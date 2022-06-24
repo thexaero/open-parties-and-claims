@@ -50,11 +50,11 @@ import javax.annotation.Nullable;
  * <p>
  * Make sure to check whether the server side has the mod installed with
  * <p>
- {@code
-	 ClientWorldMainCapabilityAPI capability = api.getCapabilityHelper().getCapability(Minecraft.getInstance().level, ClientWorldCapabilityTypes.MAIN_CAP);
-	 IClientWorldDataAPI worldData = capability.getClientWorldData();
-	 boolean serverHasMod = worldData.serverHasMod();
- }
+ * {@code
+ *   ClientWorldMainCapabilityAPI capability = api.getCapabilityHelper().getCapability(Minecraft.getInstance().level, ClientWorldCapabilityTypes.MAIN_CAP);
+ *   IClientWorldDataAPI worldData = capability.getClientWorldData();
+ *   boolean serverHasMod = worldData.serverHasMod();
+ * }
  * <p>
  * for each client world instance ({@code Minecraft.getInstance().level}).
  */
