@@ -24,16 +24,16 @@ import java.util.List;
 
 public interface IForgeConfigValue<T> {
 
-    public List<String> getPath();
+	public List<String> getPath();
 
-    public T get();
+	public T get();
 
-    public IForgeConfigSpecBuilder next();
+	public IForgeConfigSpecBuilder next();
 
-    public void save();
+	public void save();
 
-    public void set(T value);
+	public void set(T value);
 
-    public void clearCache();
+	public void clearCache();
 
 }

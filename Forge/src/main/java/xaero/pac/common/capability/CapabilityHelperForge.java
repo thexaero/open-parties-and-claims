@@ -25,11 +25,11 @@ import javax.annotation.Nullable;
 
 public class CapabilityHelperForge implements ICapabilityHelper {
 
-    @Nullable
-    @Override
-    public <T, C extends ICapability<T>> T getCapability(@Nonnull Object object, @Nonnull C capability) {
-        @SuppressWarnings("unchecked")
-        ForgeCapabilityWrapper<T> forgeCapabilityWrapper = (ForgeCapabilityWrapper<T>) capability;
-        return ((CapabilityProvider<?>)object).getCapability(forgeCapabilityWrapper.getForgeCapability()).orElse(null);
-    }
+	@Nullable
+	@Override
+	public <T, C extends ICapability<T>> T getCapability(@Nonnull Object object, @Nonnull C capability) {
+		@SuppressWarnings("unchecked")
+		ForgeCapabilityWrapper<T> forgeCapabilityWrapper = (ForgeCapabilityWrapper<T>) capability;
+		return ((CapabilityProvider<?>)object).getCapability(forgeCapabilityWrapper.getForgeCapability()).orElse(null);
+	}
 }

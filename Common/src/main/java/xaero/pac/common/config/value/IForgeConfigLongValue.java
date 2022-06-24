@@ -19,5 +19,5 @@
 package xaero.pac.common.config.value;
 
 public interface IForgeConfigLongValue extends IForgeConfigValue<Long> {
-    
+	
 }

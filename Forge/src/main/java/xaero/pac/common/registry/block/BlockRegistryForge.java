@@ -24,9 +24,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class BlockRegistryForge implements IBlockRegistry {
 
-    @Override
-    public Block getValue(ResourceLocation id) {
-        return ForgeRegistries.BLOCKS.getValue(id);
-    }
+	@Override
+	public Block getValue(ResourceLocation id) {
+		return ForgeRegistries.BLOCKS.getValue(id);
+	}
 
 }

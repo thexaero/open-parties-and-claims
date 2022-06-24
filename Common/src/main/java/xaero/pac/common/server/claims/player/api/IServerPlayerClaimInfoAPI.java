@@ -53,7 +53,7 @@ public interface IServerPlayerClaimInfoAPI<DC extends IPlayerDimensionClaimsAPI<
 	public int getClaimsColor();
 	
 	@Nonnull
-    @Override
+	@Override
 	public Stream<Entry<ResourceLocation, DC>> getStream();
 
 }

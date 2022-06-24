@@ -33,32 +33,32 @@ import java.util.function.Function;
 
 public class PacketHandlerForge implements IPacketHandler {
 
-    private static final String PROTOCOL_VERSION = "1.0.0";
-    public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation("openpartiesandclaims", "main"), () -> {return PROTOCOL_VERSION;}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);});
+	private static final String PROTOCOL_VERSION = "1.0.0";
+	public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation("openpartiesandclaims", "main"), () -> {return PROTOCOL_VERSION;}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);});
 
-    @Override
-    public <P> void register(int index, Class<P> type,
-                             BiConsumer<P, FriendlyByteBuf> encoder,
-                             Function<FriendlyByteBuf, P> decoder,
-                             BiConsumer<P, ServerPlayer> serverHandler,
-                             Consumer<P> clientHandler) {
-        PacketConsumerForge<P> consumer = new PacketConsumerForge<P>(serverHandler, clientHandler);
-        if((serverHandler == null) != (clientHandler == null))
-            NETWORK.registerMessage(index, type, encoder, decoder,
-                    consumer, Optional.of(clientHandler != null ? NetworkDirection.PLAY_TO_CLIENT : NetworkDirection.PLAY_TO_SERVER));
-        else
-            NETWORK.registerMessage(index, type, encoder, decoder,
-                    consumer);
-    }
+	@Override
+	public <P> void register(int index, Class<P> type,
+							 BiConsumer<P, FriendlyByteBuf> encoder,
+							 Function<FriendlyByteBuf, P> decoder,
+							 BiConsumer<P, ServerPlayer> serverHandler,
+							 Consumer<P> clientHandler) {
+		PacketConsumerForge<P> consumer = new PacketConsumerForge<P>(serverHandler, clientHandler);
+		if((serverHandler == null) != (clientHandler == null))
+			NETWORK.registerMessage(index, type, encoder, decoder,
+					consumer, Optional.of(clientHandler != null ? NetworkDirection.PLAY_TO_CLIENT : NetworkDirection.PLAY_TO_SERVER));
+		else
+			NETWORK.registerMessage(index, type, encoder, decoder,
+					consumer);
+	}
 
-    @Override
-    public void sendToServer(Object packet) {
-        NETWORK.sendToServer(packet);
-    }
+	@Override
+	public void sendToServer(Object packet) {
+		NETWORK.sendToServer(packet);
+	}
 
-    @Override
-    public void sendToPlayer(ServerPlayer player, Object packet) {
-        NETWORK.send(PacketDistributor.PLAYER.with(()->player), packet);
-    }
+	@Override
+	public void sendToPlayer(ServerPlayer player, Object packet) {
+		NETWORK.send(PacketDistributor.PLAYER.with(()->player), packet);
+	}
 
 }

@@ -20,17 +20,17 @@ package xaero.pac.common.config.value;
 
 public interface IForgeConfigValueSpec {
 
-    public String getComment();
+	public String getComment();
 
-    public String getTranslationKey();
+	public String getTranslationKey();
 
-    public boolean needsWorldRestart();
+	public boolean needsWorldRestart();
 
-    public Class<?> getClazz();
+	public Class<?> getClazz();
 
-    public boolean test(Object value);
+	public boolean test(Object value);
 
-    public Object correct(Object value);
+	public Object correct(Object value);
 
-    public Object getDefault();
+	public Object getDefault();
 }

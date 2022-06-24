@@ -26,39 +26,39 @@ import java.util.List;
 
 public class ForgeConfigIntValueWrapper implements IForgeConfigIntValue{
 
-    private final ForgeConfigSpec.IntValue intValue;
+	private final ForgeConfigSpec.IntValue intValue;
 
-    public ForgeConfigIntValueWrapper(ForgeConfigSpec.IntValue intValue) {
-        this.intValue = intValue;
-    }
+	public ForgeConfigIntValueWrapper(ForgeConfigSpec.IntValue intValue) {
+		this.intValue = intValue;
+	}
 
-    @Override
-    public List<String> getPath() {
-        return intValue.getPath();
-    }
+	@Override
+	public List<String> getPath() {
+		return intValue.getPath();
+	}
 
-    @Override
-    public Integer get() {
-        return intValue.get();
-    }
+	@Override
+	public Integer get() {
+		return intValue.get();
+	}
 
-    @Override
-    public IForgeConfigSpecBuilder next() {
-        return new ForgeConfigSpecBuilderWrapper(intValue.next());
-    }
+	@Override
+	public IForgeConfigSpecBuilder next() {
+		return new ForgeConfigSpecBuilderWrapper(intValue.next());
+	}
 
-    @Override
-    public void save() {
-        intValue.save();
-    }
+	@Override
+	public void save() {
+		intValue.save();
+	}
 
-    @Override
-    public void set(Integer value) {
-        intValue.set(value);
-    }
+	@Override
+	public void set(Integer value) {
+		intValue.set(value);
+	}
 
-    @Override
-    public void clearCache() {
-        intValue.clearCache();
-    }
+	@Override
+	public void clearCache() {
+		intValue.clearCache();
+	}
 }

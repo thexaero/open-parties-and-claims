@@ -45,7 +45,7 @@ public class XPACKeyBindings implements OPACKeyBindingsAPI {
 	}
 	
 	@Nonnull
-    @Override
+	@Override
 	public KeyMapping getOpenModMenuKeyBinding() {
 		return openModMenu;
 	}

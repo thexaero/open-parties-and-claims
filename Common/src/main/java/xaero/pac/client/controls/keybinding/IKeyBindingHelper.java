@@ -23,8 +23,8 @@ import net.minecraft.client.KeyMapping;
 
 public interface IKeyBindingHelper {
 
-    public void register(KeyMapping keyBinding);
+	public void register(KeyMapping keyBinding);
 
-    public InputConstants.Key getBoundKey(KeyMapping keyBinding);
+	public InputConstants.Key getBoundKey(KeyMapping keyBinding);
 
 }

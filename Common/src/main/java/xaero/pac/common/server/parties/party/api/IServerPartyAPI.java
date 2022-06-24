@@ -70,7 +70,7 @@ public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlay
 	public Stream<I> getInvitedPlayersStream();
 
 	@Nonnull
-    @Override
+	@Override
 	public Stream<UUID> getAllyPartiesStream();
 
 	@Nonnull
@@ -82,7 +82,7 @@ public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlay
 	public UUID getId();
 
 	@Nonnull
-    @Override
+	@Override
 	public String getDefaultName();
 	
 	@Override
@@ -104,7 +104,7 @@ public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlay
 	 *
 	 * @param playerUUID  the UUID of a player, not null
 	 * @return the removed party member info, null if the specified player is the party owner
-	 *                      or if the player isn't in the party
+	 *         or if the player isn't in the party
 	 */
 	@Nullable
 	public M removeMember(@Nonnull UUID playerUUID);

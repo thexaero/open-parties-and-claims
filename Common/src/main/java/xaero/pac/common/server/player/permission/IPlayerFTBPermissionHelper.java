@@ -24,8 +24,8 @@ import java.util.OptionalInt;
 
 public interface IPlayerFTBPermissionHelper {
 
-    public OptionalInt getIntPermission(ServerPlayer player, String node);
+	public OptionalInt getIntPermission(ServerPlayer player, String node);
 
-    public boolean getPermission(ServerPlayer player, String node);
+	public boolean getPermission(ServerPlayer player, String node);
 
 }

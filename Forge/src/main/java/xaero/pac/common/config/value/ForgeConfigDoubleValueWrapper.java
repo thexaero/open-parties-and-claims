@@ -26,39 +26,39 @@ import java.util.List;
 
 public class ForgeConfigDoubleValueWrapper implements IForgeConfigDoubleValue{
 
-    private final ForgeConfigSpec.DoubleValue doubleValue;
+	private final ForgeConfigSpec.DoubleValue doubleValue;
 
-    public ForgeConfigDoubleValueWrapper(ForgeConfigSpec.DoubleValue doubleValue) {
-        this.doubleValue = doubleValue;
-    }
+	public ForgeConfigDoubleValueWrapper(ForgeConfigSpec.DoubleValue doubleValue) {
+		this.doubleValue = doubleValue;
+	}
 
-    @Override
-    public List<String> getPath() {
-        return doubleValue.getPath();
-    }
+	@Override
+	public List<String> getPath() {
+		return doubleValue.getPath();
+	}
 
-    @Override
-    public Double get() {
-        return doubleValue.get();
-    }
+	@Override
+	public Double get() {
+		return doubleValue.get();
+	}
 
-    @Override
-    public IForgeConfigSpecBuilder next() {
-        return new ForgeConfigSpecBuilderWrapper(doubleValue.next());
-    }
+	@Override
+	public IForgeConfigSpecBuilder next() {
+		return new ForgeConfigSpecBuilderWrapper(doubleValue.next());
+	}
 
-    @Override
-    public void save() {
-        doubleValue.save();
-    }
+	@Override
+	public void save() {
+		doubleValue.save();
+	}
 
-    @Override
-    public void set(Double value) {
-        doubleValue.set(value);
-    }
+	@Override
+	public void set(Double value) {
+		doubleValue.set(value);
+	}
 
-    @Override
-    public void clearCache() {
-        doubleValue.clearCache();
-    }
+	@Override
+	public void clearCache() {
+		doubleValue.clearCache();
+	}
 }

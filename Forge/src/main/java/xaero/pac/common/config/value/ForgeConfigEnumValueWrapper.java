@@ -26,40 +26,40 @@ import java.util.List;
 
 public class ForgeConfigEnumValueWrapper<T extends Enum<T>> implements IForgeConfigEnumValue<T>{
 
-    private final ForgeConfigSpec.EnumValue<T> enumValue;
+	private final ForgeConfigSpec.EnumValue<T> enumValue;
 
-    public ForgeConfigEnumValueWrapper(ForgeConfigSpec.EnumValue<T> enumValue) {
-        this.enumValue = enumValue;
-    }
+	public ForgeConfigEnumValueWrapper(ForgeConfigSpec.EnumValue<T> enumValue) {
+		this.enumValue = enumValue;
+	}
 
-    @Override
-    public List<String> getPath() {
-        return enumValue.getPath();
-    }
+	@Override
+	public List<String> getPath() {
+		return enumValue.getPath();
+	}
 
-    @Override
-    public T get() {
-        return enumValue.get();
-    }
+	@Override
+	public T get() {
+		return enumValue.get();
+	}
 
-    @Override
-    public IForgeConfigSpecBuilder next() {
-        return new ForgeConfigSpecBuilderWrapper(enumValue.next());
-    }
+	@Override
+	public IForgeConfigSpecBuilder next() {
+		return new ForgeConfigSpecBuilderWrapper(enumValue.next());
+	}
 
-    @Override
-    public void save() {
-        enumValue.save();
-    }
+	@Override
+	public void save() {
+		enumValue.save();
+	}
 
-    @Override
-    public void set(T value) {
-        enumValue.set(value);
-    }
+	@Override
+	public void set(T value) {
+		enumValue.set(value);
+	}
 
-    @Override
-    public void clearCache() {
-        enumValue.clearCache();
-    }
+	@Override
+	public void clearCache() {
+		enumValue.clearCache();
+	}
 
 }

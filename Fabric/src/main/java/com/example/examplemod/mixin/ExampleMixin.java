@@ -28,12 +28,12 @@ import xaero.pac.OpenPartiesAndClaims;
 
 @Mixin(TitleScreen.class)
 public class ExampleMixin {
-    
-    @Inject(at = @At("HEAD"), method = "init()V")
-    private void init(CallbackInfo info) {
-        
-        OpenPartiesAndClaims.LOGGER.info("This line is printed by an example mod mixin from Fabric!");
-        OpenPartiesAndClaims.LOGGER.info("MC Version: {}", Minecraft.getInstance().getVersionType());
-        OpenPartiesAndClaims.LOGGER.info("Classloader: {}", this.getClass().getClassLoader());
-    }
+	
+	@Inject(at = @At("HEAD"), method = "init()V")
+	private void init(CallbackInfo info) {
+		
+		OpenPartiesAndClaims.LOGGER.info("This line is printed by an example mod mixin from Fabric!");
+		OpenPartiesAndClaims.LOGGER.info("MC Version: {}", Minecraft.getInstance().getVersionType());
+		OpenPartiesAndClaims.LOGGER.info("Classloader: {}", this.getClass().getClassLoader());
+	}
 }

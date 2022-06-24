@@ -22,48 +22,48 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ForgeConfigValueSpecWrapper implements IForgeConfigValueSpec {
 
-    private final ForgeConfigSpec.ValueSpec valueSpec;
+	private final ForgeConfigSpec.ValueSpec valueSpec;
 
-    public ForgeConfigValueSpecWrapper(ForgeConfigSpec.ValueSpec valueSpec) {
-        this.valueSpec = valueSpec;
-    }
+	public ForgeConfigValueSpecWrapper(ForgeConfigSpec.ValueSpec valueSpec) {
+		this.valueSpec = valueSpec;
+	}
 
-    public ForgeConfigSpec.ValueSpec getValueSpec() {
-        return valueSpec;
-    }
+	public ForgeConfigSpec.ValueSpec getValueSpec() {
+		return valueSpec;
+	}
 
-    @Override
-    public String getComment() {
-        return valueSpec.getComment();
-    }
+	@Override
+	public String getComment() {
+		return valueSpec.getComment();
+	}
 
-    @Override
-    public String getTranslationKey() {
-        return valueSpec.getTranslationKey();
-    }
+	@Override
+	public String getTranslationKey() {
+		return valueSpec.getTranslationKey();
+	}
 
-    @Override
-    public boolean needsWorldRestart() {
-        return valueSpec.needsWorldRestart();
-    }
+	@Override
+	public boolean needsWorldRestart() {
+		return valueSpec.needsWorldRestart();
+	}
 
-    @Override
-    public Class<?> getClazz() {
-        return valueSpec.getClazz();
-    }
+	@Override
+	public Class<?> getClazz() {
+		return valueSpec.getClazz();
+	}
 
-    @Override
-    public boolean test(Object value) {
-        return valueSpec.test(value);
-    }
+	@Override
+	public boolean test(Object value) {
+		return valueSpec.test(value);
+	}
 
-    @Override
-    public Object correct(Object value) {
-        return valueSpec.correct(value);
-    }
+	@Override
+	public Object correct(Object value) {
+		return valueSpec.correct(value);
+	}
 
-    @Override
-    public Object getDefault() {
-        return valueSpec.getDefault();
-    }
+	@Override
+	public Object getDefault() {
+		return valueSpec.getDefault();
+	}
 }

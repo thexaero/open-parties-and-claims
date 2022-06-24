@@ -34,11 +34,11 @@ import xaero.pac.server.LoadDedicatedServerForge;
 @Mod("openpartiesandclaims")
 public class OpenPartiesAndClaimsForge extends OpenPartiesAndClaims {
 
-    public OpenPartiesAndClaimsForge() {
+	public OpenPartiesAndClaimsForge() {
 		super(new CapabilityHelperForge(), new PacketHandlerForge(), new ForgeConfigHelperForge(), new ModSupportForge());
-    	LoadCommonForge<?> loader = FMLLoader.getDist() == Dist.CLIENT ? new LoadClientForge(this) : new LoadDedicatedServerForge(this);
-    	FMLJavaModLoadingContext.get().getModEventBus().register(loader);
-    	FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientWorldCapabilityProvider::registerCapabilities);
-    }
-    
+		LoadCommonForge<?> loader = FMLLoader.getDist() == Dist.CLIENT ? new LoadClientForge(this) : new LoadDedicatedServerForge(this);
+		FMLJavaModLoadingContext.get().getModEventBus().register(loader);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientWorldCapabilityProvider::registerCapabilities);
+	}
+	
 }

@@ -27,14 +27,14 @@ import java.util.function.Function;
 
 public interface IPacketHandler {
 
-    public <P> void register(int index, Class<P> type,
-                             BiConsumer<P, FriendlyByteBuf> encoder,
-                             Function<FriendlyByteBuf, P> decoder,
-                             BiConsumer<P, ServerPlayer> serverHandler,
-                             Consumer<P> clientHandler);
+	public <P> void register(int index, Class<P> type,
+							 BiConsumer<P, FriendlyByteBuf> encoder,
+							 Function<FriendlyByteBuf, P> decoder,
+							 BiConsumer<P, ServerPlayer> serverHandler,
+							 Consumer<P> clientHandler);
 
-    public void sendToServer(Object packet);
+	public void sendToServer(Object packet);
 
-    public void sendToPlayer(ServerPlayer player, Object packet);
+	public void sendToPlayer(ServerPlayer player, Object packet);
 
 }

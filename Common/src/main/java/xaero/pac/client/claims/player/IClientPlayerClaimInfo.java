@@ -39,7 +39,7 @@ public interface IClientPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	public int getForceloadCount();
 	
 	@Nonnull
-    @Override
+	@Override
 	public UUID getPlayerId();
 	
 	@Nonnull
@@ -47,7 +47,7 @@ public interface IClientPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	public String getPlayerUsername();
 	
 	@Nonnull
-    @Override
+	@Override
 	public Stream<Entry<ResourceLocation, DC>> getStream();
 
 }

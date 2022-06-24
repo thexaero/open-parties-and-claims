@@ -23,9 +23,9 @@ import net.minecraft.world.entity.Entity;
 
 public class EntityAccessForge implements IEntityAccess {
 
-    @Override
-    public CompoundTag getPersistentData(Entity entity) {
-        return entity.getPersistentData();
-    }
+	@Override
+	public CompoundTag getPersistentData(Entity entity) {
+		return entity.getPersistentData();
+	}
 
 }

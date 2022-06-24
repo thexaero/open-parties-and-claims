@@ -69,7 +69,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	protected ServerDimensionClaimsManager create(ResourceLocation dimension,
-			Long2ObjectMap<ServerRegionClaims> claims) {
+												  Long2ObjectMap<ServerRegionClaims> claims) {
 		boolean playerClaimsSyncAllowed = ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() || isClaimable(dimension);
 		return new ServerDimensionClaimsManager(dimension, claims, this, playerClaimsSyncAllowed);
 	}
@@ -269,7 +269,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return new AreaClaimResult(resultTypes, left, top, right, bottom);
 	}
 
-    @Nonnull
+	@Nonnull
 	@Override
 	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
 		return tryClaimActionOverArea(dimension, playerId, fromX, fromZ, left, top, right, bottom, Action.CLAIM, replace);
@@ -288,7 +288,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Nullable
-    @Override
+	@Override
 	public PlayerChunkClaim get(@Nonnull ResourceLocation dimension, int x, int z) {
 		PlayerChunkClaim actualClaim = super.get(dimension, x, z);
 		//allowExistingClaimsInUnclaimableDimensions is applied here, not when loading the files, so that new changes to claims still affect the "ignored" claims, e.g. when a server claims a chunk claimed by player

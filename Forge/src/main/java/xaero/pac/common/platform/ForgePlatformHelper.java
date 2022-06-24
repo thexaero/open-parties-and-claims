@@ -31,47 +31,47 @@ import xaero.pac.common.server.world.ServerChunkCacheAccessForge;
 
 public class ForgePlatformHelper implements IPlatformHelper {
 
-    private final BlockRegistryForge blockRegistryForge = new BlockRegistryForge();
-    private final KeyBindingHelperForge keyBindingRegistryForge = new KeyBindingHelperForge();
-    private final ServerChunkCacheAccessForge serverChunkCacheAccessForge = new ServerChunkCacheAccessForge();
-    private final EntityAccessForge entityAccessForge = new EntityAccessForge();
+	private final BlockRegistryForge blockRegistryForge = new BlockRegistryForge();
+	private final KeyBindingHelperForge keyBindingRegistryForge = new KeyBindingHelperForge();
+	private final ServerChunkCacheAccessForge serverChunkCacheAccessForge = new ServerChunkCacheAccessForge();
+	private final EntityAccessForge entityAccessForge = new EntityAccessForge();
 
-    @Override
-    public String getPlatformName() {
+	@Override
+	public String getPlatformName() {
 
-        return "Forge";
-    }
+		return "Forge";
+	}
 
-    @Override
-    public boolean isModLoaded(String modId) {
+	@Override
+	public boolean isModLoaded(String modId) {
 
-        return ModList.get().isLoaded(modId);
-    }
+		return ModList.get().isLoaded(modId);
+	}
 
-    @Override
-    public boolean isDevelopmentEnvironment() {
+	@Override
+	public boolean isDevelopmentEnvironment() {
 
-        return !FMLLoader.isProduction();
-    }
+		return !FMLLoader.isProduction();
+	}
 
-    @Override
-    public IBlockRegistry getBlockRegistry() {
-        return blockRegistryForge;
-    }
+	@Override
+	public IBlockRegistry getBlockRegistry() {
+		return blockRegistryForge;
+	}
 
-    @Override
-    public IKeyBindingHelper getKeyBindingRegistry() {
-        return keyBindingRegistryForge;
-    }
+	@Override
+	public IKeyBindingHelper getKeyBindingRegistry() {
+		return keyBindingRegistryForge;
+	}
 
-    @Override
-    public IServerChunkCacheAccess getServerChunkCacheAccess() {
-        return serverChunkCacheAccessForge;
-    }
+	@Override
+	public IServerChunkCacheAccess getServerChunkCacheAccess() {
+		return serverChunkCacheAccessForge;
+	}
 
-    @Override
-    public EntityAccessForge getEntityAccess() {
-        return entityAccessForge;
-    }
+	@Override
+	public EntityAccessForge getEntityAccess() {
+		return entityAccessForge;
+	}
 
 }

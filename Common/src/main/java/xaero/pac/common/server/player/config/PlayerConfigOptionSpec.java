@@ -58,8 +58,8 @@ public class PlayerConfigOptionSpec<T> {
 
 	protected IForgeConfigSpecBuilder buildForgeSpec(IForgeConfigSpecBuilder builder) {
 		return builder
-        .comment(comment)
-        .translation(translation);
+		.comment(comment)
+		.translation(translation);
 	}
 
 	public PlayerConfigOptionSpec<T> applyToForgeSpec(IForgeConfigSpecBuilder builder) {

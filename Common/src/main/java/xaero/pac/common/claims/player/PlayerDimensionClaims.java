@@ -89,7 +89,7 @@ public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaim
 	}
 
 	@Nonnull
-    @Override
+	@Override
 	public Stream<PlayerClaimPosList> getStream() {
 		return claimLists.values().stream();
 	}

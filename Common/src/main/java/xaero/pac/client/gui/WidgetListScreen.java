@@ -75,7 +75,7 @@ public abstract class WidgetListScreen extends XPACScreen {
 			prevButton.active = page > 0;
 			nextButton.active = page < pageCount - 1;
 		}
-	    minecraft.keyboardHandler.setSendRepeatsToGui(true);
+		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 	
 	private int getStartIndex() {

@@ -26,39 +26,39 @@ import java.util.List;
 
 public class ForgeConfigBooleanValueWrapper implements IForgeConfigBooleanValue{
 
-    private final ForgeConfigSpec.BooleanValue booleanValue;
+	private final ForgeConfigSpec.BooleanValue booleanValue;
 
-    public ForgeConfigBooleanValueWrapper(ForgeConfigSpec.BooleanValue booleanValue) {
-        this.booleanValue = booleanValue;
-    }
+	public ForgeConfigBooleanValueWrapper(ForgeConfigSpec.BooleanValue booleanValue) {
+		this.booleanValue = booleanValue;
+	}
 
-    @Override
-    public List<String> getPath() {
-        return booleanValue.getPath();
-    }
+	@Override
+	public List<String> getPath() {
+		return booleanValue.getPath();
+	}
 
-    @Override
-    public Boolean get() {
-        return booleanValue.get();
-    }
+	@Override
+	public Boolean get() {
+		return booleanValue.get();
+	}
 
-    @Override
-    public IForgeConfigSpecBuilder next() {
-        return new ForgeConfigSpecBuilderWrapper(booleanValue.next());
-    }
+	@Override
+	public IForgeConfigSpecBuilder next() {
+		return new ForgeConfigSpecBuilderWrapper(booleanValue.next());
+	}
 
-    @Override
-    public void save() {
-        booleanValue.save();
-    }
+	@Override
+	public void save() {
+		booleanValue.save();
+	}
 
-    @Override
-    public void set(Boolean value) {
-        booleanValue.set(value);
-    }
+	@Override
+	public void set(Boolean value) {
+		booleanValue.set(value);
+	}
 
-    @Override
-    public void clearCache() {
-        booleanValue.clearCache();
-    }
+	@Override
+	public void clearCache() {
+		booleanValue.clearCache();
+	}
 }

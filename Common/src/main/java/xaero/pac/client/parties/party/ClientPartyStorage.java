@@ -135,7 +135,7 @@ public class ClientPartyStorage implements IClientPartyStorage<ClientPartyAllyIn
 	}
 	
 	@Nullable
-    @Override
+	@Override
 	public ClientParty getParty() {
 		return party;
 	}

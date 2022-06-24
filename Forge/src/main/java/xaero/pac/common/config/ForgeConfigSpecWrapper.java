@@ -25,73 +25,73 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ForgeConfigSpecWrapper implements IForgeConfigSpec {
 
-    private final ForgeConfigSpec forgeConfigSpec;
+	private final ForgeConfigSpec forgeConfigSpec;
 
-    public ForgeConfigSpecWrapper(ForgeConfigSpec forgeConfigSpec) {
-        this.forgeConfigSpec = forgeConfigSpec;
-    }
+	public ForgeConfigSpecWrapper(ForgeConfigSpec forgeConfigSpec) {
+		this.forgeConfigSpec = forgeConfigSpec;
+	}
 
-    public ForgeConfigSpec getForgeConfigSpec() {
-        return forgeConfigSpec;
-    }
+	public ForgeConfigSpec getForgeConfigSpec() {
+		return forgeConfigSpec;
+	}
 
-    @Override
-    public void setConfig(CommentedConfig config) {
-        forgeConfigSpec.setConfig(config);
-    }
+	@Override
+	public void setConfig(CommentedConfig config) {
+		forgeConfigSpec.setConfig(config);
+	}
 
-    @Override
-    public void acceptConfig(CommentedConfig data) {
-        forgeConfigSpec.acceptConfig(data);
-    }
+	@Override
+	public void acceptConfig(CommentedConfig data) {
+		forgeConfigSpec.acceptConfig(data);
+	}
 
-    @Override
-    public boolean isCorrecting() {
-        return forgeConfigSpec.isCorrecting();
-    }
+	@Override
+	public boolean isCorrecting() {
+		return forgeConfigSpec.isCorrecting();
+	}
 
-    @Override
-    public boolean isLoaded() {
-        return forgeConfigSpec.isLoaded();
-    }
+	@Override
+	public boolean isLoaded() {
+		return forgeConfigSpec.isLoaded();
+	}
 
-    @Override
-    public UnmodifiableConfig getSpec() {
-        return forgeConfigSpec.getSpec();
-    }
+	@Override
+	public UnmodifiableConfig getSpec() {
+		return forgeConfigSpec.getSpec();
+	}
 
-    @Override
-    public UnmodifiableConfig getValues() {
-        return forgeConfigSpec.getValues();
-    }
+	@Override
+	public UnmodifiableConfig getValues() {
+		return forgeConfigSpec.getValues();
+	}
 
-    @Override
-    public void afterReload() {
-        forgeConfigSpec.afterReload();
-    }
+	@Override
+	public void afterReload() {
+		forgeConfigSpec.afterReload();
+	}
 
-    @Override
-    public void save() {
-        forgeConfigSpec.save();
-    }
+	@Override
+	public void save() {
+		forgeConfigSpec.save();
+	}
 
-    @Override
-    public boolean isCorrect(CommentedConfig config) {
-        return forgeConfigSpec.isCorrect(config);
-    }
+	@Override
+	public boolean isCorrect(CommentedConfig config) {
+		return forgeConfigSpec.isCorrect(config);
+	}
 
-    @Override
-    public int correct(CommentedConfig config) {
-        return forgeConfigSpec.correct(config);
-    }
+	@Override
+	public int correct(CommentedConfig config) {
+		return forgeConfigSpec.correct(config);
+	}
 
-    @Override
-    public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener) {
-        return forgeConfigSpec.correct(config, listener);
-    }
+	@Override
+	public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener) {
+		return forgeConfigSpec.correct(config, listener);
+	}
 
-    @Override
-    public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener, ConfigSpec.CorrectionListener commentListener) {
-        return forgeConfigSpec.correct(config, listener, commentListener);
-    }
+	@Override
+	public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener, ConfigSpec.CorrectionListener commentListener) {
+		return forgeConfigSpec.correct(config, listener, commentListener);
+	}
 }

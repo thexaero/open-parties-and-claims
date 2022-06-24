@@ -24,14 +24,14 @@ import net.minecraftforge.client.ClientRegistry;
 
 public class KeyBindingHelperForge implements IKeyBindingHelper {
 
-    @Override
-    public void register(KeyMapping keyBinding) {
-        ClientRegistry.registerKeyBinding(keyBinding);
-    }
+	@Override
+	public void register(KeyMapping keyBinding) {
+		ClientRegistry.registerKeyBinding(keyBinding);
+	}
 
-    @Override
-    public InputConstants.Key getBoundKey(KeyMapping keyBinding) {
-        return keyBinding.getKey();
-    }
+	@Override
+	public InputConstants.Key getBoundKey(KeyMapping keyBinding) {
+		return keyBinding.getKey();
+	}
 
 }

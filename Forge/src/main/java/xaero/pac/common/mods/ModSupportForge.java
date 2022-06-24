@@ -20,9 +20,9 @@ package xaero.pac.common.mods;
 
 public class ModSupportForge extends ModSupport {
 
-    @Override
-    public FTBRanks createFTBRanksSupport() {
-        return new FTBRanksForge();
-    }
+	@Override
+	public FTBRanks createFTBRanksSupport() {
+		return new FTBRanksForge();
+	}
 
 }

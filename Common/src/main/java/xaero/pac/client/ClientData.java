@@ -79,7 +79,7 @@ public final class ClientData implements IClientData<PlayerConfigClientStorageMa
 	}
 
 	@Nonnull
-    @Override
+	@Override
 	public PlayerConfigClientStorageManager getPlayerConfigStorageManager() {
 		return playerConfigStorageManager;
 	}

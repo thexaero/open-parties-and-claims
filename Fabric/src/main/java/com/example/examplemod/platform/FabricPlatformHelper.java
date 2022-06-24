@@ -27,40 +27,40 @@ import xaero.pac.common.server.world.IServerChunkCacheAccess;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
-    @Override
-    public String getPlatformName() {
-        return "Fabric";
-    }
+	@Override
+	public String getPlatformName() {
+		return "Fabric";
+	}
 
-    @Override
-    public boolean isModLoaded(String modId) {
+	@Override
+	public boolean isModLoaded(String modId) {
 
-        return FabricLoader.getInstance().isModLoaded(modId);
-    }
+		return FabricLoader.getInstance().isModLoaded(modId);
+	}
 
-    @Override
-    public boolean isDevelopmentEnvironment() {
+	@Override
+	public boolean isDevelopmentEnvironment() {
 
-        return FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
+		return FabricLoader.getInstance().isDevelopmentEnvironment();
+	}
 
-    @Override
-    public IBlockRegistry getBlockRegistry() {
-        return null;//TODO implement this
-    }
+	@Override
+	public IBlockRegistry getBlockRegistry() {
+		return null;//TODO implement this
+	}
 
-    @Override
-    public IKeyBindingHelper getKeyBindingRegistry() {
-        return null;//TODO implement this
-    }
+	@Override
+	public IKeyBindingHelper getKeyBindingRegistry() {
+		return null;//TODO implement this
+	}
 
-    @Override
-    public IServerChunkCacheAccess getServerChunkCacheAccess() {
-        return null;//TODO implement this
-    }
+	@Override
+	public IServerChunkCacheAccess getServerChunkCacheAccess() {
+		return null;//TODO implement this
+	}
 
-    @Override
-    public IEntityAccess getEntityAccess() {
-        return null;//TODO implement this
-    }
+	@Override
+	public IEntityAccess getEntityAccess() {
+		return null;//TODO implement this
+	}
 }

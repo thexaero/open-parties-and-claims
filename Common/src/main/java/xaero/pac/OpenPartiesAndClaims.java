@@ -52,26 +52,26 @@ import xaero.pac.common.server.CrashHandler;
 public class OpenPartiesAndClaims {
 
 	public static OpenPartiesAndClaims INSTANCE;
-    public static final Logger LOGGER = LogManager.getLogger();
-    
-    public final CrashHandler startupCrashHandler;
-    private ClientData clientData;
-    private OpenPACClientAPI clientAPI;
+	public static final Logger LOGGER = LogManager.getLogger();
+	
+	public final CrashHandler startupCrashHandler;
+	private ClientData clientData;
+	private OpenPACClientAPI clientAPI;
 	private final ICapabilityHelper capabilityHelper;
 	private final IPacketHandler packetHandler;
 	private final IForgeConfigHelper forgeConfigHelper;
 	private final ModSupport modSupport;
 
-    public OpenPartiesAndClaims(ICapabilityHelper capabilityHelper, IPacketHandler packetHandler, IForgeConfigHelper forgeConfigHelper, ModSupport modSupport) {
+	public OpenPartiesAndClaims(ICapabilityHelper capabilityHelper, IPacketHandler packetHandler, IForgeConfigHelper forgeConfigHelper, ModSupport modSupport) {
 		this.capabilityHelper = capabilityHelper;
 		this.packetHandler = packetHandler;
 		this.forgeConfigHelper = forgeConfigHelper;
 		this.modSupport = modSupport;
 		INSTANCE = this;
-    	startupCrashHandler = new CrashHandler();
-    }
-    
-    @SuppressWarnings("unchecked")
+		startupCrashHandler = new CrashHandler();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public IClientData
 	<
 		IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>,
@@ -86,15 +86,15 @@ public class OpenPartiesAndClaims {
 			>
 		)(Object)clientData;
 	}
-    
-    public void setClientData(ClientData clientData) {
-    	if(this.clientData != null)
-    		throw new IllegalAccessError();
+	
+	public void setClientData(ClientData clientData) {
+		if(this.clientData != null)
+			throw new IllegalAccessError();
 		this.clientData = clientData;
 		this.clientAPI = new OpenPACClientAPI();
 	}
-    
-    public OpenPACClientAPI getClientAPI() {
+	
+	public OpenPACClientAPI getClientAPI() {
 		return clientAPI;
 	}
 

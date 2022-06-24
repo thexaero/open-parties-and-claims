@@ -20,10 +20,10 @@ package xaero.pac.common.config;
 
 public interface IForgeConfigHelper {
 
-    public IForgeConfigSpecBuilder beginSpecBuilding();
+	public IForgeConfigSpecBuilder beginSpecBuilding();
 
-    public void registerServerConfig(IForgeConfigSpec spec);
-    public void registerClientConfig(IForgeConfigSpec spec);
-    public void registerCommonConfig(IForgeConfigSpec spec);
+	public void registerServerConfig(IForgeConfigSpec spec);
+	public void registerClientConfig(IForgeConfigSpec spec);
+	public void registerCommonConfig(IForgeConfigSpec spec);
 
 }

@@ -57,7 +57,7 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 	}
 	
 	@Nonnull
-    @Override
+	@Override
 	public UUID getPlayerId() {
 		return playerId;
 	}

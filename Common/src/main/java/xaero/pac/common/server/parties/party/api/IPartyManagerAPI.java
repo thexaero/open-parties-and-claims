@@ -73,7 +73,7 @@ public interface IPartyManagerAPI
 	 *
 	 * @param owner  the player to own the created party, not null
 	 * @return the created party, null if the player already owns a party, the parties feature is disabled
-	 *                  or the party wasn't created for another reason
+	 *         or the party wasn't created for another reason
 	 */
 	@Nullable
 	public P createPartyForOwner(@Nonnull Player owner);

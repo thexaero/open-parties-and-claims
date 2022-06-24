@@ -22,14 +22,14 @@ import xaero.pac.common.server.player.permission.IPlayerFTBPermissionHelper;
 
 public class FTBRanks {
 
-    private final IPlayerFTBPermissionHelper permissionHelper;
+	private final IPlayerFTBPermissionHelper permissionHelper;
 
-    public FTBRanks(IPlayerFTBPermissionHelper permissionHelper) {
-        this.permissionHelper = permissionHelper;
-    }
+	public FTBRanks(IPlayerFTBPermissionHelper permissionHelper) {
+		this.permissionHelper = permissionHelper;
+	}
 
-    public IPlayerFTBPermissionHelper getPermissionHelper() {
-        return permissionHelper;
-    }
+	public IPlayerFTBPermissionHelper getPermissionHelper() {
+		return permissionHelper;
+	}
 
 }

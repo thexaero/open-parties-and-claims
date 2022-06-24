@@ -34,14 +34,14 @@ public interface IServerDimensionClaimsManagerAPI
 > extends IDimensionClaimsManagerAPI<WRC>{
 	
 	@Nonnull
-    @Override
+	@Override
 	public ResourceLocation getDimension();
 
 	@Override
 	public int getCount();
 	
 	@Nonnull
-    @Override
+	@Override
 	public Stream<WRC> getRegionStream();
 	
 	@Nullable

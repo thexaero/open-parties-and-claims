@@ -22,8 +22,8 @@ import xaero.pac.common.server.player.permission.PlayerFTBPermissionHelperForge;
 
 public class FTBRanksForge extends FTBRanks {
 
-    public FTBRanksForge() {
-        super(new PlayerFTBPermissionHelperForge());
-    }
+	public FTBRanksForge() {
+		super(new PlayerFTBPermissionHelperForge());
+	}
 
 }

@@ -51,7 +51,7 @@ public interface IClientClaimsManager
 	public void setMaxClaimDistance(int maxClaimDistance);
 	
 	@Nonnull
-    @Override
+	@Override
 	public IClaimsManagerClaimResultTracker getClaimResultTracker();
 	
 }

@@ -24,28 +24,28 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 public interface IForgeConfigSpec {
 
-    public void setConfig(CommentedConfig config);
+	public void setConfig(CommentedConfig config);
 
-    public void acceptConfig(final CommentedConfig data);
+	public void acceptConfig(final CommentedConfig data);
 
-    public boolean isCorrecting();
+	public boolean isCorrecting();
 
-    public boolean isLoaded();
+	public boolean isLoaded();
 
-    public UnmodifiableConfig getSpec();
+	public UnmodifiableConfig getSpec();
 
-    public UnmodifiableConfig getValues();
+	public UnmodifiableConfig getValues();
 
-    public void afterReload();
+	public void afterReload();
 
-    public void save();
+	public void save();
 
-    public boolean isCorrect(CommentedConfig config);
+	public boolean isCorrect(CommentedConfig config);
 
-    public int correct(CommentedConfig config);
+	public int correct(CommentedConfig config);
 
-    public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener);
+	public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener);
 
-    public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener, ConfigSpec.CorrectionListener commentListener);
+	public int correct(CommentedConfig config, ConfigSpec.CorrectionListener listener, ConfigSpec.CorrectionListener commentListener);
 
 }

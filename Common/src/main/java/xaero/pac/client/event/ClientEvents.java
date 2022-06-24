@@ -87,7 +87,7 @@ public class ClientEvents {
 	public void handleRenderPlayerEventPost(AbstractClientPlayer player, PlayerRenderer renderer, MultiBufferSource multiBufferSource, int packedLight, float partialTick, PoseStack matrixStack){
 	}
 
-    public static abstract class Builder {
+	public static abstract class Builder {
 
 		protected IClientData
 		<

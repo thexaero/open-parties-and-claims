@@ -46,6 +46,6 @@ public interface IClaimsManager
 	public IPlayerChunkClaim get(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos);
 
 	@Nonnull
-    public IClaimsManagerTracker getTracker();
+	public IClaimsManagerTracker getTracker();
 	
 }

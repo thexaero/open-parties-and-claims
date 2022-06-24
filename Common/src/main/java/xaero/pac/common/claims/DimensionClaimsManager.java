@@ -120,7 +120,7 @@ public abstract class DimensionClaimsManager
 	}
 	
 	@Nonnull
-    @Override
+	@Override
 	public ResourceLocation getDimension() {
 		return dimension;
 	}

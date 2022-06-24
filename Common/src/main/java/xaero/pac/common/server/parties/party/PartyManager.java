@@ -90,7 +90,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	}
 
 	@Nullable
-    @Override
+	@Override
 	public ServerParty getPartyByOwner(@Nonnull UUID owner) {
 		return partiesByOwner.get(owner);
 	}

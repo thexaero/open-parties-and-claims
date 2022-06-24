@@ -24,7 +24,7 @@ import net.minecraft.world.level.ChunkPos;
 
 public interface IServerChunkCacheAccess {
 
-    public <T> void registerTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value);
-    public <T> void releaseTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value);
+	public <T> void registerTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value);
+	public <T> void releaseTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value);
 
 }

@@ -39,7 +39,7 @@ public final class PlayerClaimPosList implements IPlayerClaimPosList {
 	}
 	
 	@Nonnull
-    @Override
+	@Override
 	public PlayerChunkClaim getClaimState() {
 		return claimState;
 	}

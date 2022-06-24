@@ -23,5 +23,5 @@ import net.minecraft.world.entity.Entity;
 
 public interface IEntityAccess {
 
-    public CompoundTag getPersistentData(Entity entity);
+	public CompoundTag getPersistentData(Entity entity);
 }

@@ -134,7 +134,7 @@ public interface IServerClaimsManagerAPI
 	 * @param x  the X coordinate of the chunk to claim
 	 * @param z  the Z coordinate of the chunk to claim
 	 * @param replace  whether to ignore some limitations,
-	 *                    mainly the existing claim state at the specified location and the maximum claim distance
+	 *                 mainly the existing claim state at the specified location and the maximum claim distance
 	 * @return the result, not null
 	 */
 	@Nonnull
@@ -155,7 +155,7 @@ public interface IServerClaimsManagerAPI
 	 * @param x  the X coordinate of the chunk to unclaim
 	 * @param z  the Z coordinate of the chunk to unclaim
 	 * @param replace  whether to ignore some limitations,
-	 *                    mainly the existing claim owner at the specified location and the maximum claim distance
+	 *                 mainly the existing claim owner at the specified location and the maximum claim distance
 	 * @return the result, not null
 	 */
 	@Nonnull
@@ -177,7 +177,7 @@ public interface IServerClaimsManagerAPI
 	 * @param z  the Z coordinate of the chunk to (un)mark for forceloading
 	 * @param enable  true to mark for forceloading, false to unmark
 	 * @param replace  whether to ignore some limitations,
-	 *                    mainly the existing claim owner at the specified location and the maximum claim distance
+	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
 	 * @return the result, not null
 	 */
 	@Nonnull
@@ -199,7 +199,7 @@ public interface IServerClaimsManagerAPI
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param replace  whether to ignore some limitations,
-	 *                    mainly the existing claim owner at the specified location and the maximum claim distance
+	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
 	 * @return the area result, not null
 	 */
 	@Nonnull
@@ -221,7 +221,7 @@ public interface IServerClaimsManagerAPI
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param replace  whether to ignore some limitations,
-	 *                    mainly the existing claim owner at the specified location and the maximum claim distance
+	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
 	 * @return the area result, not null
 	 */
 	@Nonnull
@@ -244,7 +244,7 @@ public interface IServerClaimsManagerAPI
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param enable  true to mark for forceloading, false to unmark
 	 * @param replace  whether to ignore some limitations,
-	 *                    mainly the existing claim owner at the specified location and the maximum claim distance
+	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
 	 * @return the area result, not null
 	 */
 	@Nonnull

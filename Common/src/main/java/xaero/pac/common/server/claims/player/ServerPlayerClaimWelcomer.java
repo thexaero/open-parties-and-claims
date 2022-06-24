@@ -46,47 +46,47 @@ import java.util.UUID;
 
 public class ServerPlayerClaimWelcomer {
 
-    public void onPlayerTick(ServerPlayerData mainCap, ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData){
-        IPlayerChunkClaim lastClaimCheck = mainCap.getLastClaimCheck();
-        IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
-        IPlayerChunkClaim currentClaim = claimsManager.get(player.getLevel().dimension().location(), player.chunkPosition());
-        if (!Objects.equals(lastClaimCheck, currentClaim)) {
-            UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();
-            IPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = currentClaim == null ? null : serverData.getServerClaimsManager().getPlayerInfo(currentClaimId);
-            boolean isOwner = !mainCap.isClaimsNonallyMode() && currentClaim != null && Objects.equals(currentClaimId, player.getUUID());
-            boolean hasAccess = isOwner || serverData.getChunkProtection().hasChunkAccess(serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigs(), currentClaim), player);
+	public void onPlayerTick(ServerPlayerData mainCap, ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData){
+		IPlayerChunkClaim lastClaimCheck = mainCap.getLastClaimCheck();
+		IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
+		IPlayerChunkClaim currentClaim = claimsManager.get(player.getLevel().dimension().location(), player.chunkPosition());
+		if (!Objects.equals(lastClaimCheck, currentClaim)) {
+			UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();
+			IPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = currentClaim == null ? null : serverData.getServerClaimsManager().getPlayerInfo(currentClaimId);
+			boolean isOwner = !mainCap.isClaimsNonallyMode() && currentClaim != null && Objects.equals(currentClaimId, player.getUUID());
+			boolean hasAccess = isOwner || serverData.getChunkProtection().hasChunkAccess(serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigs(), currentClaim), player);
 
-            IPlayerConfig claimConfig = serverData.getPlayerConfigs().getLoadedConfig(currentClaimId);
-            String customName = claimConfig.getEffective(PlayerConfig.CLAIMS_NAME);
-            int claimColor = claimConfig.getEffective(PlayerConfig.CLAIMS_COLOR);
-            MutableComponent subTitleText;
-            if (playerClaimInfo == null)
-                subTitleText = customName == null || customName.isEmpty() ? new TranslatableComponent("gui.xaero_pac_title_entered_wilderness") : new TranslatableComponent(customName);
-            else {
-                TranslatableComponent properDesc;
-                Component forceloadedComponent = currentClaim.isForceloadable() ? new TranslatableComponent("gui.xaero_pac_marked_for_forceload") : new TextComponent("");
-                if (Objects.equals(currentClaimId, PlayerConfig.SERVER_CLAIM_UUID))
-                    properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_server_claim", forceloadedComponent);
-                else if (Objects.equals(currentClaimId, PlayerConfig.EXPIRED_CLAIM_UUID))
-                    properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_expired_claim", forceloadedComponent);
-                else
-                    properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_claim", playerClaimInfo.getPlayerUsername(), forceloadedComponent);
-                if (customName != null && !customName.isEmpty()) {
-                    subTitleText = new TextComponent(I18n.get(customName) + " - ");
-                    subTitleText.getSiblings().add(properDesc);
-                } else
-                    subTitleText = properDesc;
-            }
-            subTitleText = subTitleText.withStyle(s -> s.withColor(isOwner ? ChatFormatting.DARK_GREEN : hasAccess ? ChatFormatting.GOLD : ChatFormatting.DARK_RED));
+			IPlayerConfig claimConfig = serverData.getPlayerConfigs().getLoadedConfig(currentClaimId);
+			String customName = claimConfig.getEffective(PlayerConfig.CLAIMS_NAME);
+			int claimColor = claimConfig.getEffective(PlayerConfig.CLAIMS_COLOR);
+			MutableComponent subTitleText;
+			if (playerClaimInfo == null)
+				subTitleText = customName == null || customName.isEmpty() ? new TranslatableComponent("gui.xaero_pac_title_entered_wilderness") : new TranslatableComponent(customName);
+			else {
+				TranslatableComponent properDesc;
+				Component forceloadedComponent = currentClaim.isForceloadable() ? new TranslatableComponent("gui.xaero_pac_marked_for_forceload") : new TextComponent("");
+				if (Objects.equals(currentClaimId, PlayerConfig.SERVER_CLAIM_UUID))
+					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_server_claim", forceloadedComponent);
+				else if (Objects.equals(currentClaimId, PlayerConfig.EXPIRED_CLAIM_UUID))
+					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_expired_claim", forceloadedComponent);
+				else
+					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_claim", playerClaimInfo.getPlayerUsername(), forceloadedComponent);
+				if (customName != null && !customName.isEmpty()) {
+					subTitleText = new TextComponent(I18n.get(customName) + " - ");
+					subTitleText.getSiblings().add(properDesc);
+				} else
+					subTitleText = properDesc;
+			}
+			subTitleText = subTitleText.withStyle(s -> s.withColor(isOwner ? ChatFormatting.DARK_GREEN : hasAccess ? ChatFormatting.GOLD : ChatFormatting.DARK_RED));
 
-            MutableComponent subTitle = new TextComponent("□ ").withStyle(s -> s.withColor(claimColor));
-            subTitle.getSiblings().add(subTitleText);
-            subTitle.getSiblings().add(new TextComponent(" □").withStyle(s -> s.withColor(claimColor)));
-            ClientboundSetActionBarTextPacket packet = new ClientboundSetActionBarTextPacket(subTitle);
-            player.connection.send(packet);
+			MutableComponent subTitle = new TextComponent("□ ").withStyle(s -> s.withColor(claimColor));
+			subTitle.getSiblings().add(subTitleText);
+			subTitle.getSiblings().add(new TextComponent(" □").withStyle(s -> s.withColor(claimColor)));
+			ClientboundSetActionBarTextPacket packet = new ClientboundSetActionBarTextPacket(subTitle);
+			player.connection.send(packet);
 
-            mainCap.setLastClaimCheck(currentClaim);
-        }
-    }
+			mainCap.setLastClaimCheck(currentClaim);
+		}
+	}
 
 }

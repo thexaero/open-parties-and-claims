@@ -28,33 +28,33 @@ import java.util.function.Supplier;
 
 public class PacketConsumerForge<P> implements BiConsumer<P, Supplier<NetworkEvent.Context>> {
 
-    private final BiConsumer<P, ServerPlayer> serverHandler;
-    private final Consumer<P> clientHandler;
+	private final BiConsumer<P, ServerPlayer> serverHandler;
+	private final Consumer<P> clientHandler;
 
-    public PacketConsumerForge(BiConsumer<P, ServerPlayer> serverHandler,
-                               Consumer<P> clientHandler) {
-        this.serverHandler = serverHandler;
-        this.clientHandler = clientHandler;
-    }
+	public PacketConsumerForge(BiConsumer<P, ServerPlayer> serverHandler,
+							   Consumer<P> clientHandler) {
+		this.serverHandler = serverHandler;
+		this.clientHandler = clientHandler;
+	}
 
-    @Override
-    public void accept(P msg, Supplier<NetworkEvent.Context> contextSupplier) {
-        if(msg == null) {
-            contextSupplier.get().setPacketHandled(true);
-            return;
-        }
-        NetworkDirection networkDirection = contextSupplier.get().getDirection();
-        if(clientHandler != null && networkDirection == NetworkDirection.PLAY_TO_CLIENT) {
-            contextSupplier.get().enqueueWork(
-                    () -> clientHandler.accept(msg)
-            );
-        } else if(serverHandler != null && networkDirection == NetworkDirection.PLAY_TO_SERVER) {
-            ServerPlayer sender = contextSupplier.get().getSender();
-            contextSupplier.get().enqueueWork(
-                    () -> serverHandler.accept(msg, sender)
-            );
-        }
-        contextSupplier.get().setPacketHandled(true);
-    }
+	@Override
+	public void accept(P msg, Supplier<NetworkEvent.Context> contextSupplier) {
+		if(msg == null) {
+			contextSupplier.get().setPacketHandled(true);
+			return;
+		}
+		NetworkDirection networkDirection = contextSupplier.get().getDirection();
+		if(clientHandler != null && networkDirection == NetworkDirection.PLAY_TO_CLIENT) {
+			contextSupplier.get().enqueueWork(
+					() -> clientHandler.accept(msg)
+			);
+		} else if(serverHandler != null && networkDirection == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = contextSupplier.get().getSender();
+			contextSupplier.get().enqueueWork(
+					() -> serverHandler.accept(msg, sender)
+			);
+		}
+		contextSupplier.get().setPacketHandled(true);
+	}
 
 }

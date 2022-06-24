@@ -32,7 +32,7 @@ public class PartyPlayerInfo implements IPartyPlayerInfo {
 	}
 
 	@Nonnull
-    @Override
+	@Override
 	public UUID getUUID() {
 		return UUID;
 	}

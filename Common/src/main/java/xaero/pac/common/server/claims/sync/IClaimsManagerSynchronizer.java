@@ -24,9 +24,9 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 
 public interface IClaimsManagerSynchronizer {
 
-    public void syncClaimLimits(IPlayerConfig config, ServerPlayer player);
-    public void syncToPlayersClaimPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo);
-    public void syncOnLogin(ServerPlayer player);
-    public void onServerTick();
+	public void syncClaimLimits(IPlayerConfig config, ServerPlayer player);
+	public void syncToPlayersClaimPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo);
+	public void syncOnLogin(ServerPlayer player);
+	public void onServerTick();
 
 }

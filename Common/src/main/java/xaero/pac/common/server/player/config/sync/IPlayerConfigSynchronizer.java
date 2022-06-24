@@ -22,8 +22,8 @@ import net.minecraft.server.level.ServerPlayer;
 
 public interface IPlayerConfigSynchronizer {
 
-    //internal api
+	//internal api
 
-    public void syncToClient(ServerPlayer player);
+	public void syncToClient(ServerPlayer player);
 
 }

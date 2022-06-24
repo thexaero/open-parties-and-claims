@@ -26,39 +26,39 @@ import java.util.List;
 
 public class ForgeConfigILongValueWrapper implements IForgeConfigLongValue{
 
-    private final ForgeConfigSpec.LongValue longValue;
+	private final ForgeConfigSpec.LongValue longValue;
 
-    public ForgeConfigILongValueWrapper(ForgeConfigSpec.LongValue longValue) {
-        this.longValue = longValue;
-    }
+	public ForgeConfigILongValueWrapper(ForgeConfigSpec.LongValue longValue) {
+		this.longValue = longValue;
+	}
 
-    @Override
-    public List<String> getPath() {
-        return longValue.getPath();
-    }
+	@Override
+	public List<String> getPath() {
+		return longValue.getPath();
+	}
 
-    @Override
-    public Long get() {
-        return longValue.get();
-    }
+	@Override
+	public Long get() {
+		return longValue.get();
+	}
 
-    @Override
-    public IForgeConfigSpecBuilder next() {
-        return new ForgeConfigSpecBuilderWrapper(longValue.next());
-    }
+	@Override
+	public IForgeConfigSpecBuilder next() {
+		return new ForgeConfigSpecBuilderWrapper(longValue.next());
+	}
 
-    @Override
-    public void save() {
-        longValue.save();
-    }
+	@Override
+	public void save() {
+		longValue.save();
+	}
 
-    @Override
-    public void set(Long value) {
-        longValue.set(value);
-    }
+	@Override
+	public void set(Long value) {
+		longValue.set(value);
+	}
 
-    @Override
-    public void clearCache() {
-        longValue.clearCache();
-    }
+	@Override
+	public void clearCache() {
+		longValue.clearCache();
+	}
 }

@@ -135,34 +135,34 @@ public class MainMenu extends XPACScreen {
 		addRenderableWidget(configsButton = new Button(width / 2 - 100, height / 7 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_config_menu"), this::onConfigsButton));
 		
 		aboutPartyButton = new Button(width / 2 - 100, height / 7 + 40, 70, 20, new TranslatableComponent("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton, new Button.OnTooltip() {
-	         public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
-	        	 MainMenu.this.renderTooltip(p_170020_, ABOUT_PARTY_COMMAND, p_170021_, p_170022_);
-	          }
+			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
+				 MainMenu.this.renderTooltip(p_170020_, ABOUT_PARTY_COMMAND, p_170021_, p_170022_);
+			}
 
-	          public void narrateTooltip(Consumer<Component> p_170017_) {
-	             p_170017_.accept(ABOUT_PARTY_COMMAND);
-	          }
-	       });
+			public void narrateTooltip(Consumer<Component> p_170017_) {
+				p_170017_.accept(ABOUT_PARTY_COMMAND);
+			}
+		});
 		
 		claimButton = new Button(width / 2 - 100, height / 7 + 112, 70, 20, CLAIM, this::onClaimButton, new Button.OnTooltip() {
-	         public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
-	        	 MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND, p_170021_, p_170022_);
-	          }
+			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
+				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND, p_170021_, p_170022_);
+			}
 
-	          public void narrateTooltip(Consumer<Component> p_170017_) {
-	             p_170017_.accept(claimButton.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND);
-	          }
-	       });
+			public void narrateTooltip(Consumer<Component> p_170017_) {
+				p_170017_.accept(claimButton.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND);
+			}
+		});
 		
 		forceloadButton = new Button(width / 2 - 100, height / 7 + 136, 70, 20, FORCELOAD, this::onForceloadButton, new Button.OnTooltip() {
-	         public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
-	        	 MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND, p_170021_, p_170022_);
-	          }
+			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
+				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND, p_170021_, p_170022_);
+			}
 
-	          public void narrateTooltip(Consumer<Component> p_170017_) {
-	             p_170017_.accept(claimButton.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND);
-	          }
-	       });
+			public void narrateTooltip(Consumer<Component> p_170017_) {
+				p_170017_.accept(claimButton.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND);
+			}
+		});
 		
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
 

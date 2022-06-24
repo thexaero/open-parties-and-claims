@@ -24,24 +24,24 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class ForgeConfigHelperForge implements IForgeConfigHelper {
 
-    @Override
-    public IForgeConfigSpecBuilder beginSpecBuilding() {
-        return new ForgeConfigSpecBuilderWrapper(new ForgeConfigSpec.Builder());
-    }
+	@Override
+	public IForgeConfigSpecBuilder beginSpecBuilding() {
+		return new ForgeConfigSpecBuilderWrapper(new ForgeConfigSpec.Builder());
+	}
 
-    @Override
-    public void registerServerConfig(IForgeConfigSpec spec) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
-    }
+	@Override
+	public void registerServerConfig(IForgeConfigSpec spec) {
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
+	}
 
-    @Override
-    public void registerClientConfig(IForgeConfigSpec spec) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
-    }
+	@Override
+	public void registerClientConfig(IForgeConfigSpec spec) {
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
+	}
 
-    @Override
-    public void registerCommonConfig(IForgeConfigSpec spec) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
-    }
+	@Override
+	public void registerCommonConfig(IForgeConfigSpec spec) {
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
+	}
 
 }

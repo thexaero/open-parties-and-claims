@@ -20,22 +20,22 @@ package xaero.pac.common.mods;
 
 public abstract class ModSupport {
 
-    public boolean FTB_RANKS;
-    private FTBRanks ftbRanks;
+	public boolean FTB_RANKS;
+	private FTBRanks ftbRanks;
 
-    public void check(){
-        try {
-            Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
-            FTB_RANKS = true;
-            ftbRanks = createFTBRanksSupport();
-        } catch (ClassNotFoundException e) {
-        }
-    }
+	public void check(){
+		try {
+			Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
+			FTB_RANKS = true;
+			ftbRanks = createFTBRanksSupport();
+		} catch (ClassNotFoundException e) {
+		}
+	}
 
-    public FTBRanks getFTBRanksSupport(){
-        return ftbRanks;
-    }
+	public FTBRanks getFTBRanksSupport(){
+		return ftbRanks;
+	}
 
-    protected abstract FTBRanks createFTBRanksSupport();
+	protected abstract FTBRanks createFTBRanksSupport();
 
 }

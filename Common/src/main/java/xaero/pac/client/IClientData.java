@@ -36,7 +36,7 @@ public interface IClientData
 	//internal api
 
 	@Nonnull
-    @Override
+	@Override
 	public XPACKeyBindings getKeyBindings();
 	
 	public ClientTickHandler getClientTickHandler();

@@ -81,13 +81,13 @@ public abstract class PlayerClaimInfo
 	}
 
 	@Nonnull
-    @Override
+	@Override
 	public UUID getPlayerId() {
 		return playerId;
 	}
 	
 	@Nonnull
-    @Override
+	@Override
 	public Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getStream(){
 		return claims.entrySet().stream();
 	}

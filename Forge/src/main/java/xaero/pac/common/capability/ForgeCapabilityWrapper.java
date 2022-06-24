@@ -22,14 +22,14 @@ import net.minecraftforge.common.capabilities.Capability;
 
 public class ForgeCapabilityWrapper<T> implements ICapability<T> {
 
-    private final Capability<T> forgeCapability;
+	private final Capability<T> forgeCapability;
 
-    public ForgeCapabilityWrapper(Capability<T> forgeCapability) {
-        this.forgeCapability = forgeCapability;
-    }
+	public ForgeCapabilityWrapper(Capability<T> forgeCapability) {
+		this.forgeCapability = forgeCapability;
+	}
 
-    public Capability<T> getForgeCapability() {
-        return forgeCapability;
-    }
+	public Capability<T> getForgeCapability() {
+		return forgeCapability;
+	}
 
 }

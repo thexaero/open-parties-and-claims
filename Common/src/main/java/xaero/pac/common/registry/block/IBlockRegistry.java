@@ -23,6 +23,6 @@ import net.minecraft.world.level.block.Block;
 
 public interface IBlockRegistry {
 
-    public Block getValue(ResourceLocation id);
+	public Block getValue(ResourceLocation id);
 
 }

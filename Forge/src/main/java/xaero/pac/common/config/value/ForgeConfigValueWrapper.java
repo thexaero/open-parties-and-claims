@@ -26,40 +26,40 @@ import java.util.List;
 
 public class ForgeConfigValueWrapper<T> implements IForgeConfigValue<T> {
 
-    private final ForgeConfigSpec.ConfigValue<T> configValue;
+	private final ForgeConfigSpec.ConfigValue<T> configValue;
 
-    public ForgeConfigValueWrapper(ForgeConfigSpec.ConfigValue<T> configValue) {
-        this.configValue = configValue;
-    }
+	public ForgeConfigValueWrapper(ForgeConfigSpec.ConfigValue<T> configValue) {
+		this.configValue = configValue;
+	}
 
-    @Override
-    public List<String> getPath() {
-        return configValue.getPath();
-    }
+	@Override
+	public List<String> getPath() {
+		return configValue.getPath();
+	}
 
-    @Override
-    public T get() {
-        return configValue.get();
-    }
+	@Override
+	public T get() {
+		return configValue.get();
+	}
 
-    @Override
-    public IForgeConfigSpecBuilder next() {
-        return new ForgeConfigSpecBuilderWrapper(configValue.next());
-    }
+	@Override
+	public IForgeConfigSpecBuilder next() {
+		return new ForgeConfigSpecBuilderWrapper(configValue.next());
+	}
 
-    @Override
-    public void save() {
-        configValue.save();
-    }
+	@Override
+	public void save() {
+		configValue.save();
+	}
 
-    @Override
-    public void set(T value) {
-        configValue.set(value);
-    }
+	@Override
+	public void set(T value) {
+		configValue.set(value);
+	}
 
-    @Override
-    public void clearCache() {
-        configValue.clearCache();
-    }
+	@Override
+	public void clearCache() {
+		configValue.clearCache();
+	}
 
 }

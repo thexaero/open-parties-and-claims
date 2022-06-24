@@ -27,8 +27,8 @@ public interface IRegionClaims extends IRegionClaimsAPI {
 	
 	//internal api
 
-    @Nullable
-    @Override
-    public IPlayerChunkClaim get(int x, int z);
+	@Nullable
+	@Override
+	public IPlayerChunkClaim get(int x, int z);
 
 }

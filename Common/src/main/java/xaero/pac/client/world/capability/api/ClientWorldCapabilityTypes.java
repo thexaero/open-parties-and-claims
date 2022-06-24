@@ -26,7 +26,7 @@ import xaero.pac.common.capability.api.ICapabilityHelperAPI;
  */
 public class ClientWorldCapabilityTypes {
 
-    /** The main capability type for client worlds */
-    public static ICapability<ClientWorldMainCapabilityAPI> MAIN_CAP;
+	/** The main capability type for client worlds */
+	public static ICapability<ClientWorldMainCapabilityAPI> MAIN_CAP;
 
 }

@@ -25,14 +25,14 @@ import java.util.OptionalInt;
 
 public class PlayerFTBPermissionHelperForge implements IPlayerFTBPermissionHelper {
 
-    @Override
-    public OptionalInt getIntPermission(ServerPlayer player, String node) {
-        return FTBRanksAPI.getPermissionValue(player, node).asInteger();
-    }
+	@Override
+	public OptionalInt getIntPermission(ServerPlayer player, String node) {
+		return FTBRanksAPI.getPermissionValue(player, node).asInteger();
+	}
 
-    @Override
-    public boolean getPermission(ServerPlayer player, String node) {
-        return FTBRanksAPI.getPermissionValue(player, node).asBooleanOrFalse();
-    }
+	@Override
+	public boolean getPermission(ServerPlayer player, String node) {
+		return FTBRanksAPI.getPermissionValue(player, node).asBooleanOrFalse();
+	}
 
 }

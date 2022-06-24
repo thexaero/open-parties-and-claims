@@ -19,5 +19,5 @@
 package xaero.pac.common.config.value;
 
 public interface IForgeConfigDoubleValue extends IForgeConfigValue<Double> {
-    
+	
 }
