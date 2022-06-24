@@ -1,0 +1,103 @@
+/*
+ *     Open Parties and Claims - adds chunk claims and player parties to Minecraft
+ *     Copyright (C) 2022, Xaero <xaero1996@gmail.com> and contributors
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of version 3 of the GNU Lesser General Public License
+ *     (LGPL-3.0-only) as published by the Free Software Foundation.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received copies of the GNU Lesser General Public License
+ *     and the GNU General Public License along with this program.
+ *     If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package xaero.pac.common.server.parties.party.expiration;
+
+import net.minecraft.server.MinecraftServer;
+import xaero.pac.common.parties.party.member.PartyMember;
+import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.expiration.ObjectExpirationHandler;
+import xaero.pac.common.server.info.ServerInfo;
+import xaero.pac.common.server.parties.party.PartyManager;
+import xaero.pac.common.server.parties.party.ServerParty;
+
+import java.util.Iterator;
+
+public final class PartyExpirationHandler extends ObjectExpirationHandler<ServerParty, PartyManager>{
+	
+	private final MinecraftServer server;
+
+	protected PartyExpirationHandler(ServerInfo serverInfo, MinecraftServer server, PartyManager manager, long liveCheckInterval, int expirationTime,
+			String checkingMessage) {
+		super(serverInfo, manager, liveCheckInterval, expirationTime, checkingMessage);
+		this.server = server;
+	}
+
+	@Override
+	public void handle() {
+		if(!ServerConfig.CONFIG.partiesEnabled.get())
+			return;
+		super.handle();
+	}
+
+	@Override
+	protected void preExpirationCheck(ServerParty party) {
+	}
+
+	@Override
+	protected boolean checkExpiration(ServerParty party) {
+		Iterator<PartyMember> partyMemberIterator = party.getMemberInfoStream().iterator();
+		while(partyMemberIterator.hasNext()) {
+			PartyMember member = partyMemberIterator.next();
+			if(server.getPlayerList().getPlayer(member.getUUID()) != null)//member is logged in
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected void expire(ServerParty party) {
+		manager.removeParty(party);
+	}
+	
+	public static final class Builder extends ObjectExpirationHandler.Builder<ServerParty, PartyManager, Builder>{
+
+		private MinecraftServer server;
+		
+		public Builder setDefault() {
+			super.setDefault();
+			setServer(null);
+			setCheckingMessage("Checking for expired parties...");
+			setExpirationTime(ServerConfig.CONFIG.partyExpirationTime.get() * 60 * 60 * 1000);
+			setLiveCheckInterval(ServerConfig.CONFIG.partyExpirationCheckInterval.get() * 60000);
+			return this;
+		}
+
+		public Builder setServer(MinecraftServer server) {
+			this.server = server;
+			return this;
+		}
+
+		public PartyExpirationHandler build() {
+			if(server == null)
+				throw new IllegalStateException();
+			return (PartyExpirationHandler) super.build();
+		}
+		
+		public static Builder begin() {
+			return new Builder().setDefault();
+		}
+
+		@Override
+		protected ObjectExpirationHandler<ServerParty, PartyManager> buildInternally() {
+			return new PartyExpirationHandler(serverInfo, server, manager, liveCheckInterval, expirationTime, checkingMessage);
+		}
+		
+	}
+
+}
