@@ -12,6 +12,23 @@ The mod is currently in beta. Only Forge 1.18.2 is supported as of writing this.
 
 Official downloads of the mod as well as map integration for the mod in Xaero's Minimap and World Map mods are coming soon.
 
+### Commands:
+/openpac player-config ... - player config commands
+
+/openpac-claims ... - everything claim-related
+
+/openpac-parties ... - everything party-related
+
+/opm - shortcut for the party chat
+
+### Keybindings:
+' - open the mod UI. Can be changed in the controls menu.
+
+### Configs:
+[world directory]/serverconfig/openpartiesandclaims-server.toml - the main mod config
+
+[world directory]/serverconfig/openpartiesandclaims-... - some global "player configs", although all of them can be accessed in game through the UI
+
 ## Developing
 
 _The license that this mod is released under, as I understand it, explicitly allows you have this mod as a dependency for your own mod and use the API through Java/JVM mechanics, 
