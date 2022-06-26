@@ -200,16 +200,16 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onAboutPartyButton(Button b) {
-		minecraft.player.command(ABOUT_PARTY_COMMAND.getString());
+		minecraft.player.command(ABOUT_PARTY_COMMAND.getString().substring(1));
 		minecraft.setScreen(null);
 	}
 	
 	private void onClaimButton(Button b) {
 		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 		if(currentClaim == null)
-			minecraft.player.command(CLAIM_COMMAND.getString());
+			minecraft.player.command(CLAIM_COMMAND.getString().substring(1));
 		else
-			minecraft.player.command(UNCLAIM_COMMAND.getString());
+			minecraft.player.command(UNCLAIM_COMMAND.getString().substring(1));
 		onClose();
 	}
 	
@@ -218,9 +218,9 @@ public class MainMenu extends XPACScreen {
 		if(currentClaim == null)
 			return;
 		if(!currentClaim.isForceloadable())
-			minecraft.player.command(FORCELOAD_COMMAND.getString());
+			minecraft.player.command(FORCELOAD_COMMAND.getString().substring(1));
 		else
-			minecraft.player.command(UNFORCELOAD_COMMAND.getString());
+			minecraft.player.command(UNFORCELOAD_COMMAND.getString().substring(1));
 		onClose();
 	}
 	
