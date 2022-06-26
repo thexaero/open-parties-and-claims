@@ -26,7 +26,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -62,10 +61,10 @@ public class MessagePartyCommand {
 			
 			String inputMessage = StringArgumentType.getString(context, "message");
 
-			Component rankComponent = new TextComponent((playerParty.getOwner() == casterInfo ? "OWNER" : casterInfo.getRank().toString()) + " ").withStyle(s -> s.withColor(casterInfo.getRank().getColor()));
-			Component nameComponent = new TextComponent("<" + player.getGameProfile().getName() + "> ");
-			Component contentComponent = new TextComponent(inputMessage).withStyle(s -> s.withColor(ChatFormatting.GRAY));
-			Component messageComponent = new TextComponent("");
+			Component rankComponent = Component.literal((playerParty.getOwner() == casterInfo ? "OWNER" : casterInfo.getRank().toString()) + " ").withStyle(s -> s.withColor(casterInfo.getRank().getColor()));
+			Component nameComponent = Component.literal("<" + player.getGameProfile().getName() + "> ");
+			Component contentComponent = Component.literal(inputMessage).withStyle(s -> s.withColor(ChatFormatting.GRAY));
+			Component messageComponent = Component.literal("");
 			messageComponent.getSiblings().add(rankComponent);
 			messageComponent.getSiblings().add(nameComponent);
 			messageComponent.getSiblings().add(contentComponent);

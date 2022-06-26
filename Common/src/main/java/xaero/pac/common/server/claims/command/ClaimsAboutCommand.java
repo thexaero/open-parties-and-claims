@@ -29,8 +29,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -76,7 +74,7 @@ public class ClaimsAboutCommand {
 				//}
 			}
 			if(targetProfile == null) {
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_claims_about_invalid_player"));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_claims_about_invalid_player"));
 				return 0;
 			}
 			final GameProfile profile = targetProfile;
@@ -93,17 +91,17 @@ public class ClaimsAboutCommand {
 			
 			int claimLimit = claimsManager.getPlayerBaseClaimLimit(profile.getId()) + playerConfig.getEffective(PlayerConfig.BONUS_CHUNK_CLAIMS);
 			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(profile.getId()) + playerConfig.getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS);
-			Component claimCountNumbers = new TextComponent(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
-			Component claimNameComponent = new TextComponent(playerInfo.getClaimsName()).withStyle(s -> s.withColor(0xFFAAAAAA));
-			Component forceloadCountNumbers = new TextComponent(playerInfo.getForceloadCount() + " / " + forceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
-			casterPlayer.sendMessage(new TextComponent(""), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TextComponent("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_ui_claim_count", claimCountNumbers), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_ui_forceload_count", forceloadCountNumbers), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_ui_claims_name", claimNameComponent), casterPlayer.getUUID());
-			Component colorComponent = new TextComponent(Integer.toUnsignedString(playerInfo.getClaimsColor(), 16).toUpperCase()).withStyle(s -> s.withColor(playerInfo.getClaimsColor()));
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_ui_claims_color", colorComponent), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TextComponent("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
+			Component claimCountNumbers = Component.literal(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
+			Component claimNameComponent = Component.literal(playerInfo.getClaimsName()).withStyle(s -> s.withColor(0xFFAAAAAA));
+			Component forceloadCountNumbers = Component.literal(playerInfo.getForceloadCount() + " / " + forceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
+			casterPlayer.sendSystemMessage(Component.literal(""));
+			casterPlayer.sendSystemMessage(Component.literal("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_ui_claim_count", claimCountNumbers));
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_ui_forceload_count", forceloadCountNumbers));
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_ui_claims_name", claimNameComponent));
+			Component colorComponent = Component.literal(Integer.toUnsignedString(playerInfo.getClaimsColor(), 16).toUpperCase()).withStyle(s -> s.withColor(playerInfo.getClaimsColor()));
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_ui_claims_color", colorComponent));
+			casterPlayer.sendSystemMessage(Component.literal("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
 			return 1;
 		};
 		

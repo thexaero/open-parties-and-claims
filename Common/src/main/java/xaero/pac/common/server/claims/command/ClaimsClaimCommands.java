@@ -21,7 +21,7 @@ package xaero.pac.common.server.claims.command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
@@ -58,8 +58,8 @@ public class ClaimsClaimCommands {
 				int chunkZ = player.chunkPosition().z;
 				try {
 					ColumnPos columnPos = ColumnPosArgument.getColumnPos(context, "block pos");
-					chunkX = columnPos.x >> 4;
-					chunkZ = columnPos.z >> 4;
+					chunkX = columnPos.x() >> 4;
+					chunkZ = columnPos.z() >> 4;
 				} catch(IllegalArgumentException iae) {
 				}
 				
@@ -74,7 +74,7 @@ public class ClaimsClaimCommands {
 						
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> claimOwnerInfo = claimsManager.getPlayerInfo(result.getClaimResult().getPlayerId());
-							context.getSource().sendFailure(new TranslatableComponent("gui.xaero_claims_claim_already_claimed_by", claimOwnerInfo.getPlayerUsername()));
+							context.getSource().sendFailure(Component.translatable("gui.xaero_claims_claim_already_claimed_by", claimOwnerInfo.getPlayerUsername()));
 							return 0;
 						}
 					} else {
@@ -85,13 +85,13 @@ public class ClaimsClaimCommands {
 						}
 					}
 					if(result.getResultType().success) {
-						player.sendMessage(new TranslatableComponent(shouldClaim ? "gui.xaero_claims_claimed_at" : "gui.xaero_claims_unclaimed_at", chunkX, chunkZ), player.getUUID());
+						player.sendSystemMessage(Component.translatable(shouldClaim ? "gui.xaero_claims_claimed_at" : "gui.xaero_claims_unclaimed_at", chunkX, chunkZ));
 						return 1;
 					} else {
 						if(result.getResultType().fail)
 							context.getSource().sendFailure(result.getResultType().message);
 						else
-							player.sendMessage(result.getResultType().message, player.getUUID());
+							player.sendSystemMessage(result.getResultType().message);
 						return 0;
 					}
 				} finally {

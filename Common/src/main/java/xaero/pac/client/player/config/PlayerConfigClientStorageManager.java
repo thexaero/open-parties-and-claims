@@ -20,7 +20,7 @@ package xaero.pac.client.player.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
 import xaero.pac.client.gui.PlayerConfigScreen;
 import xaero.pac.common.misc.MapFactory;
@@ -118,7 +118,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 				.begin(ArrayList::new)
 				.setParent(parent)
 				.setEscape(escape)
-				.setTitle(new TranslatableComponent("gui.xaero_pac_ui_server_claims_config"))
+				.setTitle(Component.translatable("gui.xaero_pac_ui_server_claims_config"))
 				.setData(config)
 				.build()
 				);
@@ -132,7 +132,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 				.begin(ArrayList::new)
 				.setParent(parent)
 				.setEscape(escape)
-				.setTitle(new TranslatableComponent("gui.xaero_pac_ui_expired_claims_config"))
+				.setTitle(Component.translatable("gui.xaero_pac_ui_expired_claims_config"))
 				.setData(config)
 				.build()
 				);
@@ -146,7 +146,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 				.begin(ArrayList::new)
 				.setParent(parent)
 				.setEscape(escape)
-				.setTitle(new TranslatableComponent("gui.xaero_pac_ui_wilderness_config"))
+				.setTitle(Component.translatable("gui.xaero_pac_ui_wilderness_config"))
 				.setData(config)
 				.build()
 				);
@@ -160,7 +160,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 				.begin(ArrayList::new)
 				.setParent(parent)
 				.setEscape(escape)
-				.setTitle(new TranslatableComponent("gui.xaero_pac_ui_default_player_config"))
+				.setTitle(Component.translatable("gui.xaero_pac_ui_default_player_config"))
 				.setData(config)
 				.build()
 				);

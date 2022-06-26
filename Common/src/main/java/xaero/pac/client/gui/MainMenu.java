@@ -25,8 +25,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
@@ -54,67 +52,67 @@ import java.util.function.Consumer;
 
 public class MainMenu extends XPACScreen {
 	
-	public static final TranslatableComponent NO_HANDSHAKE = new TranslatableComponent("gui.xaero_pac_ui_handshake_not_received");
-	public static final TranslatableComponent NO_PARTIES = new TranslatableComponent("gui.xaero_pac_ui_parties_disabled");
-	public static final TranslatableComponent NO_CLAIMS = new TranslatableComponent("gui.xaero_pac_ui_claims_disabled");
-	public static final TranslatableComponent PARTY_SYNCING = new TranslatableComponent("gui.xaero_pac_ui_party_syncing");
-	public static final TranslatableComponent CLAIMS_SYNCING = new TranslatableComponent("gui.xaero_pac_ui_claims_syncing");
+	public static final Component NO_HANDSHAKE = Component.translatable("gui.xaero_pac_ui_handshake_not_received");
+	public static final Component NO_PARTIES = Component.translatable("gui.xaero_pac_ui_parties_disabled");
+	public static final Component NO_CLAIMS = Component.translatable("gui.xaero_pac_ui_claims_disabled");
+	public static final Component PARTY_SYNCING = Component.translatable("gui.xaero_pac_ui_party_syncing");
+	public static final Component CLAIMS_SYNCING = Component.translatable("gui.xaero_pac_ui_claims_syncing");
 	
-	private static final Component ABOUT_PARTY_COMMAND = new TextComponent("/" + PartyCommandRegister.COMMAND_PREFIX + " about");
+	private static final Component ABOUT_PARTY_COMMAND = Component.literal("/" + PartyCommandRegister.COMMAND_PREFIX + " about");
 
-	public static final TranslatableComponent CLAIM = new TranslatableComponent("gui.xaero_pac_ui_claim");
-	public static final TranslatableComponent UNCLAIM = new TranslatableComponent("gui.xaero_pac_ui_unclaim");
-	private static final Component CLAIM_COMMAND = new TextComponent("/" + ClaimsCommandRegister.COMMAND_PREFIX + " claim");
-	private static final Component UNCLAIM_COMMAND = new TextComponent("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unclaim");
+	public static final Component CLAIM = Component.translatable("gui.xaero_pac_ui_claim");
+	public static final Component UNCLAIM = Component.translatable("gui.xaero_pac_ui_unclaim");
+	private static final Component CLAIM_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " claim");
+	private static final Component UNCLAIM_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unclaim");
 	
-	public static final TranslatableComponent FORCELOAD = new TranslatableComponent("gui.xaero_pac_ui_forceload");
-	public static final TranslatableComponent UNFORCELOAD = new TranslatableComponent("gui.xaero_pac_ui_unforceload");
-	private static final Component FORCELOAD_COMMAND = new TextComponent("/" + ClaimsCommandRegister.COMMAND_PREFIX + " forceload");
-	private static final Component UNFORCELOAD_COMMAND = new TextComponent("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unforceload");
+	public static final Component FORCELOAD = Component.translatable("gui.xaero_pac_ui_forceload");
+	public static final Component UNFORCELOAD = Component.translatable("gui.xaero_pac_ui_unforceload");
+	private static final Component FORCELOAD_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " forceload");
+	private static final Component UNFORCELOAD_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unforceload");
 	private static final CachedComponentSupplier partyNameSupplier = new CachedComponentSupplier(args -> {
 		String currentPartyName = (String) args[0];
-		return new TranslatableComponent("gui.xaero_pac_ui_party_name", new TextComponent(currentPartyName).withStyle(s -> s.withColor(0xFFAAAAAA)));
+		return Component.translatable("gui.xaero_pac_ui_party_name", Component.literal(currentPartyName).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 	private static final CachedComponentSupplier ownerNameSupplier = new CachedComponentSupplier(args -> {
 		String currentOwnerName = (String) args[0];
-		return new TranslatableComponent("gui.xaero_pac_ui_party_owner", new TextComponent(currentOwnerName).withStyle(s -> s.withColor(0xFFAAAAAA)));
+		return Component.translatable("gui.xaero_pac_ui_party_owner", Component.literal(currentOwnerName).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 	private static final CachedComponentSupplier memberCountSupplier = new CachedComponentSupplier(args -> {
 		int currentMemberCount = (Integer) args[0];
 		int currentMemberLimit = (Integer) args[1];
-		return new TranslatableComponent("gui.xaero_pac_ui_party_member_count", new TextComponent(currentMemberCount + " / " + currentMemberLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
+		return Component.translatable("gui.xaero_pac_ui_party_member_count", Component.literal(currentMemberCount + " / " + currentMemberLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 	private static final CachedComponentSupplier allyCountSupplier = new CachedComponentSupplier(args -> {
 		int currentAllyCount = (Integer) args[0];
 		int currentAllyLimit = (Integer) args[1];
-		return new TranslatableComponent("gui.xaero_pac_ui_party_ally_count", new TextComponent(currentAllyCount + " / " + currentAllyLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
+		return Component.translatable("gui.xaero_pac_ui_party_ally_count", Component.literal(currentAllyCount + " / " + currentAllyLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 	private static final CachedComponentSupplier inviteCountSupplier = new CachedComponentSupplier(args -> {
 		int currentInviteCount = (Integer) args[0];
 		int currentInviteLimit = (Integer) args[1];
-		return new TranslatableComponent("gui.xaero_pac_ui_party_invite_count", new TextComponent(currentInviteCount + " / " + currentInviteLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
+		return Component.translatable("gui.xaero_pac_ui_party_invite_count", Component.literal(currentInviteCount + " / " + currentInviteLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 
 	private static final CachedComponentSupplier claimsNameSupplier = new CachedComponentSupplier(args -> {
 		String currentClaimsName = (String) args[0];
-		Component nameComponent = new TextComponent(currentClaimsName).withStyle(s -> s.withColor(0xFFAAAAAA));
-		return new TranslatableComponent("gui.xaero_pac_ui_claims_name", nameComponent);
+		Component nameComponent = Component.literal(currentClaimsName).withStyle(s -> s.withColor(0xFFAAAAAA));
+		return Component.translatable("gui.xaero_pac_ui_claims_name", nameComponent);
 	});
 	private static final CachedComponentSupplier claimCountSupplier = new CachedComponentSupplier(args -> {
 		int currentClaimCount = (Integer) args[0];
 		int currentClaimLimit = (Integer) args[1];
-		Component numbers = new TextComponent(currentClaimCount + " / " + currentClaimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
-		return new TranslatableComponent("gui.xaero_pac_ui_claim_count", numbers);
+		Component numbers = Component.literal(currentClaimCount + " / " + currentClaimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
+		return Component.translatable("gui.xaero_pac_ui_claim_count", numbers);
 	});
 	private static final CachedComponentSupplier forceloadCountSupplier = new CachedComponentSupplier(args -> {
 		int currentForceloadCount = (Integer) args[0];
 		int currentForceloadLimit = (Integer) args[1];
-		return new TranslatableComponent("gui.xaero_pac_ui_forceload_count", new TextComponent(currentForceloadCount + " / " + currentForceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
+		return Component.translatable("gui.xaero_pac_ui_forceload_count", Component.literal(currentForceloadCount + " / " + currentForceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 	private static final CachedComponentSupplier claimsColorSupplier = new CachedComponentSupplier(args -> {
 		int currentClaimColor = (Integer) args[0];
-		Component colorComponent = new TextComponent(Integer.toUnsignedString(currentClaimColor, 16).toUpperCase()).withStyle(s -> s.withColor(currentClaimColor));
-		return new TranslatableComponent("gui.xaero_pac_ui_claims_color", colorComponent);
+		Component colorComponent = Component.literal(Integer.toUnsignedString(currentClaimColor, 16).toUpperCase()).withStyle(s -> s.withColor(currentClaimColor));
+		return Component.translatable("gui.xaero_pac_ui_claims_color", colorComponent);
 	});
 
 	private boolean serverHasMod;
@@ -126,15 +124,15 @@ public class MainMenu extends XPACScreen {
 	private Button forceloadButton;
 
 	public MainMenu(Screen escape, Screen parent) {
-		super(escape, parent, new TranslatableComponent("gui.xaero_pac_ui_main_menu"));
+		super(escape, parent, Component.translatable("gui.xaero_pac_ui_main_menu"));
 	}
 	
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(configsButton = new Button(width / 2 - 100, height / 7 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_config_menu"), this::onConfigsButton));
+		addRenderableWidget(configsButton = new Button(width / 2 - 100, height / 7 + 8, 200, 20, Component.translatable("gui.xaero_pac_ui_config_menu"), this::onConfigsButton));
 		
-		aboutPartyButton = new Button(width / 2 - 100, height / 7 + 40, 70, 20, new TranslatableComponent("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton, new Button.OnTooltip() {
+		aboutPartyButton = new Button(width / 2 - 100, height / 7 + 40, 70, 20, Component.translatable("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				 MainMenu.this.renderTooltip(p_170020_, ABOUT_PARTY_COMMAND, p_170021_, p_170022_);
 			}
@@ -164,7 +162,7 @@ public class MainMenu extends XPACScreen {
 			}
 		});
 		
-		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
+		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_back"), this::onBackButton));
 
 		updateButtons();
 
@@ -202,16 +200,16 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onAboutPartyButton(Button b) {
-		sendMessage(ABOUT_PARTY_COMMAND.getString());
+		minecraft.player.command(ABOUT_PARTY_COMMAND.getString());
 		minecraft.setScreen(null);
 	}
 	
 	private void onClaimButton(Button b) {
 		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 		if(currentClaim == null)
-			sendMessage(CLAIM_COMMAND.getString());
+			minecraft.player.command(CLAIM_COMMAND.getString());
 		else
-			sendMessage(UNCLAIM_COMMAND.getString());
+			minecraft.player.command(UNCLAIM_COMMAND.getString());
 		onClose();
 	}
 	
@@ -220,9 +218,9 @@ public class MainMenu extends XPACScreen {
 		if(currentClaim == null)
 			return;
 		if(!currentClaim.isForceloadable())
-			sendMessage(FORCELOAD_COMMAND.getString());
+			minecraft.player.command(FORCELOAD_COMMAND.getString());
 		else
-			sendMessage(UNFORCELOAD_COMMAND.getString());
+			minecraft.player.command(UNFORCELOAD_COMMAND.getString());
 		onClose();
 	}
 	

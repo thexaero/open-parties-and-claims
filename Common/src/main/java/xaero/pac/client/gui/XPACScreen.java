@@ -21,11 +21,10 @@ package xaero.pac.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class XPACScreen extends Screen {
 
-	private static final Component XPAC_TITLE = new TranslatableComponent("gui.xaero_pac_ui_parties_and_claims");
+	private static final Component XPAC_TITLE = Component.translatable("gui.xaero_pac_ui_parties_and_claims");
 	protected final Screen escape;
 	protected final Screen parent;
 

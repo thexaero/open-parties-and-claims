@@ -25,7 +25,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -73,16 +75,16 @@ public class InvitePartyCommand {
 							ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
 							UUID targetPlayerId = targetPlayer.getUUID();
 							if(playerParty.getMemberInfo(targetPlayerId) != null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_already_your_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_invite_already_your_party", targetPlayer.getGameProfile().getName()));
 								return 0;
 							} else if(partyManager.getPartyByMember(targetPlayerId) != null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_already_a_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_invite_already_a_party", targetPlayer.getGameProfile().getName()));
 								return 0;
 							} else if(playerParty.getInviteCount() >= ServerConfig.CONFIG.maxPartyInvites.get()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_invite_limit"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_invite_invite_limit"));
 								return 0;
 							} else if(playerParty.getMemberCount() >= ServerConfig.CONFIG.maxPartyMembers.get()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_member_limit"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_invite_member_limit"));
 								return 0;
 							}
 							
@@ -92,13 +94,13 @@ public class InvitePartyCommand {
 							
 							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
 							
-							Component acceptComponent = new TranslatableComponent("gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
-							acceptComponent.getSiblings().add(new TextComponent(" "));
-							acceptComponent.getSiblings().add(new TranslatableComponent("gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/openpac-parties join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("gui.xaero_parties_invite_target_message_accept_tooltip")))));
-							targetPlayer.sendMessage(acceptComponent, playerId);
+							Component acceptComponent = Component.translatable("gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
+							acceptComponent.getSiblings().add(Component.literal(" "));
+							acceptComponent.getSiblings().add(Component.translatable("gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/openpac-parties join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("gui.xaero_parties_invite_target_message_accept_tooltip")))));
+							targetPlayer.sendSystemMessage(acceptComponent);
 							Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer).putUUID("xaero_OPAC_LastInviteId", playerParty.getId());
 
-							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_invite_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), new TextComponent(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 							return 1;
 						}))));
 		dispatcher.register(command);

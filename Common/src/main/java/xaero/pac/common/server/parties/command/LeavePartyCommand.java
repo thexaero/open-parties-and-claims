@@ -24,8 +24,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -64,17 +62,17 @@ public class LeavePartyCommand {
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 					IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(playerId);
 					if(playerParty.getOwner().getUUID().equals(playerId)) {
-						Component confirmComponent = new TranslatableComponent("gui.xaero_parties_leave_own_party");
+						Component confirmComponent = Component.translatable("gui.xaero_parties_leave_own_party");
 						context.getSource().sendFailure(confirmComponent);
 						return 0;
 					} else {
 						IPartyMember memberToRemove = playerParty.getMemberInfo(playerId);
 						playerParty.removeMember(memberToRemove.getUUID());
 						
-						new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_leave_party_message", new TextComponent(memberToRemove.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+						new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_leave_party_message", Component.literal(memberToRemove.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 						
 						server.getCommands().sendCommands(player);
-						player.sendMessage(new TranslatableComponent("gui.xaero_parties_leave_caster_message", playerParty.getDefaultName()), player.getUUID());
+						player.sendSystemMessage(Component.translatable("gui.xaero_parties_leave_caster_message", playerParty.getDefaultName()));
 						return 1;
 					}
 				}));

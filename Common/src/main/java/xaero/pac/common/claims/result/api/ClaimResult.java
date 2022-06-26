@@ -20,7 +20,6 @@ package xaero.pac.common.claims.result.api;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 
 import javax.annotation.Nonnull;
@@ -72,49 +71,49 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 	public static enum Type {
 
 		/** A chunk was already forceloadable */
-		ALREADY_FORCELOADABLE(new TranslatableComponent("gui.xaero_claims_forceload_already"), false, false),
+		ALREADY_FORCELOADABLE(Component.translatable("gui.xaero_claims_forceload_already"), false, false),
 
 		/** A chunk was already not forceloadable */
-		ALREADY_UNFORCELOADED(new TranslatableComponent("gui.xaero_claims_unforceload_already"), false, false),
+		ALREADY_UNFORCELOADED(Component.translatable("gui.xaero_claims_unforceload_already"), false, false),
 
 		/** The claims feature is disabled */
-		CLAIMS_ARE_DISABLED(new TranslatableComponent("gui.xaero_claims_are_disabled").withStyle(ChatFormatting.RED), false, true),
+		CLAIMS_ARE_DISABLED(Component.translatable("gui.xaero_claims_are_disabled").withStyle(ChatFormatting.RED), false, true),
 
 		/** The area for a claim action was too big */
-		TOO_MANY_CHUNKS(new TranslatableComponent("gui.xaero_claims_too_many_chunks").withStyle(ChatFormatting.RED), false, true),
+		TOO_MANY_CHUNKS(Component.translatable("gui.xaero_claims_too_many_chunks").withStyle(ChatFormatting.RED), false, true),
 
 		/** The dimension is unclaimable */
-		UNCLAIMABLE_DIMENSION(new TranslatableComponent("gui.xaero_claims_claim_dimension_unclaimable").withStyle(ChatFormatting.RED), false, true),
+		UNCLAIMABLE_DIMENSION(Component.translatable("gui.xaero_claims_claim_dimension_unclaimable").withStyle(ChatFormatting.RED), false, true),
 
 		/** The chunk isn't claimed by who is trying to (un)forceload it */
-		NOT_CLAIMED_BY_USER_FORCELOAD(new TranslatableComponent("gui.xaero_claims_forceload_not_yours").withStyle(ChatFormatting.RED), false, true),
+		NOT_CLAIMED_BY_USER_FORCELOAD(Component.translatable("gui.xaero_claims_forceload_not_yours").withStyle(ChatFormatting.RED), false, true),
 
 		/** The chunk isn't claimed by who is trying to unclaim it */
-		NOT_CLAIMED_BY_USER(new TranslatableComponent("gui.xaero_claims_claim_unclaim_not_yours").withStyle(ChatFormatting.RED), false, true),
+		NOT_CLAIMED_BY_USER(Component.translatable("gui.xaero_claims_claim_unclaim_not_yours").withStyle(ChatFormatting.RED), false, true),
 
 		/** The chunk is already claimed */
-		ALREADY_CLAIMED(new TranslatableComponent("gui.xaero_claims_claim_already_claimed").withStyle(ChatFormatting.RED), false, true),
+		ALREADY_CLAIMED(Component.translatable("gui.xaero_claims_claim_already_claimed").withStyle(ChatFormatting.RED), false, true),
 
 		/** The maximum number of forceloadable claims was reached */
-		FORCELOAD_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_forceload_limit_reached").withStyle(ChatFormatting.RED), false, true),
+		FORCELOAD_LIMIT_REACHED(Component.translatable("gui.xaero_claims_forceload_limit_reached").withStyle(ChatFormatting.RED), false, true),
 
 		/** The maximum number of claims was reached */
-		CLAIM_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_claim_limit_reached").withStyle(ChatFormatting.RED), false, true),
+		CLAIM_LIMIT_REACHED(Component.translatable("gui.xaero_claims_claim_limit_reached").withStyle(ChatFormatting.RED), false, true),
 
 		/** The chunk was beyond the maximum distance */
-		TOO_FAR(new TranslatableComponent("gui.xaero_claims_claim_not_within_distance").withStyle(ChatFormatting.RED), false, true),
+		TOO_FAR(Component.translatable("gui.xaero_claims_claim_not_within_distance").withStyle(ChatFormatting.RED), false, true),
 
 		/** Successfully unforceloaded a chunk */
-		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false),
+		SUCCESSFUL_UNFORCELOAD(Component.translatable("gui.xaero_claims_unforceloaded"), true, false),
 
 		/** Successfully unclaimed a chunk */
-		SUCCESSFUL_UNCLAIM(new TranslatableComponent("gui.xaero_claims_unclaimed"), true, false),
+		SUCCESSFUL_UNCLAIM(Component.translatable("gui.xaero_claims_unclaimed"), true, false),
 
 		/** Successfully forceloaded a chunk */
-		SUCCESSFUL_FORCELOAD(new TranslatableComponent("gui.xaero_claims_forceloaded"), true, false),
+		SUCCESSFUL_FORCELOAD(Component.translatable("gui.xaero_claims_forceloaded"), true, false),
 
 		/** Successfully claimed a chunk */
-		SUCCESSFUL_CLAIM(new TranslatableComponent("gui.xaero_claims_claimed"), true, false);
+		SUCCESSFUL_CLAIM(Component.translatable("gui.xaero_claims_claimed"), true, false);
 
 		/**
 		 * A message describing the result

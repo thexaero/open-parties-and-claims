@@ -26,8 +26,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -71,7 +70,7 @@ public class InviteAcceptPartyCommand {
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(playerId);
 							if(playerParty != null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_party_already_in_one"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_party_already_in_one"));
 								return 0;
 							}
 							String targetPartyStringId = context.getArgument("id", String.class);
@@ -79,28 +78,28 @@ public class InviteAcceptPartyCommand {
 							try {
 								targetPartyId = UUID.fromString(targetPartyStringId);
 							} catch(IllegalArgumentException iae) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_invalid_id"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_invalid_id"));
 								return 0;
 							}
 							IServerParty<IPartyMember, IPartyPlayerInfo> targetParty = partyManager.getPartyById(targetPartyId);
 							if(targetParty == null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_party_not_exist"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_party_not_exist"));
 								return 0;
 							}
 							if(!targetParty.isInvited(playerId)) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_party_not_invited"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_party_not_invited"));
 								return 0;
 							}
 							if(targetParty.getMemberCount() >= ServerConfig.CONFIG.maxPartyMembers.get()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_member_limit"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_member_limit"));
 								return 0;
 							}
 							IPartyMember addedPartyMember = targetParty.addMember(playerId, null, player.getGameProfile().getName());
 							if(addedPartyMember == null)
 								return 0;
-							player.sendMessage(new TranslatableComponent("gui.xaero_parties_join_success", targetParty.getDefaultName()), player.getUUID());
+							player.sendSystemMessage(Component.translatable("gui.xaero_parties_join_success", targetParty.getDefaultName()));
 							
-							new PartyOnCommandUpdater().update(playerId, server, targetParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_join_success_info", new TextComponent(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
+							new PartyOnCommandUpdater().update(playerId, server, targetParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_join_success_info", Component.literal(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
 							server.getCommands().sendCommands(player);
 							return 1;
 						})));

@@ -23,8 +23,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -54,7 +53,7 @@ public class DestroyPartyConfirmCommand {
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get()).then(Commands.literal("destroy")
 				.requires(requirement)
 				.executes(context -> {
-					context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_party_destroy_info"));
+					context.getSource().sendFailure(Component.translatable("gui.xaero_parties_party_destroy_info"));
 					return 0;
 				})
 				.then(Commands.literal("confirm")
@@ -69,7 +68,7 @@ public class DestroyPartyConfirmCommand {
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 					IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(playerId);
 					partyManager.removeParty(playerParty);
-					new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> true, new TranslatableComponent("gui.xaero_parties_party_destroy_members_info", new TextComponent(playerParty.getOwner().getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+					new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> true, Component.translatable("gui.xaero_parties_party_destroy_members_info", Component.literal(playerParty.getOwner().getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 					return 1;
 				})));
 		dispatcher.register(command);

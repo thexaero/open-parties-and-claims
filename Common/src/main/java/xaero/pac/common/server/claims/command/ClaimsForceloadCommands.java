@@ -21,7 +21,7 @@ package xaero.pac.common.server.claims.command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
@@ -58,8 +58,8 @@ public class ClaimsForceloadCommands {
 				int chunkZ = player.chunkPosition().z;
 				try {
 					ColumnPos columnPos = ColumnPosArgument.getColumnPos(context, "block pos");
-					chunkX = columnPos.x >> 4;
-					chunkZ = columnPos.z >> 4;
+					chunkX = columnPos.x() >> 4;
+					chunkZ = columnPos.z() >> 4;
 				} catch(IllegalArgumentException iae) {
 				}
 				
@@ -74,14 +74,14 @@ public class ClaimsForceloadCommands {
 						if(result.getResultType().fail)
 							context.getSource().sendFailure(result.getResultType().message);
 						else
-							player.sendMessage(result.getResultType().message, player.getUUID());
+							player.sendSystemMessage(result.getResultType().message);
 				 		return 0;
 				 	}
 					
 				 	if(enable)
-				 		player.sendMessage(new TranslatableComponent("gui.xaero_claims_forceloaded_at", chunkX, chunkZ), player.getUUID());
+				 		player.sendSystemMessage(Component.translatable("gui.xaero_claims_forceloaded_at", chunkX, chunkZ));
 				 	else
-				 		player.sendMessage(new TranslatableComponent("gui.xaero_claims_unforceloaded_at", chunkX, chunkZ), player.getUUID());
+				 		player.sendSystemMessage(Component.translatable("gui.xaero_claims_unforceloaded_at", chunkX, chunkZ));
 				 	return 1;
 			 	} finally {
 					((ClaimsManagerSynchronizer)claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(

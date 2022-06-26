@@ -29,7 +29,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -62,14 +62,14 @@ public class ConfigSetCommand {
 		try {
 			value = option.getCommandInputParser().apply(valueInput);
 		} catch(Throwable t) {
-			context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_set_invalid_value_format"));
+			context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_value_format"));
 			return false;
 		}
 		SetResult result = playerConfig.tryToSet(option, value);
 		if(result == SetResult.SUCCESS || result == SetResult.DEFAULTED)
 			return true;
 		if(result == SetResult.INVALID)
-			context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_set_invalid_value"));
+			context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_value"));
 		return false;
 	}
 	
@@ -142,7 +142,7 @@ public class ConfigSetCommand {
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
 			PlayerConfigOptionSpec<?> option = PlayerConfig.OPTIONS.get(targetConfigOptionId);
 			if(option == null) {
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_set_invalid_key"));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_key"));
 				return 0;
 			}
 			GameProfile inputPlayer = null;
@@ -151,10 +151,10 @@ public class ConfigSetCommand {
 				try {
 					Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "player");
 					if(profiles.size() > 1) {
-						context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_set_too_many_targets"));
+						context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_too_many_targets"));
 						return 0;
 					} else if(profiles.isEmpty()) {
-						context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_set_invalid_target"));
+						context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_target"));
 						return 0;
 					}
 					inputPlayer = profiles.iterator().next();
@@ -179,7 +179,7 @@ public class ConfigSetCommand {
 			boolean isOP = context.getSource().hasPermission(2);
 			if(!isOP && ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getId())) {
 				//such options are not redirected to the default config, so they need a separate check
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_op_option"));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_op_option"));
 				return 0;
 			}
 			if(!tryToset(context, playerConfig, option, valueInput))
@@ -187,11 +187,11 @@ public class ConfigSetCommand {
 			Object wantedValue = option.getCommandInputParser().apply(valueInput);
 			Object actualValue = playerConfig.getFromEffectiveConfig(option);
 			if(type == ConfigType.PLAYER)
-				sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, option.getCommandOutputWriterCast().apply(wantedValue)), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, option.getCommandOutputWriterCast().apply(wantedValue)));
 			else
-				sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, option.getCommandOutputWriterCast().apply(wantedValue)), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, option.getCommandOutputWriterCast().apply(wantedValue)));
 			if(wantedValue != actualValue)
-				sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_option_set_server_force", option.getCommandOutputWriterCast().apply(actualValue)), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_set_server_force", option.getCommandOutputWriterCast().apply(actualValue)));
 			return 1;
 		};
 	}

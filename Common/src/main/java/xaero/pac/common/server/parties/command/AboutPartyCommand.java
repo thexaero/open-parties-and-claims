@@ -31,8 +31,6 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -64,13 +62,13 @@ public class AboutPartyCommand {
 	private static final int MAX_ALLY_COUNT = 32;
 	private static final int MAX_INVITES_COUNT = 16;
 	
-	private static <T> int createLimitedList(TextComponent listComponent, int maxCount, Iterator<T> iterator, Consumer<T> adder) {
+	private static <T> int createLimitedList(Component listComponent, int maxCount, Iterator<T> iterator, Consumer<T> adder) {
 		int count = 0;
 		while(iterator.hasNext()) {
 			adder.accept(iterator.next());
 			count++;
 			if(count == maxCount) {
-				listComponent.getSiblings().add(new TextComponent(" ..."));
+				listComponent.getSiblings().add(Component.literal(" ..."));
 				break;
 			}
 		}
@@ -99,7 +97,7 @@ public class AboutPartyCommand {
 				}
 			}
 			if(targetProfile == null) {
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_about_invalid_player"));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_parties_about_invalid_player"));
 				return 0;
 			}
 			final GameProfile profile = targetProfile;
@@ -108,73 +106,73 @@ public class AboutPartyCommand {
 			IPartyManager<IServerParty<IPartyMember,IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 			IServerParty<IPartyMember,IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(profile.getId());
 			if(playerParty == null) {
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_about_no_party", profile.getName()));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_parties_about_no_party", profile.getName()));
 				return 0;
 			}
 			
-			casterPlayer.sendMessage(new TextComponent(""), casterPlayerId);
-			casterPlayer.sendMessage(new TextComponent("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayerId);
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_parties_player").withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
-			casterPlayer.sendMessage(new TextComponent(profile.getName()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(profile.getId().toString())))), casterPlayerId);
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_parties_current_party").withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
+			casterPlayer.sendSystemMessage(Component.literal(""));
+			casterPlayer.sendSystemMessage(Component.literal("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_parties_player").withStyle(s -> s.withColor(ChatFormatting.GOLD)));
+			casterPlayer.sendSystemMessage(Component.literal(profile.getName()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(profile.getId().toString())))));
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_parties_current_party").withStyle(s -> s.withColor(ChatFormatting.GOLD)));
 			String partyName = playerParty.getDefaultName();
 			IPlayerConfig ownerConfig = serverData.getPlayerConfigs().getLoadedConfig(playerParty.getOwner().getUUID());
 			String partyCustomName = ownerConfig.getEffective(PlayerConfig.PARTY_NAME);
 			String tooltipPrefix = !partyCustomName.isEmpty() ? partyName + "\n" : "";
 			if(!partyCustomName.isEmpty())
 				partyName = partyCustomName;
-			casterPlayer.sendMessage(new TextComponent(partyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(tooltipPrefix + playerParty.getId().toString())))), casterPlayerId);
+			casterPlayer.sendSystemMessage(Component.literal(partyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(tooltipPrefix + playerParty.getId().toString())))));
 			
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_parties_party_members", playerParty.getMemberCount() + "/" + ServerConfig.CONFIG.maxPartyMembers.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
-			TextComponent partyMembersComponent = new TextComponent("");
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_parties_party_members", playerParty.getMemberCount() + "/" + ServerConfig.CONFIG.maxPartyMembers.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
+			Component partyMembersComponent = Component.literal("");
 			
 			Consumer<IPartyMember> partyMemberConsumer = mi -> {
 				if(!partyMembersComponent.getSiblings().isEmpty())
-					partyMembersComponent.getSiblings().add(new TextComponent(", "));
-				partyMembersComponent.getSiblings().add(new TextComponent(mi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(mi.getUUID().toString())))));
+					partyMembersComponent.getSiblings().add(Component.literal(", "));
+				partyMembersComponent.getSiblings().add(Component.literal(mi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(mi.getUUID().toString())))));
 				if(mi.getRank() != PartyMemberRank.MEMBER) {
-					Component rankComponent = new TextComponent(playerParty.getOwner() == mi ? "OWNER" : mi.getRank().toString()).withStyle(s -> s.withColor(mi.getRank().getColor()));
-					partyMembersComponent.getSiblings().add(new TranslatableComponent("[%s]", rankComponent));
+					Component rankComponent = Component.literal(playerParty.getOwner() == mi ? "OWNER" : mi.getRank().toString()).withStyle(s -> s.withColor(mi.getRank().getColor()));
+					partyMembersComponent.getSiblings().add(Component.translatable("[%s]", rankComponent));
 				}
 			};
 			int staffCount = createLimitedList(partyMembersComponent, MAX_MEMBER_COUNT, playerParty.getStaffInfoStream().iterator(), partyMemberConsumer);
 			if(staffCount < MAX_MEMBER_COUNT)
 				createLimitedList(partyMembersComponent, MAX_MEMBER_COUNT - staffCount, playerParty.getNonStaffInfoStream().iterator(), partyMemberConsumer);
-			casterPlayer.sendMessage(partyMembersComponent, casterPlayerId);
+			casterPlayer.sendSystemMessage(partyMembersComponent);
 			
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_parties_party_allies", playerParty.getAllyCount() + "/" + ServerConfig.CONFIG.maxPartyAllies.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
-			TextComponent partyAlliesComponent = new TextComponent("");
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_parties_party_allies", playerParty.getAllyCount() + "/" + ServerConfig.CONFIG.maxPartyAllies.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
+			Component partyAlliesComponent = Component.literal("");
 			createLimitedList(partyAlliesComponent, MAX_ALLY_COUNT, playerParty.getAllyPartiesStream().iterator(), allyId -> {
 				IServerParty<IPartyMember, IPartyPlayerInfo> allyParty = partyManager.getPartyById(allyId);
 				if(allyParty != null) {
 					if(!partyAlliesComponent.getSiblings().isEmpty())
-						partyAlliesComponent.getSiblings().add(new TextComponent(", "));
+						partyAlliesComponent.getSiblings().add(Component.literal(", "));
 					IPlayerConfig allyOwnerConfig = serverData.getPlayerConfigs().getLoadedConfig(allyParty.getOwner().getUUID());
 					String configuredAllyName = allyOwnerConfig.getEffective(PlayerConfig.PARTY_NAME);
 					String allyDefaultName = allyParty.getDefaultName();
 					String allyTooltipPrefix = !configuredAllyName.isEmpty() ? allyDefaultName + "\n" : "";
-					partyAlliesComponent.getSiblings().add(new TextComponent(configuredAllyName.isEmpty() ? allyDefaultName : configuredAllyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(allyTooltipPrefix + allyParty.getId().toString())))));
+					partyAlliesComponent.getSiblings().add(Component.literal(configuredAllyName.isEmpty() ? allyDefaultName : configuredAllyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(allyTooltipPrefix + allyParty.getId().toString())))));
 				}
 			});
 			if(partyAlliesComponent.getSiblings().isEmpty())
-				casterPlayer.sendMessage(new TextComponent("N/A").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayerId);
+				casterPlayer.sendSystemMessage(Component.literal("N/A").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
 			else
-				casterPlayer.sendMessage(partyAlliesComponent, casterPlayerId);
+				casterPlayer.sendSystemMessage(partyAlliesComponent);
 			
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_parties_party_invited", playerParty.getInviteCount() + "/" + ServerConfig.CONFIG.maxPartyInvites.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
-			TextComponent invitedComponent = new TextComponent("");
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_parties_party_invited", playerParty.getInviteCount() + "/" + ServerConfig.CONFIG.maxPartyInvites.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
+			Component invitedComponent = Component.literal("");
 			
 			createLimitedList(invitedComponent, MAX_INVITES_COUNT, playerParty.getInvitedPlayersStream().iterator(), pi -> {
 				if(!invitedComponent.getSiblings().isEmpty())
-					invitedComponent.getSiblings().add(new TextComponent(", "));
-				invitedComponent.getSiblings().add(new TextComponent(pi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(pi.getUUID().toString())))));
+					invitedComponent.getSiblings().add(Component.literal(", "));
+				invitedComponent.getSiblings().add(Component.literal(pi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(pi.getUUID().toString())))));
 			});
 			if(invitedComponent.getSiblings().isEmpty())
-				casterPlayer.sendMessage(new TextComponent("N/A").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayerId);
+				casterPlayer.sendSystemMessage(Component.literal("N/A").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
 			else
-				casterPlayer.sendMessage(invitedComponent, casterPlayerId);
+				casterPlayer.sendSystemMessage(invitedComponent);
 			
-			casterPlayer.sendMessage(new TextComponent("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayerId);
+			casterPlayer.sendSystemMessage(Component.literal("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
 			
 			return 1;
 		};

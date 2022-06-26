@@ -27,8 +27,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
@@ -55,7 +53,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(new Button(5, 5, 60, 20, new TranslatableComponent("gui.xaero_pac_ui_player_config_refresh"), b -> refreshHandler.accept(this, b)));
+		addRenderableWidget(new Button(5, 5, 60, 20, Component.translatable("gui.xaero_pac_ui_player_config_refresh"), b -> refreshHandler.accept(this, b)));
 	}
 	
 	public final static class Builder {
@@ -115,7 +113,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			if(data == null || data.getType() == PlayerConfigType.PLAYER && defaultPlayerConfigData == null)
 				throw new IllegalStateException();
 			if(title == null)
-				title = new TranslatableComponent("gui.xaero_pac_ui_player_config");
+				title = Component.translatable("gui.xaero_pac_ui_player_config");
 			boolean anotherPlayer = data.getType() == PlayerConfigType.PLAYER && data.getOwner() != null;
 			if(anotherPlayer && otherPlayerName == null)
 				throw new IllegalStateException();
@@ -124,13 +122,13 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			int elementHeight = 20;
 			data.optionStream().forEach(option -> {
 				Class<?> type = option.getType();
-				Component optionTitle = new TranslatableComponent(option.getTranslation());
+				Component optionTitle = Component.translatable(option.getTranslation());
 				String commentTranslated = I18n.get("gui.xaero_pac_player_config_tooltip_" + option.getId());
 				if(commentTranslated.equals("default"))
 					commentTranslated = option.getComment();
 				if(option.getTooltipPrefix() != null)
 					commentTranslated = option.getTooltipPrefix() + "\n" + commentTranslated;
-				List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(new TextComponent(commentTranslated), 200);
+				List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(Component.literal(commentTranslated), 200);
 				Object value;
 				if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
 					value = defaultPlayerConfigData.getOptionStorage(option.getOption()).getValue();

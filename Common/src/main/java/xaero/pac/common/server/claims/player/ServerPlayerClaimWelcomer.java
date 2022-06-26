@@ -22,8 +22,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -61,27 +59,27 @@ public class ServerPlayerClaimWelcomer {
 			int claimColor = claimConfig.getEffective(PlayerConfig.CLAIMS_COLOR);
 			MutableComponent subTitleText;
 			if (playerClaimInfo == null)
-				subTitleText = customName == null || customName.isEmpty() ? new TranslatableComponent("gui.xaero_pac_title_entered_wilderness") : new TranslatableComponent(customName);
+				subTitleText = customName == null || customName.isEmpty() ? Component.translatable("gui.xaero_pac_title_entered_wilderness") : Component.translatable(customName);
 			else {
-				TranslatableComponent properDesc;
-				Component forceloadedComponent = currentClaim.isForceloadable() ? new TranslatableComponent("gui.xaero_pac_marked_for_forceload") : new TextComponent("");
+				MutableComponent properDesc;
+				Component forceloadedComponent = currentClaim.isForceloadable() ? Component.translatable("gui.xaero_pac_marked_for_forceload") : Component.literal("");
 				if (Objects.equals(currentClaimId, PlayerConfig.SERVER_CLAIM_UUID))
-					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_server_claim", forceloadedComponent);
+					properDesc = Component.translatable("gui.xaero_pac_title_entered_server_claim", forceloadedComponent);
 				else if (Objects.equals(currentClaimId, PlayerConfig.EXPIRED_CLAIM_UUID))
-					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_expired_claim", forceloadedComponent);
+					properDesc = Component.translatable("gui.xaero_pac_title_entered_expired_claim", forceloadedComponent);
 				else
-					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_claim", playerClaimInfo.getPlayerUsername(), forceloadedComponent);
+					properDesc = Component.translatable("gui.xaero_pac_title_entered_claim", playerClaimInfo.getPlayerUsername(), forceloadedComponent);
 				if (customName != null && !customName.isEmpty()) {
-					subTitleText = new TextComponent(I18n.get(customName) + " - ");
+					subTitleText = Component.literal(I18n.get(customName) + " - ");
 					subTitleText.getSiblings().add(properDesc);
 				} else
 					subTitleText = properDesc;
 			}
 			subTitleText = subTitleText.withStyle(s -> s.withColor(isOwner ? ChatFormatting.DARK_GREEN : hasAccess ? ChatFormatting.GOLD : ChatFormatting.DARK_RED));
 
-			MutableComponent subTitle = new TextComponent("□ ").withStyle(s -> s.withColor(claimColor));
+			MutableComponent subTitle = Component.literal("□ ").withStyle(s -> s.withColor(claimColor));
 			subTitle.getSiblings().add(subTitleText);
-			subTitle.getSiblings().add(new TextComponent(" □").withStyle(s -> s.withColor(claimColor)));
+			subTitle.getSiblings().add(Component.literal(" □").withStyle(s -> s.withColor(claimColor)));
 			ClientboundSetActionBarTextPacket packet = new ClientboundSetActionBarTextPacket(subTitle);
 			player.connection.send(packet);
 

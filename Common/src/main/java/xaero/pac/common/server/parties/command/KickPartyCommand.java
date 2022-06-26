@@ -26,8 +26,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -83,7 +81,7 @@ public class KickPartyCommand {
 							IPartyPlayerInfo targetPlayerInfo = new PartySearch().searchForPlayer(playerParty, ppi -> ppi.getUsername().equalsIgnoreCase(targetUsername));
 							
 							if(targetPlayerInfo == null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_kick_not_member", targetUsername));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_kick_not_member", targetUsername));
 								return 0;
 							}
 							
@@ -94,11 +92,11 @@ public class KickPartyCommand {
 							if(targetIsMember) {
 								IPartyMember targetMember = (IPartyMember) targetPlayerInfo;
 								if(targetMember == playerParty.getOwner()) {
-									context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_kick_owner"));
+									context.getSource().sendFailure(Component.translatable("gui.xaero_parties_kick_owner"));
 									return 0;
 								}
 								if(!casterIsOwner && targetMember.getRank().ordinal() > casterInfo.getRank().ordinal()) {
-									context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_kick_higher_rank"));
+									context.getSource().sendFailure(Component.translatable("gui.xaero_parties_kick_higher_rank"));
 									return 0;
 								}
 							}
@@ -111,12 +109,12 @@ public class KickPartyCommand {
 								ServerPlayer kickedPlayer = server.getPlayerList().getPlayer(targetPlayerId);
 								if(kickedPlayer != null) {
 									server.getCommands().sendCommands(kickedPlayer);
-									Component acceptComponent = new TranslatableComponent("gui.xaero_parties_kick_target_message", playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.RED));
-									kickedPlayer.sendMessage(acceptComponent, playerId);
+									Component acceptComponent = Component.translatable("gui.xaero_parties_kick_target_message", playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.RED));
+									kickedPlayer.sendSystemMessage(acceptComponent);
 								}
 							}
 							
-							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_kick_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.RED))));
+							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_kick_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.RED))));
 							
 							return 1;
 						}))));

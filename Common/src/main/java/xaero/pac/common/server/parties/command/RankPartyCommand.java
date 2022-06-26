@@ -25,8 +25,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -81,7 +80,7 @@ public class RankPartyCommand {
 							IPartyPlayerInfo targetPlayerInfo = new PartySearch().searchForPlayer(playerParty, ppi -> ppi instanceof IPartyMember && ppi.getUsername().equalsIgnoreCase(targetUsername));
 							
 							if(targetPlayerInfo == null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_rank_not_member", targetUsername));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_rank_not_member", targetUsername));
 								return 0;
 							}
 							
@@ -90,7 +89,7 @@ public class RankPartyCommand {
 							IPartyMember targetMember = (IPartyMember) targetPlayerInfo;
 							
 							if(!casterIsOwner && targetMember.getRank().ordinal() >= casterInfo.getRank().ordinal() || targetMember == playerParty.getOwner()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_rank_not_lower_rank_player"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_rank_not_lower_rank_player"));
 								return 0;
 							}
 
@@ -98,7 +97,7 @@ public class RankPartyCommand {
 							PartyMemberRank targetRank = PartyMemberRank.valueOf(targetRankString);
 							
 							if(!casterIsOwner && targetRank.ordinal() >= casterInfo.getRank().ordinal()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_rank_not_lower_rank"));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_rank_not_lower_rank"));
 								return 0;
 							}
 							
@@ -109,7 +108,7 @@ public class RankPartyCommand {
 							if(rankedPlayer != null)
 								server.getCommands().sendCommands(rankedPlayer);
 							
-							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_rank_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), new TextComponent(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
+							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
 							
 							return 1;
 						})))));

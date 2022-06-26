@@ -21,8 +21,7 @@ package xaero.pac.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
@@ -33,20 +32,20 @@ import java.util.ArrayList;
 
 public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	
-	private final TranslatableComponent message;
+	private final Component message;
 	private final String otherPlayerName;
 	private Listener listener;
 
 	public OtherPlayerConfigWaitScreen(Screen escape, Screen parent, String otherPlayerName) {
-		super(escape, parent, new TextComponent(""));
+		super(escape, parent, Component.literal(""));
 		this.otherPlayerName = otherPlayerName;
-		message = new TranslatableComponent("gui.xaero_pac_ui_other_player_config_waiting", otherPlayerName);
+		message = Component.translatable("gui.xaero_pac_ui_other_player_config_waiting", otherPlayerName);
 	}
 	
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_waiting_cancel"), this::onCancelButton));
+		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_ui_other_player_config_waiting_cancel"), this::onCancelButton));
 		startListening();
 	}
 	
@@ -85,7 +84,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 					.begin(ArrayList::new)
 					.setParent(parent)
 					.setEscape(escape)
-					.setTitle(new TranslatableComponent("gui.xaero_pac_ui_other_player_config", otherPlayerName))
+					.setTitle(Component.translatable("gui.xaero_pac_ui_other_player_config", otherPlayerName))
 					.setData((PlayerConfigClientStorage)(Object)configData)
 					.setDefaultPlayerConfigData((PlayerConfigClientStorage)(Object) OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().getDefaultPlayerConfig())
 					.setOtherPlayerName(otherPlayerName)

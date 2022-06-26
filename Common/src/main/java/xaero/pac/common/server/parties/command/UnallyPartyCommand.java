@@ -25,8 +25,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -79,16 +78,16 @@ public class UnallyPartyCommand {
 							IServerParty<IPartyMember, IPartyPlayerInfo> targetPlayerParty = new PartySearch().searchForAlly(playerParty, partyManager, party -> party.getOwner().getUsername().equalsIgnoreCase(targetOwnerName));
 							
 							if(targetPlayerParty == null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_unally_party_not_found", targetOwnerName));
+								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_unally_party_not_found", targetOwnerName));
 								return 0;
 							}
 							
 							playerParty.removeAllyParty(targetPlayerParty.getId());
 							
-							new PartyOnCommandUpdater().update(playerId, server, targetPlayerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_unally_target_party_message", new TextComponent(playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerParty.getDefaultName())));
+							new PartyOnCommandUpdater().update(playerId, server, targetPlayerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_unally_target_party_message", Component.literal(playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerParty.getDefaultName())));
 
 							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
-							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_unally_caster_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_unally_caster_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 							
 							return 1;
 						}))));

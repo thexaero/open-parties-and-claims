@@ -21,7 +21,6 @@ package xaero.pac.common.server.parties.command;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -41,7 +40,7 @@ public class PartyOnCommandUpdater {
 		if(shouldUpdateCommandsForMember.test(mi))
 			server.getCommands().sendCommands(onlineMember);
 		if(massMessage != null)
-			onlineMember.sendMessage(massMessage, commandCasterId);
+			onlineMember.sendSystemMessage(massMessage);
 	}
 	
 	public 
@@ -52,8 +51,8 @@ public class PartyOnCommandUpdater {
 		String partyCustomName = configs.getLoadedConfig(party.getOwner().getUUID()).getEffective(PlayerConfig.PARTY_NAME);
 		if(!partyCustomName.isEmpty())
 			partyName = partyCustomName;
-		Component partyNameComponent = new TextComponent("[" + partyName + "] ").withStyle(s -> s.withColor(ChatFormatting.GOLD).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(party.getDefaultName()))));
-		Component massMessage = new TextComponent("");
+		Component partyNameComponent = Component.literal("[" + partyName + "] ").withStyle(s -> s.withColor(ChatFormatting.GOLD).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(party.getDefaultName()))));
+		Component massMessage = Component.literal("");
 		massMessage.getSiblings().add(partyNameComponent);
 		massMessage.getSiblings().add(massMessageContent);
 		

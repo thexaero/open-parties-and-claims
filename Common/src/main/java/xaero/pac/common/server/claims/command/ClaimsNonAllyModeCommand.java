@@ -22,7 +22,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
@@ -37,7 +37,7 @@ public class ClaimsNonAllyModeCommand {
 					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 					mainCapability.setClaimsNonallyMode(!mainCapability.isClaimsNonallyMode());
 					mainCapability.setClaimsAdminMode(false);
-					player.sendMessage(new TranslatableComponent(mainCapability.isClaimsNonallyMode() ? "gui.xaero_claims_nonally_mode_enabled" : "gui.xaero_claims_nonally_mode_disabled"), player.getUUID());
+					player.sendSystemMessage(Component.translatable(mainCapability.isClaimsNonallyMode() ? "gui.xaero_claims_nonally_mode_enabled" : "gui.xaero_claims_nonally_mode_disabled"));
 					return 1;
 				}));
 		dispatcher.register(command);
