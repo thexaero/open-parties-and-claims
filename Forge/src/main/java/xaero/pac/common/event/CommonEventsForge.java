@@ -134,7 +134,7 @@ public class CommonEventsForge extends CommonEvents {
 	
 	@SubscribeEvent
 	public void onLivingHurt(LivingAttackEvent event) {
-		if(super.onLivingHurt(event.getSource().getEntity(), event.getEntity()))
+		if(super.onLivingHurt(event.getSource().getEntity(), event.getSource().getDirectEntity(), event.getEntity()))
 			event.setCanceled(true);
 	}
 	

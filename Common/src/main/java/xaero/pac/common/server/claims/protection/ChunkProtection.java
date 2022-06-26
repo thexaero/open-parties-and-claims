@@ -104,11 +104,20 @@ public class ChunkProtection
 	private boolean shouldProtectEntity(IPlayerConfig claimConfig, Entity e, Entity from) {
 		if(claimConfig == null || !claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS))
 			return false;
-		return from != null && 
-				isProtectable(e) && 
-				!(from instanceof Player && entityHelper.isTamed(e, (Player)from)) && 
-				(from instanceof LivingEntity && (from instanceof Player && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS) && !hasChunkAccess(claimConfig, from) || !(from instanceof Player) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS)) || 
-						!(from instanceof LivingEntity) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS));
+		return isProtectable(e) &&
+				(
+					from != null && !(from instanceof Player && entityHelper.isTamed(e, (Player)from)) &&
+					(
+						from instanceof LivingEntity &&
+						(
+							from instanceof Player && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS) && !hasChunkAccess(claimConfig, from)
+						||
+							!(from instanceof Player) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS)
+						)
+					)
+				||
+					!(from instanceof LivingEntity) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS)
+				);
 	}
 	
 	private boolean isIncludedByLists(Entity e) {
@@ -218,14 +227,14 @@ public class ChunkProtection
 		return false;
 	}
 	
-	public boolean onEntityInteract(IServerData<CM,P> serverData, Entity entity, Entity target, InteractionHand hand) {
+	public boolean onEntityInteract(IServerData<CM,P> serverData, Entity entity, Entity target, InteractionHand hand, boolean direct) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		ChunkPos chunkPos = new ChunkPos(new BlockPos(target.getBlockX(), target.getBlockY(), target.getBlockZ()));
 		IPlayerChunkClaim claim = claimsManager.get(target.getLevel().dimension().location(), chunkPos);
 		if(shouldProtectEntity(getClaimConfig(playerConfigs, claim), target, entity)) {
-			if(entity instanceof Player)
+			if(direct && entity instanceof Player)
 				entity.sendSystemMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF);
 			//OpenPartiesAndClaims.LOGGER.info("stopped {} interacting with {}", entity, target);
 			return true;
