@@ -194,6 +194,29 @@ function initializeCoreMod() {
                 instructions.insert(instructions.get(0), patchList)
                 return methodNode
             }
+        },
+        'xaero_pac_livingentity_addeffect': {
+            'target' : {
+                 'type': 'METHOD',
+                 'class': 'net.minecraft.world.entity.LivingEntity',
+                 'methodName': 'm_147207_',
+                 'methodDesc' : '(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z'
+            },
+            'transformer' : function(methodNode){
+				var MY_LABEL = new LabelNode(new Label())
+				var insnToInsert = new InsnList()
+				insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+				insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+				insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+				insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', "canAddLivingEntityEffect", "(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
+				insnToInsert.add(new InsnNode(Opcodes.DUP))
+				insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+				insnToInsert.add(new InsnNode(Opcodes.IRETURN))
+				insnToInsert.add(MY_LABEL)
+				insnToInsert.add(new InsnNode(Opcodes.POP))
+				methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
         }
 	}
 }
