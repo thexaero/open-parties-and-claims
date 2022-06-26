@@ -26,6 +26,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -189,11 +191,15 @@ public class CommonEvents {
 		return false;
 	}
 
-	public boolean onLivingHurt(Entity source, Entity directSource, Entity target) {
+	public boolean onLivingHurt(DamageSource source, Entity target) {
 		if(target.getLevel() instanceof ServerLevel) {
+			if(!(source instanceof EntityDamageSource) &&
+					!source.isDamageHelmet()/*almost certainly something falling from the top*/ && source != DamageSource.DRAGON_BREATH &&
+					!source.isProjectile() && !source.isExplosion())
+				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(target.getServer());
-			Entity effectiveSource = source != null ? source : directSource;
-			return serverData.getChunkProtection().onEntityInteract(serverData, effectiveSource, target, InteractionHand.MAIN_HAND, source == directSource);
+			Entity effectiveSource = source.getEntity() != null ? source.getEntity() : source.getDirectEntity();
+			return serverData.getChunkProtection().onEntityInteract(serverData, effectiveSource, target, InteractionHand.MAIN_HAND, source.getEntity() == source.getDirectEntity());
 		}
 		return false;
 	}
