@@ -189,10 +189,11 @@ public class CommonEvents {
 		return false;
 	}
 
-	public boolean onLivingHurt(Entity source, Entity target) {
+	public boolean onLivingHurt(Entity source, Entity directSource, Entity target) {
 		if(target.getLevel() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(target.getServer());
-			return serverData.getChunkProtection().onEntityInteract(serverData, source, target, InteractionHand.MAIN_HAND);
+			Entity effectiveSource = source != null ? source : directSource;
+			return serverData.getChunkProtection().onEntityInteract(serverData, effectiveSource, target, InteractionHand.MAIN_HAND, source == directSource);
 		}
 		return false;
 	}
@@ -200,7 +201,7 @@ public class CommonEvents {
 	public boolean onEntityInteract(Entity source, Entity target, InteractionHand hand) {
 		if(target.getLevel() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(target.getServer());
-			return serverData.getChunkProtection().onEntityInteract(serverData, source, target, hand);
+			return serverData.getChunkProtection().onEntityInteract(serverData, source, target, hand, true);
 		}
 		return false;
 	}
