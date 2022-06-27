@@ -1,14 +1,14 @@
 modLoader="javafml" #mandatory
 loaderVersion="[40,)" #mandatory
 license="GNU Lesser General Public License v3.0 (LGPL-3.0-only)"
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+issueTrackerURL="https://github.com/thexaero/open-parties-and-claims/issues" #optional
 
 [[mods]] #mandatory
 modId="openpartiesandclaims" #mandatory
 version="${file.jarVersion}" #mandatory
 displayName="Open Parties and Claims" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+displayURL="https://www.curseforge.com/minecraft/mc-mods/open-parties-and-claims" #optional
 logoFile="openpartiesandclaims.png" #optional
 # credits="Thanks for this example mod goes to Java" #optional
 authors="xaero96 and other contributors" #optional
