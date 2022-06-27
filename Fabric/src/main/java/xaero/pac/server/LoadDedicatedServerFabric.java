@@ -16,24 +16,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.example.examplemod.mixin;
+package xaero.pac.server;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.TitleScreen;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.LoadCommonFabric;
 
-@Mixin(TitleScreen.class)
-public class ExampleMixin {
-	
-	@Inject(at = @At("HEAD"), method = "init()V")
-	private void init(CallbackInfo info) {
-		
-		OpenPartiesAndClaims.LOGGER.info("This line is printed by an example mod mixin from Fabric!");
-		OpenPartiesAndClaims.LOGGER.info("MC Version: {}", Minecraft.getInstance().getVersionType());
-		OpenPartiesAndClaims.LOGGER.info("Classloader: {}", this.getClass().getClassLoader());
+public class LoadDedicatedServerFabric extends LoadCommonFabric<LoadDedicatedServer> {
+
+	public LoadDedicatedServerFabric(OpenPartiesAndClaims modMain) {
+		super(modMain, new LoadDedicatedServer(modMain));
 	}
+
+	public void loadServer() {
+		loader.loadServer();
+	}
+
 }

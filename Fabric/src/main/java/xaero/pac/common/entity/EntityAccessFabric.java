@@ -16,21 +16,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.example.examplemod;
+package xaero.pac.common.entity;
 
-import net.fabricmc.api.ModInitializer;
-import xaero.pac.OpenPartiesAndClaims;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import org.apache.commons.lang3.NotImplementedException;
 
-public class ExampleMod implements ModInitializer {
-	
+public class EntityAccessFabric implements IEntityAccess {
+
 	@Override
-	public void onInitialize() {
-		
-		// This method is invoked by the Fabric mod loader when it is ready
-		// to load your mod. You can access Fabric and Common code in this
-		// project.
-
-		// Use Fabric to bootstrap the Common mod.
-		OpenPartiesAndClaims.LOGGER.info("Hello Fabric world!");
+	public CompoundTag getPersistentData(Entity entity) {
+		if(entity instanceof ILivingEntity living){//this should be enough for the time being
+			return living.getPersistentData();
+		} else
+			throw new NotImplementedException();
 	}
+
 }

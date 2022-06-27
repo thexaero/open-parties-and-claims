@@ -16,16 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.example.examplemod.platform;
+package xaero.pac.common.platform.services;
 
-import xaero.pac.common.entity.IEntityAccess;
-import xaero.pac.common.registry.block.IBlockRegistry;
-import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
-import xaero.pac.common.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import xaero.pac.client.controls.KeyBindingHelperFabric;
+import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
+import xaero.pac.common.entity.EntityAccessFabric;
+import xaero.pac.common.entity.IEntityAccess;
+import xaero.pac.common.registry.block.BlockRegistryFabric;
+import xaero.pac.common.registry.block.IBlockRegistry;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
+import xaero.pac.common.server.world.ServerChunkCacheAccessFabric;
 
-public class FabricPlatformHelper implements IPlatformHelper {
+public class FabricPlatformHelper implements IPlatformHelper{
+
+	private final BlockRegistryFabric blockRegistryFabric = new BlockRegistryFabric();
+	private final KeyBindingHelperFabric keyBindingHelperFabric = new KeyBindingHelperFabric();
+	private final EntityAccessFabric entityAccessFabric = new EntityAccessFabric();
+	private final ServerChunkCacheAccessFabric serverChunkCacheAccessFabric = new ServerChunkCacheAccessFabric();
 
 	@Override
 	public String getPlatformName() {
@@ -34,33 +42,32 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
 	@Override
 	public boolean isModLoaded(String modId) {
-
 		return FabricLoader.getInstance().isModLoaded(modId);
 	}
 
 	@Override
 	public boolean isDevelopmentEnvironment() {
-
 		return FabricLoader.getInstance().isDevelopmentEnvironment();
 	}
 
 	@Override
 	public IBlockRegistry getBlockRegistry() {
-		return null;//TODO implement this
+		return blockRegistryFabric;
 	}
 
 	@Override
-	public IKeyBindingHelper getKeyBindingRegistry() {
-		return null;//TODO implement this
+	public IKeyBindingHelper getKeyBindingHelper() {
+		return keyBindingHelperFabric;
 	}
 
 	@Override
 	public IServerChunkCacheAccess getServerChunkCacheAccess() {
-		return null;//TODO implement this
+		return serverChunkCacheAccessFabric;
 	}
 
 	@Override
 	public IEntityAccess getEntityAccess() {
-		return null;//TODO implement this
+		return entityAccessFabric;
 	}
+
 }
