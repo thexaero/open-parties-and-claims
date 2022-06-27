@@ -296,10 +296,10 @@ public class MainMenu extends XPACScreen {
 	
 	@Override
 	public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
-		IKeyBindingHelper keyBindingRegistry = Services.PLATFORM.getKeyBindingRegistry();
-		if(getFocused() == null && keyBindingRegistry.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.KEYSYM
+		IKeyBindingHelper keyBindingHelper = Services.PLATFORM.getKeyBindingHelper();
+		if(getFocused() == null && keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.KEYSYM
 				&&
-				p_96552_ == keyBindingRegistry.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
+				p_96552_ == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
 				) {
 			onClose();
 			return true;
@@ -309,10 +309,10 @@ public class MainMenu extends XPACScreen {
 	
 	@Override
 	public boolean mouseClicked(double p_94695_, double p_94696_, int p_94697_) {
-		IKeyBindingHelper keyBindingRegistry = Services.PLATFORM.getKeyBindingRegistry();
-		if(getFocused() == null && keyBindingRegistry.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.MOUSE
+		IKeyBindingHelper keyBindingHelper = Services.PLATFORM.getKeyBindingHelper();
+		if(getFocused() == null && keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.MOUSE
 				&&
-				p_94697_ == keyBindingRegistry.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
+				p_94697_ == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
 				) {
 			onClose();
 			return true;

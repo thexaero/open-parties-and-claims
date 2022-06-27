@@ -16,4 +16,4 @@
 # If not, see <https://www.gnu.org/licenses/>.
 #
 
-xaero.pac.common.platform.ForgePlatformHelper
+xaero.pac.common.platform.services.ForgePlatformHelper

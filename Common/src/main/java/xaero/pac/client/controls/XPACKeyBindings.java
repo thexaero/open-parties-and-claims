@@ -40,7 +40,7 @@ public class XPACKeyBindings implements OPACKeyBindingsAPI {
 	}
 	
 	public void register() {
-		IKeyBindingHelper registry = Services.PLATFORM.getKeyBindingRegistry();
+		IKeyBindingHelper registry = Services.PLATFORM.getKeyBindingHelper();
 		keyBindings.forEach(registry::register);
 	}
 	

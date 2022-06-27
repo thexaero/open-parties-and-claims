@@ -16,14 +16,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.platform;
+package xaero.pac.common.platform.services;
 
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.controls.keybinding.KeyBindingHelperForge;
 import xaero.pac.common.entity.EntityAccessForge;
-import xaero.pac.common.platform.services.IPlatformHelper;
 import xaero.pac.common.registry.block.BlockRegistryForge;
 import xaero.pac.common.registry.block.IBlockRegistry;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
@@ -38,19 +37,16 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
 	@Override
 	public String getPlatformName() {
-
 		return "Forge";
 	}
 
 	@Override
 	public boolean isModLoaded(String modId) {
-
 		return ModList.get().isLoaded(modId);
 	}
 
 	@Override
 	public boolean isDevelopmentEnvironment() {
-
 		return !FMLLoader.isProduction();
 	}
 
@@ -60,7 +56,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
 	}
 
 	@Override
-	public IKeyBindingHelper getKeyBindingRegistry() {
+	public IKeyBindingHelper getKeyBindingHelper() {
 		return keyBindingRegistryForge;
 	}
 
