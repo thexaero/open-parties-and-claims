@@ -39,7 +39,7 @@ import java.util.*;
 
 public final class ForceLoadTicketManager {
 	
-	public static final TicketType<ChunkPos> OPAC_TICKET = TicketType.create("openpartiesandclaims:forced", Comparator.comparingLong(ChunkPos::toLong));
+	public static final TicketType<ChunkPos> OPAC_TICKET = TicketType.create(OpenPartiesAndClaims.MOD_ID + ":forced", Comparator.comparingLong(ChunkPos::toLong));
 	
 	private IServerClaimsManager<?, ?, ?> claimsManager;
 	private final MinecraftServer server;

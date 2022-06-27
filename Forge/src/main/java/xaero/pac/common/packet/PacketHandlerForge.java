@@ -25,6 +25,7 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import xaero.pac.OpenPartiesAndClaims;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -34,7 +35,7 @@ import java.util.function.Function;
 public class PacketHandlerForge implements IPacketHandler {
 
 	private static final String PROTOCOL_VERSION = "1.0.0";
-	public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation("openpartiesandclaims", "main"), () -> {return PROTOCOL_VERSION;}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);});
+	public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation(OpenPartiesAndClaims.MOD_ID, "main"), () -> {return PROTOCOL_VERSION;}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);});
 
 	@Override
 	public <P> void register(int index, Class<P> type,

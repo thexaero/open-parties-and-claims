@@ -144,7 +144,7 @@ public final class PlayerClaimInfoManagerIO<S>
 		}
 
 		public PlayerClaimInfoManagerIO<S> buildInternally() {
-			Path claimsFolderPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve("openpartiesandclaims").resolve("player-claims");
+			Path claimsFolderPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("player-claims");
 			return new PlayerClaimInfoManagerIO<>(fileExtension, serializationHandler, serializedDataFileIO, ioThreadWorker, server, serverClaimsManager, manager, fileIOHelper, claimsFolderPath);
 		}
 

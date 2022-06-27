@@ -31,7 +31,7 @@ import xaero.pac.common.mods.ModSupportForge;
 import xaero.pac.common.packet.PacketHandlerForge;
 import xaero.pac.server.LoadDedicatedServerForge;
 
-@Mod("openpartiesandclaims")
+@Mod(OpenPartiesAndClaims.MOD_ID)
 public class OpenPartiesAndClaimsForge extends OpenPartiesAndClaims {
 
 	public OpenPartiesAndClaimsForge() {

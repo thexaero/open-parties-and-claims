@@ -43,7 +43,7 @@ public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, Strin
 			SerializedDataFileIO<CompoundTag, String> serializedDataFileIO, IOThreadWorker ioThreadWorker,
 			MinecraftServer server, String fileExtension, ServerInfoHolder manager, FileIOHelper fileIOHelper) {
 		super(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
-		folderPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve("openpartiesandclaims");
+		folderPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID);
 	}
 
 	@Override
