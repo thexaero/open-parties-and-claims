@@ -22,6 +22,6 @@ import net.minecraft.nbt.CompoundTag;
 
 public interface ILivingEntity {
 
-	public CompoundTag getPersistentData();
+	public CompoundTag getXaero_OPAC_persistentData();
 
 }

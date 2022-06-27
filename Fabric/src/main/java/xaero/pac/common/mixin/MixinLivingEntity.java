@@ -38,7 +38,7 @@ public class MixinLivingEntity implements ILivingEntity {
 	}
 
 	@Override
-	public CompoundTag getPersistentData() {
+	public CompoundTag getXaero_OPAC_persistentData() {
 		if(xaero_OPAC_persistentData == null)
 			xaero_OPAC_persistentData = new CompoundTag();
 		return xaero_OPAC_persistentData;
