@@ -23,13 +23,14 @@ import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
 
 public class ServerChunkCacheAccessFabric implements IServerChunkCacheAccess {
+
 	@Override
-	public <T> void registerTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value) {
+	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
 		//TODO implement
 	}
 
 	@Override
-	public <T> void releaseTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value) {
+	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
 		//TODO implement
 	}
 

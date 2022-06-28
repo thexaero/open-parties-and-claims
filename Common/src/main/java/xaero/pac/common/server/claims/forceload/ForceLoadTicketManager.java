@@ -67,10 +67,7 @@ public final class ForceLoadTicketManager {
 		if(!isServer && (!ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() || !ServerConfig.CONFIG.allowExistingForceloadsInUnclaimableDimensions.get()) && !claimsManager.isClaimable(ticket.getDimension()))
 			return false;
 		ChunkPos pos = new ChunkPos(ticket.getX(), ticket.getZ());
-		//requires 2 tickets
-		//addRegionTicket is vanilla, which is required by default to add a ticket in the tickingTicketsTracker
-		//registerTickingTicket is added by forge and adds the ticket to forge forcedTickets, which makes the game ignore all tick requirements except tickingTicketsTracker
-		
+
 		ResourceKey<Level> levelKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
 		Services.PLATFORM.getServerChunkCacheAccess().addRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
