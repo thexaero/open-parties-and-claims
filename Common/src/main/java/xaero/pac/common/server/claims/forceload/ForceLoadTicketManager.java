@@ -73,8 +73,7 @@ public final class ForceLoadTicketManager {
 		
 		ResourceKey<Level> levelKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
-		world.getChunkSource().addRegionTicket(OPAC_TICKET, pos, 2, pos);
-		Services.PLATFORM.getServerChunkCacheAccess().registerTickingTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos);
+		Services.PLATFORM.getServerChunkCacheAccess().addRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(true);
 //		OpenPartiesAndClaims.LOGGER.info("Enabled force load ticket at " + pos);
 		return true;
@@ -84,8 +83,7 @@ public final class ForceLoadTicketManager {
 		ChunkPos pos = new ChunkPos(ticket.getX(), ticket.getZ());
 		ResourceKey<Level> levelKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
-		world.getChunkSource().removeRegionTicket(OPAC_TICKET, pos, 2, pos);
-		Services.PLATFORM.getServerChunkCacheAccess().releaseTickingTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos);
+		Services.PLATFORM.getServerChunkCacheAccess().removeRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(false);
 //		OpenPartiesAndClaims.LOGGER.info("Disabled force load ticket at " + pos);
 	}

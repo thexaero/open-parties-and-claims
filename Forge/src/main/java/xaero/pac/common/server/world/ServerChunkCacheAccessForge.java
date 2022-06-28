@@ -21,17 +21,22 @@ package xaero.pac.common.server.world;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
+import xaero.pac.common.platform.Services;
 
 public class ServerChunkCacheAccessForge implements IServerChunkCacheAccess {
 
 	@Override
-	public <T> void registerTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value) {
-		serverChunkCache.registerTickingTicket(type, pos, distance, value);
+	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
+		serverChunkCache.addRegionTicket(type, pos, distance, value);
+		if(forceTicks)
+			serverChunkCache.registerTickingTicket(type, pos, distance, value);
 	}
 
 	@Override
-	public <T> void releaseTickingTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value) {
-		serverChunkCache.releaseTickingTicket(type, pos, distance, value);
+	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
+		serverChunkCache.removeRegionTicket(type, pos, distance, value);
+		if(forceTicks)
+			serverChunkCache.releaseTickingTicket(type, pos, distance, value);
 	}
 
 }
