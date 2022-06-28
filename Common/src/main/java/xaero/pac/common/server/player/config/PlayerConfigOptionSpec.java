@@ -19,7 +19,7 @@
 package xaero.pac.common.server.player.config;
 
 import com.electronwill.nightconfig.core.utils.StringUtils;
-import xaero.pac.common.config.IForgeConfigSpecBuilder;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 import java.util.Map;
@@ -56,13 +56,13 @@ public class PlayerConfigOptionSpec<T> {
 		this.tooltipPrefix = tooltipPrefix;
 	}
 
-	protected IForgeConfigSpecBuilder buildForgeSpec(IForgeConfigSpecBuilder builder) {
+	protected ForgeConfigSpec.Builder buildForgeSpec(ForgeConfigSpec.Builder builder) {
 		return builder
 		.comment(comment)
 		.translation(translation);
 	}
 
-	public PlayerConfigOptionSpec<T> applyToForgeSpec(IForgeConfigSpecBuilder builder) {
+	public PlayerConfigOptionSpec<T> applyToForgeSpec(ForgeConfigSpec.Builder builder) {
 		buildForgeSpec(builder).define(id, defaultValue);
 		return this;
 	}

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.player.config;
 
-import xaero.pac.common.config.IForgeConfigSpecBuilder;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 import java.util.Map;
@@ -39,8 +39,8 @@ public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpe
 	}
 	
 	@Override
-	public PlayerConfigOptionSpec<T> applyToForgeSpec(IForgeConfigSpecBuilder builder) {
-		IForgeConfigSpecBuilder b = buildForgeSpec(builder);
+	public PlayerConfigOptionSpec<T> applyToForgeSpec(ForgeConfigSpec.Builder builder) {
+		ForgeConfigSpec.Builder b = buildForgeSpec(builder);
 		if(type == Integer.class)
 			b.defineInRange(id, (int)defaultValue, (int)minValue, (int)maxValue);
 		else 

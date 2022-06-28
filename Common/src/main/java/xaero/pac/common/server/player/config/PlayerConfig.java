@@ -21,9 +21,8 @@ package xaero.pac.common.server.player.config;
 import com.electronwill.nightconfig.core.Config;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.config.IForgeConfigSpec;
-import xaero.pac.common.config.IForgeConfigSpecBuilder;
 import xaero.pac.common.misc.ConfigUtil;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -72,12 +71,12 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> RECEIVE_LOCATIONS_FROM_PARTY;
 	public static final PlayerConfigOptionSpec<Boolean> RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES;
 	
-	public static final IForgeConfigSpec SPEC;
+	public static final ForgeConfigSpec SPEC;
 
 	static {
 		Map<String, PlayerConfigOptionSpec<?>> allOptions = new LinkedHashMap<>();
 		
-		IForgeConfigSpecBuilder builder = OpenPartiesAndClaims.INSTANCE.getForgeConfigHelper().beginSpecBuilding();
+		ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 		PARTY_NAME = PlayerConfigStringOptionSpec.Builder.begin()
 				.setId("playerConfig.parties.name")
 				.setDefaultValue("")

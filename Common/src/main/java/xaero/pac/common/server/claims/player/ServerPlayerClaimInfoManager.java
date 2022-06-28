@@ -21,11 +21,10 @@ package xaero.pac.common.server.claims.player;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
-import xaero.pac.common.config.value.IForgeConfigIntValue;
-import xaero.pac.common.config.value.IForgeConfigValue;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
@@ -127,7 +126,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		toSave.remove(playerInfo);
 	}
 
-	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, IForgeConfigIntValue limitConfig, IForgeConfigValue<String> permissionNodeConfig){
+	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, ForgeConfigSpec.ConfigValue<String> permissionNodeConfig){
 		boolean hasFtbRanks = OpenPartiesAndClaims.INSTANCE.getModSupport().FTB_RANKS;
 		int defaultLimit = limitConfig.get();
 		if(!hasFtbRanks)
