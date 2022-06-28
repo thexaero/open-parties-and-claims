@@ -19,50 +19,44 @@
 package xaero.pac.common.server.config;
 
 import com.google.common.collect.Lists;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.config.IForgeConfigSpec;
-import xaero.pac.common.config.IForgeConfigSpecBuilder;
-import xaero.pac.common.config.value.IForgeConfigBooleanValue;
-import xaero.pac.common.config.value.IForgeConfigEnumValue;
-import xaero.pac.common.config.value.IForgeConfigIntValue;
-import xaero.pac.common.config.value.IForgeConfigValue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServerConfig {
 
-	public final IForgeConfigBooleanValue partiesEnabled;
-	public final IForgeConfigBooleanValue claimsEnabled;
-	public final IForgeConfigIntValue autosaveInterval;
-	public final IForgeConfigIntValue partyExpirationTime;
-	public final IForgeConfigIntValue partyExpirationCheckInterval;
-	public final IForgeConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
-	public final IForgeConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
-	public final IForgeConfigEnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
-	public final IForgeConfigValue<List<? extends String>> friendlyChunkProtectedEntityList;
-	public final IForgeConfigEnumValue<ConfigListType> hostileChunkProtectedEntityListType;
-	public final IForgeConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
-	public final IForgeConfigValue<List<? extends String>> blockProtectionExceptionList;
-	public final IForgeConfigIntValue maxClaimDistance;
-	public final IForgeConfigValue<List<? extends String>> claimableDimensionsList;
-	public final IForgeConfigEnumValue<ConfigListType> claimableDimensionsListType;
-	public final IForgeConfigBooleanValue allowExistingClaimsInUnclaimableDimensions;
-	public final IForgeConfigBooleanValue allowExistingForceloadsInUnclaimableDimensions;
-	public final IForgeConfigIntValue maxPlayerClaims;
-	public final IForgeConfigIntValue maxPlayerClaimForceloads;
-	public final IForgeConfigIntValue maxPartyMembers;
-	public final IForgeConfigIntValue maxPartyAllies;
-	public final IForgeConfigIntValue maxPartyInvites;
-	public final IForgeConfigIntValue playerClaimsExpirationTime;
-	public final IForgeConfigIntValue playerClaimsExpirationCheckInterval;
-	public final IForgeConfigBooleanValue playerClaimsConvertExpiredClaims;
-	public final IForgeConfigEnumValue<ClaimsSyncType> claimsSynchronization;
-	public final IForgeConfigValue<String> maxPlayerClaimsFTBPermission;
-	public final IForgeConfigValue<String> maxPlayerClaimForceloadsFTBPermission;
+	public final ForgeConfigSpec.BooleanValue partiesEnabled;
+	public final ForgeConfigSpec.BooleanValue claimsEnabled;
+	public final ForgeConfigSpec.IntValue autosaveInterval;
+	public final ForgeConfigSpec.IntValue partyExpirationTime;
+	public final ForgeConfigSpec.IntValue partyExpirationCheckInterval;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
+	public final ForgeConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> friendlyChunkProtectedEntityList;
+	public final ForgeConfigSpec.EnumValue<ConfigListType> hostileChunkProtectedEntityListType;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
+	public final ForgeConfigSpec.IntValue maxClaimDistance;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
+	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
+	public final ForgeConfigSpec.BooleanValue allowExistingClaimsInUnclaimableDimensions;
+	public final ForgeConfigSpec.BooleanValue allowExistingForceloadsInUnclaimableDimensions;
+	public final ForgeConfigSpec.IntValue maxPlayerClaims;
+	public final ForgeConfigSpec.IntValue maxPlayerClaimForceloads;
+	public final ForgeConfigSpec.IntValue maxPartyMembers;
+	public final ForgeConfigSpec.IntValue maxPartyAllies;
+	public final ForgeConfigSpec.IntValue maxPartyInvites;
+	public final ForgeConfigSpec.IntValue playerClaimsExpirationTime;
+	public final ForgeConfigSpec.IntValue playerClaimsExpirationCheckInterval;
+	public final ForgeConfigSpec.BooleanValue playerClaimsConvertExpiredClaims;
+	public final ForgeConfigSpec.EnumValue<ClaimsSyncType> claimsSynchronization;
+	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsFTBPermission;
+	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsFTBPermission;
 	
-	private ServerConfig(IForgeConfigSpecBuilder builder) {
+	private ServerConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("serverConfig");
 
 		autosaveInterval = builder
@@ -261,10 +255,10 @@ public class ServerConfig {
 		builder.pop();
 	}
 
-	public static final IForgeConfigSpec SPEC;
+	public static final ForgeConfigSpec SPEC;
 	public static final ServerConfig CONFIG;
 	static {
-		final Pair<ServerConfig, IForgeConfigSpec> specPair = OpenPartiesAndClaims.INSTANCE.getForgeConfigHelper().beginSpecBuilding().configure(ServerConfig::new);
+		final Pair<ServerConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
 		SPEC = specPair.getRight();
 		CONFIG = specPair.getLeft();
 		

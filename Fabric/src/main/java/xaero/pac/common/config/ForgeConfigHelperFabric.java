@@ -26,23 +26,18 @@ import xaero.pac.OpenPartiesAndClaims;
 public class ForgeConfigHelperFabric implements IForgeConfigHelper {
 
 	@Override
-	public IForgeConfigSpecBuilder beginSpecBuilding() {
-		return new ForgeConfigSpecBuilderWrapper(new ForgeConfigSpec.Builder());
+	public void registerServerConfig(ForgeConfigSpec spec) {
+		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
 	}
 
 	@Override
-	public void registerServerConfig(IForgeConfigSpec spec) {
-		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
+	public void registerClientConfig(ForgeConfigSpec spec) {
+		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
 	}
 
 	@Override
-	public void registerClientConfig(IForgeConfigSpec spec) {
-		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
-	}
-
-	@Override
-	public void registerCommonConfig(IForgeConfigSpec spec) {
-		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, ((ForgeConfigSpecWrapper)spec).getForgeConfigSpec());
+	public void registerCommonConfig(ForgeConfigSpec spec) {
+		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
 	}
 
 }
