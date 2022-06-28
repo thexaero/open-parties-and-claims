@@ -16,21 +16,30 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.example.examplemod;
+package xaero.pac.common.packet;
 
-import net.fabricmc.api.ModInitializer;
-import xaero.pac.OpenPartiesAndClaims;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 
-public class ExampleMod implements ModInitializer {
-	
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+public class PacketHandlerFabric implements IPacketHandler {
+
 	@Override
-	public void onInitialize() {
-		
-		// This method is invoked by the Fabric mod loader when it is ready
-		// to load your mod. You can access Fabric and Common code in this
-		// project.
-
-		// Use Fabric to bootstrap the Common mod.
-		OpenPartiesAndClaims.LOGGER.info("Hello Fabric world!");
+	public <P> void register(int index, Class<P> type, BiConsumer<P, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, P> decoder, BiConsumer<P, ServerPlayer> serverHandler, Consumer<P> clientHandler) {
+		//TODO implement
 	}
+
+	@Override
+	public void sendToServer(Object packet) {
+		//TODO implement
+	}
+
+	@Override
+	public void sendToPlayer(ServerPlayer player, Object packet) {
+		//TODO implement
+	}
+
 }

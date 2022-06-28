@@ -1,12 +1,16 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "com.example.examplemod.mixin",
+    "package": "xaero.pac.common.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "MixinLivingEntity"
     ],
     "client": [
-      "ExampleMixin"
+
+    ],
+    "server": [
+
     ],
     "injectors": {
       "defaultRequire": 1

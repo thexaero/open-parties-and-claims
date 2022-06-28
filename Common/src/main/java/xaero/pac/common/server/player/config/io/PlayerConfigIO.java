@@ -58,11 +58,11 @@ public final class PlayerConfigIO
 	private PlayerConfigIO(SerializationHandler<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>> serializationHandler, SerializedDataFileIO<String, PlayerConfigDeserializationInfo> serializedDataFileIO, IOThreadWorker ioThreadWorker,
 			MinecraftServer server, String fileExtension, PlayerConfigManager<P, CM> manager, FileIOHelper fileIOHelper) {
 		super(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
-		defaultConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve("openpartiesandclaims-default-player-config.toml");
-		wildernessConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve("openpartiesandclaims-wilderness-config.toml");
-		serverClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve("openpartiesandclaims-server-claim-config.toml");
-		expiredClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve("openpartiesandclaims-expired-claim-config.toml");
-		configsPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve("openpartiesandclaims").resolve("player-configs");
+		defaultConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-default-player-config.toml");
+		wildernessConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-wilderness-config.toml");
+		serverClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-server-claim-config.toml");
+		expiredClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-expired-claim-config.toml");
+		configsPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("player-configs");
 	}
 
 	@Override

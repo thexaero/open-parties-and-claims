@@ -16,15 +16,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.world;
+package xaero.pac.client;
 
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.TicketType;
-import net.minecraft.world.level.ChunkPos;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.LoadCommonFabric;
 
-public interface IServerChunkCacheAccess {
+public class LoadClientFabric extends LoadCommonFabric<LoadClient> {
 
-	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
-	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
+	public LoadClientFabric(OpenPartiesAndClaims modMain) {
+		super(modMain, new LoadClient(modMain));
+	}
+
+	public void loadClient(){
+		loader.loadClient();
+	}
 
 }

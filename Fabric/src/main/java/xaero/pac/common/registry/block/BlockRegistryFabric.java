@@ -16,15 +16,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.world;
+package xaero.pac.common.registry.block;
 
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.TicketType;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 
-public interface IServerChunkCacheAccess {
+public class BlockRegistryFabric implements IBlockRegistry {
 
-	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
-	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
+	@Override
+	public Block getValue(ResourceLocation id) {
+		return Registry.BLOCK.get(id);
+	}
 
 }

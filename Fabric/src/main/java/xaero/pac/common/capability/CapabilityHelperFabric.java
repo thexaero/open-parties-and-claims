@@ -16,15 +16,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.world;
+package xaero.pac.common.capability;
 
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.TicketType;
-import net.minecraft.world.level.ChunkPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface IServerChunkCacheAccess {
+public class CapabilityHelperFabric implements ICapabilityHelper {
 
-	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
-	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
+	@Nullable
+	@Override
+	public <T, C extends ICapability<T>> T getCapability(@NotNull Object object, @NotNull C capability) {
+		//TODO implement
+		return null;
+	}
 
 }

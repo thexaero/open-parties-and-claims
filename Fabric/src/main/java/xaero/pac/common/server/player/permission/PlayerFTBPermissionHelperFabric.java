@@ -16,15 +16,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.world;
+package xaero.pac.common.server.player.permission;
 
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.TicketType;
-import net.minecraft.world.level.ChunkPos;
+import dev.ftb.mods.ftbranks.api.FTBRanksAPI;
+import net.minecraft.server.level.ServerPlayer;
 
-public interface IServerChunkCacheAccess {
+import java.util.OptionalInt;
 
-	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
-	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
+public class PlayerFTBPermissionHelperFabric implements IPlayerFTBPermissionHelper{
+
+	@Override
+	public OptionalInt getIntPermission(ServerPlayer player, String node) {
+		return FTBRanksAPI.getPermissionValue(player, node).asInteger();
+	}
+
+	@Override
+	public boolean getPermission(ServerPlayer player, String node) {
+		return FTBRanksAPI.getPermissionValue(player, node).asBooleanOrFalse();
+	}
 
 }

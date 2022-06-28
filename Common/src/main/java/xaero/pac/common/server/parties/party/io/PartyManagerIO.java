@@ -44,7 +44,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 
 	@Override
 	protected Path getObjectFolderPath() {
-		return server.getWorldPath(LevelResource.ROOT).resolve("data").resolve("openpartiesandclaims").resolve("parties");
+		return server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("parties");
 	}
 	
 	@Override

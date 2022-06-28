@@ -45,7 +45,7 @@ processResources {
 javadoc {
     include "**/api/**"
 
-    title "${mod_display_name} API ${minecraft_version}-${version}"
+    title "${mod_display_name} API"
     destinationDir file("${rootProject.rootDir}/docs/javadoc")
 }
 

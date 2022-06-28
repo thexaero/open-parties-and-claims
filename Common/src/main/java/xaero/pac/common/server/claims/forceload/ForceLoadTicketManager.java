@@ -39,7 +39,7 @@ import java.util.*;
 
 public final class ForceLoadTicketManager {
 	
-	public static final TicketType<ChunkPos> OPAC_TICKET = TicketType.create("openpartiesandclaims:forced", Comparator.comparingLong(ChunkPos::toLong));
+	public static final TicketType<ChunkPos> OPAC_TICKET = TicketType.create(OpenPartiesAndClaims.MOD_ID + ":forced", Comparator.comparingLong(ChunkPos::toLong));
 	
 	private IServerClaimsManager<?, ?, ?> claimsManager;
 	private final MinecraftServer server;
@@ -67,14 +67,10 @@ public final class ForceLoadTicketManager {
 		if(!isServer && (!ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() || !ServerConfig.CONFIG.allowExistingForceloadsInUnclaimableDimensions.get()) && !claimsManager.isClaimable(ticket.getDimension()))
 			return false;
 		ChunkPos pos = new ChunkPos(ticket.getX(), ticket.getZ());
-		//requires 2 tickets
-		//addRegionTicket is vanilla, which is required by default to add a ticket in the tickingTicketsTracker
-		//registerTickingTicket is added by forge and adds the ticket to forge forcedTickets, which makes the game ignore all tick requirements except tickingTicketsTracker
-		
+
 		ResourceKey<Level> levelKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
-		world.getChunkSource().addRegionTicket(OPAC_TICKET, pos, 2, pos);
-		Services.PLATFORM.getServerChunkCacheAccess().registerTickingTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos);
+		Services.PLATFORM.getServerChunkCacheAccess().addRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(true);
 //		OpenPartiesAndClaims.LOGGER.info("Enabled force load ticket at " + pos);
 		return true;
@@ -84,8 +80,7 @@ public final class ForceLoadTicketManager {
 		ChunkPos pos = new ChunkPos(ticket.getX(), ticket.getZ());
 		ResourceKey<Level> levelKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
-		world.getChunkSource().removeRegionTicket(OPAC_TICKET, pos, 2, pos);
-		Services.PLATFORM.getServerChunkCacheAccess().releaseTickingTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos);
+		Services.PLATFORM.getServerChunkCacheAccess().removeRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(false);
 //		OpenPartiesAndClaims.LOGGER.info("Disabled force load ticket at " + pos);
 	}

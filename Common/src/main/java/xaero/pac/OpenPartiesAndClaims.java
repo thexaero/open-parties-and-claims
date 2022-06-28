@@ -51,6 +51,7 @@ import xaero.pac.common.server.CrashHandler;
  */
 public class OpenPartiesAndClaims {
 
+	public static final String MOD_ID = "openpartiesandclaims";
 	public static OpenPartiesAndClaims INSTANCE;
 	public static final Logger LOGGER = LogManager.getLogger();
 	

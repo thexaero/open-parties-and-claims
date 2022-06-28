@@ -16,51 +16,58 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.example.examplemod.platform;
+package xaero.pac.common.platform.services;
 
-import xaero.pac.common.entity.IEntityAccess;
-import xaero.pac.common.registry.block.IBlockRegistry;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLLoader;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
-import xaero.pac.common.platform.services.IPlatformHelper;
-import net.fabricmc.loader.api.FabricLoader;
+import xaero.pac.client.controls.keybinding.KeyBindingHelperForge;
+import xaero.pac.common.entity.EntityAccessForge;
+import xaero.pac.common.registry.block.BlockRegistryForge;
+import xaero.pac.common.registry.block.IBlockRegistry;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
+import xaero.pac.common.server.world.ServerChunkCacheAccessForge;
 
-public class FabricPlatformHelper implements IPlatformHelper {
+public class ForgePlatformHelper implements IPlatformHelper {
+
+	private final BlockRegistryForge blockRegistryForge = new BlockRegistryForge();
+	private final KeyBindingHelperForge keyBindingRegistryForge = new KeyBindingHelperForge();
+	private final ServerChunkCacheAccessForge serverChunkCacheAccessForge = new ServerChunkCacheAccessForge();
+	private final EntityAccessForge entityAccessForge = new EntityAccessForge();
 
 	@Override
 	public String getPlatformName() {
-		return "Fabric";
+		return "Forge";
 	}
 
 	@Override
 	public boolean isModLoaded(String modId) {
-
-		return FabricLoader.getInstance().isModLoaded(modId);
+		return ModList.get().isLoaded(modId);
 	}
 
 	@Override
 	public boolean isDevelopmentEnvironment() {
-
-		return FabricLoader.getInstance().isDevelopmentEnvironment();
+		return !FMLLoader.isProduction();
 	}
 
 	@Override
 	public IBlockRegistry getBlockRegistry() {
-		return null;//TODO implement this
+		return blockRegistryForge;
 	}
 
 	@Override
-	public IKeyBindingHelper getKeyBindingRegistry() {
-		return null;//TODO implement this
+	public IKeyBindingHelper getKeyBindingHelper() {
+		return keyBindingRegistryForge;
 	}
 
 	@Override
 	public IServerChunkCacheAccess getServerChunkCacheAccess() {
-		return null;//TODO implement this
+		return serverChunkCacheAccessForge;
 	}
 
 	@Override
-	public IEntityAccess getEntityAccess() {
-		return null;//TODO implement this
+	public EntityAccessForge getEntityAccess() {
+		return entityAccessForge;
 	}
+
 }

@@ -49,7 +49,7 @@ public interface IPlatformHelper {
 
 	IBlockRegistry getBlockRegistry();
 
-	IKeyBindingHelper getKeyBindingRegistry();
+	IKeyBindingHelper getKeyBindingHelper();
 
 	IServerChunkCacheAccess getServerChunkCacheAccess();
 

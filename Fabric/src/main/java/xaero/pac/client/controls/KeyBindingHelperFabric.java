@@ -16,15 +16,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.world;
+package xaero.pac.client.controls;
 
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.TicketType;
-import net.minecraft.world.level.ChunkPos;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.KeyMapping;
+import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 
-public interface IServerChunkCacheAccess {
+public class KeyBindingHelperFabric implements IKeyBindingHelper {
 
-	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
-	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks);
+	@Override
+	public void register(KeyMapping keyBinding) {
+		KeyBindingHelper.registerKeyBinding(keyBinding);
+	}
+
+	@Override
+	public InputConstants.Key getBoundKey(KeyMapping keyBinding) {
+		return KeyBindingHelper.getBoundKeyOf(keyBinding);
+	}
 
 }
