@@ -27,20 +27,12 @@ public class ServerChunkCacheAccessForge implements IServerChunkCacheAccess {
 
 	@Override
 	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		//because of a bug, requires 2 tickets for forced ticks
-		//addRegionTicket is vanilla, which is required by default to add a ticket in the tickingTicketsTracker
-		//registerTickingTicket is added by forge and adds the ticket to forge forcedTickets, which makes the game ignore all tick requirements except tickingTicketsTracker
-
-		serverChunkCache.addRegionTicket(type, pos, distance, value);
-		if(forceTicks)
-			serverChunkCache.registerTickingTicket(type, pos, distance, value);
+		serverChunkCache.addRegionTicket(type, pos, distance, value, forceTicks);
 	}
 
 	@Override
 	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		serverChunkCache.removeRegionTicket(type, pos, distance, value);
-		if(forceTicks)
-			serverChunkCache.releaseTickingTicket(type, pos, distance, value);
+		serverChunkCache.removeRegionTicket(type, pos, distance, value, forceTicks);
 	}
 
 }

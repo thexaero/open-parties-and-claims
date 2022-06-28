@@ -25,12 +25,12 @@ dependencies {
 
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
-    modImplementation "curse.maven:forgeconfigfabric-547434:3671141"
+    modImplementation "curse.maven:forgeconfigfabric-547434:3823451"
 
 
-    modImplementation "curse.maven:ftbranks-472659:3599719"
-    modImplementation "curse.maven:architectury-419699:3843621"
-    modImplementation "curse.maven:ftblibrary-438495:3822757"
+    modImplementation "curse.maven:ftbranks-472659:3831005"
+    modImplementation "curse.maven:architectury-419699:3843623"
+    modImplementation "curse.maven:ftblibrary-438495:3831893"
 }
 
 loom {
