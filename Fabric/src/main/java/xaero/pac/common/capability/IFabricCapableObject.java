@@ -17,25 +17,9 @@
  */
 
 package xaero.pac.common.capability;
-import org.jetbrains.annotations.Nullable;
-import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 
-import javax.annotation.Nonnull;
+public interface IFabricCapableObject {
 
-public class CapabilityHelperFabric implements ICapabilityHelper {
-
-	public static void createCapabilities(){
-		ClientWorldCapabilityTypes.MAIN_CAP = new FabricCapabilityType<>();
-	}
-
-	@Nullable
-	@Override
-	public <T, C extends ICapability<T>> T getCapability(@Nonnull Object object, @Nonnull C capability) {
-		//only supports ClientLevel instances as of writing this
-		//can be extended to other classes with mixins implementing IFabricCapableObject
-		if(!(object instanceof IFabricCapableObject capableObject))
-			return null;
-		return capableObject.getXaero_OPAC_CapabilityProvider().getCapability(capability);
-	}
+	IFabricCapabilityProvider getXaero_OPAC_CapabilityProvider();
 
 }

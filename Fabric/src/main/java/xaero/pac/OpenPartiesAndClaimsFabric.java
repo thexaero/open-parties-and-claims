@@ -31,7 +31,7 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 
 	public OpenPartiesAndClaimsFabric() {
 		super(new CapabilityHelperFabric(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
-
+		CapabilityHelperFabric.createCapabilities();
 	}
 
 	@Override

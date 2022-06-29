@@ -7,7 +7,7 @@
         "MixinLivingEntity"
     ],
     "client": [
-
+        "MixinClientLevel"
     ],
     "server": [
 
