@@ -64,7 +64,8 @@ public final class ClientEventsForge extends ClientEvents {
 
 	@SubscribeEvent
 	public void onWorldLoaded(WorldEvent.Load event) {
-		super.onWorldLoaded(event.getWorld());
+		if(event.getWorld() instanceof ClientLevel)
+			super.onClientWorldLoaded((ClientLevel) event.getWorld());
 	}
 
 	@SubscribeEvent
@@ -91,7 +92,7 @@ public final class ClientEventsForge extends ClientEvents {
 		}
 	}
 	
-	public static final class Builder extends ClientEvents.Builder {
+	public static final class Builder extends ClientEvents.Builder<Builder> {
 
 		@Override
 		public Builder setDefault() {
