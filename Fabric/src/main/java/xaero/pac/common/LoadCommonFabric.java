@@ -22,7 +22,7 @@ import xaero.pac.OpenPartiesAndClaims;
 
 public class LoadCommonFabric<L extends LoadCommon> {
 
-	private final OpenPartiesAndClaims modMain;
+	protected final OpenPartiesAndClaims modMain;
 	protected final L loader;
 
 	public LoadCommonFabric(OpenPartiesAndClaims modMain, L loader) {

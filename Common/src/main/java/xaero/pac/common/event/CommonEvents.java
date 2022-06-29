@@ -73,6 +73,7 @@ public class CommonEvents {
 		lastServerStarted = server;
 		OpenPartiesAndClaims.LOGGER.info("Initializing Open Parties and Claims for the server...");
 		((IOpenPACMinecraftServer) lastServerStarted).setXaero_OPAC_ServerData(new ServerDataInitializer().init(modMain, lastServerStarted));
+		modMain.getPacketHandler().onServerAboutToStart();
 	}
 
 	public void onServerStarting() {

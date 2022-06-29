@@ -20,6 +20,7 @@ package xaero.pac.client;
 
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.LoadCommonFabric;
+import xaero.pac.common.packet.PacketHandlerFabric;
 
 public class LoadClientFabric extends LoadCommonFabric<LoadClient> {
 
@@ -29,6 +30,7 @@ public class LoadClientFabric extends LoadCommonFabric<LoadClient> {
 
 	public void loadClient(){
 		loader.loadClient();
+		((PacketHandlerFabric)modMain.getPacketHandler()).registerOnClient();
 	}
 
 }

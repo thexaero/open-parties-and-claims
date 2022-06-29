@@ -30,7 +30,7 @@ import xaero.pac.server.LoadDedicatedServerFabric;
 public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements ClientModInitializer, DedicatedServerModInitializer {
 
 	public OpenPartiesAndClaimsFabric() {
-		super(new CapabilityHelperFabric(), new PacketHandlerFabric(), new ForgeConfigHelperFabric(), new ModSupportFabric());
+		super(new CapabilityHelperFabric(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
 
 	}
 

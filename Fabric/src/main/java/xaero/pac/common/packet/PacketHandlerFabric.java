@@ -18,28 +18,92 @@
 
 package xaero.pac.common.packet;
 
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.OpenPartiesAndClaims;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PacketHandlerFabric implements IPacketHandler {
 
+	private final Int2ObjectOpenHashMap<PacketType<?>> int2PacketType;
+	private final Map<Class<?>, PacketType<?>> class2PacketType;
+
+	private PacketHandlerFabric(Int2ObjectOpenHashMap<PacketType<?>> int2PacketType, Map<Class<?>, PacketType<?>> class2PacketType){
+		this.int2PacketType = int2PacketType;
+		this.class2PacketType = class2PacketType;
+	}
+
+	public void registerOnClient(){
+		ClientPlayNetworking.registerGlobalReceiver(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, new ClientPacketReceiver(this));
+	}
+
+	@Override
+	public void onServerAboutToStart() {
+		ServerPlayNetworking.registerGlobalReceiver(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, new ServerPacketReceiver(this));
+	}
+
 	@Override
 	public <P> void register(int index, Class<P> type, BiConsumer<P, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, P> decoder, BiConsumer<P, ServerPlayer> serverHandler, Consumer<P> clientHandler) {
-		//TODO implement
+		PacketType<P> packetType = new PacketType<>(index, type, encoder, decoder, serverHandler, clientHandler);
+		if(int2PacketType.containsKey(index))
+			throw new IllegalArgumentException("duplicate index!");
+		if(class2PacketType.containsKey(type))
+			throw new IllegalArgumentException("duplicate packet class!");
+		int2PacketType.put(index, packetType);
+		class2PacketType.put(type, packetType);
 	}
 
 	@Override
-	public void sendToServer(Object packet) {
-		//TODO implement
+	public <T> void sendToServer(T packet) {
+		ClientPlayNetworking.send(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, getPacketBuffer(packet));
 	}
 
 	@Override
-	public void sendToPlayer(ServerPlayer player, Object packet) {
-		//TODO implement
+	public <T> void sendToPlayer(ServerPlayer player, T packet) {
+		ServerPlayNetworking.send(player, OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, getPacketBuffer(packet));
+	}
+
+	private <T> FriendlyByteBuf getPacketBuffer(T packet){
+		PacketType<?> packetTypePreCast = class2PacketType.get(packet.getClass());
+		if(packetTypePreCast == null)
+			throw new IllegalArgumentException("unregistered packet class!");
+		@SuppressWarnings("unchecked")
+		PacketType<T> packetType = (PacketType<T>) packetTypePreCast;
+		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+		buffer.writeByte(packetType.getIndex());
+		packetType.getEncoder().accept(packet, buffer);
+		return buffer;
+	}
+
+	public PacketType<?> getPacketTypeByIndex(int index){
+		return int2PacketType.get(index);
+	}
+
+	public static class Builder {
+
+		private Builder(){}
+
+		public Builder setDefault(){
+			return this;
+		}
+
+		public PacketHandlerFabric build(){
+			return new PacketHandlerFabric(new Int2ObjectOpenHashMap<>(), new HashMap<>());
+		}
+
+		public static Builder begin(){
+			return new Builder().setDefault();
+		}
+
 	}
 
 }
