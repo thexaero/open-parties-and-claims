@@ -43,7 +43,7 @@ import xaero.pac.client.parties.party.IClientPartyStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.client.world.capability.ClientWorldCapabilityProvider;
+import xaero.pac.client.world.capability.ClientWorldCapabilityProviderForge;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -85,7 +85,7 @@ public final class ClientEventsForge extends ClientEvents {
 	@SubscribeEvent
 	public void worldCapabilities(AttachCapabilitiesEvent<Level> event) {
 		if(event.getObject() instanceof ClientLevel) {
-			ClientWorldCapabilityProvider capProvider = new ClientWorldCapabilityProvider();
+			ClientWorldCapabilityProviderForge capProvider = new ClientWorldCapabilityProviderForge();
 			event.addCapability(new ResourceLocation(OpenPartiesAndClaimsForge.class.getAnnotation(Mod.class).value(), "client_world_main_capability"), capProvider);
 			event.addListener(capProvider::invalidateCaps);
 		}

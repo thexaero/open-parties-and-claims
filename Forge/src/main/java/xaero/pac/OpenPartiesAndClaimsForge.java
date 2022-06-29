@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import xaero.pac.client.LoadClientForge;
-import xaero.pac.client.world.capability.ClientWorldCapabilityProvider;
+import xaero.pac.client.world.capability.ClientWorldCapabilityProviderForge;
 import xaero.pac.common.LoadCommonForge;
 import xaero.pac.common.capability.CapabilityHelperForge;
 import xaero.pac.common.config.ForgeConfigHelperForge;
@@ -38,7 +38,7 @@ public class OpenPartiesAndClaimsForge extends OpenPartiesAndClaims {
 		super(new CapabilityHelperForge(), new PacketHandlerForge(), new ForgeConfigHelperForge(), new ModSupportForge());
 		LoadCommonForge<?> loader = FMLLoader.getDist() == Dist.CLIENT ? new LoadClientForge(this) : new LoadDedicatedServerForge(this);
 		FMLJavaModLoadingContext.get().getModEventBus().register(loader);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientWorldCapabilityProvider::registerCapabilities);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientWorldCapabilityProviderForge::registerCapabilities);
 	}
 	
 }

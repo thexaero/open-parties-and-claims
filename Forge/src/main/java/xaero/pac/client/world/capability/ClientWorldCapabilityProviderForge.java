@@ -26,16 +26,16 @@ import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 import xaero.pac.client.world.capability.api.ClientWorldMainCapabilityAPI;
 import xaero.pac.common.capability.ForgeCapabilityWrapper;
 
-public class ClientWorldCapabilityProvider implements ICapabilityProvider {
+import javax.annotation.Nonnull;
+
+public class ClientWorldCapabilityProviderForge extends ClientWorldCapabilityProvider implements ICapabilityProvider {
 
 	public static Capability<ClientWorldMainCapabilityAPI> MAIN_CAP = null;
-
-	private final ClientWorldMainCapability mainCapability;
 	private final LazyOptional<ClientWorldMainCapabilityAPI> lazyMainCapability;
 	private static boolean registered;
 
-	public ClientWorldCapabilityProvider() {
-		mainCapability = new ClientWorldMainCapability(ClientWorldData.Builder.begin().build());
+	public ClientWorldCapabilityProviderForge() {
+		super();
 		lazyMainCapability = LazyOptional.of(() -> mainCapability);
 	}
 
@@ -50,8 +50,9 @@ public class ClientWorldCapabilityProvider implements ICapabilityProvider {
 		registered = true;
 	}
 
+	@Nonnull
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
 		if(cap == MAIN_CAP)
 			return lazyMainCapability.cast();
 		return LazyOptional.empty();
