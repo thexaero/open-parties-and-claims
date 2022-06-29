@@ -18,26 +18,22 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerModelPart;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.client.core.ClientCore;
 
-@Mixin(Minecraft.class)
-public class MixinMinecraft {
+@Mixin(Player.class)
+public class MixinPlayer {
 
-	@Shadow
-	public LocalPlayer player;
-
-	@Inject(at = @At("HEAD"), method = "clearLevel")
-	public void onClearLevel(Screen screen, CallbackInfo info) {
-		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getClientEvents().onPlayerLogout(player);
+	@Inject(at = @At("HEAD"), method = "isModelPartShown", cancellable = true)
+	public void onIsModelPartShown(PlayerModelPart part, CallbackInfoReturnable<Boolean> info) {
+		Boolean moddedValue = ClientCore.isWearing((Player)(Object)this, part);
+		if(moddedValue != null)
+			info.setReturnValue(moddedValue);
 	}
 
 }

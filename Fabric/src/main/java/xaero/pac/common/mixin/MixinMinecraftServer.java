@@ -18,26 +18,24 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
+import xaero.pac.common.server.IOpenPACMinecraftServer;
+import xaero.pac.common.server.IServerDataAPI;
 
-@Mixin(Minecraft.class)
-public class MixinMinecraft {
+@Mixin(MinecraftServer.class)
+public class MixinMinecraftServer implements IOpenPACMinecraftServer {
 
-	@Shadow
-	public LocalPlayer player;
+	private IServerDataAPI<?, ?> xaero_OPAC_ServerData;
 
-	@Inject(at = @At("HEAD"), method = "clearLevel")
-	public void onClearLevel(Screen screen, CallbackInfo info) {
-		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getClientEvents().onPlayerLogout(player);
+	@Override
+	public void setXaero_OPAC_ServerData(IServerDataAPI<?, ?> data) {
+		xaero_OPAC_ServerData = data;
+	}
+
+	@Override
+	public IServerDataAPI<?, ?> getXaero_OPAC_ServerData() {
+		return xaero_OPAC_ServerData;
 	}
 
 }

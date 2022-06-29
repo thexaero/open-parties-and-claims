@@ -20,6 +20,7 @@ package xaero.pac.common.mixin;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
+import xaero.pac.client.core.ClientCore;
 
 @Mixin(ClientPacketListener.class)
 public class MixinClientPacketListener {
@@ -35,4 +37,10 @@ public class MixinClientPacketListener {
 	public void onHandleLogin(ClientboundLoginPacket packet, CallbackInfo info) {
 		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getClientEvents().onPlayerLogin(Minecraft.getInstance().player);
 	}
+
+	@Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target="Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/util/thread/BlockableEventLoop;)V"), method = "handleInitializeBorder")
+	public void onHandleInitializeBorder(ClientboundInitializeBorderPacket clientboundInitializeBorderPacket, CallbackInfo info){
+		ClientCore.onInitializeWorldBorder(clientboundInitializeBorderPacket);
+	}
+
 }
