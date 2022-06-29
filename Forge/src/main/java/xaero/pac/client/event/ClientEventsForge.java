@@ -79,11 +79,6 @@ public final class ClientEventsForge extends ClientEvents {
 	}
 
 	@SubscribeEvent
-	public void handleRenderPlayerEventPost(RenderPlayerEvent.Post event){
-		super.handleRenderPlayerEventPost((AbstractClientPlayer) event.getPlayer(), event.getRenderer(), event.getMultiBufferSource(), event.getPackedLight(), event.getPartialTick(), event.getPoseStack());
-	}
-
-	@SubscribeEvent
 	public void worldCapabilities(AttachCapabilitiesEvent<Level> event) {
 		if(event.getObject() instanceof ClientLevel) {
 			ClientWorldCapabilityProviderForge capProvider = new ClientWorldCapabilityProviderForge();

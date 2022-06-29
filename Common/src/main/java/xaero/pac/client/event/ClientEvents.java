@@ -82,9 +82,6 @@ public class ClientEvents {
 		clientData.getClientWorldLoadHandler().handle(player.clientLevel, player);
 	}
 
-	public void handleRenderPlayerEventPost(AbstractClientPlayer player, PlayerRenderer renderer, MultiBufferSource multiBufferSource, int packedLight, float partialTick, PoseStack matrixStack){
-	}
-
 	public static abstract class Builder<B extends Builder> {
 
 		protected IClientData
