@@ -27,7 +27,7 @@ public class EntityAccessFabric implements IEntityAccess {
 	@Override
 	public CompoundTag getPersistentData(Entity entity) {
 		if(entity instanceof ILivingEntity living){//this should be enough for the time being
-			return living.getXaero_OPAC_persistentData();
+			return living.getXaero_OPAC_PersistentData();
 		} else
 			throw new NotImplementedException();
 	}
