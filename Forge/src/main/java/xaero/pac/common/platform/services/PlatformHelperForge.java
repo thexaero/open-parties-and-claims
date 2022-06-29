@@ -18,56 +18,56 @@
 
 package xaero.pac.common.platform.services;
 
-import net.fabricmc.loader.api.FabricLoader;
-import xaero.pac.client.controls.KeyBindingHelperFabric;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLLoader;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
-import xaero.pac.common.entity.EntityAccessFabric;
-import xaero.pac.common.entity.IEntityAccess;
-import xaero.pac.common.registry.block.BlockRegistryFabric;
+import xaero.pac.client.controls.keybinding.KeyBindingHelperForge;
+import xaero.pac.common.entity.EntityAccessForge;
+import xaero.pac.common.registry.block.BlockRegistryForge;
 import xaero.pac.common.registry.block.IBlockRegistry;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
-import xaero.pac.common.server.world.ServerChunkCacheAccessFabric;
+import xaero.pac.common.server.world.ServerChunkCacheAccessForge;
 
-public class FabricPlatformHelper implements IPlatformHelper{
+public class PlatformHelperForge implements IPlatformHelper {
 
-	private final BlockRegistryFabric blockRegistryFabric = new BlockRegistryFabric();
-	private final KeyBindingHelperFabric keyBindingHelperFabric = new KeyBindingHelperFabric();
-	private final EntityAccessFabric entityAccessFabric = new EntityAccessFabric();
-	private final ServerChunkCacheAccessFabric serverChunkCacheAccessFabric = new ServerChunkCacheAccessFabric();
+	private final BlockRegistryForge blockRegistryForge = new BlockRegistryForge();
+	private final KeyBindingHelperForge keyBindingRegistryForge = new KeyBindingHelperForge();
+	private final ServerChunkCacheAccessForge serverChunkCacheAccessForge = new ServerChunkCacheAccessForge();
+	private final EntityAccessForge entityAccessForge = new EntityAccessForge();
 
 	@Override
 	public String getPlatformName() {
-		return "Fabric";
+		return "Forge";
 	}
 
 	@Override
 	public boolean isModLoaded(String modId) {
-		return FabricLoader.getInstance().isModLoaded(modId);
+		return ModList.get().isLoaded(modId);
 	}
 
 	@Override
 	public boolean isDevelopmentEnvironment() {
-		return FabricLoader.getInstance().isDevelopmentEnvironment();
+		return !FMLLoader.isProduction();
 	}
 
 	@Override
 	public IBlockRegistry getBlockRegistry() {
-		return blockRegistryFabric;
+		return blockRegistryForge;
 	}
 
 	@Override
 	public IKeyBindingHelper getKeyBindingHelper() {
-		return keyBindingHelperFabric;
+		return keyBindingRegistryForge;
 	}
 
 	@Override
 	public IServerChunkCacheAccess getServerChunkCacheAccess() {
-		return serverChunkCacheAccessFabric;
+		return serverChunkCacheAccessForge;
 	}
 
 	@Override
-	public IEntityAccess getEntityAccess() {
-		return entityAccessFabric;
+	public EntityAccessForge getEntityAccess() {
+		return entityAccessForge;
 	}
 
 }
