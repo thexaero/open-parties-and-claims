@@ -7,7 +7,9 @@
         "MixinLivingEntity"
     ],
     "client": [
-        "MixinClientLevel"
+        "MixinClientLevel",
+        "MixinClientPacketListener",
+        "MixinMinecraft"
     ],
     "server": [
 

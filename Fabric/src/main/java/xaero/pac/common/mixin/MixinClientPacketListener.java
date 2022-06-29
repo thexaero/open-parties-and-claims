@@ -18,31 +18,21 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.client.world.capability.ClientWorldCapabilityProviderFabric;
-import xaero.pac.common.capability.IFabricCapabilityProvider;
-import xaero.pac.common.capability.IFabricCapableObject;
 
-@Mixin(ClientLevel.class)
-public class MixinClientLevel implements IFabricCapableObject {
+@Mixin(ClientPacketListener.class)
+public class MixinClientPacketListener {
 
-	private ClientWorldCapabilityProviderFabric xaero_OPAC_CapabilityProvider;
-
-	@Override
-	public IFabricCapabilityProvider getXaero_OPAC_CapabilityProvider() {
-		if(xaero_OPAC_CapabilityProvider == null)
-			xaero_OPAC_CapabilityProvider = new ClientWorldCapabilityProviderFabric();
-		return xaero_OPAC_CapabilityProvider;
+	@Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target="Lnet/minecraft/client/player/LocalPlayer;resetPos()V"), method = "handleLogin")
+	public void onHandleLogin(ClientboundLoginPacket packet, CallbackInfo info) {
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getClientEvents().onPlayerLogin(Minecraft.getInstance().player);
 	}
-
-	@Inject(at = @At("RETURN"), method = "<init>")
-	public void onInit(){
-		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getClientEvents().onClientWorldLoaded((ClientLevel)(Object)this);
-	}
-
 }

@@ -18,31 +18,26 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.client.world.capability.ClientWorldCapabilityProviderFabric;
-import xaero.pac.common.capability.IFabricCapabilityProvider;
-import xaero.pac.common.capability.IFabricCapableObject;
 
-@Mixin(ClientLevel.class)
-public class MixinClientLevel implements IFabricCapableObject {
+@Mixin(Minecraft.class)
+public class MixinMinecraft {
 
-	private ClientWorldCapabilityProviderFabric xaero_OPAC_CapabilityProvider;
+	@Shadow
+	public LocalPlayer player;
 
-	@Override
-	public IFabricCapabilityProvider getXaero_OPAC_CapabilityProvider() {
-		if(xaero_OPAC_CapabilityProvider == null)
-			xaero_OPAC_CapabilityProvider = new ClientWorldCapabilityProviderFabric();
-		return xaero_OPAC_CapabilityProvider;
-	}
-
-	@Inject(at = @At("RETURN"), method = "<init>")
-	public void onInit(){
-		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getClientEvents().onClientWorldLoaded((ClientLevel)(Object)this);
+	@Inject(at = @At("HEAD"), method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V")
+	public void onClearLevel(Screen screen, CallbackInfo info) {
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getClientEvents().onPlayerLogout(player);
 	}
 
 }
