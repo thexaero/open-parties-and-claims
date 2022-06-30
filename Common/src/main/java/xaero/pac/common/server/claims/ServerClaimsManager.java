@@ -18,11 +18,11 @@
 
 package xaero.pac.common.server.claims;
 
+import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import org.apache.commons.compress.utils.Sets;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
