@@ -16,26 +16,28 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.capability;
-import org.jetbrains.annotations.Nullable;
-import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
+package xaero.pac.common.mixin;
 
-import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 
-public class CapabilityHelperFabric implements ICapabilityHelper {
+@Mixin(Minecraft.class)
+public class MixinMinecraft {
 
-	public static void createCapabilities(){
-		ClientWorldCapabilityTypes.MAIN_CAP = new FabricCapabilityType<>();
-	}
+	@Shadow
+	public LocalPlayer player;
 
-	@Nullable
-	@Override
-	public <T, C extends ICapability<T>> T getCapability(@Nonnull Object object, @Nonnull C capability) {
-		//only supports ClientLevel instances as of writing this
-		//can be extended to other classes with mixins implementing IFabricCapableObject
-		if(!(object instanceof IFabricCapableObject capableObject))
-			return null;
-		return capableObject.getXaero_OPAC_CapabilityProvider().getCapability(capability);
+	@Inject(at = @At("HEAD"), method = "clearLevel")
+	public void onClearLevel(Screen screen, CallbackInfo info) {
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getClientEvents().onPlayerLogout(player);
 	}
 
 }

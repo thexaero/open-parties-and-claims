@@ -20,7 +20,10 @@ package xaero.pac.common;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.network.NetworkConstants;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.event.CommonEventsForge;
 
@@ -38,6 +41,10 @@ public class LoadCommonForge<L extends LoadCommon> {
 	@SubscribeEvent
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		loader.loadCommon();
+
+		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+				() -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY,
+						(remoteVersion, isFromServer) -> isFromServer));
 	}
 
 }

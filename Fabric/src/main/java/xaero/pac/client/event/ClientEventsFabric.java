@@ -18,19 +18,10 @@
 
 package xaero.pac.client.event;
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import xaero.pac.OpenPartiesAndClaimsForge;
+import net.minecraft.client.player.LocalPlayer;
 import xaero.pac.client.IClientData;
 import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
@@ -43,7 +34,6 @@ import xaero.pac.client.parties.party.IClientPartyStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.client.world.capability.ClientWorldCapabilityProviderForge;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -51,40 +41,36 @@ import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 
-public final class ClientEventsForge extends ClientEvents {
+public final class ClientEventsFabric extends ClientEvents {
 
-	protected ClientEventsForge(IClientData<IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>, IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>, IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>> clientData) {
+	protected ClientEventsFabric(IClientData<IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>, IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>, IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>> clientData) {
 		super(clientData);
 	}
 
-	@SubscribeEvent
-	public void onClientTick(ClientTickEvent event) {
-		super.onClientTick(event.phase == Phase.START);
+	public void registerFabricAPIEvents(){
+		ClientTickEvents.START_CLIENT_TICK.register(this::onClientTickStart);
+		ClientTickEvents.END_CLIENT_TICK.register(this::onClientTickEnd);
+
 	}
 
-	@SubscribeEvent
-	public void onWorldLoaded(WorldEvent.Load event) {
-		if(event.getWorld() instanceof ClientLevel)
-			super.onClientWorldLoaded((ClientLevel) event.getWorld());
+	public void onClientTickStart(Minecraft minecraft) {
+		super.onClientTick(true);
 	}
 
-	@SubscribeEvent
-	public void onPlayerLogout(ClientPlayerNetworkEvent.LoggedOutEvent event){
-		super.onPlayerLogout(event.getPlayer());
+	public void onClientTickEnd(Minecraft minecraft) {
+		super.onClientTick(false);
+	}
+
+	public void onClientWorldLoaded(ClientLevel world) {
+		super.onClientWorldLoaded(world);
+	}
+
+	public void onPlayerLogout(LocalPlayer player){
+		super.onPlayerLogout(player);
 	}
 	
-	@SubscribeEvent
-	public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event) {
-		super.onPlayerLogin(event.getPlayer());
-	}
-
-	@SubscribeEvent
-	public void worldCapabilities(AttachCapabilitiesEvent<Level> event) {
-		if(event.getObject() instanceof ClientLevel) {
-			ClientWorldCapabilityProviderForge capProvider = new ClientWorldCapabilityProviderForge();
-			event.addCapability(new ResourceLocation(OpenPartiesAndClaimsForge.class.getAnnotation(Mod.class).value(), "client_world_main_capability"), capProvider);
-			event.addListener(capProvider::invalidateCaps);
-		}
+	public void onPlayerLogin(LocalPlayer player) {
+		super.onPlayerLogin(player);
 	}
 	
 	public static final class Builder extends ClientEvents.Builder<Builder> {
@@ -96,8 +82,13 @@ public final class ClientEventsForge extends ClientEvents {
 		}
 
 		@Override
+		public ClientEventsFabric build() {
+			return (ClientEventsFabric) super.build();
+		}
+
+		@Override
 		protected ClientEvents buildInternally() {
-			return new ClientEventsForge(clientData);
+			return new ClientEventsFabric(clientData);
 		}
 
 		public static Builder begin() {

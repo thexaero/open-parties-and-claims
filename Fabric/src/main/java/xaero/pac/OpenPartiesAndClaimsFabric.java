@@ -21,6 +21,7 @@ package xaero.pac;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import xaero.pac.client.LoadClientFabric;
+import xaero.pac.client.event.ClientEvents;
 import xaero.pac.common.capability.CapabilityHelperFabric;
 import xaero.pac.common.config.ForgeConfigHelperFabric;
 import xaero.pac.common.mods.ModSupportFabric;
@@ -29,9 +30,11 @@ import xaero.pac.server.LoadDedicatedServerFabric;
 
 public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements ClientModInitializer, DedicatedServerModInitializer {
 
-	public OpenPartiesAndClaimsFabric() {
-		super(new CapabilityHelperFabric(), new PacketHandlerFabric(), new ForgeConfigHelperFabric(), new ModSupportFabric());
+	private ClientEvents clientEvents;
 
+	public OpenPartiesAndClaimsFabric() {
+		super(new CapabilityHelperFabric(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
+		CapabilityHelperFabric.createCapabilities();
 	}
 
 	@Override
@@ -46,6 +49,14 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 		LoadDedicatedServerFabric loader = new LoadDedicatedServerFabric(this);
 		loader.loadCommon();
 		loader.loadServer();
+	}
+
+	public void setClientEvents(ClientEvents clientEvents) {
+		this.clientEvents = clientEvents;
+	}
+
+	public ClientEvents getClientEvents() {
+		return clientEvents;
 	}
 
 }

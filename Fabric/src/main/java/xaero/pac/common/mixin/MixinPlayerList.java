@@ -16,27 +16,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet;
+package xaero.pac.common.mixin;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.common.server.core.ServerCore;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
+@Mixin(PlayerList.class)
+public class MixinPlayerList {
 
-public interface IPacketHandler {
-
-	void onServerAboutToStart();
-
-	public <P> void register(int index, Class<P> type,
-							 BiConsumer<P, FriendlyByteBuf> encoder,
-							 Function<FriendlyByteBuf, P> decoder,
-							 BiConsumer<P, ServerPlayer> serverHandler,
-							 Consumer<P> clientHandler);
-
-	public <T> void sendToServer(T packet);
-
-	public <T> void sendToPlayer(ServerPlayer player, T packet);
+	@Inject(at = @At("HEAD"), method = "sendLevelInfo")
+	public void onSendLevelInfo(ServerPlayer player, ServerLevel world, CallbackInfo info){
+		ServerCore.onServerWorldInfo(player);
+	}
 
 }

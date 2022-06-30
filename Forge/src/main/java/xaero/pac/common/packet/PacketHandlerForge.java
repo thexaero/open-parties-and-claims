@@ -19,7 +19,6 @@
 package xaero.pac.common.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -35,7 +34,11 @@ import java.util.function.Function;
 public class PacketHandlerForge implements IPacketHandler {
 
 	private static final String PROTOCOL_VERSION = "1.0.0";
-	public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(new ResourceLocation(OpenPartiesAndClaims.MOD_ID, "main"), () -> {return PROTOCOL_VERSION;}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);}, (s) -> {return s == null || s.equals(PROTOCOL_VERSION);});
+	public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, () -> {return PROTOCOL_VERSION;}, (s) -> {return NetworkRegistry.ABSENT.equals(s) || s.equals(PROTOCOL_VERSION);}, (s) -> {return NetworkRegistry.ABSENT.equals(s) || s.equals(PROTOCOL_VERSION);});
+
+	@Override
+	public void onServerAboutToStart() {
+	}
 
 	@Override
 	public <P> void register(int index, Class<P> type,

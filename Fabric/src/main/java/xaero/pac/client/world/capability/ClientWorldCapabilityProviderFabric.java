@@ -16,27 +16,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet;
+package xaero.pac.client.world.capability;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
+import xaero.pac.common.capability.ICapability;
+import xaero.pac.common.capability.IFabricCapabilityProvider;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
+public class ClientWorldCapabilityProviderFabric extends ClientWorldCapabilityProvider implements IFabricCapabilityProvider {
 
-public interface IPacketHandler {
-
-	void onServerAboutToStart();
-
-	public <P> void register(int index, Class<P> type,
-							 BiConsumer<P, FriendlyByteBuf> encoder,
-							 Function<FriendlyByteBuf, P> decoder,
-							 BiConsumer<P, ServerPlayer> serverHandler,
-							 Consumer<P> clientHandler);
-
-	public <T> void sendToServer(T packet);
-
-	public <T> void sendToPlayer(ServerPlayer player, T packet);
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(ICapability<T> cap) {
+		if(cap == ClientWorldCapabilityTypes.MAIN_CAP)
+			return (T) mainCapability;
+		return null;
+	}
 
 }

@@ -70,10 +70,8 @@ public class ClientEvents {
 		}
 	}
 
-	public void onWorldLoaded(LevelAccessor world) {
-		if(world instanceof ClientLevel) {
-			clientData.getClientWorldLoadHandler().handle((ClientLevel) world, Minecraft.getInstance().player);
-		}
+	public void onClientWorldLoaded(ClientLevel world) {
+		clientData.getClientWorldLoadHandler().handle(world, Minecraft.getInstance().player);
 	}
 
 	public void onPlayerLogout(LocalPlayer player) {
@@ -84,10 +82,7 @@ public class ClientEvents {
 		clientData.getClientWorldLoadHandler().handle(player.clientLevel, player);
 	}
 
-	public void handleRenderPlayerEventPost(AbstractClientPlayer player, PlayerRenderer renderer, MultiBufferSource multiBufferSource, int packedLight, float partialTick, PoseStack matrixStack){
-	}
-
-	public static abstract class Builder {
+	public static abstract class Builder<B extends Builder> {
 
 		protected IClientData
 		<
@@ -96,19 +91,26 @@ public class ClientEvents {
 			IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 		> clientData;
 
-		public Builder setDefault() {
+		private final B self;
+
+		@SuppressWarnings("unchecked")
+		protected Builder(){
+			this.self = (B) this;
+		}
+
+		public B setDefault() {
 			setClientData(null);
-			return this;
+			return self;
 		}
 		
-		public Builder setClientData(IClientData
+		public B setClientData(IClientData
 			<
 				IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>,
 				IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>, 
 				IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 			> clientData) {
 			this.clientData = clientData;
-			return this;
+			return self;
 		}
 		
 		public ClientEvents build(){

@@ -18,6 +18,7 @@
 
 package xaero.pac;
 
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xaero.pac.client.ClientData;
@@ -52,6 +53,7 @@ import xaero.pac.common.server.CrashHandler;
 public class OpenPartiesAndClaims {
 
 	public static final String MOD_ID = "openpartiesandclaims";
+
 	public static OpenPartiesAndClaims INSTANCE;
 	public static final Logger LOGGER = LogManager.getLogger();
 	
@@ -62,6 +64,7 @@ public class OpenPartiesAndClaims {
 	private final IPacketHandler packetHandler;
 	private final IForgeConfigHelper forgeConfigHelper;
 	private final ModSupport modSupport;
+	public static final ResourceLocation MAIN_CHANNEL_LOCATION = new ResourceLocation(MOD_ID, "main");
 
 	public OpenPartiesAndClaims(ICapabilityHelper capabilityHelper, IPacketHandler packetHandler, IForgeConfigHelper forgeConfigHelper, ModSupport modSupport) {
 		this.capabilityHelper = capabilityHelper;

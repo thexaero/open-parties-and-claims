@@ -16,27 +16,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet;
+package xaero.pac.common.mixin;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
+import org.spongepowered.asm.mixin.Mixin;
+import xaero.pac.common.server.IOpenPACMinecraftServer;
+import xaero.pac.common.server.IServerDataAPI;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
+@Mixin(MinecraftServer.class)
+public class MixinMinecraftServer implements IOpenPACMinecraftServer {
 
-public interface IPacketHandler {
+	private IServerDataAPI<?, ?> xaero_OPAC_ServerData;
 
-	void onServerAboutToStart();
+	@Override
+	public void setXaero_OPAC_ServerData(IServerDataAPI<?, ?> data) {
+		xaero_OPAC_ServerData = data;
+	}
 
-	public <P> void register(int index, Class<P> type,
-							 BiConsumer<P, FriendlyByteBuf> encoder,
-							 Function<FriendlyByteBuf, P> decoder,
-							 BiConsumer<P, ServerPlayer> serverHandler,
-							 Consumer<P> clientHandler);
-
-	public <T> void sendToServer(T packet);
-
-	public <T> void sendToPlayer(ServerPlayer player, T packet);
+	@Override
+	public IServerDataAPI<?, ?> getXaero_OPAC_ServerData() {
+		return xaero_OPAC_ServerData;
+	}
 
 }

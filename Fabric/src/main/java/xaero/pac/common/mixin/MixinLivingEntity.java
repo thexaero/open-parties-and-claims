@@ -19,29 +19,44 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.entity.ILivingEntity;
+import xaero.pac.common.server.core.ServerCore;
 
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity implements ILivingEntity {
 
 	private CompoundTag xaero_OPAC_persistentData;
 
-	@Inject(at = @At("HEAD"), method = "addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V")
+	@Inject(at = @At("HEAD"), method = "addAdditionalSaveData")
 	public void onAddAdditionalSaveData(CompoundTag tag, CallbackInfo info) {
 		if(xaero_OPAC_persistentData != null && !xaero_OPAC_persistentData.isEmpty())
-			tag.put("xaero_OPAC_persistentData", xaero_OPAC_persistentData.copy());
+			tag.put("xaero_OPAC_PersistentData", xaero_OPAC_persistentData.copy());
+	}
+
+	@Inject(at = @At("HEAD"), method = "readAdditionalSaveData")
+	public void onReadAdditionalSaveData(CompoundTag tag, CallbackInfo info) {
+		xaero_OPAC_persistentData = tag.getCompound("xaero_OPAC_PersistentData");
 	}
 
 	@Override
-	public CompoundTag getXaero_OPAC_persistentData() {
+	public CompoundTag getXaero_OPAC_PersistentData() {
 		if(xaero_OPAC_persistentData == null)
 			xaero_OPAC_persistentData = new CompoundTag();
 		return xaero_OPAC_persistentData;
+	}
+
+	@Inject(at = @At("HEAD"), method = "addEffect", cancellable = true)
+	public void onAddEffect(MobEffectInstance mobEffectInstance, Entity entity, CallbackInfoReturnable<Boolean> info){
+		if(!ServerCore.canAddLivingEntityEffect((LivingEntity)(Object)this, mobEffectInstance, entity))
+			info.setReturnValue(false);
 	}
 
 }

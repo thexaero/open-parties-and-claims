@@ -25,18 +25,46 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface IPacketHandler {
+public class PacketType<P> {
 
-	void onServerAboutToStart();
+	private final int index;
+	private final Class<P> type;
+	private final BiConsumer<P, FriendlyByteBuf> encoder;
+	private final Function<FriendlyByteBuf, P> decoder;
+	private final BiConsumer<P, ServerPlayer> serverHandler;
+	private final Consumer<P> clientHandler;
 
-	public <P> void register(int index, Class<P> type,
-							 BiConsumer<P, FriendlyByteBuf> encoder,
-							 Function<FriendlyByteBuf, P> decoder,
-							 BiConsumer<P, ServerPlayer> serverHandler,
-							 Consumer<P> clientHandler);
+	public PacketType(int index, Class<P> type, BiConsumer<P, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, P> decoder, BiConsumer<P, ServerPlayer> serverHandler, Consumer<P> clientHandler) {
+		this.index = index;
+		this.type = type;
+		this.encoder = encoder;
+		this.decoder = decoder;
+		this.serverHandler = serverHandler;
+		this.clientHandler = clientHandler;
+	}
 
-	public <T> void sendToServer(T packet);
+	public int getIndex() {
+		return index;
+	}
 
-	public <T> void sendToPlayer(ServerPlayer player, T packet);
+	public Class<P> getType() {
+		return type;
+	}
+
+	public BiConsumer<P, FriendlyByteBuf> getEncoder() {
+		return encoder;
+	}
+
+	public Function<FriendlyByteBuf, P> getDecoder() {
+		return decoder;
+	}
+
+	public BiConsumer<P, ServerPlayer> getServerHandler() {
+		return serverHandler;
+	}
+
+	public Consumer<P> getClientHandler() {
+		return clientHandler;
+	}
 
 }

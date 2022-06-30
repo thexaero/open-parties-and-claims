@@ -19,7 +19,10 @@
 package xaero.pac.client;
 
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
+import xaero.pac.client.event.ClientEventsFabric;
 import xaero.pac.common.LoadCommonFabric;
+import xaero.pac.common.packet.PacketHandlerFabric;
 
 public class LoadClientFabric extends LoadCommonFabric<LoadClient> {
 
@@ -29,6 +32,10 @@ public class LoadClientFabric extends LoadCommonFabric<LoadClient> {
 
 	public void loadClient(){
 		loader.loadClient();
+		((PacketHandlerFabric)modMain.getPacketHandler()).registerOnClient();
+		ClientEventsFabric clientEvents = ClientEventsFabric.Builder.begin().setClientData(modMain.getClientDataInternal()).build();
+		clientEvents.registerFabricAPIEvents();
+		((OpenPartiesAndClaimsFabric)modMain).setClientEvents(clientEvents);
 	}
 
 }

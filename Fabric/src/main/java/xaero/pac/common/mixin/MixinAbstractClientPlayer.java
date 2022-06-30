@@ -16,26 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.capability;
-import org.jetbrains.annotations.Nullable;
-import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
+package xaero.pac.common.mixin;
 
-import javax.annotation.Nonnull;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.resources.ResourceLocation;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.client.core.ClientCore;
 
-public class CapabilityHelperFabric implements ICapabilityHelper {
+@Mixin(AbstractClientPlayer.class)
+public class MixinAbstractClientPlayer {
 
-	public static void createCapabilities(){
-		ClientWorldCapabilityTypes.MAIN_CAP = new FabricCapabilityType<>();
-	}
-
-	@Nullable
-	@Override
-	public <T, C extends ICapability<T>> T getCapability(@Nonnull Object object, @Nonnull C capability) {
-		//only supports ClientLevel instances as of writing this
-		//can be extended to other classes with mixins implementing IFabricCapableObject
-		if(!(object instanceof IFabricCapableObject capableObject))
-			return null;
-		return capableObject.getXaero_OPAC_CapabilityProvider().getCapability(capability);
+	@Inject(at = @At("HEAD"), method = "getCloakTextureLocation", cancellable = true)
+	public void onGetCloakTextureLocation(CallbackInfoReturnable<ResourceLocation> info) {
+		ResourceLocation moddedLocation = ClientCore.getPlayerCape((AbstractClientPlayer) (Object)this);
+		if(moddedLocation != null)
+			info.setReturnValue(moddedLocation);
 	}
 
 }
