@@ -185,6 +185,8 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.entitiesFromExplosions" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.chorusFruitTeleport" : "Prevent Chorus Fruit Teleport",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.chorusFruitTeleport" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.playerLightning" : "Protect From Player Lightning",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.playerLightning" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.allowSomeBlockInteractions" : "Allow Some Blocks Interactions",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.allowSomeBlockInteractions" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.forceload.enabled" : "Forceload Marked Chunks",

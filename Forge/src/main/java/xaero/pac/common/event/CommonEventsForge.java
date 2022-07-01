@@ -18,10 +18,12 @@
 
 package xaero.pac.common.event;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -153,6 +155,11 @@ public class CommonEventsForge extends CommonEvents {
 	public void onChorusFruit(EntityTeleportEvent.ChorusFruit event){
 		if(super.onChorusFruit(event.getEntity(), event.getTarget()))
 			event.setCanceled(true);
+	}
+
+	@SubscribeEvent
+	public void onEntityJoinWorld(EntityJoinWorldEvent event){
+		super.onEntityJoinWorld(event.getEntity(), event.getWorld());
 	}
 	
 }
