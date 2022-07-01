@@ -18,34 +18,21 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.server.IOpenPACMinecraftServer;
-import xaero.pac.common.server.IServerDataAPI;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-@Mixin(MinecraftServer.class)
-public class MixinMinecraftServer implements IOpenPACMinecraftServer {
+@Mixin(EnderDragon.class)
+public class MixinEnderDragon {
 
-	private IServerDataAPI<?, ?> xaero_OPAC_ServerData;
-
-	@Override
-	public void setXaero_OPAC_ServerData(IServerDataAPI<?, ?> data) {
-		xaero_OPAC_ServerData = data;
-	}
-
-	@Override
-	public IServerDataAPI<?, ?> getXaero_OPAC_ServerData() {
-		return xaero_OPAC_ServerData;
-	}
-
-	@Inject(at = @At("HEAD"), method = "loadLevel")
-	public void onLoadLevel(CallbackInfo callbackInfo) throws Throwable {
-		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getCommonEvents().onServerAboutToStart((MinecraftServer)(Object)this);
+	@Inject(method = "checkWalls", at = @At("HEAD"))
+	public void onMobGriefGameRuleMethod(CallbackInfoReturnable<Boolean> callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
 	}
 
 }

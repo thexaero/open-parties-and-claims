@@ -39,7 +39,7 @@ dependencies {
 
      implementation 'com.electronwill.night-config:core:3.6.3'
      implementation 'com.electronwill.night-config:toml:3.6.3'
-     implementation "curse.maven:forgeconfigfabric-547434:3671141"
+     compileOnly "curse.maven:forgeconfigfabric-547434:3671141"
 }
 
 processResources {

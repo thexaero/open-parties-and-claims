@@ -21,16 +21,18 @@ package xaero.pac;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import xaero.pac.client.LoadClientFabric;
-import xaero.pac.client.event.ClientEvents;
+import xaero.pac.client.event.ClientEventsFabric;
 import xaero.pac.common.capability.CapabilityHelperFabric;
 import xaero.pac.common.config.ForgeConfigHelperFabric;
+import xaero.pac.common.event.CommonEventsFabric;
 import xaero.pac.common.mods.ModSupportFabric;
 import xaero.pac.common.packet.PacketHandlerFabric;
 import xaero.pac.server.LoadDedicatedServerFabric;
 
 public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements ClientModInitializer, DedicatedServerModInitializer {
 
-	private ClientEvents clientEvents;
+	private ClientEventsFabric clientEvents;
+	private CommonEventsFabric commonEvents;
 
 	public OpenPartiesAndClaimsFabric() {
 		super(new CapabilityHelperFabric(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
@@ -51,12 +53,20 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 		loader.loadServer();
 	}
 
-	public void setClientEvents(ClientEvents clientEvents) {
+	public ClientEventsFabric getClientEvents() {
+		return clientEvents;
+	}
+
+	public CommonEventsFabric getCommonEvents() {
+		return commonEvents;
+	}
+
+	public void setClientEvents(ClientEventsFabric clientEvents) {
 		this.clientEvents = clientEvents;
 	}
 
-	public ClientEvents getClientEvents() {
-		return clientEvents;
+	public void setCommonEvents(CommonEventsFabric commonEvents) {
+		this.commonEvents = commonEvents;
 	}
 
 }

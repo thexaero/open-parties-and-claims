@@ -19,7 +19,10 @@
   
     "environment": "*",
     "entrypoints": {
-      "main": [
+      "client": [
+        "xaero.pac.OpenPartiesAndClaimsFabric"
+      ],
+      "server": [
         "xaero.pac.OpenPartiesAndClaimsFabric"
       ]
     },

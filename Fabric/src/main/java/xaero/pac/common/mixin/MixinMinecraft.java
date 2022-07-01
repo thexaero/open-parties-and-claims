@@ -21,6 +21,7 @@ package xaero.pac.common.mixin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraftforge.mixin.LevelResourceAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,7 +36,7 @@ public class MixinMinecraft {
 	@Shadow
 	public LocalPlayer player;
 
-	@Inject(at = @At("HEAD"), method = "clearLevel")
+	@Inject(at = @At("HEAD"), method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V")
 	public void onClearLevel(Screen screen, CallbackInfo info) {
 		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getClientEvents().onPlayerLogout(player);
 	}

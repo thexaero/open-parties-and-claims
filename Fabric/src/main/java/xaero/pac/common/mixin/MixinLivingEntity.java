@@ -19,16 +19,22 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.common.entity.ILivingEntity;
 import xaero.pac.common.server.core.ServerCore;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity implements ILivingEntity {
@@ -53,10 +59,30 @@ public class MixinLivingEntity implements ILivingEntity {
 		return xaero_OPAC_persistentData;
 	}
 
-	@Inject(at = @At("HEAD"), method = "addEffect", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", cancellable = true)
 	public void onAddEffect(MobEffectInstance mobEffectInstance, Entity entity, CallbackInfoReturnable<Boolean> info){
 		if(!ServerCore.canAddLivingEntityEffect((LivingEntity)(Object)this, mobEffectInstance, entity))
 			info.setReturnValue(false);
+	}
+
+	@Inject(method = "createWitherRose", at = @At("HEAD"))
+	public void onCreateWitherRose(CallbackInfo callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
+	}
+
+	@Inject(at = @At("HEAD"), method = "hurt", cancellable = true)
+	public void onHurt(DamageSource source, float f, CallbackInfoReturnable<Boolean> info) {
+		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onLivingHurt(source, (Entity)(Object)this))
+			info.setReturnValue(false);
+	}
+
+	@Inject(at = @At("HEAD"), method = "randomTeleport", cancellable = true)
+	public void onRandomTeleport(double x, double y, double z, boolean broadcast, CallbackInfoReturnable<Boolean> info){
+		if((Object)this instanceof ServerPlayer player) {
+			Vec3 target = new Vec3(x, y, z);
+			if (((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onChorusFruit(player, target))
+				info.setReturnValue(false);
+		}
 	}
 
 }

@@ -16,20 +16,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.server;
+package xaero.pac.common.server.core;
 
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.LoadCommonFabric;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 
-public class LoadDedicatedServerFabric extends LoadCommonFabric<LoadDedicatedServer> {
+public class ServerCoreFabric {
 
-	public LoadDedicatedServerFabric(OpenPartiesAndClaimsFabric modMain) {
-		super(modMain, new LoadDedicatedServer(modMain));
-	}
+	public static Entity MOB_GRIEFING_GAME_RULE_ENTITY = null;
 
-	public void loadServer() {
-		loader.loadServer();
+	public static void tryToSetMobGriefingEntity(Entity entity){
+		if(entity != null && entity.level instanceof ServerLevel)
+			MOB_GRIEFING_GAME_RULE_ENTITY = entity;
 	}
 
 }

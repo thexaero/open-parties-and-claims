@@ -16,20 +16,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.server;
+package xaero.pac.common.mixin;
 
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.LoadCommonFabric;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public class LoadDedicatedServerFabric extends LoadCommonFabric<LoadDedicatedServer> {
+@Mixin(MoveToBlockGoal.class)
+public class MixinMoveToBlockGoal {
 
-	public LoadDedicatedServerFabric(OpenPartiesAndClaimsFabric modMain) {
-		super(modMain, new LoadDedicatedServer(modMain));
-	}
-
-	public void loadServer() {
-		loader.loadServer();
-	}
+	@Shadow
+	protected PathfinderMob mob;
 
 }

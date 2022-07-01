@@ -18,34 +18,28 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.server.IOpenPACMinecraftServer;
-import xaero.pac.common.server.IServerDataAPI;
 
-@Mixin(MinecraftServer.class)
-public class MixinMinecraftServer implements IOpenPACMinecraftServer {
+import java.util.List;
 
-	private IServerDataAPI<?, ?> xaero_OPAC_ServerData;
+@Mixin(Explosion.class)
+public class MixinExplosion {
 
-	@Override
-	public void setXaero_OPAC_ServerData(IServerDataAPI<?, ?> data) {
-		xaero_OPAC_ServerData = data;
-	}
+	@Shadow
+	private Level level;
 
-	@Override
-	public IServerDataAPI<?, ?> getXaero_OPAC_ServerData() {
-		return xaero_OPAC_ServerData;
-	}
-
-	@Inject(at = @At("HEAD"), method = "loadLevel")
-	public void onLoadLevel(CallbackInfo callbackInfo) throws Throwable {
-		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getCommonEvents().onServerAboutToStart((MinecraftServer)(Object)this);
+	@ModifyVariable(method = "explode", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
+	public List<Entity> onExplosion(List<Entity> entityList){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onExplosionDetonate((Explosion)(Object)this, entityList, level);
+		return entityList;
 	}
 
 }
