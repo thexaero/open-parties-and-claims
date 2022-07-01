@@ -147,7 +147,7 @@ public class PlayerConfig
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 					.setId("playerConfig.claims.protection.blocksFromMobGriefing")
 					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the claimed chunks would also be protected. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
+					.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the protected chunks are also partially protected. Should work for vanilla mob behavior, unless another mod breaks it. Modded mob behavior is unlikely to be included. Feel free to set the vanilla game rule for mob griefing to be safe. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
 					.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 					.setId("playerConfig.claims.protection.entitiesFromPlayers")
@@ -177,7 +177,7 @@ public class PlayerConfig
 		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.playerLightning")
 				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the claimed chunks would also be protected.")
+				.setComment("When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the protected chunks are also partially protected.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockInteractions")
