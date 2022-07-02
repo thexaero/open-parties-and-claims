@@ -16,6 +16,7 @@
         "MixinEvokerWololoSpellGoal",
         "MixinExplosion",
         "MixinFarmBlock",
+        "MixinFireBlock",
         "MixinFoxEatBerriesGoal",
         "MixinGameRules",
         "MixinHarvestFarmland",

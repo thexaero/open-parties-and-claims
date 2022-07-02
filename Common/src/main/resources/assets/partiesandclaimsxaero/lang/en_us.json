@@ -175,6 +175,8 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.blocksFromExplosions" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.fromMobGriefing" : "Protect From Mob Griefing",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.fromMobGriefing" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.fromFireSpread" : "Protect From Fire Spread",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.fromFireSpread" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.entitiesFromPlayers" : "Protect Entities From Players",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.entitiesFromPlayers" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.entitiesFromMobs" : "Protect Entities From Mobs",

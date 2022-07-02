@@ -224,7 +224,7 @@ public class ChunkProtection
 				ChunkPos chunkPos = new ChunkPos(entity.chunkPosition().x + i, entity.chunkPosition().z + j);
 				IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
 				IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-				if(config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOB_GRIEFING) && !hasChunkAccess(config, entity))
+				if(config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING) && !hasChunkAccess(config, entity))
 					return true;
 			}
 		return false;
@@ -308,6 +308,15 @@ public class ChunkProtection
 					break;
 				}
 			}
+	}
+
+	public boolean onFireSpread(IServerData<CM,P> serverData, ServerLevel level, BlockPos pos){
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), new ChunkPos(pos));
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
+		return claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD);
 	}
 
 }
