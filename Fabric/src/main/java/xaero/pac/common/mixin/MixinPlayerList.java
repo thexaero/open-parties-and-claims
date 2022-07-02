@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -25,6 +26,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.common.server.core.ServerCore;
 
 @Mixin(PlayerList.class)
@@ -33,6 +36,15 @@ public class MixinPlayerList {
 	@Inject(at = @At("HEAD"), method = "sendLevelInfo")
 	public void onSendLevelInfo(ServerPlayer player, ServerLevel world, CallbackInfo info){
 		ServerCore.onServerWorldInfo(player);
+	}
+
+	@Inject(at = @At("TAIL"), method = "placeNewPlayer")
+	public void onPlaceNewPlayer(Connection connection, ServerPlayer serverPlayer, CallbackInfo info){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPlayerLogIn(serverPlayer);
+	}
+	@Inject(at = @At("HEAD"), method = "remove")
+	public void onRemove(ServerPlayer serverPlayer, CallbackInfo info){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPlayerLogOut(serverPlayer);
 	}
 
 }

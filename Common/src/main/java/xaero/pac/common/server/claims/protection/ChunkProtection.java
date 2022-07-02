@@ -28,12 +28,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
@@ -202,7 +200,11 @@ public class ChunkProtection
 		boolean shouldProtect = false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		ChunkPos chunkPos = new ChunkPos(pos);
-		if(itemStack.getItem().getFoodProperties() == null && !(itemStack.getItem() instanceof PotionItem) && !(itemStack.getItem() instanceof ProjectileWeaponItem)) {
+		if(itemStack.getItem().getFoodProperties() == null &&
+				!(itemStack.getItem() instanceof PotionItem) &&
+				!(itemStack.getItem() instanceof ProjectileWeaponItem) &&
+				!(itemStack.getItem() instanceof TridentItem)
+		) {
 			IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), chunkPos);
 			if(!hasChunkAccess(getClaimConfig(playerConfigs, claim), player))
 				shouldProtect = true;
@@ -218,10 +220,10 @@ public class ChunkProtection
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		for(int i = -1; i < 2; i++)
 			for(int j = -1; j < 2; j++) {
-				ChunkPos chunkPos = new ChunkPos(new BlockPos(entity.getBlockX() + i, entity.getBlockY(), entity.getBlockZ() + j));
+				ChunkPos chunkPos = new ChunkPos(entity.chunkPosition().x + i, entity.chunkPosition().z + j);
 				IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
 				IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-				if(config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOB_GRIEFING) && !hasChunkAccess(config, entity))
+				if(config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING) && !hasChunkAccess(config, entity))
 					return true;
 			}
 		return false;
@@ -289,6 +291,31 @@ public class ChunkProtection
 			return true;
 		}
 		return false;
+	}
+
+	public void onLightningBolt(IServerData<CM,P> serverData, LightningBolt bolt) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get() || bolt.getCause() == null)
+			return;
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		for(int i = -1; i < 2; i++)
+			for(int j = -1; j < 2; j++) {
+				ChunkPos chunkPos = new ChunkPos(bolt.chunkPosition().x + i, bolt.chunkPosition().z + j);
+				IPlayerChunkClaim claim = claimsManager.get(bolt.getLevel().dimension().location(), chunkPos);
+				IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+				if(config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING) && !hasChunkAccess(config, bolt.getCause())) {
+					bolt.setVisualOnly(true);
+					break;
+				}
+			}
+	}
+
+	public boolean onFireSpread(IServerData<CM,P> serverData, ServerLevel level, BlockPos pos){
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), new ChunkPos(pos));
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
+		return claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD);
 	}
 
 }

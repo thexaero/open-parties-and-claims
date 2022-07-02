@@ -18,34 +18,32 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.FireBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.server.IOpenPACMinecraftServer;
-import xaero.pac.common.server.IServerDataAPI;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(MinecraftServer.class)
-public class MixinMinecraftServer implements IOpenPACMinecraftServer {
+import java.util.Random;
 
-	private IServerDataAPI<?, ?> xaero_OPAC_ServerData;
+@Mixin(FireBlock.class)
+public class MixinFireBlock {
 
-	@Override
-	public void setXaero_OPAC_ServerData(IServerDataAPI<?, ?> data) {
-		xaero_OPAC_ServerData = data;
+	@Inject(method = "checkBurnOut", at = @At("HEAD"), cancellable = true)
+	public void onCheckBurnOut(Level level, BlockPos blockPos, int i, Random random, int j, CallbackInfo info){
+		if(!ServerCore.canSpreadFire(level, blockPos))
+			info.cancel();
 	}
 
-	@Override
-	public IServerDataAPI<?, ?> getXaero_OPAC_ServerData() {
-		return xaero_OPAC_ServerData;
-	}
-
-	@Inject(at = @At("HEAD"), method = "loadLevel")
-	public void onLoadLevel(CallbackInfo callbackInfo) throws Throwable {
-		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getCommonEvents().onServerAboutToStart((MinecraftServer)(Object)this);
+	@Inject(method = "getFireOdds", at = @At("HEAD"), cancellable = true)
+	public void onGetFireOdds(LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Integer> info){
+		if(!ServerCore.canSpreadFire(levelReader, blockPos))
+			info.setReturnValue(0);
 	}
 
 }

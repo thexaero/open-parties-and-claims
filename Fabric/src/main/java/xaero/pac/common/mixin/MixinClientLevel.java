@@ -22,6 +22,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.client.world.capability.ClientWorldCapabilityProviderFabric;
@@ -41,7 +42,7 @@ public class MixinClientLevel implements IFabricCapableObject {
 	}
 
 	@Inject(at = @At("RETURN"), method = "<init>")
-	public void onInit(){
+	public void onInit(CallbackInfo info){
 		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getClientEvents().onClientWorldLoaded((ClientLevel)(Object)this);
 	}
 

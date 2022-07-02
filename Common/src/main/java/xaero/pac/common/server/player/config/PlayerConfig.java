@@ -22,7 +22,6 @@ import com.electronwill.nightconfig.core.Config;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.common.ForgeConfigSpec;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.misc.ConfigUtil;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -54,13 +53,16 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_PARTY;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOB_GRIEFING;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING;
+
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_INTERACTIONS; 
 
 	public static final PlayerConfigOptionSpec<Boolean> FORCELOAD;
@@ -144,11 +146,16 @@ public class PlayerConfig
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the mob griefing option.")
 				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.blocksFromMobGriefing")
+		PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+					.setId("playerConfig.claims.protection.fromMobGriefing")
 					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Keep in mind that creeper explosions are also affected by the explosion-related options.")
+					.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the protected chunks are also partially protected. Should work for vanilla mob behavior, unless another mod breaks it. Modded mob behavior is unlikely to be included. Feel free to set the vanilla game rule for mob griefing to be safe. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
 					.build(allOptions).applyToForgeSpec(builder);
+		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.fromFireSpread")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against fire spread.")
+				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 					.setId("playerConfig.claims.protection.entitiesFromPlayers")
 					.setDefaultValue(true)
@@ -173,6 +180,11 @@ public class PlayerConfig
 				.setId("playerConfig.claims.protection.chorusFruitTeleport")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes chorus fruit teleportation prevention for players who don't have access to the chunks.")
+				.build(allOptions).applyToForgeSpec(builder);
+		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.playerLightning")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the protected chunks are also partially protected.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockInteractions")

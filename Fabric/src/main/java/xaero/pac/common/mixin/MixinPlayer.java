@@ -23,7 +23,10 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.client.core.ClientCore;
 
 @Mixin(Player.class)
@@ -34,6 +37,16 @@ public class MixinPlayer {
 		Boolean moddedValue = ClientCore.isWearing((Player)(Object)this, part);
 		if(moddedValue != null)
 			info.setReturnValue(moddedValue);
+	}
+
+	@Inject(at = @At("HEAD"), method = "tick")
+	public void onTickHead(CallbackInfo info){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPlayerTick(true, (Player)(Object)this);
+	}
+
+	@Inject(at = @At("TAIL"), method = "tick")
+	public void onTickTail(CallbackInfo info){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPlayerTick(false, (Player)(Object)this);
 	}
 
 }

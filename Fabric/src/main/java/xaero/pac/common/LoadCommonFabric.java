@@ -18,20 +18,23 @@
 
 package xaero.pac.common;
 
-import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
+import xaero.pac.common.event.CommonEventsFabric;
 
 public class LoadCommonFabric<L extends LoadCommon> {
 
-	protected final OpenPartiesAndClaims modMain;
+	protected final OpenPartiesAndClaimsFabric modMain;
 	protected final L loader;
 
-	public LoadCommonFabric(OpenPartiesAndClaims modMain, L loader) {
+	public LoadCommonFabric(OpenPartiesAndClaimsFabric modMain, L loader) {
 		this.modMain = modMain;
 		this.loader = loader;
+		modMain.setCommonEvents(new CommonEventsFabric(modMain));
 	}
 
 	public void loadCommon() {
 		loader.loadCommon();
+		modMain.getCommonEvents().registerFabricAPIEvents();
 	}
 
 }

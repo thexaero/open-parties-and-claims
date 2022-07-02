@@ -18,34 +18,27 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ChorusFruitItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.server.IOpenPACMinecraftServer;
-import xaero.pac.common.server.IServerDataAPI;
 
-@Mixin(MinecraftServer.class)
-public class MixinMinecraftServer implements IOpenPACMinecraftServer {
+@Mixin(ChorusFruitItem.class)
+public class MixinChorusFruitItem {
 
-	private IServerDataAPI<?, ?> xaero_OPAC_ServerData;
-
-	@Override
-	public void setXaero_OPAC_ServerData(IServerDataAPI<?, ?> data) {
-		xaero_OPAC_ServerData = data;
-	}
-
-	@Override
-	public IServerDataAPI<?, ?> getXaero_OPAC_ServerData() {
-		return xaero_OPAC_ServerData;
-	}
-
-	@Inject(at = @At("HEAD"), method = "loadLevel")
-	public void onLoadLevel(CallbackInfo callbackInfo) throws Throwable {
-		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getCommonEvents().onServerAboutToStart((MinecraftServer)(Object)this);
+	@Inject(method = "finishUsingItem", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z"), cancellable = true)
+	public void onFinishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<ItemStack> callbackInfoReturnable, ItemStack itemStack2, double d, double e, double f, int i, double g, double h, double j){
+		Vec3 target = new Vec3(g, h, j);
+		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onChorusFruit(livingEntity, target))
+			callbackInfoReturnable.setReturnValue(itemStack2);
 	}
 
 }
