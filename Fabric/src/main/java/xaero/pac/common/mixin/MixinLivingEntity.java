@@ -76,13 +76,4 @@ public class MixinLivingEntity implements ILivingEntity {
 			info.setReturnValue(false);
 	}
 
-	@Inject(at = @At("HEAD"), method = "randomTeleport", cancellable = true)
-	public void onRandomTeleport(double x, double y, double z, boolean broadcast, CallbackInfoReturnable<Boolean> info){
-		if((Object)this instanceof ServerPlayer player) {
-			Vec3 target = new Vec3(x, y, z);
-			if (((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onChorusFruit(player, target))
-				info.setReturnValue(false);
-		}
-	}
-
 }

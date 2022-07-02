@@ -5,6 +5,7 @@
     "compatibilityLevel": "JAVA_17",
     "mixins": [
         "MixinBreakDoorGoal",
+        "MixinChorusFruitItem",
         "MixinCreeper",
         "MixinCropBlock",
         "MixinDoorInteractGoal",
