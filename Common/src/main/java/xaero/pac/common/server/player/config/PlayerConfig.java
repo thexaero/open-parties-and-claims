@@ -53,7 +53,7 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_PARTY;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOB_GRIEFING;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS;
@@ -144,8 +144,8 @@ public class PlayerConfig
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the mob griefing option.")
 				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.blocksFromMobGriefing")
+		PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+					.setId("playerConfig.claims.protection.fromMobGriefing")
 					.setDefaultValue(true)
 					.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the protected chunks are also partially protected. Should work for vanilla mob behavior, unless another mod breaks it. Modded mob behavior is unlikely to be included. Feel free to set the vanilla game rule for mob griefing to be safe. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
 					.build(allOptions).applyToForgeSpec(builder);
