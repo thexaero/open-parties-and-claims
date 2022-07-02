@@ -18,7 +18,6 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.monster.Silverfish;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,8 +32,9 @@ public class MixinSilverfishWakeUpFriendsGoal {
 	@Shadow
 	private Silverfish silverfish;
 
-	@Inject(method = "tick", at = @At("HEAD"))
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/GameRules;getBoolean(Lnet/minecraft/world/level/GameRules$Key;)Z"))
 	public void onMobGriefGameRuleMethod(CallbackInfo callbackInfo){
+		//called before getBoolean in this case because the game rule is checked multiple times
 		ServerCoreFabric.tryToSetMobGriefingEntity(silverfish);
 	}
 
