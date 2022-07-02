@@ -19,6 +19,7 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.FireBlock;
@@ -35,12 +36,12 @@ import java.util.Random;
 public class MixinFireBlock {
 
 	@Inject(method = "checkBurnOut", at = @At("HEAD"), cancellable = true)
-	public void onCheckBurnOut(Level level, BlockPos blockPos, int i, Random random, int j, CallbackInfo info){
+	public void onCheckBurnOut(Level level, BlockPos blockPos, int i, RandomSource random, int j, CallbackInfo info){
 		if(!ServerCore.canSpreadFire(level, blockPos))
 			info.cancel();
 	}
 
-	@Inject(method = "getFireOdds", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "getIgniteOdds", at = @At("HEAD"), cancellable = true)
 	public void onGetFireOdds(LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Integer> info){
 		if(!ServerCore.canSpreadFire(levelReader, blockPos))
 			info.setReturnValue(0);

@@ -223,7 +223,7 @@ function initializeCoreMod() {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.block.FireBlock',
                 'methodName': 'tryCatchFire',
-                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;ILjava/util/Random;ILnet/minecraft/core/Direction;)V'
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;ILnet/minecraft/util/RandomSource;ILnet/minecraft/core/Direction;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
@@ -242,7 +242,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.block.FireBlock',
-                'methodName': 'm_53441_',
+                'methodName': 'm_221156_',
                 'methodDesc' : '(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)I'
             },
             'transformer' : function(methodNode){
