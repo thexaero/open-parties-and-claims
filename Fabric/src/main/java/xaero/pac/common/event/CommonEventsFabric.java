@@ -22,6 +22,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -31,6 +32,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,17 +50,28 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import xaero.pac.OpenPartiesAndClaims;
 
 import java.util.List;
 
 public class CommonEventsFabric extends CommonEvents {
 
+	private final ResourceLocation PROTECTION_PHASE = new ResourceLocation(OpenPartiesAndClaims.MOD_ID, "protection");
+
 	public CommonEventsFabric(OpenPartiesAndClaims modMain) {
 		super(modMain);
 	}
 
 	public void registerFabricAPIEvents(){
+		//trying to handle these events before other mods
+		AttackBlockCallback.EVENT.addPhaseOrdering(PROTECTION_PHASE, Event.DEFAULT_PHASE);
+		PlayerBlockBreakEvents.BEFORE.addPhaseOrdering(PROTECTION_PHASE, Event.DEFAULT_PHASE);
+		UseBlockCallback.EVENT.addPhaseOrdering(PROTECTION_PHASE, Event.DEFAULT_PHASE);
+		UseItemCallback.EVENT.addPhaseOrdering(PROTECTION_PHASE, Event.DEFAULT_PHASE);
+		UseEntityCallback.EVENT.addPhaseOrdering(PROTECTION_PHASE, Event.DEFAULT_PHASE);
+		AttackEntityCallback.EVENT.addPhaseOrdering(PROTECTION_PHASE, Event.DEFAULT_PHASE);
+
 		ServerPlayerEvents.AFTER_RESPAWN.register(this::onPlayerRespawn);
 		ServerPlayerEvents.COPY_FROM.register(this::onPlayerClone);
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarting);
@@ -67,11 +80,11 @@ public class CommonEventsFabric extends CommonEvents {
 		ServerTickEvents.START_SERVER_TICK.register(server -> onServerTick(true));
 		ServerTickEvents.END_SERVER_TICK.register(server -> onServerTick(false));
 		CommandRegistrationCallback.EVENT.register(this::onRegisterCommands);
-		AttackBlockCallback.EVENT.register(this::onLeftClickBlock);
-		PlayerBlockBreakEvents.BEFORE.register(this::onDestroyBlock);
-		UseBlockCallback.EVENT.register(this::onRightClickBlock);
-		UseItemCallback.EVENT.register(this::onItemRightClick);
-		UseEntityCallback.EVENT.register(this::onEntityInteract);
+		AttackBlockCallback.EVENT.register(PROTECTION_PHASE, this::onLeftClickBlock);
+		PlayerBlockBreakEvents.BEFORE.register(PROTECTION_PHASE, this::onDestroyBlock);
+		UseBlockCallback.EVENT.register(PROTECTION_PHASE, this::onRightClickBlock);
+		UseItemCallback.EVENT.register(PROTECTION_PHASE, this::onItemRightClick);
+		AttackEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityAttack);
 		ServerEntityEvents.ENTITY_LOAD.register(this::onEntityJoinWorld);
 	}
 
@@ -159,10 +172,14 @@ public class CommonEventsFabric extends CommonEvents {
 		return super.onLivingHurt(source, target);
 	}
 
-	private InteractionResult onEntityInteract(Player player, Level level, InteractionHand interactionHand, Entity entity, EntityHitResult entityHitResult) {
-		if(super.onEntityInteract(player, entity, interactionHand))
+	private InteractionResult onEntityAttack(Player player, Level level, InteractionHand interactionHand, Entity entity, @Nullable EntityHitResult entityHitResult) {
+		if(super.onEntityAttack(player, entity))
 			return InteractionResult.FAIL;
 		return InteractionResult.PASS;
+	}
+
+	public boolean onEntityInteract(Player player, Entity entity, InteractionHand interactionHand) {
+		return super.onEntityInteract(player, entity, interactionHand);
 	}
 
 	public void onExplosionDetonate(Explosion explosion, List<Entity> entities, Level level) {

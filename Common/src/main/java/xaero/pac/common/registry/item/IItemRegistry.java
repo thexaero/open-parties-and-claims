@@ -16,26 +16,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.client;
+package xaero.pac.common.registry.item;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsForge;
-import xaero.pac.client.event.ClientEventsForge;
-import xaero.pac.common.LoadCommonForge;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
-public class LoadClientForge extends LoadCommonForge<LoadClient> {
-	
-	public LoadClientForge(OpenPartiesAndClaimsForge modMain) {
-		super(modMain, new LoadClient(modMain));
-	}
+public interface IItemRegistry {
 
-	@SubscribeEvent
-	public void loadClient(final FMLClientSetupEvent event) {
-		loader.loadClient();
-		MinecraftForge.EVENT_BUS.register(ClientEventsForge.Builder.begin().setClientData(modMain.getClientDataInternal()).build());
-	}
+	public Item getValue(ResourceLocation id);
 
 }
