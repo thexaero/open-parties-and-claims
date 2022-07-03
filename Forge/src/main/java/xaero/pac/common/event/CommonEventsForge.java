@@ -18,6 +18,7 @@
 
 package xaero.pac.common.event;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -39,6 +40,7 @@ import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import xaero.pac.OpenPartiesAndClaims;
@@ -47,6 +49,18 @@ public class CommonEventsForge extends CommonEvents {
 
 	public CommonEventsForge(OpenPartiesAndClaims modMain) {
 		super(modMain);
+	}
+
+	public void registerPriorityEvents(){
+		//trying to handle these events before other mods
+		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.LeftClickBlock>addListener(EventPriority.HIGHEST, this::onLeftClickBlock);
+		MinecraftForge.EVENT_BUS.<BlockEvent.BreakEvent>addListener(EventPriority.HIGHEST, this::onDestroyBlock);
+		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.RightClickBlock>addListener(EventPriority.HIGHEST, this::onRightClickBlock);
+		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.RightClickItem>addListener(EventPriority.HIGHEST, this::onItemRightClick);
+		MinecraftForge.EVENT_BUS.<LivingAttackEvent>addListener(EventPriority.HIGHEST, this::onLivingHurt);
+		MinecraftForge.EVENT_BUS.<AttackEntityEvent>addListener(EventPriority.HIGHEST, this::onEntityAttack);
+		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.EntityInteract>addListener(EventPriority.HIGHEST, this::onEntityInteract);
+		MinecraftForge.EVENT_BUS.<EntityTeleportEvent.ChorusFruit>addListener(EventPriority.HIGHEST, this::onChorusFruit);
 	}
 
 	@SubscribeEvent
@@ -103,26 +117,22 @@ public class CommonEventsForge extends CommonEvents {
 	public void onRegisterCommands(RegisterCommandsEvent event) {
 		super.onRegisterCommands(event.getDispatcher(), event.getEnvironment());
 	}
-	
-	@SubscribeEvent
+
 	public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
 		if(super.onLeftClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer()))
 			event.setCanceled(true);
 	}
-	
-	@SubscribeEvent
+
 	public void onDestroyBlock(BlockEvent.BreakEvent event) {
 		if(super.onDestroyBlock(event.getWorld(), event.getPos(), event.getPlayer()))
 			event.setCanceled(true);
 	}
-	
-	@SubscribeEvent
+
 	public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
 		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec()))
 			event.setCanceled(true);
 	}
-	
-	@SubscribeEvent
+
 	public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
 		if(super.onItemRightClick(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getItemStack()))
 			event.setCanceled(true);
@@ -133,20 +143,17 @@ public class CommonEventsForge extends CommonEvents {
 		if(super.onMobGrief(event.getEntity()))
 			event.setResult(Result.DENY);
 	}
-	
-	@SubscribeEvent
+
 	public void onLivingHurt(LivingAttackEvent event) {
 		if(super.onLivingHurt(event.getSource(), event.getEntity()))
 			event.setCanceled(true);
 	}
 
-	@SubscribeEvent
 	public void onEntityAttack(AttackEntityEvent event) {
 		if(super.onEntityAttack(event.getPlayer(), event.getTarget()))
 			event.setCanceled(true);
 	}
-	
-	@SubscribeEvent
+
 	public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
 		if(super.onEntityInteract(event.getEntity(), event.getTarget(), event.getHand()))
 			event.setCanceled(true);
@@ -156,8 +163,7 @@ public class CommonEventsForge extends CommonEvents {
 	public void onExplosionDetonate(ExplosionEvent.Detonate event) {
 		super.onExplosionDetonate(event.getWorld(), event.getExplosion(), event.getAffectedEntities(), event.getAffectedBlocks());
 	}
-	
-	@SubscribeEvent
+
 	public void onChorusFruit(EntityTeleportEvent.ChorusFruit event){
 		if(super.onChorusFruit(event.getEntity(), event.getTarget()))
 			event.setCanceled(true);

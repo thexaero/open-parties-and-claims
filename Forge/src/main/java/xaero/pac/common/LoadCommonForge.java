@@ -25,23 +25,27 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkConstants;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.event.CommonEventsForge;
 
 public class LoadCommonForge<L extends LoadCommon> {
 	
-	protected final OpenPartiesAndClaims modMain;
+	protected final OpenPartiesAndClaimsForge modMain;
 	protected final L loader;
 	
-	public LoadCommonForge(OpenPartiesAndClaims modMain, L loader) {
+	public LoadCommonForge(OpenPartiesAndClaimsForge modMain, L loader) {
 		this.modMain = modMain;
 		this.loader = loader;
-		MinecraftForge.EVENT_BUS.register(new CommonEventsForge(modMain));
+		CommonEventsForge commonEventsForge = new CommonEventsForge(modMain);
+		MinecraftForge.EVENT_BUS.register(commonEventsForge);
+		modMain.setCommonEventsForge(commonEventsForge);
 	}
 	
 	@SubscribeEvent
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		loader.loadCommon();
 
+		modMain.getCommonEventsForge().registerPriorityEvents();
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
 				() -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY,
 						(remoteVersion, isFromServer) -> isFromServer));

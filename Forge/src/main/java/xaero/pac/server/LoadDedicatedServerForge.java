@@ -22,12 +22,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.LoadCommonForge;
 import xaero.pac.server.event.DedicatedServerEventsForge;
 
 public class LoadDedicatedServerForge extends LoadCommonForge<LoadDedicatedServer> {
 
-	public LoadDedicatedServerForge(OpenPartiesAndClaims modMain) {
+	public LoadDedicatedServerForge(OpenPartiesAndClaimsForge modMain) {
 		super(modMain, new LoadDedicatedServer(modMain));
 		MinecraftForge.EVENT_BUS.register(new DedicatedServerEventsForge());
 	}
