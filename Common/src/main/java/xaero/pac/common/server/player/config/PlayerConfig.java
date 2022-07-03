@@ -63,7 +63,10 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
-	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_INTERACTIONS; 
+	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_INTERACTIONS;
+	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_BREAKING;
+	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_ENTITY_INTERACTIONS;
+	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_ENTITY_KILLING;
 
 	public static final PlayerConfigOptionSpec<Boolean> FORCELOAD;
 	public static final PlayerConfigOptionSpec<Boolean> OFFLINE_FORCELOAD;
@@ -189,9 +192,24 @@ public class PlayerConfig
 		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockInteractions")
 				.setDefaultValue(true)
-				.setComment("When enabled, some block interactions are allowed, which are configured by the server. It is meant for things like levers, doors etc.")
+				.setComment("When enabled, in addition to some forced exceptions across the server, more block interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like levers, doors etc. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
-		
+		ALLOW_SOME_BLOCK_BREAKING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.allowSomeBlockBreaking")
+				.setDefaultValue(true)
+				.setComment("When enabled, in addition to some forced exceptions across the server, more blocks are allowed to be broken, which are also configured by the server. You can use the non-ally mode to test it out.")
+				.build(allOptions).applyToForgeSpec(builder);
+		ALLOW_SOME_ENTITY_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.allowSomeEntityInteractions")
+				.setDefaultValue(true)
+				.setComment("When enabled, in addition to some forced exceptions across the server, more entity interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like villager trading, minecarts, boats etc. You can use the non-ally mode to test it out.")
+				.build(allOptions).applyToForgeSpec(builder);
+		ALLOW_SOME_ENTITY_KILLING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.allowSomeEntityKilling")
+				.setDefaultValue(true)
+				.setComment("When enabled, in addition to some forced exceptions across the server, more entities are allowed to be attacked and killed, which are also configured by the server. You can use the non-ally mode to test it out.")
+				.build(allOptions).applyToForgeSpec(builder);
+
 		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 					.setId("playerConfig.claims.forceload.enabled")
 					.setDefaultValue(true)

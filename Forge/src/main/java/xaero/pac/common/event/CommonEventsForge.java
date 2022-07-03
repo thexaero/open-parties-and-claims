@@ -18,7 +18,6 @@
 
 package xaero.pac.common.event;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -27,6 +26,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -137,6 +137,12 @@ public class CommonEventsForge extends CommonEvents {
 	@SubscribeEvent
 	public void onLivingHurt(LivingAttackEvent event) {
 		if(super.onLivingHurt(event.getSource(), event.getEntity()))
+			event.setCanceled(true);
+	}
+
+	@SubscribeEvent
+	public void onEntityAttack(AttackEntityEvent event) {
+		if(super.onEntityAttack(event.getPlayer(), event.getTarget()))
 			event.setCanceled(true);
 	}
 	

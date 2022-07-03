@@ -39,6 +39,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.EnumValue<ConfigListType> hostileChunkProtectedEntityListType;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityProtectionExceptionList;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
@@ -216,13 +217,19 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_hostile_protected_entities")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("hostileChunkProtectedEntityList"), ArrayList::new, s -> s instanceof String);
-		
+
 		blockProtectionExceptionList = builder
-			.comment("Blocks to exclude from chunk protection on block interaction with an empty hand. Player config determines whether the list is actually used. For example [\"minecraft:lever\", \"minecraft:stone_button\"]")
-			.translation("gui.xaero_pac_config_block_protection_exception")
+			.comment("Blocks to exclude from chunk protection. Just a block ID in the list, e.g. \"minecraft:level\" allows block interaction with an empty hand if a claim owner's config agrees. A block ID with a prefix \"force$\" allows empty hand interactions without asking the claim owner's config. Prefix \"break$\" allows breaking the block, if the claim owner's config agrees. Prefix \"force_break$\" allows breaking across the server. Add the same block multiple times to use multiple prefixes. For example [\"minecraft:lever\", \"force$minecraft:stone_button\", \"force_break$minecraft:stone_button\"]")
+			.translation("gui.xaero_pac_config_block_protection_exception_empty_hand")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("blockProtectionExceptionList"), () -> Lists.newArrayList("minecraft:lever", "minecraft:stone_button", "minecraft:polished_blackstone_button", "minecraft:oak_button", "minecraft:spruce_button", "minecraft:birch_button", "minecraft:jungle_button", "minecraft:acacia_button", "minecraft:dark_oak_button", "minecraft:crimson_button", "minecraft:warped_button"), s -> s instanceof String);
-		
+
+		entityProtectionExceptionList = builder
+			.comment("Entities to exclude from chunk protection. Just an entity ID in the list, e.g. \"minecraft:horse\" allows entity interaction with an empty hand if a claim owner's config agrees. An entity ID with a prefix \"force$\" allows empty hand interactions without asking the claim owner's config. Prefix \"break$\" allows killing the entity, if the claim owner's config agrees. Prefix \"force_break$\" allows killing the entity across the server. Add the same entity multiple times to use multiple prefixes. For example [\"minecraft:villager\", \"break$minecraft:villager\"]")
+			.translation("gui.xaero_pac_config_entity_protection_exception")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), () -> Lists.newArrayList("minecraft:villager", "force$minecraft:minecart", "force$minecraft:boat"), s -> s instanceof String);
+
 		builder.pop();
 
 		builder.pop();
