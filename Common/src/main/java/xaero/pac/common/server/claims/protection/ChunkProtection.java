@@ -272,7 +272,8 @@ public class ChunkProtection
 		if(itemStack.getItem().getFoodProperties() == null &&
 				!(itemStack.getItem() instanceof PotionItem) &&
 				!(itemStack.getItem() instanceof ProjectileWeaponItem) &&
-				!(itemStack.getItem() instanceof TridentItem)
+				!(itemStack.getItem() instanceof TridentItem) &&
+				!(itemStack.getItem() instanceof ShieldItem)
 		) {
 			for(int i = -1; i < 2; i++)
 				for(int j = -1; j < 2; j++) {//checking neighboring chunks too because of items that affect a high range
