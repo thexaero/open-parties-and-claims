@@ -25,12 +25,15 @@ import xaero.pac.common.entity.EntityAccessFabric;
 import xaero.pac.common.entity.IEntityAccess;
 import xaero.pac.common.registry.block.BlockRegistryFabric;
 import xaero.pac.common.registry.block.IBlockRegistry;
+import xaero.pac.common.registry.item.IItemRegistry;
+import xaero.pac.common.registry.item.ItemRegistryFabric;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessFabric;
 
 public class PlatformHelperFabric implements IPlatformHelper{
 
 	private final BlockRegistryFabric blockRegistryFabric = new BlockRegistryFabric();
+	private final ItemRegistryFabric itemRegistryFabric = new ItemRegistryFabric();
 	private final KeyBindingHelperFabric keyBindingHelperFabric = new KeyBindingHelperFabric();
 	private final EntityAccessFabric entityAccessFabric = new EntityAccessFabric();
 	private final ServerChunkCacheAccessFabric serverChunkCacheAccessFabric = new ServerChunkCacheAccessFabric();
@@ -53,6 +56,11 @@ public class PlatformHelperFabric implements IPlatformHelper{
 	@Override
 	public IBlockRegistry getBlockRegistry() {
 		return blockRegistryFabric;
+	}
+
+	@Override
+	public IItemRegistry getItemRegistry() {
+		return itemRegistryFabric;
 	}
 
 	@Override

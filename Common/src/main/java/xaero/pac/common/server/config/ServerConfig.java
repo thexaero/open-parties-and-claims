@@ -40,6 +40,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityProtectionExceptionList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
@@ -204,7 +205,7 @@ public class ServerConfig {
 			.comment("Friendly entities to include/exclude in chunk protection, depending on the list type. For example [\"minecraft:cow\", \"minecraft:rabbit\"]. By default the list is empty with the type set to ALL_BUT, which means that all friendly entities are included.")
 			.translation("gui.xaero_pac_config_friendly_protected_entities")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("friendlyChunkProtectedEntityList"), ArrayList::new, s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("friendlyChunkProtectedEntityList"), () -> Lists.newArrayList("minecraft:boat"), s -> s instanceof String);
 
 		hostileChunkProtectedEntityListType = builder
 			.comment("The type of the list defined in \"hostileChunkProtectedEntityList\". ONLY - include only the listed entities. ALL_BUT - include all but the listed entities.")
@@ -228,7 +229,13 @@ public class ServerConfig {
 			.comment("Entities to exclude from chunk protection. Just an entity ID in the list, e.g. \"minecraft:horse\" allows entity interaction with an empty hand if a claim owner's config agrees. An entity ID with a prefix \"force$\" allows empty hand interactions without asking the claim owner's config. Prefix \"break$\" allows killing the entity, if the claim owner's config agrees. Prefix \"force_break$\" allows killing the entity across the server. Add the same entity multiple times to use multiple prefixes. For example [\"minecraft:villager\", \"break$minecraft:villager\"]")
 			.translation("gui.xaero_pac_config_entity_protection_exception")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), () -> Lists.newArrayList("minecraft:villager", "force$minecraft:minecart", "force$minecraft:boat"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), () -> Lists.newArrayList("minecraft:villager", "force$minecraft:minecart"), s -> s instanceof String);
+
+		additionalBannedItemsList = builder
+				.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. For example [\"minecraft:trident\", \"minecraft:shield\"]")
+				.translation("gui.xaero_pac_config_banned_item_list")
+				.worldRestart()
+				.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList(), s -> s instanceof String);
 
 		builder.pop();
 

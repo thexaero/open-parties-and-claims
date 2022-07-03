@@ -97,6 +97,7 @@ public class ChunkProtection
 	private final Set<EntityType<?>> optionalKillExceptionEntities;
 	private final Set<EntityType<?>> forcedEmptyHandExceptionEntities;
 	private final Set<EntityType<?>> forcedKillExceptionEntities;
+	private final Set<Item> additionalBannedItems;
 	
 	public ChunkProtection(CM claimsManager, IPartyManager<P> partyManager, ChunkProtectionEntityHelper entityHelper) {
 		this.claimsManager = claimsManager;
@@ -112,6 +113,7 @@ public class ChunkProtection
 		optionalKillExceptionEntities = new HashSet<>();
 		forcedEmptyHandExceptionEntities = new HashSet<>();
 		forcedKillExceptionEntities = new HashSet<>();
+		additionalBannedItems = new HashSet<>();
 		ServerConfig.CONFIG.friendlyChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(friendlyEntityList::add));
 		ServerConfig.CONFIG.hostileChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(hostileEntityList::add));
 
@@ -135,6 +137,11 @@ public class ChunkProtection
 						forcedKillExceptionEntities,
 						entityGetter
 				));
+		ServerConfig.CONFIG.additionalBannedItemsList.get().forEach(s -> {
+			Item item = Services.PLATFORM.getItemRegistry().getValue(new ResourceLocation(s));
+			if(item != null)
+				additionalBannedItems.add(item);
+		});
 	}
 
 	private <T> void onExceptionListElement(String element, Set<T> optionalEmptyHandException, Set<T> optionalBreakException, Set<T> forcedEmptyHandException, Set<T> forcedBreakException, Function<ResourceLocation, T> objectGetter){
@@ -269,11 +276,16 @@ public class ChunkProtection
 		boolean shouldProtect = false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		ChunkPos chunkPos = new ChunkPos(pos);
-		if(itemStack.getItem().getFoodProperties() == null &&
-				!(itemStack.getItem() instanceof PotionItem) &&
-				!(itemStack.getItem() instanceof ProjectileWeaponItem) &&
-				!(itemStack.getItem() instanceof TridentItem) &&
-				!(itemStack.getItem() instanceof ShieldItem)
+		Item item = itemStack.getItem();
+		if(item.getFoodProperties() == null &&
+				!(item instanceof PotionItem) &&
+				!(item instanceof ProjectileWeaponItem) &&
+				!(item instanceof TridentItem) &&
+				!(item instanceof ShieldItem) &&
+				!(item instanceof SwordItem) &&
+				!(item instanceof BoatItem)
+				||
+				additionalBannedItems.contains(item)
 		) {
 			for(int i = -1; i < 2; i++)
 				for(int j = -1; j < 2; j++) {//checking neighboring chunks too because of items that affect a high range
