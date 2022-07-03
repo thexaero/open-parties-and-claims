@@ -83,7 +83,6 @@ public class CommonEventsFabric extends CommonEvents {
 		PlayerBlockBreakEvents.BEFORE.register(PROTECTION_PHASE, this::onDestroyBlock);
 		UseBlockCallback.EVENT.register(PROTECTION_PHASE, this::onRightClickBlock);
 		UseItemCallback.EVENT.register(PROTECTION_PHASE, this::onItemRightClick);
-		UseEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityInteract);
 		AttackEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityAttack);
 		ServerEntityEvents.ENTITY_LOAD.register(this::onEntityJoinWorld);
 	}
@@ -177,11 +176,8 @@ public class CommonEventsFabric extends CommonEvents {
 		return InteractionResult.PASS;
 	}
 
-	private InteractionResult onEntityInteract(Player player, Level level, InteractionHand interactionHand, Entity entity, EntityHitResult entityHitResult) {
-		if(super.onEntityInteract(player, entity, interactionHand)) {
-			return InteractionResult.FAIL;
-		}
-		return InteractionResult.PASS;
+	public boolean onEntityInteract(Player player, Entity entity, InteractionHand interactionHand) {
+		return super.onEntityInteract(player, entity, interactionHand);
 	}
 
 	public void onExplosionDetonate(Explosion explosion, List<Entity> entities, Level level) {

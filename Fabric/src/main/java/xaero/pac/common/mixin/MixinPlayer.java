@@ -18,6 +18,9 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,6 +50,12 @@ public class MixinPlayer {
 	@Inject(at = @At("TAIL"), method = "tick")
 	public void onTickTail(CallbackInfo info){
 		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPlayerTick(false, (Player)(Object)this);
+	}
+
+	@Inject(at = @At("HEAD"), method = "interactOn", cancellable = true)
+	public void onInteractOn(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> info){
+		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onEntityInteract((Player)(Object)this, entity, hand))
+			info.setReturnValue(InteractionResult.FAIL);
 	}
 
 }
