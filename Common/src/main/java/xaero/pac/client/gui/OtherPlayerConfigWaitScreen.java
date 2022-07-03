@@ -68,7 +68,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, message, width / 2, height / 2, -1);
+		drawCenteredString(poseStack, font, message, width / 2, height / 6 + 64, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
 	}
 	
