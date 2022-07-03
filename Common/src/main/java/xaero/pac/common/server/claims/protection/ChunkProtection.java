@@ -291,9 +291,11 @@ public class ChunkProtection
 			for(int j = -1; j < 2; j++) {
 				ChunkPos chunkPos = new ChunkPos(entity.chunkPosition().x + i, entity.chunkPosition().z + j);
 				IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
-				IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-				if(config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING) && !hasChunkAccess(config, entity))
-					return true;
+				if(i == 0 && j == 0 || claim != null) {//wilderness neighbors don't have to be protected this much
+					IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+					if (config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING) && !hasChunkAccess(config, entity))
+						return true;
+				}
 			}
 		return false;
 	}
@@ -393,10 +395,12 @@ public class ChunkProtection
 			for(int j = -1; j < 2; j++) {
 				ChunkPos chunkPos = new ChunkPos(bolt.chunkPosition().x + i, bolt.chunkPosition().z + j);
 				IPlayerChunkClaim claim = claimsManager.get(bolt.getLevel().dimension().location(), chunkPos);
-				IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-				if(config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING) && !hasChunkAccess(config, bolt.getCause())) {
-					bolt.setVisualOnly(true);
-					break;
+				if(i == 0 && j == 0 || claim != null) {//wilderness neighbors don't have to be protected this much
+					IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+					if (config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING) && !hasChunkAccess(config, bolt.getCause())) {
+						bolt.setVisualOnly(true);
+						break;
+					}
 				}
 			}
 	}
