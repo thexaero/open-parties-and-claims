@@ -98,66 +98,21 @@ public class ChunkProtection
 	private final Set<EntityType<?>> forcedKillExceptionEntities;
 	private final Set<Item> additionalBannedItems;
 	
-	public ChunkProtection(CM claimsManager, IPartyManager<P> partyManager, ChunkProtectionEntityHelper entityHelper) {
+	private ChunkProtection(CM claimsManager, IPartyManager<P> partyManager, ChunkProtectionEntityHelper entityHelper, Set<EntityType<?>> friendlyEntityList, Set<EntityType<?>> hostileEntityList, Set<Block> optionalEmptyHandExceptionBlocks, Set<Block> optionalBreakExceptionBlocks, Set<Block> forcedEmptyHandExceptionBlocks, Set<Block> forcedBreakExceptionBlocks, Set<EntityType<?>> optionalEmptyHandExceptionEntities, Set<EntityType<?>> optionalKillExceptionEntities, Set<EntityType<?>> forcedEmptyHandExceptionEntities, Set<EntityType<?>> forcedKillExceptionEntities, Set<Item> additionalBannedItems) {
 		this.claimsManager = claimsManager;
 		this.partyManager = partyManager;
 		this.entityHelper = entityHelper;
-		friendlyEntityList = new HashSet<>();
-		hostileEntityList = new HashSet<>();
-		optionalEmptyHandExceptionBlocks = new HashSet<>();
-		optionalBreakExceptionBlocks = new HashSet<>();
-		forcedEmptyHandExceptionBlocks = new HashSet<>();
-		forcedBreakExceptionBlocks = new HashSet<>();
-		optionalEmptyHandExceptionEntities = new HashSet<>();
-		optionalKillExceptionEntities = new HashSet<>();
-		forcedEmptyHandExceptionEntities = new HashSet<>();
-		forcedKillExceptionEntities = new HashSet<>();
-		additionalBannedItems = new HashSet<>();
-		ServerConfig.CONFIG.friendlyChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(friendlyEntityList::add));
-		ServerConfig.CONFIG.hostileChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(hostileEntityList::add));
-
-		Function<ResourceLocation, Block> blockGetter = Services.PLATFORM.getBlockRegistry()::getValue;
-		Function<ResourceLocation, EntityType<?>> entityGetter = rl -> EntityType.byString(rl.toString()).orElse(null);
-		ServerConfig.CONFIG.blockProtectionExceptionList.get()
-				.forEach(s -> onExceptionListElement(
-						s,
-						optionalEmptyHandExceptionBlocks,
-						optionalBreakExceptionBlocks,
-						forcedEmptyHandExceptionBlocks,
-						forcedBreakExceptionBlocks,
-						blockGetter
-				));
-		ServerConfig.CONFIG.entityProtectionExceptionList.get()
-				.forEach(s -> onExceptionListElement(
-						s,
-						optionalEmptyHandExceptionEntities,
-						optionalKillExceptionEntities,
-						forcedEmptyHandExceptionEntities,
-						forcedKillExceptionEntities,
-						entityGetter
-				));
-		ServerConfig.CONFIG.additionalBannedItemsList.get().forEach(s -> {
-			Item item = Services.PLATFORM.getItemRegistry().getValue(new ResourceLocation(s));
-			if(item != null)
-				additionalBannedItems.add(item);
-		});
-	}
-
-	private <T> void onExceptionListElement(String element, Set<T> optionalEmptyHandException, Set<T> optionalBreakException, Set<T> forcedEmptyHandException, Set<T> forcedBreakException, Function<ResourceLocation, T> objectGetter){
-		String id = element;
-		Set<T> destination = optionalEmptyHandException;
-		if(element.startsWith(BREAK_PREFIX) || element.startsWith(FORCE_PREFIX) || element.startsWith(FORCE_BREAK_PREFIX)){
-			if(element.startsWith(BREAK_PREFIX))
-				destination = optionalBreakException;
-			else if(element.startsWith(FORCE_PREFIX))
-				destination = forcedEmptyHandException;
-			else
-				destination = forcedBreakException;
-			id = element.substring(element.indexOf("$") + 1);
-		}
-		T object = objectGetter.apply(new ResourceLocation(id));
-		if(object != null)
-			destination.add(object);
+		this.friendlyEntityList = friendlyEntityList;
+		this.hostileEntityList = hostileEntityList;
+		this.optionalEmptyHandExceptionBlocks = optionalEmptyHandExceptionBlocks;
+		this.optionalBreakExceptionBlocks = optionalBreakExceptionBlocks;
+		this.forcedEmptyHandExceptionBlocks = forcedEmptyHandExceptionBlocks;
+		this.forcedBreakExceptionBlocks = forcedBreakExceptionBlocks;
+		this.optionalEmptyHandExceptionEntities = optionalEmptyHandExceptionEntities;
+		this.optionalKillExceptionEntities = optionalKillExceptionEntities;
+		this.forcedEmptyHandExceptionEntities = forcedEmptyHandExceptionEntities;
+		this.forcedKillExceptionEntities = forcedKillExceptionEntities;
+		this.additionalBannedItems = additionalBannedItems;
 	}
 	
 	private boolean shouldProtectEntity(IPlayerConfig claimConfig, Entity e, Entity from) {
@@ -179,7 +134,7 @@ public class ChunkProtection
 				);
 	}
 	
-	private boolean isIncludedByLists(Entity e) {
+	private boolean isIncludedByProtectedEntityLists(Entity e) {
 		if(entityHelper.isHostile(e))
 			return ServerConfig.CONFIG.hostileChunkProtectedEntityListType.get() == ServerConfig.ConfigListType.ALL_BUT && !hostileEntityList.contains(e.getType()) ||
 					ServerConfig.CONFIG.hostileChunkProtectedEntityListType.get() == ServerConfig.ConfigListType.ONLY && hostileEntityList.contains(e.getType());
@@ -188,7 +143,7 @@ public class ChunkProtection
 	}
 	
 	private boolean isProtectable(Entity e) {
-		return !(e instanceof Player) && isIncludedByLists(e);
+		return !(e instanceof Player) && isIncludedByProtectedEntityLists(e);
 	}
 	
 	public boolean hasChunkAccess(IPlayerConfig claimConfig, Entity e) {
@@ -429,6 +384,110 @@ public class ChunkProtection
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
 		return claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD);
+	}
+
+	public static final class Builder
+	<
+		CM extends IServerClaimsManager<?, ?, ?>,
+		M extends IPartyMember,
+		I extends IPartyPlayerInfo,
+		P extends IServerParty<M, I>
+	> {
+
+		private CM claimsManager;
+		private IPartyManager<P> partyManager;
+
+		private Builder(){
+		}
+
+		public Builder<CM,M,I,P> setDefault(){
+			setClaimsManager(null);
+			setPartyManager(null);
+			return this;
+		}
+
+		public Builder<CM,M,I,P> setClaimsManager(CM claimsManager) {
+			this.claimsManager = claimsManager;
+			return this;
+		}
+
+		public Builder<CM,M,I,P> setPartyManager(IPartyManager<P> partyManager) {
+			this.partyManager = partyManager;
+			return this;
+		}
+
+		public ChunkProtection<CM,M,I,P> build(){
+			if(claimsManager == null || partyManager == null)
+				throw new IllegalStateException();
+			Set<EntityType<?>> friendlyEntityList = new HashSet<>();
+			Set<EntityType<?>> hostileEntityList = new HashSet<>();
+			Set<Block> optionalEmptyHandExceptionBlocks = new HashSet<>();
+			Set<Block> optionalBreakExceptionBlocks = new HashSet<>();
+			Set<Block> forcedEmptyHandExceptionBlocks = new HashSet<>();
+			Set<Block> forcedBreakExceptionBlocks = new HashSet<>();
+			Set<EntityType<?>> optionalEmptyHandExceptionEntities = new HashSet<>();
+			Set<EntityType<?>> optionalKillExceptionEntities = new HashSet<>();
+			Set<EntityType<?>> forcedEmptyHandExceptionEntities = new HashSet<>();
+			Set<EntityType<?>> forcedKillExceptionEntities = new HashSet<>();
+			Set<Item> additionalBannedItems = new HashSet<>();
+			ServerConfig.CONFIG.friendlyChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(friendlyEntityList::add));
+			ServerConfig.CONFIG.hostileChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(hostileEntityList::add));
+
+			Function<ResourceLocation, Block> blockGetter = Services.PLATFORM.getBlockRegistry()::getValue;
+			Function<ResourceLocation, EntityType<?>> entityGetter = rl -> EntityType.byString(rl.toString()).orElse(null);
+			ServerConfig.CONFIG.blockProtectionExceptionList.get()
+					.forEach(s -> onExceptionListElement(
+							s,
+							optionalEmptyHandExceptionBlocks,
+							optionalBreakExceptionBlocks,
+							forcedEmptyHandExceptionBlocks,
+							forcedBreakExceptionBlocks,
+							blockGetter
+					));
+			ServerConfig.CONFIG.entityProtectionExceptionList.get()
+					.forEach(s -> onExceptionListElement(
+							s,
+							optionalEmptyHandExceptionEntities,
+							optionalKillExceptionEntities,
+							forcedEmptyHandExceptionEntities,
+							forcedKillExceptionEntities,
+							entityGetter
+					));
+			ServerConfig.CONFIG.additionalBannedItemsList.get().forEach(s -> {
+				Item item = Services.PLATFORM.getItemRegistry().getValue(new ResourceLocation(s));
+				if(item != null)
+					additionalBannedItems.add(item);
+			});
+			return new ChunkProtection<>(claimsManager, partyManager, new ChunkProtectionEntityHelper(), friendlyEntityList, hostileEntityList, optionalEmptyHandExceptionBlocks, optionalBreakExceptionBlocks, forcedEmptyHandExceptionBlocks, forcedBreakExceptionBlocks, optionalEmptyHandExceptionEntities, optionalKillExceptionEntities, forcedEmptyHandExceptionEntities, forcedKillExceptionEntities, additionalBannedItems);
+		}
+
+		private <T> void onExceptionListElement(String element, Set<T> optionalEmptyHandException, Set<T> optionalBreakException, Set<T> forcedEmptyHandException, Set<T> forcedBreakException, Function<ResourceLocation, T> objectGetter){
+			String id = element;
+			Set<T> destination = optionalEmptyHandException;
+			if(element.startsWith(BREAK_PREFIX) || element.startsWith(FORCE_PREFIX) || element.startsWith(FORCE_BREAK_PREFIX)){
+				if(element.startsWith(BREAK_PREFIX))
+					destination = optionalBreakException;
+				else if(element.startsWith(FORCE_PREFIX))
+					destination = forcedEmptyHandException;
+				else
+					destination = forcedBreakException;
+				id = element.substring(element.indexOf("$") + 1);
+			}
+			T object = objectGetter.apply(new ResourceLocation(id));
+			if(object != null)
+				destination.add(object);
+		}
+
+		public static
+		<
+			CM extends IServerClaimsManager<?, ?, ?>,
+			M extends IPartyMember,
+			I extends IPartyPlayerInfo,
+			P extends IServerParty<M, I>
+		> Builder<CM,M,I,P> begin(){
+			return new Builder<CM,M,I,P>().setDefault();
+		}
+
 	}
 
 }
