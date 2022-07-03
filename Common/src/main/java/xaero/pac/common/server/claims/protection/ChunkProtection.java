@@ -274,9 +274,14 @@ public class ChunkProtection
 				!(itemStack.getItem() instanceof ProjectileWeaponItem) &&
 				!(itemStack.getItem() instanceof TridentItem)
 		) {
-			IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), chunkPos);
-			if(!hasChunkAccess(getClaimConfig(playerConfigs, claim), player))
-				shouldProtect = true;
+			for(int i = -1; i < 2; i++)
+				for(int j = -1; j < 2; j++) {//checking neighboring chunks too because of items that affect a high range
+					IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), new ChunkPos(chunkPos.x + i, chunkPos.z + j));
+					if ((i == 0 && j == 0 || claim != null) && !hasChunkAccess(getClaimConfig(playerConfigs, claim), player)) {//wilderness neighbors don't have to be protected this much
+						shouldProtect = true;
+						break;
+					}
+				}
 		}
 		if(shouldProtect)
 			player.sendMessage(hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
