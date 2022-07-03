@@ -170,7 +170,11 @@ public class ServerDataInitializer {
 			serverClaimsManager.setExpirationHandler(claimsExpirationHandler);
 			
 			ObjectManagerLiveSaver playerClaimInfoLiveSaver = new ObjectManagerLiveSaver(playerClaimInfoManagerIO, autosaveInterval, autosaveInterval / 3 * 2);
-			ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection = new ChunkProtection<>(serverClaimsManager, partyManager, new ChunkProtectionEntityHelper());
+			ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection = ChunkProtection.Builder
+					.<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty>begin()
+					.setClaimsManager(serverClaimsManager)
+					.setPartyManager(partyManager)
+					.build();
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
 			
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
