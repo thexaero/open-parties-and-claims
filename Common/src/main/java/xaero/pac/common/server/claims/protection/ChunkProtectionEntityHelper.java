@@ -47,18 +47,26 @@ public class ChunkProtectionEntityHelper {
 			foxTrustSecondaryField = Fox.class.getDeclaredField("f_28439_");
 		} catch (Exception e) {
 			try {
-				foxTrustSecondaryField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_0");
+				foxTrustSecondaryField = Fox.class.getDeclaredField("field_17951");
 			} catch (Exception e1) {
-				e1.printStackTrace();
+				try {
+					foxTrustSecondaryField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_0");
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
 			}
 		}
 		try {
-			foxTrustMainField = Fox.class.getDeclaredField("f_28440_");
+			foxTrustMainField = Fox.class.getDeclaredField("field_17952");
 		} catch (Exception e) {
 			try {
 				foxTrustMainField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_1");
 			} catch (Exception e1) {
-				e1.printStackTrace();
+				try {
+					foxTrustMainField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_1");
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
 			}
 		}
 		if(foxTrustSecondaryField != null)
