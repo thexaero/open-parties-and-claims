@@ -18,20 +18,32 @@
 
 package xaero.pac.common.server.world;
 
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.Ticket;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
+
+import java.util.Set;
 
 public class ServerChunkCacheAccessFabric implements IServerChunkCacheAccess {
 
 	@Override
 	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		//TODO implement
+		serverChunkCache.addRegionTicket(type, pos, distance, value);
+		if(forceTicks){
+			LongSet forceloadTickets = ((IServerLevel)serverChunkCache.getLevel()).getXaero_OPAC_forceloadTickets();
+			forceloadTickets.add(pos.toLong());
+		}
 	}
 
 	@Override
 	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		//TODO implement
+		serverChunkCache.removeRegionTicket(type, pos, distance, value);
+		if(forceTicks){
+			LongSet forceloadTickets = ((IServerLevel)serverChunkCache.getLevel()).getXaero_OPAC_forceloadTickets();
+			forceloadTickets.remove(pos.toLong());
+		}
 	}
 
 }
