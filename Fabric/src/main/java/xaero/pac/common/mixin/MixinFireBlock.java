@@ -41,7 +41,7 @@ public class MixinFireBlock {
 			info.cancel();
 	}
 
-	@Inject(method = "getIgniteOdds", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "getIgniteOdds(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)I", at = @At("HEAD"), cancellable = true)
 	public void onGetFireOdds(LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Integer> info){
 		if(!ServerCore.canSpreadFire(levelReader, blockPos))
 			info.setReturnValue(0);
