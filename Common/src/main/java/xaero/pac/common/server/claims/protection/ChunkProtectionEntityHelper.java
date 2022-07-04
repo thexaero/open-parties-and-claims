@@ -57,10 +57,10 @@ public class ChunkProtectionEntityHelper {
 			}
 		}
 		try {
-			foxTrustMainField = Fox.class.getDeclaredField("field_17952");
+			foxTrustMainField = Fox.class.getDeclaredField("f_28440_");
 		} catch (Exception e) {
 			try {
-				foxTrustMainField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_1");
+				foxTrustMainField = Fox.class.getDeclaredField("field_17952");
 			} catch (Exception e1) {
 				try {
 					foxTrustMainField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_1");
