@@ -35,7 +35,7 @@
       "fabric": "*",
       "minecraft": "1.19.x",
       "java": ">=17",
-      "forgeconfigapiport" : "*",
+      "forgeconfigapiport" : "*"
     },
     "suggests": {
       "another-mod": "*"
