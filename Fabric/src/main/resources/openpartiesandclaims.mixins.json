@@ -6,6 +6,7 @@
     "mixins": [
         "MixinBreakDoorGoal",
         "MixinChorusFruitItem",
+        "MixinChunkMap",
         "MixinCreeper",
         "MixinCropBlock",
         "MixinDoorInteractGoal",
@@ -35,6 +36,7 @@
         "MixinRandomStrollGoal",
         "MixinRavager",
         "MixinRemoveBlockGoal",
+        "MixinServerLevel",
         "MixinServerPlayer",
         "MixinSilverfishMergeWithStoneGoal",
         "MixinSilverfishWakeUpFriendsGoal",
