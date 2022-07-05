@@ -21,7 +21,6 @@
         "MixinFoxEatBerriesGoal",
         "MixinGameRules",
         "MixinHarvestFarmland",
-        "MixinIntegratedServer",
         "MixinLargeFireball",
         "MixinLivingEntity",
         "MixinMinecraftServer",
@@ -50,6 +49,7 @@
         "MixinAbstractClientPlayer",
         "MixinClientLevel",
         "MixinClientPacketListener",
+        "MixinIntegratedServer",
         "MixinMinecraft"
     ],
     "server": [

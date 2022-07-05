@@ -20,8 +20,9 @@ package xaero.pac.common.packet;
 
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -37,13 +38,19 @@ public class PacketHandlerFabric implements IPacketHandler {
 	private final Int2ObjectOpenHashMap<PacketType<?>> int2PacketType;
 	private final Map<Class<?>, PacketType<?>> class2PacketType;
 
+	private ClientPacketHandlerFabric clientPacketHandlerFabric;
+
 	private PacketHandlerFabric(Int2ObjectOpenHashMap<PacketType<?>> int2PacketType, Map<Class<?>, PacketType<?>> class2PacketType){
 		this.int2PacketType = int2PacketType;
 		this.class2PacketType = class2PacketType;
 	}
 
+	private void setClientPacketHandlerFabric(ClientPacketHandlerFabric clientPacketHandlerFabric) {
+		this.clientPacketHandlerFabric = clientPacketHandlerFabric;
+	}
+
 	public void registerOnClient(){
-		ClientPlayNetworking.registerGlobalReceiver(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, new ClientPacketReceiver(this));
+		clientPacketHandlerFabric.registerOnClient();
 	}
 
 	@Override
@@ -64,7 +71,7 @@ public class PacketHandlerFabric implements IPacketHandler {
 
 	@Override
 	public <T> void sendToServer(T packet) {
-		ClientPlayNetworking.send(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, getPacketBuffer(packet));
+		clientPacketHandlerFabric.sendToServer(packet);
 	}
 
 	@Override
@@ -72,7 +79,7 @@ public class PacketHandlerFabric implements IPacketHandler {
 		ServerPlayNetworking.send(player, OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, getPacketBuffer(packet));
 	}
 
-	private <T> FriendlyByteBuf getPacketBuffer(T packet){
+	<T> FriendlyByteBuf getPacketBuffer(T packet){
 		PacketType<?> packetTypePreCast = class2PacketType.get(packet.getClass());
 		if(packetTypePreCast == null)
 			throw new IllegalArgumentException("unregistered packet class!");
@@ -97,7 +104,10 @@ public class PacketHandlerFabric implements IPacketHandler {
 		}
 
 		public PacketHandlerFabric build(){
-			return new PacketHandlerFabric(new Int2ObjectOpenHashMap<>(), new HashMap<>());
+			PacketHandlerFabric result = new PacketHandlerFabric(new Int2ObjectOpenHashMap<>(), new HashMap<>());
+			if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+				result.setClientPacketHandlerFabric(new ClientPacketHandlerFabric(result));
+			return result;
 		}
 
 		public static Builder begin(){
