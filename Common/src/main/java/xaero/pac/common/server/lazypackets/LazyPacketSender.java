@@ -57,8 +57,9 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 	public void onServerTick() {
 		int bytesSent = 0;
 		int bytesToSend = bytesPerTickLimit;
-		while(bytesSent < bytesToSend || manager.getTotalBytesEnqueued() > capacity) {
-			PlayerLazyPacketManager playerPackets = manager.getNext(bytesPerConfirmation);
+		boolean overCapacity;
+		while((overCapacity = manager.getTotalBytesEnqueued() > capacity) || bytesSent < bytesToSend) {
+			PlayerLazyPacketManager playerPackets = manager.getNext(bytesPerConfirmation, overCapacity);
 			if(playerPackets == null)
 				break;
 			LazyPacket<?, ?> packet = playerPackets.getNext();
@@ -66,10 +67,12 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 			ServerPlayer player = server.getPlayerList().getPlayer(playerPackets.getPlayerId());
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 			
-			manager.onSend(packet);
+			manager.countSentBytes(packet);
 			playerPackets.onSend(packet);
-			if(playerPackets.needsConfirmation(bytesPerConfirmation))
+			if(!playerPackets.isWaitingForConfirmation() && playerPackets.needsConfirmation(bytesPerConfirmation)) {
+				playerPackets.startWaitingForConfirmation();
 				OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, CONFIRMATION_PACKET);
+			}
 		}
 		//if(bytesSent != 0 || manager.getTotalBytesEnqueued() != 0)
 		//	OpenPartiesAndClaims.LOGGER.info("sent " + bytesSent + " with " + manager.getTotalBytesEnqueued() + " left");
@@ -86,6 +89,7 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 			setServer(null);
 			setBytesPerTickLimit(0);
 			setCapacity(0);
+			setBytesPerConfirmation(0);
 			return this;
 		}
 		
@@ -112,7 +116,7 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 		public LazyPacketSender build() {
 			if(server == null || bytesPerTickLimit == 0 || capacity == 0 || bytesPerConfirmation == 0)
 				throw new IllegalStateException();
-			return new LazyPacketSender(server, LazyPacketManager.Builder.begin().build(), bytesPerTickLimit, capacity, bytesPerConfirmation);
+			return new LazyPacketSender(server, LazyPacketManager.Builder.begin().setServer(server).build(), bytesPerTickLimit, capacity, bytesPerConfirmation);
 		}
 		
 		public static Builder begin() {

@@ -82,6 +82,10 @@ public final class ClaimsManagerPlayerSyncHandler {
 			synchronizer.endSyncing(player);
 		}
 	}
+
+	public void onLazyPacketsDropped(){
+		dimsToSync.clear();
+	}
 	
 	public boolean shouldSchedule() {
 		return started && !dimsToSync.isEmpty();
