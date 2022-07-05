@@ -18,19 +18,22 @@
 
 package xaero.pac.common.server.lazypackets;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.*;
 
 public class LazyPacketManager {
-	
+
+	private final MinecraftServer server;
 	private final List<UUID> orderHolder;
 	private final Map<UUID, PlayerLazyPacketManager> storage;
 	private int currentIndex;
 	private int totalBytesEnqueued;
 
-	private LazyPacketManager(List<UUID> orderHolder, Map<UUID, PlayerLazyPacketManager> storage) {
+	private LazyPacketManager(MinecraftServer server, List<UUID> orderHolder, Map<UUID, PlayerLazyPacketManager> storage) {
 		super();
+		this.server = server;
 		this.orderHolder = orderHolder;
 		this.storage = storage;
 	}
@@ -38,7 +41,7 @@ public class LazyPacketManager {
 	private PlayerLazyPacketManager getForPlayer(UUID id) {
 		PlayerLazyPacketManager result = storage.get(id);
 		if(result == null) {
-			result = PlayerLazyPacketManager.Builder.begin().setPlayerId(id).build();
+			result = PlayerLazyPacketManager.Builder.begin().setServer(server).setPlayerId(id).build();
 			int insertionIndex = Collections.binarySearch(orderHolder, id);
 			if(insertionIndex < 0)
 				insertionIndex = -1 - insertionIndex;
@@ -58,11 +61,11 @@ public class LazyPacketManager {
 	}
 	
 	public void enqueue(ServerPlayer player, LazyPacket<?,?> packet) {
-		totalBytesEnqueued += packet.prepare();
-		getForPlayer(player.getUUID()).enqueue(packet);
+		if(getForPlayer(player.getUUID()).enqueue(packet))
+			totalBytesEnqueued += packet.prepare();
 	}
 	
-	public void onSend(LazyPacket<?,?> packet) {
+	public void countSentBytes(LazyPacket<?,?> packet) {
 		totalBytesEnqueued -= packet.getPreparedSize();
 	}
 	
@@ -70,15 +73,15 @@ public class LazyPacketManager {
 		return totalBytesEnqueued;
 	}
 	
-	public PlayerLazyPacketManager getNext(int bytesPerConfirmation) {
+	public PlayerLazyPacketManager getNext(int bytesPerConfirmation, boolean overCapacity) {
 		if(!orderHolder.isEmpty()) {
 			for(int i = 0; i < orderHolder.size(); i++) {//check the whole list once at most
 				currentIndex = currentIndex % orderHolder.size();
 				UUID id = orderHolder.get(currentIndex);
-				PlayerLazyPacketManager playerPackets = getForPlayer(id);
-				if(playerPackets.hasNext(bytesPerConfirmation))
-					return playerPackets;
 				currentIndex++;
+				PlayerLazyPacketManager playerPackets = getForPlayer(id);
+				if(playerPackets.hasNext(bytesPerConfirmation, overCapacity, this))
+					return playerPackets;
 			}
 		}
 		return null;
@@ -89,13 +92,23 @@ public class LazyPacketManager {
 	}
 	
 	public static final class Builder {
+
+		private MinecraftServer server;
 		
 		public Builder setDefault() {
+			setServer(null);
 			return this;
 		}
-		
+
+		public Builder setServer(MinecraftServer server) {
+			this.server = server;
+			return this;
+		}
+
 		public LazyPacketManager build() {
-			return new LazyPacketManager(new ArrayList<>(), new HashMap<>());
+			if(server == null)
+				throw new IllegalStateException();
+			return new LazyPacketManager(server, new ArrayList<>(), new HashMap<>());
 		}
 		
 		public static Builder begin() {
