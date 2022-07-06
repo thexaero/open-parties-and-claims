@@ -5,7 +5,7 @@ owners powerful controls over their players' usage of the mod's features.
 
 The mod's API allows other mods or plugins to easily interact with the parties and the chunk claims, both on the server and the client side.
 
-The mod is currently in beta. Only Forge 1.18.2 is supported as of writing this. Fabric/Quilt and Minecraft 1.19 support are coming soon.
+The mod is currently in beta. 
 
 # User Guide
 
@@ -59,5 +59,3 @@ Contributions from other people might cause complications.
 # MultiLoader Template
 
 This project uses a multi-loader template from [jaredlll08/MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template)
-
-Fabric support is still a work-in-progress though.
