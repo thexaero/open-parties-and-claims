@@ -272,7 +272,7 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		int playerCount = 0;
 		for(ServerPlayer player : players.getPlayers()) {
 			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-			if(mainCap.getClaimsManagerPlayerSyncHandler().shouldSchedule())
+			if(mainCap.getClaimsManagerPlayerSyncHandler().shouldSchedule() && !serverData.getServerTickHandler().getLazyPacketSender().isClogged(player))
 				playerCount++;
 		}
 		if(playerCount == 0)
@@ -280,7 +280,8 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		int regionsPerPlayer = Math.min(REGIONS_PER_TICK_PER_PLAYER, REGIONS_PER_TICK / playerCount);
 		for(ServerPlayer player : players.getPlayers()) {
 			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-			mainCap.getClaimsManagerPlayerSyncHandler().handle(regionsPerPlayer);
+			if(!serverData.getServerTickHandler().getLazyPacketSender().isClogged(player))
+				mainCap.getClaimsManagerPlayerSyncHandler().handle(regionsPerPlayer);
 		}
 	}
 	

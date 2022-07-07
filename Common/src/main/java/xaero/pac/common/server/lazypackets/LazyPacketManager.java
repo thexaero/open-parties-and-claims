@@ -90,6 +90,10 @@ public class LazyPacketManager {
 	void onConfirmation(ServerPlayer player) {
 		getForPlayer(player.getUUID()).clientConfirm();
 	}
+
+	public boolean isClogged(ServerPlayer player){
+		return getForPlayer(player.getUUID()).isClogged();
+	}
 	
 	public static final class Builder {
 
