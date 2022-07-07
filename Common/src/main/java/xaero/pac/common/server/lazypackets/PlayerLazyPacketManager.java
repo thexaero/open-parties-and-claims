@@ -102,7 +102,11 @@ public class PlayerLazyPacketManager {
 			return true;
 		return false;
 	}
-	
+
+	public boolean isClogged() {
+		return isWaitingForConfirmation() && System.currentTimeMillis() - startedWaitingAt > 1000;//no response for a second
+	}
+
 	public static final class Builder {
 
 		private MinecraftServer server;

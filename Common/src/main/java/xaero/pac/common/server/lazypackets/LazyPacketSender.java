@@ -77,6 +77,10 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 		//if(bytesSent != 0 || manager.getTotalBytesEnqueued() != 0)
 		//	OpenPartiesAndClaims.LOGGER.info("sent " + bytesSent + " with " + manager.getTotalBytesEnqueued() + " left");
 	}
+
+	public boolean isClogged(ServerPlayer player){
+		return manager.isClogged(player);
+	}
 	
 	public static final class Builder {
 		
