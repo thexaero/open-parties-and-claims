@@ -46,6 +46,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -57,14 +58,18 @@ public class UnallyPartyCommand {
 				.requires(requirement).then(Commands.literal("remove")
 				.then(Commands.argument("owner", StringArgumentType.word())
 						.suggests((context, builder) -> {
+							//limited at 16 to reduce synced data for super large parties
 							ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(context.getSource().getServer());
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
+							String lowercaseInput = builder.getRemainingLowerCase();
 							return SharedSuggestionProvider.suggest(playerParty.getAllyPartiesStream()
-									.map(allyId -> partyManager.getPartyById(allyId))
-									.filter(party -> party != null)
-									.map(party -> party.getOwner().getUsername()), 
+									.map(partyManager::getPartyById)
+									.filter(Objects::nonNull)
+									.map(party -> party.getOwner().getUsername())
+									.filter(ownerName -> ownerName.toLowerCase().startsWith(lowercaseInput))
+									.limit(16),
 									builder);
 						})
 						.executes(context -> {

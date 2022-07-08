@@ -61,13 +61,15 @@ public class RankPartyCommand {
 				})
 				.then(Commands.argument("name", StringArgumentType.word())
 						.suggests((context, builder) -> {
+							//limited at 16 to reduce synced data for super large parties
 							ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(context.getSource().getServer());
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
-							return SharedSuggestionProvider.suggest(playerParty.getMemberInfoStream().map(targetPlayer -> {
-								return targetPlayer.getUsername();
-							}), builder);
+							String lowercaseInput = builder.getRemainingLowerCase();
+							return SharedSuggestionProvider.suggest(playerParty.getMemberInfoStream().map(IPartyPlayerInfo::getUsername)
+									.filter(name -> name.toLowerCase().startsWith(lowercaseInput))
+									.limit(16), builder);
 						})
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
