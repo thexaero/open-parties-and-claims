@@ -186,7 +186,7 @@ public class CommonEvents {
 	}
 
 	public boolean onMobGrief(Entity entity) {
-		if(entity.getLevel() instanceof ServerLevel) {
+		if(entity != null /*anonymous fireballs on Forge*/ && entity.getLevel() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
 			return serverData.getChunkProtection().onMobGrief(serverData, entity);
 		}
