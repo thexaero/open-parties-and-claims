@@ -47,6 +47,10 @@ public class PlayerTickHandler {
 	public void onTick(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 		ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		if(mainCap != null) {
+			if(mainCap.shouldResyncPlayerConfigs()) {
+				serverData.getPlayerConfigs().getSynchronizer().syncToClient(player);
+				mainCap.setShouldResyncPlayerConfigs(false);
+			}
 			if(ServerConfig.CONFIG.claimsEnabled.get()) {
 				claimWelcomer.onPlayerTick(mainCap, player, serverData);
 				if(OpenPartiesAndClaims.INSTANCE.getModSupport().FTB_RANKS){

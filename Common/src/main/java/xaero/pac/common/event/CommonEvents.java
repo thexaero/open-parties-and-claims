@@ -245,4 +245,11 @@ public class CommonEvents {
 			}
 		}
 	}
+
+	protected void onPermissionsChanged(ServerPlayer player) {
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(player.getServer());
+		if(serverData != null)
+			serverData.getPlayerPermissionChangeHandler().handle(player, serverData);
+	}
+
 }

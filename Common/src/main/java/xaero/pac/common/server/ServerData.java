@@ -44,10 +44,7 @@ import xaero.pac.common.server.io.ObjectManagerLiveSaver;
 import xaero.pac.common.server.parties.party.*;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
-import xaero.pac.common.server.player.PlayerLoginHandler;
-import xaero.pac.common.server.player.PlayerLogoutHandler;
-import xaero.pac.common.server.player.PlayerTickHandler;
-import xaero.pac.common.server.player.PlayerWorldJoinHandler;
+import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 
@@ -63,6 +60,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final PlayerTickHandler playerTickHandler;
 	private final PlayerLoginHandler playerLoginHandler;
 	private final PlayerLogoutHandler playerLogoutHandler;
+	private final PlayerPermissionChangeHandler playerPermissionChangeHandler;
 	private final ObjectManagerLiveSaver partyLiveSaver;
 	private final IOThreadWorker ioThreadWorker;
 	private final PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs;
@@ -81,15 +79,15 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final OpenPACServerAPI api;
 
 	public ServerData(MinecraftServer server, PartyManager partyManager, PartyManagerIO<?> partyManagerIO,
-			PlayerLogInPartyAssigner playerPartyAssigner, PartyPlayerInfoUpdater partyMemberInfoUpdater,
-			PartyExpirationHandler partyExpirationHandler, ServerTickHandler serverTickHandler,
-			PlayerTickHandler playerTickHandler, PlayerLoginHandler playerLoginHandler, PlayerLogoutHandler playerLogoutHandler, ObjectManagerLiveSaver partyLiveSaver, IOThreadWorker ioThreadWorker,
-			PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs, PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO,
-			ObjectManagerLiveSaver playerConfigLiveSaver, PlayerClaimInfoManagerIO<?> playerClaimInfoManagerIO,
-			ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
-			ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
-			ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo, 
-			ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler) {
+					  PlayerLogInPartyAssigner playerPartyAssigner, PartyPlayerInfoUpdater partyMemberInfoUpdater,
+					  PartyExpirationHandler partyExpirationHandler, ServerTickHandler serverTickHandler,
+					  PlayerTickHandler playerTickHandler, PlayerLoginHandler playerLoginHandler, PlayerLogoutHandler playerLogoutHandler, PlayerPermissionChangeHandler playerPermissionChangeHandler, ObjectManagerLiveSaver partyLiveSaver, IOThreadWorker ioThreadWorker,
+					  PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs, PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO,
+					  ObjectManagerLiveSaver playerConfigLiveSaver, PlayerClaimInfoManagerIO<?> playerClaimInfoManagerIO,
+					  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
+					  ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
+					  ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
+					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler) {
 		super();
 		this.server = server;
 		this.partyManager = partyManager;
@@ -101,6 +99,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.playerTickHandler = playerTickHandler;
 		this.playerLoginHandler = playerLoginHandler;
 		this.playerLogoutHandler = playerLogoutHandler;
+		this.playerPermissionChangeHandler = playerPermissionChangeHandler;
 		this.partyLiveSaver = partyLiveSaver;
 		this.ioThreadWorker = ioThreadWorker;
 		this.playerConfigs = playerConfigs;
@@ -224,7 +223,12 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	public PlayerLogoutHandler getPlayerLogoutHandler() {
 		return playerLogoutHandler;
 	}
-	
+
+	@Override
+	public PlayerPermissionChangeHandler getPlayerPermissionChangeHandler() {
+		return playerPermissionChangeHandler;
+	}
+
 	@Override
 	public PlayerWorldJoinHandler getPlayerWorldJoinHandler() {
 		return playerWorldJoinHandler;

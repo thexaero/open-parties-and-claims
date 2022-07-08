@@ -18,6 +18,7 @@
 
 package xaero.pac.common.event;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -28,6 +29,7 @@ import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -172,6 +174,12 @@ public class CommonEventsForge extends CommonEvents {
 	@SubscribeEvent
 	public void onEntityJoinWorld(EntityJoinWorldEvent event){
 		super.onEntityJoinWorld(event.getEntity(), event.getWorld());
+	}
+
+	@SubscribeEvent
+	public void onPermissionsChanged(PermissionsChangedEvent event){
+		if(event.getPlayer() instanceof ServerPlayer serverPlayer)
+			super.onPermissionsChanged(serverPlayer);
 	}
 	
 }

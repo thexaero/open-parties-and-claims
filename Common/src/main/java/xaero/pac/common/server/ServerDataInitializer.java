@@ -29,7 +29,6 @@ import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpira
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.io.serialization.nbt.PlayerClaimInfoNbtSerializer;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
-import xaero.pac.common.server.claims.protection.ChunkProtectionEntityHelper;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.info.ServerInfo;
@@ -48,10 +47,7 @@ import xaero.pac.common.server.parties.party.*;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.io.serialization.nbt.PartyNbtSerializer;
-import xaero.pac.common.server.player.PlayerLoginHandler;
-import xaero.pac.common.server.player.PlayerLogoutHandler;
-import xaero.pac.common.server.player.PlayerTickHandler;
-import xaero.pac.common.server.player.PlayerWorldJoinHandler;
+import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 
@@ -114,6 +110,7 @@ public class ServerDataInitializer {
 			PlayerTickHandler playerTickHandler = PlayerTickHandler.Builder.begin().build();
 			PlayerLoginHandler playerLoginHandler = new PlayerLoginHandler();
 			PlayerLogoutHandler playerLogoutHandler = new PlayerLogoutHandler();
+			PlayerPermissionChangeHandler playerPermissionChangeHandler = new PlayerPermissionChangeHandler();
 			PlayerWorldJoinHandler playerWorldJoinHandler = new PlayerWorldJoinHandler();
 			long autosaveInterval = ServerConfig.CONFIG.autosaveInterval.get() * 60000;
 			ObjectManagerLiveSaver partyLiveSaver = new ObjectManagerLiveSaver(partyManagerIO, autosaveInterval, 0);
@@ -178,7 +175,7 @@ public class ServerDataInitializer {
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
 			
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
-					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, partyLiveSaver, 
+					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
 					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
 					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, playerWorldJoinHandler, serverInfo, serverInfoIO, 
 					claimsExpirationHandler);
