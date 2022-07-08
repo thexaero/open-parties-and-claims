@@ -88,10 +88,8 @@ public class InvitePartyCommand {
 								return 0;
 							}
 							
-							IPartyPlayerInfo targetPlayerInfo = playerParty.invitePlayer(targetPlayerId, targetPlayer.getGameProfile().getName());
-							if(targetPlayerInfo == null)
-								return 0;
-							
+							playerParty.invitePlayer(targetPlayerId, targetPlayer.getGameProfile().getName());
+
 							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
 							
 							Component acceptComponent = Component.translatable("gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
@@ -100,7 +98,7 @@ public class InvitePartyCommand {
 							targetPlayer.sendSystemMessage(acceptComponent);
 							Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer).putUUID("xaero_OPAC_LastInviteId", playerParty.getId());
 
-							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 							return 1;
 						}))));
 		dispatcher.register(command);

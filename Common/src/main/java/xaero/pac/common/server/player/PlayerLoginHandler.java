@@ -66,10 +66,7 @@ public class PlayerLoginHandler {
 	}
 	
 	public void handlePostWorldJoin(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
-		IPlayerConfigManager<IServerParty<IPartyMember, IPartyPlayerInfo>> configManager = serverData.getPlayerConfigs();
-		IPlayerConfigSynchronizer synchronizer = configManager.getSynchronizer();
-		
-		synchronizer.syncToClient(player);
+		serverData.getPlayerConfigs().getSynchronizer().syncToClient(player);
 		
 		IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 		IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(player.getUUID());

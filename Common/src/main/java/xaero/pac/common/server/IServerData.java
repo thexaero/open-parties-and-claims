@@ -33,10 +33,7 @@ import xaero.pac.common.server.parties.party.PartyPlayerInfoUpdater;
 import xaero.pac.common.server.parties.party.PlayerLogInPartyAssigner;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
-import xaero.pac.common.server.player.PlayerLoginHandler;
-import xaero.pac.common.server.player.PlayerLogoutHandler;
-import xaero.pac.common.server.player.PlayerTickHandler;
-import xaero.pac.common.server.player.PlayerWorldJoinHandler;
+import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 
@@ -59,6 +56,7 @@ extends IServerDataAPI<CM,P> {
 	public PlayerWorldJoinHandler getPlayerWorldJoinHandler();
 	public PlayerLoginHandler getPlayerLoginHandler();
 	public PlayerLogoutHandler getPlayerLogoutHandler();
+	public PlayerPermissionChangeHandler getPlayerPermissionChangeHandler();
 	public ForceLoadTicketManager getForceLoadManager();
 	public ServerTickHandler getServerTickHandler();
 	public PlayerTickHandler getPlayerTickHandler();

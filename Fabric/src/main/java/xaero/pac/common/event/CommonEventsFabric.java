@@ -18,6 +18,7 @@
 
 package xaero.pac.common.event;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
@@ -36,6 +37,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -192,6 +194,10 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public void onEntityJoinWorld(Entity entity, Level world){
 		super.onEntityJoinWorld(entity, world);
+	}
+
+	public void onPermissionsChanged(PlayerList playerList, GameProfile profile) {
+		super.onPermissionsChanged(playerList.getPlayer(profile.getId()));
 	}
 
 	public MinecraftServer getLastServerStarted(){

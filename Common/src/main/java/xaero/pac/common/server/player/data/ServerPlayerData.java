@@ -35,6 +35,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private int lastBaseClaimLimitSync;//used for detecting limit changes based on FTB ranks
 	private int lastBaseForceloadLimitSync;
 	private boolean checkedBaseForceloadLimitOnce;
+	private boolean shouldResyncPlayerConfigs;
 	private PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo;
 	private final ClaimsManagerPlayerSyncHandler claimsManagerPlayerSyncHandler;
 	private final PlayerClaimActionRequestHandler claimActionRequestHandler;
@@ -102,6 +103,14 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public void setCheckedBaseForceloadLimitOnce(){
 		checkedBaseForceloadLimitOnce = true;
+	}
+
+	public void setShouldResyncPlayerConfigs(boolean shouldResyncPlayerConfigs) {
+		this.shouldResyncPlayerConfigs = shouldResyncPlayerConfigs;
+	}
+
+	public boolean shouldResyncPlayerConfigs() {
+		return shouldResyncPlayerConfigs;
 	}
 
 }

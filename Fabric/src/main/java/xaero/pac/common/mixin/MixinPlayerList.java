@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,6 +46,16 @@ public class MixinPlayerList {
 	@Inject(at = @At("HEAD"), method = "remove")
 	public void onRemove(ServerPlayer serverPlayer, CallbackInfo info){
 		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPlayerLogOut(serverPlayer);
+	}
+
+	@Inject(at = @At("HEAD"), method = "op")
+	public void onOp(GameProfile profile, CallbackInfo info){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPermissionsChanged((PlayerList)(Object)this, profile);
+	}
+
+	@Inject(at = @At("HEAD"), method = "deop")
+	public void onDeop(GameProfile profile, CallbackInfo info){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPermissionsChanged((PlayerList)(Object)this, profile);
 	}
 
 }
