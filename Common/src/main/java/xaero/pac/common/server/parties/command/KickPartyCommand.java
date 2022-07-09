@@ -45,10 +45,9 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class KickPartyCommand {
 	
@@ -58,16 +57,16 @@ public class KickPartyCommand {
 				.requires(requirement).then(Commands.literal("kick")
 				.then(Commands.argument("name", StringArgumentType.word())
 						.suggests((context, builder) -> {
+							//limited at 16 to reduce synced data for super large parties
 							ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(context.getSource().getServer());
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
-							List<IPartyPlayerInfo> playerInfos = new ArrayList<>();
-							playerParty.getMemberInfoStream().forEach(playerInfos::add);
-							playerParty.getInvitedPlayersStream().forEach(playerInfos::add);
-							return SharedSuggestionProvider.suggest(playerInfos.stream().map(targetPlayer -> {
-								return targetPlayer.getUsername();
-							}), builder);
+							String lowercaseInput = builder.getRemainingLowerCase();
+							return SharedSuggestionProvider.suggest(Stream.concat(playerParty.getMemberInfoStream(), playerParty.getInvitedPlayersStream())
+									.map(IPartyPlayerInfo::getUsername)
+									.filter(name -> name.toLowerCase().startsWith(lowercaseInput))
+									.limit(16), builder);
 						})
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
