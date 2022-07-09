@@ -69,12 +69,12 @@ public final class ClientEventsForge extends ClientEvents {
 	}
 
 	@SubscribeEvent
-	public void onPlayerLogout(ClientPlayerNetworkEvent.LoggedOutEvent event){
+	public void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut event){
 		super.onPlayerLogout(event.getPlayer());
 	}
 	
 	@SubscribeEvent
-	public void onPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event) {
+	public void onPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
 		super.onPlayerLogin(event.getPlayer());
 	}
 
