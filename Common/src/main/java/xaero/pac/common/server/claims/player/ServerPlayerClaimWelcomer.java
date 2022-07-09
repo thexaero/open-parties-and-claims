@@ -19,7 +19,6 @@
 package xaero.pac.common.server.claims.player;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -72,7 +71,7 @@ public class ServerPlayerClaimWelcomer {
 				else
 					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_claim", playerClaimInfo.getPlayerUsername(), forceloadedComponent);
 				if (customName != null && !customName.isEmpty()) {
-					subTitleText = new TextComponent(I18n.get(customName) + " - ");
+					subTitleText = new TextComponent(customName + " - ");
 					subTitleText.getSiblings().add(properDesc);
 				} else
 					subTitleText = properDesc;
