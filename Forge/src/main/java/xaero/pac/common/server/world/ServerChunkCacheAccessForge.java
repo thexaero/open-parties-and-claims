@@ -21,7 +21,6 @@ package xaero.pac.common.server.world;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
-import xaero.pac.common.platform.Services;
 
 public class ServerChunkCacheAccessForge implements IServerChunkCacheAccess {
 

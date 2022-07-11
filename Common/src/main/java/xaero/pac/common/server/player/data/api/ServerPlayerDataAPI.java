@@ -19,7 +19,20 @@
 package xaero.pac.common.server.player.data.api;
 
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.ServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import javax.annotation.Nonnull;
 
@@ -50,7 +63,12 @@ public abstract class ServerPlayerDataAPI {
 	 */
 	@Nonnull
 	public static ServerPlayerDataAPI from(@Nonnull ServerPlayer player) {
-		return ((IOpenPACServerPlayer)player).getXaero_OPAC_PlayerData();
+		ServerPlayerDataAPI result = ((IOpenPACServerPlayer)player).getXaero_OPAC_PlayerData();
+		if(result == null) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(player.getServer());
+			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData());
+		}
+		return result;
 	}
 
 }

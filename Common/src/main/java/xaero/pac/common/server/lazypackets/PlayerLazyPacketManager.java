@@ -21,8 +21,8 @@ package xaero.pac.common.server.lazypackets;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -60,7 +60,7 @@ public class PlayerLazyPacketManager {
 			storage.forEach(manager::countSentBytes);
 			storage.clear();
 			ServerPlayer serverPlayer = server.getPlayerList().getPlayer(playerId);
-			ServerPlayerData playerData = (ServerPlayerData) ((IOpenPACServerPlayer)serverPlayer).getXaero_OPAC_PlayerData();
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(serverPlayer);
 			playerData.getClaimsManagerPlayerSyncHandler().onLazyPacketsDropped();
 			OpenPartiesAndClaims.LOGGER.info("Dropped lazy packets for player " + serverPlayer.getGameProfile().getName() + " because the client isn't responding. Probably no mod on their side.");
 			dropped = true;//won't send lazy packets to this player anymore

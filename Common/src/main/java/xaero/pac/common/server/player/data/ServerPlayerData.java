@@ -37,11 +37,15 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private boolean checkedBaseForceloadLimitOnce;
 	private boolean shouldResyncPlayerConfigs;
 	private PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo;
-	private final ClaimsManagerPlayerSyncHandler claimsManagerPlayerSyncHandler;
-	private final PlayerClaimActionRequestHandler claimActionRequestHandler;
+	private ClaimsManagerPlayerSyncHandler claimsManagerPlayerSyncHandler;
+	private PlayerClaimActionRequestHandler claimActionRequestHandler;
 	
-	public ServerPlayerData(ClaimsManagerPlayerSyncHandler claimsManagerPlayerSyncHandler, PlayerClaimActionRequestHandler claimActionRequestHandler) {
+	public ServerPlayerData() {
 		super();
+	}
+
+	public void onLogin(ClaimsManagerPlayerSyncHandler claimsManagerPlayerSyncHandler, PlayerClaimActionRequestHandler claimActionRequestHandler) {
+		//won't be called for fake players, e.g. turtles from cc
 		this.claimsManagerPlayerSyncHandler = claimsManagerPlayerSyncHandler;
 		this.claimActionRequestHandler = claimActionRequestHandler;
 	}

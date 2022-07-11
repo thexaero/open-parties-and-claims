@@ -30,13 +30,13 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 public class PlayerPermissionChangeHandler {
 
 	public void handle(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData){
-		((ServerPlayerData)((IOpenPACServerPlayer)player).getXaero_OPAC_PlayerData()).setShouldResyncPlayerConfigs(true);
+		((ServerPlayerData)ServerPlayerDataAPI.from((player))).setShouldResyncPlayerConfigs(true);
 	}
 
 }
