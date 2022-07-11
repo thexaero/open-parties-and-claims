@@ -37,10 +37,8 @@ import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHan
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSyncHandler;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.sync.IPlayerConfigSynchronizer;
-import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 public class PlayerLoginHandler {
 	
@@ -52,14 +50,18 @@ public class PlayerLoginHandler {
 		
 		serverData.getPlayerPartyAssigner().assign(serverData.getPartyManager(), player, serverData.getPartyMemberInfoUpdater());
 		
-		ServerPlayerData playerData = new ServerPlayerData(
-				ClaimsManagerPlayerSyncHandler.Builder.begin().setPlayer(player).setClaimsManager(serverData.getServerClaimsManager()).build(),
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+		playerData.onLogin(
+				ClaimsManagerPlayerSyncHandler.Builder.begin()
+						.setPlayer(player)
+						.setClaimsManager(serverData.getServerClaimsManager())
+						.build(),
 				PlayerClaimActionRequestHandler.Builder.begin()
-					.setPlayer(player)
-					.setManager(serverData.getServerClaimsManager())
-					.setServerTickHandler(serverData.getServerTickHandler()).build()
-				);
-		((IOpenPACServerPlayer)player).setXaero_OPAC_PlayerData(playerData);
+						.setPlayer(player)
+						.setManager(serverData.getServerClaimsManager())
+						.setServerTickHandler(serverData.getServerTickHandler())
+						.build()
+		);
 		playerData.setOftenSyncedPartyMemberInfo(new PartyMemberDynamicInfoSyncable(player.getUUID(), true));
 		
 		serverData.getServerClaimsManager().getPlayerInfo(player.getUUID()).registerActivity();
