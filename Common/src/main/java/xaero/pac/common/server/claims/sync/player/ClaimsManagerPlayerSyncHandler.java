@@ -32,21 +32,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ClaimsManagerPlayerSyncHandler {
-	
-	private final ServerPlayer player;
+
+	//no field for the player because this handler can be moved to another one (e.g. on respawn)
 	private final ClaimsManagerSynchronizer synchronizer;
 	private final List<ClaimsManagerPlayerDimensionSyncHandler> dimsToSync;
 	private ClaimsManagerPlayerDimensionSyncHandler currentPrefix;
 	private boolean started;
 
-	private ClaimsManagerPlayerSyncHandler(ServerPlayer player, ClaimsManagerSynchronizer synchronizer, List<ClaimsManagerPlayerDimensionSyncHandler> dimsToSync) {
+	private ClaimsManagerPlayerSyncHandler(ClaimsManagerSynchronizer synchronizer, List<ClaimsManagerPlayerDimensionSyncHandler> dimsToSync) {
 		super();
-		this.player = player;
 		this.synchronizer = synchronizer;
 		this.dimsToSync = dimsToSync;
 	}
 	
-	private void sendDimensionPrefix(ClaimsManagerPlayerDimensionSyncHandler dim) {
+	private void sendDimensionPrefix(ServerPlayer player, ClaimsManagerPlayerDimensionSyncHandler dim) {
 		if(dim != currentPrefix) {
 			ResourceLocation dimLocation = dim == null ? null : dim.getDim();
 			synchronizer.syncDimensionIdToClient(dimLocation, player);
@@ -54,12 +53,12 @@ public final class ClaimsManagerPlayerSyncHandler {
 		}
 	}
 	
-	public boolean handle(int limit) {
+	public boolean handle(ServerPlayer player, int limit) {
 		if(shouldSchedule()) {
 			int count = 0;
 			while(!dimsToSync.isEmpty()) {
 				ClaimsManagerPlayerDimensionSyncHandler dim = dimsToSync.get(0);
-				sendDimensionPrefix(dim);
+				sendDimensionPrefix(player, dim);
 				count += dim.handle(player, synchronizer, limit - count);
 				if(count >= limit)
 					break;
@@ -67,7 +66,7 @@ public final class ClaimsManagerPlayerSyncHandler {
 			}
 			boolean done = dimsToSync.isEmpty();
 			if(done) {
-				sendDimensionPrefix(null);
+				sendDimensionPrefix(player, null);
 				synchronizer.endSyncing(player);
 			}
 			return done;
@@ -75,10 +74,10 @@ public final class ClaimsManagerPlayerSyncHandler {
 		return true;
 	}
 	
-	public void start() {
+	public void start(ServerPlayer player) {
 		started = true;
 		if(!shouldSchedule()) {
-			sendDimensionPrefix(null);
+			sendDimensionPrefix(player, null);
 			synchronizer.endSyncing(player);
 		}
 	}
@@ -92,20 +91,12 @@ public final class ClaimsManagerPlayerSyncHandler {
 	}
 	
 	public static final class Builder {
-
-		private ServerPlayer player;
 		private IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager;
 		
 		private Builder() {}
 		
 		private Builder setDefault() {
-			setPlayer(null);
 			setClaimsManager(null);
-			return this;
-		}
-		
-		public Builder setPlayer(ServerPlayer player) {
-			this.player = player;
 			return this;
 		}
 		
@@ -116,7 +107,7 @@ public final class ClaimsManagerPlayerSyncHandler {
 		}
 		
 		public ClaimsManagerPlayerSyncHandler build() {
-			if(player == null || claimsManager == null)
+			if(claimsManager == null)
 				throw new IllegalStateException();
 			List<ClaimsManagerPlayerDimensionSyncHandler> dimsToSync = new ArrayList<>();
 			if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.ALL) {
@@ -126,7 +117,7 @@ public final class ClaimsManagerPlayerSyncHandler {
 					dimsToSync.add(new ClaimsManagerPlayerDimensionSyncHandler(dim.getDimension(), regionsToSync));
 				});
 			}
-			return new ClaimsManagerPlayerSyncHandler(player, (ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer(), dimsToSync);
+			return new ClaimsManagerPlayerSyncHandler((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer(), dimsToSync);
 		}
 		
 		public static Builder begin() {
