@@ -108,13 +108,14 @@ public final class ForceLoadTicketManager {
 	public void updateTicketsFor(IPlayerConfigManager<?> playerConfigManager, UUID id, boolean loggedOut) {
 		IPlayerConfig ownerConfig = playerConfigManager.getLoadedConfig(id);
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
+		boolean isServer = PlayerConfig.SERVER_CLAIM_UUID.equals(id);
 		boolean shouldBeEnabled = ticketsShouldBeEnabled(ownerConfig, loggedOut);
 		OpenPartiesAndClaims.LOGGER.info("Updating all forceload tickets for " + id);
 		int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS);//for when the bonus forceload count is changed without a restart
 		int enableSuccessCount = 0;
 		boolean withinLimit = true;
 		for(ClaimTicket ticket : playerTickets.values()) {
-			if(shouldBeEnabled)
+			if(shouldBeEnabled && !isServer)
 				withinLimit = withinLimit && enableSuccessCount < forceloadLimit;
 			boolean shouldEnableTicket = shouldBeEnabled && withinLimit;
 			if(updateTicket(shouldEnableTicket, ticket) && shouldEnableTicket)
