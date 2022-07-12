@@ -24,7 +24,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -36,11 +36,11 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -77,27 +77,27 @@ public class CommonEventsForge extends CommonEvents {
 	
 	@SubscribeEvent
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		super.onPlayerRespawn(event.getPlayer());
+		super.onPlayerRespawn(event.getEntity());
 	}
 	
 	@SubscribeEvent
 	public void onPlayerChangedDimension(PlayerChangedDimensionEvent event) {
-		super.onPlayerChangedDimension(event.getPlayer());
+		super.onPlayerChangedDimension(event.getEntity());
 	}
 	
 	@SubscribeEvent
 	public void onPlayerLogIn(PlayerLoggedInEvent event) {
-		super.onPlayerLogIn(event.getPlayer());
+		super.onPlayerLogIn(event.getEntity());
 	}
 
 	@SubscribeEvent
 	public void onPlayerClone(PlayerEvent.Clone event) {
-		super.onPlayerClone(event.getOriginal(), event.getPlayer());
+		super.onPlayerClone(event.getOriginal(), event.getEntity());
 	}
 	
 	@SubscribeEvent
 	public void onPlayerLogOut(PlayerLoggedOutEvent event) {
-		super.onPlayerLogOut(event.getPlayer());
+		super.onPlayerLogOut(event.getEntity());
 	}
 	
 	@SubscribeEvent
@@ -117,26 +117,26 @@ public class CommonEventsForge extends CommonEvents {
 	
 	@SubscribeEvent
 	public void onRegisterCommands(RegisterCommandsEvent event) {
-		super.onRegisterCommands(event.getDispatcher(), event.getEnvironment());
+		super.onRegisterCommands(event.getDispatcher(), event.getCommandSelection());
 	}
 
 	public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-		if(super.onLeftClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer()))
+		if(super.onLeftClickBlock(event.getSide() == LogicalSide.SERVER, event.getLevel(), event.getPos(), event.getEntity()))
 			event.setCanceled(true);
 	}
 
 	public void onDestroyBlock(BlockEvent.BreakEvent event) {
-		if(super.onDestroyBlock(event.getWorld(), event.getPos(), event.getPlayer()))
+		if(super.onDestroyBlock(event.getLevel(), event.getPos(), event.getPlayer()))
 			event.setCanceled(true);
 	}
 
 	public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec()))
+		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getHitVec()))
 			event.setCanceled(true);
 	}
 
 	public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-		if(super.onItemRightClick(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getItemStack()))
+		if(super.onItemRightClick(event.getSide() == LogicalSide.SERVER, event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getItemStack()))
 			event.setCanceled(true);
 	}
 	
@@ -152,7 +152,7 @@ public class CommonEventsForge extends CommonEvents {
 	}
 
 	public void onEntityAttack(AttackEntityEvent event) {
-		if(super.onEntityAttack(event.getPlayer(), event.getTarget()))
+		if(super.onEntityAttack(event.getEntity(), event.getTarget()))
 			event.setCanceled(true);
 	}
 
@@ -163,7 +163,7 @@ public class CommonEventsForge extends CommonEvents {
 	
 	@SubscribeEvent
 	public void onExplosionDetonate(ExplosionEvent.Detonate event) {
-		super.onExplosionDetonate(event.getWorld(), event.getExplosion(), event.getAffectedEntities(), event.getAffectedBlocks());
+		super.onExplosionDetonate(event.getLevel(), event.getExplosion(), event.getAffectedEntities(), event.getAffectedBlocks());
 	}
 
 	public void onChorusFruit(EntityTeleportEvent.ChorusFruit event){
@@ -172,13 +172,13 @@ public class CommonEventsForge extends CommonEvents {
 	}
 
 	@SubscribeEvent
-	public void onEntityJoinWorld(EntityJoinWorldEvent event){
-		super.onEntityJoinWorld(event.getEntity(), event.getWorld());
+	public void onEntityJoinWorld(EntityJoinLevelEvent event){
+		super.onEntityJoinWorld(event.getEntity(), event.getLevel());
 	}
 
 	@SubscribeEvent
 	public void onPermissionsChanged(PermissionsChangedEvent event){
-		if(event.getPlayer() instanceof ServerPlayer serverPlayer)
+		if(event.getEntity() instanceof ServerPlayer serverPlayer)
 			super.onPermissionsChanged(serverPlayer);
 	}
 	

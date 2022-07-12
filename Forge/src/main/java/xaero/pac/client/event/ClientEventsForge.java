@@ -19,15 +19,13 @@
 package xaero.pac.client.event;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xaero.pac.OpenPartiesAndClaimsForge;
@@ -63,9 +61,9 @@ public final class ClientEventsForge extends ClientEvents {
 	}
 
 	@SubscribeEvent
-	public void onWorldLoaded(WorldEvent.Load event) {
-		if(event.getWorld() instanceof ClientLevel)
-			super.onClientWorldLoaded((ClientLevel) event.getWorld());
+	public void onWorldLoaded(LevelEvent.Load event) {
+		if(event.getLevel() instanceof ClientLevel)
+			super.onClientWorldLoaded((ClientLevel) event.getLevel());
 	}
 
 	@SubscribeEvent
