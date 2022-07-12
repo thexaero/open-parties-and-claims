@@ -35,20 +35,19 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import java.util.UUID;
 
 public class PlayerClaimActionRequestHandler {
-	
-	private final ServerPlayer player;
+
+	//no field for the player because this handler can be moved to another one (e.g. on respawn)
 	private final ServerClaimsManager manager;
 	private final ServerTickHandler serverTickHandler;
 	private long lastRequestTickCounter;
 	
-	private PlayerClaimActionRequestHandler(ServerPlayer player, ServerClaimsManager manager, ServerTickHandler serverTickHandler) {
+	private PlayerClaimActionRequestHandler(ServerClaimsManager manager, ServerTickHandler serverTickHandler) {
 		super();
-		this.player = player;
 		this.manager = manager;
 		this.serverTickHandler = serverTickHandler;
 	}
 
-	public void onReceive(ClaimActionRequest request) {
+	public void onReceive(ServerPlayer player, ClaimActionRequest request) {
 		if(serverTickHandler.getTickCounter() == lastRequestTickCounter)
 			return;
 		if(request.isByServer() && !player.hasPermissions(2))
@@ -64,7 +63,6 @@ public class PlayerClaimActionRequestHandler {
 	}
 	
 	public static final class Builder {
-		private ServerPlayer player;
 		private ServerClaimsManager manager;
 		private ServerTickHandler serverTickHandler;
 
@@ -72,14 +70,8 @@ public class PlayerClaimActionRequestHandler {
 		}
 
 		private Builder setDefault() {
-			setPlayer(null);
 			setManager(null);
 			setServerTickHandler(null);
-			return this;
-		}
-		
-		public Builder setPlayer(ServerPlayer player) {
-			this.player = player;
 			return this;
 		}
 
@@ -94,9 +86,9 @@ public class PlayerClaimActionRequestHandler {
 		}
 
 		public PlayerClaimActionRequestHandler build() {
-			if (manager == null || player == null || serverTickHandler == null)
+			if (manager == null || serverTickHandler == null)
 				throw new IllegalStateException();
-			return new PlayerClaimActionRequestHandler(player, manager, serverTickHandler);
+			return new PlayerClaimActionRequestHandler(manager, serverTickHandler);
 		}
 
 		public static Builder begin() {

@@ -281,7 +281,7 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		for(ServerPlayer player : players.getPlayers()) {
 			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 			if(!serverData.getServerTickHandler().getLazyPacketSender().isClogged(player))
-				mainCap.getClaimsManagerPlayerSyncHandler().handle(regionsPerPlayer);
+				mainCap.getClaimsManagerPlayerSyncHandler().handle(player, regionsPerPlayer);
 		}
 	}
 	

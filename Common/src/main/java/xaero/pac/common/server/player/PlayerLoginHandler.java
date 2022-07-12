@@ -53,11 +53,9 @@ public class PlayerLoginHandler {
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		playerData.onLogin(
 				ClaimsManagerPlayerSyncHandler.Builder.begin()
-						.setPlayer(player)
 						.setClaimsManager(serverData.getServerClaimsManager())
 						.build(),
 				PlayerClaimActionRequestHandler.Builder.begin()
-						.setPlayer(player)
 						.setManager(serverData.getServerClaimsManager())
 						.setServerTickHandler(serverData.getServerTickHandler())
 						.build()

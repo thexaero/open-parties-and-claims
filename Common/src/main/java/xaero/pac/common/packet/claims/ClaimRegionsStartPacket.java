@@ -69,7 +69,7 @@ public class ClaimRegionsStartPacket extends LazyPacket<LazyPacket.Encoder<Claim
 		@Override
 		public void accept(ClaimRegionsStartPacket t, ServerPlayer serverPlayer) {
 			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(serverPlayer);
-			mainCap.getClaimsManagerPlayerSyncHandler().start();
+			mainCap.getClaimsManagerPlayerSyncHandler().start(serverPlayer);
 		}
 		
 	}
