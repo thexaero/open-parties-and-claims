@@ -43,6 +43,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.UUID;
 
@@ -66,8 +67,9 @@ public class ClaimsForceloadCommands {
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
 				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
-				
-			 	ClaimResult<?> result = claimsManager.tryToForceload(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, opReplaceCurrent);
+				boolean shouldReplace = opReplaceCurrent || ServerPlayerDataAPI.from(player).isClaimsAdminMode();
+
+			 	ClaimResult<?> result = claimsManager.tryToForceload(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);
 			 	
 			 	try {
 				 	if(!result.getResultType().success) {

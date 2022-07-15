@@ -31,6 +31,8 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.UUID;
 
@@ -55,9 +57,10 @@ public class PlayerClaimActionRequestHandler {
 		UUID playerId = request.isByServer() ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		AreaClaimResult result = manager.tryClaimActionOverArea(player.level.dimension().location(), playerId, 
 				fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(), 
-				request.getAction(), false);
+				request.getAction(), playerData.isClaimsAdminMode());
 		manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player);
 		lastRequestTickCounter = serverTickHandler.getTickCounter();
 	}

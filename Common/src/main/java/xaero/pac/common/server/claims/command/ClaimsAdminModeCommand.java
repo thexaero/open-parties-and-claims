@@ -25,6 +25,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.packet.ClientboundModesPacket;
+import xaero.pac.common.packet.claims.ClientboundClaimLimitsPacket;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
@@ -51,6 +54,7 @@ public class ClaimsAdminModeCommand {
 					mainCapability.setClaimsAdminMode(!mainCapability.isClaimsAdminMode());
 					mainCapability.setClaimsNonallyMode(false);
 					player.sendMessage(new TranslatableComponent(mainCapability.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"), player.getUUID());
+					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(mainCapability.isClaimsAdminMode()));
 					return 1;
 				}));
 		dispatcher.register(command);
