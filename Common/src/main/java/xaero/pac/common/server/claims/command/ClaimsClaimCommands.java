@@ -43,6 +43,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.UUID;
@@ -66,9 +67,15 @@ public class ClaimsClaimCommands {
 				
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
+				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+
+				if(serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
+					return 0;//going too fast
+				playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
+
 				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
 
-				boolean shouldReplace = opReplaceCurrent || ServerPlayerDataAPI.from(player).isClaimsAdminMode();
+				boolean shouldReplace = opReplaceCurrent || playerData.isClaimsAdminMode();
 				ClaimResult<?> result = null;
 				try {
 					if(shouldClaim) {

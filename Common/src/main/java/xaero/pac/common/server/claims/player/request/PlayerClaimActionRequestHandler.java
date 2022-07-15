@@ -64,7 +64,15 @@ public class PlayerClaimActionRequestHandler {
 		manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player);
 		lastRequestTickCounter = serverTickHandler.getTickCounter();
 	}
-	
+
+	public long getLastRequestTickCounter() {
+		return lastRequestTickCounter;
+	}
+
+	public void setLastRequestTickCounter(long lastRequestTickCounter) {
+		this.lastRequestTickCounter = lastRequestTickCounter;
+	}
+
 	public static final class Builder {
 		private ServerClaimsManager manager;
 		private ServerTickHandler serverTickHandler;

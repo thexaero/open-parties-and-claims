@@ -122,6 +122,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				playerClaimInfo.getClaimCount() < getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfig.BONUS_CHUNK_CLAIMS);
 		if(withinLimit) {
 			PlayerChunkClaim claim = new PlayerChunkClaim(playerId, forceLoaded, 0);
+			if(Objects.equals(claim, currentClaim))
+				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
 			PlayerChunkClaim c = claim(dimension, claim.getPlayerId(), x, z, claim.isForceloadable());
 			return new ClaimResult<>(c, Objects.equals(c, claim) ? ClaimResult.Type.SUCCESSFUL_CLAIM : ClaimResult.Type.CLAIM_LIMIT_REACHED);//forceload limit
 		} else {
@@ -143,11 +145,9 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 	
 	private ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
-		if(!replace) {
-			PlayerChunkClaim currentClaim = get(dimension, x, z);
-			if(currentClaim == null || !Objects.equals(id, currentClaim.getPlayerId()))
-				return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
-		}
+		PlayerChunkClaim currentClaim = get(dimension, x, z);
+		if(currentClaim == null || !replace && !Objects.equals(id, currentClaim.getPlayerId()))
+			return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
 	 	unclaim(dimension, x, z);
 	 	return new ClaimResult<>(null, ClaimResult.Type.SUCCESSFUL_UNCLAIM);
 	}
@@ -233,6 +233,13 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			if(outOfBounds)
 				resultTypes.add(ClaimResult.Type.TOO_FAR);
 		}
+
+		int maxRequestLength = 32;
+		if(effectiveRight - effectiveLeft >= maxRequestLength)
+			effectiveRight = effectiveLeft + maxRequestLength - 1;
+		if(effectiveBottom - effectiveTop >= maxRequestLength)
+			effectiveBottom = effectiveTop + maxRequestLength - 1;
+
 		int total;
 		if(effectiveLeft > effectiveRight || effectiveTop > effectiveBottom)
 			total = 0;
