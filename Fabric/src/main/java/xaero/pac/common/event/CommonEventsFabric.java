@@ -200,6 +200,10 @@ public class CommonEventsFabric extends CommonEvents {
 		super.onPermissionsChanged(playerList.getPlayer(profile.getId()));
 	}
 
+	public boolean onCropTrample(Entity entity, BlockPos pos) {
+		return super.onCropTrample(entity, pos);
+	}
+
 	public MinecraftServer getLastServerStarted(){
 		return lastServerStarted;
 	}

@@ -107,6 +107,12 @@ public interface IClientClaimsManagerAPI
 	public int getMaxClaimDistance();
 
 	/**
+	 * Checks whether the local client player is in admin mode.
+	 * @return true if the player is in admin mode, otherwise false
+	 */
+	public boolean isAdminMode();
+
+	/**
 	 * Gets the claim action result tracker that lets you register claim action result listeners.
 	 * <p>
 	 * The tracker notifies the registered listeners when the client receives a claim result from

@@ -19,6 +19,7 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FarmBlock;
@@ -27,13 +28,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.common.server.core.ServerCoreFabric;
 
 @Mixin(FarmBlock.class)
 public class MixinFarmBlock {
 
-	@Inject(method = "fallOn", at = @At("HEAD"))
+	@Inject(method = "fallOn", at = @At("HEAD"), cancellable = true)
 	public void onMobGriefGameRuleMethod(Level level, BlockState state, BlockPos pos, Entity entity, float f, CallbackInfo callbackInfo){
+		if(entity instanceof ServerPlayer && ((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onCropTrample(entity, pos))
+			callbackInfo.cancel();
 		ServerCoreFabric.tryToSetMobGriefingEntity(entity);
 	}
 

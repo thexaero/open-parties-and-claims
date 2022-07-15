@@ -187,10 +187,11 @@ public class MainMenu extends XPACScreen {
 		claimButton.active = forceloadButton.active = false;
 		if(serverHasMod && !OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isLoading()) {
 			IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
-			claimButton.active = currentClaim == null || currentClaim.getPlayerId().equals(minecraft.player.getUUID());
+			boolean adminMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isAdminMode();
+			claimButton.active = adminMode || (currentClaim == null || currentClaim.getPlayerId().equals(minecraft.player.getUUID()));
 			claimButton.setMessage(currentClaim == null ? CLAIM : UNCLAIM);
 			
-			forceloadButton.active = currentClaim != null && currentClaim.getPlayerId().equals(minecraft.player.getUUID());
+			forceloadButton.active = adminMode || currentClaim != null && currentClaim.getPlayerId().equals(minecraft.player.getUUID());
 			forceloadButton.setMessage(currentClaim == null || !currentClaim.isForceloadable() ? FORCELOAD : UNFORCELOAD);
 		}
 	}

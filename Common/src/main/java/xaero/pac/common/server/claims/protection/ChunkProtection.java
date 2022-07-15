@@ -386,6 +386,17 @@ public class ChunkProtection
 		return claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD);
 	}
 
+	public boolean onCropTrample(IServerData<CM,P> serverData, Entity entity, BlockPos pos) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerChunkClaim claim = claimsManager.get(entity.level.dimension().location(), new ChunkPos(pos));
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
+		return claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS)
+				&& claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE)
+				&& !hasChunkAccess(claimConfig, entity);
+	}
+
 	public static final class Builder
 	<
 		CM extends IServerClaimsManager<?, ?, ?>,

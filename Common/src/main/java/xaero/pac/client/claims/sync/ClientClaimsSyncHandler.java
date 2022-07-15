@@ -104,4 +104,8 @@ public class ClientClaimsSyncHandler {
 		claimsManager.getClaimResultTracker().onClaimResult(result);
 	}
 
+	public void onClaimModes(boolean adminMode) {
+		claimsManager.setAdminMode(adminMode);
+	}
+
 }

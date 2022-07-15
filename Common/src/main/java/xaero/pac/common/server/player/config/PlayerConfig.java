@@ -63,6 +63,7 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_INTERACTIONS;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_BREAKING;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_ENTITY_INTERACTIONS;
@@ -140,45 +141,45 @@ public class PlayerConfig
 				.setComment("When enabled, claimed chunk protection includes protection against players from the same party as you.")
 				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.fromAllyParties")
-					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes protection against players from parties who are allied by the party that you are in.")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.claims.protection.fromAllyParties")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against players from parties who are allied by the party that you are in.")
+				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.blocksFromExplosions")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the mob griefing option.")
 				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.fromMobGriefing")
-					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the protected chunks are also partially protected. Should work for vanilla mob behavior, unless another mod breaks it. Modded mob behavior is unlikely to be included. Feel free to set the vanilla game rule for mob griefing to be safe. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.claims.protection.fromMobGriefing")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the protected chunks are also partially protected. Should work for vanilla mob behavior, unless another mod breaks it. Modded mob behavior is unlikely to be included. Feel free to set the vanilla game rule for mob griefing to be safe. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
+				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.fromFireSpread")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against fire spread.")
 				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.entitiesFromPlayers")
-					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against players who don't have access to the chunks.")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.claims.protection.entitiesFromPlayers")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against players who don't have access to the chunks.")
+				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.entitiesFromMobs")
-					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs.")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.claims.protection.entitiesFromMobs")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs.")
+				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.entitiesFromAnonymousAttacks")
-					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against non-player entities without a living owner (e.g. dispenser-fired arrows, falling anvils, redstone-activated TNT).")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.claims.protection.entitiesFromAnonymousAttacks")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against non-player entities without a living owner (e.g. dispenser-fired arrows, falling anvils, redstone-activated TNT).")
+				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.protection.entitiesFromExplosions")
-					.setDefaultValue(true)
-					.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against all explosions not directly activated by the chunk owner.")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.claims.protection.entitiesFromExplosions")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against all explosions not directly activated by the chunk owner.")
+				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.chorusFruitTeleport")
 				.setDefaultValue(true)
@@ -189,32 +190,38 @@ public class PlayerConfig
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the protected chunks are also partially protected.")
 				.build(allOptions).applyToForgeSpec(builder);
+		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.cropTrample")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for players that don't have access to the chunks.")
+				.build(allOptions).applyToForgeSpec(builder);
+
 		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockInteractions")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more block interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like levers, doors etc. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_BLOCK_BREAKING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockBreaking")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more blocks are allowed to be broken, which are also configured by the server. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_ENTITY_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeEntityInteractions")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more entity interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like villager trading, minecarts, boats etc. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_ENTITY_KILLING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeEntityKilling")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more entities are allowed to be attacked and killed, which are also configured by the server. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 
 		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.claims.forceload.enabled")
-					.setDefaultValue(true)
-					.setComment("When enabled, the chunks you have marked for forceloading are forceloaded.\nIf the forceload limit has changed and you have more chunks marked than the new limit, then some of the chunks won't be forceloaded. Unmark any chunks until you are within the limit to ensure that all marked chunks are forceloaded.")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.claims.forceload.enabled")
+				.setDefaultValue(true)
+				.setComment("When enabled, the chunks you have marked for forceloading are forceloaded.\nIf the forceload limit has changed and you have more chunks marked than the new limit, then some of the chunks won't be forceloaded. Unmark any chunks until you are within the limit to ensure that all marked chunks are forceloaded.")
+				.build(allOptions).applyToForgeSpec(builder);
 		OFFLINE_FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.forceload.offlineForceload")
 				.setDefaultValue(false)
@@ -223,10 +230,10 @@ public class PlayerConfig
 		
 
 		SHARE_LOCATION_WITH_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.parties.shareLocationWithParty")
-					.setDefaultValue(true)
-					.setComment("When enabled, your location in the game is shared with players from the same party as you, which can be used by other mods, e.g. to display party members on a map.")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.parties.shareLocationWithParty")
+				.setDefaultValue(true)
+				.setComment("When enabled, your location in the game is shared with players from the same party as you, which can be used by other mods, e.g. to display party members on a map.")
+				.build(allOptions).applyToForgeSpec(builder);
 		
 		SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.parties.shareLocationWithMutualAllyParties")
@@ -236,10 +243,10 @@ public class PlayerConfig
 		
 
 		RECEIVE_LOCATIONS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-					.setId("playerConfig.parties.receiveLocationsFromParty")
-					.setDefaultValue(true)
-					.setComment("When enabled, the sharable locations of players from the same party as you are shared with your game client, which can be used by other mods, e.g. to display party members on a map.")
-					.build(allOptions).applyToForgeSpec(builder);
+				.setId("playerConfig.parties.receiveLocationsFromParty")
+				.setDefaultValue(true)
+				.setComment("When enabled, the sharable locations of players from the same party as you are shared with your game client, which can be used by other mods, e.g. to display party members on a map.")
+				.build(allOptions).applyToForgeSpec(builder);
 		
 		RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.parties.receiveLocationsFromMutualAllyParties")

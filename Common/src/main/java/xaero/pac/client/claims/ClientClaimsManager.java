@@ -47,6 +47,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private int claimLimit;
 	private int forceloadLimit;
 	private int maxClaimDistance;
+	private boolean adminMode;
 	
 	private ClientClaimsManager(ClientPlayerClaimInfoManager playerClaimInfoManager,
 			IPlayerConfigManager<?> configManager, Map<ResourceLocation, ClientDimensionClaimsManager> dimensions, 
@@ -116,6 +117,14 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		return maxClaimDistance;
 	}
 
+	public boolean isAdminMode() {
+		return adminMode;
+	}
+
+	public void setAdminMode(boolean adminMode) {
+		this.adminMode = adminMode;
+	}
+
 	@Override
 	public void addClaimState(PlayerChunkClaim claim) {
 		claimStates.put(claim, claim);
@@ -136,6 +145,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	public void reset() {
 		super.reset();
 		indexToClaimState.clear();
+		adminMode = false;
 	}
 
 	@Override

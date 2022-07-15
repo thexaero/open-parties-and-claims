@@ -43,6 +43,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.UUID;
 
@@ -66,11 +67,12 @@ public class ClaimsClaimCommands {
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
 				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
-				
+
+				boolean shouldReplace = opReplaceCurrent || ServerPlayerDataAPI.from(player).isClaimsAdminMode();
 				ClaimResult<?> result = null;
 				try {
 					if(shouldClaim) {
-						result = claimsManager.tryToClaim(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, opReplaceCurrent);
+						result = claimsManager.tryToClaim(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, shouldReplace);
 						
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> claimOwnerInfo = claimsManager.getPlayerInfo(result.getClaimResult().getPlayerId());
@@ -78,7 +80,7 @@ public class ClaimsClaimCommands {
 							return 0;
 						}
 					} else {
-						result = claimsManager.tryToUnclaim(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, opReplaceCurrent);
+						result = claimsManager.tryToUnclaim(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, shouldReplace);
 						if(!result.getResultType().success) {
 							context.getSource().sendFailure(result.getResultType().message);
 							return 0;

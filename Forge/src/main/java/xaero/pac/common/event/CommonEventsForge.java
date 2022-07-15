@@ -63,6 +63,7 @@ public class CommonEventsForge extends CommonEvents {
 		MinecraftForge.EVENT_BUS.<AttackEntityEvent>addListener(EventPriority.HIGHEST, this::onEntityAttack);
 		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.EntityInteract>addListener(EventPriority.HIGHEST, this::onEntityInteract);
 		MinecraftForge.EVENT_BUS.<EntityTeleportEvent.ChorusFruit>addListener(EventPriority.HIGHEST, this::onChorusFruit);
+		MinecraftForge.EVENT_BUS.<BlockEvent.FarmlandTrampleEvent>addListener(EventPriority.HIGHEST, this::onCropTrample);
 	}
 
 	@SubscribeEvent
@@ -180,6 +181,11 @@ public class CommonEventsForge extends CommonEvents {
 	public void onPermissionsChanged(PermissionsChangedEvent event){
 		if(event.getEntity() instanceof ServerPlayer serverPlayer)
 			super.onPermissionsChanged(serverPlayer);
+	}
+
+	private void onCropTrample(BlockEvent.FarmlandTrampleEvent event) {
+		if(super.onCropTrample(event.getEntity(), event.getPos()))
+			event.setCanceled(true);
 	}
 	
 }
