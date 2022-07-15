@@ -122,6 +122,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				playerClaimInfo.getClaimCount() < getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfig.BONUS_CHUNK_CLAIMS);
 		if(withinLimit) {
 			PlayerChunkClaim claim = new PlayerChunkClaim(playerId, forceLoaded, 0);
+			if(Objects.equals(claim, currentClaim))
+				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
 			PlayerChunkClaim c = claim(dimension, claim.getPlayerId(), x, z, claim.isForceloadable());
 			return new ClaimResult<>(c, Objects.equals(c, claim) ? ClaimResult.Type.SUCCESSFUL_CLAIM : ClaimResult.Type.CLAIM_LIMIT_REACHED);//forceload limit
 		} else {
