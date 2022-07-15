@@ -252,4 +252,9 @@ public class CommonEvents {
 			serverData.getPlayerPermissionChangeHandler().handle(player, serverData);
 	}
 
+	protected boolean onCropTrample(Entity entity, BlockPos pos) {
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
+		return serverData.getChunkProtection().onCropTrample(serverData, entity, pos);
+	}
+
 }
