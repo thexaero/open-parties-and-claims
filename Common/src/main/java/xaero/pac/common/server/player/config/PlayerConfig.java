@@ -191,22 +191,22 @@ public class PlayerConfig
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockInteractions")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more block interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like levers, doors etc. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_BLOCK_BREAKING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockBreaking")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more blocks are allowed to be broken, which are also configured by the server. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_ENTITY_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeEntityInteractions")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more entity interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like villager trading, minecarts, boats etc. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_ENTITY_KILLING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeEntityKilling")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, in addition to some forced exceptions across the server, more entities are allowed to be attacked and killed, which are also configured by the server. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 

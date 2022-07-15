@@ -27,7 +27,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.ClientboundModesPacket;
-import xaero.pac.common.packet.claims.ClientboundClaimLimitsPacket;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
