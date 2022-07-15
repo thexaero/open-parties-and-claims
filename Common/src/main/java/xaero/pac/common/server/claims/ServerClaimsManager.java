@@ -233,6 +233,13 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			if(outOfBounds)
 				resultTypes.add(ClaimResult.Type.TOO_FAR);
 		}
+
+		int maxRequestLength = 32;
+		if(effectiveRight - effectiveLeft >= maxRequestLength)
+			effectiveRight = effectiveLeft + maxRequestLength - 1;
+		if(effectiveBottom - effectiveTop >= maxRequestLength)
+			effectiveBottom = effectiveTop + maxRequestLength - 1;
+
 		int total;
 		if(effectiveLeft > effectiveRight || effectiveTop > effectiveBottom)
 			total = 0;
