@@ -143,11 +143,9 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 	
 	private ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
-		if(!replace) {
-			PlayerChunkClaim currentClaim = get(dimension, x, z);
-			if(currentClaim == null || !Objects.equals(id, currentClaim.getPlayerId()))
-				return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
-		}
+		PlayerChunkClaim currentClaim = get(dimension, x, z);
+		if(currentClaim == null || !replace && !Objects.equals(id, currentClaim.getPlayerId()))
+			return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
 	 	unclaim(dimension, x, z);
 	 	return new ClaimResult<>(null, ClaimResult.Type.SUCCESSFUL_UNCLAIM);
 	}
