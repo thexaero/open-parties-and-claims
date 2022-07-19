@@ -50,6 +50,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xaero.pac.OpenPartiesAndClaims;
@@ -200,6 +201,10 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public boolean onCropTrample(Entity entity, BlockPos pos) {
 		return super.onCropTrample(entity, pos);
+	}
+
+	public boolean onBucketUse(Entity entity, HitResult hitResult, ItemStack itemStack){
+		return super.onBucketUse(entity, hitResult, itemStack);
 	}
 
 	public MinecraftServer getLastServerStarted(){

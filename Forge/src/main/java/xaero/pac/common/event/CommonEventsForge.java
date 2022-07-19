@@ -28,14 +28,11 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
@@ -64,6 +61,7 @@ public class CommonEventsForge extends CommonEvents {
 		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.EntityInteract>addListener(EventPriority.HIGHEST, this::onEntityInteract);
 		MinecraftForge.EVENT_BUS.<EntityTeleportEvent.ChorusFruit>addListener(EventPriority.HIGHEST, this::onChorusFruit);
 		MinecraftForge.EVENT_BUS.<BlockEvent.FarmlandTrampleEvent>addListener(EventPriority.HIGHEST, this::onCropTrample);
+		MinecraftForge.EVENT_BUS.<FillBucketEvent>addListener(EventPriority.HIGHEST, this::onBucketUse);
 	}
 
 	@SubscribeEvent
@@ -185,6 +183,11 @@ public class CommonEventsForge extends CommonEvents {
 
 	private void onCropTrample(BlockEvent.FarmlandTrampleEvent event) {
 		if(super.onCropTrample(event.getEntity(), event.getPos()))
+			event.setCanceled(true);
+	}
+
+	public void onBucketUse(FillBucketEvent event){
+		if(super.onBucketUse(event.getEntity(), event.getTarget(), event.getEmptyBucket()))
 			event.setCanceled(true);
 	}
 	

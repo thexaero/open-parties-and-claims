@@ -259,6 +259,30 @@ function initializeCoreMod() {
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
             }
+        },
+        'xaero_pac_player_mayuseitemat': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.player.Player',
+                'methodName': 'm_36204_',
+                'methodDesc' : '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/item/ItemStack;)Z'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', "mayUseItemAt", "(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/item/ItemStack;)Z"))
+                insnToInsert.add(new InsnNode(Opcodes.DUP))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.IRETURN))
+                insnToInsert.add(MY_LABEL)
+                insnToInsert.add(new InsnNode(Opcodes.POP))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
         }
 	}
 }

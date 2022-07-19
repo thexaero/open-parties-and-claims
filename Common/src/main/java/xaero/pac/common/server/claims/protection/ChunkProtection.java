@@ -20,6 +20,7 @@ package xaero.pac.common.server.claims.protection;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -37,6 +38,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -75,6 +77,7 @@ public class ChunkProtection
 	private final Component USE_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_use_item", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_INTERACT_ENTITY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_PLACE_ITEM = new TranslatableComponent("gui.xaero_claims_protection_interact_item_place").withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final Component CANT_INTERACT_BLOCK_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block", new TranslatableComponent("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", new TranslatableComponent("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
@@ -181,16 +184,16 @@ public class ChunkProtection
 		return playerConfigs.getLoadedConfig(claim == null ? null : claim.getPlayerId());
 	}
 	
-	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Player player, boolean emptyHand, boolean leftClick) {
+	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Entity entity, boolean emptyHand, boolean leftClick) {
 		ChunkPos chunkPos = new ChunkPos(pos);
-		IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), chunkPos);
+		IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		boolean chunkAccess = hasChunkAccess(config, player);
+		boolean chunkAccess = hasChunkAccess(config, entity);
 		if(chunkAccess)
 			return false;
 		else {
-			Block block = player.getLevel().getBlockState(pos).getBlock();
+			Block block = entity.getLevel().getBlockState(pos).getBlock();
 			if(leftClick && forcedBreakExceptionBlocks.contains(block) || !leftClick && emptyHand && forcedEmptyHandExceptionBlocks.contains(block))
 				return false;
 			if(
@@ -238,7 +241,9 @@ public class ChunkProtection
 				!(item instanceof TridentItem) &&
 				!(item instanceof ShieldItem) &&
 				!(item instanceof SwordItem) &&
-				!(item instanceof BoatItem)
+				!(item instanceof BoatItem) &&
+				!(item instanceof BucketItem) &&
+				!(item instanceof MilkBucketItem)
 				||
 				additionalBannedItems.contains(item)
 		) {
@@ -393,9 +398,36 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(entity.level.dimension().location(), new ChunkPos(pos));
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
-		return claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS)
-				&& claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE)
+		return claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE)
 				&& !hasChunkAccess(claimConfig, entity);
+	}
+
+	public boolean onBucketUse(IServerData<CM, P> serverData, Entity entity, HitResult hitResult, ItemStack itemStack) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		//just onUseItemAt would work for buckets in "vanilla" as well, but it's better to use the proper bucket event too
+		BlockPos pos;
+		Direction direction = null;
+		if(hitResult instanceof BlockHitResult blockHitResult) {
+			pos = blockHitResult.getBlockPos();
+			direction = blockHitResult.getDirection();
+		} else
+			pos = new BlockPos(hitResult.getLocation());
+		return onUseItemAt(serverData, entity, pos, direction, itemStack);
+	}
+
+	public boolean onUseItemAt(IServerData<CM, P> serverData, Entity entity, BlockPos pos, Direction direction, ItemStack itemStack) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		BlockPos pos2 = null;
+		if(direction != null)
+			pos2 = pos.offset(direction.getNormal());
+		if(blockAccessCheck(serverData, pos, entity, false, false) || pos2 != null && blockAccessCheck(serverData, pos2, entity, false, false)){
+			if(entity instanceof ServerPlayer player)
+				player.sendMessage(CANT_PLACE_ITEM, player.getUUID());
+			return true;
+		}
+		return false;
 	}
 
 	public static final class Builder

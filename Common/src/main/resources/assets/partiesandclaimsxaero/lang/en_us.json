@@ -104,6 +104,7 @@
 	"gui.xaero_claims_protection_interact_entity_try_empty" : "(%1$s) It might work if you try again empty-handed.",
 	"gui.xaero_claims_protection_use_item" : "(%1$s) You are not allowed to use this item here!",
 	"gui.xaero_claims_protection_chorus" : "You are not allowed to chorus-fruit-teleport to that location!",
+	"gui.xaero_claims_protection_interact_item_place" : "You are not allowed to place this item here!",
 	"gui.xaero_claims_protection_main_hand" : "Main Hand",
 	"gui.xaero_claims_protection_off_hand" : "Off Hand",
 	
