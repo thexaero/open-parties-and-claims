@@ -26,6 +26,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -242,6 +243,7 @@ public class ChunkProtection
 				!(item instanceof ShieldItem) &&
 				!(item instanceof SwordItem) &&
 				!(item instanceof BoatItem) &&
+				!itemStack.is(ItemTags.BOATS) &&
 				!(item instanceof BucketItem) &&
 				!(item instanceof MilkBucketItem)
 				||
