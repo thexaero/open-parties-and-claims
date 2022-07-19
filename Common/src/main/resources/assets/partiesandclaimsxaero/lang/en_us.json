@@ -18,7 +18,7 @@
 	
 	"gui.xaero_parties_party_created" : "You have successfully created a new party!",
 	
-	"gui.xaero_parties_party_destroy_info" : "Use \"/xaeroparty destroy confirm\" to destroy the party.",
+	"gui.xaero_parties_party_destroy_info" : "Use \"/openpac-parties destroy confirm\" to destroy the party.",
 	"gui.xaero_parties_party_destroy_members_info" : "%1$s destroyed the party!",
 	
 	"gui.xaero_parties_join_invalid_id" : "The input party ID is not valid!",
