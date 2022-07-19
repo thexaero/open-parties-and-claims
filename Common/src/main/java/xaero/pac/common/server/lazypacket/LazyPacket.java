@@ -16,7 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.lazypackets;
+package xaero.pac.common.server.lazypacket;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;

@@ -21,8 +21,6 @@ package xaero.pac.common.packet;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.LoadCommon;
 import xaero.pac.common.packet.claims.*;
-import xaero.pac.common.packet.claims.owned.ClientboundPlayerClaimsOwnedClaimPacket;
-import xaero.pac.common.packet.claims.owned.ClientboundPlayerClaimsOwnerPacket;
 import xaero.pac.common.packet.config.PlayerConfigOptionValuePacket;
 import xaero.pac.common.packet.config.ServerboundOtherPlayerConfigPacket;
 import xaero.pac.common.packet.parties.ClientboundPartyAllyPacket;
@@ -64,8 +62,6 @@ public class PacketRegister {
 		
 		packetHandler.register(10, ClientboundPlayerClaimsDimensionPacket.class, ClientboundPlayerClaimsDimensionPacket.ENCODER, new ClientboundPlayerClaimsDimensionPacket.Decoder(), null, new ClientboundPlayerClaimsDimensionPacket.ClientHandler());
 		
-		packetHandler.register(11, ClientboundPlayerClaimsOwnedClaimPacket.class, ClientboundPlayerClaimsOwnedClaimPacket.ENCODER, new ClientboundPlayerClaimsOwnedClaimPacket.Decoder(), null, new ClientboundPlayerClaimsOwnedClaimPacket.ClientHandler());
-		
 		packetHandler.register(12, ClientboundClaimStatesPacket.class, ClientboundClaimStatesPacket.ENCODER, new ClientboundClaimStatesPacket.Decoder(), null, new ClientboundClaimStatesPacket.ClientHandler());
 		
 		packetHandler.register(13, ClientboundClaimsRegionPacket.class, ClientboundClaimsRegionPacket.ENCODER, new ClientboundClaimsRegionPacket.Decoder(), null, new ClientboundClaimsRegionPacket.ClientHandler());
@@ -73,8 +69,6 @@ public class PacketRegister {
 		packetHandler.register(14, ClientboundClaimsClaimUpdatePacket.class, ClientboundClaimsClaimUpdatePacket.ENCODER, new ClientboundClaimsClaimUpdatePacket.Decoder(), null, new ClientboundClaimsClaimUpdatePacket.ClientHandler());
 		
 		packetHandler.register(15, ClientboundClaimPropertiesPacket.class, ClientboundClaimPropertiesPacket.ENCODER, new ClientboundClaimPropertiesPacket.Decoder(), null, new ClientboundClaimPropertiesPacket.ClientHandler());
-		
-		packetHandler.register(16, ClientboundPlayerClaimsOwnerPacket.class, ClientboundPlayerClaimsOwnerPacket.ENCODER, new ClientboundPlayerClaimsOwnerPacket.Decoder(), null, new ClientboundPlayerClaimsOwnerPacket.ClientHandler());
 		
 		packetHandler.register(17, ClientboundClaimLimitsPacket.class, ClientboundClaimLimitsPacket.ENCODER, new ClientboundClaimLimitsPacket.Decoder(), null, new ClientboundClaimLimitsPacket.ClientHandler());
 		

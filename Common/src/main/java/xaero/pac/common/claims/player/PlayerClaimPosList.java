@@ -18,24 +18,22 @@
 
 package xaero.pac.common.claims.player;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.world.level.ChunkPos;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.stream.Stream;
 
 public final class PlayerClaimPosList implements IPlayerClaimPosList {
 	
 	private final PlayerChunkClaim claimState;
-	private final LongList positions;
+	private final LongSet positions;
 	
-	private PlayerClaimPosList(PlayerChunkClaim claimState, LongList positions) {
+	private PlayerClaimPosList(PlayerChunkClaim claimState, LongSet positions) {
 		super();
 		this.claimState = claimState;
 		this.positions = positions;
-		Collections.sort(positions);
 	}
 	
 	@Nonnull
@@ -55,28 +53,14 @@ public final class PlayerClaimPosList implements IPlayerClaimPosList {
 		return positions.size();
 	}
 	
-	private int getIndex(int x, int z) {
-		long key = PlayerChunkClaim.getLongCoordinatesFor(x, z);
-		return Collections.binarySearch(positions, key);
-	}
-	
-	public boolean contains(int x, int z) {
-		return getIndex(x, z) >= 0;
-	}
-	
 	public boolean remove(int x, int z) {
-		int index = getIndex(x, z);
-		if(index < 0)
-			return false;
-		positions.removeLong(index);
-		return true;
+		long key = PlayerChunkClaim.getLongCoordinatesFor(x, z);
+		return positions.remove(key);
 	}
 	
 	public void add(int x, int z) {
 		long key = PlayerChunkClaim.getLongCoordinatesFor(x, z);
-		int index = getIndex(x, z);
-		if(index < 0)//matters when loading from the save files
-			positions.add(-index - 1, key);
+		positions.add(key);
 	}
 	
 	public static final class Builder {
@@ -98,7 +82,7 @@ public final class PlayerClaimPosList implements IPlayerClaimPosList {
 		public PlayerClaimPosList build() {
 			if (claim == null)
 				throw new IllegalStateException();
-			return new PlayerClaimPosList(claim, new LongArrayList());
+			return new PlayerClaimPosList(claim, new LongOpenHashSet());
 		}
 
 		public static Builder begin() {

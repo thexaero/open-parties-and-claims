@@ -16,11 +16,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.claims;
+package xaero.pac.common.claims;
 
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 
-public class ServerPlayerChunkClaimHolder {
+public class PlayerChunkClaimHolder {
 	
 	private final PlayerChunkClaim claim;
 	private final byte[] counts;
@@ -28,7 +28,7 @@ public class ServerPlayerChunkClaimHolder {
 	private byte maxX;
 	private short count;
 	
-	public ServerPlayerChunkClaimHolder(PlayerChunkClaim claim, byte[] counts) {
+	public PlayerChunkClaimHolder(PlayerChunkClaim claim, byte[] counts) {
 		super();
 		if(counts.length != 32)
 			throw new IllegalArgumentException();

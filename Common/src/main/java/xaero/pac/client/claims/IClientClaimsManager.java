@@ -41,6 +41,8 @@ public interface IClientClaimsManager
 	public void setLoadingClaimCount(int loadingClaimCount);
 	
 	public int getLoadingForceloadCount();
+
+	public boolean getAlwaysUseLoadingValues();
 	
 	public void setLoadingForceloadCount(int loadingForceloadCount);
 	

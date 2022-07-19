@@ -27,7 +27,7 @@ import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMember;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

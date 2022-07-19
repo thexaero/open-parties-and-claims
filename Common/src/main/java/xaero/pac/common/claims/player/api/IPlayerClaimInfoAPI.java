@@ -90,6 +90,14 @@ public interface IPlayerClaimInfoAPI<DC extends IPlayerDimensionClaimsAPI<?>> {
 	 */
 	@Nonnull
 	public Stream<Entry<ResourceLocation, DC>> getStream();
+
+	/**
+	 * Gets claim info for a dimension with a specified ID.
+	 * @param id  the dimension ID, not null
+	 * @return  the claim info of the dimension, null if no claims exist for the specified dimension ID
+	 */
+	@Nullable
+	public DC getDimension(@Nonnull ResourceLocation id);
 	
 	
 }

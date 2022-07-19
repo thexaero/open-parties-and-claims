@@ -43,6 +43,7 @@ import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.packet.LazyPacketsConfirmationPacket;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -124,6 +125,7 @@ public class MainMenu extends XPACScreen {
 	private Button aboutPartyButton;
 	private Button claimButton;
 	private Button forceloadButton;
+	public static boolean TEST_TOGGLE;
 
 	public MainMenu(Screen escape, Screen parent) {
 		super(escape, parent, new TranslatableComponent("gui.xaero_pac_ui_main_menu"));
@@ -166,6 +168,8 @@ public class MainMenu extends XPACScreen {
 		
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
 
+		//addRenderableWidget(new Button(0, 0, 40, 20, new TextComponent("test toggle"), this::onTestToggle));
+
 		updateButtons();
 
 		if(serverHasPartiesEnabled){
@@ -178,7 +182,14 @@ public class MainMenu extends XPACScreen {
 
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
-	
+
+	private void onTestToggle(Button button) {
+		TEST_TOGGLE = !TEST_TOGGLE;
+		if(!TEST_TOGGLE)
+			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new LazyPacketsConfirmationPacket());
+		OpenPartiesAndClaims.LOGGER.info("test toggle set to " + TEST_TOGGLE);
+	}
+
 	private void updateButtons() {
 		ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(minecraft.level, ClientWorldCapabilityTypes.MAIN_CAP);
 		serverHasMod = configsButton.active = mainCap.getClientWorldData().serverHasMod();
@@ -253,9 +264,11 @@ public class MainMenu extends XPACScreen {
 		if(claimsManager.hasPlayerInfo(minecraft.player.getUUID())) {
 			IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = claimsManager.getPlayerInfo(minecraft.player.getUUID());
 
-			int claimCount = claimsManager.isLoading() ? claimsManager.getLoadingClaimCount() : playerInfo.getClaimCount();
+			boolean shouldUseLoadingValues = claimsManager.isLoading() || claimsManager.getAlwaysUseLoadingValues();
+
+			int claimCount = shouldUseLoadingValues ? claimsManager.getLoadingClaimCount() : playerInfo.getClaimCount();
 			int claimLimit = claimsManager.getClaimLimit();
-			int forceloadCount = claimsManager.isLoading() ? claimsManager.getLoadingForceloadCount() : playerInfo.getForceloadCount();
+			int forceloadCount = shouldUseLoadingValues ? claimsManager.getLoadingForceloadCount() : playerInfo.getForceloadCount();
 			int forceloadLimit = claimsManager.getForceloadLimit();
 			String claimsName = playerInfo.getClaimsName();
 			if(claimsName == null || claimsName.isEmpty())

@@ -25,6 +25,7 @@ import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,18 +35,14 @@ import java.util.function.BiConsumer;
 //only used by ClientClaimsManager
 public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager> {
 
-	public ClientPlayerClaimInfoManager(Map<UUID, ClientPlayerClaimInfo> storage) {
-		super(storage);
+	public ClientPlayerClaimInfoManager(Map<UUID, ClientPlayerClaimInfo> storage, LinkedChain<ClientPlayerClaimInfo> linkedPlayerInfo) {
+		super(storage, linkedPlayerInfo);
 	}
 
 	@Override
 	protected ClientPlayerClaimInfo create(String username, UUID playerId,
 			Map<ResourceLocation, PlayerDimensionClaims> claims) {
 		return new ClientPlayerClaimInfo(username, playerId, claims, this);
-	}
-
-	@Override
-	protected void onRemove(ClientPlayerClaimInfo playerInfo) {
 	}
 	
 	public void updatePlayerInfo(UUID playerId, String username, String claimsName, int claimsColor, ClientClaimsManager claimsManager) {

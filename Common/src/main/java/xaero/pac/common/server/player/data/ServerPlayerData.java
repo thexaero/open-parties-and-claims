@@ -21,7 +21,9 @@ package xaero.pac.common.server.player.data;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.parties.party.PartyMemberDynamicInfoSyncable;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSyncHandler;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimPropertiesSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 public class ServerPlayerData extends ServerPlayerDataAPI {
@@ -37,16 +39,23 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private boolean checkedBaseForceloadLimitOnce;
 	private boolean shouldResyncPlayerConfigs;
 	private PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo;
-	private ClaimsManagerPlayerSyncHandler claimsManagerPlayerSyncHandler;
+	private ClaimsManagerPlayerClaimPropertiesSync claimsManagerPlayerClaimPropertiesSync;
+	private ClaimsManagerPlayerStateSync claimsManagerPlayerStateSync;
+	private ClaimsManagerPlayerRegionSync claimsManagerPlayerRegionSync;
 	private PlayerClaimActionRequestHandler claimActionRequestHandler;
 	
 	public ServerPlayerData() {
 		super();
 	}
 
-	public void onLogin(ClaimsManagerPlayerSyncHandler claimsManagerPlayerSyncHandler, PlayerClaimActionRequestHandler claimActionRequestHandler) {
+	public void onLogin(ClaimsManagerPlayerRegionSync claimsManagerPlayerSyncHandler,
+						ClaimsManagerPlayerStateSync claimsManagerPlayerStateSyncHandler,
+						ClaimsManagerPlayerClaimPropertiesSync claimsManagerPlayerClaimPropertiesSync,
+						PlayerClaimActionRequestHandler claimActionRequestHandler) {
 		//won't be called for fake players, e.g. turtles from cc
-		this.claimsManagerPlayerSyncHandler = claimsManagerPlayerSyncHandler;
+		this.claimsManagerPlayerRegionSync = claimsManagerPlayerSyncHandler;
+		this.claimsManagerPlayerStateSync = claimsManagerPlayerStateSyncHandler;
+		this.claimsManagerPlayerClaimPropertiesSync = claimsManagerPlayerClaimPropertiesSync;
 		this.claimActionRequestHandler = claimActionRequestHandler;
 	}
 
@@ -84,10 +93,18 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return oftenSyncedPartyMemberInfo;
 	}
 	
-	public ClaimsManagerPlayerSyncHandler getClaimsManagerPlayerSyncHandler() {
-		return claimsManagerPlayerSyncHandler;
+	public ClaimsManagerPlayerRegionSync getClaimsManagerPlayerRegionSync() {
+		return claimsManagerPlayerRegionSync;
 	}
-	
+
+	public ClaimsManagerPlayerStateSync getClaimsManagerPlayerStateSync() {
+		return claimsManagerPlayerStateSync;
+	}
+
+	public ClaimsManagerPlayerClaimPropertiesSync getClaimsManagerPlayerClaimPropertiesSync() {
+		return claimsManagerPlayerClaimPropertiesSync;
+	}
+
 	public PlayerClaimActionRequestHandler getClaimActionRequestHandler() {
 		return claimActionRequestHandler;
 	}

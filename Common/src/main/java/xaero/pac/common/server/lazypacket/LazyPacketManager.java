@@ -16,7 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.lazypackets;
+package xaero.pac.common.server.lazypacket;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,7 +56,7 @@ public class LazyPacketManager {
 		int insertionIndex = Collections.binarySearch(orderHolder, player.getUUID());
 		if(insertionIndex >= 0) {
 			orderHolder.remove(insertionIndex);
-			storage.remove(player.getUUID());
+			storage.remove(player.getUUID()).onDropped(player);
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class LazyPacketManager {
 				UUID id = orderHolder.get(currentIndex);
 				currentIndex++;
 				PlayerLazyPacketManager playerPackets = getForPlayer(id);
-				if(playerPackets.hasNext(bytesPerConfirmation, overCapacity, this))
+				if(playerPackets.hasNext(overCapacity, this))
 					return playerPackets;
 			}
 		}

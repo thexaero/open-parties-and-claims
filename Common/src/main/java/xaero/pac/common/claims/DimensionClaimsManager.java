@@ -24,38 +24,43 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
+import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 public abstract class DimensionClaimsManager
 <
 	M extends PlayerClaimInfoManager<?, M>,
-	WRC extends RegionClaims<M>
+	WRC extends RegionClaims<M, WRC>
 > implements IDimensionClaimsManager<WRC> {
 	
 	private final ResourceLocation dimension;
-	private final Long2ObjectMap<WRC> claims;
+	private final Long2ObjectMap<WRC> regions;
+	private final LinkedChain<WRC> linkedRegions;
 	
-	public DimensionClaimsManager(ResourceLocation dimension, Long2ObjectMap<WRC> claims) {
+	public DimensionClaimsManager(ResourceLocation dimension, Long2ObjectMap<WRC> regions, LinkedChain<WRC> linkedRegions) {
 		this.dimension = dimension;
-		this.claims = claims;
+		this.regions = regions;
+		this.linkedRegions = linkedRegions;
 	}
 	
 	@Override
 	public int getCount() {
-		return claims.size();
+		return regions.size();
 	}
 	
 	@Nonnull
 	@Override
 	public Stream<WRC> getRegionStream(){
-		return claims.values().stream();
+		return linkedRegions.stream();
 	}
 	
-	private long getKey(int x, int z) {
+	public long getKey(int x, int z) {
 		return PlayerChunkClaim.getLongCoordinatesFor(x, z);
 	}
 
@@ -63,12 +68,22 @@ public abstract class DimensionClaimsManager
 	@Override
 	public WRC getRegion(int x, int z) {
 		long key = getKey(x, z);
-		return claims.get(key);
+		return regions.get(key);
 	}
 	
-	private void setRegion(int x, int z, WRC region) {
+	protected void setRegion(int x, int z, WRC region) {
 		long key = getKey(x, z);
-		claims.put(key, region);
+		WRC current = regions.get(key);
+		regions.put(key, region);
+		if(current != null)
+			onRegionRemoved(current);
+		if(region != null)
+			onRegionAdded(region);
+	}
+
+	protected void removeRegion(int x, int z) {
+		long key = getKey(x, z);
+		onRegionRemoved(regions.remove(key));
 	}
 	
 	public PlayerChunkClaim get(int x, int z) {
@@ -91,7 +106,7 @@ public abstract class DimensionClaimsManager
 		int regionZ = chunkZ >> 5;
 		WRC region = getRegion(regionX, regionZ);
 		if(region == null)
-			setRegion(regionX, regionZ, region = create(dimension, regionX, regionZ)); 
+			setRegion(regionX, regionZ, region = create(dimension, regionX, regionZ, null));
 		return region;
 	}
 	
@@ -101,7 +116,7 @@ public abstract class DimensionClaimsManager
 		return getRegion(regionX, regionZ);
 	}
 	
-	protected abstract WRC create(ResourceLocation dimension, int x, int z);
+	protected abstract WRC create(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage storage);
 	
 	public PlayerChunkClaim claim(int x, int z, PlayerChunkClaim claim, M playerClaimInfoManager, IPlayerConfigManager<?> configManager) {
 		WRC region = ensureRegionForChunk(x, z);
@@ -113,16 +128,32 @@ public abstract class DimensionClaimsManager
 		if(region != null) {
 			region.claim(x, z, null, playerClaimInfoManager, configManager);
 			if(region.isEmpty()) {
-				region.onRemoved();
-				claims.remove(getKey(region.getX(), region.getZ()));
+				removeRegion(region.getX(), region.getZ());
 			}
 		}
+	}
+
+	protected void onRegionRemoved(WRC region){
+		linkedRegions.remove(region);
+	}
+
+	protected void onRegionAdded(WRC region){
+		linkedRegions.add(region);
 	}
 	
 	@Nonnull
 	@Override
 	public ResourceLocation getDimension() {
 		return dimension;
+	}
+
+	/**
+	 * Gets an iterator that can be used across multiple game ticks without breaking.
+	 *
+	 * @return the region iterator, not null
+	 */
+	public Iterator<WRC> iterator(){
+		return linkedRegions.iterator();
 	}
 
 }

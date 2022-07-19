@@ -23,6 +23,7 @@ import xaero.pac.common.claims.player.api.IPlayerClaimInfoAPI;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -55,5 +56,8 @@ public interface IClientPlayerClaimInfoAPI<DC extends IPlayerDimensionClaimsAPI<
 	@Nonnull
 	@Override
 	public Stream<Entry<ResourceLocation, DC>> getStream();
+
+	@Nullable
+	public DC getDimension(@Nonnull ResourceLocation id);
 
 }

@@ -24,7 +24,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.BitStorage;
 import net.minecraft.util.SimpleBitStorage;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

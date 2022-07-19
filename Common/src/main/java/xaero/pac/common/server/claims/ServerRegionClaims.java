@@ -22,18 +22,17 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.SimpleBitStorage;
+import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.RegionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
-import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 
 import java.util.HashMap;
 import java.util.Objects;
 
-public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfoManager> implements IServerRegionClaims {
+public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfoManager, ServerRegionClaims> implements IServerRegionClaims {
 
 	private final ServerClaimsManager manager;
 	
@@ -65,21 +64,7 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 		if(shouldSync && value != oldValueForSync)
 			manager.getClaimsManagerSynchronizer().syncToPlayersClaimUpdate(dimension, (this.getX() << 5) | x, (this.getZ() << 5) | z, value, oldValueForSync);
 	}
-	
-	@Override
-	protected PlayerChunkClaim replaceClaim(PlayerClaimInfo<?,?> newPlayerInfo, IPlayerConfigManager<?> configManager, PlayerChunkClaim claim) {
-		//this code used to ensure that forceloads are never loaded beyond the player's forceload limit
-		//but it doesn't work with the FTB Ranks permission which can only be checked when the player is online
-		//we still want the forceloadable claims to be there when the player logs in, so everything has to be loaded
-		//whether the forceloadable claims will actually be forceloaded before the player logs in is a different story tho
-//		int baseForceloadLimit;
-//		if(claim != null && claim.isForceloaded() && !Objects.equals(claim.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) &&
-//				newPlayerInfo.getForceLoadCount() >= (baseForceloadLimit = manager.getPlayerBaseForceloadLimit(claim.getPlayerId())) && //faster this way
-//				newPlayerInfo.getForceLoadCount() >= baseForceloadLimit + configManager.getLoadedConfig(claim.getPlayerId()).getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS))
-//			return manager.getClaimState(claim.getPlayerId(), false);//checked directly here so that the forceload limit is always respected
-		return claim;
-	}
-	
+
 	public int[] getSyncablePaletteArray(){
 		return syncableStorage.getPaletteArray();
 	}
@@ -95,8 +80,12 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 	public RegionClaimsPaletteStorage getSyncableStorage() {
 		return syncableStorage;
 	}
+
+	public boolean containsState(PlayerChunkClaim state){
+		return syncableStorage.containsState(state);
+	}
 	
-	public static final class Builder extends RegionClaims.Builder<ServerPlayerClaimInfoManager, Builder>{
+	public static final class Builder extends RegionClaims.Builder<ServerPlayerClaimInfoManager, ServerRegionClaims, Builder>{
 
 		private ServerClaimsManager manager;
 		private boolean playerClaimsSyncAllowed;
@@ -127,14 +116,14 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 		@Override
 		public ServerRegionClaims build() {
 			syncableStorage = 
-					new RegionClaimsPaletteStorage(new HashMap<>(), new IntArrayList(), Lists.newArrayList((ServerPlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false);
+					new RegionClaimsPaletteStorage(new HashMap<>(), new IntArrayList(), Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false);
 			setStorage(playerClaimsSyncAllowed ? syncableStorage : 
-				new RegionClaimsPaletteStorage(new HashMap<>(), null, Lists.newArrayList((ServerPlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false));
+				new RegionClaimsPaletteStorage(new HashMap<>(), null, Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false));
 			return (ServerRegionClaims) super.build();
 		}
 
 		@Override
-		protected RegionClaims<ServerPlayerClaimInfoManager> buildInternally() {
+		protected ServerRegionClaims buildInternally() {
 			return new ServerRegionClaims(dimension, x, z, 
 					syncableStorage, storage,
 					manager);

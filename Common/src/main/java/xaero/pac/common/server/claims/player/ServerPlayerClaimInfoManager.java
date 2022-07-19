@@ -33,6 +33,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -55,8 +56,8 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	private ServerPlayerClaimsExpirationHandler expirationHandler;
 
 	public ServerPlayerClaimInfoManager(MinecraftServer server, IPlayerConfigManager<?> configManager, ForceLoadTicketManager ticketManager,
-			Map<UUID, ServerPlayerClaimInfo> storage, Set<ServerPlayerClaimInfo> toSave) {
-		super(storage);
+			Map<UUID, ServerPlayerClaimInfo> storage, LinkedChain<ServerPlayerClaimInfo> linkedPlayerInfo, Set<ServerPlayerClaimInfo> toSave) {
+		super(storage, linkedPlayerInfo);
 		this.server = server;
 		this.configManager = configManager;
 		this.ticketManager = ticketManager;
@@ -122,6 +123,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 
 	@Override
 	protected void onRemove(ServerPlayerClaimInfo playerInfo) {
+		super.onRemove(playerInfo);
 		io.delete(playerInfo);
 		toSave.remove(playerInfo);
 	}

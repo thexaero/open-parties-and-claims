@@ -22,28 +22,35 @@ import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.SimpleBitStorage;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfoManager;
+import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.RegionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
-import xaero.pac.common.server.claims.ServerPlayerChunkClaimHolder;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 
 import java.util.HashMap;
 
-public final class ClientRegionClaims extends RegionClaims<ClientPlayerClaimInfoManager> implements IClientRegionClaims {
+public final class ClientRegionClaims extends RegionClaims<ClientPlayerClaimInfoManager, ClientRegionClaims> implements IClientRegionClaims {
 
 	private ClientRegionClaims(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage storage) {
 		super(dimension, x, z, storage);
 	}
 
-	@Override
-	protected PlayerChunkClaim replaceClaim(PlayerClaimInfo<?, ?> newPlayerInfo, IPlayerConfigManager<?> configManager,
-			PlayerChunkClaim claim) {
-		return claim;
-	}	
-	
-	public static final class Builder extends RegionClaims.Builder<ClientPlayerClaimInfoManager, Builder>{
+	public void onRegionClaim(ClientRegionClaims otherRegion /*new region or the old region when "reversed"*/, ClientPlayerClaimInfoManager playerClaimsManager, IPlayerConfigManager<?> configManager, boolean reverse) {
+		ClientRegionClaims oldRegion = reverse ? otherRegion : this;
+		ClientRegionClaims newRegion = reverse ? this : otherRegion;
+		int x = getX();
+		int z = getZ();
+		for(int i = 0; i < 32; i++){
+			for(int j = 0; j < 32; j++){
+				PlayerChunkClaim claim = oldRegion == null ? null : oldRegion.get(i, j);
+				PlayerChunkClaim newClaim = newRegion == null ? null : newRegion.get(i, j);
+				onClaimSet((x << 5) | i, (z << 5) | j, claim, newClaim, playerClaimsManager, configManager);
+			}
+		}
+	}
+
+	public static final class Builder extends RegionClaims.Builder<ClientPlayerClaimInfoManager, ClientRegionClaims, Builder>{
 		
 		public static Builder begin() {
 			return new Builder().setDefault();
@@ -54,15 +61,21 @@ public final class ClientRegionClaims extends RegionClaims<ClientPlayerClaimInfo
 			super.setDefault();
 			return self;
 		}
-		
+
+		@Override
+		public Builder setStorage(RegionClaimsPaletteStorage storage) {
+			return super.setStorage(storage);
+		}
+
 		@Override
 		public ClientRegionClaims build() {
-			setStorage(new RegionClaimsPaletteStorage(new HashMap<>(), null, Lists.newArrayList((ServerPlayerChunkClaimHolder)null), new SimpleBitStorage(11, 1024), true));
+			if(storage == null)
+				setStorage(new RegionClaimsPaletteStorage(new HashMap<>(), null, Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false));
 			return (ClientRegionClaims) super.build();
 		}
 
 		@Override
-		protected RegionClaims<ClientPlayerClaimInfoManager> buildInternally() {
+		protected ClientRegionClaims buildInternally() {
 			return new ClientRegionClaims(dimension, x, z, storage);
 		}
 		

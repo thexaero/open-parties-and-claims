@@ -16,18 +16,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.claims.sync;
+package xaero.pac.common.server.task;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.IServerData;
 
-public interface IClaimsManagerSynchronizer {
+public interface IServerPlayerSpreadoutTask {
 
-	public void syncClaimLimits(IPlayerConfig config, ServerPlayer player);
-	public void syncToPlayersClaimPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo);
-	public void syncOnLogin(ServerPlayer player);
-	public void onServerTick();
-	public void onLazyPacketsDropped(ServerPlayer player);
+	boolean shouldWork();
+	void onTick(IServerData<?,?> serverData, ServerPlayer player, int perPlayer);
 
 }

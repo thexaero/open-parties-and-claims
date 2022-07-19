@@ -16,18 +16,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.claims.sync;
+package xaero.pac.common.util.linked;
 
-import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.player.config.IPlayerConfig;
+public interface ILinkedChainNode<V extends ILinkedChainNode<V>> {
 
-public interface IClaimsManagerSynchronizer {
+	public void setNext(V element);
 
-	public void syncClaimLimits(IPlayerConfig config, ServerPlayer player);
-	public void syncToPlayersClaimPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo);
-	public void syncOnLogin(ServerPlayer player);
-	public void onServerTick();
-	public void onLazyPacketsDropped(ServerPlayer player);
+	public void setPrevious(V element);
+
+	public V getNext();
+
+	public V getPrevious();
+
+	public boolean isDestroyed();
+
+	public void onDestroyed();
 
 }

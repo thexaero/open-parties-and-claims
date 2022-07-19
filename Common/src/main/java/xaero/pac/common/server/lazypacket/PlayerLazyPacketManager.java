@@ -16,17 +16,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.lazypackets;
+package xaero.pac.common.server.lazypacket;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.server.player.data.ServerPlayerData;
-import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.ServerData;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class PlayerLazyPacketManager {
 
@@ -53,15 +53,14 @@ public class PlayerLazyPacketManager {
 		return storage.removeFirst();
 	}
 	
-	boolean hasNext(int bytesPerConfirmation, boolean overCapacity, LazyPacketManager manager) {
+	boolean hasNext(boolean overCapacity, LazyPacketManager manager) {
 		if(dropped)
 			return false;
 		if(waitingForConfirmation && System.currentTimeMillis() - startedWaitingAt > 60000 /*no response in a minute*/){
 			storage.forEach(manager::countSentBytes);
 			storage.clear();
 			ServerPlayer serverPlayer = server.getPlayerList().getPlayer(playerId);
-			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(serverPlayer);
-			playerData.getClaimsManagerPlayerSyncHandler().onLazyPacketsDropped();
+			onDropped(serverPlayer);
 			OpenPartiesAndClaims.LOGGER.info("Dropped lazy packets for player " + serverPlayer.getGameProfile().getName() + " because the client isn't responding. Probably no mod on their side.");
 			dropped = true;//won't send lazy packets to this player anymore
 			//doing this instead of a client->server handshake because it is more secure (clients can send a fake handshake)
@@ -70,6 +69,11 @@ public class PlayerLazyPacketManager {
 		if(!overCapacity && waitingForConfirmation)
 			return false;//wait for client confirmation
 		return !storage.isEmpty();
+	}
+
+	protected void onDropped(ServerPlayer serverPlayer){
+		IServerData<?,?> serverData = ServerData.from(server);
+		serverData.getServerClaimsManager().getClaimsManagerSynchronizer().onLazyPacketsDropped(serverPlayer);
 	}
 	
 	boolean enqueue(LazyPacket<?,?> packet) {
@@ -131,7 +135,7 @@ public class PlayerLazyPacketManager {
 		public PlayerLazyPacketManager build() {
 			if(server == null || playerId == null)
 				throw new IllegalStateException();
-			return new PlayerLazyPacketManager(server, playerId, new ArrayDeque<>());
+			return new PlayerLazyPacketManager(server, playerId, new ConcurrentLinkedDeque<>());
 		}
 		
 		public static Builder begin() {

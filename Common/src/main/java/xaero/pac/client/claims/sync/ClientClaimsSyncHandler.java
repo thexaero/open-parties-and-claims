@@ -18,19 +18,24 @@
 
 package xaero.pac.client.claims.sync;
 
+import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.BitStorage;
 import xaero.pac.client.claims.ClientClaimsManager;
+import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
+import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ClientClaimsSyncHandler {
 	
 	private final ClientClaimsManager claimsManager;
-	private ResourceLocation dimensionSyncingOwned;
-	private UUID ownerSyncingOwned;
+	private ResourceLocation dimensionSyncing;
 	
 	public ClientClaimsSyncHandler(ClientClaimsManager claimsManager) {
 		super();
@@ -44,60 +49,46 @@ public class ClientClaimsSyncHandler {
 	public void onClaimState(PlayerChunkClaim claim) {
 		claimsManager.addClaimState(claim);
 	}
-
-	public void onOwner(UUID ownerId) {
-		ownerSyncingOwned = ownerId;
-	}
-	
-	public void onDimension(ResourceLocation dim) {
-		this.dimensionSyncingOwned = dim;
-	}
 	
 	public void onLoading(boolean start) {
 		claimsManager.setLoading(start);
 	}
 	
 	public void onClaimLimits(int loadingClaimCount, int loadingForceloadCount, int claimLimit,
-			int forceloadLimit, int maxClaimDistance) {
+			int forceloadLimit, int maxClaimDistance, boolean alwaysUseLoadingValues) {
 		claimsManager.setLoadingClaimCount(loadingClaimCount);
 		claimsManager.setLoadingForceloadCount(loadingForceloadCount);
 		claimsManager.setClaimLimit(claimLimit);
 		claimsManager.setForceloadLimit(forceloadLimit);
 		claimsManager.setMaxClaimDistance(maxClaimDistance);
+		claimsManager.setAlwaysUseLoadingValues(alwaysUseLoadingValues);
+	}
+
+	public void onDimension(ResourceLocation dim) {
+		this.dimensionSyncing = dim;
 	}
 	
-	public void onOwnedClaim(int x, int z, boolean forceload) {
-		if(dimensionSyncingOwned != null)
-			onClaimUpdate(dimensionSyncingOwned, x, z, ownerSyncingOwned, forceload);
-	}
-	
-	public void onClaimUpdate(ResourceLocation dimension, int x, int z, UUID playerId, boolean forceload) {
-		PlayerChunkClaim newClaim = null;
-		if(playerId != null)
-			newClaim = claimsManager.claim(dimension, playerId, x, z, forceload);
-		else
+	public void onClaimUpdate(ResourceLocation dimension, int x, int z, UUID playerId, boolean forceload, int claimSyncIndex) {
+		if(playerId != null) {
+			if(claimsManager.getClaimStateBySyncIndex(claimSyncIndex) == null)
+				claimsManager.addClaimState(new PlayerChunkClaim(playerId, forceload, claimSyncIndex));
+			claimsManager.claim(dimension, playerId, x, z, forceload);
+		} else
 			claimsManager.unclaim(dimension, x, z);
-		claimsManager.getTracker().onChunkChange(dimension, x, z, newClaim);
 	}
 	
 	public void onRegion(int x, int z, int[] paletteInts, BitStorage storage) {
-		int index = 0;
-		for(int i = 0; i < 32; i++)
-			for(int j = 0; j < 32; j++) {
-				int paletteIndex = storage.get(index++);
-				PlayerChunkClaim claimState = null;
-				if(paletteIndex > 0) {
-					int paletteElement = paletteInts[paletteIndex - 1];
-					claimState = claimsManager.getClaimState(paletteElement);
-				}
-				int chunkX = (x << 5) | i;
-				int chunkZ = (z << 5) | j;
-				if(claimState == null)
-					claimsManager.unclaim(dimensionSyncingOwned, chunkX, chunkZ);
-				else
-					claimsManager.claim(dimensionSyncingOwned, claimState.getPlayerId(), chunkX, chunkZ, claimState.isForceloadable());
-			}
-		claimsManager.getTracker().onWholeRegionChange(dimensionSyncingOwned, x, z);
+		Map<PlayerChunkClaim, Integer> paletteHelper = new HashMap<>();
+		ArrayList<PlayerChunkClaimHolder> palette = Lists.newArrayList((PlayerChunkClaimHolder)null);
+		for(int i = 0; i < paletteInts.length; i++){
+			PlayerChunkClaim claim = claimsManager.getClaimStateBySyncIndex(paletteInts[i]);
+			if(claim != null)//can be null depending on sync mode
+				paletteHelper.put(claim, palette.size()/*not i*/);
+			palette.add(new PlayerChunkClaimHolder(claim, new byte[32]));
+		}
+		RegionClaimsPaletteStorage newRegionStorage = new RegionClaimsPaletteStorage(paletteHelper, null, palette, storage, false);
+		newRegionStorage.setNeedsHolderRecalculation(true);//will calculate holder data when there is an attempt to modify the region
+		claimsManager.claimRegion(dimensionSyncing, x, z, newRegionStorage);
 	}
 	
 	public void onClaimResult(AreaClaimResult result) {

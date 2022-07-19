@@ -26,7 +26,7 @@ import xaero.pac.client.parties.party.ClientParty;
 import xaero.pac.common.parties.party.Party;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMember;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.UUID;
 import java.util.function.Consumer;

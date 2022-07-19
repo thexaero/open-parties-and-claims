@@ -16,7 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.lazypackets;
+package xaero.pac.common.server.lazypacket;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,14 +30,16 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 	private final MinecraftServer server;
 	private final LazyPacketManager manager;
 	private final int bytesPerTickLimit;//can go over this because individual packets are sent in full
-	private final int capacity;//at which point to stop being lazy
+	private final float speedUpAtOccupancy;//how much [0.0;1.0] should the queue be allowed to fill up until we start speeding up (confirmation packets still in use though)
+	private final int capacity;//at which point to fully stop being lazy (no limits at all)
 	private final int bytesPerConfirmation;
 
-	private LazyPacketSender(MinecraftServer server, LazyPacketManager manager, int bytesPerTickLimit, int capacity, int bytesPerConfirmation) {
+	private LazyPacketSender(MinecraftServer server, LazyPacketManager manager, int bytesPerTickLimit, float speedUpAtOccupancy, int capacity, int bytesPerConfirmation) {
 		super();
 		this.server = server;
 		this.manager = manager;
 		this.bytesPerTickLimit = bytesPerTickLimit;
+		this.speedUpAtOccupancy = speedUpAtOccupancy;
 		this.capacity = capacity;
 		this.bytesPerConfirmation = bytesPerConfirmation;
 	}
@@ -57,6 +59,9 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 	public void onServerTick() {
 		int bytesSent = 0;
 		int bytesToSend = bytesPerTickLimit;
+		float occupancy = (float)manager.getTotalBytesEnqueued() / capacity;
+		if(occupancy > speedUpAtOccupancy)
+			bytesToSend *= occupancy / speedUpAtOccupancy;
 		boolean overCapacity;
 		while((overCapacity = manager.getTotalBytesEnqueued() > capacity) || bytesSent < bytesToSend) {
 			PlayerLazyPacketManager playerPackets = manager.getNext(bytesPerConfirmation, overCapacity);
@@ -74,8 +79,8 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 				OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, CONFIRMATION_PACKET);
 			}
 		}
-		//if(bytesSent != 0 || manager.getTotalBytesEnqueued() != 0)
-		//	OpenPartiesAndClaims.LOGGER.info("sent " + bytesSent + " with " + manager.getTotalBytesEnqueued() + " left");
+//		if(bytesSent != 0 || manager.getTotalBytesEnqueued() != 0)
+//			OpenPartiesAndClaims.LOGGER.info("sent " + bytesSent + " with " + manager.getTotalBytesEnqueued() + " left");
 	}
 
 	public boolean isClogged(ServerPlayer player){
@@ -86,12 +91,14 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 		
 		private MinecraftServer server;
 		private int bytesPerTickLimit;
+		private float speedUpAtOccupancy;
 		private int capacity;
 		private int bytesPerConfirmation;
 		
 		public Builder setDefault() {
 			setServer(null);
 			setBytesPerTickLimit(0);
+			setSpeedUpAtOccupancy(0.125f);
 			setCapacity(0);
 			setBytesPerConfirmation(0);
 			return this;
@@ -106,7 +113,12 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 			this.bytesPerTickLimit = bytesPerTickLimit;
 			return this;
 		}
-		
+
+		public Builder setSpeedUpAtOccupancy(float speedUpAtOccupancy) {
+			this.speedUpAtOccupancy = speedUpAtOccupancy;
+			return this;
+		}
+
 		public Builder setCapacity(int capacity) {
 			this.capacity = capacity;
 			return this;
@@ -120,7 +132,7 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 		public LazyPacketSender build() {
 			if(server == null || bytesPerTickLimit == 0 || capacity == 0 || bytesPerConfirmation == 0)
 				throw new IllegalStateException();
-			return new LazyPacketSender(server, LazyPacketManager.Builder.begin().setServer(server).build(), bytesPerTickLimit, capacity, bytesPerConfirmation);
+			return new LazyPacketSender(server, LazyPacketManager.Builder.begin().setServer(server).build(), bytesPerTickLimit, speedUpAtOccupancy, capacity, bytesPerConfirmation);
 		}
 		
 		public static Builder begin() {
