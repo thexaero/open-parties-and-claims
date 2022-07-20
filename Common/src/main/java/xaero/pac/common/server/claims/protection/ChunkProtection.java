@@ -80,7 +80,7 @@ public class ChunkProtection
 	private final Component USE_ITEM_MAIN = Component.translatable("gui.xaero_claims_protection_use_item", Component.translatable("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_INTERACT_ENTITY_MAIN = Component.translatable("gui.xaero_claims_protection_interact_entity", Component.translatable("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ENTITY_TRY_EMPTY_MAIN = Component.translatable("gui.xaero_claims_protection_interact_entity_try_empty", Component.translatable("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_PLACE_ITEM = Component.translatable("gui.xaero_claims_protection_interact_item_place").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_APPLY_ITEM = Component.translatable("gui.xaero_claims_protection_interact_item_apply").withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final Component CANT_INTERACT_BLOCK_OFF = Component.translatable("gui.xaero_claims_protection_interact_block", Component.translatable("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_OFF = Component.translatable("gui.xaero_claims_protection_interact_block_try_empty", Component.translatable("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
@@ -434,7 +434,7 @@ public class ChunkProtection
 			pos2 = pos.offset(direction.getNormal());
 		if(blockAccessCheck(serverData, pos, entity, false, false) || pos2 != null && blockAccessCheck(serverData, pos2, entity, false, false)){
 			if(entity instanceof ServerPlayer player)
-				player.sendSystemMessage(CANT_PLACE_ITEM);
+				player.sendSystemMessage(CANT_APPLY_ITEM);
 			return true;
 		}
 		return false;
@@ -461,7 +461,7 @@ public class ChunkProtection
 		if(toClaim == null)//don't care about wilderness
 			return false;
 		IPlayerChunkClaim fromClaim = claimsManager.get(level.dimension().location(), fromChunkX, fromChunkZ);
-		if(fromClaim == toClaim)
+		if(fromClaim == toClaim || fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId()))
 			return false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
