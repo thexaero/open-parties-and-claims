@@ -462,7 +462,7 @@ public class ChunkProtection
 		if(toClaim == null)//don't care about wilderness
 			return false;
 		IPlayerChunkClaim fromClaim = claimsManager.get(level.dimension().location(), fromChunkX, fromChunkZ);
-		if(fromClaim == toClaim)
+		if(fromClaim == toClaim || fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId()))
 			return false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
