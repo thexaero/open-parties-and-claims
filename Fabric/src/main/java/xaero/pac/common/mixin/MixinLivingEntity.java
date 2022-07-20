@@ -36,7 +36,7 @@ import xaero.pac.common.entity.ILivingEntity;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.core.ServerCoreFabric;
 
-@Mixin(LivingEntity.class)
+@Mixin(value = LivingEntity.class, priority = 1000001)
 public class MixinLivingEntity implements ILivingEntity {
 
 	private CompoundTag xaero_OPAC_persistentData;

@@ -34,7 +34,10 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSyncHandler;
+import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimPropertiesSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.ServerPlayerData;
@@ -51,10 +54,25 @@ public class PlayerLoginHandler {
 		serverData.getPlayerPartyAssigner().assign(serverData.getPartyManager(), player, serverData.getPartyMemberInfoUpdater());
 		
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+
+		ClaimsManagerPlayerClaimPropertiesSync claimsManagerPlayerClaimPropertiesSync = ClaimsManagerPlayerClaimPropertiesSync.Builder.begin()
+				.setPlayer(player)
+				.setSynchronizer((ClaimsManagerSynchronizer) serverData.getServerClaimsManager().getClaimsManagerSynchronizer())
+				.build();
+		ClaimsManagerPlayerStateSync claimsManagerPlayerStateSync = ClaimsManagerPlayerStateSync.Builder.begin()
+				.setPlayer(player)
+				.setSynchronizer((ClaimsManagerSynchronizer) serverData.getServerClaimsManager().getClaimsManagerSynchronizer())
+				.setClaimPropertiesSync(claimsManagerPlayerClaimPropertiesSync)
+				.build();
+
 		playerData.onLogin(
-				ClaimsManagerPlayerSyncHandler.Builder.begin()
+				ClaimsManagerPlayerRegionSync.Builder.begin()
 						.setClaimsManager(serverData.getServerClaimsManager())
+						.setStateSyncHandler(claimsManagerPlayerStateSync)
+						.setPlayerId(player.getUUID())
 						.build(),
+				claimsManagerPlayerStateSync,
+				claimsManagerPlayerClaimPropertiesSync,
 				PlayerClaimActionRequestHandler.Builder.begin()
 						.setManager(serverData.getServerClaimsManager())
 						.setServerTickHandler(serverData.getServerTickHandler())

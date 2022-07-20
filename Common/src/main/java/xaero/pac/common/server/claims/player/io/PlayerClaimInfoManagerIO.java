@@ -72,6 +72,8 @@ public final class PlayerClaimInfoManagerIO<S>
 
 	@Override
 	public boolean save() {
+//		if(true)
+//			return true;
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return true;
 		OpenPartiesAndClaims.LOGGER.info("Saving claims!");

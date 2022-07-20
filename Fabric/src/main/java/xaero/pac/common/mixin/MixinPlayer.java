@@ -18,11 +18,14 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.client.core.ClientCore;
+import xaero.pac.common.server.core.ServerCore;
 
 @Mixin(Player.class)
 public class MixinPlayer {
@@ -56,6 +60,12 @@ public class MixinPlayer {
 	public void onInteractOn(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> info){
 		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onEntityInteract((Player)(Object)this, entity, hand))
 			info.setReturnValue(InteractionResult.FAIL);
+	}
+
+	@Inject(at = @At("HEAD"), method = "mayUseItemAt", cancellable = true)
+	public void onMayUseItemAt(BlockPos blockPos, Direction direction, ItemStack itemStack, CallbackInfoReturnable<Boolean> info){
+		if(!ServerCore.mayUseItemAt((Player)(Object)this, blockPos, direction, itemStack))
+			info.setReturnValue(false);
 	}
 
 }

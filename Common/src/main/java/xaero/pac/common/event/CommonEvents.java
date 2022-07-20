@@ -36,6 +36,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -80,6 +81,24 @@ public class CommonEvents {
 	public void onServerStarting() {
 		modMain.startupCrashHandler.check();
 		ServerData.from(lastServerStarted).getServerLoadCallback().onLoad();
+
+//		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
+//			serverData = ServerData.from(lastServerStarted);
+//		IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
+//				claimsManager = serverData.getServerClaimsManager();
+//		ResourceLocation overworld = new ResourceLocation("overworld");
+//		UUID myUUID = UUID.fromString("380df991-f603-344c-a090-369bad2a924a");
+//		OpenPartiesAndClaims.LOGGER.info("my uuid: " + myUUID);
+//		for (int i = 0; i < 100; i++)
+//			for (int j = 0; j < 100; j++) {
+//				for (int a = 0; a < 4; a++)
+//					for (int b = 0; b < 4; b++) {
+//						UUID uuid = a == 0 && b == 0 ? myUUID : UUID.randomUUID();
+//						for (int o = 0; o < 8; o++)
+//							for (int p = 0; p < 8; p++)
+//								claimsManager.claim(overworld, uuid, i * 32 + a * 8 + o, j * 32 + b * 8 + p, false);
+//					}
+//			}
 	}
 
 	public void onPlayerRespawn(Player player) {
@@ -255,6 +274,13 @@ public class CommonEvents {
 	protected boolean onCropTrample(Entity entity, BlockPos pos) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
 		return serverData.getChunkProtection().onCropTrample(serverData, entity, pos);
+	}
+
+	public boolean onBucketUse(Entity entity, HitResult hitResult, ItemStack itemStack){
+		if(entity.getServer() == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
+		return serverData.getChunkProtection().onBucketUse(serverData, entity, hitResult, itemStack);
 	}
 
 }

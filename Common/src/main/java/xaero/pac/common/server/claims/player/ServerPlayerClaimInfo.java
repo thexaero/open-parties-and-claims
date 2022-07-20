@@ -58,6 +58,8 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 			manager.getTicketManager().addTicket(configManager, dimension, playerId, x, z);
 		setDirty(true);
 		beenUsed = true;
+		if(manager.isLoaded())
+			manager.getClaimsManager().getClaimsManagerSynchronizer().trySyncClaimLimits(configManager, playerId);
 	}
 
 	@Override
@@ -70,6 +72,8 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 		super.onUnclaim(configManager, dimension, x, z);
 		setDirty(true);
 		beenUsed = true;
+		if(manager.isLoaded())
+			manager.getClaimsManager().getClaimsManagerSynchronizer().trySyncClaimLimits(configManager, playerId);
 	}
 
 	@Override

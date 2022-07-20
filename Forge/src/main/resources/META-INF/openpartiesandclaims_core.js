@@ -67,6 +67,31 @@ function clientPacketRedirectTransformCustom(methodNode, methodInsnNode, localVa
 	}
 }
 
+function insertBeforeReturn(methodNode, patchList){
+	var instructions = methodNode.instructions
+	for(var i = 0; i < instructions.size(); i++) {
+		var insn = instructions.get(i);
+		if(insn.getOpcode() >= 172 && insn.getOpcode() <= 177)
+			instructions.insertBefore(insn, patchList);
+	}
+}
+
+function insertOnInvoke(methodNode, patchList, before, invokeOwner, invokeName, invokeNameObf, invokeDesc){
+	var instructions = methodNode.instructions
+	for(var i = 0; i < instructions.size(); i++) {
+		var insn = instructions.get(i);
+		if(insn.getOpcode() >= 182 && insn.getOpcode() <= 186) {
+			if(insn.owner.equals(invokeOwner) && (insn.name.equals(invokeName) || insn.name.equals(invokeNameObf)) && insn.desc.equals(invokeDesc)) {
+				if(before)
+				    instructions.insertBefore(insn, patchList);
+                else
+                	instructions.insert(insn, patchList);
+				break;
+			}
+		}
+	}
+}
+
 function clientPacketRedirectTransform(methodNode, methodInsnNode){
 	clientPacketRedirectTransformCustom(methodNode, methodInsnNode, 1)
 }
@@ -257,6 +282,63 @@ function initializeCoreMod() {
                 insnToInsert.add(MY_LABEL)
                 insnToInsert.add(new InsnNode(Opcodes.POP))
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_player_mayuseitemat': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.player.Player',
+                'methodName': 'm_36204_',
+                'methodDesc' : '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/item/ItemStack;)Z'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'mayUseItemAt', '(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/item/ItemStack;)Z'))
+                insnToInsert.add(new InsnNode(Opcodes.DUP))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.IRETURN))
+                insnToInsert.add(MY_LABEL)
+                insnToInsert.add(new InsnNode(Opcodes.POP))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_flowingfluid_canpassthrough': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.material.FlowingFluid',
+                'methodName': 'm_75963_',
+                'methodDesc' : '(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)Z'
+            },
+            'transformer' : function(methodNode){
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 6))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'replaceFluidCanPassThrough', '(ZLnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Z'))
+                insertBeforeReturn(methodNode, insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_dispenserblock_dispensefrom': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.DispenserBlock',
+                'methodName': 'm_5824_',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;)V'
+            },
+            'transformer' : function(methodNode){
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'replaceDispenseBehavior', '(Lnet/minecraft/core/dispenser/DispenseItemBehavior;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;'))
+                insertOnInvoke(methodNode, insnToInsert, false/*after*/, 'net/minecraft/world/level/block/DispenserBlock', 'getDispenseMethod', 'm_7216_', '(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;')
                 return methodNode
             }
         }

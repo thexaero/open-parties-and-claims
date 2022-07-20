@@ -24,20 +24,24 @@ import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.util.linked.ILinkedChainNode;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
 public abstract class RegionClaims
 <
-	M extends PlayerClaimInfoManager<?, M>
-> implements IRegionClaims {//reflects what's in PlayerClaimInfoManager
+	M extends PlayerClaimInfoManager<?, M>,
+	WRC extends RegionClaims<M, WRC>
+> implements IRegionClaims, ILinkedChainNode<WRC> {//reflects what's in PlayerClaimInfoManager
 	
 	protected final ResourceLocation dimension;
 	private final int x;
 	private final int z;
 	protected final RegionClaimsPaletteStorage storage;
-	private boolean removed;
+	private boolean destroyed;
+	private WRC nextInChain;
+	private WRC previousInChain;
 	
 	public RegionClaims(ResourceLocation dimension, int x, int z, 
 			RegionClaimsPaletteStorage storage) {
@@ -48,15 +52,37 @@ public abstract class RegionClaims
 		this.x = x;
 		this.z = z;
 	}
-	
-	public void onRemoved() {
-		this.removed = true;
+
+	@Override
+	public void onDestroyed() {
+		this.destroyed = true;
 	}
-	
-	public boolean isRemoved() {
-		return removed;
+
+	@Override
+	public boolean isDestroyed() {
+		return destroyed;
 	}
-	
+
+	@Override
+	public WRC getNext() {
+		return nextInChain;
+	}
+
+	@Override
+	public WRC getPrevious() {
+		return previousInChain;
+	}
+
+	@Override
+	public void setNext(WRC nextInChain) {
+		this.nextInChain = nextInChain;
+	}
+
+	@Override
+	public void setPrevious(WRC previousInChain) {
+		this.previousInChain = previousInChain;
+	}
+
 	public static int getIndex(int x, int z) {
 		return (x << 5) | z;
 	}
@@ -74,22 +100,26 @@ public abstract class RegionClaims
 	public RegionClaimsPaletteStorage getStorage() {
 		return storage;
 	}
-	
-	protected abstract PlayerChunkClaim replaceClaim(PlayerClaimInfo<?,?> newPlayerInfo, IPlayerConfigManager<?> configManager, PlayerChunkClaim claim);
-	
+
 	public PlayerChunkClaim claim(int x, int z, PlayerChunkClaim claim, M playerClaimsManager, IPlayerConfigManager<?> configManager) {
 		PlayerChunkClaim currentClaim = get(x & 31, z & 31);
-		if(!Objects.equals(currentClaim, claim)) {
-			PlayerClaimInfo<?,?> currentPlayerInfo = currentClaim == null ? null : playerClaimsManager.getInfo(currentClaim.getPlayerId());
-			PlayerClaimInfo<?,?> newPlayerInfo = claim == null ? null : playerClaimsManager.getInfo(claim.getPlayerId());
-			claim = replaceClaim(newPlayerInfo, configManager, claim);
-			if(currentPlayerInfo != null)
-				currentPlayerInfo.onUnclaim(configManager, dimension, x, z);
-			if(newPlayerInfo != null)
-				newPlayerInfo.onClaim(configManager, dimension, claim, x, z);
+		if(onClaimSet(x, z, currentClaim, claim, playerClaimsManager, configManager))
 			set(x & 31, z & 31, claim);
-		}
 		return claim;
+	}
+
+	protected boolean onClaimSet(int x, int z, PlayerChunkClaim currentClaim, PlayerChunkClaim newClaim, M playerClaimsManager, IPlayerConfigManager<?> configManager){
+		if(!Objects.equals(currentClaim, newClaim)) {
+			PlayerClaimInfo<?,?> currentPlayerInfo = currentClaim == null ? null : playerClaimsManager.getInfo(currentClaim.getPlayerId());
+			PlayerClaimInfo<?,?> newPlayerInfo = newClaim == null ? null : playerClaimsManager.getInfo(newClaim.getPlayerId());
+
+			if (currentPlayerInfo != null)
+				currentPlayerInfo.onUnclaim(configManager, dimension, x, z);
+			if (newPlayerInfo != null)
+				newPlayerInfo.onClaim(configManager, dimension, newClaim, x, z);
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -110,11 +140,12 @@ public abstract class RegionClaims
 	public String toString() {
 		return String.format("[%s, %d, %d]", dimension, x, z);
 	}
-	
+
 	public static abstract class Builder
 	<
 		M extends PlayerClaimInfoManager<?, M>,
-		B extends Builder<M, B>
+		WRC extends RegionClaims<M, WRC>,
+		B extends Builder<M, WRC, B>
 	> {
 		
 		protected final B self;
@@ -156,13 +187,13 @@ public abstract class RegionClaims
 			return self;
 		}
 		
-		public RegionClaims<M> build(){
+		public RegionClaims<M, WRC> build(){
 			if(dimension == null || storage == null)
 				throw new IllegalStateException();
 			return buildInternally();
 		}
 		
-		protected abstract RegionClaims<M> buildInternally();
+		protected abstract RegionClaims<M, WRC> buildInternally();
 		
 	}
 

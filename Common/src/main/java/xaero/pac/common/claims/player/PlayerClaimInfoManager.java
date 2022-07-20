@@ -19,8 +19,10 @@
 package xaero.pac.common.claims.player;
 
 import net.minecraft.resources.ResourceLocation;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -33,11 +35,13 @@ public abstract class PlayerClaimInfoManager
 > {
 
 	protected final M self;
-	private final Map<UUID, PCI> storage;
+	private Map<UUID, PCI> storage;
+	private LinkedChain<PCI> linkedPlayerInfo;
 	
 	@SuppressWarnings("unchecked")
-	public PlayerClaimInfoManager(Map<UUID, PCI> storage) {
+	public PlayerClaimInfoManager(Map<UUID, PCI> storage, LinkedChain<PCI> linkedPlayerInfo) {
 		super();
+		this.linkedPlayerInfo = linkedPlayerInfo;
 		this.self = (M) this;
 		this.storage = storage;
 	}
@@ -49,19 +53,32 @@ public abstract class PlayerClaimInfoManager
 	}
 
 	public PCI getInfo(UUID playerId) {
-		return storage.computeIfAbsent(playerId, pid -> create(pid == null ? null : pid.toString(), pid, new HashMap<>()));
+		PCI result = storage.get(playerId);
+		if(result == null){
+			result = create(playerId == null ? null : playerId.toString(), playerId, new HashMap<>());
+			storage.put(playerId, result);
+			onAdd(result);
+		}
+		return result;
 	}
 	
 	public Stream<PCI> getInfoStream(){
-		return storage.values().stream();
+		return linkedPlayerInfo.stream();
 	}
-	
-	public Map<UUID, PCI> getStorage() {
-		return storage;
+
+	/**
+	 * Gets an iterator that can be used across multiple game ticks without breaking.
+	 *
+	 * @return the region iterator, not null
+	 */
+	public Iterator<PCI> iterator(){
+		return linkedPlayerInfo.iterator();
 	}
 
 	public void clear() {
-		storage.clear();
+		linkedPlayerInfo.destroy();
+		linkedPlayerInfo = new LinkedChain<>();
+		storage = new HashMap<>();
 	}
 	
 	public void tryRemove(UUID playerId) {
@@ -71,7 +88,13 @@ public abstract class PlayerClaimInfoManager
 			onRemove(info);
 		}
 	}
+
+	protected void onAdd(PCI playerInfo){
+		linkedPlayerInfo.add(playerInfo);
+	}
 	
-	protected abstract void onRemove(PCI playerInfo);
+	protected void onRemove(PCI playerInfo){
+		linkedPlayerInfo.remove(playerInfo);
+	}
 
 }

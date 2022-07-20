@@ -24,4 +24,7 @@ public interface IPlayerClaimPosList extends IPlayerClaimPosListAPI {
 	
 	//internal api
 
+	@Override
+	public IPlayerChunkClaim getClaimState();
+
 }

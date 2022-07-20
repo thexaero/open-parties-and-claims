@@ -24,7 +24,7 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.ArrayList;
 import java.util.List;

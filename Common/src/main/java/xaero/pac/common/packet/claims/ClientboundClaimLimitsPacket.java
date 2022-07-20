@@ -22,7 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,15 +36,17 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 	private final int claimLimit;
 	private final int forceloadLimit;
 	private final int maxClaimDistance;
+	private final boolean alwaysUseLoadingValues;
 
 	public ClientboundClaimLimitsPacket(int loadingClaimCount, int loadingForceloadCount, int claimLimit,
-			int forceloadLimit, int maxClaimDistance) {
+										int forceloadLimit, int maxClaimDistance, boolean alwaysUseLoadingValues) {
 		super();
 		this.loadingClaimCount = loadingClaimCount;
 		this.loadingForceloadCount = loadingForceloadCount;
 		this.claimLimit = claimLimit;
 		this.forceloadLimit = forceloadLimit;
 		this.maxClaimDistance = maxClaimDistance;
+		this.alwaysUseLoadingValues = alwaysUseLoadingValues;
 	}
 
 	@Override
@@ -55,6 +57,7 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 		tag.putInt("cl", claimLimit);
 		tag.putInt("fl", forceloadLimit);
 		tag.putInt("d", maxClaimDistance);
+		tag.putBoolean("a", alwaysUseLoadingValues);
 		u.writeNbt(tag);
 	}
 
@@ -76,7 +79,8 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 				int claimLimit = tag.getInt("cl");
 				int forceloadLimit = tag.getInt("fl");
 				int maxClaimDistance = tag.getInt("d");
-				return new ClientboundClaimLimitsPacket(loadingClaimCount, loadingForceloadCount, claimLimit, forceloadLimit, maxClaimDistance);
+				boolean alwaysUseLoadingValues = tag.getBoolean("a");
+				return new ClientboundClaimLimitsPacket(loadingClaimCount, loadingForceloadCount, claimLimit, forceloadLimit, maxClaimDistance, alwaysUseLoadingValues);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);
 				return null;
@@ -89,7 +93,7 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 		
 		@Override
 		public void accept(ClientboundClaimLimitsPacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimLimits(t.loadingClaimCount, t.loadingForceloadCount, t.claimLimit, t.forceloadLimit, t.maxClaimDistance);
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimLimits(t.loadingClaimCount, t.loadingForceloadCount, t.claimLimit, t.forceloadLimit, t.maxClaimDistance, t.alwaysUseLoadingValues);
 		}
 		
 	}

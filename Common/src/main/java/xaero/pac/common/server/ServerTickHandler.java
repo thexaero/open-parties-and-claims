@@ -27,7 +27,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.lazypackets.LazyPacketSender;
+import xaero.pac.common.server.lazypacket.LazyPacketSender;
 import xaero.pac.common.server.parties.party.IServerParty;
 
 public class ServerTickHandler {

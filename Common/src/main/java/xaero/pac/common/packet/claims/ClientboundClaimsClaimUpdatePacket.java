@@ -23,7 +23,7 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -38,14 +38,16 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 	private final int z;
 	private final UUID playerId;
 	private final boolean forceLoaded;
+	private final int claimSyncIndex;
 
-	public ClientboundClaimsClaimUpdatePacket(ResourceLocation dimension, int x, int z, UUID playerId, boolean forceLoaded) {
+	public ClientboundClaimsClaimUpdatePacket(ResourceLocation dimension, int x, int z, UUID playerId, boolean forceLoaded, int claimSyncIndex) {
 		super();
 		this.dimension = dimension;
 		this.x = x;
 		this.z = z;
 		this.playerId = playerId;
 		this.forceLoaded = forceLoaded;
+		this.claimSyncIndex = claimSyncIndex;
 	}
 
 	@Override
@@ -60,6 +62,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 		nbt.putInt("x", x);
 		nbt.putInt("z", z);
 		if(playerId != null) {
+			nbt.putInt("i", claimSyncIndex);
 			nbt.putUUID("p", playerId);
 			nbt.putBoolean("f", forceLoaded);
 		}
@@ -76,7 +79,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 		@Override
 		public ClientboundClaimsClaimUpdatePacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(8192));
+				CompoundTag nbt = input.readNbt(new NbtAccounter(10000));
 				if(nbt == null)
 					return null;
 				String dimensionString = nbt.getString("d");
@@ -84,13 +87,15 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 					return null;
 				int x = nbt.getInt("x");
 				int z = nbt.getInt("z");
+				int claimStateIndex = -1;
 				UUID playerId = null;
 				boolean forceload = false;
 				if(nbt.contains("p")) {
+					claimStateIndex = nbt.getInt("i");
 					playerId = nbt.getUUID("p");
 					forceload = nbt.getBoolean("f");
 				}
-				return new ClientboundClaimsClaimUpdatePacket(new ResourceLocation(dimensionString), x, z, playerId, forceload);
+				return new ClientboundClaimsClaimUpdatePacket(new ResourceLocation(dimensionString), x, z, playerId, forceload, claimStateIndex);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
 				return null;
@@ -103,7 +108,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 		
 		@Override
 		public void accept(ClientboundClaimsClaimUpdatePacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimUpdate(t.dimension, t.x, t.z, t.playerId, t.forceLoaded);
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimUpdate(t.dimension, t.x, t.z, t.playerId, t.forceLoaded, t.claimSyncIndex);
 		}
 		
 	}

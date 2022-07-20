@@ -104,6 +104,8 @@ public final class PlayerConfigIO
 
 	@Override
 	public boolean save() {
+//		if(true)
+//			return true;
 		OpenPartiesAndClaims.LOGGER.info("Saving player configs...");
 		if(manager.getDefaultConfig().isDirty())
 			saveFile(manager.getDefaultConfig(), defaultConfigPath);

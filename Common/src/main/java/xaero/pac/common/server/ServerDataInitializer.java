@@ -42,7 +42,7 @@ import xaero.pac.common.server.io.serialization.SimpleSerializationHandler;
 import xaero.pac.common.server.io.serialization.human.HumanReadableSerializedDataFileIO;
 import xaero.pac.common.server.io.serialization.human.SimpleHumanReadableStringConverter;
 import xaero.pac.common.server.io.serialization.nbt.SimpleNBTSerializedDataFileIO;
-import xaero.pac.common.server.lazypackets.LazyPacketSender;
+import xaero.pac.common.server.lazypacket.LazyPacketSender;
 import xaero.pac.common.server.parties.party.*;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
@@ -137,7 +137,7 @@ public class ServerDataInitializer {
 			}
 			
 			ForceLoadTicketManager forceLoadManager = playerConfigs.getForceLoadTicketManager();
-			ClaimsManagerSynchronizer claimsSynchronizer = new ClaimsManagerSynchronizer(server);
+			ClaimsManagerSynchronizer claimsSynchronizer = ClaimsManagerSynchronizer.Builder.begin().setServer(server).build();
 			ServerClaimsManager serverClaimsManager = ServerClaimsManager.Builder.begin()
 					.setServer(server)
 					.setTicketManager(forceLoadManager)

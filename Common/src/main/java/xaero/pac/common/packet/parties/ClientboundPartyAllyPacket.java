@@ -24,7 +24,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.parties.party.ClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientParty;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.UUID;
 import java.util.function.Consumer;

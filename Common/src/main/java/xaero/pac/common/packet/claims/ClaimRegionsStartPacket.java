@@ -23,7 +23,7 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
@@ -69,7 +69,9 @@ public class ClaimRegionsStartPacket extends LazyPacket<LazyPacket.Encoder<Claim
 		@Override
 		public void accept(ClaimRegionsStartPacket t, ServerPlayer serverPlayer) {
 			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(serverPlayer);
-			mainCap.getClaimsManagerPlayerSyncHandler().start(serverPlayer);
+			mainCap.getClaimsManagerPlayerClaimPropertiesSync().start(serverPlayer);
+			mainCap.getClaimsManagerPlayerStateSync().start(serverPlayer);
+			mainCap.getClaimsManagerPlayerRegionSync().start(serverPlayer);
 		}
 		
 	}

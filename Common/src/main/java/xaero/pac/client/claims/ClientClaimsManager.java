@@ -19,7 +19,6 @@
 package xaero.pac.client.claims;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
@@ -29,32 +28,34 @@ import xaero.pac.client.claims.tracker.result.ClaimsManagerClaimResultTracker;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.request.ClaimActionRequest;
+import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
 import xaero.pac.common.packet.claims.ServerboundClaimActionRequestPacket;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientRegionClaims, ClientDimensionClaimsManager> implements IClientClaimsManager<PlayerChunkClaim, ClientPlayerClaimInfo, ClientDimensionClaimsManager> {
 
-	private Int2ObjectMap<PlayerChunkClaim> indexToClaimState;
 	private final ClaimsManagerClaimResultTracker claimResultTracker;
 	private boolean loading;
 	private int loadingClaimCount;
 	private int loadingForceloadCount;
+	private boolean alwaysUseLoadingValues;
 	private int claimLimit;
 	private int forceloadLimit;
 	private int maxClaimDistance;
 	private boolean adminMode;
 	
 	private ClientClaimsManager(ClientPlayerClaimInfoManager playerClaimInfoManager,
-			IPlayerConfigManager<?> configManager, Map<ResourceLocation, ClientDimensionClaimsManager> dimensions, 
-			Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, 
-			Int2ObjectMap<PlayerChunkClaim> indexToClaimState, ClaimsManagerClaimResultTracker claimResultTracker) {
-		super(playerClaimInfoManager, configManager, dimensions, claimStates, claimsManagerTracker);
-		this.indexToClaimState = indexToClaimState;
+			IPlayerConfigManager<?> configManager, Map<ResourceLocation, ClientDimensionClaimsManager> dimensions,
+			Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker,
+			ClaimsManagerClaimResultTracker claimResultTracker) {
+		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimResultTracker = claimResultTracker;
 	}
 	
@@ -85,6 +86,15 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	public int getLoadingForceloadCount() {
 		return loadingForceloadCount;
+	}
+
+	public void setAlwaysUseLoadingValues(boolean alwaysUseLoadingValues) {
+		this.alwaysUseLoadingValues = alwaysUseLoadingValues;
+	}
+
+	@Override
+	public boolean getAlwaysUseLoadingValues() {
+		return alwaysUseLoadingValues;
 	}
 
 	@Override
@@ -127,24 +137,43 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 
 	@Override
 	public void addClaimState(PlayerChunkClaim claim) {
-		claimStates.put(claim, claim);
-		indexToClaimState.put(claim.getSyncIndex(), claim);
+		super.addClaimState(claim);
 	}
-	
-	public PlayerChunkClaim getClaimState(int index) {
-		return indexToClaimState.get(index);
+
+	@Override
+	public PlayerChunkClaim claim(ResourceLocation dimension, UUID id, int x, int z, boolean forceload) {
+		PlayerChunkClaim newClaim = super.claim(dimension, id, x, z, forceload);
+		claimsManagerTracker.onChunkChange(dimension, x, z, newClaim);
+		return newClaim;
+	}
+
+	@Override
+	public void unclaim(ResourceLocation dimension, int x, int z) {
+		super.unclaim(dimension, x, z);
+		claimsManagerTracker.onChunkChange(dimension, x, z, null);
+	}
+
+	public void unclaimRegion(ResourceLocation dimension, int x, int z){
+		ClientDimensionClaimsManager dimensionClaims = ensureDimension(dimension);
+		dimensionClaims.unclaimRegion(x, z, playerClaimInfoManager, configManager);
+		claimsManagerTracker.onWholeRegionChange(dimension, x, z);
+	}
+
+	public void claimRegion(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage regionStorage){
+		ClientDimensionClaimsManager dimensionClaims = ensureDimension(dimension);
+		dimensionClaims.claimRegion(x, z, regionStorage, playerClaimInfoManager, configManager);
+		claimsManagerTracker.onWholeRegionChange(dimension, x, z);
 	}
 
 	@Override
 	protected ClientDimensionClaimsManager create(ResourceLocation dimension,
 			Long2ObjectMap<ClientRegionClaims> claims) {
-		return new ClientDimensionClaimsManager(dimension, claims);
+		return new ClientDimensionClaimsManager(dimension, claims, new LinkedChain<>());
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
-		indexToClaimState.clear();
 		adminMode = false;
 	}
 
@@ -196,14 +225,14 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		
 		@Override
 		public ClientClaimsManager build() {
-			setPlayerClaimInfoManager(new ClientPlayerClaimInfoManager(new HashMap<>()));
+			setPlayerClaimInfoManager(new ClientPlayerClaimInfoManager(new HashMap<>(), new LinkedChain<>()));
 			return (ClientClaimsManager) super.build();
 		}
 
 		@Override
-		protected ClientClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker) {
-			return new ClientClaimsManager(playerClaimInfoManager, null, dimensions, claimStates, claimsManagerTracker, 
-					new Int2ObjectOpenHashMap<>(), ClaimsManagerClaimResultTracker.Builder.begin().build());
+		protected ClientClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
+			return new ClientClaimsManager(playerClaimInfoManager, null, dimensions,
+					indexToClaimState, claimStates, claimsManagerTracker, ClaimsManagerClaimResultTracker.Builder.begin().build());
 		}
 		
 	}

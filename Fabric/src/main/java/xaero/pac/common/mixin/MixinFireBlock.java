@@ -32,7 +32,7 @@ import xaero.pac.common.server.core.ServerCore;
 
 import java.util.Random;
 
-@Mixin(FireBlock.class)
+@Mixin(value = FireBlock.class, priority = 1000001)
 public class MixinFireBlock {
 
 	@Inject(method = "checkBurnOut", at = @At("HEAD"), cancellable = true)

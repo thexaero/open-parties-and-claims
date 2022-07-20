@@ -20,8 +20,10 @@ package xaero.pac.common.claims.player;
 
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.util.linked.ILinkedChainNode;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,13 +34,17 @@ public abstract class PlayerClaimInfo
 <
 	PCI extends PlayerClaimInfo<PCI, M>,
 	M extends PlayerClaimInfoManager<PCI, M>
-> implements IPlayerClaimInfo<PlayerDimensionClaims> {
+> implements IPlayerClaimInfo<PlayerDimensionClaims>, ILinkedChainNode<PCI> {
 
 	protected final PCI self;
 	protected final M manager;
 	private String playerUsername;
 	protected final UUID playerId;
 	protected final Map<ResourceLocation, PlayerDimensionClaims> claims;
+
+	private boolean destroyed;
+	private PCI nextInChain;
+	private PCI previousInChain;
 	
 	@SuppressWarnings("unchecked")
 	public PlayerClaimInfo(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims, M manager) {
@@ -49,19 +55,25 @@ public abstract class PlayerClaimInfo
 		this.claims = claims;
 	}
 	
-	private PlayerDimensionClaims getDimension(ResourceLocation dimension) {
+	private PlayerDimensionClaims ensureDimension(ResourceLocation dimension) {
 		return claims.computeIfAbsent(dimension, d -> new PlayerDimensionClaims(d, new HashMap<>()));
+	}
+
+	@Nullable
+	@Override
+	public PlayerDimensionClaims getDimension(@Nonnull ResourceLocation dimension) {
+		return claims.get(dimension);
 	}
 	
 	protected abstract void onForceloadUnclaim(IPlayerConfigManager<?> configManager, ResourceLocation dimension, int x, int z);
 	
 	public void onClaim(IPlayerConfigManager<?> configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
-		PlayerDimensionClaims dimensionClaims = getDimension(dimension);
+		PlayerDimensionClaims dimensionClaims = ensureDimension(dimension);
 		dimensionClaims.addClaim(x, z, claim);
 	}
 	
 	public void onUnclaim(IPlayerConfigManager<?> configManager, ResourceLocation dimension, int x, int z) {
-		PlayerDimensionClaims dimensionClaims = getDimension(dimension);
+		PlayerDimensionClaims dimensionClaims = ensureDimension(dimension);
 		boolean removedWasForceloaded = dimensionClaims.removeClaim(x, z);
 		if(removedWasForceloaded)
 			onForceloadUnclaim(configManager, dimension, x, z);
@@ -111,5 +123,36 @@ public abstract class PlayerClaimInfo
 	public abstract String getClaimsName();
 
 	public abstract int getClaimsColor();
+
+	@Override
+	public void setNext(PCI element){
+		this.nextInChain = element;
+	}
+
+	@Override
+	public void setPrevious(PCI element){
+		this.previousInChain = element;
+	}
+
+	@Override
+	public PCI getNext(){
+		return nextInChain;
+	}
+
+	@Override
+	public PCI getPrevious(){
+		return previousInChain;
+	}
+
+	@Override
+	public boolean isDestroyed(){
+		return destroyed;
+	}
+
+	@Override
+	public void onDestroyed(){
+		destroyed = true;
+	}
+
 	
 }

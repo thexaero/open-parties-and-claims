@@ -18,7 +18,7 @@
 	
 	"gui.xaero_parties_party_created" : "You have successfully created a new party!",
 	
-	"gui.xaero_parties_party_destroy_info" : "Use \"/xaeroparty destroy confirm\" to destroy the party.",
+	"gui.xaero_parties_party_destroy_info" : "Use \"/openpac-parties destroy confirm\" to destroy the party.",
 	"gui.xaero_parties_party_destroy_members_info" : "%1$s destroyed the party!",
 	
 	"gui.xaero_parties_join_invalid_id" : "The input party ID is not valid!",
@@ -104,6 +104,7 @@
 	"gui.xaero_claims_protection_interact_entity_try_empty" : "(%1$s) It might work if you try again empty-handed.",
 	"gui.xaero_claims_protection_use_item" : "(%1$s) You are not allowed to use this item here!",
 	"gui.xaero_claims_protection_chorus" : "You are not allowed to chorus-fruit-teleport to that location!",
+	"gui.xaero_claims_protection_interact_item_place" : "You are not allowed to place this item here!",
 	"gui.xaero_claims_protection_main_hand" : "Main Hand",
 	"gui.xaero_claims_protection_off_hand" : "Off Hand",
 	
@@ -192,6 +193,12 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.playerLightning" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.cropTrample" : "Protect From Crop Trample",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.cropTrample" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.fluidBarrier" : "Fluid Barrier",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.fluidBarrier" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.dispenserBarrier" : "Dispenser Barrier",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.dispenserBarrier" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.neighborChunksItemUse" : "Protect Item Use in Neighbors",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.neighborChunksItemUse" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.allowSomeBlockInteractions" : "Allow Some Blocks Interactions",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.allowSomeBlockInteractions" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.allowSomeBlockBreaking" : "Allow Some Block Breaking",

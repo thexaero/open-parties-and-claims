@@ -19,6 +19,7 @@
 package xaero.pac.common.server.claims;
 
 import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -37,6 +38,7 @@ import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,9 +51,10 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	private boolean loaded;
 	
 	protected ServerClaimsManager(MinecraftServer server, ServerPlayerClaimInfoManager playerClaimInfoManager,
-	  IPlayerConfigManager<?> configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
-	  ClaimsManagerSynchronizer claimsManagerSynchronizer, Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker) {
-		super(playerClaimInfoManager, configManager, dimensions, claimStates, claimsManagerTracker);
+			IPlayerConfigManager<?> configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
+			ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
+			Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker) {
+		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimsManagerSynchronizer = claimsManagerSynchronizer;
 	}
 	
@@ -71,7 +74,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	protected ServerDimensionClaimsManager create(ResourceLocation dimension,
 												  Long2ObjectMap<ServerRegionClaims> claims) {
 		boolean playerClaimsSyncAllowed = ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() || isClaimable(dimension);
-		return new ServerDimensionClaimsManager(dimension, claims, this, playerClaimsSyncAllowed);
+		return new ServerDimensionClaimsManager(dimension, claims, new LinkedChain<>(), this, playerClaimsSyncAllowed);
 	}
 	
 	private boolean withinDistance(int fromX, int fromZ, int x, int z) {
@@ -108,7 +111,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(loaded)
 			claimsManagerTracker.onChunkChange(dimension, x, z, null);
 	}
-	
+
 	private ClaimResult<PlayerChunkClaim> tryToClaimHelper(ResourceLocation dimension, UUID playerId, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean replace, boolean isServer) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		boolean claimCountUnaffected = false;
@@ -383,7 +386,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		public ServerClaimsManager build() {
 			if(server == null || ticketManager == null || claimsManagerSynchronizer == null || configManager == null)
 				throw new IllegalStateException();
-			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new HashSet<>());
+			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>(), new HashSet<>());
 			setPlayerClaimInfoManager(playerInfoManager);
 			ServerClaimsManager result = (ServerClaimsManager) super.build();
 			playerInfoManager.setClaimsManager(result);
@@ -395,8 +398,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		}
 
 		@Override
-		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker) {
-			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, claimStates, claimsManagerTracker);
+		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
+			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker);
 		}
 		
 	}

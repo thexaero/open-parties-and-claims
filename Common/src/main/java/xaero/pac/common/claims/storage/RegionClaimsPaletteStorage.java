@@ -19,10 +19,11 @@
 package xaero.pac.common.claims.storage;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.util.BitStorage;
 import net.minecraft.util.Mth;
 import net.minecraft.util.SimpleBitStorage;
+import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.server.claims.ServerPlayerChunkClaimHolder;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -31,12 +32,13 @@ public class RegionClaimsPaletteStorage {
 	
 	protected final Map<PlayerChunkClaim, Integer> paletteHelper;
 	private final IntList paletteInts;
-	protected final ArrayList<ServerPlayerChunkClaimHolder> palette;
-	protected SimpleBitStorage storage;
+	protected final ArrayList<PlayerChunkClaimHolder> palette;
+	protected BitStorage storage;
 	private boolean constantBits;
+	private boolean needsHolderRecalculation;
 	
 	public RegionClaimsPaletteStorage(Map<PlayerChunkClaim, Integer> paletteHelper, IntList paletteInts,
-			ArrayList<ServerPlayerChunkClaimHolder> palette, SimpleBitStorage storage, boolean constantBits) {
+									  ArrayList<PlayerChunkClaimHolder> palette, BitStorage storage, boolean constantBits) {
 		super();
 		if(storage.getSize() != 1024 || constantBits && storage.getBits() != 11 || palette.isEmpty() || palette.get(0) != null)
 			throw new IllegalArgumentException();
@@ -47,18 +49,20 @@ public class RegionClaimsPaletteStorage {
 		this.constantBits = constantBits;
 	}
 	
-	private ServerPlayerChunkClaimHolder getHolder(int x, int z) {
+	private PlayerChunkClaimHolder getHolder(int x, int z) {
 		return palette.get(storage.get(getIndex(x, z)));
 	}
 	
 	public PlayerChunkClaim get(int x, int z) {
-		ServerPlayerChunkClaimHolder claimHolder = getHolder(x, z);
+		PlayerChunkClaimHolder claimHolder = getHolder(x, z);
 		return claimHolder == null ? null : claimHolder.getClaim();
 	}
 
 	public void set(int x, int z, PlayerChunkClaim value) {
-		ServerPlayerChunkClaimHolder currentHolder = getHolder(x, z);
-		ServerPlayerChunkClaimHolder newHolder;
+		if(needsHolderRecalculation)
+			recalculateHolders();
+		PlayerChunkClaimHolder currentHolder = getHolder(x, z);
+		PlayerChunkClaimHolder newHolder;
 		Integer newPaletteIndex;
 		if(value == null) {
 			newHolder = null;
@@ -67,7 +71,7 @@ public class RegionClaimsPaletteStorage {
 			newPaletteIndex = paletteHelper.get(value);
 			if(newPaletteIndex == null) {
 				paletteHelper.put(value, newPaletteIndex = palette.size());
-				palette.add(newHolder = new ServerPlayerChunkClaimHolder(value, new byte[32]));
+				palette.add(newHolder = new PlayerChunkClaimHolder(value, new byte[32]));
 				if(paletteInts != null)
 					paletteInts.add(value.getSyncIndex());
 			} else
@@ -91,7 +95,16 @@ public class RegionClaimsPaletteStorage {
 			storage.set(index, newPaletteIndex);
 		}
 	}
-	
+
+	private void recalculateHolders() {
+		for(int i = 0; i < storage.getSize(); i++) {
+			int storageValue = storage.get(i);
+			if(storageValue > 0)
+				palette.get(storageValue).increment(i >> 5);
+		}
+		needsHolderRecalculation = false;
+	}
+
 	private void ensureSyncableStorageBits() {
 		if(constantBits)
 			return;
@@ -101,9 +114,9 @@ public class RegionClaimsPaletteStorage {
 		else if(neededBits < 11)
 			neededBits = (neededBits + 1) / 2 * 2;//always a multiple of 2 except 1 and 11
 		if(storage.getBits() < neededBits || storage.getBits() >= 6 && storage.getBits() / neededBits >= 2 /*used bits are at least 2 times too much*/) {
-			SimpleBitStorage newStorage = new SimpleBitStorage(neededBits, 1024);
+			BitStorage newStorage = new SimpleBitStorage(neededBits, 1024);
 			int allowedValueLimit = 1 << neededBits;
-			SimpleBitStorage oldStorage = this.storage;
+			BitStorage oldStorage = this.storage;
 			for (int i = 0; i < 1024; i++) {
 				int oldValue = oldStorage.get(i);
 				if(oldValue < allowedValueLimit)
@@ -113,18 +126,18 @@ public class RegionClaimsPaletteStorage {
 		}
 	}
 	
-	protected void removePaletteElement(int paletteIndex) {
+	private void removePaletteElement(int paletteIndex) {
 		if(paletteIndex == 0)
 			return;
 
 		Map<PlayerChunkClaim, Integer> paletteHelper = this.paletteHelper;
 		IntList paletteInts = this.paletteInts;
-		ArrayList<ServerPlayerChunkClaimHolder> palette = this.palette;
-		SimpleBitStorage storage = this.storage;
+		ArrayList<PlayerChunkClaimHolder> palette = this.palette;
+		BitStorage storage = this.storage;
 		if(paletteIndex < palette.size() - 1) {
 			boolean[] fixedStorageColumns = new boolean[32];
 			for(int i = paletteIndex + 1; i < palette.size(); i++) {
-				ServerPlayerChunkClaimHolder holder = palette.get(i);
+				PlayerChunkClaimHolder holder = palette.get(i);
 				paletteHelper.put(holder.getClaim(), i - 1);
 				for(int x = holder.getMinX(); x <= holder.getMaxX(); x++) {
 					if(!fixedStorageColumns[x]) {
@@ -162,6 +175,14 @@ public class RegionClaimsPaletteStorage {
 	
 	public boolean isEmpty() {
 		return palette.size() <= 1;
+	}
+
+	public boolean containsState(PlayerChunkClaim state) {
+		return paletteHelper.containsKey(state);
+	}
+
+	public void setNeedsHolderRecalculation(boolean needsHolderRecalculation) {
+		this.needsHolderRecalculation = needsHolderRecalculation;
 	}
 
 }

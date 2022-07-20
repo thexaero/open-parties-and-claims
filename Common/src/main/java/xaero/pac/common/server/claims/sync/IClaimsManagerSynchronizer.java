@@ -28,5 +28,6 @@ public interface IClaimsManagerSynchronizer {
 	public void syncToPlayersClaimPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo);
 	public void syncOnLogin(ServerPlayer player);
 	public void onServerTick();
+	public void onLazyPacketsDropped(ServerPlayer player);
 
 }

@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.common.server.core.ServerCoreFabric;
 
-@Mixin(LargeFireball.class)
+@Mixin(value = LargeFireball.class, priority = 1000001)
 public class MixinLargeFireball {
 
 	@Inject(method = "onHit", at = @At("HEAD"))

@@ -31,8 +31,6 @@ import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.packet.ClientboundLoadingPacket;
 import xaero.pac.common.packet.claims.*;
-import xaero.pac.common.packet.claims.owned.ClientboundPlayerClaimsOwnedClaimPacket;
-import xaero.pac.common.packet.claims.owned.ClientboundPlayerClaimsOwnerPacket;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
@@ -41,28 +39,36 @@ import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
-import xaero.pac.common.server.lazypackets.LazyPacket;
+import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.server.lazypacket.task.schedule.LazyPacketScheduleTaskHandler;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
-import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
-public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
+public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 	
-	public static final int REGIONS_PER_TICK = 1024;
-	public static final int REGIONS_PER_TICK_PER_PLAYER = 16;
+	public static final int REGIONS_PER_TICK = 8192;
+	public static final int REGIONS_PER_TICK_PER_PLAYER = 128;
+	public static final int STATES_PER_TICK = 16384;
+	public static final int STATES_PER_TICK_PER_PLAYER = 1024;
+	public static final int PROPERTIES_PER_TICK = 16384;
+	public static final int PROPERTIES_PER_TICK_PER_PLAYER = 1024;
 	
-	protected final MinecraftServer server;
+	private final MinecraftServer server;
 	private ServerClaimsManager claimsManager;
-	protected IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, ?> serverData;
-	
-	public ClaimsManagerSynchronizer(MinecraftServer server) {
+	private IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, ?> serverData;
+	private final List<LazyPacketScheduleTaskHandler> schedulers;
+
+	private ClaimsManagerSynchronizer(MinecraftServer server, List<LazyPacketScheduleTaskHandler> schedulers) {
 		super();
 		this.server = server;
+		this.schedulers = schedulers;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -78,50 +84,11 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		this.claimsManager = claimsManager;
 	}
 
-	protected void sendToClient(ServerPlayer player, Object packet, boolean instant) {
+	private void sendToClient(ServerPlayer player, Object packet, boolean instant) {
 		if(instant)
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 		else
 			serverData.getServerTickHandler().getLazyPacketSender().enqueue(player, (LazyPacket<?, ?>) packet);
-	}
-	
-	private void syncOwnedToClient(ServerPlayer player) {
-		if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.NOT_SYNCED)
-			return;
-		syncOwnedToClient(player.getUUID(), player);
-		if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY)
-			syncOwnedToClient(PlayerConfig.SERVER_CLAIM_UUID, player);
-	}
-	
-	private void syncOwnedToClient(UUID playerId, ServerPlayer player) {
-		ServerPlayerClaimInfo playerClaimInfo = claimsManager.getPlayerInfo(playerId);
-		sendToClient(player, new ClientboundPlayerClaimsOwnerPacket(playerId), false);
-		playerClaimInfo.getStream().map(Entry::getValue).forEach(dimensionClaims -> {
-			if(!ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() && !claimsManager.isClaimable(dimensionClaims.getDimension()))
-				return;
-			sendToClient(player, new ClientboundPlayerClaimsDimensionPacket(dimensionClaims.getDimension()), false);
-			dimensionClaims.getStream().forEach(posList ->
-				posList.getStream().forEach(
-						pos -> sendToClient(player, new ClientboundPlayerClaimsOwnedClaimPacket(pos.x, pos.z, posList.getClaimState().isForceloadable()), false)
-						)
-			);
-		});
-	}
-	
-	private void syncClaimProperties(List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder, ServerPlayer player) {
-		sendToClient(player, new ClientboundClaimPropertiesPacket(packetBuilder), false);
-	}
-	
-	private void buildClaimPropertiesPacket(List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder, ServerPlayerClaimInfo pi, ServerPlayer player) {
-		UUID playerId = pi.getPlayerId();
-		String username = pi.getPlayerUsername();
-		String claimsName = pi.getClaimsName();
-		int claimsColor = pi.getClaimsColor();
-		packetBuilder.add(new ClientboundClaimPropertiesPacket.PlayerProperties(playerId, username, claimsName, claimsColor));
-		if(packetBuilder.size() == ClientboundClaimPropertiesPacket.MAX_PROPERTIES) {
-			syncClaimProperties(packetBuilder, player);
-			packetBuilder.clear();
-		}
 	}
 	
 	private void startSyncing(ServerPlayer player) {
@@ -136,33 +103,35 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		sendToClient(player, ClientboundLoadingPacket.END_CLAIMS, false);
 	}
 
+	public void trySyncClaimLimits(IPlayerConfigManager<?> configManager, UUID playerId) {
+		ServerPlayer player = server.getPlayerList().getPlayer(playerId);
+		if(player != null){
+			IPlayerConfig config = configManager.getLoadedConfig(playerId);
+			syncClaimLimits(config, player);
+		}
+	}
+
 	@Override
 	public void syncClaimLimits(IPlayerConfig config, ServerPlayer player) {
-		if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.NOT_SYNCED)
-			return;
 		int claimsLimit = claimsManager.getPlayerBaseClaimLimit(player) + config.getEffective(PlayerConfig.BONUS_CHUNK_CLAIMS);
 		int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(player) + config.getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS);
 		int maxClaimDistance = ServerConfig.CONFIG.maxClaimDistance.get();
+		boolean alwaysUseLoadingValues = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.NOT_SYNCED;
 		IServerPlayerClaimInfo<?> playerInfo = claimsManager.getPlayerInfo(player.getUUID());
-		sendToClient(player, new ClientboundClaimLimitsPacket(playerInfo.getClaimCount(), playerInfo.getForceloadCount(), claimsLimit, forceloadLimit, maxClaimDistance), false);
+		sendToClient(player, new ClientboundClaimLimitsPacket(playerInfo.getClaimCount(), playerInfo.getForceloadCount(), claimsLimit, forceloadLimit, maxClaimDistance, alwaysUseLoadingValues), false);
 	}
-	
-	private void syncPlayerClaimProperties(ServerPlayer player) {
+
+	public Iterator<ServerPlayerClaimInfo> getClaimPropertiesToSync(ServerPlayer player){
 		if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.NOT_SYNCED)
-			return;
-		List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder = new ArrayList<>(ClientboundClaimPropertiesPacket.MAX_PROPERTIES);
-		
+			return List.of(claimsManager.getPlayerInfo(player.getUUID())).iterator();
 		if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.ALL) {
-			Iterator<ServerPlayerClaimInfo> iterator = claimsManager.getPlayerInfoStream().iterator();
-			while(iterator.hasNext())
-				buildClaimPropertiesPacket(packetBuilder, iterator.next(), player);
-		} else {
-			buildClaimPropertiesPacket(packetBuilder, claimsManager.getPlayerInfo(player.getUUID()), player);
-			buildClaimPropertiesPacket(packetBuilder, claimsManager.getPlayerInfo(PlayerConfig.SERVER_CLAIM_UUID), player);
-		}
-		
-		if(!packetBuilder.isEmpty())
-			syncClaimProperties(packetBuilder, player);
+			return claimsManager.getPlayerInfoIterator();
+		} else
+			return List.of(claimsManager.getPlayerInfo(player.getUUID()), claimsManager.getPlayerInfo(PlayerConfig.SERVER_CLAIM_UUID)).iterator();
+	}
+
+	public void syncClaimProperties(List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder, ServerPlayer player) {
+		sendToClient(player, new ClientboundClaimPropertiesPacket(packetBuilder), false);
 	}
 
 	@Override
@@ -180,25 +149,8 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		}
 	}
 	
-	private void syncClaimStates(List<PlayerChunkClaim> packetBuilder, ServerPlayer player) {
+	public void syncClaimStates(List<PlayerChunkClaim> packetBuilder, ServerPlayer player) {
 		sendToClient(player, new ClientboundClaimStatesPacket(packetBuilder), false);
-	}
-	
-	private void syncClaimStatesToClient(ServerPlayer player) {
-		if(ServerConfig.CONFIG.claimsSynchronization.get() != ServerConfig.ClaimsSyncType.ALL)
-			return;
-		Iterator<PlayerChunkClaim> iterator = claimsManager.getClaimStatesStream().iterator();
-		List<PlayerChunkClaim> packetBuilder = new ArrayList<>(ClientboundClaimStatesPacket.MAX_STATES);
-		while(iterator.hasNext()) {
-			PlayerChunkClaim state = iterator.next();
-			packetBuilder.add(state);
-			if(packetBuilder.size() == ClientboundClaimStatesPacket.MAX_STATES) {
-				syncClaimStates(packetBuilder, player);
-				packetBuilder.clear();
-			}
-		}
-		if(!packetBuilder.isEmpty())
-			syncClaimStates(packetBuilder, player);
 	}
 	
 	public void syncToPlayersNewClaimState(PlayerChunkClaim claim) {
@@ -225,14 +177,14 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		ServerConfig.ClaimsSyncType syncType = ServerConfig.CONFIG.claimsSynchronization.get();
 		PlayerList players = server.getPlayerList();
 		UUID newPlayerId = claim == null ? null : claim.getPlayerId();
-		ClientboundClaimsClaimUpdatePacket packet = new ClientboundClaimsClaimUpdatePacket(dimension, x, z, newPlayerId, claim != null && claim.isForceloadable());
+		ClientboundClaimsClaimUpdatePacket packet = new ClientboundClaimsClaimUpdatePacket(dimension, x, z, newPlayerId, claim != null && claim.isForceloadable(), claim != null ? claim.getSyncIndex() : -1);
 		if(syncType == ServerConfig.ClaimsSyncType.ALL || Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, newPlayerId)) {//new claim is visible to all
 			for(ServerPlayer player : players.getPlayers())
 				sendToClient(player, packet, false);
 		} else {
 			UUID oldPlayerId = oldClaim == null ? null : oldClaim.getPlayerId();
 			if(oldPlayerId != null && !Objects.equals(newPlayerId, oldPlayerId)) {
-				ClientboundClaimsClaimUpdatePacket removalPacket = new ClientboundClaimsClaimUpdatePacket(dimension, x, z, null, false);
+				ClientboundClaimsClaimUpdatePacket removalPacket = new ClientboundClaimsClaimUpdatePacket(dimension, x, z, null, false, -1);
 				if(Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, oldPlayerId)) {//old claim is visible to all
 					for(ServerPlayer player : players.getPlayers())
 						sendToClient(player, removalPacket, false);
@@ -260,29 +212,75 @@ public class ClaimsManagerSynchronizer implements IClaimsManagerSynchronizer {
 		IPlayerConfig config = configManager.getLoadedConfig(player.getUUID());
 		startSyncing(player);
 		syncClaimLimits(config, player);
-		syncPlayerClaimProperties(player);
-		syncClaimStatesToClient(player);
-		syncOwnedToClient(player);
+
 		sendToClient(player, new ClaimRegionsStartPacket(), false);
+	}
+
+	public PlayerChunkClaim getStateBySyncIndex(int syncIndex){
+		return claimsManager.getClaimStateBySyncIndex(syncIndex);
+	}
+
+	public int getClaimStateCountToSync(){
+		return claimsManager.getClaimStateCount();
+	}
+
+	@Override
+	public void onLazyPacketsDropped(ServerPlayer player){
+		schedulers.forEach(s -> s.onLazyPacketsDropped(player));
 	}
 
 	@Override
 	public void onServerTick() {
 		PlayerList players = server.getPlayerList();
-		int playerCount = 0;
-		for(ServerPlayer player : players.getPlayers()) {
-			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-			if(mainCap.getClaimsManagerPlayerSyncHandler().shouldSchedule() && !serverData.getServerTickHandler().getLazyPacketSender().isClogged(player))
-				playerCount++;
+		schedulers.forEach(s -> s.onTick(players, serverData));
+	}
+
+	public static final class Builder {
+
+		private MinecraftServer server;
+
+		private Builder(){}
+
+		public Builder setDefault() {
+			setServer(null);
+			return this;
 		}
-		if(playerCount == 0)
-			return;
-		int regionsPerPlayer = Math.min(REGIONS_PER_TICK_PER_PLAYER, REGIONS_PER_TICK / playerCount);
-		for(ServerPlayer player : players.getPlayers()) {
-			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-			if(!serverData.getServerTickHandler().getLazyPacketSender().isClogged(player))
-				mainCap.getClaimsManagerPlayerSyncHandler().handle(player, regionsPerPlayer);
+
+		public Builder setServer(MinecraftServer server) {
+			this.server = server;
+			return this;
 		}
+
+		public ClaimsManagerSynchronizer build(){
+			if(server == null)
+				throw new IllegalStateException();
+
+			LazyPacketScheduleTaskHandler claimPropertiesScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
+					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerClaimPropertiesSync)
+					.setPerTickLimit(PROPERTIES_PER_TICK)
+					.setPerTickPerPlayerLimit(PROPERTIES_PER_TICK_PER_PLAYER).build();
+
+			LazyPacketScheduleTaskHandler claimStateScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
+					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerStateSync)
+					.setPerTickLimit(STATES_PER_TICK)
+					.setPerTickPerPlayerLimit(STATES_PER_TICK_PER_PLAYER).build();
+
+			//owned-only sync ironically might require more work per region, so cut the frequency a bit
+			int regionsPerTick = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY ? REGIONS_PER_TICK * 2 / 3 : REGIONS_PER_TICK;
+			int regionsPerTickPerPlayer = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY ? REGIONS_PER_TICK_PER_PLAYER * 2 / 3 : REGIONS_PER_TICK_PER_PLAYER;
+			LazyPacketScheduleTaskHandler regionScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
+					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerRegionSync)
+					.setPerTickLimit(regionsPerTick)
+					.setPerTickPerPlayerLimit(regionsPerTickPerPlayer).build();
+
+			List<LazyPacketScheduleTaskHandler> schedulers = List.of(claimPropertiesScheduler, claimStateScheduler, regionScheduler);
+			return new ClaimsManagerSynchronizer(server, schedulers);
+		}
+
+		public static Builder begin(){
+			return new Builder().setDefault();
+		}
+
 	}
 	
 }

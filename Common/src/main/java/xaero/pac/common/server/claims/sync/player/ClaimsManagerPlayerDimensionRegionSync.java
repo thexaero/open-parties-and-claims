@@ -20,36 +20,52 @@ package xaero.pac.common.server.claims.sync.player;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.ServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.ServerRegionClaims;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
 
-public class ClaimsManagerPlayerDimensionSyncHandler {
+public class ClaimsManagerPlayerDimensionRegionSync {
 
-	private final ResourceLocation dim;
-	private final List<ServerRegionClaims> regionsToSync;
+	private final ServerDimensionClaimsManager dimensionClaims;
+	private final Iterator<ServerRegionClaims> iterator;
+	private final Set<PlayerChunkClaim> allowedClaimStates;
 	
-	ClaimsManagerPlayerDimensionSyncHandler(ResourceLocation dim, List<ServerRegionClaims> regionsToSync) {
+	ClaimsManagerPlayerDimensionRegionSync(ServerDimensionClaimsManager dimensionClaims, Set<PlayerChunkClaim> allowedClaimStates) {
 		super();
-		this.dim = dim;
-		this.regionsToSync = regionsToSync;
+		this.dimensionClaims = dimensionClaims;
+		this.allowedClaimStates = allowedClaimStates;
+		this.iterator = dimensionClaims.iterator();
 	}
 	
-	public int handle(ServerPlayer player, ClaimsManagerSynchronizer synchronizer, int limit) {
-		if(!regionsToSync.isEmpty()) {
+	public int handle(IServerData<?,?> serverData, ServerPlayer player, ClaimsManagerSynchronizer synchronizer, int limit) {
+		if(iterator.hasNext()) {
 			int count = 0;
-			while(!regionsToSync.isEmpty()) {
-				ServerRegionClaims region = regionsToSync.remove(regionsToSync.size() - 1);
-				if(!region.isRemoved()) {
+			while(iterator.hasNext()) {
+				ServerRegionClaims region = iterator.next();
+				boolean shouldSkip = false;
+				if(this.allowedClaimStates != null){
+					shouldSkip = true;
+					for(PlayerChunkClaim allowedState : this.allowedClaimStates) {
+						if (region.containsState(allowedState)) {
+							shouldSkip = false;
+							break;
+						}
+					}
+				}
+				if(!shouldSkip) {
 					int paletteInts[] = region.getSyncablePaletteArray();
 					long[] storageDataCopy = region.getSyncableStorageData();
 					int storageBits = region.getSyncableStorageBits();
 					synchronizer.syncRegionClaimsToClient(region.getX(), region.getZ(), paletteInts, storageDataCopy, storageBits, player);
-					count++;
-					if(count >= limit)
-						break;
 				}
+				count++;
+				if(count >= limit)
+					break;
 			}
 			return count;
 		}
@@ -57,7 +73,7 @@ public class ClaimsManagerPlayerDimensionSyncHandler {
 	}
 	
 	public ResourceLocation getDim() {
-		return dim;
+		return dimensionClaims.getDimension();
 	}
 	
 }
