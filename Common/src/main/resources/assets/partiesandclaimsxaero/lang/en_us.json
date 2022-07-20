@@ -197,6 +197,8 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.fluidBarrier" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.dispenserBarrier" : "Dispenser Barrier",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.dispenserBarrier" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.neighborChunksItemUse" : "Protect Item Use in Neighbors",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.neighborChunksItemUse" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.allowSomeBlockInteractions" : "Allow Some Blocks Interactions",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.allowSomeBlockInteractions" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.allowSomeBlockBreaking" : "Allow Some Block Breaking",

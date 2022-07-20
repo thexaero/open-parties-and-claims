@@ -256,9 +256,14 @@ public class ChunkProtection
 			for(int i = -1; i < 2; i++)
 				for(int j = -1; j < 2; j++) {//checking neighboring chunks too because of items that affect a high range
 					IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), new ChunkPos(chunkPos.x + i, chunkPos.z + j));
-					if ((i == 0 && j == 0 || claim != null) && !hasChunkAccess(getClaimConfig(playerConfigs, claim), player)) {//wilderness neighbors don't have to be protected this much
-						shouldProtect = true;
-						break;
+					boolean isCurrentChunk = i == 0 && j == 0;
+					if (isCurrentChunk || claim != null){//wilderness neighbors don't have to be protected this much
+						IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+						if((isCurrentChunk || config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE))
+								&& !hasChunkAccess(config, player)) {
+							shouldProtect = true;
+							break;
+						}
 					}
 				}
 		}
