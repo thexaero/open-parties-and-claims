@@ -38,6 +38,8 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -53,6 +55,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.HashSet;
@@ -245,6 +248,7 @@ public class ChunkProtection
 				!(item instanceof BoatItem) &&
 				!itemStack.is(ItemTags.BOATS) &&
 				!(item instanceof BucketItem) &&
+				!(item instanceof SolidBucketItem) &&
 				!(item instanceof MilkBucketItem)
 				||
 				additionalBannedItems.contains(item)
@@ -430,6 +434,49 @@ public class ChunkProtection
 			return true;
 		}
 		return false;
+	}
+
+	private boolean isOnChunkEdge(BlockPos pos){
+		int chunkRelativeX = pos.getX() & 15;
+		int chunkRelativeZ = pos.getZ() & 15;
+		return chunkRelativeX == 0 || chunkRelativeX == 15 || chunkRelativeZ == 0 || chunkRelativeZ == 15;
+	}
+
+	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to, PlayerConfigOptionSpec<Boolean> optionSpec){
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		if(!isOnChunkEdge(from))
+			return false;
+		int fromChunkX = from.getX() >> 4;
+		int fromChunkZ = from.getZ() >> 4;
+		int toChunkX = to.getX() >> 4;
+		int toChunkZ = to.getZ() >> 4;
+		if(fromChunkX == toChunkX && fromChunkZ == toChunkZ)
+			return false;
+		IPlayerChunkClaim toClaim = claimsManager.get(level.dimension().location(), toChunkX, toChunkZ);
+		if(toClaim == null)//don't care about wilderness
+			return false;
+		IPlayerChunkClaim fromClaim = claimsManager.get(level.dimension().location(), fromChunkX, fromChunkZ);
+		if(fromClaim == toClaim)
+			return false;
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
+		return toClaimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && (optionSpec == null || toClaimConfig.getEffective(optionSpec));
+	}
+
+	public boolean onFluidSpread(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to) {
+		return hitsAnotherClaim(serverData, level, from, to, PlayerConfig.PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER);
+	}
+
+	public boolean onDispenseFrom(IServerData<CM, P> serverData, ServerLevel serverLevel, BlockPos from) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		if(!isOnChunkEdge(from))
+			return false;
+		BlockState blockState = serverLevel.getBlockState(from);
+		Direction direction = blockState.getValue(DirectionalBlock.FACING);
+		BlockPos to = from.relative(direction);
+		return hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfig.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER);
 	}
 
 	public static final class Builder

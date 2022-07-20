@@ -64,6 +64,8 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_INTERACTIONS;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_BREAKING;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_ENTITY_INTERACTIONS;
@@ -194,6 +196,16 @@ public class PlayerConfig
 				.setId("playerConfig.claims.protection.cropTrample")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for players that don't have access to the chunks.")
+				.build(allOptions).applyToForgeSpec(builder);
+		PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.fluidBarrier")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against fluids (e.g. lava) flowing into the protected chunks from outside. This does not protect wilderness.")
+				.build(allOptions).applyToForgeSpec(builder);
+		PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.dispenserBarrier")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against dispensers \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
 				.build(allOptions).applyToForgeSpec(builder);
 
 		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)

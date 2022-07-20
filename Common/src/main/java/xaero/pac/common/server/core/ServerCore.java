@@ -20,6 +20,7 @@ package xaero.pac.common.server.core;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import xaero.pac.OpenPartiesAndClaims;
@@ -95,6 +97,28 @@ public class ServerCore {
 			return true;
 		boolean shouldProtect = serverData.getChunkProtection().onUseItemAt(serverData, player, pos, direction, itemStack);
 		return !shouldProtect;
+	}
+
+	public static boolean replaceFluidCanPassThrough(boolean currentValue, BlockGetter blockGetter, BlockPos from, BlockPos to){
+		if(!currentValue)
+			return false;
+		if(!(blockGetter instanceof ServerLevel level))
+			return true;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
+		if(serverData == null)
+			return true;
+		boolean shouldProtect = serverData.getChunkProtection().onFluidSpread(serverData, level, from, to);
+		return !shouldProtect;
+	}
+
+	public static DispenseItemBehavior replaceDispenseBehavior(DispenseItemBehavior defaultValue, ServerLevel level, BlockPos blockPos) {
+		if(defaultValue == DispenseItemBehavior.NOOP)
+			return defaultValue;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
+		if(serverData == null)
+			return defaultValue;
+		boolean shouldProtect = serverData.getChunkProtection().onDispenseFrom(serverData, level, blockPos);
+		return shouldProtect ? DispenseItemBehavior.NOOP : defaultValue;
 	}
 
 }
