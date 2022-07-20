@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 
-@Mixin(value = BucketItem.class, priority = 100000)
+@Mixin(value = BucketItem.class, priority = 1000001)
 public class MixinBucketItem {
 
 	@Inject(method = "use", locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/phys/BlockHitResult;getType()Lnet/minecraft/world/phys/HitResult$Type;"))

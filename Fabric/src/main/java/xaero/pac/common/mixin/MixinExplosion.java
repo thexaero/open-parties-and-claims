@@ -30,7 +30,7 @@ import xaero.pac.OpenPartiesAndClaimsFabric;
 
 import java.util.List;
 
-@Mixin(Explosion.class)
+@Mixin(value = Explosion.class, priority = 1000001)
 public class MixinExplosion {
 
 	@Shadow
