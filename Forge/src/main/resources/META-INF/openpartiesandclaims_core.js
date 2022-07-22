@@ -341,6 +341,31 @@ function initializeCoreMod() {
                 insertOnInvoke(methodNode, insnToInsert, false/*after*/, 'net/minecraft/world/level/block/DispenserBlock', 'getDispenseMethod', 'm_7216_', '(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;')
                 return methodNode
             }
+        },
+        'xaero_pac_pistonbaseblock_moveblocks': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.piston.PistonBaseBlock',
+                'methodName': 'm_60181_',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)Z'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new InsnNode(Opcodes.DUP))//the PistonStructureResolver
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new VarInsnNode(Opcodes.ILOAD, 4))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'canPistonPush', '(Lnet/minecraft/world/level/block/piston/PistonStructureResolver;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Z)Z'))
+                insnToInsert.add(new InsnNode(Opcodes.DUP))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.IRETURN))
+                insnToInsert.add(MY_LABEL)
+                insnToInsert.add(new InsnNode(Opcodes.POP))
+                insertOnInvoke(methodNode, insnToInsert, true/*before*/, 'net/minecraft/world/level/block/piston/PistonStructureResolver', 'getToPush', 'm_60436_', '()Ljava/util/List;')
+                return methodNode
+            }
         }
 	}
 }

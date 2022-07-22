@@ -30,6 +30,7 @@
         "MixinMob",
         "MixinMoveToBlockGoal",
         "MixinPiglin",
+        "MixinPistonBaseBlock",
         "MixinPlayer",
         "MixinPlayerList",
         "MixinPowderSnowBlock",

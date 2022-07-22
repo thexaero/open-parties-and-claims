@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.protection;
 
+import com.google.common.collect.Iterators;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -447,6 +448,14 @@ public class ChunkProtection
 		return chunkRelativeX == 0 || chunkRelativeX == 15 || chunkRelativeZ == 0 || chunkRelativeZ == 15;
 	}
 
+	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, IPlayerChunkClaim fromClaim, IPlayerChunkClaim toClaim, PlayerConfigOptionSpec<Boolean> optionSpec){
+		if(toClaim == null || fromClaim == toClaim || fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId()))
+			return false;
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
+		return toClaimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && (optionSpec == null || toClaimConfig.getEffective(optionSpec));
+	}
+
 	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to, PlayerConfigOptionSpec<Boolean> optionSpec){
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
@@ -459,14 +468,8 @@ public class ChunkProtection
 		if(fromChunkX == toChunkX && fromChunkZ == toChunkZ)
 			return false;
 		IPlayerChunkClaim toClaim = claimsManager.get(level.dimension().location(), toChunkX, toChunkZ);
-		if(toClaim == null)//don't care about wilderness
-			return false;
 		IPlayerChunkClaim fromClaim = claimsManager.get(level.dimension().location(), fromChunkX, fromChunkZ);
-		if(fromClaim == toClaim || fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId()))
-			return false;
-		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
-		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
-		return toClaimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && (optionSpec == null || toClaimConfig.getEffective(optionSpec));
+		return hitsAnotherClaim(serverData, fromClaim, toClaim, optionSpec);
 	}
 
 	public boolean onFluidSpread(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to) {
@@ -482,6 +485,38 @@ public class ChunkProtection
 		Direction direction = blockState.getValue(DirectionalBlock.FACING);
 		BlockPos to = from.relative(direction);
 		return hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfig.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER);
+	}
+
+	private boolean shouldStopPistonPush(IServerData<CM, P> serverData, ServerLevel level, BlockPos pushPos, int pistonChunkX, int pistonChunkZ, IPlayerChunkClaim pistonClaim){
+		int pushChunkX = pushPos.getX() >> 4;
+		int pushChunkZ = pushPos.getZ() >> 4;
+		if(pushChunkX == pistonChunkX && pushChunkZ == pistonChunkZ)
+			return false;
+		IPlayerChunkClaim pushClaim = claimsManager.get(level.dimension().location(), pushChunkX, pushChunkZ);
+		return hitsAnotherClaim(serverData, pistonClaim, pushClaim, PlayerConfig.PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER);
+	}
+
+	public boolean onPistonPush(IServerData<CM, P> serverData, ServerLevel level, List<BlockPos> toPush, List<BlockPos> toDestroy, BlockPos pistonPos, Direction direction, boolean extending) {
+		IPlayerChunkClaim pistonClaim = claimsManager.get(level.dimension().location(), pistonPos);
+		int pistonChunkX = pistonPos.getX() >> 4;
+		int pistonChunkZ = pistonPos.getZ() >> 4;
+		Direction actualDirection = extending ? direction : direction.getOpposite();
+		if(toPush.isEmpty() && toDestroy.isEmpty()) {
+			BlockPos pushPos = pistonPos.relative(direction);
+			if(shouldStopPistonPush(serverData, level, pushPos, pistonChunkX, pistonChunkZ, pistonClaim))
+				return true;
+			return shouldStopPistonPush(serverData, level, pushPos.relative(actualDirection), pistonChunkX, pistonChunkZ, pistonClaim);
+		}
+		Iterator<BlockPos> posIterator = Iterators.concat(toPush.iterator(), toDestroy.iterator());
+		while(posIterator.hasNext()){
+			BlockPos pushPos = posIterator.next();
+			if (shouldStopPistonPush(serverData, level, pushPos, pistonChunkX, pistonChunkZ, pistonClaim))
+				return true;
+			BlockPos pushedToPos = pushPos.relative(actualDirection);
+			if (shouldStopPistonPush(serverData, level, pushedToPos, pistonChunkX, pistonChunkZ, pistonClaim))
+				return true;
+		}
+		return false;
 	}
 
 	public static final class Builder
