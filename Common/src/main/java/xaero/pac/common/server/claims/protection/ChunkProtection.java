@@ -38,6 +38,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -76,7 +77,7 @@ public class ChunkProtection
 	private static final String FORCE_PREFIX = "force$";
 	private static final String BREAK_PREFIX = "break$";
 	private static final String FORCE_BREAK_PREFIX = "force_break$";
-	
+
 	private final Component CANT_INTERACT_BLOCK_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component USE_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_use_item", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
@@ -176,29 +177,29 @@ public class ChunkProtection
 	public boolean onLeftClickBlockServer(IServerData<CM,P> serverData, BlockPos pos, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		return onBlockAccess(serverData, pos, player, InteractionHand.MAIN_HAND, false, true, null);
+		return onBlockAccess(serverData, pos, player, player.getLevel(), InteractionHand.MAIN_HAND, false, true, null);
 	}
 	
 	public boolean onDestroyBlock(IServerData<CM,P> serverData, BlockPos pos, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		return onBlockAccess(serverData, pos, player, InteractionHand.MAIN_HAND, false, true, null);
+		return onBlockAccess(serverData, pos, player, player.getLevel(), InteractionHand.MAIN_HAND, false, true, null);
 	}
 	
 	public IPlayerConfig getClaimConfig(IPlayerConfigManager<?> playerConfigs, IPlayerChunkClaim claim) {
 		return playerConfigs.getLoadedConfig(claim == null ? null : claim.getPlayerId());
 	}
 	
-	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Entity entity, boolean emptyHand, boolean leftClick) {
+	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Entity entity, Level level, boolean emptyHand, boolean leftClick) {
 		ChunkPos chunkPos = new ChunkPos(pos);
-		IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
+		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), chunkPos);
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		boolean chunkAccess = hasChunkAccess(config, entity);
 		if(chunkAccess)
 			return false;
 		else {
-			Block block = entity.getLevel().getBlockState(pos).getBlock();
+			Block block = level.getBlockState(pos).getBlock();
 			if(leftClick && forcedBreakExceptionBlocks.contains(block) || !leftClick && emptyHand && forcedEmptyHandExceptionBlocks.contains(block))
 				return false;
 			if(
@@ -211,8 +212,8 @@ public class ChunkProtection
 		}
 	}
 	
-	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, InteractionHand hand, boolean emptyHand, boolean leftClick, Component message) {
-		if(blockAccessCheck(serverData, pos, player, emptyHand, leftClick)) {
+	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, Level level, InteractionHand hand, boolean emptyHand, boolean leftClick, Component message) {
+		if(blockAccessCheck(serverData, pos, player, level, emptyHand, leftClick)) {
 			player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF, player.getUUID());
 			if(message != null)
 				player.sendMessage(message, player.getUUID());
@@ -227,10 +228,16 @@ public class ChunkProtection
 		ItemStack stack = player.getItemInHand(hand);
 		boolean emptyHand = stack.getItem() == Items.AIR;
 		if(emptyHand)
-			return onBlockAccess(serverData, pos, player, hand, emptyHand, false, null);
+			return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, null);
 		BlockPos placePos = pos.offset(blockHit.getDirection().getNormal());
 		Component message = hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
-		return onBlockAccess(serverData, pos, player, hand, emptyHand, false, message) || onBlockAccess(serverData, placePos, player, hand, emptyHand, false, message);
+		return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, message) || onBlockAccess(serverData, placePos, player, player.getLevel(), hand, emptyHand, false, message);
+	}
+
+	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, Level level, BlockPos pos) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		return blockAccessCheck(serverData, pos, entity, level, false, false);
 	}
 	
 	public boolean onItemRightClick(IServerData<CM,P> serverData, InteractionHand hand, ItemStack itemStack, BlockPos pos, Player player) {
@@ -434,7 +441,7 @@ public class ChunkProtection
 		BlockPos pos2 = null;
 		if(direction != null)
 			pos2 = pos.offset(direction.getNormal());
-		if(blockAccessCheck(serverData, pos, entity, false, false) || pos2 != null && blockAccessCheck(serverData, pos2, entity, false, false)){
+		if(blockAccessCheck(serverData, pos, entity, entity.getLevel(), false, false) || pos2 != null && blockAccessCheck(serverData, pos2, entity, entity.getLevel(), false, false)){
 			if(entity instanceof ServerPlayer player)
 				player.sendMessage(CANT_APPLY_ITEM, player.getUUID());
 			return true;

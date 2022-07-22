@@ -32,6 +32,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -60,7 +61,11 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public class CommonEvents {
 
@@ -281,6 +286,33 @@ public class CommonEvents {
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
 		return serverData.getChunkProtection().onBucketUse(serverData, entity, hitResult, itemStack);
+	}
+
+	protected boolean onEntityPlaceBlock(LevelAccessor levelAccessor, BlockPos pos, Entity entity) {
+		//only supported by Forge atm
+		if(levelAccessor instanceof ServerLevel level) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
+			return serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, level, pos);
+		}
+		return false;
+	}
+
+	protected boolean onEntityMultiPlaceBlock(LevelAccessor levelAccessor, Stream<BlockPos> positions, Entity entity) {
+		//only supported by Forge atm
+		if(levelAccessor instanceof ServerLevel level) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
+			Set<ChunkPos> chunkPositions = new HashSet<>();
+			Iterator<BlockPos> iterator = positions.iterator();
+			while(iterator.hasNext()){
+				BlockPos pos = iterator.next();
+				if(chunkPositions.add(new ChunkPos(pos))) {
+					if (serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, level, pos))
+						return true;
+				}
+			}
+			return false;
+		}
+		return false;
 	}
 
 }
