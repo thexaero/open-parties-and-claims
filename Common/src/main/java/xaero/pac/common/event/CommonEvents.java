@@ -221,7 +221,7 @@ public class CommonEvents {
 		if(target.getLevel() instanceof ServerLevel) {
 			if(!(source instanceof EntityDamageSource) &&
 					!source.isDamageHelmet()/*almost certainly something falling from the top*/ && source != DamageSource.DRAGON_BREATH &&
-					!source.isProjectile() && !source.isExplosion())
+					!source.isProjectile() && !source.isExplosion() && !source.getMsgId().startsWith("create.")/*create mod*/)
 				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(target.getServer());
 			Entity effectiveSource = source.getEntity() != null ? source.getEntity() : source.getDirectEntity();

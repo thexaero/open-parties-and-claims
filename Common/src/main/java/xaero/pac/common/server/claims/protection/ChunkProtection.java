@@ -60,6 +60,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -452,6 +453,10 @@ public class ChunkProtection
 	private boolean isOnChunkEdge(BlockPos pos){
 		int chunkRelativeX = pos.getX() & 15;
 		int chunkRelativeZ = pos.getZ() & 15;
+		return isOnChunkEdge(chunkRelativeX, chunkRelativeZ);
+	}
+
+	private boolean isOnChunkEdge(int chunkRelativeX, int chunkRelativeZ){
 		return chunkRelativeX == 0 || chunkRelativeX == 15 || chunkRelativeZ == 0 || chunkRelativeZ == 15;
 	}
 
@@ -504,6 +509,8 @@ public class ChunkProtection
 	}
 
 	public boolean onPistonPush(IServerData<CM, P> serverData, ServerLevel level, List<BlockPos> toPush, List<BlockPos> toDestroy, BlockPos pistonPos, Direction direction, boolean extending) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
 		IPlayerChunkClaim pistonClaim = claimsManager.get(level.dimension().location(), pistonPos);
 		int pistonChunkX = pistonPos.getX() >> 4;
 		int pistonChunkZ = pistonPos.getZ() >> 4;
@@ -523,6 +530,48 @@ public class ChunkProtection
 			if (shouldStopPistonPush(serverData, level, pushedToPos, pistonChunkX, pistonChunkZ, pistonClaim))
 				return true;
 		}
+		return false;
+	}
+
+	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, IPlayerChunkClaim posClaim, int posChunkX, int posChunkZ, int anchorChunkX, int anchorChunkZ) {
+		if(posChunkX == anchorChunkX && posChunkZ == anchorChunkZ)
+			return false;
+		IPlayerChunkClaim anchorClaim = claimsManager.get(level.dimension().location(), anchorChunkX, anchorChunkZ);
+		return hitsAnotherClaim(serverData, anchorClaim, posClaim, null);
+	}
+
+	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, BlockPos pos, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, Player player) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		int posChunkX = pos.getX() >> 4;
+		int posChunkZ = pos.getZ() >> 4;
+		IPlayerChunkClaim posClaim = claimsManager.get(level.dimension().location(), posChunkX, posChunkZ);
+		if(posClaim == null)//wilderness not protected
+			return false;
+		if(player != null)
+			return !hasChunkAccess(getClaimConfig(serverData.getPlayerConfigs(), posClaim), player);
+		if(sourceOrAnchor == null)
+			return hitsAnotherClaim(serverData, null, posClaim, null);
+
+		int anchorChunkRelativeX = sourceOrAnchor.getX() & 15;
+		int anchorChunkRelativeZ = sourceOrAnchor.getZ() & 15;
+		int anchorChunkX = sourceOrAnchor.getX() >> 4;
+		int anchorChunkZ = sourceOrAnchor.getZ() >> 4;
+		if(!checkNeighborBlocks || !isOnChunkEdge(sourceOrAnchor))
+			return onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, anchorChunkX, anchorChunkZ);
+
+		//checking neighbor blocks as the effective anchor positions because the anchor is often offset by 1 block
+		int fromChunkOffX = anchorChunkRelativeX == 0 ? -1 : 0;
+		int toChunkOffX = anchorChunkRelativeX == 15 ? 1 : 0;
+		int fromChunkOffZ = anchorChunkRelativeZ == 0 ? -1 : 0;
+		int toChunkOffZ = anchorChunkRelativeZ == 15 ? 1 : 0;
+		for(int offX = fromChunkOffX; offX <= toChunkOffX; offX++)
+			for(int offZ = fromChunkOffZ; offZ <= toChunkOffZ; offZ++){
+				int effectiveAnchorChunkX = anchorChunkX + offX;
+				int effectiveAnchorChunkZ = anchorChunkZ + offZ;
+				if(onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, effectiveAnchorChunkX, effectiveAnchorChunkZ))
+					return true;
+			}
 		return false;
 	}
 

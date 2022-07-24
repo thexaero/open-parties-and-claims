@@ -11,6 +11,11 @@ var Label=Java.type('org.objectweb.asm.Label')
 var JumpInsnNode=Java.type('org.objectweb.asm.tree.JumpInsnNode')
 var FieldNode=Java.type('org.objectweb.asm.tree.FieldNode')
 
+var levelClass = 'net/minecraft/world/level/Level'
+var getBlockStateName = 'getBlockState'
+var getBlockStateNameObf = 'm_8055_'
+var getBlockStateDesc = '(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;'
+
 function addCustomGetter(classNode, fieldName, fieldDesc, methodName){
 	var methods = classNode.methods
 	var getterNode = new MethodNode(Opcodes.ACC_PUBLIC, methodName, "()" + fieldDesc, null, null)
@@ -67,33 +72,109 @@ function clientPacketRedirectTransformCustom(methodNode, methodInsnNode, localVa
 	}
 }
 
-function insertBeforeReturn(methodNode, patchList){
+function insertBeforeReturn2(methodNode, patchListGetter){
 	var instructions = methodNode.instructions
 	for(var i = 0; i < instructions.size(); i++) {
 		var insn = instructions.get(i);
-		if(insn.getOpcode() >= 172 && insn.getOpcode() <= 177)
-			instructions.insertBefore(insn, patchList);
-	}
-}
-
-function insertOnInvoke(methodNode, patchList, before, invokeOwner, invokeName, invokeNameObf, invokeDesc){
-	var instructions = methodNode.instructions
-	for(var i = 0; i < instructions.size(); i++) {
-		var insn = instructions.get(i);
-		if(insn.getOpcode() >= 182 && insn.getOpcode() <= 186) {
-			if(insn.owner.equals(invokeOwner) && (insn.name.equals(invokeName) || insn.name.equals(invokeNameObf)) && insn.desc.equals(invokeDesc)) {
-				if(before)
-				    instructions.insertBefore(insn, patchList);
-                else
-                	instructions.insert(insn, patchList);
-				break;
-			}
+		if(insn.getOpcode() >= 172 && insn.getOpcode() <= 177){
+		    var toInsert = patchListGetter()
+        	var patchSize = toInsert.size()
+			instructions.insertBefore(insn, toInsert);
+			i += patchSize
 		}
 	}
 }
 
+function insertBeforeReturn(methodNode, patchList){
+    var patchListGetter = function() {return patchList}
+    insertBeforeReturn2(methodNode, patchListGetter)
+}
+
+function insertOnInvoke2(methodNode, patchListGetter, before, invokeOwner, invokeName, invokeNameObf, invokeDesc, firstOnly){
+	var instructions = methodNode.instructions
+	var isObfuscated = false
+	for(var i = 0; i < instructions.size(); i++) {
+		var insn = instructions.get(i);
+		if(insn.getOpcode() >= 182 && insn.getOpcode() <= 185) {
+			if(insn.owner.equals(invokeOwner) && (insn.name.equals(invokeName) || insn.name.equals(invokeNameObf)) && insn.desc.equals(invokeDesc)) {
+				if(insn.name.equals(invokeNameObf))
+				    isObfuscated = true
+				var toInsert = patchListGetter()
+				var patchSize = toInsert.size()
+				if(before)
+				    instructions.insertBefore(insn, toInsert);
+                else
+                	instructions.insert(insn, toInsert);
+                i += patchSize
+                if(firstOnly)
+				    break
+			}
+		}
+	}
+	return isObfuscated
+}
+
+function insertOnInvoke(methodNode, patchList, before, invokeOwner, invokeName, invokeNameObf, invokeDesc){
+    var patchListGetter = function() {return patchList}
+    return insertOnInvoke2(methodNode, patchListGetter, before, invokeOwner, invokeName, invokeNameObf, invokeDesc, true)
+}
+
 function clientPacketRedirectTransform(methodNode, methodInsnNode){
 	clientPacketRedirectTransformCustom(methodNode, methodInsnNode, 1)
+}
+
+function insertCreateModBlockPosArgumentCapture(methodNode, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc){
+    var insnToInsertBeforeGetter = function() {
+        var insnToInsertBefore = new InsnList()
+        insnToInsertBefore.add(new InsnNode(Opcodes.DUP))//store the target pos in a field
+        insnToInsertBefore.add(new FieldInsnNode(Opcodes.PUTSTATIC, 'xaero/pac/common/server/core/ServerCore', 'CAPTURED_TARGET_POS', 'Lnet/minecraft/core/BlockPos;'))
+        return insnToInsertBefore
+    }
+    return insertOnInvoke2(methodNode, insnToInsertBeforeGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+}
+
+function getCreateModBlockBreakHandlerInsn(){
+    return new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'replaceBlockFetchOnCreateModBreak', '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;')
+}
+
+function transformCreateBreakerMovementBehaviour(methodNode){
+    insertCreateModBlockPosArgumentCapture(methodNode, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc)
+
+    var insnToInsertGetter = function() {
+        var insnToInsert = new InsnList()
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))//movement context
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'world', 'Lnet/minecraft/world/level/Level;'))
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'contraption', 'Lcom/simibubi/create/content/contraptions/components/structureMovement/Contraption;'))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+        insnToInsert.add(getCreateModBlockBreakHandlerInsn())
+        return insnToInsert
+    }
+    insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc, false)
+    return methodNode
+}
+
+function transformCreateSymmetryWandApply(methodNode){
+    var invokeTargetClass = 'com/simibubi/create/content/curiosities/symmetry/mirror/SymmetryMirror'
+    var invokeTargetName = 'process'
+    var invokeTargetNameObf = invokeTargetName
+    var invokeTargetDesc = '(Ljava/util/Map;)V'
+
+    var insnToInsertBeforeGetter = function() {
+        var insnToInsertBefore = new InsnList()
+        insnToInsertBefore.add(new InsnNode(Opcodes.DUP))//store the map argument in a field
+        insnToInsertBefore.add(new FieldInsnNode(Opcodes.PUTSTATIC, 'xaero/pac/common/server/core/ServerCore', 'CAPTURED_POS_STATE_MAP', 'Ljava/util/Map;'))
+        return insnToInsertBefore
+    }
+    insertOnInvoke2(methodNode, insnToInsertBeforeGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, true)
+
+    var insnToInsert = new InsnList()
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onCreateModSymmetryProcessed', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;)V'))
+    insertOnInvoke(methodNode, insnToInsert, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc)
+
+    return methodNode
 }
 
 function initializeCoreMod() {
@@ -364,6 +445,150 @@ function initializeCoreMod() {
                 insnToInsert.add(MY_LABEL)
                 insnToInsert.add(new InsnNode(Opcodes.POP))
                 insertOnInvoke(methodNode, insnToInsert, true/*before*/, 'net/minecraft/world/level/block/piston/PistonStructureResolver', 'getToPush', 'm_60436_', '()Ljava/util/List;')
+                return methodNode
+            }
+        },
+        'xaero_pac_create_contraption_movementallowed': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.Contraption',
+                'methodName': 'movementAllowed',
+                'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateModAllowed', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Z'))
+                insnToInsert.add(new InsnNode(Opcodes.DUP))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.IRETURN))
+                insnToInsert.add(MY_LABEL)
+                insnToInsert.add(new InsnNode(Opcodes.POP))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_contraption_addblockstoworld': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.Contraption',
+                'methodName': 'addBlocksToWorld',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/contraptions/components/structureMovement/StructureTransform;)V'
+            },
+            'transformer' : function(methodNode){
+                insertCreateModBlockPosArgumentCapture(methodNode, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc)
+
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                    insnToInsert.add(getCreateModBlockBreakHandlerInsn())
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc, false)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_blockbreakingkinetictileentity_tick': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.actors.BlockBreakingKineticTileEntity',
+                'methodName': 'tick',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                var isObfuscated = insertCreateModBlockPosArgumentCapture(methodNode, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc)
+
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'net/minecraft/world/level/block/entity/BlockEntity', isObfuscated? 'f_58857_' : 'level', 'Lnet/minecraft/world/level/Level;'))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/base/KineticTileEntity', 'source', 'Lnet/minecraft/core/BlockPos;'))
+                    insnToInsert.add(getCreateModBlockBreakHandlerInsn())
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc, false)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_blockbreakingmovementbehaviour_tickbreaker': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.actors.BlockBreakingMovementBehaviour',
+                'methodName': 'tickBreaker',
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/MovementContext;)V'
+            },
+            'transformer' : function(methodNode){
+                transformCreateBreakerMovementBehaviour(methodNode)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_harvestermovementbehaviour_tickbreaker': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.actors.HarvesterMovementBehaviour',
+                'methodName': 'visitNewPosition',
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/MovementContext;Lnet/minecraft/core/BlockPos;)V'
+            },
+            'transformer' : function(methodNode){
+                transformCreateBreakerMovementBehaviour(methodNode)//same exact transformation works here too
+                return methodNode
+            }
+        },
+        'xaero_pac_create_symmetrywanditem_apply': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.curiosities.symmetry.SymmetryWandItem',
+                'methodName': 'apply',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V'
+            },
+            'transformer' : function(methodNode){
+                transformCreateSymmetryWandApply(methodNode)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_symmetrywanditem_remove': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.curiosities.symmetry.SymmetryWandItem',
+                'methodName': 'remove',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;)V'
+            },
+            'transformer' : function(methodNode){
+                transformCreateSymmetryWandApply(methodNode)//same exact transformer works here too
+                return methodNode
+            }
+        },
+        'xaero_pac_create_schematicannontileentity_tickprinter': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.schematics.block.SchematicannonTileEntity',
+                'methodName': 'tickPrinter',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                var invokeTargetClass = 'com/simibubi/create/content/schematics/SchematicPrinter'
+                var invokeTargetName = 'shouldPlaceCurrent'
+                var invokeTargetNameObf = invokeTargetName
+                var invokeTargetDesc = '(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/schematics/SchematicPrinter$PlacementPredicate;)Z'
+
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/schematics/block/SchematicannonTileEntity', 'printer', 'Lcom/simibubi/create/content/schematics/SchematicPrinter;'))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, 'com/simibubi/create/content/schematics/SchematicPrinter', 'getCurrentTarget', '()Lnet/minecraft/core/BlockPos;'))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'canCreateCannonPlaceBlock', '(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/core/BlockPos;)Z'))
+                    insnToInsert.add(new InsnNode(Opcodes.IAND))
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
                 return methodNode
             }
         }

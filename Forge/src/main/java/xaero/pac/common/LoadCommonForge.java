@@ -24,7 +24,6 @@ import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkConstants;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.event.CommonEventsForge;
 
@@ -32,7 +31,7 @@ public class LoadCommonForge<L extends LoadCommon> {
 	
 	protected final OpenPartiesAndClaimsForge modMain;
 	protected final L loader;
-	
+
 	public LoadCommonForge(OpenPartiesAndClaimsForge modMain, L loader) {
 		this.modMain = modMain;
 		this.loader = loader;
@@ -40,7 +39,7 @@ public class LoadCommonForge<L extends LoadCommon> {
 		MinecraftForge.EVENT_BUS.register(commonEventsForge);
 		modMain.setCommonEventsForge(commonEventsForge);
 	}
-	
+
 	@SubscribeEvent
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		loader.loadCommon();
