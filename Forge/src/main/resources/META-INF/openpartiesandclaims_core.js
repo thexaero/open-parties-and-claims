@@ -177,6 +177,26 @@ function transformCreateSymmetryWandApply(methodNode){
     return methodNode
 }
 
+function transformCreateCollideEntities(methodNode){
+    var invokeTargetClass = 'net/minecraft/world/level/Level'
+    var invokeTargetName = 'getEntitiesOfClass'
+    var invokeTargetNameObf = 'm_6443_'
+    var invokeTargetDesc = '(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;'
+
+    var insnToInsertGetter = function() {
+        var insnToInsert = new InsnList()
+        insnToInsert.add(new InsnNode(Opcodes.DUP))
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+        insnToInsert.add(new InsnNode(Opcodes.DUP))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/AbstractContraptionEntity', 'contraption', 'Lcom/simibubi/create/content/contraptions/components/structureMovement/Contraption;'))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onCreateCollideEntities', '(Ljava/util/List;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/core/BlockPos;)V'))
+        return insnToInsert
+    }
+    insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+    return methodNode
+}
+
 function initializeCoreMod() {
 	return {
 		'xaero_pac_minecraftserverclass': {
@@ -589,6 +609,30 @@ function initializeCoreMod() {
                     return insnToInsert
                 }
                 insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_contraptioncollider_collideentities': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.ContraptionCollider',
+                'methodName': 'collideEntities',
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/AbstractContraptionEntity;)V'
+            },
+            'transformer' : function(methodNode){
+                transformCreateCollideEntities(methodNode)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_contraptioncollider_collideblocks': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.ContraptionCollider',
+                'methodName': 'collideBlocks',
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/AbstractContraptionEntity;)Z'
+            },
+            'transformer' : function(methodNode){
+                transformCreateCollideEntities(methodNode)//same exact transformer works here too
                 return methodNode
             }
         }

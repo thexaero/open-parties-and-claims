@@ -55,6 +55,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ServerCore {
@@ -183,6 +184,21 @@ public class ServerCore {
 		if(serverData == null)
 			return true;
 		return isCreateModAllowed(serverData, level, pos, placer.getBlockPos(), false);
+	}
+
+	public static void onCreateCollideEntities(List<Entity> entities, Entity contraption, BlockPos contraptionAnchor){
+		Level level = contraption.getLevel();
+		if(level == null || level.getServer() == null)
+			return;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
+		if(serverData == null)
+			return;
+		Iterator<Entity> entityIterator = entities.iterator();
+		while(entityIterator.hasNext()){
+			Entity entity = entityIterator.next();
+			if(serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, entity.blockPosition(), contraptionAnchor, true, null))
+				entityIterator.remove();
+		}
 	}
 
 }
