@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.protection;
 
+import com.google.common.collect.Iterators;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,6 +37,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -57,6 +59,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -174,29 +177,29 @@ public class ChunkProtection
 	public boolean onLeftClickBlockServer(IServerData<CM,P> serverData, BlockPos pos, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		return onBlockAccess(serverData, pos, player, InteractionHand.MAIN_HAND, false, true, null);
+		return onBlockAccess(serverData, pos, player, player.getLevel(), InteractionHand.MAIN_HAND, false, true, null);
 	}
 	
 	public boolean onDestroyBlock(IServerData<CM,P> serverData, BlockPos pos, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		return onBlockAccess(serverData, pos, player, InteractionHand.MAIN_HAND, false, true, null);
+		return onBlockAccess(serverData, pos, player, player.getLevel(), InteractionHand.MAIN_HAND, false, true, null);
 	}
 	
 	public IPlayerConfig getClaimConfig(IPlayerConfigManager<?> playerConfigs, IPlayerChunkClaim claim) {
 		return playerConfigs.getLoadedConfig(claim == null ? null : claim.getPlayerId());
 	}
 	
-	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Entity entity, boolean emptyHand, boolean leftClick) {
+	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Entity entity, Level level, boolean emptyHand, boolean leftClick) {
 		ChunkPos chunkPos = new ChunkPos(pos);
-		IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
+		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), chunkPos);
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		boolean chunkAccess = hasChunkAccess(config, entity);
 		if(chunkAccess)
 			return false;
 		else {
-			Block block = entity.getLevel().getBlockState(pos).getBlock();
+			Block block = level.getBlockState(pos).getBlock();
 			if(leftClick && forcedBreakExceptionBlocks.contains(block) || !leftClick && emptyHand && forcedEmptyHandExceptionBlocks.contains(block))
 				return false;
 			if(
@@ -209,8 +212,8 @@ public class ChunkProtection
 		}
 	}
 	
-	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, InteractionHand hand, boolean emptyHand, boolean leftClick, Component message) {
-		if(blockAccessCheck(serverData, pos, player, emptyHand, leftClick)) {
+	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, Level level, InteractionHand hand, boolean emptyHand, boolean leftClick, Component message) {
+		if(blockAccessCheck(serverData, pos, player, level, emptyHand, leftClick)) {
 			player.sendSystemMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF);
 			if(message != null)
 				player.sendSystemMessage(message);
@@ -225,10 +228,16 @@ public class ChunkProtection
 		ItemStack stack = player.getItemInHand(hand);
 		boolean emptyHand = stack.getItem() == Items.AIR;
 		if(emptyHand)
-			return onBlockAccess(serverData, pos, player, hand, emptyHand, false, null);
+			return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, null);
 		BlockPos placePos = pos.offset(blockHit.getDirection().getNormal());
 		Component message = hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
-		return onBlockAccess(serverData, pos, player, hand, emptyHand, false, message) || onBlockAccess(serverData, placePos, player, hand, emptyHand, false, message);
+		return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, message) || onBlockAccess(serverData, placePos, player, player.getLevel(), hand, emptyHand, false, message);
+	}
+
+	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, Level level, BlockPos pos) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		return blockAccessCheck(serverData, pos, entity, level, false, false);
 	}
 	
 	public boolean onItemRightClick(IServerData<CM,P> serverData, InteractionHand hand, ItemStack itemStack, BlockPos pos, Player player) {
@@ -432,7 +441,7 @@ public class ChunkProtection
 		BlockPos pos2 = null;
 		if(direction != null)
 			pos2 = pos.offset(direction.getNormal());
-		if(blockAccessCheck(serverData, pos, entity, false, false) || pos2 != null && blockAccessCheck(serverData, pos2, entity, false, false)){
+		if(blockAccessCheck(serverData, pos, entity, entity.getLevel(), false, false) || pos2 != null && blockAccessCheck(serverData, pos2, entity, entity.getLevel(), false, false)){
 			if(entity instanceof ServerPlayer player)
 				player.sendSystemMessage(CANT_APPLY_ITEM);
 			return true;
@@ -443,7 +452,19 @@ public class ChunkProtection
 	private boolean isOnChunkEdge(BlockPos pos){
 		int chunkRelativeX = pos.getX() & 15;
 		int chunkRelativeZ = pos.getZ() & 15;
+		return isOnChunkEdge(chunkRelativeX, chunkRelativeZ);
+	}
+
+	private boolean isOnChunkEdge(int chunkRelativeX, int chunkRelativeZ){
 		return chunkRelativeX == 0 || chunkRelativeX == 15 || chunkRelativeZ == 0 || chunkRelativeZ == 15;
+	}
+
+	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, IPlayerChunkClaim fromClaim, IPlayerChunkClaim toClaim, PlayerConfigOptionSpec<Boolean> optionSpec){
+		if(toClaim == null || fromClaim == toClaim || fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId()))
+			return false;
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
+		return toClaimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && (optionSpec == null || toClaimConfig.getEffective(optionSpec));
 	}
 
 	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to, PlayerConfigOptionSpec<Boolean> optionSpec){
@@ -458,14 +479,8 @@ public class ChunkProtection
 		if(fromChunkX == toChunkX && fromChunkZ == toChunkZ)
 			return false;
 		IPlayerChunkClaim toClaim = claimsManager.get(level.dimension().location(), toChunkX, toChunkZ);
-		if(toClaim == null)//don't care about wilderness
-			return false;
 		IPlayerChunkClaim fromClaim = claimsManager.get(level.dimension().location(), fromChunkX, fromChunkZ);
-		if(fromClaim == toClaim || fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId()))
-			return false;
-		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
-		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
-		return toClaimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) && (optionSpec == null || toClaimConfig.getEffective(optionSpec));
+		return hitsAnotherClaim(serverData, fromClaim, toClaim, optionSpec);
 	}
 
 	public boolean onFluidSpread(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to) {
@@ -481,6 +496,82 @@ public class ChunkProtection
 		Direction direction = blockState.getValue(DirectionalBlock.FACING);
 		BlockPos to = from.relative(direction);
 		return hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfig.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER);
+	}
+
+	private boolean shouldStopPistonPush(IServerData<CM, P> serverData, ServerLevel level, BlockPos pushPos, int pistonChunkX, int pistonChunkZ, IPlayerChunkClaim pistonClaim){
+		int pushChunkX = pushPos.getX() >> 4;
+		int pushChunkZ = pushPos.getZ() >> 4;
+		if(pushChunkX == pistonChunkX && pushChunkZ == pistonChunkZ)
+			return false;
+		IPlayerChunkClaim pushClaim = claimsManager.get(level.dimension().location(), pushChunkX, pushChunkZ);
+		return hitsAnotherClaim(serverData, pistonClaim, pushClaim, PlayerConfig.PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER);
+	}
+
+	public boolean onPistonPush(IServerData<CM, P> serverData, ServerLevel level, List<BlockPos> toPush, List<BlockPos> toDestroy, BlockPos pistonPos, Direction direction, boolean extending) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerChunkClaim pistonClaim = claimsManager.get(level.dimension().location(), pistonPos);
+		int pistonChunkX = pistonPos.getX() >> 4;
+		int pistonChunkZ = pistonPos.getZ() >> 4;
+		Direction actualDirection = extending ? direction : direction.getOpposite();
+		if(toPush.isEmpty() && toDestroy.isEmpty()) {
+			BlockPos pushPos = pistonPos.relative(direction);
+			if(shouldStopPistonPush(serverData, level, pushPos, pistonChunkX, pistonChunkZ, pistonClaim))
+				return true;
+			return shouldStopPistonPush(serverData, level, pushPos.relative(actualDirection), pistonChunkX, pistonChunkZ, pistonClaim);
+		}
+		Iterator<BlockPos> posIterator = Iterators.concat(toPush.iterator(), toDestroy.iterator());
+		while(posIterator.hasNext()){
+			BlockPos pushPos = posIterator.next();
+			if (shouldStopPistonPush(serverData, level, pushPos, pistonChunkX, pistonChunkZ, pistonClaim))
+				return true;
+			BlockPos pushedToPos = pushPos.relative(actualDirection);
+			if (shouldStopPistonPush(serverData, level, pushedToPos, pistonChunkX, pistonChunkZ, pistonClaim))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, IPlayerChunkClaim posClaim, int posChunkX, int posChunkZ, int anchorChunkX, int anchorChunkZ) {
+		if(posChunkX == anchorChunkX && posChunkZ == anchorChunkZ)
+			return false;
+		IPlayerChunkClaim anchorClaim = claimsManager.get(level.dimension().location(), anchorChunkX, anchorChunkZ);
+		return hitsAnotherClaim(serverData, anchorClaim, posClaim, null);
+	}
+
+	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, BlockPos pos, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, Player player) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		int posChunkX = pos.getX() >> 4;
+		int posChunkZ = pos.getZ() >> 4;
+		IPlayerChunkClaim posClaim = claimsManager.get(level.dimension().location(), posChunkX, posChunkZ);
+		if(posClaim == null)//wilderness not protected
+			return false;
+		if(player != null)
+			return !hasChunkAccess(getClaimConfig(serverData.getPlayerConfigs(), posClaim), player);
+		if(sourceOrAnchor == null)
+			return hitsAnotherClaim(serverData, null, posClaim, null);
+
+		int anchorChunkRelativeX = sourceOrAnchor.getX() & 15;
+		int anchorChunkRelativeZ = sourceOrAnchor.getZ() & 15;
+		int anchorChunkX = sourceOrAnchor.getX() >> 4;
+		int anchorChunkZ = sourceOrAnchor.getZ() >> 4;
+		if(!checkNeighborBlocks || !isOnChunkEdge(sourceOrAnchor))
+			return onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, anchorChunkX, anchorChunkZ);
+
+		//checking neighbor blocks as the effective anchor positions because the anchor is often offset by 1 block
+		int fromChunkOffX = anchorChunkRelativeX == 0 ? -1 : 0;
+		int toChunkOffX = anchorChunkRelativeX == 15 ? 1 : 0;
+		int fromChunkOffZ = anchorChunkRelativeZ == 0 ? -1 : 0;
+		int toChunkOffZ = anchorChunkRelativeZ == 15 ? 1 : 0;
+		for(int offX = fromChunkOffX; offX <= toChunkOffX; offX++)
+			for(int offZ = fromChunkOffZ; offZ <= toChunkOffZ; offZ++){
+				int effectiveAnchorChunkX = anchorChunkX + offX;
+				int effectiveAnchorChunkZ = anchorChunkZ + offZ;
+				if(onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, effectiveAnchorChunkX, effectiveAnchorChunkZ))
+					return true;
+			}
+		return false;
 	}
 
 	public static final class Builder

@@ -66,6 +66,7 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_INTERACTIONS;
 	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_BREAKING;
@@ -207,6 +208,11 @@ public class PlayerConfig
 				.setId("playerConfig.claims.protection.dispenserBarrier")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against dispensers \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
+				.build(allOptions).applyToForgeSpec(builder);
+		PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.pistonBarrier")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against being affected by pistons outside of the protected chunks. This does not protect wilderness.")
 				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.neighborChunksItemUse")

@@ -20,6 +20,7 @@ package xaero.pac.common.event;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -62,6 +63,18 @@ public class CommonEventsForge extends CommonEvents {
 		MinecraftForge.EVENT_BUS.<EntityTeleportEvent.ChorusFruit>addListener(EventPriority.HIGHEST, this::onChorusFruit);
 		MinecraftForge.EVENT_BUS.<BlockEvent.FarmlandTrampleEvent>addListener(EventPriority.HIGHEST, this::onCropTrample);
 		MinecraftForge.EVENT_BUS.<FillBucketEvent>addListener(EventPriority.HIGHEST, this::onBucketUse);
+		MinecraftForge.EVENT_BUS.<BlockEvent.EntityPlaceEvent>addListener(EventPriority.HIGHEST, this::onEntityPlaceBlock);
+		MinecraftForge.EVENT_BUS.<BlockEvent.EntityMultiPlaceEvent>addListener(EventPriority.HIGHEST, this::onEntityMultiPlaceBlock);
+	}
+
+	private void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event) {
+		if(super.onEntityPlaceBlock(event.getWorld(), event.getPos(), event.getEntity()))
+			event.setCanceled(true);
+	}
+
+	private void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
+		if(super.onEntityMultiPlaceBlock(event.getWorld(), event.getReplacedBlockSnapshots().stream().map(BlockSnapshot::getPos), event.getEntity()))
+			event.setCanceled(true);
 	}
 
 	@SubscribeEvent

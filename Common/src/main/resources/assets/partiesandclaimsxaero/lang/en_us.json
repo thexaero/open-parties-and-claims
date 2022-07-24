@@ -96,8 +96,8 @@
 	"gui.xaero_pac_config_option_get_too_many_targets" : "Only one target player is allowed!",
 	"gui.xaero_pac_config_option_get_invalid_target" : "Invalid target player!",
 	"gui.xaero_pac_config_option_get" : "(%1$s) %2$s = \"%3$s\"",
-	
-	
+
+
 	"gui.xaero_claims_protection_interact_block" : "(%1$s) You are not allowed to interact with this block!",
 	"gui.xaero_claims_protection_interact_block_try_empty" : "(%1$s) It might work if you try again empty-handed.",
 	"gui.xaero_claims_protection_interact_entity" : "(%1$s) You are not allowed to interact with this entity in this chunk!",
@@ -197,6 +197,8 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.fluidBarrier" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.dispenserBarrier" : "Dispenser Barrier",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.dispenserBarrier" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.pistonBarrier" : "Piston Barrier",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.pistonBarrier" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.neighborChunksItemUse" : "Protect Item Use in Neighbors",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.neighborChunksItemUse" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.allowSomeBlockInteractions" : "Allow Some Blocks Interactions",
