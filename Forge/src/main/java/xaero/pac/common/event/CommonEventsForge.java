@@ -68,12 +68,12 @@ public class CommonEventsForge extends CommonEvents {
 	}
 
 	private void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event) {
-		if(super.onEntityPlaceBlock(event.getWorld(), event.getPos(), event.getEntity()))
+		if(super.onEntityPlaceBlock(event.getLevel(), event.getPos(), event.getEntity()))
 			event.setCanceled(true);
 	}
 
 	private void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
-		if(super.onEntityMultiPlaceBlock(event.getWorld(), event.getReplacedBlockSnapshots().stream().map(BlockSnapshot::getPos), event.getEntity()))
+		if(super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(BlockSnapshot::getPos), event.getEntity()))
 			event.setCanceled(true);
 	}
 
