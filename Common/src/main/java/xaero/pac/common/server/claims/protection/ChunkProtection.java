@@ -539,11 +539,9 @@ public class ChunkProtection
 		return hitsAnotherClaim(serverData, anchorClaim, posClaim, null);
 	}
 
-	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, BlockPos pos, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, Player player) {
+	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, int posChunkX, int posChunkZ, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		int posChunkX = pos.getX() >> 4;
-		int posChunkZ = pos.getZ() >> 4;
 		IPlayerChunkClaim posClaim = claimsManager.get(level.dimension().location(), posChunkX, posChunkZ);
 		if(posClaim == null)//wilderness not protected
 			return false;
@@ -572,6 +570,27 @@ public class ChunkProtection
 					return true;
 			}
 		return false;
+	}
+
+	public void onCreateModCollideEntities(IServerData<CM, P> serverData, Level level, List<Entity> entities, BlockPos contraptionAnchor) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return;
+		Set<ChunkPos> protectedChunks = null;
+		Iterator<Entity> entityIterator = entities.iterator();
+		while(entityIterator.hasNext()){
+			Entity entity = entityIterator.next();
+			ChunkPos entityChunkPos = entity.chunkPosition();
+			if(protectedChunks != null && protectedChunks.contains(entityChunkPos)) {
+				entityIterator.remove();
+				continue;
+			}
+			if(onCreateMod(serverData, (ServerLevel) level, entityChunkPos.x, entityChunkPos.z, contraptionAnchor, true, null)) {
+				if(protectedChunks == null)
+					protectedChunks = new HashSet<>();
+				protectedChunks.add(entityChunkPos);
+				entityIterator.remove();
+			}
+		}
 	}
 
 	public static final class Builder

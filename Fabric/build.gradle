@@ -25,11 +25,11 @@ dependencies {
 
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
-    modImplementation "curse.maven:forgeconfigfabric-547434:3823451"
+    modImplementation "curse.maven:forgeconfigfabric-547434:3823451"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
-    modCompileOnly "curse.maven:ftbranks-472659:3831005"
-    modCompileOnly "curse.maven:architectury-419699:3843623"
-    modCompileOnly "curse.maven:ftblibrary-438495:3831893"
+    modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
+    modCompileOnly "curse.maven:architectury-419699:3843623"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+    modCompileOnly "curse.maven:ftblibrary-438495:3831893"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-fabric
 }
 
 loom {
