@@ -61,10 +61,7 @@ import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class ChunkProtection
@@ -573,25 +570,33 @@ public class ChunkProtection
 		return false;
 	}
 
-	public void onCreateModCollideEntities(IServerData<CM, P> serverData, Level level, List<Entity> entities, BlockPos contraptionAnchor) {
+	public <E> boolean onCreateModAffectPositionedObjects(IServerData<CM, P> serverData, Level level, List<E> objects, Function<E, ChunkPos> positionGetter, BlockPos contraptionAnchor, boolean checkNeighborBlocks, boolean removeInvalid) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
-			return;
-		Set<ChunkPos> protectedChunks = null;
-		Iterator<Entity> entityIterator = entities.iterator();
-		while(entityIterator.hasNext()){
-			Entity entity = entityIterator.next();
-			ChunkPos entityChunkPos = entity.chunkPosition();
-			if(protectedChunks != null && protectedChunks.contains(entityChunkPos)) {
-				entityIterator.remove();
+			return false;
+		Iterator<E> objectIterator = objects.iterator();
+		if(!objectIterator.hasNext())
+			return false;
+		HashMap<ChunkPos, Boolean> chunkCache = new HashMap<>();
+		boolean result = false;
+		while(objectIterator.hasNext()){
+			E object = objectIterator.next();
+			ChunkPos objectChunkPos = positionGetter.apply(object);
+			Boolean cachedValue = chunkCache.get(objectChunkPos);
+			if(cachedValue != null) {
+				if(cachedValue)
+					objectIterator.remove();
 				continue;
 			}
-			if(onCreateMod(serverData, (ServerLevel) level, entityChunkPos.x, entityChunkPos.z, contraptionAnchor, true, null)) {
-				if(protectedChunks == null)
-					protectedChunks = new HashSet<>();
-				protectedChunks.add(entityChunkPos);
-				entityIterator.remove();
+			boolean shouldProtect = onCreateMod(serverData, (ServerLevel) level, objectChunkPos.x, objectChunkPos.z, contraptionAnchor, checkNeighborBlocks, null);
+			if(shouldProtect) {
+				result = true;
+				if(!removeInvalid)
+					break;
+				objectIterator.remove();
 			}
+			chunkCache.put(objectChunkPos, shouldProtect);
 		}
+		return result;
 	}
 
 	public static final class Builder

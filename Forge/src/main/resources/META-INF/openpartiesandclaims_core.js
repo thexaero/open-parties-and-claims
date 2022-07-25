@@ -197,6 +197,19 @@ function transformCreateCollideEntities(methodNode){
     return methodNode
 }
 
+function transformCreateMechArmSearch(methodNode, listFieldName) {
+    var MY_LABEL = new LabelNode(new Label())
+    var insnToInsert = new InsnList()
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+    insnToInsert.add(new InsnNode(Opcodes.DUP))
+    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/logistics/block/mechanicalArm/ArmTileEntity', listFieldName, 'Ljava/util/List;'))
+    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateMechanicalArmValid', '(Lnet/minecraft/world/level/block/entity/BlockEntity;Ljava/util/List;)Z'))
+    insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+    insnToInsert.add(new InsnNode(Opcodes.RETURN))
+    insnToInsert.add(MY_LABEL)
+    methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+}
+
 function initializeCoreMod() {
 	return {
 		'xaero_pac_minecraftserverclass': {
@@ -635,6 +648,42 @@ function initializeCoreMod() {
                 transformCreateCollideEntities(methodNode)//same exact transformer works here too
                 return methodNode
             }
-        }
+        },
+        'xaero_pac_create_armtileentity_searchforitem': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.logistics.block.mechanicalArm.ArmTileEntity',
+                'methodName': 'searchForItem',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                transformCreateMechArmSearch(methodNode, 'inputs')
+                return methodNode
+            }
+        },
+        'xaero_pac_create_armtileentity_searchfordestination': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.logistics.block.mechanicalArm.ArmTileEntity',
+                'methodName': 'searchForDestination',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                transformCreateMechArmSearch(methodNode, 'outputs')
+                return methodNode
+            }
+        },
+		'xaero_pac_create_arminteractionpoint': {
+			'target' : {
+				'type' : 'CLASS',
+				'name' : 'com.simibubi.create.content.logistics.block.mechanicalArm.ArmInteractionPoint'
+			},
+			'transformer' : function(classNode){
+				var fields = classNode.fields
+				classNode.interfaces.add("xaero/pac/common/server/core/accessor/ICreateArmInteractionPoint")
+				addCustomGetter(classNode, 'pos', 'Lnet/minecraft/core/BlockPos;', 'xaero_OPAC_getPos')
+				return classNode
+			}
+		}
 	}
 }
