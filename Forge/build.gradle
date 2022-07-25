@@ -89,9 +89,9 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
 
-    compileOnly fg.deobf("curse.maven:ftbranks-314905:3599720")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
-    compileOnly fg.deobf("curse.maven:architectury-419699:3824307")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-    compileOnly fg.deobf("curse.maven:ftblibrary-404465:3822758")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+    compileOnly fg.deobf("curse.maven:ftbranks-314905:3890135")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
+    compileOnly fg.deobf("curse.maven:architectury-419699:3893635")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+    compileOnly fg.deobf("curse.maven:ftblibrary-404465:3890137")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
 //    implementation fg.deobf("curse.maven:create-328085:3872145")//source: https://github.com/Creators-of-Create/Create
 //    implementation fg.deobf("curse.maven:flywheel-486392:3871082")//source: https://github.com/Jozufozu/Flywheel
