@@ -138,8 +138,8 @@ public class ServerCore {
 		return !shouldProtect;
 	}
 
-	private static boolean isCreateModAllowed(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, Level level, BlockPos pos, BlockPos sourceOrAnchor, boolean checkNeighborBlocks){
-		boolean shouldProtect = serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, pos, sourceOrAnchor, checkNeighborBlocks, null);
+	private static boolean isCreateModAllowed(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, Level level, int posChunkX, int posChunkZ, BlockPos sourceOrAnchor, boolean checkNeighborBlocks){
+		boolean shouldProtect = serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, posChunkX, posChunkZ, sourceOrAnchor, checkNeighborBlocks, null);
 		return !shouldProtect;
 	}
 
@@ -149,7 +149,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return true;
-		return isCreateModAllowed(serverData, level, pos, sourceOrAnchor, true);
+		return isCreateModAllowed(serverData, level, pos.getX() >> 4, pos.getZ() >> 4, sourceOrAnchor, true);
 	}
 
 	public static BlockPos CAPTURED_TARGET_POS;
@@ -171,7 +171,7 @@ public class ServerCore {
 		Iterator<BlockPos> posIterator = CAPTURED_POS_STATE_MAP.keySet().iterator();
 		while(posIterator.hasNext()){
 			BlockPos pos = posIterator.next();
-			if(serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, pos, null, false, player))
+			if(serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, pos.getX() >> 4, pos.getZ() >> 4, null, false, player))
 				posIterator.remove();
 		}
 	}
@@ -183,7 +183,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return true;
-		return isCreateModAllowed(serverData, level, pos, placer.getBlockPos(), false);
+		return isCreateModAllowed(serverData, level, pos.getX() >> 4, pos.getZ() >> 4, placer.getBlockPos(), false);
 	}
 
 	public static void onCreateCollideEntities(List<Entity> entities, Entity contraption, BlockPos contraptionAnchor){
@@ -193,12 +193,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return;
-		Iterator<Entity> entityIterator = entities.iterator();
-		while(entityIterator.hasNext()){
-			Entity entity = entityIterator.next();
-			if(serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, entity.blockPosition(), contraptionAnchor, true, null))
-				entityIterator.remove();
-		}
+		serverData.getChunkProtection().onCreateModCollideEntities(serverData, level, entities, contraptionAnchor);
 	}
 
 }

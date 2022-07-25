@@ -92,6 +92,9 @@ dependencies {
     compileOnly fg.deobf("curse.maven:ftbranks-314905:3599720")
     compileOnly fg.deobf("curse.maven:architectury-419699:3824307")
     compileOnly fg.deobf("curse.maven:ftblibrary-404465:3822758")
+
+//    implementation fg.deobf("curse.maven:create-328085:3872145")
+//    implementation fg.deobf("curse.maven:flywheel-486392:3871082")
 }
 
 tasks.withType(JavaCompile) {
