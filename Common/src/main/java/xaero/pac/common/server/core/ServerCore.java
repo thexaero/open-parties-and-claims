@@ -212,4 +212,16 @@ public class ServerCore {
 		return true;
 	}
 
+	public static boolean isCreateTileEntityPacketAllowed(BlockEntity tileEntity, ServerPlayer player){
+		Level level = tileEntity.getLevel();
+		if(level == null || level.getServer() == null)
+			return true;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
+		if(serverData == null)
+			return true;
+		BlockPos pos = tileEntity.getBlockPos();
+		boolean shouldProtect = serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, pos.getX() >> 4, pos.getZ() >> 4, null, false, player);
+		return !shouldProtect;
+	}
+
 }

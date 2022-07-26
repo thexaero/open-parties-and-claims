@@ -684,6 +684,26 @@ function initializeCoreMod() {
 				addCustomGetter(classNode, 'pos', 'Lnet/minecraft/core/BlockPos;', 'xaero_OPAC_getPos')
 				return classNode
 			}
-		}
+		},
+        'xaero_pac_create_tilentityconfigurationpacket_applySettings': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.foundation.networking.TileEntityConfigurationPacket',
+                'methodName': 'applySettings',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;Lcom/simibubi/create/foundation/tileEntity/SyncedTileEntity;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/server/level/ServerPlayer;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        }
 	}
 }
