@@ -18,8 +18,6 @@
 
 package xaero.pac.common.event;
 
-import com.simibubi.create.content.logistics.block.mechanicalArm.ArmItem;
-import com.simibubi.create.content.logistics.block.mechanicalArm.ArmTileEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
