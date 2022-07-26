@@ -18,6 +18,8 @@
 
 package xaero.pac.common.event;
 
+import com.simibubi.create.content.logistics.block.mechanicalArm.ArmItem;
+import com.simibubi.create.content.logistics.block.mechanicalArm.ArmTileEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -151,7 +153,7 @@ public class CommonEventsForge extends CommonEvents {
 		if(super.onItemRightClick(event.getSide() == LogicalSide.SERVER, event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getItemStack()))
 			event.setCanceled(true);
 	}
-	
+
 	@SubscribeEvent
 	public void onMobGrief(EntityMobGriefingEvent event) {
 		if(super.onMobGrief(event.getEntity()))
