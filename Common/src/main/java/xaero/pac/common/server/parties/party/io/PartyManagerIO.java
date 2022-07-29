@@ -61,7 +61,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 	public boolean save() {
 		if(!ServerConfig.CONFIG.partiesEnabled.get())
 			return true;
-		OpenPartiesAndClaims.LOGGER.info("Saving parties...");
+		OpenPartiesAndClaims.LOGGER.debug("Saving parties...");
 		return super.save();
 	}
 

@@ -54,7 +54,7 @@ public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, Strin
 
 	@Override
 	public boolean save() {
-		OpenPartiesAndClaims.LOGGER.info("Saving server info!");
+		OpenPartiesAndClaims.LOGGER.debug("Saving server info!");
 		return super.save();
 	}
 
