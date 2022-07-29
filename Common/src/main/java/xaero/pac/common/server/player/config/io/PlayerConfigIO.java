@@ -106,7 +106,7 @@ public final class PlayerConfigIO
 	public boolean save() {
 //		if(true)
 //			return true;
-		OpenPartiesAndClaims.LOGGER.info("Saving player configs...");
+		OpenPartiesAndClaims.LOGGER.debug("Saving player configs...");
 		if(manager.getDefaultConfig().isDirty())
 			saveFile(manager.getDefaultConfig(), defaultConfigPath);
 		if(manager.getWildernessConfig().isDirty())

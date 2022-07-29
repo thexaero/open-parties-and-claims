@@ -76,7 +76,7 @@ public final class PlayerClaimInfoManagerIO<S>
 //			return true;
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return true;
-		OpenPartiesAndClaims.LOGGER.info("Saving claims!");
+		OpenPartiesAndClaims.LOGGER.debug("Saving claims!");
 		return super.save();
 	}
 

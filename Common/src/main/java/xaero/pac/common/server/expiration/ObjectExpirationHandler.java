@@ -58,7 +58,7 @@ public abstract class ObjectExpirationHandler
 		Iterator<T> objects = manager.getAllStream().iterator();
 		lastCheck = serverInfo.getUseTime();
 		List<T> toExpire = null;
-		OpenPartiesAndClaims.LOGGER.info(checkingMessage);
+		OpenPartiesAndClaims.LOGGER.debug(checkingMessage);
 		while(objects.hasNext()) {
 			T object = objects.next();
 			preExpirationCheck(object);
@@ -71,7 +71,7 @@ public abstract class ObjectExpirationHandler
 				object.setDirty(true);
 				continue;
 			} else if(serverInfo.getUseTime() > object.getLastConfirmedActivity() + expirationTime) {
-				OpenPartiesAndClaims.LOGGER.info("Object expired and is being removed: " + object);
+				OpenPartiesAndClaims.LOGGER.debug("Object expired and is being removed: " + object);
 				if(toExpire == null)
 					toExpire = new ArrayList<>();
 				toExpire.add(object);
