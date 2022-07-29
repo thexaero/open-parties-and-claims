@@ -158,6 +158,8 @@ public class ChunkProtection
 			return true;
 		if(claimConfig == null || !claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS))
 			return true;
+		if(e == null)
+			return false;
 		if(e instanceof Player && ServerPlayerDataAPI.from((ServerPlayer) e).isClaimsNonallyMode())
 			return false;
 		if(e.getUUID().equals(claimConfig.getPlayerId()) || e instanceof Player && ServerPlayerDataAPI.from((ServerPlayer) e).isClaimsAdminMode())

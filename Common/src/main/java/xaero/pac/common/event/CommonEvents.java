@@ -290,8 +290,10 @@ public class CommonEvents {
 
 	protected boolean onEntityPlaceBlock(LevelAccessor levelAccessor, BlockPos pos, Entity entity) {
 		//only supported by Forge atm
-		if(levelAccessor instanceof ServerLevel level) {
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
+		if(levelAccessor instanceof ServerLevel level && level.getServer() != null) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
+			if(serverData == null)
+				return false;
 			return serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, level, pos);
 		}
 		return false;
@@ -299,8 +301,10 @@ public class CommonEvents {
 
 	protected boolean onEntityMultiPlaceBlock(LevelAccessor levelAccessor, Stream<BlockPos> positions, Entity entity) {
 		//only supported by Forge atm
-		if(levelAccessor instanceof ServerLevel level) {
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
+		if(levelAccessor instanceof ServerLevel level && level.getServer() != null) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(level.getServer());
+			if(serverData == null)
+				return false;
 			Set<ChunkPos> chunkPositions = new HashSet<>();
 			Iterator<BlockPos> iterator = positions.iterator();
 			while(iterator.hasNext()){
