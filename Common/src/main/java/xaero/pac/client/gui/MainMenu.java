@@ -30,6 +30,7 @@ import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
+import xaero.pac.client.command.util.CommandUtil;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.gui.component.CachedComponentSupplier;
 import xaero.pac.client.parties.party.IClientParty;
@@ -212,16 +213,16 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onAboutPartyButton(Button b) {
-		minecraft.player.command(ABOUT_PARTY_COMMAND.getString().substring(1));
+		CommandUtil.sendCommand(minecraft, ABOUT_PARTY_COMMAND.getString().substring(1));
 		minecraft.setScreen(null);
 	}
 	
 	private void onClaimButton(Button b) {
 		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 		if(currentClaim == null)
-			minecraft.player.command(CLAIM_COMMAND.getString().substring(1));
+			CommandUtil.sendCommand(minecraft, CLAIM_COMMAND.getString().substring(1));
 		else
-			minecraft.player.command(UNCLAIM_COMMAND.getString().substring(1));
+			CommandUtil.sendCommand(minecraft, UNCLAIM_COMMAND.getString().substring(1));
 		onClose();
 	}
 	
@@ -230,9 +231,9 @@ public class MainMenu extends XPACScreen {
 		if(currentClaim == null)
 			return;
 		if(!currentClaim.isForceloadable())
-			minecraft.player.command(FORCELOAD_COMMAND.getString().substring(1));
+			CommandUtil.sendCommand(minecraft, FORCELOAD_COMMAND.getString().substring(1));
 		else
-			minecraft.player.command(UNFORCELOAD_COMMAND.getString().substring(1));
+			CommandUtil.sendCommand(minecraft, UNFORCELOAD_COMMAND.getString().substring(1));
 		onClose();
 	}
 	
