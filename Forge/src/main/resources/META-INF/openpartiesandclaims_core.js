@@ -704,6 +704,49 @@ function initializeCoreMod() {
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
             }
+        },
+        'xaero_pac_create_deployermovementbehaviour_activate': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.deployer.DeployerMovementBehaviour',
+                'methodName': 'activate',
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/MovementContext;Lnet/minecraft/core/BlockPos;Lcom/simibubi/create/content/contraptions/components/deployer/DeployerFakePlayer;Lcom/simibubi/create/content/contraptions/components/deployer/DeployerTileEntity$Mode;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))//movement context
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'world', 'Lnet/minecraft/world/level/Level;'))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'contraption', 'Lcom/simibubi/create/content/contraptions/components/structureMovement/Contraption;'))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateDeployerBlockInteractionAllowed', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_deployertilentity_activate': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.deployer.DeployerTileEntity',
+                'methodName': 'activate',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))//movement context
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateTileDeployerBlockInteractionAllowed', '(Lnet/minecraft/world/level/block/entity/BlockEntity;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
         }
 	}
 }

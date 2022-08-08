@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -222,6 +223,16 @@ public class ServerCore {
 		BlockPos pos = tileEntity.getBlockPos();
 		boolean shouldProtect = serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, pos.getX() >> 4, pos.getZ() >> 4, null, false, player);
 		return !shouldProtect;
+	}
+
+	public static boolean isCreateDeployerBlockInteractionAllowed(Level level, BlockPos anchor, BlockPos pos){
+		return isCreateModAllowed(level, pos, anchor);
+	}
+
+	public static boolean isCreateTileDeployerBlockInteractionAllowed(BlockEntity tileEntity){
+		Direction direction = tileEntity.getBlockState().getValue(BlockStateProperties.FACING);
+		BlockPos pos = tileEntity.getBlockPos().relative(direction, 2);
+		return isCreateDeployerBlockInteractionAllowed(tileEntity.getLevel(), tileEntity.getBlockPos(), pos);
 	}
 
 }
