@@ -71,6 +71,8 @@ public class ChunkProtection
 	P extends IServerParty<M, I>
 > {
 
+	public static final UUID CREATE_DEPLOYER_UUID = UUID.fromString("9e2faded-cafe-4ec2-c314-dad129ae971d");
+
 	private static final String FORCE_PREFIX = "force$";
 	private static final String BREAK_PREFIX = "break$";
 	private static final String FORCE_BREAK_PREFIX = "force_break$";
@@ -176,11 +178,15 @@ public class ChunkProtection
 	public boolean onLeftClickBlockServer(IServerData<CM,P> serverData, BlockPos pos, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
+		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
+			return false;
 		return onBlockAccess(serverData, pos, player, player.getLevel(), InteractionHand.MAIN_HAND, false, true, null);
 	}
 	
 	public boolean onDestroyBlock(IServerData<CM,P> serverData, BlockPos pos, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
 			return false;
 		return onBlockAccess(serverData, pos, player, player.getLevel(), InteractionHand.MAIN_HAND, false, true, null);
 	}
@@ -235,6 +241,8 @@ public class ChunkProtection
 
 	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, Level level, BlockPos pos) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
 		return blockAccessCheck(serverData, pos, entity, level, false, false);
 	}
@@ -423,6 +431,8 @@ public class ChunkProtection
 	public boolean onBucketUse(IServerData<CM, P> serverData, Entity entity, HitResult hitResult, ItemStack itemStack) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
+		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
+			return false;
 		//just onUseItemAt would work for buckets in "vanilla" as well, but it's better to use the proper bucket event too
 		BlockPos pos;
 		Direction direction = null;
@@ -436,6 +446,8 @@ public class ChunkProtection
 
 	public boolean onUseItemAt(IServerData<CM, P> serverData, Entity entity, BlockPos pos, Direction direction, ItemStack itemStack) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
 		BlockPos pos2 = null;
 		if(direction != null)
