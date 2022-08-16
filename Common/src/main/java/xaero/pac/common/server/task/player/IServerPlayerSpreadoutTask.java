@@ -16,29 +16,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.claims.sync.player;
+package xaero.pac.common.server.task.player;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
-import xaero.pac.common.server.lazypacket.task.schedule.LazyPacketScheduleTask;
+import xaero.pac.common.server.task.IServerSpreadoutTask;
 
-public abstract class ClaimsManagerPlayerLazyPacketScheduler extends LazyPacketScheduleTask {
-
-	protected final ClaimsManagerSynchronizer synchronizer;
-	protected boolean started;
-
-	protected ClaimsManagerPlayerLazyPacketScheduler(ClaimsManagerSynchronizer synchronizer) {
-		this.synchronizer = synchronizer;
-	}
-
-	@Override
-	public boolean shouldDrop(IServerData<?, ?> serverData, ServerPlayer holder) {
-		return false;
-	}
-
-	public void start(ServerPlayer player) {
-		started = true;
-	}
+public interface IServerPlayerSpreadoutTask extends IServerSpreadoutTask<ServerPlayer> {
 
 }

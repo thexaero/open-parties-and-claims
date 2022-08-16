@@ -59,7 +59,7 @@ public final class ClaimsManagerPlayerRegionSync extends ClaimsManagerPlayerLazy
 	}
 
 	@Override
-	public void doSchedule(IServerData<?,?> serverData, ServerPlayer player, int limit) {
+	public void onTick(IServerData<?,?> serverData, ServerPlayer player, int limit) {
 		calledOnce = true;
 		int count = 0;
 		while(!dimsToSync.isEmpty()) {
@@ -93,7 +93,7 @@ public final class ClaimsManagerPlayerRegionSync extends ClaimsManagerPlayerLazy
 	}
 
 	@Override
-	public boolean shouldWork() {
+	public boolean shouldWorkNotClogged(IServerData<?, ?> serverData, ServerPlayer player) {
 		return started && stateSyncHandler.isFinished() && (!calledOnce || !dimsToSync.isEmpty());
 	}
 	

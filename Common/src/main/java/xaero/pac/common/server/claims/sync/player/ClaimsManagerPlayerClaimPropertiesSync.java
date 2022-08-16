@@ -19,7 +19,6 @@
 package xaero.pac.common.server.claims.sync.player;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.claims.ClientboundClaimPropertiesPacket;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
@@ -41,7 +40,7 @@ public final class ClaimsManagerPlayerClaimPropertiesSync extends ClaimsManagerP
 	}
 
 	@Override
-	public void doSchedule(IServerData<?,?> serverData, ServerPlayer player, int limit){
+	public void onTick(IServerData<?,?> serverData, ServerPlayer player, int limit){
 		List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder = new ArrayList<>(ClientboundClaimPropertiesPacket.MAX_PROPERTIES);
 		int canSync = limit;
 		while(canSync > 0 && toSync.hasNext()) {
@@ -74,7 +73,7 @@ public final class ClaimsManagerPlayerClaimPropertiesSync extends ClaimsManagerP
 	}
 
 	@Override
-	public boolean shouldWork() {
+	public boolean shouldWorkNotClogged(IServerData<?, ?> serverData, ServerPlayer player) {
 		return started && !isFinished();
 	}
 

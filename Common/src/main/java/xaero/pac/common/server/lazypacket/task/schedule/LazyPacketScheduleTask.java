@@ -18,10 +18,19 @@
 
 package xaero.pac.common.server.lazypacket.task.schedule;
 
-import xaero.pac.common.server.task.IServerPlayerSpreadoutTask;
+import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.task.player.IServerPlayerSpreadoutTask;
 
-public interface ILazyPacketScheduleTask extends IServerPlayerSpreadoutTask {
+public abstract class LazyPacketScheduleTask implements IServerPlayerSpreadoutTask {
 
-	void onLazyPacketsDropped();
+	public abstract void onLazyPacketsDropped();
+
+	protected abstract boolean shouldWorkNotClogged(IServerData<?, ?> serverData, ServerPlayer player);
+
+	@Override
+	public final boolean shouldWork(IServerData<?, ?> serverData, ServerPlayer player) {
+		return !serverData.getServerTickHandler().getLazyPacketSender().isClogged(player) && shouldWorkNotClogged(serverData, player);
+	}
 
 }

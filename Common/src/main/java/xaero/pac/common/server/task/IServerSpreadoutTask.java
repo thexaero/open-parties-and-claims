@@ -18,12 +18,12 @@
 
 package xaero.pac.common.server.task;
 
-import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.IServerData;
 
-public interface IServerPlayerSpreadoutTask {
+public interface IServerSpreadoutTask<H> {
 
-	boolean shouldWork();
-	void onTick(IServerData<?,?> serverData, ServerPlayer player, int perPlayer);
+	boolean shouldWork(IServerData<?,?> serverData, H holder);
+	boolean shouldDrop(IServerData<?,?> serverData, H holder);
+	void onTick(IServerData<?,?> serverData, H holder, int perTick);
 
 }

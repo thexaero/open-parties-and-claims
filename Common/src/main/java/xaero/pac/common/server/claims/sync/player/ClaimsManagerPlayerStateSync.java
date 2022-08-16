@@ -46,7 +46,7 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 	}
 
 	@Override
-	public void doSchedule(IServerData<?,?> serverData, ServerPlayer player, int limit){
+	public void onTick(IServerData<?,?> serverData, ServerPlayer player, int limit){
 		if(packetBuilder == null)
 			packetBuilder = startClaimStateSync();
 
@@ -103,7 +103,7 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 	}
 
 	@Override
-	public boolean shouldWork() {
+	public boolean shouldWorkNotClogged(IServerData<?, ?> serverData, ServerPlayer player) {
 		return started && claimPropertiesSync.isFinished() && !isFinished();
 	}
 

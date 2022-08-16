@@ -231,8 +231,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 
 	@Override
 	public void onServerTick() {
-		PlayerList players = server.getPlayerList();
-		schedulers.forEach(s -> s.onTick(players, serverData));
+		schedulers.forEach(s -> s.onTick(serverData));
 	}
 
 	public static final class Builder {
@@ -258,12 +257,12 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 			LazyPacketScheduleTaskHandler claimPropertiesScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
 					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerClaimPropertiesSync)
 					.setPerTickLimit(PROPERTIES_PER_TICK)
-					.setPerTickPerPlayerLimit(PROPERTIES_PER_TICK_PER_PLAYER).build();
+					.setPerTickPerTaskLimit(PROPERTIES_PER_TICK_PER_PLAYER).build();
 
 			LazyPacketScheduleTaskHandler claimStateScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
 					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerStateSync)
 					.setPerTickLimit(STATES_PER_TICK)
-					.setPerTickPerPlayerLimit(STATES_PER_TICK_PER_PLAYER).build();
+					.setPerTickPerTaskLimit(STATES_PER_TICK_PER_PLAYER).build();
 
 			//owned-only sync ironically might require more work per region, so cut the frequency a bit
 			int regionsPerTick = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY ? REGIONS_PER_TICK * 2 / 3 : REGIONS_PER_TICK;
@@ -271,7 +270,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 			LazyPacketScheduleTaskHandler regionScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
 					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerRegionSync)
 					.setPerTickLimit(regionsPerTick)
-					.setPerTickPerPlayerLimit(regionsPerTickPerPlayer).build();
+					.setPerTickPerTaskLimit(regionsPerTickPerPlayer).build();
 
 			List<LazyPacketScheduleTaskHandler> schedulers = List.of(claimPropertiesScheduler, claimStateScheduler, regionScheduler);
 			return new ClaimsManagerSynchronizer(server, schedulers);
