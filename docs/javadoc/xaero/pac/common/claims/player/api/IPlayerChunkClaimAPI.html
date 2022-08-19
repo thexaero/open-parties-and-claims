@@ -98,6 +98,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether this claim is marked for forceloading.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">isSameClaimType</a><wbr>(<a href="IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;other)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if another claim state is of the same type as this, which ignores
+ whether the claim states are forceloadable.</div>
+</div>
 </div>
 </div>
 </div>
@@ -134,6 +140,22 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the UUID of this claim's owner, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">
+<h3>isSameClaimType</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isSameClaimType</span><wbr><span class="parameters">(@Nullable
+ <a href="IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;other)</span></div>
+<div class="block">Checks if another claim state is of the same type as this, which ignores
+ whether the claim states are forceloadable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>other</code> - the other claim state, can be null</dd>
+<dt>Returns:</dt>
+<dd>true if the specified claim state is of the same type as this,
+         otherwise false</dd>
 </dl>
 </section>
 </li>
