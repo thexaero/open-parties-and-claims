@@ -19,11 +19,13 @@
 package xaero.pac.common.server.claims.player.task;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.ClaimLocation;
-import xaero.pac.common.claims.player.*;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
@@ -133,8 +135,8 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 
 	public enum ResultType {
 
-		SUCCESS(true, false, new TranslatableComponent("gui.xaero_claims_replacement_success")),
-		FAILURE_STATE_MATCHES(false, true, new TranslatableComponent("gui.xaero_claims_replacement_state_matches_matcher"));
+		SUCCESS(true, false, Component.translatable("gui.xaero_claims_replacement_success")),
+		FAILURE_STATE_MATCHES(false, true, Component.translatable("gui.xaero_claims_replacement_state_matches_matcher"));
 
 		private final boolean success;
 		private final boolean failure;
