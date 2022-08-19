@@ -34,10 +34,12 @@ import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
+import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -48,14 +50,16 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	private final int MAX_REQUEST_SIZE = 25;//will go 1 chunk beyond this before cancelling but that's fine
 	private final ClaimsManagerSynchronizer claimsManagerSynchronizer;
+	private final ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
 	private boolean loaded;
 	
 	protected ServerClaimsManager(MinecraftServer server, ServerPlayerClaimInfoManager playerClaimInfoManager,
-			IPlayerConfigManager<?> configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
-			ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
-			Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker) {
+								  IPlayerConfigManager<?> configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
+								  ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
+								  Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimsManagerSynchronizer = claimsManagerSynchronizer;
+		this.claimReplaceTaskHandler = claimReplaceTaskHandler;
 	}
 	
 	public void setIo(PlayerClaimInfoManagerIO<?> io) {
@@ -139,6 +143,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public ClaimResult<PlayerChunkClaim> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
+		if(!replace && getPlayerInfo(playerId).isReplacementInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && !isClaimable(dimension))
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
@@ -273,7 +279,10 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 					} else
 						toAffect--;
 				}
-				if(result.getResultType() == ClaimResult.Type.CLAIM_LIMIT_REACHED || result.getResultType() == ClaimResult.Type.FORCELOAD_LIMIT_REACHED)
+				if(result.getResultType() == ClaimResult.Type.CLAIM_LIMIT_REACHED ||
+						result.getResultType() == ClaimResult.Type.FORCELOAD_LIMIT_REACHED ||
+						result.getResultType() == ClaimResult.Type.REPLACEMENT_IN_PROGRESS
+				)
 					break outer;
 			}
 		return new AreaClaimResult(resultTypes, left, top, right, bottom);
@@ -332,7 +341,12 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public ClaimsManagerSynchronizer getClaimsManagerSynchronizer() {
 		return claimsManagerSynchronizer;
 	}
-	
+
+	@Override
+	public ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> getClaimReplaceTaskHandler() {
+		return claimReplaceTaskHandler;
+	}
+
 	public boolean isLoaded() {
 		return loaded;
 	}
@@ -347,6 +361,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		private IPlayerConfigManager<?> configManager;
 		private ForceLoadTicketManager ticketManager;
 		private ClaimsManagerSynchronizer claimsManagerSynchronizer;
+		private ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
 		
 		public static Builder begin() {
 			return new Builder().setDefault();
@@ -376,7 +391,12 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			this.claimsManagerSynchronizer = claimsManagerSynchronizer;
 			return this;
 		}
-		
+
+		public Builder setClaimReplaceTaskHandler(ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler) {
+			this.claimReplaceTaskHandler = claimReplaceTaskHandler;
+			return this;
+		}
+
 		public Builder setConfigManager(IPlayerConfigManager<?> configManager) {
 			this.configManager = configManager;
 			return self;
@@ -384,7 +404,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		
 		@Override
 		public ServerClaimsManager build() {
-			if(server == null || ticketManager == null || claimsManagerSynchronizer == null || configManager == null)
+			if(server == null || ticketManager == null || claimsManagerSynchronizer == null || configManager == null || claimReplaceTaskHandler == null)
 				throw new IllegalStateException();
 			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>(), new HashSet<>());
 			setPlayerClaimInfoManager(playerInfoManager);
@@ -399,7 +419,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 		@Override
 		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
-			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker);
+			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler);
 		}
 		
 	}

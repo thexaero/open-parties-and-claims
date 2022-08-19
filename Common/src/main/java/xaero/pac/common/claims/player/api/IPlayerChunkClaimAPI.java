@@ -19,6 +19,7 @@
 package xaero.pac.common.claims.player.api;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
@@ -42,5 +43,15 @@ public interface IPlayerChunkClaimAPI {
 	 */
 	@Nonnull
 	public UUID getPlayerId();
+
+	/**
+	 * Checks if another claim state is of the same type as this, which ignores
+	 * whether the claim states are forceloadable.
+	 *
+	 * @param other  the other claim state, can be null
+	 * @return true if the specified claim state is of the same type as this,
+	 *         otherwise false
+	 */
+	public boolean isSameClaimType(@Nullable IPlayerChunkClaimAPI other);
 	
 }

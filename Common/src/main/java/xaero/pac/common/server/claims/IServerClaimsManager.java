@@ -22,7 +22,9 @@ import xaero.pac.common.claims.IClaimsManager;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.sync.IClaimsManagerSynchronizer;
+import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 public interface IServerClaimsManager
 <
@@ -33,4 +35,6 @@ public interface IServerClaimsManager
 	//internal API
 	
 	public IClaimsManagerSynchronizer getClaimsManagerSynchronizer();
+	public ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> getClaimReplaceTaskHandler();
+
 }

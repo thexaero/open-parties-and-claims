@@ -18,6 +18,8 @@
 
 package xaero.pac.common.claims.player;
 
+import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+
 import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.UUID;
@@ -72,7 +74,16 @@ public class PlayerChunkClaim implements IPlayerChunkClaim {
 		if(obj == null || !(obj instanceof PlayerChunkClaim))
 			return false;
 		PlayerChunkClaim other = (PlayerChunkClaim) obj;
-		return playerId.equals(other.playerId) && forceloadable == other.forceloadable;
+		return playerId.equals(other.playerId) && forceloadable == ((PlayerChunkClaim) obj).forceloadable;
+	}
+
+	@Override
+	public boolean isSameClaimType(IPlayerChunkClaimAPI other) {//ignores forceloadable differences
+		if(other == this)
+			return true;
+		if(other == null)
+			return false;
+		return playerId.equals(other.getPlayerId());
 	}
 	
 	@Override

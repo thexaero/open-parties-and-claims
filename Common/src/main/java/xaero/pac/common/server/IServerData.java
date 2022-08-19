@@ -23,6 +23,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
+import xaero.pac.common.server.expiration.task.ObjectExpirationCheckSpreadoutTask;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.info.io.ServerInfoHolderIO;
 import xaero.pac.common.server.io.IOThreadWorker;
@@ -36,6 +37,7 @@ import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 public interface IServerData
 <
@@ -75,6 +77,7 @@ extends IServerDataAPI<CM,P> {
 	public ServerInfo getServerInfo();
 	public ServerInfoHolderIO getServerInfoIO();
 	public ServerPlayerClaimsExpirationHandler getServerPlayerClaimsExpirationHandler();
+	public ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> getObjectExpirationCheckTaskHandler();
 	public void onStop();
 
 }

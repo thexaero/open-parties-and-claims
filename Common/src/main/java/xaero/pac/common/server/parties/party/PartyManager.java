@@ -23,18 +23,20 @@ import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.sync.PartySynchronizer;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-public final class PartyManager implements IPartyManager<ServerParty>, ObjectManagerIOManager<ServerParty, PartyManager> {
+public final class PartyManager implements IPartyManager<ServerParty>, ObjectManagerIOManager<ServerParty, PartyManager>, ObjectManagerIOExpirableObjectManager<ServerParty> {
 	
 	private final MinecraftServer server;
 	private final PartySynchronizer partySynchronizer;
@@ -42,6 +44,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	private final Map<UUID, ServerParty> partiesById;
 	private final Map<UUID, ServerParty> partiesByMember;
 	private final Map<UUID, Set<UUID>> partiesByAlly;
+	private final LinkedChain<ServerParty> partyChain;
 	private final Set<ServerParty> toSave;
 	private PartyManagerIO<?> io;
 	private IPlayerConfigManager<ServerParty> playerConfigs;
@@ -49,7 +52,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	private PartyExpirationHandler expirationHandler;
 	
 	private PartyManager(MinecraftServer server, PartySynchronizer partySynchronizer, Map<UUID, ServerParty> partiesByOwner, Map<UUID, ServerParty> partiesById,
-			Map<UUID, ServerParty> partiesByMember, Map<UUID, Set<UUID>> partiesByAlly, Set<ServerParty> toSave) {
+						 Map<UUID, ServerParty> partiesByMember, Map<UUID, Set<UUID>> partiesByAlly, LinkedChain<ServerParty> partyChain, Set<ServerParty> toSave) {
 		super();
 		this.server = server;
 		this.partySynchronizer = partySynchronizer;
@@ -57,6 +60,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		this.partiesById = partiesById;
 		this.partiesByMember = partiesByMember;
 		this.partiesByAlly = partiesByAlly;
+		this.partyChain = partyChain;
 		this.toSave = toSave;
 	}
 	
@@ -170,6 +174,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 			if(allier != null)
 				allier.removeAllyParty(party.getId());
 		});
+		partyChain.remove(party);
 	}
 
 	public void addParty(ServerParty party) {
@@ -181,6 +186,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		partiesById.put(party.getId(), (ServerParty) party);
 		party.getMemberInfoStream().forEach(mi -> onMemberAdded((ServerParty) party, mi));
 		party.getAllyPartiesStream().forEach(allyId -> onAllyAdded(party, allyId));
+		partyChain.add(party);
 	}
 	
 	public void onAllyAdded(ServerParty party, UUID allyId) {
@@ -216,7 +222,12 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	@Nonnull
 	@Override
 	public Stream<ServerParty> getAllStream(){
-		return partiesById.values().stream();
+		return partyChain.stream();
+	}
+
+	@Override
+	public Iterator<ServerParty> getExpirationIterator(){
+		return partyChain.iterator();
 	}
 
 	@Nonnull
@@ -272,7 +283,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 			PartySynchronizer partySynchronizer = PartySynchronizer.Builder.begin()
 					.setServer(server)
 					.build();
-			PartyManager result = new PartyManager(server, partySynchronizer, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashSet<>());
+			PartyManager result = new PartyManager(server, partySynchronizer, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new LinkedChain<>(), new HashSet<>());
 			partySynchronizer.setPartyManager(result);
 			return result;
 		}

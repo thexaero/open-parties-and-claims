@@ -19,13 +19,18 @@
 package xaero.pac.common.server.claims.sync.player;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.player.PlayerClaimPosList;
-import xaero.pac.common.claims.player.PlayerDimensionClaims;
+import xaero.pac.common.claims.player.*;
 import xaero.pac.common.packet.claims.ClientboundClaimStatesPacket;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.parties.party.IServerParty;
 
 import java.util.*;
 
@@ -46,7 +51,7 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 	}
 
 	@Override
-	public void onTick(IServerData<?,?> serverData, ServerPlayer player, int limit){
+	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player, int limit){
 		if(packetBuilder == null)
 			packetBuilder = startClaimStateSync();
 
@@ -103,7 +108,7 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 	}
 
 	@Override
-	public boolean shouldWorkNotClogged(IServerData<?, ?> serverData, ServerPlayer player) {
+	public boolean shouldWorkNotClogged(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player) {
 		return started && claimPropertiesSync.isFinished() && !isFinished();
 	}
 

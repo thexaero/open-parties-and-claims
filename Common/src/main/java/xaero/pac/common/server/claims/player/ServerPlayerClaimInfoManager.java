@@ -30,20 +30,18 @@ import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.util.linked.LinkedChain;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 //only used by ServerClaimsManager
 public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> 
-	implements ObjectManagerIOManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> {
+	implements ObjectManagerIOManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager>, ObjectManagerIOExpirableObjectManager<ServerPlayerClaimInfo> {
 
 	private final MinecraftServer server;
 	private ServerClaimsManager claimsManager;
@@ -154,6 +152,11 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	
 	public ServerClaimsManager getClaimsManager() {
 		return claimsManager;
+	}
+
+	@Override
+	public Iterator<ServerPlayerClaimInfo> getExpirationIterator() {
+		return iterator();
 	}
 
 }

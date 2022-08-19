@@ -475,7 +475,7 @@ public class ChunkProtection
 	}
 
 	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, IPlayerChunkClaim fromClaim, IPlayerChunkClaim toClaim, PlayerConfigOptionSpec<Boolean> optionSpec){
-		if(toClaim == null || fromClaim == toClaim || fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId()))
+		if(toClaim == null || fromClaim == toClaim || fromClaim != null && fromClaim.isSameClaimType(toClaim))
 			return false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);

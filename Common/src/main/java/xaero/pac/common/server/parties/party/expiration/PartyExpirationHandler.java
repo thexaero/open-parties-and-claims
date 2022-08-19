@@ -19,10 +19,21 @@
 package xaero.pac.common.server.parties.party.expiration;
 
 import net.minecraft.server.MinecraftServer;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectExpirationHandler;
 import xaero.pac.common.server.info.ServerInfo;
+import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
 
@@ -39,18 +50,18 @@ public final class PartyExpirationHandler extends ObjectExpirationHandler<Server
 	}
 
 	@Override
-	public void handle() {
+	protected void handle(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 		if(!ServerConfig.CONFIG.partiesEnabled.get())
 			return;
-		super.handle();
+		super.handle(serverData);
 	}
 
 	@Override
-	protected void preExpirationCheck(ServerParty party) {
+	public void preExpirationCheck(ServerParty party) {
 	}
 
 	@Override
-	protected boolean checkExpiration(ServerParty party) {
+	public boolean checkIfActive(ServerParty party) {
 		Iterator<PartyMember> partyMemberIterator = party.getMemberInfoStream().iterator();
 		while(partyMemberIterator.hasNext()) {
 			PartyMember member = partyMemberIterator.next();
@@ -61,8 +72,9 @@ public final class PartyExpirationHandler extends ObjectExpirationHandler<Server
 	}
 
 	@Override
-	protected void expire(ServerParty party) {
+	public boolean expire(ServerParty party, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 		manager.removeParty(party);
+		return true;
 	}
 	
 	public static final class Builder extends ObjectExpirationHandler.Builder<ServerParty, PartyManager, Builder>{

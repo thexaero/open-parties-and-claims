@@ -54,4 +54,8 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 
 	public long getLastConfirmedActivity();
 
+	public boolean isReplacementInProgress();
+
+	public void setReplacementInProgress(boolean replacementInProgress);
+
 }

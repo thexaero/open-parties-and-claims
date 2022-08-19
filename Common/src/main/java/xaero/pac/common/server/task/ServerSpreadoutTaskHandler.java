@@ -18,7 +18,17 @@
 
 package xaero.pac.common.server.task;
 
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.parties.party.IServerParty;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -37,7 +47,10 @@ public abstract class ServerSpreadoutTaskHandler<T extends IServerSpreadoutTask<
 
 	protected abstract Iterator<H> getTaskHolderIterator(IServerData<?,?> serverData);
 
-	public void onTick(IServerData<?,?> serverData){
+	public void onTick(IServerData<?,?> serverDataA){
+		@SuppressWarnings("unchecked")
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
+				serverData = (IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>) serverDataA;
 		int taskCount = 0;
 		Iterator<H> taskHolderIterator = getTaskHolderIterator(serverData);
 		while(taskHolderIterator.hasNext()){

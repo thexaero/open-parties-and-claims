@@ -28,9 +28,11 @@ import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.io.serialization.nbt.PlayerClaimInfoNbtSerializer;
+import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.expiration.task.ObjectExpirationCheckSpreadoutTask;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.info.ServerInfoHolder;
 import xaero.pac.common.server.info.io.ServerInfoHolderIO;
@@ -42,7 +44,6 @@ import xaero.pac.common.server.io.serialization.SimpleSerializationHandler;
 import xaero.pac.common.server.io.serialization.human.HumanReadableSerializedDataFileIO;
 import xaero.pac.common.server.io.serialization.human.SimpleHumanReadableStringConverter;
 import xaero.pac.common.server.io.serialization.nbt.SimpleNBTSerializedDataFileIO;
-import xaero.pac.common.server.lazypacket.LazyPacketSender;
 import xaero.pac.common.server.parties.party.*;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
@@ -50,6 +51,7 @@ import xaero.pac.common.server.parties.party.io.serialization.nbt.PartyNbtSerial
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 public class ServerDataInitializer {
 	
@@ -101,12 +103,7 @@ public class ServerDataInitializer {
 			partyManager.setIo(partyManagerIO);
 			
 			PlayerLogInPartyAssigner playerPartyAssigner = new PlayerLogInPartyAssigner();
-			ServerTickHandler serverTickHandler = new ServerTickHandler(LazyPacketSender.Builder.begin()
-					.setServer(server)
-					.setBytesPerTickLimit(104858 /*maximum ~2 MB per second*/)
-					.setCapacity(104857600 /*~100 MB*/)
-					.setBytesPerConfirmation(26214 * 20 /*~500 KB*/)
-					.build());
+			ServerTickHandler serverTickHandler = ServerTickHandler.Builder.begin().setServer(server).build();
 			PlayerTickHandler playerTickHandler = PlayerTickHandler.Builder.begin().build();
 			PlayerLoginHandler playerLoginHandler = new PlayerLoginHandler();
 			PlayerLogoutHandler playerLogoutHandler = new PlayerLogoutHandler();
@@ -133,9 +130,23 @@ public class ServerDataInitializer {
 			if(ServerConfig.CONFIG.partiesEnabled.get()) {
 				partyManagerIO.load();
 				new PartyManagerFixer().fix(partyManager);
-				partyExpirationHandler.handle();
 			}
-			
+
+			ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler =
+					ServerSpreadoutQueuedTaskHandler.Builder
+							.<PlayerClaimReplaceSpreadoutTask>begin()
+							.setPerTickLimit(1024)
+							.setPerTickPerTaskLimit(128)
+							.build();
+			serverTickHandler.registerSpreadoutTaskHandler(claimReplaceTaskHandler);
+			ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler =
+					ServerSpreadoutQueuedTaskHandler.Builder
+							.<ObjectExpirationCheckSpreadoutTask<?>>begin()
+							.setPerTickLimit(128)
+							.setPerTickPerTaskLimit(Integer.MAX_VALUE)
+							.build();
+			serverTickHandler.registerSpreadoutTaskHandler(objectExpirationCheckTaskHandler);
+
 			ForceLoadTicketManager forceLoadManager = playerConfigs.getForceLoadTicketManager();
 			ClaimsManagerSynchronizer claimsSynchronizer = ClaimsManagerSynchronizer.Builder.begin().setServer(server).build();
 			ServerClaimsManager serverClaimsManager = ServerClaimsManager.Builder.begin()
@@ -143,6 +154,7 @@ public class ServerDataInitializer {
 					.setTicketManager(forceLoadManager)
 					.setConfigManager(playerConfigs)
 					.setClaimsManagerSynchronizer(claimsSynchronizer)
+					.setClaimReplaceTaskHandler(claimReplaceTaskHandler)
 					.build();
 			forceLoadManager.setClaimsManager(serverClaimsManager);
 			playerConfigs.setClaimsManager(serverClaimsManager);
@@ -158,7 +170,7 @@ public class ServerDataInitializer {
 					.setServer(server)
 					.build();
 			serverClaimsManager.setIo(playerClaimInfoManagerIO);
-			
+
 			ServerPlayerClaimsExpirationHandler claimsExpirationHandler = serverClaimsManager
 					.beginExpirationHandlerBuilder()
 					.setServer(server)
@@ -173,12 +185,12 @@ public class ServerDataInitializer {
 					.setPartyManager(partyManager)
 					.build();
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
-			
+
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
 					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
 					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
 					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, playerWorldJoinHandler, serverInfo, serverInfoIO, 
-					claimsExpirationHandler);
+					claimsExpirationHandler, objectExpirationCheckTaskHandler);
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);
 			return serverData;

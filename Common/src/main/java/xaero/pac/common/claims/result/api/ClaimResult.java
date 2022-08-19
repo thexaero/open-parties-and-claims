@@ -104,6 +104,9 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		/** The chunk was beyond the maximum distance */
 		TOO_FAR(new TranslatableComponent("gui.xaero_claims_claim_not_within_distance").withStyle(ChatFormatting.RED), false, true),
 
+		/** There is a claim replacement currently in progress in the background */
+		REPLACEMENT_IN_PROGRESS(new TranslatableComponent("gui.xaero_claims_replacement_in_progress").withStyle(ChatFormatting.RED), false, true),
+
 		/** Successfully unforceloaded a chunk */
 		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false),
 

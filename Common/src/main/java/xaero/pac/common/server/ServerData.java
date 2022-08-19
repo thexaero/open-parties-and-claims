@@ -37,6 +37,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
+import xaero.pac.common.server.expiration.task.ObjectExpirationCheckSpreadoutTask;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.info.io.ServerInfoHolderIO;
 import xaero.pac.common.server.io.IOThreadWorker;
@@ -47,6 +48,7 @@ import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 public final class ServerData implements IServerData<ServerClaimsManager, ServerParty> {
 	
@@ -76,6 +78,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final PlayerWorldJoinHandler playerWorldJoinHandler;
 	private final ServerInfo serverInfo;
 	private final ServerInfoHolderIO serverInfoIO;
+	private final ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler;
 	private final OpenPACServerAPI api;
 
 	public ServerData(MinecraftServer server, PartyManager partyManager, PartyManagerIO<?> partyManagerIO,
@@ -87,7 +90,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 					  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
 					  ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
 					  ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
-					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler) {
+					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler) {
 		super();
 		this.server = server;
 		this.partyManager = partyManager;
@@ -115,11 +118,14 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.serverInfo = serverInfo;
 		this.serverInfoIO = serverInfoIO;
 		this.serverPlayerClaimsExpirationHandler = serverPlayerClaimsExpirationHandler;
+		this.objectExpirationCheckTaskHandler = objectExpirationCheckTaskHandler;
 		api = new OpenPACServerAPI(this);
 	}
 
 	public void onStop() {
-		partyExpirationHandler.handle();
+		@SuppressWarnings("unchecked")
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
+				serverDataInterface = (IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>)(Object) this;
 		while(!partyManagerIO.save());
 		while(!playerConfigsIO.save());
 		while(!playerClaimInfoManagerIO.save());
@@ -248,7 +254,12 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	public ServerPlayerClaimsExpirationHandler getServerPlayerClaimsExpirationHandler() {
 		return serverPlayerClaimsExpirationHandler;
 	}
-	
+
+	@Override
+	public ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> getObjectExpirationCheckTaskHandler() {
+		return objectExpirationCheckTaskHandler;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static IServerData<IServerClaimsManager<IPlayerChunkClaim,IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember,IPartyPlayerInfo>> from(MinecraftServer server) {
 		return (IServerData<IServerClaimsManager<IPlayerChunkClaim,IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember,IPartyPlayerInfo>>)
