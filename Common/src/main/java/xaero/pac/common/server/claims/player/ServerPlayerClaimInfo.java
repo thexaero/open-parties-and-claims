@@ -42,6 +42,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	protected boolean beenUsed;
 	private long lastConfirmedActivity;
 	private boolean hasBeenActive;
+	private boolean replacementInProgress;
 
 	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
 			ServerPlayerClaimInfoManager manager) {
@@ -149,6 +150,16 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public int getClaimsColor() {
 		return playerConfig.getEffective(PlayerConfig.CLAIMS_COLOR);
+	}
+
+	@Override
+	public boolean isReplacementInProgress() {
+		return replacementInProgress;
+	}
+
+	@Override
+	public void setReplacementInProgress(boolean replacementInProgress) {
+		this.replacementInProgress = replacementInProgress;
 	}
 
 }

@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server;
 
+import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -29,15 +30,21 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.lazypacket.LazyPacketSender;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.task.ServerSpreadoutTaskHandler;
 
-public class ServerTickHandler {
+import java.util.ArrayList;
+import java.util.List;
+
+public final class ServerTickHandler {
 	
 	private final LazyPacketSender lazyPacketSender;
+	private final List<ServerSpreadoutTaskHandler<?,?>> spreadoutTaskHandlers;
 	private long lastUseTimeUpdate;
 	private long tickCounter;
 	
-	public ServerTickHandler(LazyPacketSender lazyPacketSender) {
+	private ServerTickHandler(LazyPacketSender lazyPacketSender, List<ServerSpreadoutTaskHandler<?, ?>> spreadoutTaskHandlers) {
 		this.lazyPacketSender = lazyPacketSender;
+		this.spreadoutTaskHandlers = spreadoutTaskHandlers;
 		this.lastUseTimeUpdate = System.currentTimeMillis();
 	}
 	
@@ -64,10 +71,18 @@ public class ServerTickHandler {
 			serverData.getServerInfoIO().save();
 		}
 		@SuppressWarnings("unused")
-		boolean expirationCheck = serverData.getPartyExpirationHandler().onServerTick() || //prevents doing both on the same tick
-									serverData.getServerPlayerClaimsExpirationHandler().onServerTick();
-		
+		boolean expirationCheck = serverData.getPartyExpirationHandler().onServerTick(serverData) || //prevents doing both on the same tick
+									serverData.getServerPlayerClaimsExpirationHandler().onServerTick(serverData);
+
+		spreadoutTaskHandlers.forEach(th -> th.onTick(serverData));
+
 		tickCounter++;
+	}
+
+	public void registerSpreadoutTaskHandler(ServerSpreadoutTaskHandler<?,?> handler){
+		if(!spreadoutTaskHandlers.contains(handler)) {
+			spreadoutTaskHandlers.add(handler);
+		}
 	}
 	
 	public LazyPacketSender getLazyPacketSender() {
@@ -76,6 +91,41 @@ public class ServerTickHandler {
 	
 	public long getTickCounter() {
 		return tickCounter;
+	}
+
+	public static final class Builder {
+
+		private MinecraftServer server;
+
+		private Builder(){}
+
+		public Builder setDefault(){
+			setServer(null);
+			return this;
+		}
+
+		public Builder setServer(MinecraftServer server) {
+			this.server = server;
+			return this;
+		}
+
+		public ServerTickHandler build(){
+			if(server == null)
+				throw new IllegalStateException();
+			LazyPacketSender lazyPacketSender = LazyPacketSender.Builder.begin()
+					.setServer(server)
+					.setBytesPerTickLimit(104858 /*maximum ~2 MB per second*/)
+					.setCapacity(104857600 /*~100 MB*/)
+					.setBytesPerConfirmation(26214 * 20 /*~500 KB*/)
+					.build();
+
+			return new ServerTickHandler(lazyPacketSender, new ArrayList<>());
+		}
+
+		public static Builder begin(){
+			return new Builder().setDefault();
+		}
+
 	}
 
 }

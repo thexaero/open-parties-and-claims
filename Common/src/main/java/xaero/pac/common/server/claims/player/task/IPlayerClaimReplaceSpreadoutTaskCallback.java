@@ -16,14 +16,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.task;
+package xaero.pac.common.server.claims.player.task;
 
-import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.IServerData;
+public interface IPlayerClaimReplaceSpreadoutTaskCallback {
 
-public interface IServerPlayerSpreadoutTask {
-
-	boolean shouldWork();
-	void onTick(IServerData<?,?> serverData, ServerPlayer player, int perPlayer);
+	void onWork(int tickCount);
+	void onFinish(PlayerClaimReplaceSpreadoutTask.ResultType resultType, int tickCount, int totalCount);
 
 }

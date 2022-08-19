@@ -26,18 +26,22 @@ import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.info.ServerInfo;
+import xaero.pac.common.util.linked.ILinkedChainNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-public final class ServerParty extends Party implements IServerParty<PartyMember, PartyPlayerInfo>, ObjectManagerIOExpirableObject {
+public final class ServerParty extends Party implements IServerParty<PartyMember, PartyPlayerInfo>, ObjectManagerIOExpirableObject, ILinkedChainNode<ServerParty> {
 
 	private final PartyManager managedBy;
 	private boolean dirty;
 	private long lastConfirmedActivity;
 	private boolean hasBeenActive;
+	private ServerParty nextInChain;
+	private ServerParty prevInChain;
+	private boolean destroyed;
 
 	protected ServerParty(PartyManager managedBy, PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo,
 			Map<UUID, PartyPlayerInfo> invitedPlayers, HashSet<UUID> allyParties) {
@@ -211,7 +215,37 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	public long getLastConfirmedActivity() {
 		return lastConfirmedActivity;
 	}
-	
+
+	@Override
+	public void setNext(ServerParty element) {
+		this.nextInChain = element;
+	}
+
+	@Override
+	public void setPrevious(ServerParty element) {
+		this.prevInChain = element;
+	}
+
+	@Override
+	public ServerParty getNext() {
+		return nextInChain;
+	}
+
+	@Override
+	public ServerParty getPrevious() {
+		return prevInChain;
+	}
+
+	@Override
+	public boolean isDestroyed() {
+		return destroyed;
+	}
+
+	@Override
+	public void onDestroyed() {
+		destroyed = true;
+	}
+
 	public static final class Builder extends Party.Builder {
 		
 		private boolean managed;

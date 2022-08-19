@@ -157,7 +157,6 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 	
 	@Override
 	public void syncToClient(ServerPlayer player, ServerParty party) {
-		@SuppressWarnings("unchecked")
 		IPlayerConfigManager<IServerParty<IPartyMember, IPartyPlayerInfo>> playerConfigs = serverData.getPlayerConfigs();
 		sendToClient(player, ClientboundLoadingPacket.START_PARTY, false);
 		sendToClient(player, 

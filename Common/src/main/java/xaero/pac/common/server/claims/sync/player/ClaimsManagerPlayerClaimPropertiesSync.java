@@ -19,11 +19,20 @@
 package xaero.pac.common.server.claims.sync.player;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.packet.claims.ClientboundClaimPropertiesPacket;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
+import xaero.pac.common.server.parties.party.IServerParty;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,7 +50,7 @@ public final class ClaimsManagerPlayerClaimPropertiesSync extends ClaimsManagerP
 	}
 
 	@Override
-	public void doSchedule(IServerData<?,?> serverData, ServerPlayer player, int limit){
+	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player, int limit){
 		List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder = new ArrayList<>(ClientboundClaimPropertiesPacket.MAX_PROPERTIES);
 		int canSync = limit;
 		while(canSync > 0 && toSync.hasNext()) {
@@ -74,7 +83,7 @@ public final class ClaimsManagerPlayerClaimPropertiesSync extends ClaimsManagerP
 	}
 
 	@Override
-	public boolean shouldWork() {
+	public boolean shouldWorkNotClogged(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player) {
 		return started && !isFinished();
 	}
 

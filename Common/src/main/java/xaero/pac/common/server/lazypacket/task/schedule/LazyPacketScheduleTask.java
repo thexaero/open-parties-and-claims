@@ -16,7 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.claims.sync.player;
+package xaero.pac.common.server.lazypacket.task.schedule;
 
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -29,26 +29,18 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
-import xaero.pac.common.server.lazypacket.task.schedule.LazyPacketScheduleTask;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.task.player.IServerPlayerSpreadoutTask;
 
-public abstract class ClaimsManagerPlayerLazyPacketScheduler extends LazyPacketScheduleTask {
+public abstract class LazyPacketScheduleTask implements IServerPlayerSpreadoutTask {
 
-	protected final ClaimsManagerSynchronizer synchronizer;
-	protected boolean started;
+	public abstract void onLazyPacketsDropped();
 
-	protected ClaimsManagerPlayerLazyPacketScheduler(ClaimsManagerSynchronizer synchronizer) {
-		this.synchronizer = synchronizer;
-	}
+	protected abstract boolean shouldWorkNotClogged(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player);
 
 	@Override
-	public boolean shouldDrop(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer holder) {
-		return false;
-	}
-
-	public void start(ServerPlayer player) {
-		started = true;
+	public final boolean shouldWork(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player) {
+		return !serverData.getServerTickHandler().getLazyPacketSender().isClogged(player) && shouldWorkNotClogged(serverData, player);
 	}
 
 }

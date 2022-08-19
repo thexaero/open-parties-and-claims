@@ -19,37 +19,22 @@
 package xaero.pac.common.server.lazypacket.task.schedule;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.player.data.ServerPlayerData;
-import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
-import xaero.pac.common.server.task.ServerPlayerSpreadoutTaskHandler;
+import xaero.pac.common.server.task.ServerSpreadoutTaskHandler;
+import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTaskHandler;
 
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-public final class LazyPacketScheduleTaskHandler extends ServerPlayerSpreadoutTaskHandler<ILazyPacketScheduleTask> {
+public final class LazyPacketScheduleTaskHandler extends ServerPlayerSpreadoutTaskHandler<LazyPacketScheduleTask> {
 
-	private LazyPacketScheduleTaskHandler(Function<ServerPlayerData, ILazyPacketScheduleTask> playerTaskGetter, int perTickLimit, int perTickPerPlayerLimit, BiPredicate<IServerData<?, ?>, ServerPlayer> shouldWaitPredicate) {
-		super(playerTaskGetter, perTickLimit, perTickPerPlayerLimit, shouldWaitPredicate);
+	private LazyPacketScheduleTaskHandler(Function<ServerPlayer, LazyPacketScheduleTask> holderToTask, int perTickLimit, int perTickPerTaskLimit) {
+		super(holderToTask, perTickLimit, perTickPerTaskLimit);
 	}
 
 	public void onLazyPacketsDropped(ServerPlayer player){
-		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-		playerTaskGetter.apply(playerData).onLazyPacketsDropped();
+		holderToTask.apply(player).onLazyPacketsDropped();
 	}
 
-	public static final class Builder extends ServerPlayerSpreadoutTaskHandler.Builder<ILazyPacketScheduleTask, Builder> {
-
-		public static Builder begin(){
-			return new Builder().setDefault();
-		}
-
-		@Override
-		public Builder setDefault() {
-			super.setDefault();
-			setShouldWaitPredicate((sd, p) -> sd.getServerTickHandler().getLazyPacketSender().isClogged(p));
-			return self;
-		}
+	public static final class Builder extends ServerPlayerSpreadoutTaskHandler.Builder<LazyPacketScheduleTask, Builder> {
 
 		@Override
 		public LazyPacketScheduleTaskHandler build() {
@@ -57,10 +42,13 @@ public final class LazyPacketScheduleTaskHandler extends ServerPlayerSpreadoutTa
 		}
 
 		@Override
-		protected LazyPacketScheduleTaskHandler buildInternally() {
-			return new LazyPacketScheduleTaskHandler(playerTaskGetter, perTickLimit, perTickPerPlayerLimit, shouldWaitPredicate);
+		protected ServerSpreadoutTaskHandler<LazyPacketScheduleTask, ServerPlayer> buildInternally() {
+			return new LazyPacketScheduleTaskHandler(holderToTask, perTickLimit, perTickPerTaskLimit);
 		}
 
+		public static Builder begin(){
+			return new Builder().setDefault();
+		}
 	}
 
 }

@@ -16,12 +16,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.lazypacket.task.schedule;
+package xaero.pac.common.server.task.player;
 
-import xaero.pac.common.server.task.IServerPlayerSpreadoutTask;
+import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.server.task.IServerSpreadoutTask;
 
-public interface ILazyPacketScheduleTask extends IServerPlayerSpreadoutTask {
-
-	void onLazyPacketsDropped();
+public interface IServerPlayerSpreadoutTask extends IServerSpreadoutTask<ServerPlayer> {
 
 }

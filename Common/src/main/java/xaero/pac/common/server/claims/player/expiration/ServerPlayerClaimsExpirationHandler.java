@@ -18,21 +18,32 @@
 
 package xaero.pac.common.server.claims.player.expiration;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.ChunkPos;
-import xaero.pac.common.claims.player.PlayerDimensionClaims;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
+import xaero.pac.common.server.claims.player.task.IPlayerClaimReplaceSpreadoutTaskCallback;
+import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectExpirationHandler;
 import xaero.pac.common.server.info.ServerInfo;
+import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 
-import java.util.*;
+import java.util.Objects;
 
-public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationHandler<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager>{
+public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationHandler<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> {
 	
 	private final ServerClaimsManager claimsManager;
 	private final MinecraftServer server;
@@ -45,48 +56,35 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 	}
 
 	@Override
-	public void handle() {
+	protected void handle(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return;
-		super.handle();
+		super.handle(serverData);
 	}
 
 	@Override
-	protected void preExpirationCheck(ServerPlayerClaimInfo playerInfo) {
+	public void preExpirationCheck(ServerPlayerClaimInfo playerInfo) {
 	}
 
 	@Override
-	protected boolean checkExpiration(ServerPlayerClaimInfo playerInfo) {
+	public boolean checkIfActive(ServerPlayerClaimInfo playerInfo) {
 		if(
-				Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, playerInfo.getPlayerId()) || 
-				Objects.equals(PlayerConfig.EXPIRED_CLAIM_UUID, playerInfo.getPlayerId()) || 
+				Objects.equals(PlayerConfig.EXPIRED_CLAIM_UUID, playerInfo.getPlayerId()) ||
+				Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, playerInfo.getPlayerId()) ||
 				server.getPlayerList().getPlayer(playerInfo.getPlayerId()) != null)//player is logged in
 			return true;
 		return false;
 	}
 
 	@Override
-	protected void expire(ServerPlayerClaimInfo playerInfo) {
-		Map<ResourceLocation, List<ChunkPos>> posMap = new HashMap<>();
-		playerInfo.getStream().forEach(entry -> {
-			ResourceLocation dim = entry.getKey();
-			List<ChunkPos> dimPosList = posMap.computeIfAbsent(dim, d -> new ArrayList<>());
-			PlayerDimensionClaims dimensionClaims = entry.getValue();
-			dimensionClaims.getStream().forEach(posList -> posList.getStream().forEach(dimPosList::add));
-		});
-
-		boolean expiredReclaim = ServerConfig.CONFIG.playerClaimsConvertExpiredClaims.get();
-		posMap.forEach((dim, dimPosList) -> {
-			for(ChunkPos pos : dimPosList) {
-				if(expiredReclaim)
-					claimsManager.claim(dim, PlayerConfig.EXPIRED_CLAIM_UUID, pos.x, pos.z, false);
-				else
-					claimsManager.unclaim(dim, pos.x, pos.z);
-			}
-		});
-		manager.tryRemove(playerInfo.getPlayerId());
+	public boolean expire(ServerPlayerClaimInfo playerInfo, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
+		PlayerChunkClaim toReplaceWith = ServerConfig.CONFIG.playerClaimsConvertExpiredClaims.get() ?
+			new PlayerChunkClaim(PlayerConfig.EXPIRED_CLAIM_UUID, false, 0) : null;
+		SpreadoutTaskCallback spreadoutTaskCallback = new SpreadoutTaskCallback(playerInfo);
+		return !claimsManager.getClaimReplaceTaskHandler().addTask(
+				new PlayerClaimReplaceSpreadoutTask(spreadoutTaskCallback, playerInfo.getPlayerId(), s -> true, toReplaceWith), serverData);
 	}
-	
+
 	public static final class Builder extends ObjectExpirationHandler.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, Builder>{
 
 		private ServerClaimsManager claimsManager;
@@ -127,6 +125,27 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 			return new ServerPlayerClaimsExpirationHandler(claimsManager, serverInfo, server, manager, liveCheckInterval, expirationTime, checkingMessage);
 		}
 		
+	}
+
+	public class SpreadoutTaskCallback implements IPlayerClaimReplaceSpreadoutTaskCallback {
+
+		private final ServerPlayerClaimInfo playerInfo;
+
+		public SpreadoutTaskCallback(ServerPlayerClaimInfo playerInfo) {
+			this.playerInfo = playerInfo;
+		}
+
+		@Override
+		public void onWork(int tickCount) {
+		}
+
+		@Override
+		public void onFinish(PlayerClaimReplaceSpreadoutTask.ResultType resultType, int tickCount, int totalCount) {
+			if(resultType.isSuccess())
+				manager.tryRemove(playerInfo.getPlayerId());
+			onElementExpirationDone();
+		}
+
 	}
 
 }

@@ -19,25 +19,37 @@
 package xaero.pac.common.server.expiration;
 
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.expiration.task.ObjectExpirationCheckSpreadoutTask;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
+import xaero.pac.common.server.parties.party.IServerParty;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public abstract class ObjectExpirationHandler
 <
 	T extends ObjectManagerIOExpirableObject, 
-	M extends ObjectManagerIOManager<T, M>
+	M extends ObjectManagerIOManager<T, M> & ObjectManagerIOExpirableObjectManager<T>
 > {
 	
 	private final ServerInfo serverInfo;
 	protected final M manager;
 	private final long liveCheckInterval;
 	private long lastCheck;
+	private Iterator<T> checkingIterator;
 	private final String checkingMessage;
 	private final int expirationTime;
+	private boolean expiringAnElement;
 
 	protected ObjectExpirationHandler(ServerInfo serverInfo, M manager,
 			long liveCheckInterval, int expirationTime, String checkingMessage) {
@@ -50,41 +62,40 @@ public abstract class ObjectExpirationHandler
 		this.lastCheck = serverInfo.getUseTime();
 	}
 	
-	protected abstract void preExpirationCheck(T object);
-	protected abstract boolean checkExpiration(T object);
-	protected abstract void expire(T object);
+	public abstract void preExpirationCheck(T object);
+	public abstract boolean checkIfActive(T object);
+	public abstract boolean expire(T object, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData);
 
-	public void handle() {
-		Iterator<T> objects = manager.getAllStream().iterator();
+	protected void handle(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
+		checkingIterator = manager.getExpirationIterator();
+
 		lastCheck = serverInfo.getUseTime();
-		List<T> toExpire = null;
 		OpenPartiesAndClaims.LOGGER.debug(checkingMessage);
-		while(objects.hasNext()) {
-			T object = objects.next();
-			preExpirationCheck(object);
-			
-			boolean hasBeenActive = object.hasBeenActive();//since last check
-			if(!hasBeenActive)
-				hasBeenActive = checkExpiration(object);
-			if(hasBeenActive) {
-				object.confirmActivity(serverInfo);
-				object.setDirty(true);
-				continue;
-			} else if(serverInfo.getUseTime() > object.getLastConfirmedActivity() + expirationTime) {
-				OpenPartiesAndClaims.LOGGER.debug("Object expired and is being removed: " + object);
-				if(toExpire == null)
-					toExpire = new ArrayList<>();
-				toExpire.add(object);
-			}
-		}
-		if(toExpire != null)
-			for(T object : toExpire)
-				expire(object);
+		serverData.getObjectExpirationCheckTaskHandler().addTask(new ObjectExpirationCheckSpreadoutTask<>(this, checkingIterator), serverData);
 	}
-	
-	public boolean onServerTick() {
+
+	public void onElementExpirationBegin(){
+		expiringAnElement = true;
+	}
+
+	public void onElementExpirationDone() {
+		expiringAnElement = false;
+	}
+
+	public boolean isExpiringAnElement() {
+		return expiringAnElement;
+	}
+
+	public void onIterationDone(){
+		OpenPartiesAndClaims.LOGGER.debug("Expiration iteration has finished!");
+		checkingIterator = null;
+	}
+
+	public boolean onServerTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
+		if(checkingIterator != null)
+			return true;
 		if(serverInfo.getUseTime() > lastCheck + liveCheckInterval) {
-			handle();
+			handle(serverData);
 			return true;
 		}
 		return false;
@@ -93,11 +104,15 @@ public abstract class ObjectExpirationHandler
 	public ServerInfo getServerInfo() {
 		return serverInfo;
 	}
-	
+
+	public int getExpirationTime() {
+		return expirationTime;
+	}
+
 	public static abstract class Builder
 	<
 		T extends ObjectManagerIOExpirableObject, 
-		M extends ObjectManagerIOManager<T, M>,
+		M extends ObjectManagerIOManager<T, M> & ObjectManagerIOExpirableObjectManager<T>,
 		B extends Builder<T, M, B>
 	> {
 

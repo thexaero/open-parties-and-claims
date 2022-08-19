@@ -66,6 +66,7 @@
 	"gui.xaero_claims_claimed_at" : "Successfully claimed the chunk at (%1$s, %2$s)!",
 	"gui.xaero_claims_unclaimed_at" : "Successfully unclaimed the chunk at (%1$s, %2$s)!",
 	"gui.xaero_claims_claim_not_within_distance" : "The target chunk(s) is/are too far away from you!",
+	"gui.xaero_claims_replacement_in_progress" : "A claim mass-replacement is still in progress!",
 	"gui.xaero_claims_claim_already_claimed" : "The target chunk(s) is/are already claimed!",
 	"gui.xaero_claims_claim_already_claimed_by" : "The target chunk is already claimed by %1$s!",
 	"gui.xaero_claims_claim_limit_reached" : "You have reached your chunk claim limit!",
@@ -82,6 +83,9 @@
 	"gui.xaero_claims_forceload_not_yours" : "You need to claim the target chunk(s) first!",
 	"gui.xaero_claims_forceload_already" : "The target chunk(s) is/are already marked for forceloading!",
 	"gui.xaero_claims_unforceload_already" : "The target chunk(s) is/are not marked for forceloading!",
+
+	"gui.xaero_claims_replacement_success" : "Successfully replaced all matching claims!",
+	"gui.xaero_claims_replacement_state_matches_matcher" : "The new claim state matches the replacement rule!",
 	
 	"gui.xaero_pac_config_op_option" : "Only server OPs can configure this option for you!",
 	"gui.xaero_pac_config_option_set" : "(%1$s) Option %2$s was set to \"%3$s\".",
