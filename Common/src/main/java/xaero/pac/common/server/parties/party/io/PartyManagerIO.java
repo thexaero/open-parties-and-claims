@@ -32,7 +32,9 @@ import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerParty, PartyManager, PartyManagerIO<S>> {
@@ -53,6 +55,21 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 			return;
 		OpenPartiesAndClaims.LOGGER.info("Loading parties...");
 		super.load();
+		manager.getAllStream().forEach(p -> {
+			Iterator<UUID> allyPartyIterator = p.getAllyPartiesIteratorModifiable();
+			List<UUID> alliesToRemove = null;
+			while(allyPartyIterator.hasNext()) {
+				UUID ally = allyPartyIterator.next();
+				ServerParty allyParty = manager.getPartyById(ally);
+				if(allyParty == null) {
+					if(alliesToRemove == null)
+						alliesToRemove = new ArrayList<>();
+					alliesToRemove.add(ally);
+				}
+			}
+			if(alliesToRemove != null)
+				alliesToRemove.forEach(p::removeAllyParty);
+		});
 		manager.setLoaded(true);
 		OpenPartiesAndClaims.LOGGER.info("Loaded parties!");
 	}
@@ -84,14 +101,6 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 
 	@Override
 	protected void onObjectLoad(ServerParty loadedObject) {
-		Iterator<UUID> allyPartyIterator = loadedObject.getAllyPartiesIteratorModifiable();
-		while(allyPartyIterator.hasNext()) {
-			ServerParty allyParty = manager.getPartyById(allyPartyIterator.next());
-			if(allyParty == null) {
-				allyPartyIterator.remove();
-				loadedObject.setDirty(true);
-			}
-		}
 		manager.addParty(loadedObject);
 	}
 	
