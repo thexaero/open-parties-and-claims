@@ -58,4 +58,16 @@ public interface IClaimsManagerListenerAPI {
 	 */
 	public void onChunkChange(@Nonnull ResourceLocation dimension, int chunkX, int chunkZ, @Nullable IPlayerChunkClaimAPI claim);
 
+	/**
+	 * Called after claim changes are made throughout a dimension.
+	 * <p>
+	 * For example, this is called on the client side when a huge number of claims change color.
+	 * <p>
+	 * Override this method and register the listener in {@link IClaimsManagerTrackerAPI} to handle dimension-wide
+	 * updates however you'd like.
+	 *
+	 * @param dimension  the dimension ID, not null
+	 */
+	public void onDimensionChange(ResourceLocation dimension);
+
 }

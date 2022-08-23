@@ -52,14 +52,18 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 		int oldColor = playerInfo.getClaimsColor();
 		playerInfo.setClaimsColor(claimsColor);
 		if(oldColor != claimsColor) {
+			boolean notManyClaims = playerInfo.getClaimCount() < 1024;
 			ClaimsManagerTracker tracker = claimsManager.getTracker();
 			playerInfo.getStream().map(Entry::getValue).forEach(dim -> {
 				ResourceLocation dimensionId = dim.getDimension();
-				BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> tracker.onChunkChange(dimensionId, pos.x, pos.z, claim);
-				dim.getStream().forEach(posList -> {
-					PlayerChunkClaim state = posList.getClaimState();
-					posList.getStream().forEach(pos -> claimConsumer.accept(state, pos));
-				});
+				if(notManyClaims) {
+					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> tracker.onChunkChange(dimensionId, pos.x, pos.z, claim);
+					dim.getStream().forEach(posList -> {
+						PlayerChunkClaim state = posList.getClaimState();
+						posList.getStream().forEach(pos -> claimConsumer.accept(state, pos));
+					});
+				} else
+					tracker.onDimensionChange(dimensionId);
 			});
 		}
 	}

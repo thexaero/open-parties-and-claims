@@ -48,4 +48,9 @@ public class ClaimsManagerTracker implements IClaimsManagerTracker {
 			listener.onChunkChange(dimension, chunkX, chunkZ, claim);
 	}
 
+	public void onDimensionChange(ResourceLocation dimension) {
+		for(IClaimsManagerListenerAPI listener : listeners)
+			listener.onDimensionChange(dimension);
+	}
+
 }
