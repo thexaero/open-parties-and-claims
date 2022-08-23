@@ -99,10 +99,15 @@ loadScripts(document, 'script');</script>
 <div class="block">Called after the claim state of a chunk is updated.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onWholeRegionChange(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">onWholeRegionChange</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onDimensionChange(net.minecraft.resources.ResourceLocation)" class="member-name-link">onDimensionChange</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Called after claim changes are made throughout a dimension.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onWholeRegionChange(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">onWholeRegionChange</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  int&nbsp;regionX,
  int&nbsp;regionZ)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Called after a whole 512x512 region of claim states is updated.</div>
 </div>
 </div>
@@ -159,6 +164,22 @@ loadScripts(document, 'script');</script>
 <dd><code>chunkX</code> - the X coordinate of the chunk</dd>
 <dd><code>chunkZ</code> - the Z coordinate of the chunk</dd>
 <dd><code>claim</code> - the new claim state, null when the chunk is unclaimed</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onDimensionChange(net.minecraft.resources.ResourceLocation)">
+<h3>onDimensionChange</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">onDimensionChange</span><wbr><span class="parameters">(net.minecraft.resources.ResourceLocation&nbsp;dimension)</span></div>
+<div class="block">Called after claim changes are made throughout a dimension.
+ <p>
+ For example, this is called on the client side when a huge number of claims change color.
+ <p>
+ Override this method and register the listener in <a href="IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api"><code>IClaimsManagerTrackerAPI</code></a> to handle dimension-wide
+ updates however you'd like.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID, not null</dd>
 </dl>
 </section>
 </li>
