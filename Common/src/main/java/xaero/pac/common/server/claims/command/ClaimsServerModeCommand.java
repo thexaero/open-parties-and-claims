@@ -22,7 +22,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.ClientboundModesPacket;
@@ -39,7 +39,7 @@ public class ClaimsServerModeCommand {
 					ServerPlayer player = context.getSource().getPlayerOrException();
 					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 					mainCapability.setClaimsServerMode(!mainCapability.isClaimsServerMode());
-					player.sendMessage(new TranslatableComponent(mainCapability.isClaimsServerMode() ? "gui.xaero_claims_server_mode_enabled" : "gui.xaero_claims_server_mode_disabled"), player.getUUID());
+					player.sendSystemMessage(Component.translatable(mainCapability.isClaimsServerMode() ? "gui.xaero_claims_server_mode_enabled" : "gui.xaero_claims_server_mode_disabled"));
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(mainCapability.isClaimsAdminMode(), mainCapability.isClaimsServerMode()));
 					return 1;
 				}));

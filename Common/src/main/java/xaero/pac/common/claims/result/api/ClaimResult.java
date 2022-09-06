@@ -112,7 +112,7 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		 * This result type is only used for server claim requests made by online players.
 		 * Permissions for server claims are not checked by the try methods in the server claims manager.
 		 */
-		NO_SERVER_PERMISSION(new TranslatableComponent("gui.xaero_claims_claim_no_server_permission").withStyle(ChatFormatting.RED), false, true),
+		NO_SERVER_PERMISSION(Component.translatable("gui.xaero_claims_claim_no_server_permission").withStyle(ChatFormatting.RED), false, true),
 
 		/** Successfully unforceloaded a chunk */
 		SUCCESSFUL_UNFORCELOAD(Component.translatable("gui.xaero_claims_unforceloaded"), true, false),

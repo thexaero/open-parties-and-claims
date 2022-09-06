@@ -71,7 +71,7 @@ public class ClaimsForceloadCommands {
 				if(playerData.isClaimsServerMode())
 					shouldServerClaim = true;
 				if(shouldServerClaim && serverData.getServerClaimsManager().getPermissionHandler().shouldPreventServerClaim(player, playerData, server)){
-					context.getSource().sendFailure(new TranslatableComponent("gui.xaero_claims_claim_no_server_permission"));
+					context.getSource().sendFailure(Component.translatable("gui.xaero_claims_claim_no_server_permission"));
 					return 0;
 				}
 				UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
