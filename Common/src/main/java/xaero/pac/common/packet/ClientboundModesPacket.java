@@ -30,10 +30,12 @@ import java.util.function.Function;
 public class ClientboundModesPacket {
 
 	private final boolean adminMode;
+	private final boolean serverMode;
 
-	public ClientboundModesPacket(boolean adminMode) {
+	public ClientboundModesPacket(boolean adminMode, boolean serverMode) {
 		super();
 		this.adminMode = adminMode;
+		this.serverMode = serverMode;
 	}
 	
 	public static class Codec implements BiConsumer<ClientboundModesPacket, FriendlyByteBuf>, Function<FriendlyByteBuf, ClientboundModesPacket> {
@@ -45,7 +47,8 @@ public class ClientboundModesPacket {
 				if(tag == null)
 					return null;
 				boolean adminMode = tag.getBoolean("am");
-				return new ClientboundModesPacket(adminMode);
+				boolean serverMode = tag.getBoolean("sm");
+				return new ClientboundModesPacket(adminMode, serverMode);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);
 				return null;
@@ -56,6 +59,7 @@ public class ClientboundModesPacket {
 		public void accept(ClientboundModesPacket t, FriendlyByteBuf u) {
 			CompoundTag tag = new CompoundTag();
 			tag.putBoolean("am", t.adminMode);
+			tag.putBoolean("sm", t.serverMode);
 			u.writeNbt(tag);
 		}
 
@@ -65,7 +69,7 @@ public class ClientboundModesPacket {
 		
 		@Override
 		public void accept(ClientboundModesPacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimModes(t.adminMode);
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimModes(t.adminMode, t.serverMode);
 		}
 		
 	}

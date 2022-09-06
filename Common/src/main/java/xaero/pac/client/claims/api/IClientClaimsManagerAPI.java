@@ -108,9 +108,17 @@ public interface IClientClaimsManagerAPI
 
 	/**
 	 * Checks whether the local client player is in admin mode.
+	 *
 	 * @return true if the player is in admin mode, otherwise false
 	 */
 	public boolean isAdminMode();
+
+	/**
+	 * Checks whether the local client player is in server claim mode.
+	 *
+	 * @return true if the player is in server claim mode, otherwise false
+	 */
+	public boolean isServerMode();
 
 	/**
 	 * Gets the claim action result tracker that lets you register claim action result listeners.

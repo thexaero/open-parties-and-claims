@@ -54,7 +54,6 @@ public class ClaimsForceloadCommands {
 		return builder
 			.executes(context -> {
 				ServerPlayer player = context.getSource().getPlayerOrException();
-				UUID playerId = serverClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 				ServerLevel world = player.getLevel();
 				int chunkX = player.chunkPosition().x;
 				int chunkZ = player.chunkPosition().z;
@@ -68,6 +67,14 @@ public class ClaimsForceloadCommands {
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
 				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+				boolean shouldServerClaim = serverClaim;
+				if(playerData.isClaimsServerMode())
+					shouldServerClaim = true;
+				if(shouldServerClaim && serverData.getServerClaimsManager().getPermissionHandler().shouldPreventServerClaim(player, playerData, server)){
+					context.getSource().sendFailure(new TranslatableComponent("gui.xaero_claims_claim_no_server_permission"));
+					return 0;
+				}
+				UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 
 				if(serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
 					return 0;//going too fast

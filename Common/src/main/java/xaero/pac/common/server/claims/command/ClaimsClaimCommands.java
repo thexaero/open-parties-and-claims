@@ -20,6 +20,7 @@ package xaero.pac.common.server.claims.command;
 
 import com.google.common.collect.Sets;
 import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
 import net.minecraft.network.chat.Component;
@@ -47,6 +48,7 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class ClaimsClaimCommands {
 	
@@ -54,7 +56,6 @@ public class ClaimsClaimCommands {
 		return builder
 			.executes(context -> {
 				ServerPlayer player = context.getSource().getPlayerOrException();
-				UUID playerId = serverClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 				ServerLevel world = player.getLevel();
 				int chunkX = player.chunkPosition().x;
 				int chunkZ = player.chunkPosition().z;
@@ -68,6 +69,14 @@ public class ClaimsClaimCommands {
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
 				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+				boolean shouldServerClaim = serverClaim;
+				if(playerData.isClaimsServerMode())
+					shouldServerClaim = true;
+				if(shouldServerClaim && serverData.getServerClaimsManager().getPermissionHandler().shouldPreventServerClaim(player, playerData, server)){
+					context.getSource().sendFailure(new TranslatableComponent("gui.xaero_claims_claim_no_server_permission"));
+					return 0;
+				}
+				UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 
 				if(serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
 					return 0;//going too fast
@@ -110,6 +119,23 @@ public class ClaimsClaimCommands {
 								player);
 				}
 			});
+	}
+
+	public static Predicate<CommandSourceStack> getServerClaimCommandRequirement(){
+		return source -> {
+			if(source.hasPermission(2))
+				return true;
+			try {
+				ServerPlayer player = source.getPlayerOrException();
+				MinecraftServer server = player.getServer();
+				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
+						serverData = ServerData.from(server);
+				if(serverData.getServerClaimsManager().getPermissionHandler().playerHasServerClaimPermission(player))
+					return true;
+			} catch (CommandSyntaxException e) {
+			}
+			return false;
+		};
 	}
 	
 }

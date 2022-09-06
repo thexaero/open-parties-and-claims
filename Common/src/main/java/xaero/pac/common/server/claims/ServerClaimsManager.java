@@ -51,15 +51,17 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	private final int MAX_REQUEST_SIZE = 25;//will go 1 chunk beyond this before cancelling but that's fine
 	private final ClaimsManagerSynchronizer claimsManagerSynchronizer;
 	private final ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
+	private final ServerClaimsPermissionHandler permissionHandler;
 	private boolean loaded;
 	
 	protected ServerClaimsManager(MinecraftServer server, ServerPlayerClaimInfoManager playerClaimInfoManager,
 								  IPlayerConfigManager<?> configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
 								  ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
-								  Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler) {
+								  Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler, ServerClaimsPermissionHandler permissionHandler) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimsManagerSynchronizer = claimsManagerSynchronizer;
 		this.claimReplaceTaskHandler = claimReplaceTaskHandler;
+		this.permissionHandler = permissionHandler;
 	}
 	
 	public void setIo(PlayerClaimInfoManagerIO<?> io) {
@@ -148,7 +150,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && !isClaimable(dimension))
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
-		if(!isServer && !replace && !withinDistance(fromX, fromZ, x, z))
+		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		return tryToClaimHelper(dimension, playerId, fromX, fromZ, x, z, false, replace, isServer);
 	}
@@ -166,8 +168,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public ClaimResult<PlayerChunkClaim> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
-		boolean isServer = Objects.equals(id, PlayerConfig.SERVER_CLAIM_UUID);
-		if(!isServer && !replace && !withinDistance(fromX, fromZ, x, z))
+		//boolean isServer = Objects.equals(id, PlayerConfig.SERVER_CLAIM_UUID);
+		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		return tryToUnclaimHelper(dimension, id, fromX, fromZ, x, z, replace);
 	}
@@ -202,7 +204,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		boolean isServer = Objects.equals(id, PlayerConfig.SERVER_CLAIM_UUID);
 		if(enable && !isServer && !isClaimable(dimension))
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
-		if(!isServer && !replace && !withinDistance(fromX, fromZ, x, z))
+		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		return tryToForceloadHelper(dimension, id, fromX, fromZ, x, z, enable, replace, isServer);
 	}
@@ -220,7 +222,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		int effectiveTop = top;
 		int effectiveRight = right;
 		int effectiveBottom = bottom;
-		if(!isServer && !replace) {
+		if(!replace) {
 			int maxClaimDistance = ServerConfig.CONFIG.maxClaimDistance.get();
 			boolean outOfBounds = false;
 			if(effectiveLeft < fromX - maxClaimDistance) {
@@ -347,6 +349,11 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return claimReplaceTaskHandler;
 	}
 
+	@Override
+	public ServerClaimsPermissionHandler getPermissionHandler() {
+		return permissionHandler;
+	}
+
 	public boolean isLoaded() {
 		return loaded;
 	}
@@ -419,7 +426,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 		@Override
 		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
-			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler);
+			ServerClaimsPermissionHandler permissionHandler = new ServerClaimsPermissionHandler();
+			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler, permissionHandler);
 		}
 		
 	}

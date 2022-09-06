@@ -33,6 +33,7 @@ public class ClaimsCommandRegister {
 		new ClaimsUnforceloadCommand().register(dispatcher, environment);
 		new ClaimsNonAllyModeCommand().register(dispatcher, environment);
 		new ClaimsAboutCommand().register(dispatcher, environment);
+		new ClaimsServerModeCommand().register(dispatcher, environment);
 		
 		//op commands
 		new ClaimsServerClaimCommand().register(dispatcher, environment);

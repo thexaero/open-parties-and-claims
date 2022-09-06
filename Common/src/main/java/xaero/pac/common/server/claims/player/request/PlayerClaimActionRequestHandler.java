@@ -24,6 +24,7 @@ import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
+import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.server.ServerTickHandler;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
@@ -34,6 +35,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerClaimActionRequestHandler {
@@ -52,12 +54,19 @@ public class PlayerClaimActionRequestHandler {
 	public void onReceive(ServerPlayer player, ClaimActionRequest request) {
 		if(serverTickHandler.getTickCounter() == lastRequestTickCounter)
 			return;
-		if(request.isByServer() && !player.hasPermissions(2))
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+		boolean shouldServerClaim = request.isByServer();
+		if(playerData.isClaimsServerMode())
+			shouldServerClaim = true;
+		if(shouldServerClaim && manager.getPermissionHandler().shouldPreventServerClaim(player, playerData, player.getServer())){
+			manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
+					new AreaClaimResult(Set.of(ClaimResult.Type.NO_SERVER_PERMISSION), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
+					player);
 			return;
-		UUID playerId = request.isByServer() ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
+		}
+		UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
-		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		AreaClaimResult result = manager.tryClaimActionOverArea(player.level.dimension().location(), playerId, 
 				fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(), 
 				request.getAction(), playerData.isClaimsAdminMode());

@@ -49,7 +49,9 @@ import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.claims.command.ClaimsCommandRegister;
 import xaero.pac.common.server.parties.command.PartyCommandRegister;
+import xaero.pac.common.server.player.config.PlayerConfig;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MainMenu extends XPACScreen {
@@ -200,10 +202,12 @@ public class MainMenu extends XPACScreen {
 		if(serverHasMod && !OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isLoading()) {
 			IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 			boolean adminMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isAdminMode();
-			claimButton.active = adminMode || (currentClaim == null || currentClaim.getPlayerId().equals(minecraft.player.getUUID()));
+			boolean serverMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isServerMode();
+			UUID claimTargetUUID = serverMode ? PlayerConfig.SERVER_CLAIM_UUID : minecraft.player.getUUID();
+					claimButton.active = adminMode || (currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID));
 			claimButton.setMessage(currentClaim == null ? CLAIM : UNCLAIM);
 			
-			forceloadButton.active = adminMode || currentClaim != null && currentClaim.getPlayerId().equals(minecraft.player.getUUID());
+			forceloadButton.active = adminMode || currentClaim != null && currentClaim.getPlayerId().equals(claimTargetUUID);
 			forceloadButton.setMessage(currentClaim == null || !currentClaim.isForceloadable() ? FORCELOAD : UNFORCELOAD);
 		}
 	}

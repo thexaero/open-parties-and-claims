@@ -132,44 +132,48 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">The maximum number of forceloadable claims was reached</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#NOT_CLAIMED_BY_USER" class="member-name-link">NOT_CLAIMED_BY_USER</a></code></div>
+<div class="col-first even-row-color"><code><a href="#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">The user doesn't have permission to make server claims</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED_BY_USER" class="member-name-link">NOT_CLAIMED_BY_USER</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The chunk isn't claimed by who is trying to unclaim it</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED_BY_USER_FORCELOAD" class="member-name-link">NOT_CLAIMED_BY_USER_FORCELOAD</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#NOT_CLAIMED_BY_USER_FORCELOAD" class="member-name-link">NOT_CLAIMED_BY_USER_FORCELOAD</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The chunk isn't claimed by who is trying to (un)forceload it</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#REPLACEMENT_IN_PROGRESS" class="member-name-link">REPLACEMENT_IN_PROGRESS</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#REPLACEMENT_IN_PROGRESS" class="member-name-link">REPLACEMENT_IN_PROGRESS</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">There is a claim replacement currently in progress in the background</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_CLAIM" class="member-name-link">SUCCESSFUL_CLAIM</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#SUCCESSFUL_CLAIM" class="member-name-link">SUCCESSFUL_CLAIM</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Successfully claimed a chunk</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#SUCCESSFUL_FORCELOAD" class="member-name-link">SUCCESSFUL_FORCELOAD</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_FORCELOAD" class="member-name-link">SUCCESSFUL_FORCELOAD</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Successfully forceloaded a chunk</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_UNCLAIM" class="member-name-link">SUCCESSFUL_UNCLAIM</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#SUCCESSFUL_UNCLAIM" class="member-name-link">SUCCESSFUL_UNCLAIM</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Successfully unclaimed a chunk</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#SUCCESSFUL_UNFORCELOAD" class="member-name-link">SUCCESSFUL_UNFORCELOAD</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_UNFORCELOAD" class="member-name-link">SUCCESSFUL_UNFORCELOAD</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Successfully unforceloaded a chunk</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#TOO_FAR" class="member-name-link">TOO_FAR</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#TOO_FAR" class="member-name-link">TOO_FAR</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The chunk was beyond the maximum distance</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#TOO_MANY_CHUNKS" class="member-name-link">TOO_MANY_CHUNKS</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#TOO_MANY_CHUNKS" class="member-name-link">TOO_MANY_CHUNKS</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The area for a claim action was too big</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#UNCLAIMABLE_DIMENSION" class="member-name-link">UNCLAIMABLE_DIMENSION</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#UNCLAIMABLE_DIMENSION" class="member-name-link">UNCLAIMABLE_DIMENSION</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The dimension is unclaimable</div>
 </div>
 </div>
@@ -326,6 +330,16 @@ the order they are declared.</div>
 <h3>REPLACEMENT_IN_PROGRESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">REPLACEMENT_IN_PROGRESS</span></div>
 <div class="block">There is a claim replacement currently in progress in the background</div>
+</section>
+</li>
+<li>
+<section class="detail" id="NO_SERVER_PERMISSION">
+<h3>NO_SERVER_PERMISSION</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NO_SERVER_PERMISSION</span></div>
+<div class="block">The user doesn't have permission to make server claims
+ <p>
+ This result type is only used for server claim requests made by online players.
+ Permissions for server claims are not checked by the try methods in the server claims manager.</div>
 </section>
 </li>
 <li>
