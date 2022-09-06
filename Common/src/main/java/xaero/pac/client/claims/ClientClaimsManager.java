@@ -50,6 +50,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private int forceloadLimit;
 	private int maxClaimDistance;
 	private boolean adminMode;
+	private boolean serverMode;
 	
 	private ClientClaimsManager(ClientPlayerClaimInfoManager playerClaimInfoManager,
 			IPlayerConfigManager<?> configManager, Map<ResourceLocation, ClientDimensionClaimsManager> dimensions,
@@ -136,6 +137,15 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
+	public boolean isServerMode() {
+		return serverMode;
+	}
+
+	public void setServerMode(boolean serverMode) {
+		this.serverMode = serverMode;
+	}
+
+	@Override
 	public void addClaimState(PlayerChunkClaim claim) {
 		super.addClaimState(claim);
 	}
@@ -175,6 +185,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	public void reset() {
 		super.reset();
 		adminMode = false;
+		serverMode = false;
 	}
 
 	@Override

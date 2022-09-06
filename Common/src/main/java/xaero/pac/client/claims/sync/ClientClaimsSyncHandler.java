@@ -95,8 +95,9 @@ public class ClientClaimsSyncHandler {
 		claimsManager.getClaimResultTracker().onClaimResult(result);
 	}
 
-	public void onClaimModes(boolean adminMode) {
+	public void onClaimModes(boolean adminMode, boolean serverMode) {
 		claimsManager.setAdminMode(adminMode);
+		claimsManager.setServerMode(serverMode);
 	}
 
 }

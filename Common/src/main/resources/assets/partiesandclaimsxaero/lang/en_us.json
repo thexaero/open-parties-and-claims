@@ -59,6 +59,8 @@
 	"gui.xaero_claims_about_invalid_player" : "Invalid target player!",
 	"gui.xaero_claims_admin_mode_enabled" : "Admin mode enabled!",
 	"gui.xaero_claims_admin_mode_disabled" : "Admin mode disabled!",
+	"gui.xaero_claims_server_mode_enabled" : "Server claim mode enabled!",
+	"gui.xaero_claims_server_mode_disabled" : "Server claim mode disabled!",
 	"gui.xaero_claims_nonally_mode_enabled" : "Non-ally mode enabled! You are now viewing/accessing your claims as a non-ally would.",
 	"gui.xaero_claims_nonally_mode_disabled" : "Non-ally mode disabled!",
 	"gui.xaero_claims_claimed" : "Successfully claimed the chunk(s)!",
@@ -74,6 +76,7 @@
 	"gui.xaero_claims_claim_unclaim_not_yours" : "You can't unclaim a chunk that you haven't claimed!",
 	"gui.xaero_claims_too_many_chunks" : "Too many chunks for a single action!",
 	"gui.xaero_claims_are_disabled" : "The chunk claims feature is disabled!",
+	"gui.xaero_claims_claim_no_server_permission" : "You no longer have permission to make server claims!",
 	
 	"gui.xaero_claims_forceloaded" : "Successfully forceload-marked the chunk(s)!",
 	"gui.xaero_claims_unforceloaded" : "Successfully unforceload-marked the chunk(s)!",

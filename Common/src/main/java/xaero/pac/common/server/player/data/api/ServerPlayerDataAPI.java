@@ -56,6 +56,13 @@ public abstract class ServerPlayerDataAPI {
 	public abstract boolean isClaimsNonallyMode();
 
 	/**
+	 * Checks if the player is using the server claim mode.
+	 *
+	 * @return true if the player is in the server claim mode, otherwise false
+	 */
+	public abstract boolean isClaimsServerMode();
+
+	/**
 	 * Gets the player data for a specified logged in player.
 	 *
 	 * @param player  the player, not null

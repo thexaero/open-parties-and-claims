@@ -33,6 +33,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	private boolean claimsAdminMode;
 	private boolean claimsNonallyMode;
+	private boolean claimsServerMode;
 	private IPlayerChunkClaim lastClaimCheck;
 	private int lastBaseClaimLimitSync;//used for detecting limit changes based on FTB ranks
 	private int lastBaseForceloadLimitSync;
@@ -68,7 +69,12 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public boolean isClaimsNonallyMode() {
 		return claimsNonallyMode;
 	}
-	
+
+	@Override
+	public boolean isClaimsServerMode() {
+		return claimsServerMode;
+	}
+
 	public void setOftenSyncedPartyMemberInfo(PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo) {
 		this.oftenSyncedPartyMemberInfo = oftenSyncedPartyMemberInfo;
 	}
@@ -80,7 +86,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public void setClaimsNonallyMode(boolean claimsNonallyMode) {
 		this.claimsNonallyMode = claimsNonallyMode;
 	}
-	
+
+	public void setClaimsServerMode(boolean claimsServerMode) {
+		this.claimsServerMode = claimsServerMode;
+	}
+
 	public void setLastClaimCheck(IPlayerChunkClaim lastClaimCheck) {
 		this.lastClaimCheck = lastClaimCheck;
 	}

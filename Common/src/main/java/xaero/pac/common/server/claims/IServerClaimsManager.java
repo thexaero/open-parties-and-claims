@@ -36,5 +36,6 @@ public interface IServerClaimsManager
 	
 	public IClaimsManagerSynchronizer getClaimsManagerSynchronizer();
 	public ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> getClaimReplaceTaskHandler();
+	public ServerClaimsPermissionHandler getPermissionHandler();
 
 }
