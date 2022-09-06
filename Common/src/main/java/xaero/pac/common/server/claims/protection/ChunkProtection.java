@@ -267,7 +267,8 @@ public class ChunkProtection
 				!itemStack.is(ItemTags.BOATS) &&
 				!(item instanceof BucketItem) &&
 				!(item instanceof SolidBucketItem) &&
-				!(item instanceof MilkBucketItem)
+				!(item instanceof MilkBucketItem) &&
+				!(item instanceof ArmorItem)
 				||
 				additionalBannedItems.contains(item)
 			) && !itemUseProtectionExceptions.contains(item)
