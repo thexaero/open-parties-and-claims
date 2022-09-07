@@ -57,6 +57,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import javax.annotation.Nullable;
@@ -169,11 +170,13 @@ public class ChunkProtection
 		if(e.getUUID().equals(claimConfig.getPlayerId()) ||
 				e instanceof Player && (ServerPlayerDataAPI.from((ServerPlayer) e).isClaimsAdminMode() ||
 						ServerPlayerDataAPI.from((ServerPlayer) e).isClaimsServerMode() &&
-								claimsManager.getPermissionHandler().playerHasServerClaimPermission((ServerPlayer) e) &&
-								Objects.equals(claimConfig.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID)
+						claimsManager.getPermissionHandler().playerHasServerClaimPermission((ServerPlayer) e) &&
+						claimConfig.getType() == PlayerConfigType.SERVER
 				)
 		)
 			return true;
+		if(claimConfig.getPlayerId() == null)
+			return false;
 		if(!(e instanceof Player) || claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_PARTY) && claimConfig.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES))
 			return false;
 		P claimParty = partyManager.getPartyByMember(claimConfig.getPlayerId());
