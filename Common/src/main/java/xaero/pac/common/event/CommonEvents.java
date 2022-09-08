@@ -219,11 +219,16 @@ public class CommonEvents {
 
 	public boolean onLivingHurt(DamageSource source, Entity target) {
 		if(target.getLevel() instanceof ServerLevel) {
+
 			if(!(source instanceof EntityDamageSource) &&
 					!source.isDamageHelmet()/*almost certainly something falling from the top*/ && source != DamageSource.DRAGON_BREATH &&
-					!source.isProjectile() && !source.isExplosion() && !source.getMsgId().startsWith("create.")/*create mod*/)
+					!source.isFire() &&
+					!source.isProjectile() && !source.isExplosion() && !source.getMsgId().startsWith("create.")/*create mod*/
+					|| source == DamageSource.LAVA || source == DamageSource.HOT_FLOOR)
 				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(target.getServer());
+			if(source.isFire())
+				return serverData.getChunkProtection().onEntityFire(serverData, target);
 			Entity effectiveSource = source.getEntity() != null ? source.getEntity() : source.getDirectEntity();
 			return serverData.getChunkProtection().onEntityInteract(serverData, effectiveSource, target, InteractionHand.MAIN_HAND, source.getEntity() == source.getDirectEntity(), true);
 		}

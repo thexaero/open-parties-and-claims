@@ -355,6 +355,18 @@ public class ChunkProtection
 		}
 		return false;
 	}
+
+	public boolean onEntityFire(IServerData<CM, P> serverData, Entity target) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+		ChunkPos chunkPos = new ChunkPos(new BlockPos(target.getBlockX(), target.getBlockY(), target.getBlockZ()));
+		IPlayerChunkClaim claim = claimsManager.get(target.getLevel().dimension().location(), chunkPos);
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		return config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS) &&
+				config.getEffective(PlayerConfig.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE) &&
+				isProtectable(target);
+	}
 	
 	public void onExplosionDetonate(IServerData<CM,P> serverData, ServerLevel world, Explosion explosion, List<Entity> affectedEntities, List<BlockPos> affectedBlocks) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
