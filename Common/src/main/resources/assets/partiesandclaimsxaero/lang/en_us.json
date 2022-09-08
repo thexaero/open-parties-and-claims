@@ -194,6 +194,8 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.entitiesFromAnonymousAttacks" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.entitiesFromExplosions" : "Protect Entities From Explosions",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.entitiesFromExplosions" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.entitiesFromFire" : "Protect Entities From Fire",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.entitiesFromFire" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.chorusFruitTeleport" : "Prevent Chorus Fruit Teleport",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.chorusFruitTeleport" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.playerLightning" : "Protect From Player Lightning",

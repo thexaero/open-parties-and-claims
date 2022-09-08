@@ -61,6 +61,7 @@ public class PlayerConfig
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS;
+	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
 	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE;
@@ -183,6 +184,11 @@ public class PlayerConfig
 				.setId("playerConfig.claims.protection.entitiesFromExplosions")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against all explosions not directly activated by the chunk owner.")
+				.build(allOptions).applyToForgeSpec(builder);
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId("playerConfig.claims.protection.entitiesFromFire")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against fire.")
 				.build(allOptions).applyToForgeSpec(builder);
 		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.chorusFruitTeleport")
