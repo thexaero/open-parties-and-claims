@@ -57,6 +57,7 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 		return clientEvents;
 	}
 
+	@Override
 	public CommonEventsFabric getCommonEvents() {
 		return commonEvents;
 	}

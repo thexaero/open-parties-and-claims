@@ -44,7 +44,6 @@ public class LoadCommonForge<L extends LoadCommon> {
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		loader.loadCommon();
 
-		modMain.getCommonEventsForge().registerPriorityEvents();
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
 				() -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY,
 						(remoteVersion, isFromServer) -> isFromServer));

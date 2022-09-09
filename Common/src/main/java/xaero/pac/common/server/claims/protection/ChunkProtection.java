@@ -330,7 +330,7 @@ public class ChunkProtection
 		return false;
 	}
 	
-	public boolean onEntityInteract(IServerData<CM,P> serverData, Entity entity, Entity target, InteractionHand hand, boolean direct, boolean attack) {
+	public boolean onEntityInteract(IServerData<CM,P> serverData, Entity entity, Entity target, InteractionHand hand, boolean direct, boolean attack, boolean posSpecific) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
@@ -343,10 +343,12 @@ public class ChunkProtection
 				boolean emptyHand = stack.getItem() == Items.AIR;
 				if(isEntityException(target, config, emptyHand, attack))
 					return false;
-				entity.sendSystemMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF);
-				if(!attack && !emptyHand){
-					Component message = hand == InteractionHand.MAIN_HAND ? ENTITY_TRY_EMPTY_MAIN : ENTITY_TRY_EMPTY_OFF;
-					entity.sendSystemMessage(message);
+				if(!posSpecific) {//avoiding double messages
+					entity.sendSystemMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF);
+					if (!attack && !emptyHand) {
+						Component message = hand == InteractionHand.MAIN_HAND ? ENTITY_TRY_EMPTY_MAIN : ENTITY_TRY_EMPTY_OFF;
+						entity.sendSystemMessage(message);
+					}
 				}
 			}
 			//OpenPartiesAndClaims.LOGGER.info("stopped {} interacting with {}", entity, target);
