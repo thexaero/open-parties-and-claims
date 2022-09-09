@@ -21,9 +21,11 @@ package xaero.pac.common.server.core;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -39,6 +41,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -56,6 +59,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.core.accessor.ICreateArmInteractionPoint;
 import xaero.pac.common.server.parties.party.IServerParty;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
@@ -85,7 +89,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(world.getServer());
 		if(serverData == null)
 			return true;
-		boolean shouldProtect = serverData.getChunkProtection().onEntityInteract(serverData, source, target, InteractionHand.MAIN_HAND, false, true);
+		boolean shouldProtect = serverData.getChunkProtection().onEntityInteract(serverData, source, target, InteractionHand.MAIN_HAND, false, true, false);
 		return !shouldProtect;
 	}
 
@@ -234,5 +238,29 @@ public class ServerCore {
 		BlockPos pos = tileEntity.getBlockPos().relative(direction, 2);
 		return isCreateDeployerBlockInteractionAllowed(tileEntity.getLevel(), tileEntity.getBlockPos(), pos);
 	}
+
+	private static InteractionHand ENTITY_INTERACTION_HAND;
+
+	public static boolean canInteract(ServerGamePacketListenerImpl packetListener, ServerboundInteractPacket packet){
+		ENTITY_INTERACTION_HAND = null;
+		packet.dispatch(new ServerboundInteractPacket.Handler() {
+			@Override
+			public void onInteraction(@Nonnull InteractionHand interactionHand) {}
+			@Override
+			public void onInteraction(@Nonnull InteractionHand interactionHand, @Nonnull Vec3 vec3) {
+				ENTITY_INTERACTION_HAND = interactionHand;
+			}
+			@Override
+			public void onAttack() {}
+		});
+		if(ENTITY_INTERACTION_HAND == null)//not specific interaction
+			return true;
+		ServerPlayer player = packetListener.player;
+		ServerLevel level = player.getLevel();
+		final Entity entity = packet.getTarget(level);
+		return !OpenPartiesAndClaims.INSTANCE.getCommonEvents().onInteractEntitySpecific(player, entity, ENTITY_INTERACTION_HAND);
+	}
+
+
 
 }

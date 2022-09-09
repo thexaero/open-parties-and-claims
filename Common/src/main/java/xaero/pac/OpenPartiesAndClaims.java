@@ -40,6 +40,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.config.IForgeConfigHelper;
+import xaero.pac.common.event.CommonEvents;
 import xaero.pac.common.mods.ModSupport;
 import xaero.pac.common.packet.IPacketHandler;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
@@ -50,7 +51,7 @@ import xaero.pac.common.server.CrashHandler;
 /**
  * For internal use only.
  */
-public class OpenPartiesAndClaims {
+public abstract class OpenPartiesAndClaims {
 
 	public static final String MOD_ID = "openpartiesandclaims";
 
@@ -117,4 +118,7 @@ public class OpenPartiesAndClaims {
 	public ModSupport getModSupport() {
 		return modSupport;
 	}
+
+	public abstract CommonEvents getCommonEvents();
+
 }

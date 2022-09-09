@@ -39,6 +39,7 @@
         "MixinRandomStrollGoal",
         "MixinRavager",
         "MixinRemoveBlockGoal",
+        "MixinServerGamePacketListenerImpl",
         "MixinServerLevel",
         "MixinServerPlayer",
         "MixinSilverfishMergeWithStoneGoal",

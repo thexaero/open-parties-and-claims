@@ -48,7 +48,8 @@ public class OpenPartiesAndClaimsForge extends OpenPartiesAndClaims {
 		this.commonEventsForge = commonEventsForge;
 	}
 
-	public CommonEventsForge getCommonEventsForge() {
+	@Override
+	public CommonEventsForge getCommonEvents() {
 		return commonEventsForge;
 	}
 
