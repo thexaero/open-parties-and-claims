@@ -19,7 +19,6 @@
 package xaero.pac.common.event;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -51,28 +50,14 @@ public class CommonEventsForge extends CommonEvents {
 		super(modMain);
 	}
 
-	public void registerPriorityEvents(){
-		//trying to handle these events before other mods
-		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.LeftClickBlock>addListener(EventPriority.HIGHEST, this::onLeftClickBlock);
-		MinecraftForge.EVENT_BUS.<BlockEvent.BreakEvent>addListener(EventPriority.HIGHEST, this::onDestroyBlock);
-		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.RightClickBlock>addListener(EventPriority.HIGHEST, this::onRightClickBlock);
-		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.RightClickItem>addListener(EventPriority.HIGHEST, this::onItemRightClick);
-		MinecraftForge.EVENT_BUS.<LivingAttackEvent>addListener(EventPriority.HIGHEST, this::onLivingHurt);
-		MinecraftForge.EVENT_BUS.<AttackEntityEvent>addListener(EventPriority.HIGHEST, this::onEntityAttack);
-		MinecraftForge.EVENT_BUS.<PlayerInteractEvent.EntityInteract>addListener(EventPriority.HIGHEST, this::onEntityInteract);
-		MinecraftForge.EVENT_BUS.<EntityTeleportEvent.ChorusFruit>addListener(EventPriority.HIGHEST, this::onChorusFruit);
-		MinecraftForge.EVENT_BUS.<BlockEvent.FarmlandTrampleEvent>addListener(EventPriority.HIGHEST, this::onCropTrample);
-		MinecraftForge.EVENT_BUS.<FillBucketEvent>addListener(EventPriority.HIGHEST, this::onBucketUse);
-		MinecraftForge.EVENT_BUS.<BlockEvent.EntityPlaceEvent>addListener(EventPriority.HIGHEST, this::onEntityPlaceBlock);
-		MinecraftForge.EVENT_BUS.<BlockEvent.EntityMultiPlaceEvent>addListener(EventPriority.HIGHEST, this::onEntityMultiPlaceBlock);
-	}
-
-	private void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event) {
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event) {
 		if(super.onEntityPlaceBlock(event.getWorld(), event.getPos(), event.getEntity()))
 			event.setCanceled(true);
 	}
 
-	private void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
 		if(super.onEntityMultiPlaceBlock(event.getWorld(), event.getReplacedBlockSnapshots().stream().map(BlockSnapshot::getPos), event.getEntity()))
 			event.setCanceled(true);
 	}
@@ -132,21 +117,25 @@ public class CommonEventsForge extends CommonEvents {
 		super.onRegisterCommands(event.getDispatcher(), event.getEnvironment());
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
 		if(super.onLeftClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer()))
 			event.setCanceled(true);
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onDestroyBlock(BlockEvent.BreakEvent event) {
 		if(super.onDestroyBlock(event.getWorld(), event.getPos(), event.getPlayer()))
 			event.setCanceled(true);
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
 		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec()))
 			event.setCanceled(true);
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
 		if(super.onItemRightClick(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getItemStack()))
 			event.setCanceled(true);
@@ -158,16 +147,19 @@ public class CommonEventsForge extends CommonEvents {
 			event.setResult(Result.DENY);
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onLivingHurt(LivingAttackEvent event) {
 		if(super.onLivingHurt(event.getSource(), event.getEntity()))
 			event.setCanceled(true);
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityAttack(AttackEntityEvent event) {
 		if(super.onEntityAttack(event.getPlayer(), event.getTarget()))
 			event.setCanceled(true);
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
 		if(super.onEntityInteract(event.getEntity(), event.getTarget(), event.getHand()))
 			event.setCanceled(true);
@@ -178,6 +170,7 @@ public class CommonEventsForge extends CommonEvents {
 		super.onExplosionDetonate(event.getWorld(), event.getExplosion(), event.getAffectedEntities(), event.getAffectedBlocks());
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onChorusFruit(EntityTeleportEvent.ChorusFruit event){
 		if(super.onChorusFruit(event.getEntity(), event.getTarget()))
 			event.setCanceled(true);
@@ -194,11 +187,13 @@ public class CommonEventsForge extends CommonEvents {
 			super.onPermissionsChanged(serverPlayer);
 	}
 
-	private void onCropTrample(BlockEvent.FarmlandTrampleEvent event) {
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onCropTrample(BlockEvent.FarmlandTrampleEvent event) {
 		if(super.onCropTrample(event.getEntity(), event.getPos()))
 			event.setCanceled(true);
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onBucketUse(FillBucketEvent event){
 		if(super.onBucketUse(event.getEntity(), event.getTarget(), event.getEmptyBucket()))
 			event.setCanceled(true);
