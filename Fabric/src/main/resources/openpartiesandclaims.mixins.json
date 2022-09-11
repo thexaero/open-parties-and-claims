@@ -29,6 +29,7 @@
         "MixinMinecraftServer",
         "MixinMob",
         "MixinMoveToBlockGoal",
+        "MixinPersistentEntitySectionManagerCallback",
         "MixinPiglin",
         "MixinPistonBaseBlock",
         "MixinPlayer",
@@ -46,6 +47,7 @@
         "MixinSilverfishWakeUpFriendsGoal",
         "MixinSmallFireball",
         "MixinSnowGolem",
+        "MixinTransientEntitySectionManagerCallback",
         "MixinTurtleEggBlock",
         "MixinWitherBoss",
         "MixinWitherSkull"
