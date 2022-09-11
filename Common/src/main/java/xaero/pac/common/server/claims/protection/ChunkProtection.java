@@ -247,6 +247,8 @@ public class ChunkProtection
 	public boolean onRightClickBlock(IServerData<CM,P> serverData, Player player, InteractionHand hand, BlockPos pos, BlockHitResult blockHit) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
+		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
+			return false;
 		ItemStack stack = player.getItemInHand(hand);
 		boolean emptyHand = stack.getItem() == Items.AIR;
 		if(emptyHand)
@@ -338,6 +340,8 @@ public class ChunkProtection
 	
 	public boolean onEntityInteract(IServerData<CM,P> serverData, Entity entity, Entity target, InteractionHand hand, boolean direct, boolean attack, boolean posSpecific) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
 		IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 		ChunkPos chunkPos = new ChunkPos(new BlockPos(target.getBlockX(), target.getBlockY(), target.getBlockZ()));
