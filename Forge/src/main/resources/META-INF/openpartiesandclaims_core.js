@@ -775,6 +775,25 @@ function initializeCoreMod() {
                 insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
                 return methodNode
             }
+        },
+        'xaero_pac_servergamepacketlistenerimpl_handleinteract': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.Entity',
+                'methodName': 'm_6673_',
+                'methodDesc' : '(Lnet/minecraft/world/damagesource/DamageSource;)Z'
+            },
+            'transformer' : function(methodNode){
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'replaceEntityIsInvulnerable', '(ZLnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/entity/Entity;)Z'))
+                    return insnToInsert
+                }
+                insertBeforeReturn2(methodNode, insnToInsertGetter)
+                return methodNode
+            }
         }
 	}
 }

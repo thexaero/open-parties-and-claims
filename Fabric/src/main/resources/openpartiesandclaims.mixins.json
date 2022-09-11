@@ -16,6 +16,7 @@
         "MixinEnderDragon",
         "MixinEndermanLeaveBlockGoal",
         "MixinEndermanTakeBlockGoal",
+        "MixinEntity",
         "MixinEvokerWololoSpellGoal",
         "MixinExplosion",
         "MixinFarmBlock",
