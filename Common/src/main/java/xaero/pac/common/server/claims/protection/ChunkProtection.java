@@ -25,6 +25,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +37,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
@@ -112,6 +114,8 @@ public class ChunkProtection
 	private final Set<EntityType<?>> forcedEntityClaimBarrierList;
 	private final Set<Item> additionalBannedItems;
 	private final Set<Item> itemUseProtectionExceptions;
+
+	private boolean ignoreChunkEnter = false;
 	
 	private ChunkProtection(CM claimsManager, IPartyManager<P> partyManager, ChunkProtectionEntityHelper entityHelper, Set<EntityType<?>> friendlyEntityList, Set<EntityType<?>> hostileEntityList, Set<Block> optionalEmptyHandExceptionBlocks, Set<Block> optionalBreakExceptionBlocks, Set<Block> forcedEmptyHandExceptionBlocks, Set<Block> forcedBreakExceptionBlocks, Set<EntityType<?>> optionalEmptyHandExceptionEntities, Set<EntityType<?>> optionalKillExceptionEntities, Set<EntityType<?>> forcedEmptyHandExceptionEntities, Set<EntityType<?>> forcedKillExceptionEntities, Set<EntityType<?>> optionalEntityClaimBarrierList, Set<EntityType<?>> forcedEntityClaimBarrierList, Set<Item> additionalBannedItems, Set<Item> itemUseProtectionExceptions) {
 		this.claimsManager = claimsManager;
@@ -379,12 +383,14 @@ public class ChunkProtection
 				isProtectable(target);
 	}
 
-	public boolean onEntityEnterChunk(IServerData<CM, P> serverData, Entity entity, SectionPos newSection, SectionPos oldSection) {
+	public void onEntityEnterChunk(IServerData<CM, P> serverData, Entity entity, double goodX, double goodZ, SectionPos newSection, SectionPos oldSection) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
-			return false;
+			return;
+		if(ignoreChunkEnter)
+			return;
 		IPlayerChunkClaim toClaim = claimsManager.get(entity.getLevel().dimension().location(), newSection.x(), newSection.z());
 		if(toClaim == null)//wilderness is fine
-			return false;
+			return;
 		IPlayerChunkClaim fromClaim = claimsManager.get(entity.getLevel().dimension().location(), oldSection.x(), oldSection.z());
 		boolean isForcedEntity = forcedEntityClaimBarrierList.contains(entity.getType());
 		if(isForcedEntity && hitsAnotherClaim(serverData, fromClaim, toClaim, null)
@@ -392,9 +398,23 @@ public class ChunkProtection
 					hitsAnotherClaim(serverData, fromClaim, toClaim, PlayerConfig.PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER)){
 			IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
 			IPlayerConfig config = getClaimConfig(playerConfigs, toClaim);
-			return !hasChunkAccess(config, entity);
+			Entity accessCheckEntity = entity;
+			if(entity instanceof Projectile projectile && projectile.getOwner() != null)
+				accessCheckEntity = projectile.getOwner();
+			if(!hasChunkAccess(config, accessCheckEntity)){
+				ignoreChunkEnter = true;
+				int goodXInt = (int)Math.floor(goodX);
+				int goodZInt = (int)Math.floor(goodZ);
+				//not using goodX/Z directly because it's not good enough for some things like the Supplementaries slingshot
+				double fixedX = goodXInt + 0.5;
+				double fixedZ = goodZInt + 0.5;
+				entity.removeVehicle();
+				entity.moveTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players
+				if(entity instanceof ServerPlayer player)
+					player.connection.send(new ClientboundPlayerPositionPacket(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot(), Collections.emptySet(), -1, true));
+				ignoreChunkEnter = false;
+			}
 		}
-		return false;
 	}
 	
 	public void onExplosionDetonate(IServerData<CM,P> serverData, ServerLevel world, Explosion explosion, List<Entity> affectedEntities, List<BlockPos> affectedBlocks) {

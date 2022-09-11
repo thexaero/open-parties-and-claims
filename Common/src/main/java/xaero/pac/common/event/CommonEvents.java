@@ -23,7 +23,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,6 +32,7 @@ import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
@@ -63,15 +63,16 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class CommonEvents {
 
 	protected final OpenPartiesAndClaims modMain;
 	protected MinecraftServer lastServerStarted;
-
-	private boolean ignoreChunkEnter = false;
 	
 	public CommonEvents(OpenPartiesAndClaims modMain) {
 		this.modMain = modMain;
@@ -280,24 +281,23 @@ public class CommonEvents {
 			if(entity instanceof LightningBolt bolt) {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
 				serverData.getChunkProtection().onLightningBolt(serverData, bolt);
+			} else if(entity instanceof Projectile projectile && projectile.getOwner() != null){
+				SectionPos oldSection = SectionPos.of(projectile.getOwner().blockPosition());
+				SectionPos newSection = SectionPos.of(entity.blockPosition());
+				if(oldSection.x() != newSection.x() || oldSection.z() != newSection.z()) {
+					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
+							serverData = ServerData.from(entity.getServer());
+					serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, projectile.getOwner().getX(), projectile.getOwner().getZ(), newSection, oldSection);
+				}
 			}
 		}
 	}
 
 	protected void onEntityEnteringSection(Entity entity, SectionPos oldSection, SectionPos newSection, boolean chunkChanged){
-		if(ignoreChunkEnter)
-			return;
 		if(entity.getServer() != null && chunkChanged && (entity.xOld != 0 || entity.yOld != 0 || entity.zOld != 0)) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
 					serverData = ServerData.from(entity.getServer());
-			if(serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, newSection, oldSection)) {
-				ignoreChunkEnter = true;
-				entity.removeVehicle();
-				entity.moveTo(entity.xOld, entity.getY(), entity.zOld, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players
-				if(entity instanceof ServerPlayer player)
-					player.connection.send(new ClientboundPlayerPositionPacket(entity.xOld, entity.getY(), entity.zOld, entity.getYRot(), entity.getXRot(), Collections.emptySet(), -1, true));
-				ignoreChunkEnter = false;
-			}
+			serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, entity.xOld, entity.zOld, newSection, oldSection);
 		}
 	}
 
