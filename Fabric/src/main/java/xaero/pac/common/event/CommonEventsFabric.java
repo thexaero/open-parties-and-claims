@@ -33,6 +33,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -195,6 +196,13 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public void onEntityJoinWorld(Entity entity, Level world){
 		super.onEntityJoinWorld(entity, world);
+	}
+
+	public void onEntityEnteringSection(Entity entity, long oldSectionKey, long newSectionKey){
+		SectionPos oldSection = SectionPos.of(oldSectionKey);
+		SectionPos newSection = SectionPos.of(newSectionKey);
+		boolean chunkChanged = oldSection.x() != newSection.x() || oldSection.z() != newSection.z();
+		super.onEntityEnteringSection(entity, oldSection, newSection, chunkChanged);
 	}
 
 	public void onPermissionsChanged(PlayerList playerList, GameProfile profile) {

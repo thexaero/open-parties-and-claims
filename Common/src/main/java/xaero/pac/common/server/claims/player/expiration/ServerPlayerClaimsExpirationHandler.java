@@ -48,7 +48,7 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 	private final ServerClaimsManager claimsManager;
 	private final MinecraftServer server;
 
-	protected ServerPlayerClaimsExpirationHandler(ServerClaimsManager claimsManager, ServerInfo serverInfo, MinecraftServer server, ServerPlayerClaimInfoManager manager, long liveCheckInterval, int expirationTime,
+	protected ServerPlayerClaimsExpirationHandler(ServerClaimsManager claimsManager, ServerInfo serverInfo, MinecraftServer server, ServerPlayerClaimInfoManager manager, long liveCheckInterval, long expirationTime,
 			String checkingMessage) {
 		super(serverInfo, manager, liveCheckInterval, expirationTime, checkingMessage);
 		this.claimsManager = claimsManager;
@@ -95,8 +95,8 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 			setClaimsManager(null);
 			setServer(null);
 			setCheckingMessage("Checking for expired player claims...");
-			setExpirationTime(ServerConfig.CONFIG.playerClaimsExpirationTime.get() * 60 * 60 * 1000);
-			setLiveCheckInterval(ServerConfig.CONFIG.playerClaimsExpirationCheckInterval.get() * 60000);
+			setExpirationTime((long) ServerConfig.CONFIG.playerClaimsExpirationTime.get() * 60 * 60 * 1000);
+			setLiveCheckInterval((long) ServerConfig.CONFIG.playerClaimsExpirationCheckInterval.get() * 60000);
 			return this;
 		}
 		

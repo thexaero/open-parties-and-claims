@@ -40,6 +40,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityProtectionExceptionList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
@@ -239,17 +240,23 @@ public class ServerConfig {
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), () -> Lists.newArrayList("minecraft:villager", "force$minecraft:minecart"), s -> s instanceof String);
 
+		entityClaimBarrierList = builder
+			.comment("Entities that can be prevented from entering the claim. Just an entity ID in the list, e.g. \"minecraft:falling_block\" prevents the entity from entering if the optional entity barrier is enabled in the claim owner's config. An entity ID with a prefix \"force$\" prevents the entity from entering without asking the claim owner's config.")
+			.translation("gui.xaero_pac_config_entity_claim_barrier_list")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entityClaimBarrierList"), () -> Lists.newArrayList("force$minecraft:falling_block", "force$supplementaries:slingshot_projectile"), s -> s instanceof String);
+
 		additionalBannedItemsList = builder
-				.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. For example [\"minecraft:trident\", \"minecraft:shield\"]")
-				.translation("gui.xaero_pac_config_banned_item_list")
-				.worldRestart()
-				.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. For example [\"minecraft:trident\", \"minecraft:shield\"]")
+			.translation("gui.xaero_pac_config_banned_item_list")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList("supplementaries:slingshot"), s -> s instanceof String);
 
 		itemUseProtectionExceptionList = builder
-				.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\"]")
-				.translation("gui.xaero_pac_config_item_protection_exception")
-				.worldRestart()
-				.defineListAllowEmpty(Lists.newArrayList("itemUseProtectionExceptionList"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\"]")
+			.translation("gui.xaero_pac_config_item_protection_exception")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("itemUseProtectionExceptionList"), () -> Lists.newArrayList(), s -> s instanceof String);
 
 		builder.pop();
 

@@ -24,6 +24,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
@@ -179,6 +180,11 @@ public class CommonEventsForge extends CommonEvents {
 	@SubscribeEvent
 	public void onEntityJoinWorld(EntityJoinLevelEvent event){
 		super.onEntityJoinWorld(event.getEntity(), event.getLevel());
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onEntityEnteringSection(EntityEvent.EnteringSection event){
+		super.onEntityEnteringSection(event.getEntity(), event.getOldPos(), event.getNewPos(), event.didChunkChange());
 	}
 
 	@SubscribeEvent

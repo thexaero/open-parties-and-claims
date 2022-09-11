@@ -66,7 +66,7 @@ public final class ServerTickHandler {
 		
 		long time = System.currentTimeMillis();
 		if(time - lastUseTimeUpdate > 600000/*10 minutes*/) {
-			serverData.getServerInfo().setUseTime(serverData.getServerInfo().getUseTime() + time - lastUseTimeUpdate);
+			serverData.getServerInfo().setUseTime(serverData.getServerInfo().getUseTime() + (time - lastUseTimeUpdate));
 			lastUseTimeUpdate = time;
 			serverData.getServerInfoIO().save();
 		}

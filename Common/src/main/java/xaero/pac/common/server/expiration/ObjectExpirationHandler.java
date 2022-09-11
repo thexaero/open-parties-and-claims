@@ -48,11 +48,11 @@ public abstract class ObjectExpirationHandler
 	private long lastCheck;
 	private Iterator<T> checkingIterator;
 	private final String checkingMessage;
-	private final int expirationTime;
+	private final long expirationTime;
 	private boolean expiringAnElement;
 
 	protected ObjectExpirationHandler(ServerInfo serverInfo, M manager,
-			long liveCheckInterval, int expirationTime, String checkingMessage) {
+			long liveCheckInterval, long expirationTime, String checkingMessage) {
 		super();
 		this.serverInfo = serverInfo;
 		this.manager = manager;
@@ -94,7 +94,7 @@ public abstract class ObjectExpirationHandler
 	public boolean onServerTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 		if(checkingIterator != null)
 			return true;
-		if(serverInfo.getUseTime() > lastCheck + liveCheckInterval) {
+		if(serverInfo.getUseTime() - lastCheck > liveCheckInterval) {
 			handle(serverData);
 			return true;
 		}
@@ -105,7 +105,7 @@ public abstract class ObjectExpirationHandler
 		return serverInfo;
 	}
 
-	public int getExpirationTime() {
+	public long getExpirationTime() {
 		return expirationTime;
 	}
 
@@ -121,7 +121,7 @@ public abstract class ObjectExpirationHandler
 		protected M manager;
 		protected long liveCheckInterval;
 		protected String checkingMessage;
-		protected int expirationTime;
+		protected long expirationTime;
 		
 		@SuppressWarnings("unchecked")
 		protected Builder() {
@@ -157,7 +157,7 @@ public abstract class ObjectExpirationHandler
 			return self;
 		}
 		
-		public B setExpirationTime(int expirationTime) {
+		public B setExpirationTime(long expirationTime) {
 			this.expirationTime = expirationTime;
 			return self;
 		}
