@@ -281,7 +281,7 @@ public class CommonEvents {
 			if(entity instanceof LightningBolt bolt) {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(entity.getServer());
 				serverData.getChunkProtection().onLightningBolt(serverData, bolt);
-			} else if(entity instanceof Projectile projectile && projectile.getOwner() != null){
+			} else if(entity instanceof Projectile projectile && projectile.getOwner() != null && projectile.getOwner().getLevel() == entity.getLevel()){
 				SectionPos oldSection = SectionPos.of(projectile.getOwner().blockPosition());
 				SectionPos newSection = SectionPos.of(entity.blockPosition());
 				if(oldSection.x() != newSection.x() || oldSection.z() != newSection.z()) {
