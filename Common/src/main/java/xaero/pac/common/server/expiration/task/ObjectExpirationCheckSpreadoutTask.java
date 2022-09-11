@@ -67,7 +67,7 @@ public class ObjectExpirationCheckSpreadoutTask<T extends ObjectManagerIOExpirab
 	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ObjectExpirationCheckSpreadoutTask<?> holder, int perTick) {
 		int stepsLeft = perTick;
 		ServerInfo serverInfo = expirationHandler.getServerInfo();
-		int expirationTime = expirationHandler.getExpirationTime();
+		long expirationTime = expirationHandler.getExpirationTime();
 		while(!expirationHandler.isExpiringAnElement() && iterator.hasNext() && stepsLeft > 0){
 			T object = iterator.next();
 
@@ -79,7 +79,7 @@ public class ObjectExpirationCheckSpreadoutTask<T extends ObjectManagerIOExpirab
 			if(hasBeenActive) {
 				object.confirmActivity(serverInfo);
 				object.setDirty(true);
-			} else if(serverInfo.getUseTime() > object.getLastConfirmedActivity() + expirationTime) {
+			} else if(serverInfo.getUseTime() - object.getLastConfirmedActivity() > expirationTime) {
 				OpenPartiesAndClaims.LOGGER.debug("Object expired and is being removed: " + object);
 				expirationHandler.onElementExpirationBegin();
 				if(expirationHandler.expire(object, serverData)) {

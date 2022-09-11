@@ -43,7 +43,7 @@ public final class PartyExpirationHandler extends ObjectExpirationHandler<Server
 	
 	private final MinecraftServer server;
 
-	protected PartyExpirationHandler(ServerInfo serverInfo, MinecraftServer server, PartyManager manager, long liveCheckInterval, int expirationTime,
+	protected PartyExpirationHandler(ServerInfo serverInfo, MinecraftServer server, PartyManager manager, long liveCheckInterval, long expirationTime,
 			String checkingMessage) {
 		super(serverInfo, manager, liveCheckInterval, expirationTime, checkingMessage);
 		this.server = server;
@@ -85,8 +85,8 @@ public final class PartyExpirationHandler extends ObjectExpirationHandler<Server
 			super.setDefault();
 			setServer(null);
 			setCheckingMessage("Checking for expired parties...");
-			setExpirationTime(ServerConfig.CONFIG.partyExpirationTime.get() * 60 * 60 * 1000);
-			setLiveCheckInterval(ServerConfig.CONFIG.partyExpirationCheckInterval.get() * 60000);
+			setExpirationTime((long) ServerConfig.CONFIG.partyExpirationTime.get() * 60 * 60 * 1000);
+			setLiveCheckInterval((long) ServerConfig.CONFIG.partyExpirationCheckInterval.get() * 60000);
 			return this;
 		}
 
