@@ -41,6 +41,8 @@ public class LazyPacketManager {
 	private PlayerLazyPacketManager getForPlayer(UUID id) {
 		PlayerLazyPacketManager result = storage.get(id);
 		if(result == null) {
+			if(server.getPlayerList().getPlayer(id) == null)//TODO remove this stuff once fixed
+				throw new RuntimeException("(Open Parties and Claims) Please report this! " + id);
 			result = PlayerLazyPacketManager.Builder.begin().setServer(server).setPlayerId(id).build();
 			int insertionIndex = Collections.binarySearch(orderHolder, id);
 			if(insertionIndex < 0)
@@ -80,8 +82,18 @@ public class LazyPacketManager {
 				UUID id = orderHolder.get(currentIndex);
 				currentIndex++;
 				PlayerLazyPacketManager playerPackets = getForPlayer(id);
-				if(playerPackets.hasNext(overCapacity, this))
+				if(playerPackets.hasNext(overCapacity, this)) {
+					if(server.getPlayerList().getPlayer(id) == null) {//TODO remove this stuff once fixed
+						boolean suchPlayerExists = false;
+						for(ServerPlayer player : server.getPlayerList().getPlayers())
+							if(player.getUUID().equals(id)) {
+								suchPlayerExists = true;
+								break;
+							}
+						throw new RuntimeException("(Open Parties and Claims) Please report this! " + id + " " + suchPlayerExists);
+					}
 					return playerPackets;
+				}
 			}
 		}
 		return null;
