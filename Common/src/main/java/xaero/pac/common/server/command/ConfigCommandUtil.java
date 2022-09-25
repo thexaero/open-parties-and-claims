@@ -26,13 +26,12 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
@@ -69,11 +68,11 @@ public class ConfigCommandUtil {
 			Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "player");
 			if(profiles.size() > 1) {
 				if(tooManyTargetMessage != null)
-					context.getSource().sendFailure(new TranslatableComponent(tooManyTargetMessage));
+					context.getSource().sendFailure(Component.translatable(tooManyTargetMessage));
 				return null;
 			} else if(profiles.isEmpty()) {
 				if(invalidTargetMessage != null)
-					context.getSource().sendFailure(new TranslatableComponent(invalidTargetMessage));
+					context.getSource().sendFailure(Component.translatable(invalidTargetMessage));
 				return null;
 			}
 			inputPlayer = profiles.iterator().next();

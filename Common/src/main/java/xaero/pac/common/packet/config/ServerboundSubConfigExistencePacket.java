@@ -22,8 +22,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -143,9 +143,9 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				if (reachedLimit || config.createSubConfig(t.subId) == null || !isServer && !Objects.equals(ownerId, serverPlayer.getUUID())) {
 					playerConfigs.getSynchronizer().confirmSubConfigCreationSync(serverPlayer, config);//need to notify the client even when unsuccessful
 					if(reachedLimit) {
-						MutableComponent limitReachedMessage = new TranslatableComponent("gui.xaero_pac_config_create_sub_id_limit_reached", config.getSubConfigLimit());
+						MutableComponent limitReachedMessage = Component.translatable("gui.xaero_pac_config_create_sub_id_limit_reached", config.getSubConfigLimit());
 						limitReachedMessage.withStyle(s -> s.withColor(ChatFormatting.RED));
-						serverPlayer.sendMessage(limitReachedMessage, serverPlayer.getUUID());
+						serverPlayer.sendSystemMessage(limitReachedMessage);
 					}
 				}
 			} else {
@@ -157,7 +157,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 					return;
 				IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(config.getPlayerId());
 				if(playerInfo.hasReplacementTasks()){
-					serverPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_delete_sub_already_replacing"), serverPlayer.getUUID());
+					serverPlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_delete_sub_already_replacing"));
 					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
 					return;
 				}

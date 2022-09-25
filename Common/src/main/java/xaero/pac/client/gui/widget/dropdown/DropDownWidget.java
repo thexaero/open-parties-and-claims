@@ -28,8 +28,6 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import org.lwjgl.glfw.GLFW;
 
@@ -291,10 +289,10 @@ public final class DropDownWidget extends AbstractWidget
 
 	@Override
 	protected MutableComponent createNarrationMessage() {
-		MutableComponent narrationMessage = new TextComponent("");
+		MutableComponent narrationMessage = Component.literal("");
 		narrationMessage.getSiblings().add(getMessage());
-		narrationMessage.getSiblings().add(new TextComponent(". "));
-		narrationMessage.getSiblings().add(new TranslatableComponent("gui.xaero_dropdown_selected_narration", realOptions[selected]));
+		narrationMessage.getSiblings().add(Component.literal(". "));
+		narrationMessage.getSiblings().add(Component.translatable("gui.xaero_dropdown_selected_narration", realOptions[selected]));
 		return narrationMessage;
 	}
 

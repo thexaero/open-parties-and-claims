@@ -27,7 +27,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -120,15 +120,15 @@ public class ClaimsSubClaimUseCommand {
 
 			IPlayerConfig result = rootConfig.getSubConfig(inputSubId);
 			if(result == null){
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_claims_sub_use_not_exist"));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_claims_sub_use_not_exist"));
 				return 0;
 			}
 			IPlayerConfigAPI.SetResult setResult = playerConfig.tryToSet(option, inputSubId);
 			if(setResult == IPlayerConfigAPI.SetResult.INVALID) {
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_claims_sub_use_invalid_value"));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_claims_sub_use_invalid_value"));
 				return 0;
 			}
-			sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_sub_use", inputSubId), sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_claims_sub_use", inputSubId));
 			return 1;
 		};
 	}

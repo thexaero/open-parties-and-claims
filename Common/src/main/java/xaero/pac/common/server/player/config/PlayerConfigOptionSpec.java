@@ -20,8 +20,6 @@ package xaero.pac.common.server.player.config;
 
 import com.electronwill.nightconfig.core.utils.StringUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
@@ -40,9 +38,9 @@ import java.util.function.Predicate;
 
 public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerConfigOptionSpecAPI<T> {
 
-	public static final TranslatableComponent INHERITED_TEXT = new TranslatableComponent("gui.xaero_pac_config_option_sub_inherited");
-	public static final TranslatableComponent ON_TEXT = new TranslatableComponent("gui.xaero_pac_ui_on");
-	public static final TranslatableComponent OFF_TEXT = new TranslatableComponent("gui.xaero_pac_ui_off");
+	public static final Component INHERITED_TEXT = Component.translatable("gui.xaero_pac_config_option_sub_inherited");
+	public static final Component ON_TEXT = Component.translatable("gui.xaero_pac_ui_on");
+	public static final Component OFF_TEXT = Component.translatable("gui.xaero_pac_ui_off");
 	
 	protected final String id;
 	private final List<String> path;
@@ -94,9 +92,9 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 	private Component applyValueQuotesIfNeeded(Object value, Component valueString){
 		Component result = valueString;
 		if(value instanceof String) {
-			result = new TextComponent("\"");
+			result = Component.literal("\"");
 			result.getSiblings().add(valueString);
-			result.getSiblings().add(new TextComponent("\""));
+			result.getSiblings().add(Component.literal("\""));
 		}
 		return result;
 	}
@@ -337,7 +335,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 				if(type == Boolean.class)
 					setCommandOutputWriter(o -> (Boolean)o ? ON_TEXT : OFF_TEXT);
 				else
-					setCommandOutputWriter(o -> new TextComponent(o.toString()));
+					setCommandOutputWriter(o -> Component.literal(o.toString()));
 			}
 			if(translation == null)
 				setTranslation("gui.xaero_pac_player_config_" + id);

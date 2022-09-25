@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.player.task;
 
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -147,11 +147,11 @@ public final class PlayerSubClaimDeletionSpreadoutTask extends PlayerClaimReplac
 							if(Objects.equals(playerData.getLastOtherConfigRequest(), removedSub.getPlayerId()))
 								serverData.getPlayerConfigs().getSynchronizer().syncSubExistence(onlinePlayer, removedSub, false);//notify the "other player" config
 						}
-						onlinePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()), onlinePlayer.getUUID());
+						onlinePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()));
 					}
 				} else {
 					if (onlinePlayer != null)
-						onlinePlayer.sendMessage(resultType.getMessage(), onlinePlayer.getUUID());
+						onlinePlayer.sendSystemMessage(resultType.getMessage());
 				}
 			}
 		}

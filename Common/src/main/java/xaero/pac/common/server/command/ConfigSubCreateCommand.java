@@ -26,7 +26,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -108,15 +108,15 @@ public class ConfigSubCreateCommand {
 			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 
 			if(playerConfig.getSubCount() >= playerConfig.getSubConfigLimit()){
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_create_sub_id_limit_reached", playerConfig.getSubConfigLimit()));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_create_sub_id_limit_reached", playerConfig.getSubConfigLimit()));
 				return 0;
 			}
 			PlayerSubConfig<?> result = playerConfig.createSubConfig(inputSubId);
 			if(result == null){
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH));
+				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH));
 				return 0;
 			}
-			sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_create_sub"), sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_create_sub"));
 			return 1;
 		};
 	}

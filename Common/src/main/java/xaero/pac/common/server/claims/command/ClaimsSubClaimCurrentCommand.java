@@ -26,8 +26,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -111,7 +110,7 @@ public class ClaimsSubClaimCurrentCommand {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
 			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;
-			sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_sub_current", playerConfig.getEffective(option)), sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_claims_sub_current", playerConfig.getEffective(option)));
 			return 1;
 		};
 	}

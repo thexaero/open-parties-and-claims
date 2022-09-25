@@ -19,7 +19,6 @@
 package xaero.pac.common.server.player.config;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
@@ -46,7 +45,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 		@Override
 		public Builder setDefault() {
 			super.setDefault();
-			setCommandOutputWriter(o -> new TextComponent(Integer.toUnsignedString(o, 16).toUpperCase()));
+			setCommandOutputWriter(o -> Component.literal(Integer.toUnsignedString(o, 16).toUpperCase()));
 			return self;
 		}
 		

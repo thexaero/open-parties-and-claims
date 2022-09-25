@@ -24,7 +24,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.Vec3i;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -53,9 +53,9 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 	@Override
 	public AbstractWidget screenInit(int x, int y, WidgetListScreen screen, List<EditBox> tickableBoxes) {
 		prevButton = (Button) super.screenInit(x, y, screen, tickableBoxes);
-		screen.addRenderableWidget(defaultButton = new Button(x + w - 20, y, 20, 20, new TextComponent("-"), this::onDefaultButton));
+		screen.addRenderableWidget(defaultButton = new Button(x + w - 20, y, 20, 20, Component.literal("-"), this::onDefaultButton));
 		updateDefaultButton();
-		screen.addRenderableWidget(nextButton = new Button(x + w - 40, y, 20, 20, new TextComponent(">"), this::onNextButton));
+		screen.addRenderableWidget(nextButton = new Button(x + w - 40, y, 20, 20, Component.literal(">"), this::onNextButton));
 		return prevButton;
 	}
 
@@ -152,7 +152,7 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		@Override
 		protected PickerWidgetListElement<T> buildInternal() {
 			BiFunction<PickerWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) ->
-					new Button(xy.getX(), xy.getY(), 20, 20, new TextComponent("<"), el::onPrevButton);
+					new Button(xy.getX(), xy.getY(), 20, 20, Component.literal("<"), el::onPrevButton);
 			return new PickerWidgetListElement<>(w, h, mutable, widgetSupplier, tooltip, startValue, startIndex, options, defaultValue, valueChangeConsumer);
 		}
 		
