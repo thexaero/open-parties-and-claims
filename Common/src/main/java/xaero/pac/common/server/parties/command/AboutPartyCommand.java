@@ -49,7 +49,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -117,7 +117,7 @@ public class AboutPartyCommand {
 			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_parties_current_party").withStyle(s -> s.withColor(ChatFormatting.GOLD)));
 			String partyName = playerParty.getDefaultName();
 			IPlayerConfig ownerConfig = serverData.getPlayerConfigs().getLoadedConfig(playerParty.getOwner().getUUID());
-			String partyCustomName = ownerConfig.getEffective(PlayerConfig.PARTY_NAME);
+			String partyCustomName = ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 			String tooltipPrefix = !partyCustomName.isEmpty() ? partyName + "\n" : "";
 			if(!partyCustomName.isEmpty())
 				partyName = partyCustomName;
@@ -148,7 +148,7 @@ public class AboutPartyCommand {
 					if(!partyAlliesComponent.getSiblings().isEmpty())
 						partyAlliesComponent.getSiblings().add(Component.literal(", "));
 					IPlayerConfig allyOwnerConfig = serverData.getPlayerConfigs().getLoadedConfig(allyParty.getOwner().getUUID());
-					String configuredAllyName = allyOwnerConfig.getEffective(PlayerConfig.PARTY_NAME);
+					String configuredAllyName = allyOwnerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 					String allyDefaultName = allyParty.getDefaultName();
 					String allyTooltipPrefix = !configuredAllyName.isEmpty() ? allyDefaultName + "\n" : "";
 					partyAlliesComponent.getSiblings().add(Component.literal(configuredAllyName.isEmpty() ? allyDefaultName : configuredAllyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(allyTooltipPrefix + allyParty.getId().toString())))));

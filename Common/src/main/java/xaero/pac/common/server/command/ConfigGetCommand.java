@@ -46,19 +46,25 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
+
+import static xaero.pac.common.server.command.ConfigCommandUtil.*;
 
 public class ConfigGetCommand {
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		SuggestionProvider<CommandSourceStack> optionSuggestor = (context, builder) -> {
-			return SharedSuggestionProvider.suggest(new ArrayList<>(PlayerConfig.OPTIONS.values()).stream().map(r -> r.getId()), builder);
+			return SharedSuggestionProvider.suggest(new ArrayList<>(PlayerConfigOptions.OPTIONS.values()).stream().map(r -> r.getId()), builder);
 		};
+		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
+		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
 			
-		Command<CommandSourceStack> regularExecutor = getExecutor(ConfigType.PLAYER);
+		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
 		
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal("get")
@@ -66,6 +72,18 @@ public class ConfigGetCommand {
 				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
 				.executes(regularExecutor))));
+		dispatcher.register(command);
+
+		//sub version of this ^
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
+				.then(Commands.literal("sub")
+				.then(Commands.literal("get")
+				.requires(sourceStack -> true)
+				.then(Commands.argument("sub-id", StringArgumentType.word())
+				.suggests(playerSubConfigSuggestionProvider)
+				.then(Commands.argument("key", StringArgumentType.word())
+				.suggests(optionSuggestor)
+				.executes(regularExecutor))))));
 		dispatcher.register(command);
 		
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("for")
@@ -75,98 +93,113 @@ public class ConfigGetCommand {
 				.suggests(optionSuggestor)
 				.executes(regularExecutor))))));
 		dispatcher.register(command);
+
+		//sub version of this ^
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("for")
+				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.then(Commands.argument("player", GameProfileArgument.gameProfile())
+				.then(Commands.literal("sub")
+				.then(Commands.literal("get")
+				.then(Commands.argument("sub-id", StringArgumentType.word())
+				.suggests(playerSubConfigSuggestionProvider)
+				.then(Commands.argument("key", StringArgumentType.word())
+				.suggests(optionSuggestor)
+				.executes(regularExecutor))))))));
+		dispatcher.register(command);
 		
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.literal("get").then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
-				.executes(getExecutor(ConfigType.DEFAULT_PLAYER))))));
+				.executes(getExecutor(PlayerConfigType.DEFAULT_PLAYER))))));
 		dispatcher.register(command);
-		
+
+		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER);
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal("get").then(Commands.argument("key", StringArgumentType.word())
+				.then(Commands.literal("get")
+				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
-				.executes(getExecutor(ConfigType.SERVER)))));
+				.executes(serverExecutor))));
+		dispatcher.register(command);
+
+		//sub version of this ^
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
+				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.then(Commands.literal("sub")
+				.then(Commands.literal("get")
+				.then(Commands.argument("sub-id", StringArgumentType.word())
+				.suggests(serverSubConfigSuggestionProvider)
+				.then(Commands.argument("key", StringArgumentType.word())
+				.suggests(optionSuggestor)
+				.executes(serverExecutor))))));
 		dispatcher.register(command);
 		
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal("get").then(Commands.argument("key", StringArgumentType.word())
+				.then(Commands.literal("get")
+				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
-				.executes(getExecutor(ConfigType.EXPIRED)))));
+				.executes(getExecutor(PlayerConfigType.EXPIRED)))));
 		dispatcher.register(command);
 		
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal("get").then(Commands.argument("key", StringArgumentType.word())
+				.then(Commands.literal("get")
+				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
-				.executes(getExecutor(ConfigType.WILDERNESS)))));
+				.executes(getExecutor(PlayerConfigType.WILDERNESS)))));
 		dispatcher.register(command);
 	}
 	
-	private static Command<CommandSourceStack> getExecutor(ConfigType type){
+	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
 			
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
-			PlayerConfigOptionSpec<?> option = PlayerConfig.OPTIONS.get(targetConfigOptionId);
+			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) PlayerConfigOptions.OPTIONS.get(targetConfigOptionId);
 			if(option == null) {
 				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_get_invalid_key"));
 				return 0;
 			}
 			
 			GameProfile inputPlayer = null;
-			UUID configPlayerUUID = type == ConfigType.SERVER ? PlayerConfig.SERVER_CLAIM_UUID : null;
-			if(type == ConfigType.PLAYER) {
-				try {
-					Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "player");
-					if(profiles.size() > 1) {
-						context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_get_too_many_targets"));
-						return 0;
-					} else if(profiles.isEmpty()) {
-						context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_get_invalid_target"));
-						return 0;
-					}
-					inputPlayer = profiles.iterator().next();
-				} catch(IllegalArgumentException iae) {
-					inputPlayer = sourcePlayer.getGameProfile();
-				}
+			UUID configPlayerUUID = type == PlayerConfigType.SERVER ? PlayerConfig.SERVER_CLAIM_UUID : null;
+			if(type == PlayerConfigType.PLAYER) {
+				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
+						"gui.xaero_pac_config_option_get_too_many_targets",
+						"gui.xaero_pac_config_option_get_invalid_target");
+				if(inputPlayer == null)
+					return 0;
 				configPlayerUUID = inputPlayer.getId();
 			}
-			
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
-			IPlayerConfig playerConfig = 
-					type == ConfigType.DEFAULT_PLAYER ? 
+			IPlayerConfig playerConfig =
+					type == PlayerConfigType.DEFAULT_PLAYER ?
 							serverData.getPlayerConfigs().getDefaultConfig() : 
-								type == ConfigType.EXPIRED ? 
+								type == PlayerConfigType.EXPIRED ?
 										serverData.getPlayerConfigs().getExpiredClaimConfig() : 
 											serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
-			Object optionValue = playerConfig.getFromEffectiveConfig(option);
-			if(type == ConfigType.PLAYER)
-				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, option.getCommandOutputWriterCast().apply(optionValue)));
+			IPlayerConfig effectivePlayerConfig = getEffectiveConfig(context, playerConfig);
+			if(effectivePlayerConfig == null) {
+				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_get_invalid_sub"));
+				return 0;
+			}
+			if(!effectivePlayerConfig.isOptionAllowed(option)){
+				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_get_not_allowed"));
+				return 0;
+			}
+			Object optionValue = effectivePlayerConfig.getFromEffectiveConfig(option);
+			if(effectivePlayerConfig instanceof PlayerSubConfig<?> subConfig && subConfig.isInherited(option))
+				optionValue = null;
+			Component optionValueName = option.getValueDisplayName(optionValue);
+			if(type == PlayerConfigType.PLAYER)
+				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName));
 			else
-				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, option.getCommandOutputWriterCast().apply(optionValue)));
+				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName));
 			return 1;
 		};
-	}
-	
-	static enum ConfigType {
-		PLAYER("player claim config"),
-		DEFAULT_PLAYER("default player config"),
-		SERVER("server claim config"),
-		EXPIRED("expired claims config"),
-		WILDERNESS("wilderness claim config");
-		
-		private final String name;
-		ConfigType(String name) {
-			this.name = name;
-		}
-		
-		public String getName() {
-			return name;
-		}
 	}
 
 }

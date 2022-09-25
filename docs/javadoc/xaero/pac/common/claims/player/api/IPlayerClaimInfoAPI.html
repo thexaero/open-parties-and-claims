@@ -100,12 +100,24 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimsColor()" class="member-name-link">getClaimsColor</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the currently configured color of the player's claims.</div>
+<div class="block">Gets the currently configured main color of the player's claims.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimsColor(int)" class="member-name-link">getClaimsColor</a><wbr>(int&nbsp;subConfigIndex)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the currently configured color of the player's sub-claim with
+ a specified index.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimsName()" class="member-name-link">getClaimsName</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the currently configured main custom name of the player's claims.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimsName()" class="member-name-link">getClaimsName</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimsName(int)" class="member-name-link">getClaimsName</a><wbr>(int&nbsp;subConfigIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the currently configured custom name of the player's claims.</div>
+<div class="block">Gets the currently configured custom name of the player's sub-claim
+ with a specified index.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerClaimInfoAPI.html" title="type parameter in IPlayerClaimInfoAPI">DC</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimension(net.minecraft.resources.ResourceLocation)" class="member-name-link">getDimension</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;id)</code></div>
@@ -200,12 +212,12 @@ loadScripts(document, 'script');</script>
 <h3>getClaimsName</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getClaimsName</span>()</div>
-<div class="block">Gets the currently configured custom name of the player's claims.
+<div class="block">Gets the currently configured main custom name of the player's claims.
  <p>
  Can be empty if a custom name is not configured or null if the name hasn't been synced to the client yet.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the custom name of claimed chunks</dd>
+<dd>the main custom name of claimed chunks</dd>
 </dl>
 </section>
 </li>
@@ -213,12 +225,48 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getClaimsColor()">
 <h3>getClaimsColor</h3>
 <div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getClaimsColor</span>()</div>
-<div class="block">Gets the currently configured color of the player's claims.
+<div class="block">Gets the currently configured main color of the player's claims.
  <p>
  Is 0 on the client side before it is synced from the server.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the claim color int</dd>
+<dd>the main claim color int</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getClaimsName(int)">
+<h3>getClaimsName</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getClaimsName</span><wbr><span class="parameters">(int&nbsp;subConfigIndex)</span></div>
+<div class="block">Gets the currently configured custom name of the player's sub-claim
+ with a specified index.
+ <p>
+ Returns null if no such sub-claim exists or the name is inherited from
+ the main config.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>subConfigIndex</code> - the index of the sub-config used by the sub-claim</dd>
+<dt>Returns:</dt>
+<dd>the custom name of the sub-claim</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getClaimsColor(int)">
+<h3>getClaimsColor</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a></span>&nbsp;<span class="element-name">getClaimsColor</span><wbr><span class="parameters">(int&nbsp;subConfigIndex)</span></div>
+<div class="block">Gets the currently configured color of the player's sub-claim with
+ a specified index.
+ <p>
+ Returns null if no such sub-claim exists or the color is inherited from
+ the main config.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>subConfigIndex</code> - the index of the sub-config used by the sub-claim</dd>
+<dt>Returns:</dt>
+<dd>the sub-claim color Integer, null if no such sub-claim exists</dd>
 </dl>
 </section>
 </li>

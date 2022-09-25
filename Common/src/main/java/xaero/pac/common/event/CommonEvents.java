@@ -88,7 +88,6 @@ public class CommonEvents {
 	public void onServerStarting() {
 		modMain.startupCrashHandler.check();
 		ServerData.from(lastServerStarted).getServerLoadCallback().onLoad();
-
 //		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
 //			serverData = ServerData.from(lastServerStarted);
 //		IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>

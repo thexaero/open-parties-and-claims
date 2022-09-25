@@ -79,10 +79,10 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 	@Override
 	public boolean expire(ServerPlayerClaimInfo playerInfo, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 		PlayerChunkClaim toReplaceWith = ServerConfig.CONFIG.playerClaimsConvertExpiredClaims.get() ?
-			new PlayerChunkClaim(PlayerConfig.EXPIRED_CLAIM_UUID, false, 0) : null;
+			new PlayerChunkClaim(PlayerConfig.EXPIRED_CLAIM_UUID, -1, false, 0) : null;
 		SpreadoutTaskCallback spreadoutTaskCallback = new SpreadoutTaskCallback(playerInfo);
-		return !claimsManager.getClaimReplaceTaskHandler().addTask(
-				new PlayerClaimReplaceSpreadoutTask(spreadoutTaskCallback, playerInfo.getPlayerId(), s -> true, toReplaceWith), serverData);
+		playerInfo.addReplacementTask(new PlayerClaimReplaceSpreadoutTask(spreadoutTaskCallback, playerInfo.getPlayerId(), s -> true, toReplaceWith), serverData);
+		return false;
 	}
 
 	public static final class Builder extends ObjectExpirationHandler.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, Builder>{
@@ -140,7 +140,7 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 		}
 
 		@Override
-		public void onFinish(PlayerClaimReplaceSpreadoutTask.ResultType resultType, int tickCount, int totalCount) {
+		public void onFinish(PlayerClaimReplaceSpreadoutTask.ResultType resultType, int tickCount, int totalCount, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 			if(resultType.isSuccess())
 				manager.tryRemove(playerInfo.getPlayerId());
 			onElementExpirationDone();

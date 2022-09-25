@@ -24,7 +24,8 @@ import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.config.sync.PlayerConfigSynchronizer;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,7 @@ public final class PlayerConfigManager
 	P extends IServerParty<?, ?>,
 	CM extends IServerClaimsManager<?, ?, ?>
 >
-implements IPlayerConfigManager<P>, ObjectManagerIOManager<PlayerConfig<P>, PlayerConfigManager<P, CM>> {
+implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerConfigManager<P, CM>> {
 
 	private final MinecraftServer server;
 	private boolean loaded;
@@ -51,6 +52,7 @@ implements IPlayerConfigManager<P>, ObjectManagerIOManager<PlayerConfig<P>, Play
 	private final PlayerConfigSynchronizer synchronizer;
 	private CM claimsManager;
 	private final IPartyManager<P> partyManager;
+	private PlayerConfigIO<P, CM> io;
 
 	private PlayerConfigManager(MinecraftServer server, ForceLoadTicketManager forceLoadTicketManager,
 			Map<UUID, PlayerConfig<P>> configs, Set<PlayerConfig<P>> configsToSave, PlayerConfigSynchronizer synchronizer, 
@@ -86,7 +88,7 @@ implements IPlayerConfigManager<P>, ObjectManagerIOManager<PlayerConfig<P>, Play
 		if(Objects.equals(id, PlayerConfig.EXPIRED_CLAIM_UUID))
 			return expiredClaimConfig;
 		return configs.computeIfAbsent(id, 
-			i -> new PlayerConfig<>(PlayerConfigType.PLAYER, i, this, new HashMap<>())
+			i -> PlayerConfig.FinalBuilder.<P>begin().setPlayerId(i).setManager(this).build()
 		);
 	}
 	
@@ -169,7 +171,22 @@ implements IPlayerConfigManager<P>, ObjectManagerIOManager<PlayerConfig<P>, Play
 	public Stream<PlayerConfig<P>> getAllStream() {
 		return configs.values().stream();
 	}
-	
+
+	public void onSubConfigRemoved(PlayerSubConfig<P> subConfig) {
+		configsToSave.remove(subConfig);
+		io.delete(subConfig);
+	}
+
+	public void setIO(PlayerConfigIO<P, CM> io) {
+		if(this.io != null)
+			throw new RuntimeException(new IllegalAccessException());
+		this.io = io;
+	}
+
+	public boolean isLoaded() {
+		return loaded;
+	}
+
 	public static final class Builder
 	<
 		P extends IServerParty<?, ?>,

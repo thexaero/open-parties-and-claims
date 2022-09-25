@@ -19,294 +19,74 @@
 package xaero.pac.common.server.player.config;
 
 import com.electronwill.nightconfig.core.Config;
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.common.ForgeConfigSpec;
+import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.ConfigUtil;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.io.ObjectManagerIOObject;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.*;
 
 public class PlayerConfig
 <
 	P extends IServerParty<?, ?>
 > implements IPlayerConfig, ObjectManagerIOObject {
 
+	private static final Map<String, IPlayerConfigOptionSpecAPI<?>> OPTIONS = PlayerConfigOptions.OPTIONS;//here so that SPEC gets a value
+	public static ForgeConfigSpec SPEC;
+
+	public final static int MAX_SUB_ID_LENGTH = 16;
+	public final static String SUB_ID_REGEX = "[a-zA-Z\\d\\-_]+";
 	public final static UUID SERVER_CLAIM_UUID = new UUID(0, 0);
 	public final static UUID EXPIRED_CLAIM_UUID = new UUID(0, 1);
-	
-	public static final Map<String, PlayerConfigOptionSpec<?>> OPTIONS;
-	public static final PlayerConfigOptionSpec<String> PARTY_NAME;
-	public static final PlayerConfigOptionSpec<Integer> BONUS_CHUNK_CLAIMS;
-	public static final PlayerConfigOptionSpec<Integer> BONUS_CHUNK_FORCELOADS;
-	public static final PlayerConfigOptionSpec<String> CLAIMS_NAME;
-	public static final PlayerConfigOptionSpec<Integer> CLAIMS_COLOR;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_PARTY;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING;
+	public final static String MAIN_SUB_ID = "main";
 
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER;
-	public static final PlayerConfigOptionSpec<Boolean> PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE;
-	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_INTERACTIONS;
-	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_BLOCK_BREAKING;
-	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_ENTITY_INTERACTIONS;
-	public static final PlayerConfigOptionSpec<Boolean> ALLOW_SOME_ENTITY_KILLING;
-
-	public static final PlayerConfigOptionSpec<Boolean> FORCELOAD;
-	public static final PlayerConfigOptionSpec<Boolean> OFFLINE_FORCELOAD;
-
-	public static final PlayerConfigOptionSpec<Boolean> SHARE_LOCATION_WITH_PARTY;
-	public static final PlayerConfigOptionSpec<Boolean> SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES;
-	public static final PlayerConfigOptionSpec<Boolean> RECEIVE_LOCATIONS_FROM_PARTY;
-	public static final PlayerConfigOptionSpec<Boolean> RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES;
-	
-	public static final ForgeConfigSpec SPEC;
-
-	static {
-		Map<String, PlayerConfigOptionSpec<?>> allOptions = new LinkedHashMap<>();
-		
-		ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-		PARTY_NAME = PlayerConfigStringOptionSpec.Builder.begin()
-				.setId("playerConfig.parties.name")
-				.setDefaultValue("")
-				.setValidator(s -> s.matches("^(\\p{L}|[0-9 _'\"!?,\\-&%*\\(\\):])*$"))
-				.setMaxLength(100)
-				.setComment("When not empty, used in some places as the name for the parties that you create.")
-				.build(allOptions).applyToForgeSpec(builder);
-		CLAIMS_NAME = PlayerConfigStringOptionSpec.Builder.begin()
-				.setId("playerConfig.claims.name")
-				.setDefaultValue("")
-				.setValidator(s -> s.matches("^(\\p{L}|[0-9 _'\"!?,\\-&%*\\(\\):])*$"))
-				.setMaxLength(100)
-				.setComment("When not empty, used as the name for your claimed chunks.")
-				.build(allOptions).applyToForgeSpec(builder);
-		BONUS_CHUNK_CLAIMS = PlayerConfigOptionSpec.FinalBuilder.begin(Integer.class)
-				.setId("playerConfig.claims.bonusChunkClaims")
-				.setDefaultValue(0)
-				.setComment("The number of additional chunk claims that you can make on top of the normal limit.")
-				.build(allOptions).applyToForgeSpec(builder);
-		CLAIMS_COLOR = PlayerConfigHexOptionSpec.Builder.begin()
-				.setId("playerConfig.claims.color")
-				.setDefaultValue(0x000000)
-				.setDefaultReplacer((config, value) -> {
-					if(config.getPlayerId() == null || Objects.equals(config.getPlayerId(), SERVER_CLAIM_UUID) || Objects.equals(config.getPlayerId(), EXPIRED_CLAIM_UUID))
-						return 0xAA0000;
-					int playerIdHash = config.getPlayerId().hashCode();
-					int red = (playerIdHash >> 16) & 255;
-					int green = (playerIdHash >> 8) & 255;
-					int blue = playerIdHash & 255;
-					int max = Math.max(Math.max(red, green), blue);
-					if(max > 0) {
-						red = (int) ((float)red / max * 255);
-						green = (int) ((float)green / max * 255);
-						blue = (int) ((float)blue / max * 255);
-					}
-					int autoColor = (red << 16) | (green << 8) | blue;
-					if(autoColor == 0)
-						autoColor = 0xFF000000;
-					return autoColor;
-				})
-				.setComment("Used as the color for your claims. Set to 0 to use the default automatic color.")
-				.build(allOptions).applyToForgeSpec(builder);
-		BONUS_CHUNK_FORCELOADS = PlayerConfigOptionSpec.FinalBuilder.begin(Integer.class)
-				.setId("playerConfig.claims.bonusChunkForceloads")
-				.setDefaultValue(0)
-				.setComment("The number of additional chunk claim forceloads that you can make on top of the normal limit.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protectClaimedChunks")
-				.setDefaultValue(true)
-				.setComment("When enabled, the mod tries to protect your claimed chunks from other players. Workarounds are possible, especially with mods.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.fromParty")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against players from the same party as you.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.fromAllyParties")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against players from parties who are allied by the party that you are in.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.blocksFromExplosions")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the mob griefing option.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.fromMobGriefing")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the protected chunks are also partially protected. Should work for vanilla mob behavior, unless another mod breaks it. Modded mob behavior is unlikely to be included. Feel free to set the vanilla game rule for mob griefing to be safe. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.fromFireSpread")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against fire spread.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.entitiesFromPlayers")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against players who don't have access to the chunks.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.entitiesFromMobs")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.entitiesFromAnonymousAttacks")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against non-player entities without a living owner (e.g. dispenser-fired arrows, falling anvils, redstone-activated TNT).")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.entitiesFromExplosions")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against all explosions not directly activated by the chunk owner.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.entitiesFromFire")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against fire.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.chorusFruitTeleport")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes chorus fruit teleportation prevention for players who don't have access to the chunks.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.playerLightning")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the protected chunks are also partially protected.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.cropTrample")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for players that don't have access to the chunks.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.fluidBarrier")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against fluids (e.g. lava) flowing into the protected chunks from outside. This does not protect wilderness.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.dispenserBarrier")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against dispensers \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.pistonBarrier")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against being affected by pistons outside of the protected chunks. This does not protect wilderness.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.entityBarrier")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against some optional server-configured entities entering the protected chunks from outside. Such a barrier can be used for stopping launched blocks, e.g. anvils. Some entities may also be forced to be stopped by the server config, ignoring this value. This does not protect wilderness.")
-				.build(allOptions).applyToForgeSpec(builder);
-		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.neighborChunksItemUse")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection from \"item use\" for chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
-				.build(allOptions).applyToForgeSpec(builder);
-
-		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.allowSomeBlockInteractions")
-				.setDefaultValue(false)
-				.setComment("When enabled, in addition to some forced exceptions across the server, more block interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like levers, doors etc. You can use the non-ally mode to test it out.")
-				.build(allOptions).applyToForgeSpec(builder);
-		ALLOW_SOME_BLOCK_BREAKING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.allowSomeBlockBreaking")
-				.setDefaultValue(false)
-				.setComment("When enabled, in addition to some forced exceptions across the server, more blocks are allowed to be broken, which are also configured by the server. You can use the non-ally mode to test it out.")
-				.build(allOptions).applyToForgeSpec(builder);
-		ALLOW_SOME_ENTITY_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.allowSomeEntityInteractions")
-				.setDefaultValue(false)
-				.setComment("When enabled, in addition to some forced exceptions across the server, more entity interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like villager trading, minecarts, boats etc. You can use the non-ally mode to test it out.")
-				.build(allOptions).applyToForgeSpec(builder);
-		ALLOW_SOME_ENTITY_KILLING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.protection.allowSomeEntityKilling")
-				.setDefaultValue(false)
-				.setComment("When enabled, in addition to some forced exceptions across the server, more entities are allowed to be attacked and killed, which are also configured by the server. You can use the non-ally mode to test it out.")
-				.build(allOptions).applyToForgeSpec(builder);
-
-		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.forceload.enabled")
-				.setDefaultValue(true)
-				.setComment("When enabled, the chunks you have marked for forceloading are forceloaded.\nIf the forceload limit has changed and you have more chunks marked than the new limit, then some of the chunks won't be forceloaded. Unmark any chunks until you are within the limit to ensure that all marked chunks are forceloaded.")
-				.build(allOptions).applyToForgeSpec(builder);
-		OFFLINE_FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.claims.forceload.offlineForceload")
-				.setDefaultValue(false)
-				.setComment("When enabled, the chunks you have marked for forceloading stay loaded even when you are offline (can significantly affect server performance!).\nIf your forceload limit is affected by your FTB Ranks rank/permissions, then you need to login at least once after a server (re)launch for it to take effect while you are offline.")
-				.build(allOptions).applyToForgeSpec(builder);
-		
-
-		SHARE_LOCATION_WITH_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.parties.shareLocationWithParty")
-				.setDefaultValue(true)
-				.setComment("When enabled, your location in the game is shared with players from the same party as you, which can be used by other mods, e.g. to display party members on a map.")
-				.build(allOptions).applyToForgeSpec(builder);
-		
-		SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.parties.shareLocationWithMutualAllyParties")
-				.setDefaultValue(false)
-				.setComment("When enabled, your location in the game is shared with the mutual ally parties of the party that you are in, which can be used by other mods, e.g. to display party members on a map.")
-				.build(allOptions).applyToForgeSpec(builder);
-		
-
-		RECEIVE_LOCATIONS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.parties.receiveLocationsFromParty")
-				.setDefaultValue(true)
-				.setComment("When enabled, the sharable locations of players from the same party as you are shared with your game client, which can be used by other mods, e.g. to display party members on a map.")
-				.build(allOptions).applyToForgeSpec(builder);
-		
-		RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId("playerConfig.parties.receiveLocationsFromMutualAllyParties")
-				.setDefaultValue(false)
-				.setComment("When enabled, the sharable locations of players from the mutual ally parties of the party that you are in are shared with your game client, which can be used by other mods, e.g. to display allies on a map.")
-				.build(allOptions).applyToForgeSpec(builder);
-		
-		SPEC = builder.build();
-
-		OPTIONS = Collections.unmodifiableMap(allOptions);
-	}
-	
-	private final PlayerConfigManager<P, ?> manager;
+	protected final PlayerConfigManager<P, ?> manager;
 	private final PlayerConfigType type;
 	private final UUID playerId;
-	private Config storage;
+	protected Config storage;
 	private boolean dirty;
-	private final Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues; 
+	private final Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues;
+	private final LinkedChain<PlayerSubConfig<P>> linkedSubConfigs;
+	private final Map<String, PlayerSubConfig<P>> subByID;
+	private final Int2ObjectMap<String> subIndexToID;
+	private int lastCreatedSubIndex;
+	private final SortedValueList<String> subConfigIds;
+	private final List<String> subConfigIdsUnmodifiable;
+	private boolean beingDeleted;
 	
-	public PlayerConfig(PlayerConfigType type, UUID playerId, PlayerConfigManager<P, ?> manager, Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues) {
+	protected PlayerConfig(PlayerConfigType type, UUID playerId, PlayerConfigManager<P, ?> manager, Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues, LinkedChain<PlayerSubConfig<P>> linkedSubConfigs, Map<String, PlayerSubConfig<P>> subByID, Int2ObjectMap<String> subIndexToID, SortedValueList<String> subConfigIds, List<String> subConfigIdsUnmodifiable) {
 		this.type = type;
 		this.playerId = playerId;
 		this.manager = manager;
 		this.automaticDefaultValues = automaticDefaultValues;
+		this.linkedSubConfigs = linkedSubConfigs;
+		this.subByID = subByID;
+		this.subIndexToID = subIndexToID;
+		this.subConfigIds = subConfigIds;
+		this.subConfigIdsUnmodifiable = subConfigIdsUnmodifiable;
 	}
 	
 	public Config getStorage() {
@@ -321,29 +101,49 @@ public class PlayerConfig
 		this.storage = storage;
 	}
 	
-	private <T> void set(PlayerConfigOptionSpec<T> option, T value) {
-		getStorage().set(option.getPath(), value);
+	private <T extends Comparable<T>> void set(PlayerConfigOptionSpec<T> option, T value) {
+		if(value == null)
+			getStorage().remove(option.getPath());
+		else
+			getStorage().set(option.getPath(), value);
 		setDirty(true);
 	}
 
-	private <T> T get(PlayerConfigOptionSpec<T> option) {
-		T value = getStorage().get(option.getPath());
-		return value;
+	private <T extends Comparable<T>> T get(PlayerConfigOptionSpec<T> option) {
+		return getStorage().get(option.getPath());
+	}
+
+	protected <T extends Comparable<T>> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value){
+		return option.getServerSideValidator().test(this, value);
+	}
+
+	protected <T extends Comparable<T>> T getValueForDefaultConfigMatch(T actualEffective, T value){
+		return actualEffective;//the value from the default config
+	}
+
+	@Override
+	public  boolean isOptionAllowed(@Nonnull IPlayerConfigOptionSpecAPI<?> option){
+		return option.getConfigTypeFilter().test(getType());
 	}
 	
 	@Nonnull
 	@Override
-	public <T> SetResult tryToSet(@Nonnull PlayerConfigOptionSpec<T> option, @Nonnull T value) {
-		if(value == null || !option.getValidator().test(value))
+	public <T extends Comparable<T>> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> o, @Nullable T value) {
+		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
+		if(!isOptionAllowed(option))
+			return SetResult.ILLEGAL_OPTION;
+		if(!isValidSetValue(option, value))
 			return SetResult.INVALID;
 		T beforeEffective = getFromEffectiveConfig(option);
 		set(option, value);
-		T actualEffective = getFromEffectiveConfig(option);
-		if(actualEffective != value) {
-			set(option, actualEffective);//to avoid confusion when the option is no longer forced in the future
+		T nowEffective = value;
+		if(isOptionDefaulted(option)){
+			nowEffective = getValueForDefaultConfigMatch(manager.getDefaultConfig().getFromEffectiveConfig(option), value);
+			if (nowEffective != value)
+				set(option, nowEffective);//to avoid confusion when the option is no longer forced in the future
 			return SetResult.DEFAULTED;
 		}
-		if(playerId != null && !Objects.equals(actualEffective, beforeEffective)) {
+		if(playerId != null && !Objects.equals(nowEffective, beforeEffective)) {
 			if(option == BONUS_CHUNK_FORCELOADS || option == BONUS_CHUNK_CLAIMS) {
 				ServerPlayer onlinePlayer = getOnlinePlayer();
 				if(onlinePlayer != null) {
@@ -358,7 +158,7 @@ public class PlayerConfig
 				if(party != null)
 					manager.getPartyManager().getPartySynchronizer().syncToPartyAndAlliersUpdateName(party, (String)value);
 			} else if(option == SHARE_LOCATION_WITH_PARTY || option == SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES || option == RECEIVE_LOCATIONS_FROM_PARTY || option == RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES) {
-				boolean castValue = (boolean)actualEffective;
+				boolean castValue = (Boolean)nowEffective;
 				P party = manager.getPartyManager().getPartyByMember(playerId);
 				if(party != null) {
 					ServerPlayer onlinePlayer = getOnlinePlayer();
@@ -379,9 +179,14 @@ public class PlayerConfig
 					}
 				}
 			} else if(option == CLAIMS_NAME || option == CLAIMS_COLOR)
-				manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersClaimPropertiesUpdate(manager.getClaimsManager().getPlayerInfo(playerId));
+				manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(this);
+			else if(option == USED_SUBCLAIM || option == USED_SERVER_SUBCLAIM) {
+				ServerPlayer onlinePlayer = getOnlinePlayer();
+				if(onlinePlayer != null)
+					manager.getClaimsManager().getClaimsManagerSynchronizer().syncCurrentSubClaim(this, onlinePlayer);
+			}
 		}
-		manager.getSynchronizer().syncToClient(this, option);
+		manager.getSynchronizer().syncOptionToClients(this, option);
 		return SetResult.SUCCESS;
 	}
 	
@@ -390,20 +195,51 @@ public class PlayerConfig
 		return serverPlayers.getPlayer(playerId);
 	}
 
+	public boolean isPlayerConfigurable(IPlayerConfigOptionSpecAPI<?> o){
+		return o == USED_SUBCLAIM || o == USED_SERVER_SUBCLAIM || ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getId());
+	}
+
+	protected boolean isOptionDefaulted(PlayerConfigOptionSpec<?> option){
+		return playerId != null && !Objects.equals(playerId, SERVER_CLAIM_UUID) && !Objects.equals(playerId, EXPIRED_CLAIM_UUID) &&
+				!ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getId()) &&
+				!isPlayerConfigurable(option);//kinda annoying that it iterates over the whole lists but the lists should be small
+	}
+
 	@Nonnull
 	@Override
-	public <T> T getFromEffectiveConfig(@Nonnull PlayerConfigOptionSpec<T> option) {
-		if(playerId != null && !Objects.equals(playerId, SERVER_CLAIM_UUID) && !Objects.equals(playerId, EXPIRED_CLAIM_UUID) && !ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getId()) && !ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(option.getId()))//kinda annoying that it iterates over the whole lists but the lists should be small
-			return manager.getDefaultConfig().get(option);
+	public <T extends Comparable<T>> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
+		if(isOptionDefaulted(option))
+			return manager.getDefaultConfig().getFromEffectiveConfig(option);
+		return get(option);
+	}
+
+	@Override
+	public <T extends Comparable<T>> T getRaw(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
+		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		return get(option);
 	}
 
 	@Nonnull
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getEffective(@Nonnull PlayerConfigOptionSpec<T> option) {
+	public <T extends Comparable<T>> SetResult tryToReset(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+		return tryToSet(option, getDefaultRawValue(option));
+	}
+
+	@Nonnull
+	@Override
+	public <T extends Comparable<T>> T getEffective(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		T value = getFromEffectiveConfig(option);
+		return applyDefaultReplacer(o, value);
+	}
+
+	public <T extends Comparable<T>> T applyDefaultReplacer(IPlayerConfigOptionSpecAPI<T> o, T value){
+		if(value == null)
+			return null;
+		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		if(option.getDefaultReplacer() != null && value.equals(option.getDefaultValue())) {
+			@SuppressWarnings("unchecked")
 			T autoValue = (T) automaticDefaultValues.get(option);
 			if(autoValue == null)
 				automaticDefaultValues.put(option, autoValue = option.getDefaultReplacer().apply(this, value));
@@ -441,6 +277,268 @@ public class PlayerConfig
 	@Override
 	public PlayerConfigType getType() {
 		return type;
+	}
+
+	public static boolean isValidSubId(String id){
+		return !id.isEmpty() && id.length() <= MAX_SUB_ID_LENGTH && id.matches(PlayerConfig.SUB_ID_REGEX);
+	}
+
+	private boolean isFreeSubIndex(int index){
+		return index != -1 && !subIndexToID.containsKey(index);
+	}
+
+	private int getFreeSubConfigIndex(){
+		int result = lastCreatedSubIndex;
+		while(!isFreeSubIndex(++result));
+		return result;
+	}
+
+	@Nullable
+	public PlayerSubConfig<P> createSubConfig(@Nonnull String id){
+		int freeSubIndex = getFreeSubConfigIndex();
+		return createSubConfig(id, freeSubIndex);
+	}
+
+	public PlayerSubConfig<P> createSubConfig(String id, int index){
+		if(subConfigIds.contains(id) || !isFreeSubIndex(index) || !isValidSubId(id))
+			return null;
+		if(index > lastCreatedSubIndex || index < 0 && lastCreatedSubIndex >= 0)
+			lastCreatedSubIndex = index;
+		PlayerSubConfig<P> subConfig = PlayerSubConfig.Builder.<P>begin()
+				.setType(type)
+				.setPlayerId(playerId)
+				.setManager(manager)
+				.setMainConfig(this)
+				.setSubId(id)
+				.setSubIndex(index)
+				.build();
+		subByID.put(id, subConfig);
+		subIndexToID.put(index, id);
+		linkedSubConfigs.add(subConfig);
+		addToSubConfigIds(id);
+		if(manager.isLoaded()) {
+			subConfig.getStorage();//creates the storage here to avoid concur modif exception when saving
+			manager.getSynchronizer().syncSubExistence(null, subConfig, true);
+		}
+		return subConfig;
+	}
+
+	private void addToSubConfigIds(String id){
+		subConfigIds.add(id);
+	}
+
+	private void removeFromSubConfigIds(String id){
+		subConfigIds.remove(id);
+	}
+
+	@Override
+	public PlayerSubConfig<P> removeSubConfig(String id){
+		PlayerSubConfig<P> subConfig = subByID.remove(id);
+		if(subConfig == null)
+			return null;
+		subIndexToID.remove(subConfig.getSubIndex());
+		removeFromSubConfigIds(id);
+		linkedSubConfigs.remove(subConfig);
+		manager.onSubConfigRemoved(subConfig);
+		if(type != PlayerConfigType.SERVER && getEffective(USED_SUBCLAIM).equals(id))
+			tryToReset(USED_SUBCLAIM);
+		manager.getSynchronizer().syncSubExistence(null, subConfig, false);
+		return subConfig;
+	}
+
+	@Override
+	public PlayerSubConfig<P> removeSubConfig(int index){
+		String subId = subIndexToID.get(index);
+		return subId != null ? removeSubConfig(subId) : null;
+	}
+
+	@Nullable
+	@Override
+	public PlayerConfig<P> getSubConfig(@Nonnull String id){
+		if(PlayerConfig.MAIN_SUB_ID.equals(id))
+			return this;
+		return subByID.get(id);
+	}
+
+	@Nonnull
+	@Override
+	public PlayerConfig<P> getEffectiveSubConfig(@Nonnull String id) {
+		PlayerConfig<P> result = getSubConfig(id);
+		return result == null ? this : result;
+	}
+
+	@Nonnull
+	@Override
+	public PlayerConfig<P> getEffectiveSubConfig(int subIndex){
+		if(subIndex == -1)
+			return this;
+		String subId = subIndexToID.get(subIndex);
+		if(subId == null)
+			return this;
+		return getSubConfig(subId);
+	}
+
+	@Override
+	public boolean subConfigExists(@Nonnull String id) {
+		return subByID.containsKey(id);
+	}
+
+	@Override
+	public boolean subConfigExists(int subIndex) {
+		return subIndexToID.containsKey(subIndex);
+	}
+
+	@Nonnull
+	public PlayerConfig<P> getUsedSubConfig(){
+		String usedSubId = getEffective(USED_SUBCLAIM);
+		PlayerConfig<P> result = getSubConfig(usedSubId);
+		return result == null ? this : result;
+	}
+
+	@Nonnull
+	@Override
+	public IPlayerConfig getUsedServerSubConfig() {
+		return manager.getServerClaimConfig().getEffectiveSubConfig(getEffective(USED_SERVER_SUBCLAIM));
+	}
+
+	@Nullable
+	@Override
+	public <T extends Comparable<T>> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+		return option.getDefaultValue();
+	}
+
+	public int getSubCount(){
+		return subByID.size();
+	}
+
+	public Stream<PlayerSubConfig<P>> getSubConfigStream(){
+		return linkedSubConfigs.stream();
+	}
+
+	@Override
+	public Iterator<IPlayerConfig> getSubConfigIterator(){
+		return getSubConfigStream().<IPlayerConfig>map(Function.identity()).iterator();
+	}
+
+	@Nonnull
+	@Override
+	public List<String> getSubConfigIds() {
+		return subConfigIdsUnmodifiable;
+	}
+
+	@Nonnull
+	@Override
+	public Stream<IPlayerConfigAPI> getSubConfigAPIStream() {
+		return getSubConfigStream().map(Function.identity());
+	}
+
+	@Nullable
+	@Override
+	public String getSubId(){
+		return null;
+	}
+
+	public PlayerConfigManager<P, ?> getManager() {
+		return manager;
+	}
+
+	@Override
+	public int getSubIndex(){
+		return -1;
+	}
+
+	@Override
+	public boolean isBeingDeleted() {
+		return beingDeleted;
+	}
+
+	@Override
+	public int getSubConfigLimit() {
+		if(type == PlayerConfigType.SERVER)
+			return Integer.MAX_VALUE;
+		return ServerConfig.CONFIG.playerSubConfigLimit.get();
+	}
+
+	@Override
+	public void setBeingDeleted() {
+		this.beingDeleted = true;
+		manager.getSynchronizer().syncGeneralState(null, this);
+	}
+
+	public static abstract class Builder
+	<
+		P extends IServerParty<?, ?>,
+		B extends Builder<P, B>
+	> {
+
+		protected final B self;
+		protected PlayerConfigManager<P, ?> manager;
+		protected PlayerConfigType type;
+		protected UUID playerId;
+		protected Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues;
+
+		@SuppressWarnings("unchecked")
+		protected Builder(){
+			this.self = (B) this;
+		}
+
+		public B setDefault(){
+			setManager(null);
+			setType(PlayerConfigType.PLAYER);
+			setPlayerId(null);
+			setAutomaticDefaultValues(null);
+			return self;
+		}
+
+		public B setManager(PlayerConfigManager<P, ?> manager) {
+			this.manager = manager;
+			return self;
+		}
+
+		public B setType(PlayerConfigType type) {
+			this.type = type;
+			return self;
+		}
+
+		public B setPlayerId(UUID playerId) {
+			this.playerId = playerId;
+			return self;
+		}
+
+		public B setAutomaticDefaultValues(Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues) {
+			this.automaticDefaultValues = automaticDefaultValues;
+			return self;
+		}
+
+		public PlayerConfig<P> build(){
+			if(type == PlayerConfigType.PLAYER && playerId == null || manager == null)
+				throw new IllegalStateException();
+			if(automaticDefaultValues == null)
+				automaticDefaultValues = new HashMap<>();
+			return buildInternally();
+		}
+
+		protected abstract PlayerConfig<P> buildInternally();
+
+	}
+
+	public static final class FinalBuilder
+	<
+		P extends IServerParty<?, ?>
+	> extends Builder<P, FinalBuilder<P>> {
+
+		@Override
+		protected PlayerConfig<P> buildInternally() {
+			List<String> subConfigIdStorage = Lists.newArrayList(PlayerConfig.MAIN_SUB_ID);
+			SortedValueList<String> subConfigIds = SortedValueList.Builder.<String>begin().setContent(subConfigIdStorage).build();
+			List<String> subConfigIdsUnmodifiable = Collections.unmodifiableList(subConfigIdStorage);
+			return new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
+		}
+
+		public static <P extends IServerParty<?, ?>> FinalBuilder<P> begin(){
+			return new FinalBuilder<P>().setDefault();
+		}
+
 	}
 	
 }

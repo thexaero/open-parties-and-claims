@@ -94,8 +94,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IServerClaimsManagerAPI.html" title="type parameter in IServerClaimsManagerAPI">C</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#claim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,boolean)" class="member-name-link">claim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#claim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,boolean)" class="member-name-link">claim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;id,
+ int&nbsp;subConfigIndex,
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;forceload)</code></div>
@@ -177,8 +178,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Checks whether a dimension is claimable.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="IServerClaimsManagerAPI.html" title="type parameter in IServerClaimsManagerAPI">C</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
  int&nbsp;fromX,
  int&nbsp;fromZ,
  int&nbsp;x,
@@ -188,8 +190,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Tries to claim a chunk by a specified player.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,int,boolean)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
  int&nbsp;fromX,
  int&nbsp;fromZ,
  int&nbsp;left,
@@ -452,25 +455,27 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 </section>
 </li>
 <li>
-<section class="detail" id="claim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,boolean)">
+<section class="detail" id="claim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,boolean)">
 <h3>claim</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="return-type"><a href="IServerClaimsManagerAPI.html" title="type parameter in IServerClaimsManagerAPI">C</a></span>&nbsp;<span class="element-name">claim</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;id,
+ int&nbsp;subConfigIndex,
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;forceload)</span></div>
 <div class="block">Directly replaces the current claim state of a chunk.
  <p>
  It is usually a bad idea to give regular players unfiltered access to this method.
- Use <a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)"><code>tryToClaim(net.minecraft.resources.ResourceLocation, java.util.UUID, int, int, int, int, boolean)</code></a> or <a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)"><code>tryToForceload(net.minecraft.resources.ResourceLocation, java.util.UUID, int, int, int, int, boolean, boolean)</code></a> instead if you want different limitations to be considered,
+ Use <a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)"><code>tryToClaim(net.minecraft.resources.ResourceLocation, java.util.UUID, int, int, int, int, int, boolean)</code></a> or <a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)"><code>tryToForceload(net.minecraft.resources.ResourceLocation, java.util.UUID, int, int, int, int, boolean, boolean)</code></a> instead if you want different limitations to be considered,
  e.g. maximum claim distance, maximum claim number, the chunk being already claimed etc.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
 <dd><code>id</code> - the claim owner UUID, not null</dd>
+<dd><code>subConfigIndex</code> - the sub-config index to be used by the claim</dd>
 <dd><code>x</code> - the X coordinate of the chunk</dd>
 <dd><code>z</code> - the Z coordinate of the chunk</dd>
 <dd><code>forceload</code> - whether the chunk should be marked for forceloading</dd>
@@ -500,13 +505,14 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 </section>
 </li>
 <li>
-<section class="detail" id="tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)">
+<section class="detail" id="tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)">
 <h3>tryToClaim</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="IServerClaimsManagerAPI.html" title="type parameter in IServerClaimsManagerAPI">C</a>&gt;</span>&nbsp;<span class="element-name">tryToClaim</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
  int&nbsp;fromX,
  int&nbsp;fromZ,
  int&nbsp;x,
@@ -522,6 +528,7 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
 <dd><code>playerId</code> - the claiming player UUID, not null</dd>
+<dd><code>subConfigIndex</code> - the sub-config index to be used by the claim</dd>
 <dd><code>fromX</code> - the X coordinate of the claiming player's current chunk position</dd>
 <dd><code>fromZ</code> - the Z coordinate of the claiming player's current chunk position</dd>
 <dd><code>x</code> - the X coordinate of the chunk to claim</dd>
@@ -604,13 +611,14 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 </section>
 </li>
 <li>
-<section class="detail" id="tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean)">
+<section class="detail" id="tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,int,boolean)">
 <h3>tryToClaimArea</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></span>&nbsp;<span class="element-name">tryToClaimArea</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
  int&nbsp;fromX,
  int&nbsp;fromZ,
  int&nbsp;left,
@@ -627,6 +635,7 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunks, not null</dd>
 <dd><code>playerId</code> - the claiming player UUID, not null</dd>
+<dd><code>subConfigIndex</code> - the sub-config index to be used by the claims</dd>
 <dd><code>fromX</code> - the X coordinate of the claiming player's current chunk position</dd>
 <dd><code>fromZ</code> - the Z coordinate of the claiming player's current chunk position</dd>
 <dd><code>left</code> - the lowest X coordinate of the area</dd>

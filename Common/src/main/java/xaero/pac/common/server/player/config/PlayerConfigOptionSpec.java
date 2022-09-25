@@ -19,15 +19,30 @@
 package xaero.pac.common.server.player.config;
 
 import com.electronwill.nightconfig.core.utils.StringUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
+import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
+import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class PlayerConfigOptionSpec<T> {
+public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerConfigOptionSpecAPI<T> {
+
+	public static final TranslatableComponent INHERITED_TEXT = new TranslatableComponent("gui.xaero_pac_config_option_sub_inherited");
+	public static final TranslatableComponent ON_TEXT = new TranslatableComponent("gui.xaero_pac_ui_on");
+	public static final TranslatableComponent OFF_TEXT = new TranslatableComponent("gui.xaero_pac_ui_off");
 	
 	protected final String id;
 	private final List<String> path;
@@ -37,11 +52,16 @@ public class PlayerConfigOptionSpec<T> {
 	private final String translation;
 	protected final Class<T> type;
 	private final Function<String, T> commandInputParser;
-	private final Function<T, String> commandOutputWriter;
-	private final Predicate<T> validator;
+	private final Function<T, Component> commandOutputWriter;
+	private final BiPredicate<PlayerConfig<?>, T> serverSideValidator;
+	private final BiPredicate<PlayerConfigClientStorage, T> clientSideValidator;
+
+	private final BiPredicate<IPlayerConfigAPI, T> serverSideValidatorAPI;
+	private final BiPredicate<IPlayerConfigClientStorageAPI<?>, T> clientSideValidatorAPI;
 	private final String tooltipPrefix;
+	private final Predicate<PlayerConfigType> configTypeFilter;
 	
-	protected PlayerConfigOptionSpec(Class<T> type, String id, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment, String translation, Function<String, T> commandInputParser, Function<T, String> commandOutputWriter, Predicate<T> validator, String tooltipPrefix) {
+	protected PlayerConfigOptionSpec(Class<T> type, String id, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment, String translation, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter) {
 		super();
 		this.type = type;
 		this.id = id;
@@ -52,8 +72,12 @@ public class PlayerConfigOptionSpec<T> {
 		this.translation = translation;
 		this.commandInputParser = commandInputParser;
 		this.commandOutputWriter = commandOutputWriter;
-		this.validator = validator;
+		this.serverSideValidator = serverSideValidator;
+		this.clientSideValidator = clientSideValidator;
+		this.serverSideValidatorAPI = (c,v) -> serverSideValidator.test((PlayerConfig<?>) c, v);
+		this.clientSideValidatorAPI = (c,v) -> clientSideValidator.test((PlayerConfigClientStorage) c, v);
 		this.tooltipPrefix = tooltipPrefix;
+		this.configTypeFilter = configTypeFilter;
 	}
 
 	protected ForgeConfigSpec.Builder buildForgeSpec(ForgeConfigSpec.Builder builder) {
@@ -66,35 +90,81 @@ public class PlayerConfigOptionSpec<T> {
 		buildForgeSpec(builder).define(id, defaultValue);
 		return this;
 	}
-	
+
+	private Component applyValueQuotesIfNeeded(Object value, Component valueString){
+		Component result = valueString;
+		if(value instanceof String) {
+			result = new TextComponent("\"");
+			result.getSiblings().add(valueString);
+			result.getSiblings().add(new TextComponent("\""));
+		}
+		return result;
+	}
+
+	public Component getValueDisplayName(Object value){
+		if(value == null)
+			return PlayerConfigOptionSpec.INHERITED_TEXT;
+		return applyValueQuotesIfNeeded(value, getCommandOutputWriterCast().apply(value));
+	}
+
+	@Nonnull
+	@Override
 	public String getId() {
 		return id;
 	}
 	
+	@Nonnull
+	@Override
 	public List<String> getPath() {
 		return path;
 	}
 	
+	@Nonnull
+	@Override
 	public Class<T> getType() {
 		return type;
 	}
 	
+	@Nonnull
+	@Override
 	public String getTranslation() {
 		return translation;
 	}
 	
+	@Nonnull
+	@Override
 	public String getComment() {
 		return comment;
 	}
-	
+
+	@Nonnull
+	@Override
 	public T getDefaultValue() {
 		return defaultValue;
 	}
-	
-	public Predicate<T> getValidator() {
-		return validator;
+
+	@Nonnull
+	@Override
+	public BiPredicate<IPlayerConfigAPI, T> getServerSideValidator() {
+		return serverSideValidatorAPI;
 	}
-	
+
+	@Nonnull
+	@Override
+	public BiPredicate<IPlayerConfigClientStorageAPI<?>, T> getClientSideValidator() {
+		return clientSideValidatorAPI;
+	}
+
+	public BiPredicate<PlayerConfig<?>, T> getServerSideValidatorInternal() {
+		return serverSideValidator;
+	}
+
+	public BiPredicate<PlayerConfigClientStorage, T> getClientSideValidatorInternal() {
+		return clientSideValidator;
+	}
+
+	@Nonnull
+	@Override
 	public String getTooltipPrefix() {
 		return tooltipPrefix;
 	}
@@ -104,24 +174,34 @@ public class PlayerConfigOptionSpec<T> {
 		return String.format("[%s, %s]", id, type);
 	}
 	
+	@Nonnull
+	@Override
 	public Function<String, T> getCommandInputParser() {
 		return commandInputParser;
 	}
 	
-	public Function<T, String> getCommandOutputWriter() {
+	@Nonnull
+	@Override
+	public Function<T, Component> getCommandOutputWriter() {
 		return commandOutputWriter;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public Function<Object, String> getCommandOutputWriterCast() {
-		return (Function<Object, String>) commandOutputWriter;
+	public Function<Object, Component> getCommandOutputWriterCast() {
+		return (Function<Object, Component>) (Object) commandOutputWriter;
 	}
-	
+
+	@Override
+	@Nonnull
+	public Predicate<PlayerConfigType> getConfigTypeFilter() {
+		return configTypeFilter;
+	}
+
 	public BiFunction<PlayerConfig<?>, T, T> getDefaultReplacer() {
 		return defaultReplacer;
 	}
 	
-	abstract static class Builder<T, B extends Builder<T, B>> {
+	abstract static class Builder<T extends Comparable<T>, B extends Builder<T, B>> {
 		
 		protected final B self;
 		protected final Class<T> type;
@@ -130,9 +210,12 @@ public class PlayerConfigOptionSpec<T> {
 		protected BiFunction<PlayerConfig<?>, T, T> defaultReplacer;
 		protected String comment;
 		protected String translation;
-		private Predicate<T> validator;
+		protected BiPredicate<PlayerConfig<?>, T> serverSideValidator;
+		protected BiPredicate<PlayerConfigClientStorage, T> clientSideValidator;
+		private Predicate<T> valueValidator;
 		protected String tooltipPrefix;
-		protected Function<T, String> commandOutputWriter;
+		protected Function<T, Component> commandOutputWriter;
+		protected Predicate<PlayerConfigType> configTypeFilter;
 		
 		@SuppressWarnings("unchecked")
 		protected Builder(Class<T> valueType){
@@ -146,9 +229,12 @@ public class PlayerConfigOptionSpec<T> {
 			setDefaultReplacer(null);
 			setComment(null);
 			setTranslation(null);
-			setValidator(null);
+			setValueValidator(null);
+			setClientSideValidator(null);
+			setServerSideValidator(null);
 			setTooltipPrefix(null);
-			setCommandOutputWriter(o -> o.toString());
+			setConfigTypeFilter(t -> true);
+			setCommandOutputWriter(null);
 			return self;
 		}
 		
@@ -176,19 +262,34 @@ public class PlayerConfigOptionSpec<T> {
 			this.translation = translation;
 			return self;
 		}
-		
-		public B setValidator(Predicate<T> validator) {
-			this.validator = validator;
+
+		public B setValueValidator(Predicate<T> valueValidator) {
+			this.valueValidator = valueValidator;
 			return self;
 		}
-		
+
+		public B setClientSideValidator(BiPredicate<PlayerConfigClientStorage, T> clientSideValidator) {
+			this.clientSideValidator = clientSideValidator;
+			return self;
+		}
+
+		public B setServerSideValidator(BiPredicate<PlayerConfig<?>, T> serverSideValidator) {
+			this.serverSideValidator = serverSideValidator;
+			return self;
+		}
+
 		public B setTooltipPrefix(String tooltipPrefix) {
 			this.tooltipPrefix = tooltipPrefix;
 			return self;
 		}
 		
-		public B setCommandOutputWriter(Function<T, String> commandOutputWriter) {
+		public B setCommandOutputWriter(Function<T, Component> commandOutputWriter) {
 			this.commandOutputWriter = commandOutputWriter;
+			return self;
+		}
+
+		public B setConfigTypeFilter(Predicate<PlayerConfigType> configTypeFilter) {
+			this.configTypeFilter = configTypeFilter;
 			return self;
 		}
 
@@ -196,7 +297,7 @@ public class PlayerConfigOptionSpec<T> {
 		private Function<String, T> getCommandInputParser() {
 			Function<String, T> commandInputParser = null;
 			if(type == Boolean.class)
-				commandInputParser = s -> (T)(Object)s.equals("true");
+				commandInputParser = s -> (T)(Object)(s.equalsIgnoreCase("true") || s.equalsIgnoreCase("on"));
 			else if(type == Integer.class)
 				commandInputParser = s -> (T)(Object)Integer.parseInt(s);
 			else if(type == Double.class)
@@ -207,22 +308,46 @@ public class PlayerConfigOptionSpec<T> {
 				commandInputParser = s -> (T)s;
 			return commandInputParser;
 		}
-		
-		protected final Predicate<T> getValidator(){
-			if(type == String.class && validator == null)
-				throw new IllegalStateException();
-			return validator == null ? (v -> true) : validator;
+
+		protected Predicate<T> buildValueValidator() {
+			if(valueValidator == null) {
+				if(type == String.class)
+					throw new IllegalStateException();
+				return v -> true;
+			}
+			return valueValidator;
 		}
-		
+
+		public BiPredicate<PlayerConfig<?>, T> buildServerSideValidator() {
+			if(serverSideValidator == null)
+				return (c, v) -> valueValidator.test(v);
+			return serverSideValidator;
+		}
+
+		public BiPredicate<PlayerConfigClientStorage, T> buildClientSideValidator() {
+			if(clientSideValidator == null)
+				return (c, v) -> valueValidator.test(v);
+			return clientSideValidator;
+		}
+
 		public PlayerConfigOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
-			if(id == null || defaultValue == null || comment == null || commandOutputWriter == null)
+			if(id == null || defaultValue == null || comment == null || configTypeFilter == null)
 				throw new IllegalStateException();
+			if(commandOutputWriter == null) {
+				if(type == Boolean.class)
+					setCommandOutputWriter(o -> (Boolean)o ? ON_TEXT : OFF_TEXT);
+				else
+					setCommandOutputWriter(o -> new TextComponent(o.toString()));
+			}
 			if(translation == null)
 				setTranslation("gui.xaero_pac_player_config_" + id);
 			Function<String, T> commandInputParser = getCommandInputParser();
 			if(commandInputParser == null)
 				throw new IllegalStateException();
-			PlayerConfigOptionSpec<T> spec = buildInternally(StringUtils.split(id, '.'), commandInputParser);
+			valueValidator = buildValueValidator();
+			serverSideValidator = buildServerSideValidator();
+			clientSideValidator = buildClientSideValidator();
+			PlayerConfigOptionSpec<T> spec = buildInternally(Collections.unmodifiableList(StringUtils.split(id, '.')), commandInputParser);
 			dest.put(spec.getId(), spec);
 			return spec;
 		}
@@ -231,7 +356,7 @@ public class PlayerConfigOptionSpec<T> {
 		
 	}
 	
-	public static final class FinalBuilder<T> extends Builder<T, FinalBuilder<T>> {
+	public static final class FinalBuilder<T extends Comparable<T>> extends Builder<T, FinalBuilder<T>> {
 		
 		protected FinalBuilder(Class<T> valueType) {
 			super(valueType);
@@ -239,10 +364,10 @@ public class PlayerConfigOptionSpec<T> {
 
 		@Override
 		protected PlayerConfigOptionSpec<T> buildInternally(List<String> path, Function<String, T> commandInputParser){
-			return new PlayerConfigOptionSpec<>(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, getValidator(), tooltipPrefix);
+			return new PlayerConfigOptionSpec<>(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
 		}
 		
-		public static <T> FinalBuilder<T> begin(Class<T> valueType){
+		public static <T extends Comparable<T>> FinalBuilder<T> begin(Class<T> valueType){
 			return new FinalBuilder<T>(valueType).setDefault();
 		}
 		

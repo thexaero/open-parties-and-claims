@@ -30,8 +30,8 @@ import xaero.pac.client.gui.widget.TextWidgetEditBox;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public final class TextWidgetListElement extends SimpleValueWidgetListElement<String, TextWidgetListElement> {
@@ -41,10 +41,10 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	private Button confirmButton;
 	private Button cancelButton;
 	private String confirmedText;
-	private final Consumer<String> valueConfirmResponder;
+	private final BiConsumer<TextWidgetListElement, String> valueConfirmResponder;
 	private final Predicate<String> validator;
 	
-	private TextWidgetListElement(int w, int h, boolean mutable, Component title, BiFunction<TextWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip, Consumer<String> valueConfirmResponder, Predicate<String> validator, String startValue) {
+	private TextWidgetListElement(int w, int h, boolean mutable, Component title, BiFunction<TextWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip, BiConsumer<TextWidgetListElement, String> valueConfirmResponder, Predicate<String> validator, String startValue) {
 		super(startValue, w, h, mutable, widgetSupplier, tooltip);
 		this.confirmedText = startValue;
 		this.title = title;
@@ -86,11 +86,15 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	
 	private void onConfirmButton(Button b) {
 		if(validator.test(draftValue)) {
+			valueConfirmResponder.accept(this, draftValue);
 			confirmedText = draftValue;
-			valueConfirmResponder.accept(confirmedText);
 			confirmButton.active = false;
 			cancelButton.active = false;
 		}
+	}
+
+	public void clearBox(){
+		editBox.setValue("");
 	}
 	
 	private void onCancelButton(Button b) {
@@ -109,7 +113,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	public static final class Builder extends SimpleValueWidgetListElement.Builder<String, TextWidgetListElement, Builder> {
 		
 		private Component title;
-		private Consumer<String> responder;
+		private BiConsumer<TextWidgetListElement, String> responder;
 		private Predicate<String> filter;
 		private Predicate<String> validator;
 		private int boxWidth;
@@ -142,7 +146,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 			return this;
 		}
 		
-		public Builder setResponder(Consumer<String> responder) {
+		public Builder setResponder(BiConsumer<TextWidgetListElement, String> responder) {
 			this.responder = responder;
 			return this;
 		}

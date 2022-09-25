@@ -25,6 +25,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.io.FileIOHelper;
+import xaero.pac.common.server.io.FilePathConfig;
 import xaero.pac.common.server.io.IOThreadWorker;
 import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.serialization.SerializationHandler;
@@ -32,16 +33,19 @@ import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigDeserializationInfo;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigSerializationHandler;
+import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public final class PlayerConfigIO
 <
@@ -50,24 +54,32 @@ public final class PlayerConfigIO
 > extends ObjectManagerIO<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>, PlayerConfigIO<P, CM>> {
 	
 	private final Path configsPath;
+	private final Path configSubConfigPath;
 	private final Path defaultConfigPath;
 	private final Path wildernessConfigPath;
 	private final Path serverClaimConfigPath;
+	private final Path serverClaimConfigOverridesPath;
 	private final Path expiredClaimConfigPath;
+	private final FilePathConfig globalFilePathConfig;
 	
 	private PlayerConfigIO(SerializationHandler<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>> serializationHandler, SerializedDataFileIO<String, PlayerConfigDeserializationInfo> serializedDataFileIO, IOThreadWorker ioThreadWorker,
 			MinecraftServer server, String fileExtension, PlayerConfigManager<P, CM> manager, FileIOHelper fileIOHelper) {
 		super(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
+		configsPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("player-configs");
+		configSubConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("player-configs").resolve("sub-configs");
+
+		globalFilePathConfig = new FilePathConfig(server.getWorldPath(LevelResource.ROOT).resolve("serverconfig"), false);
 		defaultConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-default-player-config.toml");
 		wildernessConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-wilderness-config.toml");
-		serverClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-server-claim-config.toml");
+		String serverClaimConfigName = OpenPartiesAndClaims.MOD_ID + "-server-claim-config";
+		serverClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(serverClaimConfigName + ".toml");
+		serverClaimConfigOverridesPath = configSubConfigPath.resolve(serverClaimConfigName);
 		expiredClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-expired-claim-config.toml");
-		configsPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("player-configs");
 	}
 
 	@Override
-	protected Path getObjectFolderPath() {
-		return configsPath;
+	protected Stream<FilePathConfig> getObjectFolderPaths() {
+		return Stream.of(new FilePathConfig(configsPath, false), new FilePathConfig(configSubConfigPath, true));
 	}
 	
 	@Override
@@ -89,14 +101,24 @@ public final class PlayerConfigIO
 	
 	private void loadGlobalConfig(PlayerConfigType type, Path path, Consumer<PlayerConfig<P>> resultConsumer) {
 		if(Files.exists(path))
-			resultConsumer.accept(loadFile(path));
+			resultConsumer.accept(loadFile(path, globalFilePathConfig));
 		else {
-			PlayerConfig<P> config = new PlayerConfig<>(type, null, manager, new HashMap<>());
+			PlayerConfig<P> config = PlayerConfig.FinalBuilder.<P>begin()
+					.setType(type)
+					.setPlayerId(
+							type == PlayerConfigType.SERVER ?
+								PlayerConfig.SERVER_CLAIM_UUID :
+							type == PlayerConfigType.EXPIRED ?
+								PlayerConfig.EXPIRED_CLAIM_UUID :
+								null
+							)
+					.setManager(manager)
+					.build();
 			CommentedConfig storage = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
 			PlayerConfig.SPEC.correct(storage);
 			config.setStorage(storage);
 			if(path == wildernessConfigPath)
-				config.tryToSet(PlayerConfig.PROTECT_CLAIMED_CHUNKS, false);
+				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
 			
 			resultConsumer.accept(config);
 		}
@@ -113,10 +135,16 @@ public final class PlayerConfigIO
 			saveFile(manager.getWildernessConfig(), wildernessConfigPath);
 		if(manager.getServerClaimConfig().isDirty())
 			saveFile(manager.getServerClaimConfig(), serverClaimConfigPath);
+		saveGlobalConfigSubConfigs(manager.getServerClaimConfig());
 		if(manager.getExpiredClaimConfig().isDirty())
 			saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPath);
 		return super.save();
 		
+	}
+
+	private void saveGlobalConfigSubConfigs(PlayerConfig<P> globalConfig){
+		globalConfig.getSubConfigStream().filter(PlayerConfig::isDirty)
+				.forEach(co -> saveFile(co, getFilePath(co, co.getFileName())));
 	}
 
 	@Override
@@ -125,14 +153,38 @@ public final class PlayerConfigIO
 	}
 
 	@Override
-	protected PlayerConfigDeserializationInfo getObjectId(String fileNameNoExtension, Path file) {
+	protected PlayerConfigDeserializationInfo getObjectId(String fileNameNoExtension, Path file, FilePathConfig filePathConfig) {
 		if(file == defaultConfigPath || file == wildernessConfigPath)
-			return new PlayerConfigDeserializationInfo(null, file == defaultConfigPath ? PlayerConfigType.DEFAULT_PLAYER : PlayerConfigType.WILDERNESS);
+			return new PlayerConfigDeserializationInfo(null, file == defaultConfigPath ? PlayerConfigType.DEFAULT_PLAYER : PlayerConfigType.WILDERNESS, null, -1);
 		if(file == serverClaimConfigPath)
-			return new PlayerConfigDeserializationInfo(PlayerConfig.SERVER_CLAIM_UUID, PlayerConfigType.SERVER);
+			return new PlayerConfigDeserializationInfo(PlayerConfig.SERVER_CLAIM_UUID, PlayerConfigType.SERVER, null, -1);
 		if(file == expiredClaimConfigPath)
-			return new PlayerConfigDeserializationInfo(PlayerConfig.EXPIRED_CLAIM_UUID, PlayerConfigType.EXPIRED);
-		return new PlayerConfigDeserializationInfo(UUID.fromString(fileNameNoExtension), PlayerConfigType.PLAYER);
+			return new PlayerConfigDeserializationInfo(PlayerConfig.EXPIRED_CLAIM_UUID, PlayerConfigType.EXPIRED, null, -1);
+		boolean isSub = filePathConfig.getPath() == configSubConfigPath;
+		if(!isSub)
+			return new PlayerConfigDeserializationInfo(UUID.fromString(fileNameNoExtension), PlayerConfigType.PLAYER, null, -1);
+		UUID playerId = UUID.fromString(file.getParent().getFileName().toString());
+		String[] fileNameArgs = fileNameNoExtension.split("\\$");
+		String subId = fileNameArgs[0];
+		String subIndexString = fileNameArgs.length > 1 ? fileNameArgs[1] : null;
+		int subIndex;
+		try {
+			subIndex = subIndexString == null ? 0 : Integer.parseInt(subIndexString);
+		} catch(NumberFormatException nfe){
+			subIndex = 0;
+		}
+		if(Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID))
+			return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.SERVER, subId, subIndex);
+		return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.PLAYER, subId, subIndex);
+	}
+
+	@Override
+	protected Path getFilePath(PlayerConfig<P> object, String fileName) {
+		if(object instanceof PlayerSubConfig subConfig) {
+			Path folder = configSubConfigPath.resolve(fileName);
+			return folder.resolve(subConfig.getSubId() + "$" + subConfig.getSubIndex() + this.fileExtension);
+		}
+		return configsPath.resolve(fileName + this.fileExtension);
 	}
 
 	@Override
@@ -162,7 +214,9 @@ public final class PlayerConfigIO
 
 		@Override
 		protected PlayerConfigIO<P, CM> buildInternally() {
-			return new PlayerConfigIO<>(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
+			PlayerConfigIO<P, CM> result = new PlayerConfigIO<>(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
+			manager.setIO(result);
+			return result;
 		}
 
 		public static <

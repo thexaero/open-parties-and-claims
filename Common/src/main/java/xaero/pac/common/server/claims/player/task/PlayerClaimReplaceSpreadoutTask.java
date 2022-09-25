@@ -25,7 +25,6 @@ import xaero.pac.common.claims.ClaimLocation;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
@@ -43,12 +42,12 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 
 	private final IPlayerClaimReplaceSpreadoutTaskCallback callback;
 	private final UUID claimOwnerId;
-	private final PlayerChunkClaim with;
+	private final IPlayerChunkClaim with;
 	private final Predicate<IPlayerChunkClaim> matcher;
 	private boolean finished;
 	private int totalCount;
 
-	public PlayerClaimReplaceSpreadoutTask(IPlayerClaimReplaceSpreadoutTaskCallback callback, UUID claimOwnerId, Predicate<IPlayerChunkClaim> matcher, PlayerChunkClaim with) {
+	public PlayerClaimReplaceSpreadoutTask(IPlayerClaimReplaceSpreadoutTaskCallback callback, UUID claimOwnerId, Predicate<IPlayerChunkClaim> matcher, IPlayerChunkClaim with) {
 		this.callback = callback;
 		this.claimOwnerId = claimOwnerId;
 		this.matcher = matcher;
@@ -74,7 +73,7 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 	}
 
 	@Override
-	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, PlayerClaimReplaceSpreadoutTask holder, int perTick) {
+	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, PlayerClaimReplaceSpreadoutTask holder, int perTick, List<PlayerClaimReplaceSpreadoutTask> tasksToAdd) {
 		IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 				claimManager = serverData.getServerClaimsManager();
 
@@ -87,7 +86,7 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 			resultType = ResultType.FAILURE_STATE_MATCHES;
 			finished = true;
 		} else {
-			Iterator<Map.Entry<ResourceLocation, IPlayerDimensionClaims<IPlayerClaimPosList>>> dimensionIterator = playerInfo.getStream().iterator();
+			Iterator<Map.Entry<ResourceLocation, IPlayerDimensionClaims<IPlayerClaimPosList>>> dimensionIterator = playerInfo.getFullStream().iterator();
 			Iterator<IPlayerClaimPosList> claimPosListIterator = null;
 			Iterator<ChunkPos> claimPosIterator = null;
 			List<ClaimLocation> locations = new ArrayList<>(perTick);
@@ -124,11 +123,14 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 			if (with == null)
 				locations.forEach(cl -> claimManager.unclaim(cl.getDimId(), cl.getChunkX(), cl.getChunkZ()));
 			else
-				locations.forEach(cl -> claimManager.claim(cl.getDimId(), with.getPlayerId(), cl.getChunkX(), cl.getChunkZ(), with.isForceloadable()));
+				locations.forEach(cl -> claimManager.claim(cl.getDimId(), with.getPlayerId(), with.getSubConfigIndex(), cl.getChunkX(), cl.getChunkZ(), with.isForceloadable()));
 		}
 		if(finished) {
-			callback.onFinish(resultType, tickCount, totalCount);
+			callback.onFinish(resultType, tickCount, totalCount, serverData);
 			playerInfo.setReplacementInProgress(false);
+			//queueing the next task
+			if(playerInfo.hasReplacementTasks())
+				tasksToAdd.add(playerInfo.removeNextReplacementTask());
 		} else
 			callback.onWork(tickCount);
 	}

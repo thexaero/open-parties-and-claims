@@ -18,18 +18,22 @@
 
 package xaero.pac.common.server.player.data;
 
+import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.parties.party.PartyMemberDynamicInfoSyncable;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimPropertiesSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPropertiesSync;
+import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+
+import java.util.UUID;
 
 public class ServerPlayerData extends ServerPlayerDataAPI {
 	
 	//internal api
-
 
 	private boolean claimsAdminMode;
 	private boolean claimsNonallyMode;
@@ -40,24 +44,33 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private boolean checkedBaseForceloadLimitOnce;
 	private boolean shouldResyncPlayerConfigs;
 	private PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo;
-	private ClaimsManagerPlayerClaimPropertiesSync claimsManagerPlayerClaimPropertiesSync;
+	private ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync;
+	private ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync;
 	private ClaimsManagerPlayerStateSync claimsManagerPlayerStateSync;
 	private ClaimsManagerPlayerRegionSync claimsManagerPlayerRegionSync;
 	private PlayerClaimActionRequestHandler claimActionRequestHandler;
-	
+	private PlayerConfigSyncSpreadoutTask configSyncSpreadoutTask;
+	private long lastSubConfigCreationTick;
+	private ResourceLocation lastClaimUpdateDimension;
+	private IPlayerChunkClaim lastClaimUpdateState;
+	private UUID lastOtherConfigRequest;
+
 	public ServerPlayerData() {
 		super();
 	}
 
 	public void onLogin(ClaimsManagerPlayerRegionSync claimsManagerPlayerSyncHandler,
 						ClaimsManagerPlayerStateSync claimsManagerPlayerStateSyncHandler,
-						ClaimsManagerPlayerClaimPropertiesSync claimsManagerPlayerClaimPropertiesSync,
-						PlayerClaimActionRequestHandler claimActionRequestHandler) {
+						ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync,
+						ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync,
+						PlayerClaimActionRequestHandler claimActionRequestHandler, PlayerConfigSyncSpreadoutTask configSyncSpreadoutTask) {
 		//won't be called for fake players, e.g. turtles from cc
 		this.claimsManagerPlayerRegionSync = claimsManagerPlayerSyncHandler;
 		this.claimsManagerPlayerStateSync = claimsManagerPlayerStateSyncHandler;
-		this.claimsManagerPlayerClaimPropertiesSync = claimsManagerPlayerClaimPropertiesSync;
+		this.claimsManagerPlayerClaimOwnerPropertiesSync = claimsManagerPlayerClaimOwnerPropertiesSync;
+		this.claimsManagerPlayerSubClaimPropertiesSync = claimsManagerPlayerSubClaimPropertiesSync;
 		this.claimActionRequestHandler = claimActionRequestHandler;
+		this.configSyncSpreadoutTask = configSyncSpreadoutTask;
 	}
 
 	@Override
@@ -111,12 +124,20 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return claimsManagerPlayerStateSync;
 	}
 
-	public ClaimsManagerPlayerClaimPropertiesSync getClaimsManagerPlayerClaimPropertiesSync() {
-		return claimsManagerPlayerClaimPropertiesSync;
+	public ClaimsManagerPlayerClaimOwnerPropertiesSync getClaimsManagerPlayerClaimOwnerPropertiesSync() {
+		return claimsManagerPlayerClaimOwnerPropertiesSync;
+	}
+
+	public ClaimsManagerPlayerSubClaimPropertiesSync getClaimsManagerPlayerSubClaimPropertiesSync() {
+		return claimsManagerPlayerSubClaimPropertiesSync;
 	}
 
 	public PlayerClaimActionRequestHandler getClaimActionRequestHandler() {
 		return claimActionRequestHandler;
+	}
+
+	public PlayerConfigSyncSpreadoutTask getConfigSyncSpreadoutTask() {
+		return configSyncSpreadoutTask;
 	}
 
 	public void setLastClaimLimitsSync(int lastBaseClaimLimitSync, int lastBaseForceloadLimitSync) {
@@ -142,6 +163,35 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public boolean shouldResyncPlayerConfigs() {
 		return shouldResyncPlayerConfigs;
+	}
+
+	public long getLastSubConfigCreationTick() {
+		return lastSubConfigCreationTick;
+	}
+
+	public void setLastSubConfigCreationTick(long lastSubConfigCreationTick) {
+		this.lastSubConfigCreationTick = lastSubConfigCreationTick;
+	}
+
+	public ResourceLocation getLastClaimUpdateDimension() {
+		return lastClaimUpdateDimension;
+	}
+
+	public IPlayerChunkClaim getLastClaimUpdateState() {
+		return lastClaimUpdateState;
+	}
+
+	public void setLastClaimUpdate(ResourceLocation dimension, IPlayerChunkClaim state) {
+		this.lastClaimUpdateDimension = dimension;
+		this.lastClaimUpdateState = state;
+	}
+
+	public UUID getLastOtherConfigRequest() {
+		return lastOtherConfigRequest;
+	}
+
+	public void setLastOtherConfigRequest(UUID lastOtherConfigRequest) {
+		this.lastOtherConfigRequest = lastOtherConfigRequest;
 	}
 
 }

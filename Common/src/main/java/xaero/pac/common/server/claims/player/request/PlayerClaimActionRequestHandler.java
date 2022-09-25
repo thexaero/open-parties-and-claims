@@ -25,12 +25,18 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.ServerTickHandler;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
@@ -65,10 +71,15 @@ public class PlayerClaimActionRequestHandler {
 			return;
 		}
 		UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
+				serverData = ServerData.from(player.getServer());
+		IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(player.getUUID());
+		IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
+		int subConfigIndex = usedSubConfig.getSubIndex();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
-		AreaClaimResult result = manager.tryClaimActionOverArea(player.level.dimension().location(), playerId, 
-				fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(), 
+		AreaClaimResult result = manager.tryClaimActionOverArea(player.level.dimension().location(), playerId, subConfigIndex,
+				fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
 				request.getAction(), playerData.isClaimsAdminMode());
 		manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player);
 		lastRequestTickCounter = serverTickHandler.getTickCounter();

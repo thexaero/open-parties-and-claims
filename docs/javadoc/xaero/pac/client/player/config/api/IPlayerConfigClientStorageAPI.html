@@ -88,30 +88,70 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOptionStorage(xaero.pac.common.server.player.config.PlayerConfigOptionSpec)" class="member-name-link">getOptionStorage</a><wbr>(xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;T&gt;&nbsp;option)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEffectiveSubConfig(java.lang.String)" class="member-name-link">getEffectiveSubConfig</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a sub-config of this config from a specified sub-config ID.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;<br><a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOptionStorage(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI)" class="member-name-link">getOptionStorage</a><wbr>(<a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;T&gt;&nbsp;option)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the config option value storage for a specified config option in this config.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOwner()" class="member-name-link">getOwner</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOwner()" class="member-name-link">getOwner</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the UUID of the owner of this config.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSubConfig(java.lang.String)" class="member-name-link">getSubConfig</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a sub-config of this config from a specified sub-config ID.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSubConfigAPIStream()" class="member-name-link">getSubConfigAPIStream</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a stream of all sub-configs of this player config.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSubConfigIds()" class="member-name-link">getSubConfigIds</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets an unmodifiable list of all string IDs of this config's sub-configs.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSubConfigLimit()" class="member-name-link">getSubConfigLimit</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the maximum number of sub-configs that this player config is allowed to have.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSubCount()" class="member-name-link">getSubCount</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the number of sub-configs that this config has.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../../common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the type <a href="../../../../common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api"><code>PlayerConfigType</code></a> of this config.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#optionStream()" class="member-name-link">optionStream</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isBeingDeleted()" class="member-name-link">isBeingDeleted</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether this player (sub-)config is in the process of being deleted.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#optionStream()" class="member-name-link">optionStream</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a stream of all config option value storages for this config.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#size()" class="member-name-link">size</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#size()" class="member-name-link">size</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the number of config option value storages.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subConfigExists(java.lang.String)" class="member-name-link">subConfigExists</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether a sub-config with a specified string ID exists.</div>
 </div>
 </div>
 </div>
@@ -128,14 +168,14 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="getOptionStorage(xaero.pac.common.server.player.config.PlayerConfigOptionSpec)">
+<section class="detail" id="getOptionStorage(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI)">
 <h3>getOptionStorage</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a></span>&nbsp;<span class="element-name">getOptionStorage</span><wbr><span class="parameters">(@Nonnull
- xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;T&gt;&nbsp;option)</span></div>
+</span><span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;</span>&nbsp;<span class="return-type"><a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a></span>&nbsp;<span class="element-name">getOptionStorage</span><wbr><span class="parameters">(@Nonnull
+ <a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;T&gt;&nbsp;option)</span></div>
 <div class="block">Gets the config option value storage for a specified config option in this config.
  <p>
- All player config option types are statically accessible in <code>PlayerConfig</code>.</div>
+ All player config option types are statically accessible in <a href="../../../../common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api"><code>PlayerConfigOptions</code></a>.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>T</code> - the type of the option value</dd>
@@ -190,6 +230,119 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the number of config option value storages</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubConfigIds()">
+<h3>getSubConfigIds</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getSubConfigIds</span>()</div>
+<div class="block">Gets an unmodifiable list of all string IDs of this config's sub-configs.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an unmodifiable <code>List&lt;String&gt;</code> of sub-config IDs</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubConfig(java.lang.String)">
+<h3>getSubConfig</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="return-type"><a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;</span>&nbsp;<span class="element-name">getSubConfig</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Gets a sub-config of this config from a specified sub-config ID.
+ <p>
+ Gets this config, if the specified sub-config ID is "main".</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - the string ID of the sub-config, not null</dd>
+<dt>Returns:</dt>
+<dd>the sub-config, null if it doesn't exist</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getEffectiveSubConfig(java.lang.String)">
+<h3>getEffectiveSubConfig</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;</span>&nbsp;<span class="element-name">getEffectiveSubConfig</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Gets a sub-config of this config from a specified sub-config ID.
+ <p>
+ Gets this config, if the specified sub-config ID is "main" or isn't used.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - the string ID of the sub-config, not null</dd>
+<dt>Returns:</dt>
+<dd>the effective sub-config, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="subConfigExists(java.lang.String)">
+<h3>subConfigExists</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">subConfigExists</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Checks whether a sub-config with a specified string ID exists.
+ <p>
+ Does not consider "main" a sub-config.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - the string ID of the sub-config, not null</dd>
+<dt>Returns:</dt>
+<dd>true, if the sub-config exists, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubCount()">
+<h3>getSubCount</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getSubCount</span>()</div>
+<div class="block">Gets the number of sub-configs that this config has.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the number of sub-configs</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubConfigAPIStream()">
+<h3>getSubConfigAPIStream</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="type parameter in IPlayerConfigClientStorageAPI">OS</a>&gt;&gt;</span>&nbsp;<span class="element-name">getSubConfigAPIStream</span>()</div>
+<div class="block">Gets a stream of all sub-configs of this player config.
+ <p>
+ This must not be a sub-config in itself.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a stream of all sub-configs, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isBeingDeleted()">
+<h3>isBeingDeleted</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isBeingDeleted</span>()</div>
+<div class="block">Checks whether this player (sub-)config is in the process of being deleted.
+ <p>
+ This is typically only ever true for sub-configs.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this player (sub-)config is in the process of being deleted, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubConfigLimit()">
+<h3>getSubConfigLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getSubConfigLimit</span>()</div>
+<div class="block">Gets the maximum number of sub-configs that this player config is allowed to have.
+ <p>
+ Returns 0 if this is a sub-config. Returns the maximum int value if this is a server claims config.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the sub-config limit</dd>
 </dl>
 </section>
 </li>

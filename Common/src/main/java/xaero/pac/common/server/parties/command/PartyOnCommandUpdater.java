@@ -28,7 +28,7 @@ import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 
 import java.util.Iterator;
 import java.util.UUID;
@@ -46,9 +46,9 @@ public class PartyOnCommandUpdater {
 	public 
 	<
 		M extends IPartyMember, I extends IPartyPlayerInfo
-	> void update(UUID commandCasterId, MinecraftServer server, IServerParty<M, I> party, IPlayerConfigManager<IServerParty<IPartyMember, IPartyPlayerInfo>> configs, Predicate<IPartyMember> shouldUpdateCommandsForMember, Component massMessageContent) {
+	> void update(UUID commandCasterId, MinecraftServer server, IServerParty<M, I> party, IPlayerConfigManager configs, Predicate<IPartyMember> shouldUpdateCommandsForMember, Component massMessageContent) {
 		String partyName = party.getDefaultName();
-		String partyCustomName = configs.getLoadedConfig(party.getOwner().getUUID()).getEffective(PlayerConfig.PARTY_NAME);
+		String partyCustomName = configs.getLoadedConfig(party.getOwner().getUUID()).getEffective(PlayerConfigOptions.PARTY_NAME);
 		if(!partyCustomName.isEmpty())
 			partyName = partyCustomName;
 		Component partyNameComponent = Component.literal("[" + partyName + "] ").withStyle(s -> s.withColor(ChatFormatting.GOLD).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(party.getDefaultName()))));

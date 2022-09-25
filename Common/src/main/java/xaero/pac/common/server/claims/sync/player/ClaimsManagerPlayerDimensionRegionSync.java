@@ -20,26 +20,27 @@ package xaero.pac.common.server.claims.sync.player;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.ServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.ServerRegionClaims;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
+import xaero.pac.common.server.player.config.PlayerConfig;
 
 import java.util.Iterator;
-import java.util.Set;
 
 public class ClaimsManagerPlayerDimensionRegionSync {
 
 	private final ServerDimensionClaimsManager dimensionClaims;
 	private final Iterator<ServerRegionClaims> iterator;
-	private final Set<PlayerChunkClaim> allowedClaimStates;
+	private final boolean ownedOnly;
+	private final boolean serverOnly;
 	
-	ClaimsManagerPlayerDimensionRegionSync(ServerDimensionClaimsManager dimensionClaims, Set<PlayerChunkClaim> allowedClaimStates) {
+	ClaimsManagerPlayerDimensionRegionSync(ServerDimensionClaimsManager dimensionClaims, boolean ownedOnly, boolean serverOnly) {
 		super();
 		this.dimensionClaims = dimensionClaims;
-		this.allowedClaimStates = allowedClaimStates;
 		this.iterator = dimensionClaims.iterator();
+		this.ownedOnly = ownedOnly;
+		this.serverOnly = serverOnly;
 	}
 	
 	public int handle(IServerData<?,?> serverData, ServerPlayer player, ClaimsManagerSynchronizer synchronizer, int limit) {
@@ -47,17 +48,7 @@ public class ClaimsManagerPlayerDimensionRegionSync {
 			int count = 0;
 			while(iterator.hasNext()) {
 				ServerRegionClaims region = iterator.next();
-				boolean shouldSkip = false;
-				if(this.allowedClaimStates != null){
-					shouldSkip = true;
-					for(PlayerChunkClaim allowedState : this.allowedClaimStates) {
-						if (region.containsState(allowedState)) {
-							shouldSkip = false;
-							break;
-						}
-					}
-				}
-				if(!shouldSkip) {
+				if(!serverOnly && !ownedOnly || !serverOnly && region.containsStateOwner(player.getUUID()) || region.containsStateOwner(PlayerConfig.SERVER_CLAIM_UUID)) {
 					int paletteInts[] = region.getSyncablePaletteArray();
 					long[] storageDataCopy = region.getSyncableStorageData();
 					int storageBits = region.getSyncableStorageBits();

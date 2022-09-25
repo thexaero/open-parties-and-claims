@@ -52,12 +52,46 @@ public interface IServerPlayerClaimInfoAPI<DC extends IPlayerDimensionClaimsAPI<
 
 	@Override
 	public int getClaimsColor();
-	
+
+	@Nullable
+	@Override
+	String getClaimsName(int subConfigIndex);
+
+	@Nullable
+	@Override
+	Integer getClaimsColor(int subConfigIndex);
+
 	@Nonnull
 	@Override
 	public Stream<Entry<ResourceLocation, DC>> getStream();
 
 	@Nullable
 	public DC getDimension(@Nonnull ResourceLocation id);
+
+	/**
+	 * Gets the currently configured custom name of the player's sub-claim
+	 * with a specified string ID.
+	 * <p>
+	 * Returns null if no such sub-claim exists or the name is inherited from
+	 * the main config.
+	 *
+	 * @param subId  the string ID of the sub-config used by the sub-claim, not null
+	 * @return the custom name of the sub-claim
+	 */
+	@Nullable
+	public String getClaimsName(@Nonnull String subId);
+
+	/**
+	 * Gets the currently configured color of the player's sub-claim with
+	 * a specified string ID.
+	 * <p>
+	 * Returns null if no such sub-claim exists or the color is inherited from
+	 * the main config.
+	 *
+	 * @param subId  the string ID of the sub-config used by the sub-claim, not null
+	 * @return the sub-claim color Integer, null if no such sub-claim exists
+	 */
+	@Nullable
+	public Integer getClaimsColor(@Nonnull String subId);
 
 }

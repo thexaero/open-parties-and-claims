@@ -78,7 +78,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(packet);
 		}
 		
-		public void onConfigDataPacket(IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> configData) {
+		public void onConfigDataSyncDone(IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> configData) {
 			minecraft.setScreen(
 					PlayerConfigScreen.Builder
 					.begin(ArrayList::new)

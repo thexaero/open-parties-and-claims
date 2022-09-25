@@ -22,7 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.packet.claims.ClientboundClaimPropertiesPacket;
+import xaero.pac.common.packet.claims.ClientboundClaimOwnerPropertiesPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
@@ -39,36 +39,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public final class ClaimsManagerPlayerClaimPropertiesSync extends ClaimsManagerPlayerLazyPacketScheduler {
+public final class ClaimsManagerPlayerClaimOwnerPropertiesSync extends ClaimsManagerPlayerLazyPacketScheduler {
 
 	//no field for the player because this handler can be moved to another one (e.g. on respawn)
 	private Iterator<ServerPlayerClaimInfo> toSync;
 
-	private ClaimsManagerPlayerClaimPropertiesSync(Iterator<ServerPlayerClaimInfo> toSync, ClaimsManagerSynchronizer synchronizer) {
+	private ClaimsManagerPlayerClaimOwnerPropertiesSync(Iterator<ServerPlayerClaimInfo> toSync, ClaimsManagerSynchronizer synchronizer) {
 		super(synchronizer);
 		this.toSync = toSync;
 	}
 
 	@Override
 	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player, int limit){
-		List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder = new ArrayList<>(ClientboundClaimPropertiesPacket.MAX_PROPERTIES);
+		List<ClientboundClaimOwnerPropertiesPacket.PlayerProperties> packetBuilder = new ArrayList<>(ClientboundClaimOwnerPropertiesPacket.MAX_PROPERTIES);
 		int canSync = limit;
 		while(canSync > 0 && toSync.hasNext()) {
 			buildClaimPropertiesPacket(packetBuilder, toSync.next(), player);
 			canSync--;
 		}
 		if(!packetBuilder.isEmpty())
-			synchronizer.syncClaimProperties(packetBuilder, player);
+			synchronizer.syncClaimOwnerProperties(packetBuilder, player);
 	}
 
-	private void buildClaimPropertiesPacket(List<ClientboundClaimPropertiesPacket.PlayerProperties> packetBuilder, ServerPlayerClaimInfo pi, ServerPlayer player) {
+	private void buildClaimPropertiesPacket(List<ClientboundClaimOwnerPropertiesPacket.PlayerProperties> packetBuilder, ServerPlayerClaimInfo pi, ServerPlayer player) {
 		UUID playerId = pi.getPlayerId();
 		String username = pi.getPlayerUsername();
-		String claimsName = pi.getClaimsName();
-		int claimsColor = pi.getClaimsColor();
-		packetBuilder.add(new ClientboundClaimPropertiesPacket.PlayerProperties(playerId, username, claimsName, claimsColor));
-		if(packetBuilder.size() == ClientboundClaimPropertiesPacket.MAX_PROPERTIES) {
-			synchronizer.syncClaimProperties(packetBuilder, player);
+		packetBuilder.add(new ClientboundClaimOwnerPropertiesPacket.PlayerProperties(playerId, username));
+		if(packetBuilder.size() == ClientboundClaimOwnerPropertiesPacket.MAX_PROPERTIES) {
+			synchronizer.syncClaimOwnerProperties(packetBuilder, player);
 			packetBuilder.clear();
 		}
 	}
@@ -110,11 +108,11 @@ public final class ClaimsManagerPlayerClaimPropertiesSync extends ClaimsManagerP
 			return this;
 		}
 
-		public ClaimsManagerPlayerClaimPropertiesSync build(){
+		public ClaimsManagerPlayerClaimOwnerPropertiesSync build(){
 			if(synchronizer == null || player == null)
 				throw new IllegalStateException();
 			Iterator<ServerPlayerClaimInfo> toSync = synchronizer.getClaimPropertiesToSync(player);
-			return new ClaimsManagerPlayerClaimPropertiesSync(toSync, synchronizer);
+			return new ClaimsManagerPlayerClaimOwnerPropertiesSync(toSync, synchronizer);
 		}
 
 		public static Builder begin(){

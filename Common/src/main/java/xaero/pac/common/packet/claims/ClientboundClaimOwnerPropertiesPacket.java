@@ -31,25 +31,25 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundClaimPropertiesPacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimPropertiesPacket>, ClientboundClaimPropertiesPacket> {
-	
+public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimOwnerPropertiesPacket>, ClientboundClaimOwnerPropertiesPacket> {
+
 	public static final int MAX_PROPERTIES = 32;
-	public static final Encoder<ClientboundClaimPropertiesPacket> ENCODER = new Encoder<>();
-	
+	public static final Encoder<ClientboundClaimOwnerPropertiesPacket> ENCODER = new Encoder<>();
+
 	private final List<PlayerProperties> properties;
 
-	public ClientboundClaimPropertiesPacket(List<PlayerProperties> properties) {
+	public ClientboundClaimOwnerPropertiesPacket(List<PlayerProperties> properties) {
 		super();
 		this.properties = properties;
 	}
 
 	@Override
-	protected Encoder<ClientboundClaimPropertiesPacket> getEncoder() {
+	protected Encoder<ClientboundClaimOwnerPropertiesPacket> getEncoder() {
 		return ENCODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundClaimPropertiesPacket> encoder, FriendlyByteBuf dest) {
+	protected void writeOnPrepare(Encoder<ClientboundClaimOwnerPropertiesPacket> encoder, FriendlyByteBuf dest) {
 		CompoundTag nbt = new CompoundTag();
 		ListTag propertiesListTag = new ListTag();
 		for (int i = 0; i < this.properties.size(); i++) {
@@ -57,43 +57,37 @@ public class ClientboundClaimPropertiesPacket extends LazyPacket<LazyPacket.Enco
 			CompoundTag propertiesEntryNbt = new CompoundTag();
 			propertiesEntryNbt.putUUID("p", propertiesEntry.playerId);
 			propertiesEntryNbt.putString("u", propertiesEntry.username);
-			propertiesEntryNbt.putString("n", propertiesEntry.claimsName);
-			propertiesEntryNbt.putInt("c", propertiesEntry.claimsColor);
 			propertiesListTag.add(propertiesEntryNbt);
 		}
 		nbt.put("l", propertiesListTag);
 		dest.writeNbt(nbt);
 	}
 	
-	public static class Decoder implements Function<FriendlyByteBuf, ClientboundClaimPropertiesPacket> {
+	public static class Decoder implements Function<FriendlyByteBuf, ClientboundClaimOwnerPropertiesPacket> {
 
 		@Override
-		public ClientboundClaimPropertiesPacket apply(FriendlyByteBuf input) {
+		public ClientboundClaimOwnerPropertiesPacket apply(FriendlyByteBuf input) {
 			try {
 				CompoundTag nbt = input.readNbt(new NbtAccounter(32768));
+				if(nbt == null)
+					return null;
 				ListTag propertiesListTag = nbt.getList("l", 10);
 				if(propertiesListTag.size() > MAX_PROPERTIES) {
-					OpenPartiesAndClaims.LOGGER.info("Received claim properties list is too large!");
+					OpenPartiesAndClaims.LOGGER.info("Received claim owner properties list is too large!");
 					return null;
 				}
 				List<PlayerProperties> propertiesList = new ArrayList<>(propertiesListTag.size());
 				for (int i = 0; i < propertiesListTag.size(); i++) {
 					CompoundTag propertiesEntryNbt = propertiesListTag.getCompound(i);
 					String username = propertiesEntryNbt.getString("u");
-					if(username == null || username.isEmpty() || username.length() > 128) {
-						OpenPartiesAndClaims.LOGGER.info("Received claim properties list with invalid player username!");
-						return null;
-					}
-					String claimsName = propertiesEntryNbt.getString("n");
-					if(claimsName.length() > 128) {
-						OpenPartiesAndClaims.LOGGER.info("Received claim properties list with invalid claims name!");
+					if(username.isEmpty() || username.length() > 128) {
+						OpenPartiesAndClaims.LOGGER.info("Received claim owner properties list with invalid player username!");
 						return null;
 					}
 					UUID playerId = propertiesEntryNbt.getUUID("p");
-					int claimsColor = propertiesEntryNbt.getInt("c");
-					propertiesList.add(new PlayerProperties(playerId, username, claimsName, claimsColor));
+					propertiesList.add(new PlayerProperties(playerId, username));
 				}
-				return new ClientboundClaimPropertiesPacket(propertiesList);
+				return new ClientboundClaimOwnerPropertiesPacket(propertiesList);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
 				return null;
@@ -102,13 +96,13 @@ public class ClientboundClaimPropertiesPacket extends LazyPacket<LazyPacket.Enco
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundClaimPropertiesPacket> {
+	public static class ClientHandler implements Consumer<ClientboundClaimOwnerPropertiesPacket> {
 		
 		@Override
-		public void accept(ClientboundClaimPropertiesPacket t) {
+		public void accept(ClientboundClaimOwnerPropertiesPacket t) {
 			for (PlayerProperties propertiesEntry : t.properties) {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().
-					onPlayerInfo(propertiesEntry.playerId, propertiesEntry.username, propertiesEntry.claimsName, propertiesEntry.claimsColor);
+					onPlayerInfo(propertiesEntry.playerId, propertiesEntry.username);
 			}
 		}
 		
@@ -118,20 +112,16 @@ public class ClientboundClaimPropertiesPacket extends LazyPacket<LazyPacket.Enco
 		
 		private final UUID playerId;
 		private final String username;
-		private final String claimsName;
-		private final int claimsColor;
 		
-		public PlayerProperties(UUID playerId, String username, String claimsName, int claimsColor) {
+		public PlayerProperties(UUID playerId, String username) {
 			super();
 			this.playerId = playerId;
 			this.username = username;
-			this.claimsName = claimsName;
-			this.claimsColor = claimsColor;
 		}
 		
 		@Override
 		public String toString() {
-			return String.format("[%s, %s, %s, %d]", playerId, username, claimsName, claimsColor);
+			return String.format("[%s, %s]", playerId, username);
 		}
 		
 	}

@@ -93,14 +93,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the UUID of the owner of this claim.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isForceloadable()" class="member-name-link">isForceloadable</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSubConfigIndex()" class="member-name-link">getSubConfigIndex</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks whether this claim is marked for forceloading.</div>
+<div class="block">Gets the sub-config index of this claim.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">isSameClaimType</a><wbr>(<a href="IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;other)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isForceloadable()" class="member-name-link">isForceloadable</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether this claim is marked for forceloading.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">isSameClaimType</a><wbr>(<a href="IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;other)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks if another claim state is of the same type as this, which ignores
  whether the claim states are forceloadable.</div>
 </div>
@@ -140,6 +145,17 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the UUID of this claim's owner, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubConfigIndex()">
+<h3>getSubConfigIndex</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getSubConfigIndex</span>()</div>
+<div class="block">Gets the sub-config index of this claim.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the index corresponding to the sub-config used by this claim</dd>
 </dl>
 </section>
 </li>

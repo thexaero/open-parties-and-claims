@@ -18,9 +18,14 @@
 
 package xaero.pac.common.server.player.config;
 
+import net.minecraft.network.chat.Component;
+import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -29,8 +34,8 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 	private final int maxLength;
 
 	private PlayerConfigStringOptionSpec(Class<String> type, String id, List<String> path, String defaultValue, BiFunction<PlayerConfig<?>, String, String> defaultReplacer, String comment,
-			String translation, Function<String, String> commandInputParser, Function<String, String> commandOutputWriter, Predicate<String> validator, int maxLength, String tooltipPrefix) {
-		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, validator, tooltipPrefix);
+										 String translation, Function<String, String> commandInputParser, Function<String, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, String> serverSideValidator, BiPredicate<PlayerConfigClientStorage, String> clientSideValidator, int maxLength, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter) {
+		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
 		this.maxLength = maxLength;
 	}
 	
@@ -38,37 +43,41 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 		return maxLength;
 	}
 
-	final static class Builder extends PlayerConfigOptionSpec.Builder<String, Builder> {
+	public final static class Builder extends PlayerConfigOptionSpec.Builder<String, Builder> {
 
 		private int maxLength;
-		
+
 		protected Builder() {
 			super(String.class);
 		}
-		
+
 		@Override
 		public Builder setDefault() {
 			setMaxLength(32);
 			return super.setDefault();
 		}
-		
+
 		public Builder setMaxLength(int maxLength) {
 			this.maxLength = maxLength;
 			return this;
 		}
-		
+
 		public static <T> Builder begin(){
 			return new Builder().setDefault();
 		}
-		
+
 		@Override
-		public PlayerConfigStringOptionSpec build(Map<String, PlayerConfigOptionSpec<?>> dest) {
-			Predicate<String> normalValidator = getValidator();
-			setValidator(v -> {
+		protected Predicate<String> buildValueValidator() {
+			Predicate<String> normalValidator = super.buildValueValidator();
+			return v -> {
 				if(!normalValidator.test(v))
 					return false;
 				return v.length() <= maxLength;
-			});
+			};
+		}
+
+		@Override
+		public PlayerConfigStringOptionSpec build(Map<String, PlayerConfigOptionSpec<?>> dest) {
 			if(tooltipPrefix == null)
 				tooltipPrefix = String.format("~%s", maxLength);
 			return (PlayerConfigStringOptionSpec) super.build(dest);
@@ -76,9 +85,9 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 
 		@Override
 		protected PlayerConfigStringOptionSpec buildInternally(List<String> path, Function<String, String> commandInputParser) {
-			return new PlayerConfigStringOptionSpec(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, getValidator(), maxLength, tooltipPrefix);
+			return new PlayerConfigStringOptionSpec(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, maxLength, tooltipPrefix, configTypeFilter);
 		}
-		
+
 	}
 	
 }

@@ -23,7 +23,6 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
@@ -35,9 +34,10 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.config.PlayerConfig;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public final class ClaimsManagerPlayerRegionSync extends ClaimsManagerPlayerLazyPacketScheduler {
 
@@ -129,30 +129,19 @@ public final class ClaimsManagerPlayerRegionSync extends ClaimsManagerPlayerLazy
 			return this;
 		}
 
-		private void addAllowedClaimsFor(UUID id, ResourceLocation dim, Set<PlayerChunkClaim> allowedClaimStates){
-			IServerPlayerClaimInfo<?> playerClaimInfo = claimsManager.getPlayerInfo(id);
-			IPlayerDimensionClaims<?> playerDimensionClaims = playerClaimInfo.getDimension(dim);
-			if (playerDimensionClaims != null)
-				playerDimensionClaims.getStream().forEach(posList -> allowedClaimStates.add((PlayerChunkClaim) posList.getClaimState()));
-		}
-
 		public ClaimsManagerPlayerRegionSync build() {
 			if(claimsManager == null || stateSyncHandler == null || playerId == null)
 				throw new IllegalStateException();
 			List<ClaimsManagerPlayerDimensionRegionSync> dimsToSync = new ArrayList<>();
 
 			if(ServerConfig.CONFIG.claimsSynchronization.get() != ServerConfig.ClaimsSyncType.NOT_SYNCED) {
+				boolean ownedOnly = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY;
+				boolean allowExistingUnclaimableClaims = ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get();
 				((ServerClaimsManager) (Object) claimsManager).getDimensionStream().forEach(dim -> {
-					Set<PlayerChunkClaim> allowedClaimStates = null;
-					if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY){
-						allowedClaimStates = new HashSet<>();
-						//adding all claim states for the current player and the server claims
-						//will be used when filtering the synced region claim data
-						addAllowedClaimsFor(playerId, dim.getDimension(), allowedClaimStates);
-						addAllowedClaimsFor(PlayerConfig.SERVER_CLAIM_UUID, dim.getDimension(), allowedClaimStates);
+						boolean serverOnly = !allowExistingUnclaimableClaims && !claimsManager.isClaimable(dim.getDimension());
+						dimsToSync.add(new ClaimsManagerPlayerDimensionRegionSync(dim, ownedOnly, serverOnly));
 					}
-					dimsToSync.add(new ClaimsManagerPlayerDimensionRegionSync(dim, allowedClaimStates));
-				});
+				);
 			}
 
 			ClaimsManagerPlayerRegionSync result = new ClaimsManagerPlayerRegionSync((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer(), dimsToSync, stateSyncHandler);

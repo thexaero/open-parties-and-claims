@@ -41,39 +41,47 @@ public abstract class ClaimsManager
 	PCI extends PlayerClaimInfo<PCI, M>,
 	M extends PlayerClaimInfoManager<PCI, M>,
 	WRC extends RegionClaims<M, WRC>,
-	WCM extends DimensionClaimsManager<M, WRC>
+	WCM extends DimensionClaimsManager<M, WRC>,
+	CSH extends ClaimStateHolder
 > implements IClaimsManager<PCI, WCM> {
 	
 	protected final M playerClaimInfoManager;
-	protected final IPlayerConfigManager<?> configManager;
+	protected final IPlayerConfigManager configManager;
 	private Map<ResourceLocation, WCM> dimensions;
 	private Int2ObjectMap<PlayerChunkClaim> indexToClaimState;
-	private Map<PlayerChunkClaim, PlayerChunkClaim> claimStates;
+	protected Map<PlayerChunkClaim, CSH> claimStateHolders;
+	private int nextClaimStateSyncIndex;
 	protected final ClaimsManagerTracker claimsManagerTracker;
 	
-	protected ClaimsManager(M playerClaimInfoManager, IPlayerConfigManager<?> configManager,
-							Map<ResourceLocation, WCM> dimensions, Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker) {
+	protected ClaimsManager(M playerClaimInfoManager, IPlayerConfigManager configManager,
+							Map<ResourceLocation, WCM> dimensions, Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, CSH> claimStates, ClaimsManagerTracker claimsManagerTracker) {
 		super();
 		this.playerClaimInfoManager = playerClaimInfoManager;
 		this.configManager = configManager;
 		this.dimensions = dimensions;
 		this.indexToClaimState = indexToClaimState;
-		this.claimStates = claimStates;
+		this.claimStateHolders = claimStates;
 		this.claimsManagerTracker = claimsManagerTracker;
 	}
 
+	protected abstract CSH createStateHolder(PlayerChunkClaim claim);
+
 	protected void addClaimState(PlayerChunkClaim claim){
-		claimStates.put(claim, claim);
+		CSH claimStateHolder = createStateHolder(claim);
+		claimStateHolders.put(claim, claimStateHolder);
 		indexToClaimState.put(claim.getSyncIndex(), claim);
+		onClaimStateAdded(claimStateHolder);
 	}
+
+	protected abstract void onClaimStateAdded(CSH stateHolder);
 
 	protected void reset() {
 		indexToClaimState.clear();
 		dimensions.clear();
-		claimStates.clear();
+		claimStateHolders.clear();
 		indexToClaimState = new Int2ObjectOpenHashMap<>();
 		dimensions = new HashMap<>();
-		claimStates = new HashMap<>();
+		claimStateHolders = new HashMap<>();
 		playerClaimInfoManager.clear();
 	}
 
@@ -93,18 +101,20 @@ public abstract class ClaimsManager
 		return dimensions.values().stream();
 	}
 	
-	protected abstract void onClaimStateCreation(PlayerChunkClaim created);
-	
-	public PlayerChunkClaim getClaimState(UUID id, boolean forceload) {
-		PlayerChunkClaim potentialState = new PlayerChunkClaim(id, forceload, claimStates.size());
-		PlayerChunkClaim originalState = claimStates.get(potentialState);
-		if(originalState == null) {
-			originalState = potentialState;
-			claimStates.put(originalState, originalState);
-			indexToClaimState.put(originalState.getSyncIndex(), originalState);
-			onClaimStateCreation(originalState);
+	public PlayerChunkClaim getClaimState(UUID id, int subConfigIndex, boolean forceload) {
+		PlayerChunkClaim potentialState = new PlayerChunkClaim(id, subConfigIndex, forceload, nextClaimStateSyncIndex);
+		CSH originalStateHolder = claimStateHolders.get(potentialState);
+		if(originalStateHolder == null) {
+			nextClaimStateSyncIndex++;
+			addClaimState(potentialState);
+			return potentialState;
 		}
-		return originalState;
+		return originalStateHolder.getState();
+	}
+
+	protected void removeClaimState(PlayerChunkClaim state){
+		claimStateHolders.remove(state);
+		indexToClaimState.remove(state.getSyncIndex());
 	}
 
 	public PlayerChunkClaim getClaimStateBySyncIndex(int syncIndex){
@@ -112,14 +122,14 @@ public abstract class ClaimsManager
 	}
 
 	public Stream<PlayerChunkClaim> getClaimStatesStream(){
-		return claimStates.keySet().stream();
+		return claimStateHolders.keySet().stream();
 	}
 	
 	protected abstract WCM create(ResourceLocation dimension, Long2ObjectMap<WRC> claims);
 
-	public PlayerChunkClaim claim(ResourceLocation dimension, UUID id, int x, int z, boolean forceload) {
+	public PlayerChunkClaim claim(ResourceLocation dimension, UUID id, int subConfigIndex, int x, int z, boolean forceload) {
 		WCM dimensionClaims = ensureDimension(dimension);
-		PlayerChunkClaim claim = getClaimState(id, forceload);//no duplicates
+		PlayerChunkClaim claim = getClaimState(id, subConfigIndex, forceload);//no duplicates
 		return dimensionClaims.claim(x, z, claim, playerClaimInfoManager, configManager);
 	}
 	
@@ -179,7 +189,7 @@ public abstract class ClaimsManager
 	}
 	
 	public int getClaimStateCount() {
-		return claimStates.size();
+		return claimStateHolders.size();
 	}
 	
 	public abstract static class Builder
@@ -188,13 +198,14 @@ public abstract class ClaimsManager
 		M extends PlayerClaimInfoManager<PCI, M>,
 		WRC extends RegionClaims<M, WRC>,
 		WCM extends DimensionClaimsManager<M, WRC>,
-		B extends Builder<PCI, M, WRC, WCM, B>
+		CSH extends ClaimStateHolder,
+		B extends Builder<PCI, M, WRC, WCM, CSH, B>
 	>  {
 
 		protected final B self;
 		protected M playerClaimInfoManager;
 		protected Map<ResourceLocation, WCM> dimensions;
-		protected Map<PlayerChunkClaim, PlayerChunkClaim> claimStates;
+		protected Map<PlayerChunkClaim, CSH> claimStates;
 		
 		@SuppressWarnings("unchecked")
 		protected Builder() {
@@ -218,20 +229,22 @@ public abstract class ClaimsManager
 			return self;
 		}
 		
-		public B setClaimStates(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates) {
+		public B setClaimStates(Map<PlayerChunkClaim, CSH> claimStates) {
 			this.claimStates = claimStates;
 			return self;
 		}
 		
-		public ClaimsManager<PCI, M, WRC, WCM> build() {
+		public ClaimsManager<PCI, M, WRC, WCM, CSH> build() {
 			if(playerClaimInfoManager == null)
 				throw new IllegalStateException();
 			if(dimensions == null)
 				dimensions = new HashMap<>();
-			return buildInternally(new HashMap<>(), new ClaimsManagerTracker(new HashSet<>()), new Int2ObjectOpenHashMap<>());
+			if(claimStates == null)
+				claimStates = new HashMap<>();
+			return buildInternally(claimStates, new ClaimsManagerTracker(new HashSet<>()), new Int2ObjectOpenHashMap<>());
 		}
 		
-		protected abstract ClaimsManager<PCI, M, WRC, WCM> buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState);
+		protected abstract ClaimsManager<PCI, M, WRC, WCM, CSH> buildInternally(Map<PlayerChunkClaim, CSH> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState);
 		
 	}
 	

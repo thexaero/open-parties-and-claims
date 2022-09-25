@@ -16,11 +16,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.task.player;
+package xaero.pac.client.gui.widget.dropdown;
 
-import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.task.IServerSpreadoutTask;
+public interface IDropDownContainer {
 
-public interface IServerPlayerSpreadoutTask extends IServerSpreadoutTask<ServerPlayer> {
+	void onDropdownOpen(DropDownWidget menu);
+	void onDropdownClosed(DropDownWidget menu);
 
 }

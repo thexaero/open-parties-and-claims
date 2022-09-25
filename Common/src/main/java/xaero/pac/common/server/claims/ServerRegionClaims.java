@@ -20,6 +20,8 @@ package xaero.pac.common.server.claims;
 
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.SimpleBitStorage;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
@@ -29,21 +31,23 @@ import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 
-import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfoManager, ServerRegionClaims> implements IServerRegionClaims {
 
 	private final ServerClaimsManager manager;
 	
 	private final RegionClaimsPaletteStorage syncableStorage;
+	private final Object2IntMap<UUID> claimOwnerStateCounts;
 
-	private ServerRegionClaims(ResourceLocation dimension, int x, int z, 
-			RegionClaimsPaletteStorage syncableStorage, RegionClaimsPaletteStorage storage,
-			ServerClaimsManager manager) {
+	private ServerRegionClaims(ResourceLocation dimension, int x, int z,
+							   RegionClaimsPaletteStorage syncableStorage, RegionClaimsPaletteStorage storage,
+							   ServerClaimsManager manager, Object2IntMap<UUID> claimOwnerStateCounts) {
 		super(dimension, x, z, storage);
 		this.syncableStorage = syncableStorage;
 		this.manager = manager;
+		this.claimOwnerStateCounts = claimOwnerStateCounts;
 	}
 
 	@Override
@@ -58,11 +62,29 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 				value = null;
 			if(shouldSync && oldValueForSync != null && !Objects.equals(oldValueForSync.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID))
 				oldValueForSync = null;
-			syncableStorage.set(x, z, value);
+			syncableStorage.set(x, z, value, this);
 		}
 
 		if(shouldSync && value != oldValueForSync)
 			manager.getClaimsManagerSynchronizer().syncToPlayersClaimUpdate(dimension, (this.getX() << 5) | x, (this.getZ() << 5) | z, value, oldValueForSync);
+	}
+
+	@Override
+	public void onAddedToPalette(RegionClaimsPaletteStorage paletteStorage, PlayerChunkClaim state) {
+		super.onAddedToPalette(paletteStorage, state);
+		if(paletteStorage == storage) {
+			increaseOwnerCount(state.getPlayerId());
+			manager.countStateRegions(state, 1);
+		}
+	}
+
+	@Override
+	public void onRemovedFromPalette(RegionClaimsPaletteStorage paletteStorage, PlayerChunkClaim state) {
+		super.onRemovedFromPalette(paletteStorage, state);
+		if(paletteStorage == storage) {
+			decreaseOwnerCount(state.getPlayerId());
+			manager.countStateRegions(state, -1);
+		}
 	}
 
 	public int[] getSyncablePaletteArray(){
@@ -76,13 +98,25 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 	public long[] getSyncableStorageData() {
 		return syncableStorage.getStorageData();
 	}
-	
-	public RegionClaimsPaletteStorage getSyncableStorage() {
-		return syncableStorage;
+
+	public boolean containsSyncableState(PlayerChunkClaim state){
+		return syncableStorage.containsState(state);
 	}
 
-	public boolean containsState(PlayerChunkClaim state){
-		return syncableStorage.containsState(state);
+	public boolean containsStateOwner(UUID ownerId){
+		return claimOwnerStateCounts.containsKey(ownerId);
+	}
+
+	private void increaseOwnerCount(UUID ownerId){
+		claimOwnerStateCounts.put(ownerId, claimOwnerStateCounts.getInt(ownerId) + 1);
+	}
+
+	private void decreaseOwnerCount(UUID ownerId){
+		int currentCount = claimOwnerStateCounts.getInt(ownerId);
+		if(currentCount == 1)
+			claimOwnerStateCounts.removeInt(ownerId);
+		else
+			claimOwnerStateCounts.put(ownerId, currentCount - 1);
 	}
 	
 	public static final class Builder extends RegionClaims.Builder<ServerPlayerClaimInfoManager, ServerRegionClaims, Builder>{
@@ -116,9 +150,9 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 		@Override
 		public ServerRegionClaims build() {
 			syncableStorage = 
-					new RegionClaimsPaletteStorage(new HashMap<>(), new IntArrayList(), Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false);
+					new RegionClaimsPaletteStorage(new Object2IntOpenHashMap<>(), new IntArrayList(), Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false);
 			setStorage(playerClaimsSyncAllowed ? syncableStorage : 
-				new RegionClaimsPaletteStorage(new HashMap<>(), null, Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false));
+				new RegionClaimsPaletteStorage(new Object2IntOpenHashMap<>(), null, Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false));
 			return (ServerRegionClaims) super.build();
 		}
 
@@ -126,7 +160,7 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 		protected ServerRegionClaims buildInternally() {
 			return new ServerRegionClaims(dimension, x, z, 
 					syncableStorage, storage,
-					manager);
+					manager, new Object2IntOpenHashMap<>());
 		}
 		
 	}

@@ -65,23 +65,49 @@ public interface IPlayerClaimInfoAPI<DC extends IPlayerDimensionClaimsAPI<?>> {
 	public String getPlayerUsername();
 
 	/**
-	 * Gets the currently configured custom name of the player's claims.
+	 * Gets the currently configured main custom name of the player's claims.
 	 * <p>
 	 * Can be empty if a custom name is not configured or null if the name hasn't been synced to the client yet.
 	 *
-	 * @return the custom name of claimed chunks
+	 * @return the main custom name of claimed chunks
 	 */
 	@Nullable
 	public String getClaimsName();
 
 	/**
-	 * Gets the currently configured color of the player's claims.
+	 * Gets the currently configured main color of the player's claims.
 	 * <p>
 	 * Is 0 on the client side before it is synced from the server.
 	 *
-	 * @return the claim color int
+	 * @return the main claim color int
 	 */
 	public int getClaimsColor();
+
+	/**
+	 * Gets the currently configured custom name of the player's sub-claim
+	 * with a specified index.
+	 * <p>
+	 * Returns null if no such sub-claim exists or the name is inherited from
+	 * the main config.
+	 *
+	 * @param subConfigIndex  the index of the sub-config used by the sub-claim
+	 * @return the custom name of the sub-claim
+	 */
+	@Nullable
+	public String getClaimsName(int subConfigIndex);
+
+	/**
+	 * Gets the currently configured color of the player's sub-claim with
+	 * a specified index.
+	 * <p>
+	 * Returns null if no such sub-claim exists or the color is inherited from
+	 * the main config.
+	 *
+	 * @param subConfigIndex  the index of the sub-config used by the sub-claim
+	 * @return the sub-claim color Integer, null if no such sub-claim exists
+	 */
+	@Nullable
+	public Integer getClaimsColor(int subConfigIndex);
 
 	/**
 	 * Gets a stream of all dimension claim info entries for the player.

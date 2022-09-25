@@ -36,6 +36,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import java.util.Objects;
@@ -53,9 +54,9 @@ public class ServerPlayerClaimWelcomer {
 			boolean isOwner = !mainCap.isClaimsNonallyMode() && currentClaim != null && Objects.equals(currentClaimId, player.getUUID());
 			boolean hasAccess = isOwner || serverData.getChunkProtection().hasChunkAccess(serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigs(), currentClaim), player);
 
-			IPlayerConfig claimConfig = serverData.getPlayerConfigs().getLoadedConfig(currentClaimId);
-			String customName = claimConfig.getEffective(PlayerConfig.CLAIMS_NAME);
-			int claimColor = claimConfig.getEffective(PlayerConfig.CLAIMS_COLOR);
+			IPlayerConfig claimConfig = serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigs(), currentClaim);
+			String customName = claimConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
+			int claimColor = claimConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
 			MutableComponent subTitleText;
 			if (playerClaimInfo == null)
 				subTitleText = customName == null || customName.isEmpty() ? Component.translatable("gui.xaero_pac_title_entered_wilderness") : Component.translatable(customName);

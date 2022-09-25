@@ -30,7 +30,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 
-public interface IServerSpreadoutQueuedTask<H> extends IServerSpreadoutTask<H> {
+public interface IServerSpreadoutQueuedTask<T extends IServerSpreadoutTask<T, T>> extends IServerSpreadoutTask<T, T> {
 
 	void onQueued(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData);
 

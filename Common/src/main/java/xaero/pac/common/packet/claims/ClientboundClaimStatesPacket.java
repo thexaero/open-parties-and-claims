@@ -57,6 +57,7 @@ public class ClientboundClaimStatesPacket extends LazyPacket<LazyPacket.Encoder<
 			PlayerChunkClaim state = claimStates.get(i);
 			CompoundTag claimStateNbt = new CompoundTag();
 			claimStateNbt.putUUID("p", state.getPlayerId());
+			claimStateNbt.putInt("s", state.getSubConfigIndex());
 			claimStateNbt.putBoolean("f", state.isForceloadable());
 			claimStateNbt.putInt("i", state.getSyncIndex());
 			stateListTag.add(claimStateNbt);
@@ -82,9 +83,10 @@ public class ClientboundClaimStatesPacket extends LazyPacket<LazyPacket.Encoder<
 				for (int i = 0; i < stateListTag.size(); i++) {
 					CompoundTag claimStateNbt = stateListTag.getCompound(i);
 					UUID playerId = claimStateNbt.getUUID("p");
+					int subConfigIndex = claimStateNbt.getInt("s");
 					boolean forceloadable = claimStateNbt.getBoolean("f");
 					int syncIndex = claimStateNbt.getInt("i");
-					claimStates.add(new PlayerChunkClaim(playerId, forceloadable, syncIndex));
+					claimStates.add(new PlayerChunkClaim(playerId, subConfigIndex, forceloadable, syncIndex));
 				}
 				return new ClientboundClaimStatesPacket(claimStates);
 			} catch(Throwable t) {

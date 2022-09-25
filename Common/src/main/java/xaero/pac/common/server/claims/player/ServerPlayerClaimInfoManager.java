@@ -45,7 +45,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 
 	private final MinecraftServer server;
 	private ServerClaimsManager claimsManager;
-	private final IPlayerConfigManager<?> configManager;
+	private final IPlayerConfigManager configManager;
 	private final ForceLoadTicketManager ticketManager;
 	private final Set<ServerPlayerClaimInfo> toSave;
 	private final Set<ResourceLocation> claimableDimensionsSet;
@@ -53,8 +53,8 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	private PlayerClaimInfoManagerIO<?> io;
 	private ServerPlayerClaimsExpirationHandler expirationHandler;
 
-	public ServerPlayerClaimInfoManager(MinecraftServer server, IPlayerConfigManager<?> configManager, ForceLoadTicketManager ticketManager,
-			Map<UUID, ServerPlayerClaimInfo> storage, LinkedChain<ServerPlayerClaimInfo> linkedPlayerInfo, Set<ServerPlayerClaimInfo> toSave) {
+	public ServerPlayerClaimInfoManager(MinecraftServer server, IPlayerConfigManager configManager, ForceLoadTicketManager ticketManager,
+										Map<UUID, ServerPlayerClaimInfo> storage, LinkedChain<ServerPlayerClaimInfo> linkedPlayerInfo, Set<ServerPlayerClaimInfo> toSave) {
 		super(storage, linkedPlayerInfo);
 		this.server = server;
 		this.configManager = configManager;
@@ -116,7 +116,14 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 
 	@Override
 	protected ServerPlayerClaimInfo create(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims) {
-		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this);
+		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this, new ArrayDeque<>());
+	}
+
+	@Override
+	protected void onAdd(ServerPlayerClaimInfo playerInfo) {
+		super.onAdd(playerInfo);
+		if(loaded)
+			getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(getConfig(playerInfo.getPlayerId()));
 	}
 
 	@Override

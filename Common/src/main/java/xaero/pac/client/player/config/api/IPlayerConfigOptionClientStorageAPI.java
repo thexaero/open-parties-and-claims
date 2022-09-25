@@ -18,16 +18,16 @@
 
 package xaero.pac.client.player.config.api;
 
-import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 /**
  * API for a player config option value storage on the client side
  */
-public interface IPlayerConfigOptionClientStorageAPI<T> {
+public interface IPlayerConfigOptionClientStorageAPI<T extends Comparable<T>> {
 
 	/**
 	 * Gets the option spec that this storage holds the value for.
@@ -35,7 +35,7 @@ public interface IPlayerConfigOptionClientStorageAPI<T> {
 	 * @return the option spec of this storage, not null
 	 */
 	@Nonnull
-	public PlayerConfigOptionSpec<T> getOption();
+	public IPlayerConfigOptionSpecAPI<T> getOption();
 
 	/**
 	 * Gets the option string ID.
@@ -83,7 +83,7 @@ public interface IPlayerConfigOptionClientStorageAPI<T> {
 	 * @return the option value validator, not null
 	 */
 	@Nonnull
-	public Predicate<T> getValidator();
+	public BiPredicate<IPlayerConfigClientStorageAPI<?>, T> getValidator();
 
 	/**
 	 * Gets the text prefix for the option tooltip on the UI screens.

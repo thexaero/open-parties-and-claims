@@ -21,15 +21,27 @@ package xaero.pac.client.player.config;
 import com.google.common.collect.Lists;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.config.PlayerConfigOptionValuePacket;
+import xaero.pac.common.packet.config.ServerboundSubConfigExistencePacket;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 
 public class PlayerConfigClientSynchronizer {
 	
-	public <T> void syncToServer(PlayerConfigClientStorage config, IPlayerConfigStringableOptionClientStorage<T> option) {
-		PlayerConfigOptionClientStorage<T> packetOptionEntry = new PlayerConfigOptionClientStorage<>(option.getOption(), option.getValue());
+	public <T extends Comparable<T>> void syncToServer(PlayerConfigClientStorage config, IPlayerConfigStringableOptionClientStorage<T> option) {
+		PlayerConfigOptionClientStorage<T> packetOptionEntry = new PlayerConfigOptionClientStorage<>((PlayerConfigOptionSpec<T>) option.getOption(), option.getValue());
 		packetOptionEntry.setMutable(option.isMutable());
 		packetOptionEntry.setDefaulted(option.isDefaulted());
 		
-		PlayerConfigOptionValuePacket packet = new PlayerConfigOptionValuePacket(config.getType(), config.getOwner(), Lists.newArrayList(packetOptionEntry));
+		PlayerConfigOptionValuePacket packet = new PlayerConfigOptionValuePacket(config.getType(), config.getSubId(), config.getOwner(), Lists.newArrayList(packetOptionEntry));
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(packet);
+	}
+
+	public void requestCreateSubConfig(PlayerConfigClientStorage config, String subId){
+		ServerboundSubConfigExistencePacket packet = new ServerboundSubConfigExistencePacket(subId, config.getOwner(), config.getType(), true);
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(packet);
+	}
+
+	public void requestDeleteSubConfig(PlayerConfigClientStorage config, String subId){
+		ServerboundSubConfigExistencePacket packet = new ServerboundSubConfigExistencePacket(subId, config.getOwner(), config.getType(), false);
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(packet);
 	}
 

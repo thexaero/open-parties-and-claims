@@ -25,6 +25,7 @@ import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
 import xaero.pac.common.server.io.serialization.SimpleSerializer;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public final class PlayerClaimInfoNbtSerializer implements SimpleSerializer<Comp
 	public CompoundTag serialize(ServerPlayerClaimInfo object) {
 		CompoundTag nbt = new CompoundTag();
 		CompoundTag dimensions = new CompoundTag();
-		object.getStream().forEach(e -> dimensions.put(e.getKey().toString(), playerDimensionClaimsNbtSerializer.serialize(e.getValue())));
+		object.getFullStream().forEach(e -> dimensions.put(e.getKey().toString(), playerDimensionClaimsNbtSerializer.serialize(e.getValue())));
 		nbt.put("dimensions", dimensions);
 		nbt.putString("username", object.getPlayerUsername());
 		nbt.putLong("lastConfirmedActivity", object.getLastConfirmedActivity());
@@ -55,7 +56,7 @@ public final class PlayerClaimInfoNbtSerializer implements SimpleSerializer<Comp
 		String username = nbt.getString("username");
 		Map<ResourceLocation, PlayerDimensionClaims> claims = new HashMap<>();
 		dimensionsTag.getAllKeys().forEach(key -> claims.put(new ResourceLocation(key), playerDimensionClaimsNbtSerializer.deserialize(id, key, dimensionsTag.getCompound(key))));
-		ServerPlayerClaimInfo result = new ServerPlayerClaimInfo(manager.getConfig(id), username, id, claims, manager);
+		ServerPlayerClaimInfo result = new ServerPlayerClaimInfo(manager.getConfig(id), username, id, claims, manager, new ArrayDeque<>());
 		result.setLastConfirmedActivity(nbt.getLong("lastConfirmedActivity"));
 		return result;
 	}

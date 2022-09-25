@@ -47,7 +47,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	private final LinkedChain<ServerParty> partyChain;
 	private final Set<ServerParty> toSave;
 	private PartyManagerIO<?> io;
-	private IPlayerConfigManager<ServerParty> playerConfigs;
+	private IPlayerConfigManager playerConfigs;
 	private boolean loaded;
 	private PartyExpirationHandler expirationHandler;
 	
@@ -80,12 +80,12 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		return server;
 	}
 	
-	public void setPlayerConfigs(IPlayerConfigManager<ServerParty> playerConfigs) {
+	public void setPlayerConfigs(IPlayerConfigManager playerConfigs) {
 		this.playerConfigs = playerConfigs;
 	}
 	
 	@Override
-	public IPlayerConfigManager<ServerParty> getPlayerConfigs() {
+	public IPlayerConfigManager getPlayerConfigs() {
 		return playerConfigs;
 	}
 	

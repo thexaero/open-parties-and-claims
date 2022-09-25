@@ -20,11 +20,13 @@ package xaero.pac.client.claims;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfo;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfoManager;
 import xaero.pac.client.claims.tracker.result.ClaimsManagerClaimResultTracker;
+import xaero.pac.common.claims.ClaimStateHolder;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.request.ClaimActionRequest;
@@ -32,6 +34,7 @@ import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
 import xaero.pac.common.packet.claims.ServerboundClaimActionRequestPacket;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -39,7 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientRegionClaims, ClientDimensionClaimsManager> implements IClientClaimsManager<PlayerChunkClaim, ClientPlayerClaimInfo, ClientDimensionClaimsManager> {
+public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientRegionClaims, ClientDimensionClaimsManager, ClaimStateHolder> implements IClientClaimsManager<PlayerChunkClaim, ClientPlayerClaimInfo, ClientDimensionClaimsManager> {
 
 	private final ClaimsManagerClaimResultTracker claimResultTracker;
 	private boolean loading;
@@ -51,13 +54,21 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private int maxClaimDistance;
 	private boolean adminMode;
 	private boolean serverMode;
+	private int currentSubConfigIndex;
+	private int currentServerSubConfigIndex;
+	private String currentSubConfigId;
+	private String currentServerSubConfigId;
 	
 	private ClientClaimsManager(ClientPlayerClaimInfoManager playerClaimInfoManager,
-			IPlayerConfigManager<?> configManager, Map<ResourceLocation, ClientDimensionClaimsManager> dimensions,
-			Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker,
-			ClaimsManagerClaimResultTracker claimResultTracker) {
+								IPlayerConfigManager configManager, Map<ResourceLocation, ClientDimensionClaimsManager> dimensions,
+								Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, ClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker,
+								ClaimsManagerClaimResultTracker claimResultTracker) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimResultTracker = claimResultTracker;
+		this.currentSubConfigIndex = -1;
+		this.currentServerSubConfigIndex = -1;
+		this.currentSubConfigId = PlayerConfig.MAIN_SUB_ID;
+		this.currentServerSubConfigId = PlayerConfig.MAIN_SUB_ID;
 	}
 	
 	public void setLoading(boolean loading) {
@@ -146,13 +157,43 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
+	public void setCurrentSubConfigIndex(int currentSubConfigIndex) {
+		this.currentSubConfigIndex = currentSubConfigIndex;
+	}
+
+	@Override
+	public void setCurrentServerSubConfigIndex(int currentServerSubConfigIndex) {
+		this.currentServerSubConfigIndex = currentServerSubConfigIndex;
+	}
+
+	@Override
+	public void setCurrentSubConfigId(String currentSubConfigId) {
+		this.currentSubConfigId = currentSubConfigId;
+	}
+
+	@Override
+	public void setCurrentServerSubConfigId(String currentServerSubConfigId) {
+		this.currentServerSubConfigId = currentServerSubConfigId;
+	}
+
+	@Override
+	protected ClaimStateHolder createStateHolder(PlayerChunkClaim claim) {
+		return new ClaimStateHolder(claim);
+	}
+
+	@Override
 	public void addClaimState(PlayerChunkClaim claim) {
 		super.addClaimState(claim);
 	}
 
 	@Override
-	public PlayerChunkClaim claim(ResourceLocation dimension, UUID id, int x, int z, boolean forceload) {
-		PlayerChunkClaim newClaim = super.claim(dimension, id, x, z, forceload);
+	public void removeClaimState(PlayerChunkClaim state) {
+		super.removeClaimState(state);
+	}
+
+	@Override
+	public PlayerChunkClaim claim(ResourceLocation dimension, UUID id, int subConfigIndex, int x, int z, boolean forceload) {
+		PlayerChunkClaim newClaim = super.claim(dimension, id, subConfigIndex, x, z, forceload);
 		claimsManagerTracker.onChunkChange(dimension, x, z, newClaim);
 		return newClaim;
 	}
@@ -219,7 +260,40 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	protected void onClaimStateCreation(PlayerChunkClaim created) {
+	protected void onClaimStateAdded(ClaimStateHolder stateHolder) {
+	}
+
+	public void removeSubClaim(UUID playerId, int subConfigIndex) {
+		getPlayerInfo(playerId).removeSubClaim(subConfigIndex);
+	}
+
+	@Override
+	public PlayerChunkClaim getPotentialClaimStateReflection(){
+		if(isServerMode())
+			return new PlayerChunkClaim(PlayerConfig.SERVER_CLAIM_UUID, currentServerSubConfigIndex, false, 0);
+		if(Minecraft.getInstance().player == null)
+			return null;
+		return new PlayerChunkClaim(Minecraft.getInstance().player.getUUID(), currentSubConfigIndex, false, 0);
+	}
+
+	@Override
+	public int getCurrentSubConfigIndex() {
+		return currentSubConfigIndex;
+	}
+
+	@Override
+	public int getCurrentServerSubConfigIndex() {
+		return currentServerSubConfigIndex;
+	}
+
+	@Override
+	public String getCurrentSubConfigId() {
+		return currentSubConfigId;
+	}
+
+	@Override
+	public String getCurrentServerSubConfigId() {
+		return currentServerSubConfigId;
 	}
 
 	@Nonnull
@@ -227,8 +301,8 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	public ClaimsManagerClaimResultTracker getClaimResultTracker() {
 		return claimResultTracker;
 	}
-	
-	public final static class Builder extends ClaimsManager.Builder<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientRegionClaims, ClientDimensionClaimsManager, Builder>{
+
+	public final static class Builder extends ClaimsManager.Builder<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientRegionClaims, ClientDimensionClaimsManager, ClaimStateHolder, Builder>{
 		
 		public static Builder begin() {
 			return new Builder().setDefault();
@@ -241,7 +315,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		}
 
 		@Override
-		protected ClientClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
+		protected ClientClaimsManager buildInternally(Map<PlayerChunkClaim, ClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
 			return new ClientClaimsManager(playerClaimInfoManager, null, dimensions,
 					indexToClaimState, claimStates, claimsManagerTracker, ClaimsManagerClaimResultTracker.Builder.begin().build());
 		}

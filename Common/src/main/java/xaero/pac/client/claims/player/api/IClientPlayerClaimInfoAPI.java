@@ -52,6 +52,14 @@ public interface IClientPlayerClaimInfoAPI<DC extends IPlayerDimensionClaimsAPI<
 
 	@Override
 	public int getClaimsColor();
+
+	@Nullable
+	@Override
+	String getClaimsName(int subConfigIndex);
+
+	@Nullable
+	@Override
+	Integer getClaimsColor(int subConfigIndex);
 	
 	@Nonnull
 	@Override

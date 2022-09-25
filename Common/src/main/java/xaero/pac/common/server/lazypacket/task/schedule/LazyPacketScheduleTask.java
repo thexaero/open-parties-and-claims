@@ -30,9 +30,9 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.task.player.IServerPlayerSpreadoutTask;
+import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTask;
 
-public abstract class LazyPacketScheduleTask implements IServerPlayerSpreadoutTask {
+public abstract class LazyPacketScheduleTask extends ServerPlayerSpreadoutTask<LazyPacketScheduleTask> {
 
 	public abstract void onLazyPacketsDropped();
 

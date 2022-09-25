@@ -56,7 +56,11 @@ public abstract class PlayerClaimInfo
 	}
 	
 	private PlayerDimensionClaims ensureDimension(ResourceLocation dimension) {
-		return claims.computeIfAbsent(dimension, d -> new PlayerDimensionClaims(d, new HashMap<>()));
+		return claims.computeIfAbsent(dimension, d -> new PlayerDimensionClaims(playerId, d, new HashMap<>()));
+	}
+
+	private void removeDimension(ResourceLocation dimension){
+		claims.remove(dimension);
 	}
 
 	@Nullable
@@ -65,21 +69,21 @@ public abstract class PlayerClaimInfo
 		return claims.get(dimension);
 	}
 	
-	protected abstract void onForceloadUnclaim(IPlayerConfigManager<?> configManager, ResourceLocation dimension, int x, int z);
-	
-	public void onClaim(IPlayerConfigManager<?> configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
+	public void onClaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
 		PlayerDimensionClaims dimensionClaims = ensureDimension(dimension);
 		dimensionClaims.addClaim(x, z, claim);
 	}
 	
-	public void onUnclaim(IPlayerConfigManager<?> configManager, ResourceLocation dimension, int x, int z) {
+	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
 		PlayerDimensionClaims dimensionClaims = ensureDimension(dimension);
-		boolean removedWasForceloaded = dimensionClaims.removeClaim(x, z);
-		if(removedWasForceloaded)
-			onForceloadUnclaim(configManager, dimension, x, z);
+		if(!dimensionClaims.removeClaim(x, z, claim))
+			throw new IllegalStateException();
+		if(dimensionClaims.getCount() <= 0)
+			removeDimension(dimension);
 	}
 	
 	protected abstract Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionClaimCountStream();
+
 	protected abstract Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionForceloadCountStream();
 
 	@Override
@@ -89,7 +93,7 @@ public abstract class PlayerClaimInfo
 
 	@Override
 	public int getForceloadCount() {
-		return getDimensionForceloadCountStream().mapToInt(e -> e.getValue().getForceLoadedCount()).sum();
+		return getDimensionForceloadCountStream().mapToInt(e -> e.getValue().getForceloadableCount()).sum();
 	}
 
 	@Nonnull
@@ -118,11 +122,16 @@ public abstract class PlayerClaimInfo
 	public void setPlayerUsername(String playerUsername) {
 		this.playerUsername = playerUsername;
 	}
-	
 
-	public abstract String getClaimsName();
+	@Override
+	public String getClaimsName() {
+		return getClaimsName(-1);
+	}
 
-	public abstract int getClaimsColor();
+	@Override
+	public int getClaimsColor() {
+		return getClaimsColor(-1);
+	}
 
 	@Override
 	public void setNext(PCI element){

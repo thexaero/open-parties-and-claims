@@ -19,7 +19,10 @@
 package xaero.pac.common.server.claims.sync.player;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.claims.player.*;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.packet.claims.ClientboundClaimStatesPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -27,48 +30,47 @@ import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.ServerClaimStateHolder;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.PlayerConfig;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyPacketScheduler {
 
 	//no field for the player because this handler can be moved to another one (e.g. on respawn)
-	private int syncedStateCount = 0;
-	private final int totalToSync;
-	private final ClaimsManagerPlayerClaimPropertiesSync claimPropertiesSync;
+	private final UUID playerId;
+	private final ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync;
 	private List<PlayerChunkClaim> packetBuilder;
-	private Iterator<PlayerChunkClaim> specificStates;
+	private Iterator<ServerClaimStateHolder> iterator;
+	private final boolean ownedOnly;
 
-	private ClaimsManagerPlayerStateSync(int totalToSync, ClaimsManagerSynchronizer synchronizer, ClaimsManagerPlayerClaimPropertiesSync claimPropertiesSync, Iterator<PlayerChunkClaim> specificStates) {
+	private ClaimsManagerPlayerStateSync(UUID playerId, ClaimsManagerSynchronizer synchronizer, ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync, Iterator<ServerClaimStateHolder> iterator, boolean ownedOnly) {
 		super(synchronizer);
-		this.totalToSync = totalToSync;
-		this.claimPropertiesSync = claimPropertiesSync;
-		this.specificStates = specificStates;
+		this.playerId = playerId;
+		this.subClaimPropertiesSync = subClaimPropertiesSync;
+		this.iterator = iterator;
+		this.ownedOnly = ownedOnly;
 	}
 
 	@Override
 	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player, int limit){
 		if(packetBuilder == null)
 			packetBuilder = startClaimStateSync();
-
-		if(specificStates == null) {
-			int syncUntil = Math.min(totalToSync, syncedStateCount + limit) - 1;
-			for (int syncIndex = syncedStateCount; syncIndex <= syncUntil; syncIndex++) {
-				PlayerChunkClaim state = synchronizer.getStateBySyncIndex(syncIndex);
+		int canSync = limit;
+		while(iterator != null && iterator.hasNext() && canSync > 0){
+			PlayerChunkClaim state = iterator.next().getState();
+			if(!ownedOnly || state.getPlayerId().equals(playerId) || state.getPlayerId().equals(PlayerConfig.SERVER_CLAIM_UUID)) {
 				continueClaimStateSync(packetBuilder, state, player);
+				canSync -= 2;
 			}
-			syncedStateCount = syncUntil + 1;
-		} else {
-			int canSync = limit;
-			while(canSync > 0 && specificStates.hasNext()){
-				PlayerChunkClaim state = specificStates.next();
-				continueClaimStateSync(packetBuilder, state, player);
-				canSync--;
-			}
+			canSync--;
 		}
 		finalizeClaimStateSync(packetBuilder, player);
 
@@ -97,33 +99,31 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 
 	@Override
 	public void onLazyPacketsDropped() {
-		syncedStateCount = totalToSync;
-		specificStates = null;
+		iterator = null;
 	}
 
 	public boolean isFinished(){
-		return claimPropertiesSync.isFinished() &&
-				(specificStates == null && syncedStateCount == totalToSync ||
-						specificStates != null && !specificStates.hasNext());
+		return subClaimPropertiesSync.isFinished() && (iterator == null ||
+				!iterator.hasNext());
 	}
 
 	@Override
 	public boolean shouldWorkNotClogged(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ServerPlayer player) {
-		return started && claimPropertiesSync.isFinished() && !isFinished();
+		return started && subClaimPropertiesSync.isFinished() && !isFinished();
 	}
 
 	public static final class Builder {
 
 		private ServerPlayer player;
 		private ClaimsManagerSynchronizer synchronizer;
-		private ClaimsManagerPlayerClaimPropertiesSync claimPropertiesSync;
+		private ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync;
 
 		private Builder(){}
 
 		public Builder setDefault() {
 			setPlayer(null);
 			setSynchronizer(null);
-			setClaimPropertiesSync(null);
+			setSubClaimPropertiesSync(null);
 			return this;
 		}
 
@@ -137,28 +137,17 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 			return this;
 		}
 
-		public Builder setClaimPropertiesSync(ClaimsManagerPlayerClaimPropertiesSync claimPropertiesSync) {
-			this.claimPropertiesSync = claimPropertiesSync;
+		public Builder setSubClaimPropertiesSync(ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync) {
+			this.subClaimPropertiesSync = subClaimPropertiesSync;
 			return this;
 		}
 
 		public ClaimsManagerPlayerStateSync build(){
-			if(player == null || synchronizer == null || claimPropertiesSync == null)
+			if(player == null || synchronizer == null || subClaimPropertiesSync == null)
 				throw new IllegalStateException();
-			int totalToSync = ServerConfig.CONFIG.claimsSynchronization.get() != ServerConfig.ClaimsSyncType.ALL ? 0 : synchronizer.getClaimStateCountToSync();
-			Iterator<PlayerChunkClaim> specificStates = null;
-			if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY) {
-				Set<PlayerChunkClaim> specificStatesSet = new HashSet<>();
-				//just owned and server states
-				synchronizer.getClaimPropertiesToSync(player).forEachRemaining(pi -> {
-					pi.getStream().map(Map.Entry::getValue)
-							.flatMap(PlayerDimensionClaims::getStream)
-							.map(PlayerClaimPosList::getClaimState)
-							.forEach(specificStatesSet::add);
-				});
-				specificStates = specificStatesSet.iterator();
-			}
-			return new ClaimsManagerPlayerStateSync(totalToSync, synchronizer, claimPropertiesSync, specificStates);
+			boolean ownedOnly = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY;
+			Iterator<ServerClaimStateHolder> iterator = synchronizer.getStateHolderIteratorForSync();
+			return new ClaimsManagerPlayerStateSync(player.getUUID(), synchronizer, subClaimPropertiesSync, iterator, ownedOnly);
 		}
 
 		public static Builder begin(){

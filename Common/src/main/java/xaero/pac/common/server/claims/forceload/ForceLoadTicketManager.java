@@ -34,6 +34,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 
 import java.util.*;
 
@@ -96,22 +97,22 @@ public final class ForceLoadTicketManager {
 	}
 	
 	private boolean ticketsShouldBeEnabled(IPlayerConfig ownerConfig, boolean loggedOut) {
-		return ownerConfig.getEffective(PlayerConfig.FORCELOAD) && 
+		return ownerConfig.getEffective(PlayerConfigOptions.FORCELOAD) &&
 				(
 						Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, ownerConfig.getPlayerId()) || 
 						Objects.equals(PlayerConfig.EXPIRED_CLAIM_UUID, ownerConfig.getPlayerId()) || 
-						ownerConfig.getEffective(PlayerConfig.OFFLINE_FORCELOAD) || 
+						ownerConfig.getEffective(PlayerConfigOptions.OFFLINE_FORCELOAD) ||
 						!loggedOut && /*is online*/server.getPlayerList().getPlayer(ownerConfig.getPlayerId()) != null
 				);
 	}
 	
-	public void updateTicketsFor(IPlayerConfigManager<?> playerConfigManager, UUID id, boolean loggedOut) {
+	public void updateTicketsFor(IPlayerConfigManager playerConfigManager, UUID id, boolean loggedOut) {
 		IPlayerConfig ownerConfig = playerConfigManager.getLoadedConfig(id);
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		boolean isServer = PlayerConfig.SERVER_CLAIM_UUID.equals(id);
 		boolean shouldBeEnabled = ticketsShouldBeEnabled(ownerConfig, loggedOut);
 		OpenPartiesAndClaims.LOGGER.info("Updating all forceload tickets for " + id);
-		int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS);//for when the bonus forceload count is changed without a restart
+		int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);//for when the bonus forceload count is changed without a restart
 		int enableSuccessCount = 0;
 		boolean withinLimit = true;
 		for(ClaimTicket ticket : playerTickets.values()) {
@@ -124,20 +125,20 @@ public final class ForceLoadTicketManager {
 		playerTickets.setFailedToEnableSome(!withinLimit);
 	}
 
-	public void addTicket(IPlayerConfigManager<?> playerConfigManager, ResourceLocation dimension, UUID id, int x, int z) {
+	public void addTicket(IPlayerConfigManager playerConfigManager, ResourceLocation dimension, UUID id, int x, int z) {
 		ClaimTicket ticket = new ClaimTicket(id, dimension, x, z);
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		playerTickets.add(ticket);
 		IPlayerConfig ownerConfig = playerConfigManager.getLoadedConfig(id);
 		boolean shouldBeEnabled = ticketsShouldBeEnabled(ownerConfig, false);
 		if(shouldBeEnabled) {
-			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS);
+			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
 			if(playerTickets.getCount() <= forceloadLimit)
 				updateTicket(true, ticket);
 		}
 	}
 
-	public void removeTicket(IPlayerConfigManager<?> playerConfigManager, ResourceLocation dimension, UUID id, int x, int z) {
+	public void removeTicket(IPlayerConfigManager playerConfigManager, ResourceLocation dimension, UUID id, int x, int z) {
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		ClaimTicket ticket = playerTickets.remove(new ClaimTicket(id, dimension, x, z));//find and remove the equivalent in the map
 		if (ticket.isEnabled()){

@@ -18,21 +18,22 @@
 
 package xaero.pac.client.player.config.api;
 
-import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import net.minecraft.network.chat.Component;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * API for a stringable player config option value storage on the client side
  */
-public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlayerConfigOptionClientStorageAPI<T> {
+public interface IPlayerConfigStringableOptionClientStorageAPI<T extends Comparable<T>> extends IPlayerConfigOptionClientStorageAPI<T> {
 
 	@Override
 	@Nonnull
-	public PlayerConfigOptionSpec<T> getOption();
+	public IPlayerConfigOptionSpecAPI<T> getOption();
 
 	@Override
 	@Nonnull
@@ -56,7 +57,7 @@ public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlaye
 
 	@Override
 	@Nonnull
-	public Predicate<T> getValidator();
+	public BiPredicate<IPlayerConfigClientStorageAPI<?>, T> getValidator();
 
 	@Nullable
 	@Override
@@ -88,7 +89,7 @@ public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlaye
 	 * @return the string output writer function, not null
 	 */
 	@Nonnull
-	public Function<Object, String> getCommandOutputWriterCast();
+	public Function<Object, Component> getCommandOutputWriterCast();
 
 	/**
 	 * Gets the string value input validator for this option.
@@ -96,6 +97,6 @@ public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlaye
 	 * @return the string value input validator function, not null
 	 */
 	@Nonnull
-	public Predicate<String> getStringValidator();
+	public BiPredicate<IPlayerConfigClientStorageAPI<?>, String> getStringValidator();
 	
 }

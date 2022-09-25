@@ -18,20 +18,26 @@
 
 package xaero.pac.common.server.player.config;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Integer> {
 
 	private PlayerConfigHexOptionSpec(Class<Integer> type, String id, List<String> path, Integer defaultValue, BiFunction<PlayerConfig<?>, Integer, Integer> defaultReplacer, String comment,
-			String translation, Function<String, Integer> commandInputParser, Function<Integer, String> commandOutputWriter, Predicate<Integer> validator, String tooltipPrefix) {
-		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, validator, tooltipPrefix);
+									  String translation, Function<String, Integer> commandInputParser, Function<Integer, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, Integer> serverSideValidator, BiPredicate<PlayerConfigClientStorage, Integer> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter) {
+		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
 	}
 
-	final static class Builder extends PlayerConfigOptionSpec.Builder<Integer, Builder> {
+	public final static class Builder extends PlayerConfigOptionSpec.Builder<Integer, Builder> {
 		
 		protected Builder() {
 			super(Integer.class);
@@ -40,7 +46,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 		@Override
 		public Builder setDefault() {
 			super.setDefault();
-			setCommandOutputWriter(o -> Integer.toUnsignedString(o, 16).toUpperCase());
+			setCommandOutputWriter(o -> new TextComponent(Integer.toUnsignedString(o, 16).toUpperCase()));
 			return self;
 		}
 		
@@ -64,7 +70,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 					throw new IllegalArgumentException(nfe);
 				}
 			};
-			return new PlayerConfigHexOptionSpec(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, getValidator(), tooltipPrefix);
+			return new PlayerConfigHexOptionSpec(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
 		}
 		
 	}
