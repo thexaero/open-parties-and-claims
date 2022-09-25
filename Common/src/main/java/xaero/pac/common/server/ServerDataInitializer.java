@@ -51,7 +51,10 @@ import xaero.pac.common.server.parties.party.io.serialization.nbt.PartyNbtSerial
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
+import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTaskHandler;
 
 public class ServerDataInitializer {
 	
@@ -135,8 +138,8 @@ public class ServerDataInitializer {
 			ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler =
 					ServerSpreadoutQueuedTaskHandler.Builder
 							.<PlayerClaimReplaceSpreadoutTask>begin()
-							.setPerTickLimit(1024)
-							.setPerTickPerTaskLimit(128)
+							.setPerTickLimit(256)
+							.setPerTickPerTaskLimit(32)
 							.build();
 			serverTickHandler.registerSpreadoutTaskHandler(claimReplaceTaskHandler);
 			ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler =
@@ -146,6 +149,14 @@ public class ServerDataInitializer {
 							.setPerTickPerTaskLimit(Integer.MAX_VALUE)
 							.build();
 			serverTickHandler.registerSpreadoutTaskHandler(objectExpirationCheckTaskHandler);
+			ServerPlayerSpreadoutTaskHandler<PlayerConfigSyncSpreadoutTask> playerConfigSyncTaskHandler =
+					ServerPlayerSpreadoutTaskHandler.FinalBuilder
+							.<PlayerConfigSyncSpreadoutTask>begin()
+							.setPerTickLimit(128)
+							.setPerTickPerTaskLimit(1)
+							.setPlayerTaskGetter(ServerPlayerData::getConfigSyncSpreadoutTask)
+							.build();
+			serverTickHandler.registerSpreadoutTaskHandler(playerConfigSyncTaskHandler);
 
 			ForceLoadTicketManager forceLoadManager = playerConfigs.getForceLoadTicketManager();
 			ClaimsManagerSynchronizer claimsSynchronizer = ClaimsManagerSynchronizer.Builder.begin().setServer(server).build();

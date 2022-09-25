@@ -68,7 +68,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">xaero.pac.client.player.config.api</a></div>
-<h1 title="Interface IPlayerConfigStringableOptionClientStorageAPI" class="title">Interface IPlayerConfigStringableOptionClientStorageAPI&lt;T&gt;</h1>
+<h1 title="Interface IPlayerConfigStringableOptionClientStorageAPI" class="title">Interface IPlayerConfigStringableOptionClientStorageAPI&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;</h1>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
@@ -76,7 +76,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerConfigStringableOptionClientStorageAPI&lt;T&gt;</span><span class="extends-implements">
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerConfigStringableOptionClientStorageAPI&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;</span><span class="extends-implements">
 extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;T&gt;</span></div>
 <div class="block">API for a stringable player config option value storage on the client side</div>
 </section>
@@ -98,7 +98,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the string input parser for this option.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>net.minecraft.network.chat.Component&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCommandOutputWriterCast()" class="member-name-link">getCommandOutputWriterCast</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the string output writer for this option.</div>
@@ -113,12 +113,12 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the option string ID.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOption()" class="member-name-link">getOption</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the option spec that this storage holds the value for.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;?&gt;,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getStringValidator()" class="member-name-link">getStringValidator</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the string value input validator for this option.</div>
@@ -138,7 +138,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the type of the option value that this storage holds.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;?&gt;,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getValidator()" class="member-name-link">getValidator</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the option value validator that checks whether a certain value is valid for the option.</div>
@@ -176,12 +176,12 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <section class="detail" id="getOption()">
 <h3>getOption</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type">xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getOption</span>()</div>
+</span><span class="return-type"><a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getOption</span>()</div>
 <div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getOption()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
 <div class="block">Gets the option spec that this storage holds the value for.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getOption()">getOption</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getOption()">getOption</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the option spec of this storage, not null</dd>
 </dl>
@@ -196,7 +196,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Gets the option string ID.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getId()">getId</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getId()">getId</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the option string ID, not null</dd>
 </dl>
@@ -211,7 +211,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Gets the default comment text for the option.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getComment()">getComment</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getComment()">getComment</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the default comment text, not null</dd>
 </dl>
@@ -226,7 +226,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Gets the translation key for the name of the option.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTranslation()">getTranslation</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTranslation()">getTranslation</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>translation key for the name of the option, not null</dd>
 </dl>
@@ -241,7 +241,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Gets the type of the option value that this storage holds.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getType()">getType</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getType()">getType</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the type of the option value, not null</dd>
 </dl>
@@ -256,7 +256,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Gets the stored option value.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValue()">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValue()">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the stored value</dd>
 </dl>
@@ -266,12 +266,12 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <section class="detail" id="getValidator()">
 <h3>getValidator</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getValidator</span>()</div>
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;?&gt;,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getValidator</span>()</div>
 <div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getValidator()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
 <div class="block">Gets the option value validator that checks whether a certain value is valid for the option.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValidator()">getValidator</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValidator()">getValidator</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the option value validator, not null</dd>
 </dl>
@@ -286,7 +286,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Gets the text prefix for the option tooltip on the UI screens.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTooltipPrefix()">getTooltipPrefix</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTooltipPrefix()">getTooltipPrefix</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the tooltip prefix, null if there is none</dd>
 </dl>
@@ -300,7 +300,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Checks whether this option is forced to its default player config value.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isDefaulted()">isDefaulted</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isDefaulted()">isDefaulted</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>true if the option value is defaulted, otherwise false</dd>
 </dl>
@@ -314,7 +314,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="block">Checks whether the local client player can edit this option's value.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isMutable()">isMutable</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isMutable()">isMutable</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>true if the option value is mutable, otherwise false</dd>
 </dl>
@@ -338,7 +338,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <section class="detail" id="getCommandOutputWriterCast()">
 <h3>getCommandOutputWriterCast</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getCommandOutputWriterCast</span>()</div>
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>net.minecraft.network.chat.Component&gt;</span>&nbsp;<span class="element-name">getCommandOutputWriterCast</span>()</div>
 <div class="block">Gets the string output writer for this option.
  <p>
  It is the same one that is used for displaying option values in command outputs.
@@ -354,7 +354,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <section class="detail" id="getStringValidator()">
 <h3>getStringValidator</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getStringValidator</span>()</div>
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;?&gt;,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getStringValidator</span>()</div>
 <div class="block">Gets the string value input validator for this option.</div>
 <dl class="notes">
 <dt>Returns:</dt>

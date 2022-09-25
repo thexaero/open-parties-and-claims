@@ -26,6 +26,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import xaero.pac.common.misc.ConfigUtil;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
 import java.util.LinkedHashMap;
 import java.util.Objects;
@@ -47,7 +48,8 @@ public class PlayerConfigSerializer {
 	public void deserializeInto(PlayerConfig<?> config, String serializedData) {
 		CommentedConfig parsedData = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
 		parser.parse(serializedData, parsedData, ParsingMode.ADD);
-		PlayerConfig.SPEC.correct(parsedData);
+		if(!(config instanceof PlayerSubConfig))
+			PlayerConfig.SPEC.correct(parsedData);
 		Config loadedConfig = parsedData;
 		if(config.getPlayerId() != null && !Objects.equals(config.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) && !Objects.equals(config.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID)) {
 			loadedConfig = ConfigUtil.deepCopy(parsedData, LinkedHashMap::new);//removes comments

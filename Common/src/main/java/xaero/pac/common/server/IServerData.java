@@ -53,7 +53,7 @@ extends IServerDataAPI<CM,P> {
 	@Override
 	public CM getServerClaimsManager();
 	@Override
-	public IPlayerConfigManager<P> getPlayerConfigs();
+	public IPlayerConfigManager getPlayerConfigs();
 
 	public PlayerWorldJoinHandler getPlayerWorldJoinHandler();
 	public PlayerLoginHandler getPlayerLoginHandler();

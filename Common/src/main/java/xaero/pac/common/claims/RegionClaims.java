@@ -94,27 +94,27 @@ public abstract class RegionClaims
 	}
 	
 	protected void set(int x, int z, PlayerChunkClaim value) {
-		storage.set(x, z, value);
+		storage.set(x, z, value, this);
 	}
 	
 	public RegionClaimsPaletteStorage getStorage() {
 		return storage;
 	}
 
-	public PlayerChunkClaim claim(int x, int z, PlayerChunkClaim claim, M playerClaimsManager, IPlayerConfigManager<?> configManager) {
+	public PlayerChunkClaim claim(int x, int z, PlayerChunkClaim claim, M playerClaimsManager, IPlayerConfigManager configManager) {
 		PlayerChunkClaim currentClaim = get(x & 31, z & 31);
 		if(onClaimSet(x, z, currentClaim, claim, playerClaimsManager, configManager))
 			set(x & 31, z & 31, claim);
 		return claim;
 	}
 
-	protected boolean onClaimSet(int x, int z, PlayerChunkClaim currentClaim, PlayerChunkClaim newClaim, M playerClaimsManager, IPlayerConfigManager<?> configManager){
+	protected boolean onClaimSet(int x, int z, PlayerChunkClaim currentClaim, PlayerChunkClaim newClaim, M playerClaimsManager, IPlayerConfigManager configManager){
 		if(!Objects.equals(currentClaim, newClaim)) {
 			PlayerClaimInfo<?,?> currentPlayerInfo = currentClaim == null ? null : playerClaimsManager.getInfo(currentClaim.getPlayerId());
 			PlayerClaimInfo<?,?> newPlayerInfo = newClaim == null ? null : playerClaimsManager.getInfo(newClaim.getPlayerId());
 
 			if (currentPlayerInfo != null)
-				currentPlayerInfo.onUnclaim(configManager, dimension, x, z);
+				currentPlayerInfo.onUnclaim(configManager, dimension, currentClaim, x, z);
 			if (newPlayerInfo != null)
 				newPlayerInfo.onClaim(configManager, dimension, newClaim, x, z);
 			return true;
@@ -139,6 +139,12 @@ public abstract class RegionClaims
 	@Override
 	public String toString() {
 		return String.format("[%s, %d, %d]", dimension, x, z);
+	}
+
+	public void onAddedToPalette(RegionClaimsPaletteStorage paletteStorage, PlayerChunkClaim state) {
+	}
+
+	public void onRemovedFromPalette(RegionClaimsPaletteStorage paletteStorage, PlayerChunkClaim state) {
 	}
 
 	public static abstract class Builder

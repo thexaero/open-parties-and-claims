@@ -29,6 +29,9 @@ public class CommonCommandRegister {
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		new ConfigGetCommand().register(dispatcher, environment);
 		new ConfigSetCommand().register(dispatcher, environment);
+		new ConfigSubCreateCommand().register(dispatcher, environment);
+		new ConfigSubDeleteCommand().register(dispatcher, environment);
+		new ConfigSubListCommand().register(dispatcher, environment);
 	}
 
 }

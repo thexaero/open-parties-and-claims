@@ -39,6 +39,7 @@ import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -46,22 +47,24 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager> implements IServerClaimsManager<PlayerChunkClaim, ServerPlayerClaimInfo, ServerDimensionClaimsManager> {
+public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder> implements IServerClaimsManager<PlayerChunkClaim, ServerPlayerClaimInfo, ServerDimensionClaimsManager> {
 
 	private final int MAX_REQUEST_SIZE = 25;//will go 1 chunk beyond this before cancelling but that's fine
 	private final ClaimsManagerSynchronizer claimsManagerSynchronizer;
 	private final ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
 	private final ServerClaimsPermissionHandler permissionHandler;
+	private final LinkedChain<ServerClaimStateHolder> linkedClaimStates;
 	private boolean loaded;
 	
 	protected ServerClaimsManager(MinecraftServer server, ServerPlayerClaimInfoManager playerClaimInfoManager,
-								  IPlayerConfigManager<?> configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
+								  IPlayerConfigManager configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
 								  ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
-								  Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler, ServerClaimsPermissionHandler permissionHandler) {
+								  Map<PlayerChunkClaim, ServerClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler, ServerClaimsPermissionHandler permissionHandler, LinkedChain<ServerClaimStateHolder> linkedClaimStates) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimsManagerSynchronizer = claimsManagerSynchronizer;
 		this.claimReplaceTaskHandler = claimReplaceTaskHandler;
 		this.permissionHandler = permissionHandler;
+		this.linkedClaimStates = linkedClaimStates;
 	}
 	
 	public void setIo(PlayerClaimInfoManagerIO<?> io) {
@@ -82,7 +85,20 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		boolean playerClaimsSyncAllowed = ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() || isClaimable(dimension);
 		return new ServerDimensionClaimsManager(dimension, claims, new LinkedChain<>(), this, playerClaimsSyncAllowed);
 	}
-	
+
+	@Override
+	protected ServerClaimStateHolder createStateHolder(PlayerChunkClaim claim) {
+		return new ServerClaimStateHolder(claim);
+	}
+
+	public long countStateRegions(PlayerChunkClaim state, int direction) {
+		ServerClaimStateHolder stateHolder = claimStateHolders.get(state);
+		stateHolder.countRegions(direction);
+		if (stateHolder.getRegionCount() <= 0)
+			removeClaimState(state);
+		return stateHolder.getRegionCount();
+	}
+
 	private boolean withinDistance(int fromX, int fromZ, int x, int z) {
 		int maxClaimDistance = ServerConfig.CONFIG.maxClaimDistance.get();
 		return Math.abs(x - fromX) <= maxClaimDistance && Math.abs(z - fromZ) <= maxClaimDistance;
@@ -94,16 +110,24 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Override
-	protected void onClaimStateCreation(PlayerChunkClaim created) {
-		claimsManagerSynchronizer.syncToPlayersNewClaimState(created);
+	protected void onClaimStateAdded(ServerClaimStateHolder stateHolder) {
+		linkedClaimStates.add(stateHolder);
 	}
-	
+
+	@Override
+	protected void removeClaimState(PlayerChunkClaim state) {
+		linkedClaimStates.remove(claimStateHolders.get(state));
+		super.removeClaimState(state);
+		//removal is synced because the client can't know when to remove states while the initial sync is in progress
+		claimsManagerSynchronizer.syncToPlayersRemoveClaimState(state);
+	}
+
 	@Nullable
 	@Override
-	public PlayerChunkClaim claim(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int x, int z, boolean forceload) {
+	public PlayerChunkClaim claim(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int subConfigIndex, int x, int z, boolean forceload) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return null;
-		PlayerChunkClaim result = super.claim(dimension, id, x, z, forceload);
+		PlayerChunkClaim result = super.claim(dimension, id, subConfigIndex, x, z, forceload);
 		if(loaded)
 			claimsManagerTracker.onChunkChange(dimension, x, z, result);
 		return result;
@@ -118,22 +142,22 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			claimsManagerTracker.onChunkChange(dimension, x, z, null);
 	}
 
-	private ClaimResult<PlayerChunkClaim> tryToClaimHelper(ResourceLocation dimension, UUID playerId, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean replace, boolean isServer) {
+	private ClaimResult<PlayerChunkClaim> tryToClaimHelper(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean replace, boolean isServer) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		boolean claimCountUnaffected = false;
 		if(currentClaim != null) {
-			if(!replace)
-				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
 			claimCountUnaffected = Objects.equals(currentClaim.getPlayerId(), playerId);
+			if(!replace && !claimCountUnaffected)
+				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		boolean withinLimit = claimCountUnaffected || isServer ||
-				playerClaimInfo.getClaimCount() < getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfig.BONUS_CHUNK_CLAIMS);
+				playerClaimInfo.getClaimCount() < getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
 		if(withinLimit) {
-			PlayerChunkClaim claim = new PlayerChunkClaim(playerId, forceLoaded, 0);
+			PlayerChunkClaim claim = new PlayerChunkClaim(playerId, subConfigIndex, forceLoaded, 0);
 			if(Objects.equals(claim, currentClaim))
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
-			PlayerChunkClaim c = claim(dimension, claim.getPlayerId(), x, z, claim.isForceloadable());
+			PlayerChunkClaim c = claim(dimension, claim.getPlayerId(), subConfigIndex, x, z, claim.isForceloadable());
 			return new ClaimResult<>(c, Objects.equals(c, claim) ? ClaimResult.Type.SUCCESSFUL_CLAIM : ClaimResult.Type.CLAIM_LIMIT_REACHED);//forceload limit
 		} else {
 			return new ClaimResult<>(currentClaim, ClaimResult.Type.CLAIM_LIMIT_REACHED);
@@ -142,7 +166,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace) {
+	public ClaimResult<PlayerChunkClaim> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		if(!replace && getPlayerInfo(playerId).isReplacementInProgress())
@@ -152,7 +176,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
-		return tryToClaimHelper(dimension, playerId, fromX, fromZ, x, z, false, replace, isServer);
+		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer);
 	}
 	
 	private ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
@@ -181,11 +205,11 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				return new ClaimResult<>(currentClaim, enable ? ClaimResult.Type.ALREADY_FORCELOADABLE : ClaimResult.Type.ALREADY_UNFORCELOADED);
 			ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
 			boolean withinLimit = isServer || !enable ||
-					playerClaimInfo.getForceloadCount() < getPlayerBaseForceloadLimit(id) + configManager.getLoadedConfig(id).getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS);
+					playerClaimInfo.getForceloadCount() < getPlayerBaseForceloadLimit(id) + configManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
 			if(!withinLimit)
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.FORCELOAD_LIMIT_REACHED);
 
-			ClaimResult<PlayerChunkClaim> result = tryToClaimHelper(dimension, currentClaim.getPlayerId(), fromX, fromZ, x, z, enable, true, isServer);
+			ClaimResult<PlayerChunkClaim> result = tryToClaimHelper(dimension, currentClaim.getPlayerId(), currentClaim.getSubConfigIndex(), fromX, fromZ, x, z, enable, true, isServer);
 			if(result.getResultType() == ClaimResult.Type.SUCCESSFUL_CLAIM)
 				return new ClaimResult<>(result.getClaimResult(), enable ? ClaimResult.Type.SUCCESSFUL_FORCELOAD : ClaimResult.Type.SUCCESSFUL_UNFORCELOAD);
 //			else if(result.getResultType() == ClaimResult.Type.CLAIM_LIMIT_REACHED)
@@ -209,7 +233,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return tryToForceloadHelper(dimension, id, fromX, fromZ, x, z, enable, replace, isServer);
 	}
 	
-	public AreaClaimResult tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, Action action, boolean replace) {
+	public AreaClaimResult tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, Action action, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), left, top, right, bottom);
 		Set<ClaimResult.Type> resultTypes = new HashSet<>();
@@ -264,7 +288,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			for(int z = effectiveTop; z <= effectiveBottom; z++) {
 				ClaimResult<PlayerChunkClaim> result = null;
 				if(action == Action.CLAIM)
-					result = tryToClaimHelper(dimension, playerId, fromX, fromZ, x, z, false, replace, isServer);
+					result = tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer);
 				else if(action == Action.UNCLAIM)
 					result = tryToUnclaimHelper(dimension, playerId, fromX, fromZ, x, z, replace);
 				else if(action == Action.FORCELOAD)
@@ -292,20 +316,20 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
-		return tryClaimActionOverArea(dimension, playerId, fromX, fromZ, left, top, right, bottom, Action.CLAIM, replace);
+	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
+		return tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromX, fromZ, left, top, right, bottom, Action.CLAIM, replace);
 	}
 
 	@Nonnull
 	@Override
 	public AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
-		return tryClaimActionOverArea(dimension, id, fromX, fromZ, left, top, right, bottom, Action.UNCLAIM, replace);
+		return tryClaimActionOverArea(dimension, id, -1, fromX, fromZ, left, top, right, bottom, Action.UNCLAIM, replace);
 	}
 
 	@Nonnull
 	@Override
 	public AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace) {
-		return tryClaimActionOverArea(dimension, id, fromX, fromZ, left, top, right, bottom, enable ? Action.FORCELOAD : Action.UNFORCELOAD, replace);
+		return tryClaimActionOverArea(dimension, id, -1, fromX, fromZ, left, top, right, bottom, enable ? Action.FORCELOAD : Action.UNFORCELOAD, replace);
 	}
 
 	@Nullable
@@ -338,6 +362,10 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public int getPlayerBaseForceloadLimit(@Nonnull ServerPlayer player){
 		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.maxPlayerClaimForceloadsFTBPermission);
 	}
+
+	public Iterator<ServerClaimStateHolder> getClaimStateHolderIterator(){
+		return linkedClaimStates.iterator();
+	}
 	
 	@Override
 	public ClaimsManagerSynchronizer getClaimsManagerSynchronizer() {
@@ -362,10 +390,10 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		loaded = true;
 	}
 	
-	public final static class Builder extends ClaimsManager.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, Builder>{
+	public final static class Builder extends ClaimsManager.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder, Builder>{
 
 		private MinecraftServer server;
-		private IPlayerConfigManager<?> configManager;
+		private IPlayerConfigManager configManager;
 		private ForceLoadTicketManager ticketManager;
 		private ClaimsManagerSynchronizer claimsManagerSynchronizer;
 		private ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
@@ -404,7 +432,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return this;
 		}
 
-		public Builder setConfigManager(IPlayerConfigManager<?> configManager) {
+		public Builder setConfigManager(IPlayerConfigManager configManager) {
 			this.configManager = configManager;
 			return self;
 		}
@@ -425,9 +453,11 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		}
 
 		@Override
-		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, PlayerChunkClaim> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
+		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, ServerClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
 			ServerClaimsPermissionHandler permissionHandler = new ServerClaimsPermissionHandler();
-			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler, permissionHandler);
+			LinkedChain<ServerClaimStateHolder> linkedClaimStates = new LinkedChain<>();
+			claimStates.values().forEach(linkedClaimStates::add);
+			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler, permissionHandler, linkedClaimStates);
 		}
 		
 	}

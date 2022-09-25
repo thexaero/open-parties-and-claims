@@ -68,7 +68,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">xaero.pac.client.player.config.api</a></div>
-<h1 title="Interface IPlayerConfigOptionClientStorageAPI" class="title">Interface IPlayerConfigOptionClientStorageAPI&lt;T&gt;</h1>
+<h1 title="Interface IPlayerConfigOptionClientStorageAPI" class="title">Interface IPlayerConfigOptionClientStorageAPI&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;</h1>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
@@ -76,7 +76,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerConfigOptionClientStorageAPI&lt;T&gt;</span></div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerConfigOptionClientStorageAPI&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;</span></div>
 <div class="block">API for a player config option value storage on the client side</div>
 </section>
 <section class="summary">
@@ -102,7 +102,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the option string ID.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;<a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOption()" class="member-name-link">getOption</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the option spec that this storage holds the value for.</div>
@@ -122,7 +122,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the type of the option value that this storage holds.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;?&gt;,<wbr><a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getValidator()" class="member-name-link">getValidator</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the option value validator that checks whether a certain value is valid for the option.</div>
@@ -160,7 +160,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getOption()">
 <h3>getOption</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type">xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;<a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getOption</span>()</div>
+</span><span class="return-type"><a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getOption</span>()</div>
 <div class="block">Gets the option spec that this storage holds the value for.</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -232,7 +232,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getValidator()">
 <h3>getValidator</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getValidator</span>()</div>
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>&lt;?&gt;,<wbr><a href="IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getValidator</span>()</div>
 <div class="block">Gets the option value validator that checks whether a certain value is valid for the option.</div>
 <dl class="notes">
 <dt>Returns:</dt>

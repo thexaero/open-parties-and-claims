@@ -24,7 +24,9 @@ import xaero.pac.common.misc.MapFactory;
 public interface IPlayerConfigClientStorageManager<CS extends IPlayerConfigClientStorage<?>>  extends IPlayerConfigClientStorageManagerAPI<CS> {
 
 	//internal api
-	
+
+	public void setOtherPlayerConfig(CS otherPlayerConfig);
+	public CS getOtherPlayerConfig();
 	public IPlayerConfigClientStorage.IBuilder<CS> beginConfigStorageBuild(MapFactory mapFactory);
 	
 }

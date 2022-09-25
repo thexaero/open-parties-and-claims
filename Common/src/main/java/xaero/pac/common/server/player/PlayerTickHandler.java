@@ -48,7 +48,7 @@ public class PlayerTickHandler {
 		ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		if(mainCap != null) {
 			if(mainCap.shouldResyncPlayerConfigs()) {
-				serverData.getPlayerConfigs().getSynchronizer().syncToClient(player);
+				serverData.getPlayerConfigs().getSynchronizer().syncAllToClient(player);
 				mainCap.setShouldResyncPlayerConfigs(false);
 			}
 			if(ServerConfig.CONFIG.claimsEnabled.get()) {

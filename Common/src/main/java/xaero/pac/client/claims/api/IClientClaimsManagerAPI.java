@@ -216,5 +216,45 @@ public interface IClientClaimsManagerAPI
 	 * @param byServer  whether the (un)forceload should be made by the server
 	 */
 	public void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, boolean byServer);
+
+	/**
+	 * Gets a claim state of the same type (see {@link IPlayerChunkClaimAPI#isSameClaimType(IPlayerChunkClaimAPI)}) as
+	 * would be placed in the world when the player requests a new claim.
+	 * <p>
+	 * It's not the actual instance of the claim state that would be placed in the world but it's good enough
+	 * for comparisons against actual existing claim states.
+	 *
+	 * @return a claim state reflection of the same type as a new claim, null if unknown
+	 */
+	@Nullable
+	public IPlayerChunkClaimAPI getPotentialClaimStateReflection();
+
+	/**
+	 * Gets the index of the sub-config currently used for new claims.
+	 *
+	 * @return the current sub-config index
+	 */
+	public int getCurrentSubConfigIndex();
+
+	/**
+	 * Gets the index of the sub-config currently used for new server claims.
+	 *
+	 * @return the current server sub-config index
+	 */
+	public int getCurrentServerSubConfigIndex();
+
+	/**
+	 * Gets the string ID of the sub-config currently used for new claims.
+	 *
+	 * @return the current sub-config ID
+	 */
+	public String getCurrentSubConfigId();
+
+	/**
+	 * Gets the string ID of the sub-config currently used for new server claims.
+	 *
+	 * @return the current server sub-config ID
+	 */
+	public String getCurrentServerSubConfigId();
 	
 }

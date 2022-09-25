@@ -34,11 +34,12 @@ import java.util.LinkedHashMap;
 
 public class PlayerConfigClientStorageManager implements IPlayerConfigClientStorageManager<PlayerConfigClientStorage> {
 	
-	private PlayerConfigClientStorage serverClaimsConfig;
-	private PlayerConfigClientStorage expiredClaimsConfig;
-	private PlayerConfigClientStorage wildernessConfig;
-	private PlayerConfigClientStorage defaultPlayerConfig;
-	private PlayerConfigClientStorage myPlayerConfig;
+	private final PlayerConfigClientStorage serverClaimsConfig;
+	private final PlayerConfigClientStorage expiredClaimsConfig;
+	private final PlayerConfigClientStorage wildernessConfig;
+	private final PlayerConfigClientStorage defaultPlayerConfig;
+	private final PlayerConfigClientStorage myPlayerConfig;
+	private PlayerConfigClientStorage otherPlayerConfig;//temporary storage
 	
 	private PlayerConfigClientStorageManager(PlayerConfigClientStorage serverClaimsConfig, PlayerConfigClientStorage expiredClaimsConfig,
 			PlayerConfigClientStorage wildernessConfig, PlayerConfigClientStorage defaultPlayerConfig,
@@ -80,34 +81,29 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	public PlayerConfigClientStorage getMyPlayerConfig() {
 		return myPlayerConfig;
 	}
-	
-	public static final class Builder {
-		
-		private Builder() {
-		}
-		
-		public Builder setDefault() {
-			return this;
-		}
 
-		public PlayerConfigClientStorageManager build() {
-			PlayerConfigClientStorage serverClaimsConfig = PlayerConfigClientStorage.Builder.begin(LinkedHashMap::new).setType(PlayerConfigType.SERVER).setOwner(PlayerConfig.SERVER_CLAIM_UUID).build();
-			PlayerConfigClientStorage expiredClaimsConfig = PlayerConfigClientStorage.Builder.begin(LinkedHashMap::new).setType(PlayerConfigType.EXPIRED).setOwner(PlayerConfig.EXPIRED_CLAIM_UUID).build();
-			PlayerConfigClientStorage wildernessConfig = PlayerConfigClientStorage.Builder.begin(LinkedHashMap::new).setType(PlayerConfigType.WILDERNESS).setOwner(null).build();
-			PlayerConfigClientStorage defaultPlayerConfig = PlayerConfigClientStorage.Builder.begin(LinkedHashMap::new).setType(PlayerConfigType.DEFAULT_PLAYER).setOwner(null).build();
-			PlayerConfigClientStorage myPlayerConfig = PlayerConfigClientStorage.Builder.begin(LinkedHashMap::new).setType(PlayerConfigType.PLAYER).setOwner(null).build();
-			return new PlayerConfigClientStorageManager(serverClaimsConfig, expiredClaimsConfig, wildernessConfig, defaultPlayerConfig, myPlayerConfig);
-		}
-		
-		public static Builder begin() {
-			return new Builder().setDefault();
-		}
-		
+	public void reset(){
+		serverClaimsConfig.reset();
+		expiredClaimsConfig.reset();
+		wildernessConfig.reset();
+		defaultPlayerConfig.reset();
+		myPlayerConfig.reset();
+		otherPlayerConfig = null;
 	}
 
 	@Override
-	public PlayerConfigClientStorage.Builder beginConfigStorageBuild(MapFactory mapFactory) {
-		return PlayerConfigClientStorage.Builder.begin(mapFactory);
+	public void setOtherPlayerConfig(PlayerConfigClientStorage otherPlayerConfig) {
+		this.otherPlayerConfig = otherPlayerConfig;
+	}
+
+	@Override
+	public PlayerConfigClientStorage getOtherPlayerConfig() {
+		return otherPlayerConfig;
+	}
+
+	@Override
+	public PlayerConfigClientStorage.FinalBuilder beginConfigStorageBuild(MapFactory mapFactory) {
+		return PlayerConfigClientStorage.FinalBuilder.begin(mapFactory);
 	}
 
 	@Override
@@ -118,7 +114,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 				.begin(ArrayList::new)
 				.setParent(parent)
 				.setEscape(escape)
-				.setTitle(new TranslatableComponent("gui.xaero_pac_ui_server_claims_config"))
+				.setMainPlayerConfigData(getMyPlayerConfig())
 				.setData(config)
 				.build()
 				);
@@ -184,6 +180,30 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	public void openOtherPlayerConfigScreen(@Nullable Screen escape, @Nullable Screen parent, @Nonnull String playerName) {
 		if(!playerName.isEmpty())
 			Minecraft.getInstance().setScreen(new OtherPlayerConfigWaitScreen(escape, parent, playerName));
+	}
+
+	public static final class Builder {
+
+		private Builder() {
+		}
+
+		public Builder setDefault() {
+			return this;
+		}
+
+		public PlayerConfigClientStorageManager build() {
+			PlayerConfigClientStorage serverClaimsConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.SERVER).setOwner(PlayerConfig.SERVER_CLAIM_UUID).build();
+			PlayerConfigClientStorage expiredClaimsConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.EXPIRED).setOwner(PlayerConfig.EXPIRED_CLAIM_UUID).build();
+			PlayerConfigClientStorage wildernessConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.WILDERNESS).setOwner(null).build();
+			PlayerConfigClientStorage defaultPlayerConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.DEFAULT_PLAYER).setOwner(null).build();
+			PlayerConfigClientStorage myPlayerConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.PLAYER).setOwner(null).build();
+			return new PlayerConfigClientStorageManager(serverClaimsConfig, expiredClaimsConfig, wildernessConfig, defaultPlayerConfig, myPlayerConfig);
+		}
+
+		public static Builder begin() {
+			return new Builder().setDefault();
+		}
+
 	}
 
 }

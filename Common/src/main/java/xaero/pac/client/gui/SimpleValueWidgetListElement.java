@@ -45,7 +45,14 @@ public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElem
 	public static abstract class Builder<T, E extends SimpleValueWidgetListElement<T, E>, B extends Builder<T, E, B>> extends WidgetListElement.Builder<E, B> {
 		
 		protected T startValue;
-		
+
+		@Override
+		public B setDefault() {
+			super.setDefault();
+			setStartValue(null);
+			return self;
+		}
+
 		public B setStartValue(T startValue) {
 			this.startValue = startValue;
 			return self;
@@ -53,8 +60,6 @@ public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElem
 		
 		@Override
 		public E build() {
-			if(startValue == null)
-				throw new IllegalStateException();
 			return super.build();
 		}
 		

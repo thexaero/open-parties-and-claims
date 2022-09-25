@@ -23,9 +23,9 @@ import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.io.FileIOHelper;
+import xaero.pac.common.server.io.FilePathConfig;
 import xaero.pac.common.server.io.IOThreadWorker;
 import xaero.pac.common.server.io.ObjectManagerIO;
-import xaero.pac.common.server.io.ObjectManagerIOObject;
 import xaero.pac.common.server.io.serialization.SerializationHandler;
 import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 import xaero.pac.common.server.parties.party.PartyManager;
@@ -36,17 +36,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerParty, PartyManager, PartyManagerIO<S>> {
-	
+
+	private Path partiesPath;
+
 	private PartyManagerIO(String extension, SerializationHandler<S, String, ServerParty, PartyManager> serializationHandler, SerializedDataFileIO<S, String> serializedDataFileIO, IOThreadWorker ioThreadWorker,
 			MinecraftServer server, PartyManager manager, FileIOHelper fileIOHelper) {
 		super(serializationHandler, serializedDataFileIO, ioThreadWorker, server, extension, manager, fileIOHelper);
+		partiesPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("parties");
 	}
 
 	@Override
-	protected Path getObjectFolderPath() {
-		return server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("parties");
+	protected Stream<FilePathConfig> getObjectFolderPaths() {
+		return Stream.of(new FilePathConfig(partiesPath, false));
 	}
 	
 	@Override
@@ -83,7 +87,12 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 	}
 
 	@Override
-	public void delete(ObjectManagerIOObject object) {
+	protected Path getFilePath(ServerParty object, String fileName) {
+		return partiesPath.resolve(fileName + this.fileExtension);
+	}
+
+	@Override
+	public void delete(ServerParty object) {
 		if(!ServerConfig.CONFIG.partiesEnabled.get())
 			return;
 		super.delete(object);
@@ -95,7 +104,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 	}
 
 	@Override
-	protected String getObjectId(String fileNameNoExtension, Path file) {
+	protected String getObjectId(String fileNameNoExtension, Path file, FilePathConfig filePathConfig) {
 		return fileNameNoExtension;
 	}
 

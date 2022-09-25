@@ -30,10 +30,12 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
-public abstract class ServerSpreadoutTaskHandler<T extends IServerSpreadoutTask<H>, H> {
+public abstract class ServerSpreadoutTaskHandler<T extends IServerSpreadoutTask<T, H>, H> {
 
 	protected final Function<H, T> holderToTask;
 	protected final int perTickLimit;
@@ -46,6 +48,9 @@ public abstract class ServerSpreadoutTaskHandler<T extends IServerSpreadoutTask<
 	}
 
 	protected abstract Iterator<H> getTaskHolderIterator(IServerData<?,?> serverData);
+
+	protected void handleTasksToAdd(List<T> tasksToAdd){
+	}
 
 	public void onTick(IServerData<?,?> serverDataA){
 		@SuppressWarnings("unchecked")
@@ -66,21 +71,23 @@ public abstract class ServerSpreadoutTaskHandler<T extends IServerSpreadoutTask<
 			perTask = 1;
 		int allowedCount = perTickLimit;//to respect the perTickLimit when perTask is changed from 0 to 1
 		taskHolderIterator = getTaskHolderIterator(serverData);
+		List<T> tasksToAdd = new ArrayList<>();
 		while(taskHolderIterator.hasNext() && allowedCount-- > 0){
 			H taskHolder = taskHolderIterator.next();
 			T task = holderToTask.apply(taskHolder);
 			if(task.shouldWork(serverData, taskHolder))
-				task.onTick(serverData, taskHolder, perTask);
+				task.onTick(serverData, taskHolder, perTask, tasksToAdd);
 			if(canDropTasks() && task.shouldDrop(serverData, taskHolder))
 				taskHolderIterator.remove();
 		}
+		handleTasksToAdd(tasksToAdd);
 	}
 
 	protected boolean canDropTasks(){
 		return true;
 	}
 
-	public static abstract class Builder<T extends IServerSpreadoutTask<H>, H, B extends Builder<T, H, B>> {
+	public static abstract class Builder<T extends IServerSpreadoutTask<T, H>, H, B extends Builder<T, H, B>> {
 
 		protected final B self;
 		protected Function<H, T> holderToTask;

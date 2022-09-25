@@ -106,22 +106,27 @@ public abstract class WidgetListScreen extends XPACScreen {
 		renderBackground(poseStack);
 		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
+	}
+
+	@Override
+	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial) {
+		super.renderPreDropdown(poseStack, mouseX, mouseY, partial);
 		int startIndex = getStartIndex();
 		int endIndex = getEndIndex();
 		WidgetListElement<?> tooltipElement = null;
-		for(int index = startIndex; index < endIndex; index++) {
+		for (int index = startIndex; index < endIndex; index++) {
 			WidgetListElement<?> e = elements.get(index);
 			e.render(poseStack);
-			if(e.isOver(mouseX, mouseY))
+			if (e.isOver(mouseX, mouseY))
 				tooltipElement = e;
 		}
-		if(tooltipElement != null) {
+		if (openDropdown == null && tooltipElement != null) {
 			List<FormattedCharSequence> tooltip = tooltipElement.getTooltip();
-			if(tooltip != null)
+			if (tooltip != null)
 				renderTooltip(poseStack, tooltip, mouseX, mouseY + ROW_HEIGHT + 10);
 		}
 	}
-	
+
 	@Override
 	public void tick() {
 		super.tick();

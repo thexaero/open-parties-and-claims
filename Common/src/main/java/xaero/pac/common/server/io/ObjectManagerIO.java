@@ -62,10 +62,14 @@ public abstract class ObjectManagerIO
 		this.fileIOHelper = fileIOHelper;
 	}
 	
-	protected abstract Path getObjectFolderPath();
+	protected abstract Stream<FilePathConfig> getObjectFolderPaths();
 
 	public void load() {
-		Path folderPath = getObjectFolderPath();
+		Stream<FilePathConfig> folderPaths = getObjectFolderPaths();
+		folderPaths.forEach(folderPathConfig -> loadInFolder(folderPathConfig.getPath(), folderPathConfig));
+	}
+
+	private void loadInFolder(Path folderPath, FilePathConfig filePathConfig){
 		try {
 			Files.createDirectories(folderPath);
 			try(Stream<Path> contents = Files.list(folderPath)){
@@ -73,10 +77,21 @@ public abstract class ObjectManagerIO
 						(fd -> {
 							if(Files.isDirectory(fd))
 								return;
-							T loadedObject = loadFile(fd);
+							T loadedObject = loadFile(fd, filePathConfig);
 							if(loadedObject != null)
 								onObjectLoad(loadedObject);
 						});
+			}
+			if(filePathConfig.isLoadRecursively()) {
+				//after loading all files in this folder, go deeper
+				try (Stream<Path> contents = Files.list(folderPath)) {
+					contents.forEach
+							(fd -> {
+								if (!Files.isDirectory(fd))
+									return;
+								loadInFolder(fd, filePathConfig);
+							});
+				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -85,13 +100,13 @@ public abstract class ObjectManagerIO
 	
 	protected abstract void onObjectLoad(T loadedObject);
 	
-	protected abstract I getObjectId(String fileNameNoExtension, Path file);
+	protected abstract I getObjectId(String fileNameNoExtension, Path file, FilePathConfig filePathConfig);
 	
-	protected T loadFile(Path file) {
+	protected T loadFile(Path file, FilePathConfig filePathConfig) {
 		String fileName = file.getFileName().toString();
 		if(!fileName.endsWith(this.fileExtension))
 			return null;
-		I id = getObjectId(fileName.substring(0, fileName.lastIndexOf('.')), file);
+		I id = getObjectId(fileName.substring(0, fileName.lastIndexOf('.')), file, filePathConfig);
 		try {
 			S serializedData = ioThreadWorker.get(() -> readSerializedData(id, file, serializedDataFileIO, 20));
 			T object = serializationHandler.deserialize(id, manager, serializedData);
@@ -128,7 +143,6 @@ public abstract class ObjectManagerIO
 	}
 	
 	public boolean save() {
-		Path folderPath = getObjectFolderPath();
 		Iterator<T> iter = manager.getToSave().iterator();
 		int saves = 0;
 		while(iter.hasNext()){
@@ -137,12 +151,14 @@ public abstract class ObjectManagerIO
 			T object = iter.next();
 			iter.remove();
 			if(object.isDirty()) {//not guaranteed!
-				Path filePath = folderPath.resolve(object.getFileName() + this.fileExtension);
+				Path filePath = getFilePath(object, object.getFileName());
 				saveFile(object, filePath);
 			}
 		}
 		return true;
 	}
+
+	protected abstract Path getFilePath(T object, String fileName);
 	
 	protected void saveFile(T object, Path filePath) {
 //		OpenPartiesAndClaims.LOGGER.info("Saving file " + filePath);
@@ -165,9 +181,8 @@ public abstract class ObjectManagerIO
 		
 	}
 	
-	public void delete(ObjectManagerIOObject object) {
-		Path folderPath = getObjectFolderPath();
-		Path filePath = folderPath.resolve(object.getFileName() + this.fileExtension);
+	public void delete(T object) {
+		Path filePath = getFilePath(object, object.getFileName());
 		ioThreadWorker.enqueue(() -> {
 			try {
 				tryToDelete(filePath, 20);
@@ -224,6 +239,7 @@ public abstract class ObjectManagerIO
 	private static <S,I> void writeSerializedData(Path fd, SerializedDataFileIO<S,I> serializedDataFileIO, S serializedData, FileIOHelper fileIOHelper, int extraAttempts) throws IOException {
 		Path tempPath = fd.resolveSibling(fd.getFileName().toString() + ".temp");
 		try {//2 try clauses so that the "finally" block of the inner one is called before handling the exception
+			Files.createDirectories(fd.getParent());
 			try(FileOutputStream fileOutput = new FileOutputStream(tempPath.toFile()); BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput)){
 				serializedDataFileIO.write(bufferedOutput, serializedData);
 				fileIOHelper.safeMoveAndReplace(tempPath, fd, true);
@@ -310,7 +326,9 @@ public abstract class ObjectManagerIO
 		}
 
 		public MIO build() {
-			if (fileExtension == null)
+			if (fileExtension == null || serializationHandler == null ||
+					serializedDataFileIO == null || ioThreadWorker == null ||
+					server == null || fileIOHelper == null || manager == null)
 				throw new IllegalStateException();
 			return buildInternally();
 		}

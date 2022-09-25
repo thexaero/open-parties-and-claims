@@ -35,11 +35,13 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimPropertiesSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
+import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPropertiesSync;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
@@ -48,21 +50,28 @@ public class PlayerLoginHandler {
 	public void handlePreWorldJoin(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundPacServerLoginResetPacket());
 
-		((ServerPlayerClaimInfo)(Object)serverData.getServerClaimsManager().getPlayerInfo(player.getUUID())).setPlayerUsername(player.getGameProfile().getName());
+		IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = serverData.getServerClaimsManager().getPlayerInfo(player.getUUID());
+		((ServerPlayerClaimInfo)(Object)playerClaimInfo).setPlayerUsername(player.getGameProfile().getName());
+
 		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), false);
 		
 		serverData.getPlayerPartyAssigner().assign(serverData.getPartyManager(), player, serverData.getPartyMemberInfoUpdater());
 		
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 
-		ClaimsManagerPlayerClaimPropertiesSync claimsManagerPlayerClaimPropertiesSync = ClaimsManagerPlayerClaimPropertiesSync.Builder.begin()
+		ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync = ClaimsManagerPlayerClaimOwnerPropertiesSync.Builder.begin()
 				.setPlayer(player)
+				.setSynchronizer((ClaimsManagerSynchronizer) serverData.getServerClaimsManager().getClaimsManagerSynchronizer())
+				.build();
+		ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync = ClaimsManagerPlayerSubClaimPropertiesSync.Builder.begin()
+				.setPlayer(player)
+				.setClaimOwnerPropertiesSync(claimsManagerPlayerClaimOwnerPropertiesSync)
 				.setSynchronizer((ClaimsManagerSynchronizer) serverData.getServerClaimsManager().getClaimsManagerSynchronizer())
 				.build();
 		ClaimsManagerPlayerStateSync claimsManagerPlayerStateSync = ClaimsManagerPlayerStateSync.Builder.begin()
 				.setPlayer(player)
 				.setSynchronizer((ClaimsManagerSynchronizer) serverData.getServerClaimsManager().getClaimsManagerSynchronizer())
-				.setClaimPropertiesSync(claimsManagerPlayerClaimPropertiesSync)
+				.setSubClaimPropertiesSync(claimsManagerPlayerSubClaimPropertiesSync)
 				.build();
 
 		playerData.onLogin(
@@ -72,11 +81,13 @@ public class PlayerLoginHandler {
 						.setPlayerId(player.getUUID())
 						.build(),
 				claimsManagerPlayerStateSync,
-				claimsManagerPlayerClaimPropertiesSync,
+				claimsManagerPlayerClaimOwnerPropertiesSync,
+				claimsManagerPlayerSubClaimPropertiesSync,
 				PlayerClaimActionRequestHandler.Builder.begin()
 						.setManager(serverData.getServerClaimsManager())
 						.setServerTickHandler(serverData.getServerTickHandler())
-						.build()
+						.build(),
+				PlayerConfigSyncSpreadoutTask.Builder.begin().build()
 		);
 		playerData.setOftenSyncedPartyMemberInfo(new PartyMemberDynamicInfoSyncable(player.getUUID(), true));
 		
@@ -84,7 +95,7 @@ public class PlayerLoginHandler {
 	}
 	
 	public void handlePostWorldJoin(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
-		serverData.getPlayerConfigs().getSynchronizer().syncToClient(player);
+		serverData.getPlayerConfigs().getSynchronizer().syncAllToClient(player);
 		
 		IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
 		IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(player.getUUID());

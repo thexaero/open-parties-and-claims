@@ -98,13 +98,14 @@ public interface IServerClaimsManagerAPI
 	 *
 	 * @param dimension  the dimension ID of the chunk, not null
 	 * @param id  the claim owner UUID, not null
+	 * @param subConfigIndex  the sub-config index to be used by the claim
 	 * @param x  the X coordinate of the chunk
 	 * @param z  the Z coordinate of the chunk
 	 * @param forceload  whether the chunk should be marked for forceloading
 	 * @return the new claim state, null if claims are disabled
 	 */
 	@Nullable
-	public C claim(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int x, int z, boolean forceload);
+	public C claim(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int subConfigIndex, int x, int z, boolean forceload);
 
 	/**
 	 * Directly removes the current claim state of a chunk.
@@ -129,6 +130,7 @@ public interface IServerClaimsManagerAPI
 	 *
 	 * @param dimension  the dimension ID of the chunk, not null
 	 * @param playerId  the claiming player UUID, not null
+	 * @param subConfigIndex  the sub-config index to be used by the claim
 	 * @param fromX  the X coordinate of the claiming player's current chunk position
 	 * @param fromZ  the Z coordinate of the claiming player's current chunk position
 	 * @param x  the X coordinate of the chunk to claim
@@ -138,7 +140,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the result, not null
 	 */
 	@Nonnull
-	public ClaimResult<C> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<C> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace);
 
 	/**
 	 * Tries to unclaim a chunk by a specified player.
@@ -192,6 +194,7 @@ public interface IServerClaimsManagerAPI
 	 *
 	 * @param dimension  the dimension ID of the chunks, not null
 	 * @param playerId  the claiming player UUID, not null
+	 * @param subConfigIndex  the sub-config index to be used by the claims
 	 * @param fromX  the X coordinate of the claiming player's current chunk position
 	 * @param fromZ  the Z coordinate of the claiming player's current chunk position
 	 * @param left  the lowest X coordinate of the area
@@ -203,7 +206,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the area result, not null
 	 */
 	@Nonnull
-	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
+	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
 
 	/**
 	 * Tries to unclaim chunks over a specified area by a specified player.

@@ -110,14 +110,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#DEFAULTED" class="member-name-link">DEFAULTED</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">The option value was reset to the default</div>
+<div class="block">The option value was reset to the default config's value</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#INVALID" class="member-name-link">INVALID</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#ILLEGAL_OPTION" class="member-name-link">ILLEGAL_OPTION</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">The option is not allowed in this config</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#INVALID" class="member-name-link">INVALID</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The value is not valid for the option</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#SUCCESS" class="member-name-link">SUCCESS</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#SUCCESS" class="member-name-link">SUCCESS</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The value was successully set</div>
 </div>
 </div>
@@ -173,10 +177,17 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="ILLEGAL_OPTION">
+<h3>ILLEGAL_OPTION</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api">IPlayerConfigAPI.SetResult</a></span>&nbsp;<span class="element-name">ILLEGAL_OPTION</span></div>
+<div class="block">The option is not allowed in this config</div>
+</section>
+</li>
+<li>
 <section class="detail" id="DEFAULTED">
 <h3>DEFAULTED</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api">IPlayerConfigAPI.SetResult</a></span>&nbsp;<span class="element-name">DEFAULTED</span></div>
-<div class="block">The option value was reset to the default</div>
+<div class="block">The option value was reset to the default config's value</div>
 </section>
 </li>
 <li>

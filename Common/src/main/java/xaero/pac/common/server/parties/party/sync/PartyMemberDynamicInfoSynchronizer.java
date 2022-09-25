@@ -27,8 +27,8 @@ import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
@@ -50,19 +50,19 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 
 	@Override
 	public void syncToPartyDynamicInfo(ServerParty party, IPartyMemberDynamicInfoSyncable syncedInfo, ServerParty fromParty) {
-		IPlayerConfigManager<ServerParty> configManager = partyManager.getPlayerConfigs();
-		if(syncedInfo.isActive() && party == fromParty && !configManager.getLoadedConfig(syncedInfo.getPlayerId()).getEffective(PlayerConfig.SHARE_LOCATION_WITH_PARTY))
+		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
+		if(syncedInfo.isActive() && party == fromParty && !configManager.getLoadedConfig(syncedInfo.getPlayerId()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY))
 			return;
 		PartyMember exceptionMemberInfo = party != fromParty ? null : party.getOwner().getUUID().equals(syncedInfo.getPlayerId()) ? party.getOwner() : party.getMemberInfo(syncedInfo.getPlayerId());
-		PlayerConfigOptionSpec<Boolean> receiveConfigOption = party == fromParty ? PlayerConfig.RECEIVE_LOCATIONS_FROM_PARTY : PlayerConfig.RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES;
+		PlayerConfigOptionSpec<Boolean> receiveConfigOption = (PlayerConfigOptionSpec<Boolean>) (party == fromParty ? PlayerConfigOptions.RECEIVE_LOCATIONS_FROM_PARTY : PlayerConfigOptions.RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES);
 		Predicate<IPartyPlayerInfo> exception = mi -> mi == exceptionMemberInfo || !configManager.getLoadedConfig(mi.getUUID()).getEffective(receiveConfigOption);
 		syncToParty(party, exception, syncedInfo, true);
 	}
 
 	@Override
 	public void syncToPartyMutualAlliesDynamicInfo(ServerParty party, IPartyMemberDynamicInfoSyncable syncedInfo) {
-		IPlayerConfigManager<ServerParty> configManager = partyManager.getPlayerConfigs();
-		if(syncedInfo.isActive() && !configManager.getLoadedConfig(syncedInfo.getPlayerId()).getEffective(PlayerConfig.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES))
+		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
+		if(syncedInfo.isActive() && !configManager.getLoadedConfig(syncedInfo.getPlayerId()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES))
 			return;
 		Iterator<UUID> allyIdIterator = party.getAllyPartiesStream().iterator();
 		while(allyIdIterator.hasNext()){
@@ -78,10 +78,10 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 		syncToPartyMutualAlliesDynamicInfo(party, syncedInfo);
 	}
 
-	private void syncToClientAllDynamicInfo(IPlayerConfigManager<ServerParty> configManager, ServerPlayer player, ServerParty party, ServerParty toParty, boolean removers) {
-		if(!removers && !configManager.getLoadedConfig(player.getUUID()).getEffective(party == toParty ? PlayerConfig.RECEIVE_LOCATIONS_FROM_PARTY : PlayerConfig.RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES))
+	private void syncToClientAllDynamicInfo(IPlayerConfigManager configManager, ServerPlayer player, ServerParty party, ServerParty toParty, boolean removers) {
+		if(!removers && !configManager.getLoadedConfig(player.getUUID()).getEffective(party == toParty ? PlayerConfigOptions.RECEIVE_LOCATIONS_FROM_PARTY : PlayerConfigOptions.RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES))
 			return;
-		PlayerConfigOptionSpec<Boolean> shareConfigOption = party == toParty ? PlayerConfig.SHARE_LOCATION_WITH_PARTY : PlayerConfig.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES;
+		PlayerConfigOptionSpec<Boolean> shareConfigOption = (PlayerConfigOptionSpec<Boolean>) (party == toParty ? PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY : PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES);
 		Consumer<ServerPlayer> onlineMemberConsumer = onlineMember -> {
 			if(onlineMember != player && configManager.getLoadedConfig(onlineMember.getUUID()).getEffective(shareConfigOption)) {
 				ServerPlayerData partyMemberMainCap = (ServerPlayerData) ServerPlayerDataAPI.from(onlineMember);
@@ -99,7 +99,7 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 
 	@Override
 	public void syncToClientMutualAlliesDynamicInfo(ServerPlayer player, ServerParty party, boolean removers) {
-		IPlayerConfigManager<ServerParty> configManager = partyManager.getPlayerConfigs();
+		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
 		party.getAllyPartiesStream().forEach(allyId -> {
 			ServerParty allyParty = partyManager.getPartyById(allyId);
 			if(allyParty != null && allyParty.isAlly(party.getId()))
@@ -115,9 +115,9 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 	public void syncToPartyAnotherPartyDynamicInfo(ServerParty party, ServerParty anotherParty, boolean removers) {
 		if(party == anotherParty)
 			throw new IllegalArgumentException();
-		IPlayerConfigManager<ServerParty> configManager = partyManager.getPlayerConfigs();
+		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
 		Consumer<ServerPlayer> onlineAllyMemberConsumer = anotherPartyMember -> {
-			if(configManager.getLoadedConfig(anotherPartyMember.getUUID()).getEffective(PlayerConfig.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES)) {
+			if(configManager.getLoadedConfig(anotherPartyMember.getUUID()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES)) {
 				ServerPlayerData anotherPartyMemberMainCap = (ServerPlayerData) ServerPlayerDataAPI.from(anotherPartyMember);
 				IPartyMemberDynamicInfoSyncable syncedInfo = removers ? anotherPartyMemberMainCap.getPartyMemberDynamicInfo().getRemover() : anotherPartyMemberMainCap.getPartyMemberDynamicInfo();
 				syncToPartyDynamicInfo(party, syncedInfo, anotherParty);
@@ -131,10 +131,10 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 		if(playerParty != null) {
 			ServerPlayerData playerMainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 			PartyMemberDynamicInfoSyncable remover = playerMainCap.getPartyMemberDynamicInfo().getRemover();
-			IPlayerConfigManager<ServerParty> configManager = partyManager.getPlayerConfigs();
-			if(configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfig.SHARE_LOCATION_WITH_PARTY))
+			IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
+			if(configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY))
 				syncToPartyDynamicInfo(playerParty, remover, playerParty);
-			if(configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfig.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES))
+			if(configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES))
 				syncToPartyMutualAlliesDynamicInfo(playerParty, remover);
 		}
 	}

@@ -33,6 +33,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 
 public final class ServerSpreadoutQueuedTaskHandler<T extends IServerSpreadoutQueuedTask<T>> extends ServerSpreadoutTaskHandler<T, T> {
@@ -56,6 +57,11 @@ public final class ServerSpreadoutQueuedTaskHandler<T extends IServerSpreadoutQu
 	@Override
 	protected Iterator<T> getTaskHolderIterator(IServerData<?, ?> serverData) {
 		return taskQueue.iterator();
+	}
+
+	@Override
+	protected void handleTasksToAdd(List<T> tasksToAdd) {
+		taskQueue.addAll(tasksToAdd);
 	}
 
 	public static final class Builder<T extends IServerSpreadoutQueuedTask<T>> extends ServerSpreadoutTaskHandler.Builder<T, T, Builder<T>> {

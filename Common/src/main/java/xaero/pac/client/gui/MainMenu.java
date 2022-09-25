@@ -205,8 +205,8 @@ public class MainMenu extends XPACScreen {
 			boolean adminMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isAdminMode();
 			boolean serverMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isServerMode();
 			UUID claimTargetUUID = serverMode ? PlayerConfig.SERVER_CLAIM_UUID : minecraft.player.getUUID();
-					claimButton.active = adminMode || (currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID));
-			claimButton.setMessage(currentClaim == null ? CLAIM : UNCLAIM);
+			claimButton.active = adminMode || (currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID));
+			claimButton.setMessage(wouldClaim(currentClaim) ? CLAIM : UNCLAIM);
 			
 			forceloadButton.active = adminMode || currentClaim != null && currentClaim.getPlayerId().equals(claimTargetUUID);
 			forceloadButton.setMessage(currentClaim == null || !currentClaim.isForceloadable() ? FORCELOAD : UNFORCELOAD);
@@ -221,10 +221,17 @@ public class MainMenu extends XPACScreen {
 		sendMessage(ABOUT_PARTY_COMMAND.getString());
 		minecraft.setScreen(null);
 	}
+
+	private boolean wouldClaim(IPlayerChunkClaim currentClaim){
+		if(currentClaim == null)
+			return true;
+		IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
+		return !currentClaim.isSameClaimType(potentialClaimReflection);
+	}
 	
 	private void onClaimButton(Button b) {
 		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
-		if(currentClaim == null)
+		if(wouldClaim(currentClaim))
 			sendMessage(CLAIM_COMMAND.getString());
 		else
 			sendMessage(UNCLAIM_COMMAND.getString());
@@ -274,10 +281,16 @@ public class MainMenu extends XPACScreen {
 			int claimLimit = claimsManager.getClaimLimit();
 			int forceloadCount = shouldUseLoadingValues ? claimsManager.getLoadingForceloadCount() : playerInfo.getForceloadCount();
 			int forceloadLimit = claimsManager.getForceloadLimit();
-			String claimsName = playerInfo.getClaimsName();
+			int currentSubConfigIndex = claimsManager.getCurrentSubConfigIndex();
+			String claimsName = playerInfo.getClaimsName(currentSubConfigIndex);
+			if(claimsName == null && currentSubConfigIndex != -1)
+				claimsName = playerInfo.getClaimsName();
 			if(claimsName == null || claimsName.isEmpty())
 				claimsName = "N/A";
-			int claimsColor = playerInfo.getClaimsColor();
+			claimsName = claimsName + " (" + claimsManager.getCurrentSubConfigId() + ")";
+			Integer claimsColor = playerInfo.getClaimsColor(currentSubConfigIndex);
+			if(claimsColor == null && currentSubConfigIndex != -1)
+				claimsColor = playerInfo.getClaimsColor();
 
 			drawString(poseStack, font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 7 + 114, -1);
 			drawString(poseStack, font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 7 + 126, -1);

@@ -28,5 +28,5 @@ public interface IPartyManager<
 
 	//internal API
 	public IPartySynchronizer<P> getPartySynchronizer();
-	public IPlayerConfigManager<P> getPlayerConfigs();
+	public IPlayerConfigManager getPlayerConfigs();
 }

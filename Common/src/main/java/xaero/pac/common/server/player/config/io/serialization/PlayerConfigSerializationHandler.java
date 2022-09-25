@@ -25,8 +25,6 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
-import java.util.HashMap;
-
 public final class PlayerConfigSerializationHandler<
 	P extends IServerParty<?, ?>, 
 	CM extends IServerClaimsManager<?, ?, ?>//needed in this class because of some weird compilation error when gradle building (not displayed by the IDE)
@@ -45,9 +43,13 @@ public final class PlayerConfigSerializationHandler<
 
 	@Override
 	public PlayerConfig<P> deserialize(PlayerConfigDeserializationInfo info, PlayerConfigManager<P, CM> manager, String serializedData) {
-		PlayerConfig<P> config = info.getType() == PlayerConfigType.PLAYER ? manager.getConfig(info.getId()) : new PlayerConfig<>(info.getType(), info.getId(), manager, new HashMap<>());
-		serializer.deserializeInto(config, serializedData);
-		return config;
+		PlayerConfig<P> config = info.getSubId() != null || info.getType() == PlayerConfigType.PLAYER ? manager.getConfig(info.getId()) : PlayerConfig.FinalBuilder.<P>begin().setType(info.getType()).setPlayerId(info.getId()).setManager(manager).build();
+		PlayerConfig<P> targetConfig = config;
+		if(info.getSubId() != null)
+			targetConfig = config.createSubConfig(info.getSubId(), info.getSubIndex());
+		if(targetConfig != null)
+			serializer.deserializeInto(targetConfig, serializedData);
+		return targetConfig;
 	}
 	
 	public static final class Builder<

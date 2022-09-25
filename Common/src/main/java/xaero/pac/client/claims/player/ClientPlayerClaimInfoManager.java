@@ -18,6 +18,7 @@
 
 package xaero.pac.client.claims.player;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.client.claims.ClientClaimsManager;
@@ -29,6 +30,7 @@ import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -42,17 +44,23 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 	@Override
 	protected ClientPlayerClaimInfo create(String username, UUID playerId,
 			Map<ResourceLocation, PlayerDimensionClaims> claims) {
-		return new ClientPlayerClaimInfo(username, playerId, claims, this);
+		return new ClientPlayerClaimInfo(username, playerId, claims, this, new Int2ObjectOpenHashMap<>());
 	}
 	
-	public void updatePlayerInfo(UUID playerId, String username, String claimsName, int claimsColor, ClientClaimsManager claimsManager) {
+	public void updatePlayerInfo(UUID playerId, String username) {
 		ClientPlayerClaimInfo playerInfo = getInfo(playerId);
 		playerInfo.setPlayerUsername(username);
-		playerInfo.setClaimsName(claimsName);
-		int oldColor = playerInfo.getClaimsColor();
-		playerInfo.setClaimsColor(claimsColor);
-		if(oldColor != claimsColor) {
+	}
+
+	public void updateSubClaimInfo(UUID playerId, int subConfigIndex, String claimsName, Integer claimsColor, ClientClaimsManager claimsManager) {
+		ClientPlayerClaimInfo playerInfo = getInfo(playerId);
+		playerInfo.ensureSubClaim(subConfigIndex);
+		playerInfo.setClaimsName(subConfigIndex, claimsName);
+		Integer oldColor = playerInfo.getClaimsColor(subConfigIndex);
+		playerInfo.setClaimsColor(subConfigIndex, claimsColor);
+		if(!Objects.equals(oldColor, claimsColor)) {
 			boolean notManyClaims = playerInfo.getClaimCount() < 1024;
+			boolean isSub = subConfigIndex != -1;
 			ClaimsManagerTracker tracker = claimsManager.getTracker();
 			playerInfo.getStream().map(Entry::getValue).forEach(dim -> {
 				ResourceLocation dimensionId = dim.getDimension();
@@ -60,6 +68,9 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> tracker.onChunkChange(dimensionId, pos.x, pos.z, claim);
 					dim.getStream().forEach(posList -> {
 						PlayerChunkClaim state = posList.getClaimState();
+						int claimSubConfigIndex = state.getSubConfigIndex();
+						if(claimSubConfigIndex != subConfigIndex && (isSub || playerInfo.getClaimsColor(claimSubConfigIndex) != null))
+							return;
 						posList.getStream().forEach(pos -> claimConsumer.accept(state, pos));
 					});
 				} else

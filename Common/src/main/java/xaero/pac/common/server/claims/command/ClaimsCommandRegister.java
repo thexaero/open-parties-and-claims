@@ -34,6 +34,8 @@ public class ClaimsCommandRegister {
 		new ClaimsNonAllyModeCommand().register(dispatcher, environment);
 		new ClaimsAboutCommand().register(dispatcher, environment);
 		new ClaimsServerModeCommand().register(dispatcher, environment);
+		new ClaimsSubClaimCurrentCommand().register(dispatcher, environment);
+		new ClaimsSubClaimUseCommand().register(dispatcher, environment);
 		
 		//op commands
 		new ClaimsServerClaimCommand().register(dispatcher, environment);

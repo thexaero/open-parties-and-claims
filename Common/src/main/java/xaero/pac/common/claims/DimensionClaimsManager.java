@@ -118,12 +118,12 @@ public abstract class DimensionClaimsManager
 	
 	protected abstract WRC create(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage storage);
 	
-	public PlayerChunkClaim claim(int x, int z, PlayerChunkClaim claim, M playerClaimInfoManager, IPlayerConfigManager<?> configManager) {
+	public PlayerChunkClaim claim(int x, int z, PlayerChunkClaim claim, M playerClaimInfoManager, IPlayerConfigManager configManager) {
 		WRC region = ensureRegionForChunk(x, z);
 		return region.claim(x, z, claim, playerClaimInfoManager, configManager);
 	}
 	
-	public void unclaim(int x, int z, M playerClaimInfoManager, IPlayerConfigManager<?> configManager) {
+	public void unclaim(int x, int z, M playerClaimInfoManager, IPlayerConfigManager configManager) {
 		WRC region = getRegionForChunk(x, z);
 		if(region != null) {
 			region.claim(x, z, null, playerClaimInfoManager, configManager);

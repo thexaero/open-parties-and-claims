@@ -51,6 +51,16 @@ public interface IClientClaimsManager
 	public void setForceloadLimit(int forceloadLimit);
 
 	public void setMaxClaimDistance(int maxClaimDistance);
+
+	public void setCurrentSubConfigIndex(int currentSubConfigIndex);
+
+	public void setCurrentServerSubConfigIndex(int currentServerSubConfigIndex);
+
+	public void setCurrentSubConfigId(String currentSubConfigId);
+
+	public void setCurrentServerSubConfigId(String currentServerSubConfigId);
+
+	public IPlayerChunkClaim getPotentialClaimStateReflection();
 	
 	@Nonnull
 	@Override

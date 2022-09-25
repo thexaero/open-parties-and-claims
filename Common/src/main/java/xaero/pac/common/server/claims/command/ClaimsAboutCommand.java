@@ -48,7 +48,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 
 import java.util.Collection;
 
@@ -82,17 +82,17 @@ public class ClaimsAboutCommand {
 			final GameProfile profile = targetProfile;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>>
 				serverData = ServerData.from(casterPlayer.getServer());
-			IPlayerConfigManager<IServerParty<IPartyMember, IPartyPlayerInfo>> 
-				configManager = serverData.getPlayerConfigs();
+			IPlayerConfigManager
+					configManager = serverData.getPlayerConfigs();
 			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 				claimsManager = serverData.getServerClaimsManager();
 			IPlayerConfig 
 				playerConfig = configManager.getLoadedConfig(profile.getId());
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>
 				playerInfo = claimsManager.getPlayerInfo(profile.getId());
-			
-			int claimLimit = claimsManager.getPlayerBaseClaimLimit(profile.getId()) + playerConfig.getEffective(PlayerConfig.BONUS_CHUNK_CLAIMS);
-			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(profile.getId()) + playerConfig.getEffective(PlayerConfig.BONUS_CHUNK_FORCELOADS);
+
+			int claimLimit = claimsManager.getPlayerBaseClaimLimit(profile.getId()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(profile.getId()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
 			Component claimCountNumbers = new TextComponent(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
 			Component claimNameComponent = new TextComponent(playerInfo.getClaimsName()).withStyle(s -> s.withColor(0xFFAAAAAA));
 			Component forceloadCountNumbers = new TextComponent(playerInfo.getForceloadCount() + " / " + forceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA));

@@ -36,6 +36,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.task.IServerSpreadoutQueuedTask;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class ObjectExpirationCheckSpreadoutTask<T extends ObjectManagerIOExpirableObject> implements IServerSpreadoutQueuedTask<ObjectExpirationCheckSpreadoutTask<?>> {
 
@@ -64,7 +65,7 @@ public class ObjectExpirationCheckSpreadoutTask<T extends ObjectManagerIOExpirab
 	}
 
 	@Override
-	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ObjectExpirationCheckSpreadoutTask<?> holder, int perTick) {
+	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData, ObjectExpirationCheckSpreadoutTask<?> holder, int perTick, List<ObjectExpirationCheckSpreadoutTask<?>> tasksToAdd) {
 		int stepsLeft = perTick;
 		ServerInfo serverInfo = expirationHandler.getServerInfo();
 		long expirationTime = expirationHandler.getExpirationTime();
@@ -94,5 +95,4 @@ public class ObjectExpirationCheckSpreadoutTask<T extends ObjectManagerIOExpirab
 			finished = true;
 		}
 	}
-
 }

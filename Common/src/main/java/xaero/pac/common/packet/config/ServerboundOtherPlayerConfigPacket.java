@@ -37,8 +37,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.PlayerConfig;
-import xaero.pac.common.server.player.config.sync.PlayerConfigSynchronizer;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -88,9 +87,10 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 			}
 			serverPlayer.getServer().getProfileCache().get(t.ownerName).ifPresent(gp -> {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(serverPlayer.getServer());
-				IPlayerConfigManager<?> playerConfigs = serverData.getPlayerConfigs();
+				IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 				IPlayerConfig config = playerConfigs.getLoadedConfig(gp.getId());
-				((PlayerConfigSynchronizer)playerConfigs.getSynchronizer()).syncToClient(serverPlayer, (PlayerConfig<?>)config);
+				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(serverPlayer);
+				playerData.getConfigSyncSpreadoutTask().addConfigToSync(config);
 			});
 		}
 		

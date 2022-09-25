@@ -54,7 +54,7 @@ public class PlayerDimensionClaimsNbtSerializer {
 			});
 			claimLists.put(state, posList);
 		});
-		return new PlayerDimensionClaims(new ResourceLocation(dimension), claimLists);
+		return new PlayerDimensionClaims(playerId, new ResourceLocation(dimension), claimLists);
 	}
 
 	public CompoundTag serialize(PlayerDimensionClaims data) {

@@ -31,15 +31,13 @@ import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket.Action;
 import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket.Type;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
-import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.config.ServerConfig;
-import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 
 import java.util.UUID;
 
@@ -157,7 +155,7 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 	
 	@Override
 	public void syncToClient(ServerPlayer player, ServerParty party) {
-		IPlayerConfigManager<IServerParty<IPartyMember, IPartyPlayerInfo>> playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		sendToClient(player, ClientboundLoadingPacket.START_PARTY, false);
 		sendToClient(player, 
 				party == null ? 
@@ -187,9 +185,9 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		return fetchConfiguredPartyName(serverData.getPlayerConfigs(), party);
 	}
 	
-	private String fetchConfiguredPartyName(IPlayerConfigManager<?> playerConfigs, ServerParty party) {
+	private String fetchConfiguredPartyName(IPlayerConfigManager playerConfigs, ServerParty party) {
 		IPlayerConfig ownerConfig = party == null ? null : playerConfigs.getLoadedConfig(party.getOwner().getUUID());
-		String configuredName = ownerConfig == null ? null : ownerConfig.getEffective(PlayerConfig.PARTY_NAME);
+		String configuredName = ownerConfig == null ? null : ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 		return configuredName;
 	}
 

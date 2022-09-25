@@ -45,6 +45,13 @@ public interface IPlayerChunkClaimAPI {
 	public UUID getPlayerId();
 
 	/**
+	 * Gets the sub-config index of this claim.
+	 *
+	 * @return the index corresponding to the sub-config used by this claim
+	 */
+	public int getSubConfigIndex();
+
+	/**
 	 * Checks if another claim state is of the same type as this, which ignores
 	 * whether the claim states are forceloadable.
 	 *

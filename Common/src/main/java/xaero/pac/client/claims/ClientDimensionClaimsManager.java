@@ -37,7 +37,7 @@ public final class ClientDimensionClaimsManager extends DimensionClaimsManager<C
 		return ClientRegionClaims.Builder.begin().setDimension(dimension).setX(x).setZ(z).setStorage(storage).build();
 	}
 
-	public void unclaimRegion(int x, int z, ClientPlayerClaimInfoManager playerClaimInfoManager, IPlayerConfigManager<?> configManager) {
+	public void unclaimRegion(int x, int z, ClientPlayerClaimInfoManager playerClaimInfoManager, IPlayerConfigManager configManager) {
 		ClientRegionClaims region = getRegion(x, z);
 		if(region != null){
 			region.onRegionClaim(null, playerClaimInfoManager, configManager, false);
@@ -45,7 +45,7 @@ public final class ClientDimensionClaimsManager extends DimensionClaimsManager<C
 		}
 	}
 
-	public void claimRegion(int x, int z, RegionClaimsPaletteStorage regionStorage, ClientPlayerClaimInfoManager playerClaimInfoManager, IPlayerConfigManager<?> configManager) {
+	public void claimRegion(int x, int z, RegionClaimsPaletteStorage regionStorage, ClientPlayerClaimInfoManager playerClaimInfoManager, IPlayerConfigManager configManager) {
 		ClientRegionClaims region = getRegion(x, z);
 		ClientRegionClaims newRegion = create(getDimension(), x, z, regionStorage);
 		newRegion.onRegionClaim(region, playerClaimInfoManager, configManager, true);

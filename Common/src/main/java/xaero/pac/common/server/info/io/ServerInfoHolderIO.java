@@ -26,6 +26,7 @@ import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.info.ServerInfoHolder;
 import xaero.pac.common.server.info.io.serialization.nbt.ServerInfoSerializationHandler;
 import xaero.pac.common.server.io.FileIOHelper;
+import xaero.pac.common.server.io.FilePathConfig;
 import xaero.pac.common.server.io.IOThreadWorker;
 import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.serialization.SerializationHandler;
@@ -33,6 +34,7 @@ import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 import xaero.pac.common.server.io.serialization.nbt.SimpleNBTSerializedDataFileIO;
 
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, String, ServerInfo, ServerInfoHolder, ServerInfoHolderIO>{
 	
@@ -59,8 +61,13 @@ public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, Strin
 	}
 
 	@Override
-	protected Path getObjectFolderPath() {
-		return folderPath;
+	protected Path getFilePath(ServerInfo object, String fileName) {
+		return folderPath.resolve(fileName + this.fileExtension);
+	}
+
+	@Override
+	protected Stream<FilePathConfig> getObjectFolderPaths() {
+		return Stream.of(new FilePathConfig(folderPath, false));
 	}
 
 	@Override
@@ -69,7 +76,7 @@ public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, Strin
 	}
 
 	@Override
-	protected String getObjectId(String fileNameNoExtension, Path file) {
+	protected String getObjectId(String fileNameNoExtension, Path file, FilePathConfig filePathConfig) {
 		return fileNameNoExtension;
 	}
 	

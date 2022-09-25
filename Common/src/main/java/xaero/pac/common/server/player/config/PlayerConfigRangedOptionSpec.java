@@ -18,22 +18,26 @@
 
 package xaero.pac.common.server.player.config;
 
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
+import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpec<T> {
+public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends PlayerConfigOptionSpec<T> {
 	
 	private final T minValue;
 	private final T maxValue;
 
 	private PlayerConfigRangedOptionSpec(Class<T> type, String id, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment,
-			String translation, Function<String, T> commandInputParser, Function<T, String> commandOutputWriter, Predicate<T> validator, T minValue, T maxValue, String tooltipPrefix) {
-		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, validator, tooltipPrefix);
+										 String translation, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, T minValue, T maxValue, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter) {
+		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
@@ -42,18 +46,18 @@ public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpe
 	public PlayerConfigOptionSpec<T> applyToForgeSpec(ForgeConfigSpec.Builder builder) {
 		ForgeConfigSpec.Builder b = buildForgeSpec(builder);
 		if(type == Integer.class)
-			b.defineInRange(id, (int)defaultValue, (int)minValue, (int)maxValue);
+			b.defineInRange(id, (Integer)defaultValue, (Integer)minValue, (Integer)maxValue);
 		else 
-			b.defineInRange(id, (double)defaultValue, (double)minValue, (double)maxValue);
+			b.defineInRange(id, (Double)defaultValue, (Double)minValue, (Double)maxValue);
 		return this;
 	}
 
-	final static class Builder<T> extends PlayerConfigOptionSpec.Builder<T, Builder<T>> {
+	final static class Builder<T extends Comparable<T>> extends PlayerConfigOptionSpec.Builder<T, Builder<T>> {
 
 		private T minValue;
 		private T maxValue;
 		
-		protected Builder(Class<T> valueType) {
+		private Builder(Class<T> valueType) {
 			super(valueType);
 		}
 		
@@ -94,34 +98,38 @@ public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpe
 			return this;
 		}
 		
-		public static <T> Builder<T> begin(Class<T> valueType){
+		public static <T extends Comparable<T>> Builder<T> begin(Class<T> valueType){
 			if(valueType != Integer.class && valueType != Double.class)
 				throw new IllegalArgumentException();
 			return new Builder<T>(valueType).setDefault();
 		}
-		
+
 		@Override
-		public PlayerConfigOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
-			if(minValue == null || maxValue == null)
-				throw new IllegalStateException();
-			Predicate<T> normalValidator = getValidator();
-			setValidator(v -> {
+		protected Predicate<T> buildValueValidator() {
+			Predicate<T> normalValidator = super.buildValueValidator();
+			return v -> {
 				if(!normalValidator.test(v))
 					return false;
 				double value;
 				double minValueDouble;
 				double maxValueDouble;
 				if(type == Integer.class) {
-					value = (double) (int) v;
-					minValueDouble = (double) (int) minValue;
-					maxValueDouble = (double) (int) maxValue;
+					value = (double) (Integer) v;
+					minValueDouble = (double) (Integer) minValue;
+					maxValueDouble = (double) (Integer) maxValue;
 				} else {
-					value = (double) v;
-					minValueDouble = (double) minValue;
-					maxValueDouble = (double) maxValue;
+					value = (Double) v;
+					minValueDouble = (Double) minValue;
+					maxValueDouble = (Double) maxValue;
 				}
 				return value >= minValueDouble && value <= maxValueDouble;
-			});
+			};
+		}
+
+		@Override
+		public PlayerConfigOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
+			if(minValue == null || maxValue == null)
+				throw new IllegalStateException();
 			if(tooltipPrefix == null) {
 				boolean absoluteMin = minValue.equals(getAbsoluteMin());
 				boolean absoluteMax = maxValue.equals(getAbsoluteMax());
@@ -137,7 +145,7 @@ public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpe
 
 		@Override
 		protected PlayerConfigRangedOptionSpec<T> buildInternally(List<String> path, Function<String, T> commandInputParser) {
-			return new PlayerConfigRangedOptionSpec<T>(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, getValidator(), minValue, maxValue, tooltipPrefix);
+			return new PlayerConfigRangedOptionSpec<T>(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, minValue, maxValue, tooltipPrefix, configTypeFilter);
 		}
 		
 	}

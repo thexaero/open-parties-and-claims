@@ -37,15 +37,17 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 	private final int x;
 	private final int z;
 	private final UUID playerId;
+	private final int subConfigIndex;
 	private final boolean forceLoaded;
 	private final int claimSyncIndex;
 
-	public ClientboundClaimsClaimUpdatePacket(ResourceLocation dimension, int x, int z, UUID playerId, boolean forceLoaded, int claimSyncIndex) {
+	public ClientboundClaimsClaimUpdatePacket(ResourceLocation dimension, int x, int z, UUID playerId, int subConfigIndex, boolean forceLoaded, int claimSyncIndex) {
 		super();
 		this.dimension = dimension;
 		this.x = x;
 		this.z = z;
 		this.playerId = playerId;
+		this.subConfigIndex = subConfigIndex;
 		this.forceLoaded = forceLoaded;
 		this.claimSyncIndex = claimSyncIndex;
 	}
@@ -64,6 +66,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 		if(playerId != null) {
 			nbt.putInt("i", claimSyncIndex);
 			nbt.putUUID("p", playerId);
+			nbt.putInt("s", subConfigIndex);
 			nbt.putBoolean("f", forceLoaded);
 		}
 		u.writeNbt(nbt);
@@ -71,7 +74,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 	
 	@Override
 	public String toString() {
-		return String.format("[%s, %d, %d, %s, %s]", dimension, x, z, playerId, forceLoaded);
+		return String.format("[%s, %d, %d, %s, %s, %d, %d]", dimension, x, z, playerId, forceLoaded, subConfigIndex, claimSyncIndex);
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClientboundClaimsClaimUpdatePacket> {
@@ -89,13 +92,15 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 				int z = nbt.getInt("z");
 				int claimStateIndex = -1;
 				UUID playerId = null;
+				int subConfigIndex = -1;
 				boolean forceload = false;
 				if(nbt.contains("p")) {
 					claimStateIndex = nbt.getInt("i");
 					playerId = nbt.getUUID("p");
+					subConfigIndex = nbt.getInt("s");
 					forceload = nbt.getBoolean("f");
 				}
-				return new ClientboundClaimsClaimUpdatePacket(new ResourceLocation(dimensionString), x, z, playerId, forceload, claimStateIndex);
+				return new ClientboundClaimsClaimUpdatePacket(new ResourceLocation(dimensionString), x, z, playerId, subConfigIndex, forceload, claimStateIndex);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
 				return null;
@@ -108,7 +113,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 		
 		@Override
 		public void accept(ClientboundClaimsClaimUpdatePacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimUpdate(t.dimension, t.x, t.z, t.playerId, t.forceLoaded, t.claimSyncIndex);
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimUpdate(t.dimension, t.x, t.z, t.playerId, t.subConfigIndex, t.forceLoaded, t.claimSyncIndex);
 		}
 		
 	}

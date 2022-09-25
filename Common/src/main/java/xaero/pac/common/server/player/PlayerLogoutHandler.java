@@ -44,11 +44,11 @@ public class PlayerLogoutHandler {
 			IPartyMemberDynamicInfoSynchronizer<IServerParty<IPartyMember, IPartyPlayerInfo>> partyOftenSyncedSync = serverData.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync();
 			partyOftenSyncedSync.handlePlayerLeave(playerParty, player);
 		}
-		serverData.getServerTickHandler().getLazyPacketSender().clearForPlayer(player);
-		
 		if(serverData.getServerClaimsManager().hasPlayerInfo(player.getUUID())) {
 			serverData.getServerClaimsManager().getPlayerInfo(player.getUUID()).registerActivity();
 		}
+
+		serverData.getServerTickHandler().getLazyPacketSender().clearForPlayer(player);
 	}
 
 }

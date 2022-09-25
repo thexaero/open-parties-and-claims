@@ -18,13 +18,14 @@
 
 package xaero.pac.client.player.config;
 
+import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
-public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionClientStorage<T> {
+public class PlayerConfigOptionClientStorage<T extends Comparable<T>> implements IPlayerConfigOptionClientStorage<T> {
 	
 	protected final PlayerConfigOptionSpec<T> option;
 	private T value;
@@ -33,14 +34,15 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 	
 	public PlayerConfigOptionClientStorage(PlayerConfigOptionSpec<T> option, T value) {
 		super();
-		if(option == null || value == null)
+		if(option == null)
 			throw new IllegalArgumentException();
 		this.option = option;
 		this.value = value;
+		this.defaulted = true;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> PlayerConfigOptionClientStorage<T> createCast(PlayerConfigOptionSpec<T> option, Object value){
+	public static <T extends Comparable<T>> PlayerConfigOptionClientStorage<T> createCast(PlayerConfigOptionSpec<T> option, Object value){
 		return new PlayerConfigOptionClientStorage<>(option, (T)value);
 	}
 	
@@ -82,8 +84,8 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 
 	@Nonnull
 	@Override
-	public Predicate<T> getValidator(){
-		return option.getValidator();
+	public BiPredicate<IPlayerConfigClientStorageAPI<?>, T> getValidator(){
+		return option.getClientSideValidator();
 	}
 
 	@Nullable
@@ -100,7 +102,7 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 	@Override
 	@SuppressWarnings("unchecked")
 	public void setCastValue(Object value) {
-		if(getType() != value.getClass())
+		if(value != null && getType() != value.getClass())
 			throw new IllegalArgumentException();
 		setValue((T)value);
 	}
@@ -125,7 +127,7 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 		return mutable;
 	}
 	
-	public static abstract class Builder<T, B extends Builder<T, B>> {
+	public static abstract class Builder<T extends Comparable<T>, B extends Builder<T, B>> {
 
 		protected final B self;
 		protected PlayerConfigOptionSpec<T> option;
@@ -153,7 +155,7 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 		}
 
 		public PlayerConfigOptionClientStorage<T> build(){
-			if(option == null || value == null)
+			if(option == null)
 				throw new IllegalStateException();
 			return buildInternally();
 		}

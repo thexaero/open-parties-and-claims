@@ -21,8 +21,7 @@ package xaero.pac.common.packet;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.LoadCommon;
 import xaero.pac.common.packet.claims.*;
-import xaero.pac.common.packet.config.PlayerConfigOptionValuePacket;
-import xaero.pac.common.packet.config.ServerboundOtherPlayerConfigPacket;
+import xaero.pac.common.packet.config.*;
 import xaero.pac.common.packet.parties.ClientboundPartyAllyPacket;
 import xaero.pac.common.packet.parties.ClientboundPartyNamePacket;
 import xaero.pac.common.packet.parties.ClientboundPartyPacket;
@@ -68,10 +67,9 @@ public class PacketRegister {
 		
 		packetHandler.register(14, ClientboundClaimsClaimUpdatePacket.class, ClientboundClaimsClaimUpdatePacket.ENCODER, new ClientboundClaimsClaimUpdatePacket.Decoder(), null, new ClientboundClaimsClaimUpdatePacket.ClientHandler());
 		
-		packetHandler.register(15, ClientboundClaimPropertiesPacket.class, ClientboundClaimPropertiesPacket.ENCODER, new ClientboundClaimPropertiesPacket.Decoder(), null, new ClientboundClaimPropertiesPacket.ClientHandler());
+		packetHandler.register(15, ClientboundSubClaimPropertiesPacket.class, ClientboundSubClaimPropertiesPacket.ENCODER, new ClientboundSubClaimPropertiesPacket.Decoder(), null, new ClientboundSubClaimPropertiesPacket.ClientHandler());
 		
 		packetHandler.register(17, ClientboundClaimLimitsPacket.class, ClientboundClaimLimitsPacket.ENCODER, new ClientboundClaimLimitsPacket.Decoder(), null, new ClientboundClaimLimitsPacket.ClientHandler());
-		
 
 		LazyPacketsConfirmationPacket.Codec lazyPacketsConfirmCodec = new LazyPacketsConfirmationPacket.Codec();
 		packetHandler.register(18, LazyPacketsConfirmationPacket.class, lazyPacketsConfirmCodec, lazyPacketsConfirmCodec, new LazyPacketsConfirmationPacket.ServerHandler(), new LazyPacketsConfirmationPacket.ClientHandler());
@@ -86,6 +84,29 @@ public class PacketRegister {
 
 		ClientboundModesPacket.Codec modesCodec = new ClientboundModesPacket.Codec();
 		packetHandler.register(22, ClientboundModesPacket.class, modesCodec, modesCodec, null, new ClientboundModesPacket.ClientHandler());
+
+		ClientboundPlayerConfigSyncStatePacket.Codec playerConfigSyncCodec = new ClientboundPlayerConfigSyncStatePacket.Codec();
+		packetHandler.register(23, ClientboundPlayerConfigSyncStatePacket.class, playerConfigSyncCodec, playerConfigSyncCodec, null, new ClientboundPlayerConfigSyncStatePacket.ClientHandler());
+
+		ClientboundPlayerConfigRemoveSubPacket.Codec playerConfigSubCodec = new ClientboundPlayerConfigRemoveSubPacket.Codec();
+		packetHandler.register(24, ClientboundPlayerConfigRemoveSubPacket.class, playerConfigSubCodec, playerConfigSubCodec, null, new ClientboundPlayerConfigRemoveSubPacket.ClientHandler());
+
+		ServerboundSubConfigExistencePacket.Codec createSubConfigCodec = new ServerboundSubConfigExistencePacket.Codec();
+		packetHandler.register(25, ServerboundSubConfigExistencePacket.class, createSubConfigCodec, createSubConfigCodec, new ServerboundSubConfigExistencePacket.ServerHandler(), null);
+
+		packetHandler.register(26, ClientboundClaimOwnerPropertiesPacket.class, ClientboundClaimOwnerPropertiesPacket.ENCODER, new ClientboundClaimOwnerPropertiesPacket.Decoder(), null, new ClientboundClaimOwnerPropertiesPacket.ClientHandler());
+
+		packetHandler.register(27, ClientboundRemoveClaimStatePacket.class, ClientboundRemoveClaimStatePacket.ENCODER, new ClientboundRemoveClaimStatePacket.Decoder(), null, new ClientboundRemoveClaimStatePacket.ClientHandler());
+
+		packetHandler.register(28, ClientboundRemoveSubClaimPacket.class, ClientboundRemoveSubClaimPacket.ENCODER, new ClientboundRemoveSubClaimPacket.Decoder(), null, new ClientboundRemoveSubClaimPacket.ClientHandler());
+
+		packetHandler.register(29, ClientboundClaimsClaimUpdatePosPacket.class, ClientboundClaimsClaimUpdatePosPacket.ENCODER, new ClientboundClaimsClaimUpdatePosPacket.Decoder(), null, new ClientboundClaimsClaimUpdatePosPacket.ClientHandler());
+
+		ClientboundPlayerConfigGeneralStatePacket.Codec playerConfigGeneralStateCodec = new ClientboundPlayerConfigGeneralStatePacket.Codec();
+		packetHandler.register(30, ClientboundPlayerConfigGeneralStatePacket.class, playerConfigGeneralStateCodec, playerConfigGeneralStateCodec, null, new ClientboundPlayerConfigGeneralStatePacket.ClientHandler());
+
+		packetHandler.register(31, ClientboundCurrentSubClaimPacket.class, ClientboundCurrentSubClaimPacket.ENCODER, new ClientboundCurrentSubClaimPacket.Decoder(), null, new ClientboundCurrentSubClaimPacket.ClientHandler());
+
 
 	}
 

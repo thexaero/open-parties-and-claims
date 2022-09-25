@@ -26,7 +26,7 @@ import xaero.pac.common.server.task.ServerSpreadoutTaskHandler;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class ServerPlayerSpreadoutTaskHandler<T extends IServerPlayerSpreadoutTask> extends ServerSpreadoutTaskHandler<T, ServerPlayer> {
+public class ServerPlayerSpreadoutTaskHandler<T extends ServerPlayerSpreadoutTask<T>> extends ServerSpreadoutTaskHandler<T, ServerPlayer> {
 
 	protected ServerPlayerSpreadoutTaskHandler(Function<ServerPlayer, T> holderToTask, int perTickLimit, int perTickPerTaskLimit) {
 		super(holderToTask, perTickLimit, perTickPerTaskLimit);
@@ -43,7 +43,7 @@ public class ServerPlayerSpreadoutTaskHandler<T extends IServerPlayerSpreadoutTa
 		return false;
 	}
 
-	public static abstract class Builder<T extends IServerPlayerSpreadoutTask, B extends Builder<T, B>> extends ServerSpreadoutTaskHandler.Builder<T, ServerPlayer, B> {
+	public static abstract class Builder<T extends ServerPlayerSpreadoutTask<T>, B extends Builder<T, B>> extends ServerSpreadoutTaskHandler.Builder<T, ServerPlayer, B> {
 
 		private Function<ServerPlayerData, T> playerTaskGetter;
 
@@ -70,26 +70,26 @@ public class ServerPlayerSpreadoutTaskHandler<T extends IServerPlayerSpreadoutTa
 		}
 
 		@Override
-		public ServerSpreadoutTaskHandler<T, ServerPlayer> build() {
+		public ServerPlayerSpreadoutTaskHandler<T> build() {
 			if(playerTaskGetter == null)
 				throw new IllegalStateException();
 			holderToTask = p -> {
 				ServerPlayerData data = (ServerPlayerData) ServerPlayerData.from(p);
 				return playerTaskGetter.apply(data);
 			};
-			return super.build();
+			return (ServerPlayerSpreadoutTaskHandler<T>) super.build();
 		}
 	}
 
-	public static final class FinalBuilder extends Builder<IServerPlayerSpreadoutTask, FinalBuilder> {
+	public static final class FinalBuilder<T extends ServerPlayerSpreadoutTask<T>> extends Builder<T, FinalBuilder<T>> {
 
 		@Override
-		protected ServerSpreadoutTaskHandler<IServerPlayerSpreadoutTask, ServerPlayer> buildInternally() {
+		protected ServerSpreadoutTaskHandler<T, ServerPlayer> buildInternally() {
 			return new ServerPlayerSpreadoutTaskHandler<>(holderToTask, perTickLimit, perTickPerTaskLimit);
 		}
 
-		public static FinalBuilder begin(){
-			return new FinalBuilder().setDefault();
+		public static <T extends ServerPlayerSpreadoutTask<T>> FinalBuilder<T> begin(){
+			return new FinalBuilder<T>().setDefault();
 		}
 
 	}

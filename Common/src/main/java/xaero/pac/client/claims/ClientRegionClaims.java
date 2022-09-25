@@ -19,6 +19,7 @@
 package xaero.pac.client.claims;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.SimpleBitStorage;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfoManager;
@@ -28,15 +29,13 @@ import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 
-import java.util.HashMap;
-
 public final class ClientRegionClaims extends RegionClaims<ClientPlayerClaimInfoManager, ClientRegionClaims> implements IClientRegionClaims {
 
 	private ClientRegionClaims(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage storage) {
 		super(dimension, x, z, storage);
 	}
 
-	public void onRegionClaim(ClientRegionClaims otherRegion /*new region or the old region when "reversed"*/, ClientPlayerClaimInfoManager playerClaimsManager, IPlayerConfigManager<?> configManager, boolean reverse) {
+	public void onRegionClaim(ClientRegionClaims otherRegion /*new region or the old region when "reversed"*/, ClientPlayerClaimInfoManager playerClaimsManager, IPlayerConfigManager configManager, boolean reverse) {
 		ClientRegionClaims oldRegion = reverse ? otherRegion : this;
 		ClientRegionClaims newRegion = reverse ? this : otherRegion;
 		int x = getX();
@@ -70,7 +69,7 @@ public final class ClientRegionClaims extends RegionClaims<ClientPlayerClaimInfo
 		@Override
 		public ClientRegionClaims build() {
 			if(storage == null)
-				setStorage(new RegionClaimsPaletteStorage(new HashMap<>(), null, Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false));
+				setStorage(new RegionClaimsPaletteStorage(new Object2IntOpenHashMap<>(), null, Lists.newArrayList((PlayerChunkClaimHolder)null), new SimpleBitStorage(1, 1024), false));
 			return (ClientRegionClaims) super.build();
 		}
 

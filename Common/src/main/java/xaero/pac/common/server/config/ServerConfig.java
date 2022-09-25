@@ -30,6 +30,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue partiesEnabled;
 	public final ForgeConfigSpec.BooleanValue claimsEnabled;
 	public final ForgeConfigSpec.IntValue autosaveInterval;
+	public final ForgeConfigSpec.IntValue playerSubConfigLimit;
 	public final ForgeConfigSpec.IntValue partyExpirationTime;
 	public final ForgeConfigSpec.IntValue partyExpirationCheckInterval;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
@@ -65,10 +66,16 @@ public class ServerConfig {
 		builder.push("serverConfig");
 
 		autosaveInterval = builder
-			.comment("How often to auto-save modified data, e.g. parties, claims, player configs (in minutes)")
+			.comment("How often to auto-save modified data, e.g. parties, claims, player configs (in minutes).")
 			.translation("gui.xaero_pac_config_autosave_interval")
 			.worldRestart()
 			.defineInRange("autosaveInterval", 10, 1, Integer.MAX_VALUE);
+
+		playerSubConfigLimit = builder
+				.comment("How many sub-configs (sub-claims) can each player create.")
+				.translation("gui.xaero_pac_config_player_subconfig_limit")
+				.worldRestart()
+				.defineInRange("playerSubConfigLimit", 64, 0, 1024);
 		
 		builder.push("parties");
 

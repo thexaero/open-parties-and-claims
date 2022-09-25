@@ -27,12 +27,14 @@ import java.util.UUID;
 public class PlayerChunkClaim implements IPlayerChunkClaim {
 	
 	private final UUID playerId;
+	private final int subConfigIndex;
 	private final boolean forceloadable;
 	private final int syncIndex;
 	
-	public PlayerChunkClaim(UUID playerId, boolean forceloadable, int syncIndex) {
+	public PlayerChunkClaim(UUID playerId, int subConfigIndex, boolean forceloadable, int syncIndex) {
 		super();
 		this.playerId = playerId;
+		this.subConfigIndex = subConfigIndex;
 		this.forceloadable = forceloadable;
 		this.syncIndex = syncIndex;
 	}
@@ -57,24 +59,28 @@ public class PlayerChunkClaim implements IPlayerChunkClaim {
 	public UUID getPlayerId() {
 		return playerId;
 	}
-	
+
+	@Override
+	public int getSubConfigIndex() {
+		return subConfigIndex;
+	}
+
 	public int getSyncIndex() {
 		return syncIndex;
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(playerId, forceloadable);
+		return Objects.hash(playerId, subConfigIndex, forceloadable);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == this)
 			return true;
-		if(obj == null || !(obj instanceof PlayerChunkClaim))
+		if(obj == null || !(obj instanceof PlayerChunkClaim other))
 			return false;
-		PlayerChunkClaim other = (PlayerChunkClaim) obj;
-		return playerId.equals(other.playerId) && forceloadable == ((PlayerChunkClaim) obj).forceloadable;
+		return playerId.equals(other.playerId) && forceloadable == other.forceloadable && subConfigIndex == other.subConfigIndex;
 	}
 
 	@Override
@@ -83,12 +89,12 @@ public class PlayerChunkClaim implements IPlayerChunkClaim {
 			return true;
 		if(other == null)
 			return false;
-		return playerId.equals(other.getPlayerId());
+		return playerId.equals(other.getPlayerId()) && subConfigIndex == other.getSubConfigIndex();
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("[%s, %s, %d]", playerId, forceloadable, syncIndex);
+		return String.format("[%s, %d, %s, %d]", playerId, subConfigIndex, forceloadable, syncIndex);
 	}
 
 }

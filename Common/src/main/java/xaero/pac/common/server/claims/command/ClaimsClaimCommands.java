@@ -43,6 +43,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
@@ -88,7 +89,10 @@ public class ClaimsClaimCommands {
 				ClaimResult<?> result = null;
 				try {
 					if(shouldClaim) {
-						result = claimsManager.tryToClaim(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, shouldReplace);
+						IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(player.getUUID());
+						IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
+						int subConfigIndex = usedSubConfig.getSubIndex();
+						result = claimsManager.tryToClaim(world.dimension().location(), playerId, subConfigIndex, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, shouldReplace);
 						
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> claimOwnerInfo = claimsManager.getPlayerInfo(result.getClaimResult().getPlayerId());

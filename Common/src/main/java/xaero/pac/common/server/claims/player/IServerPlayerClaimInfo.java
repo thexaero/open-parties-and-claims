@@ -19,9 +19,20 @@
 package xaero.pac.common.server.claims.player;
 
 import net.minecraft.resources.ResourceLocation;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimInfo;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
+import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
+import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 
 import javax.annotation.Nonnull;
 import java.util.Map.Entry;
@@ -49,6 +60,8 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	@Nonnull
 	@Override
 	public Stream<Entry<ResourceLocation, DC>> getStream();
+
+	public Stream<Entry<ResourceLocation, DC>> getFullStream();
 	
 	public void registerActivity();
 
@@ -57,5 +70,13 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	public boolean isReplacementInProgress();
 
 	public void setReplacementInProgress(boolean replacementInProgress);
+
+	public IPlayerConfig getConfig();
+
+	public boolean hasReplacementTasks();
+
+	public void addReplacementTask(PlayerClaimReplaceSpreadoutTask task, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData);
+
+	public PlayerClaimReplaceSpreadoutTask removeNextReplacementTask();
 
 }
