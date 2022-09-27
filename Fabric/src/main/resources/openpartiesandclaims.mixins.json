@@ -26,6 +26,7 @@
         "MixinGameRules",
         "MixinHarvestFarmland",
         "MixinLargeFireball",
+        "MixinLevel",
         "MixinLivingEntity",
         "MixinMinecraftServer",
         "MixinMob",

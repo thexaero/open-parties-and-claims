@@ -42,6 +42,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
@@ -252,6 +253,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_entity_claim_barrier_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entityClaimBarrierList"), () -> Lists.newArrayList("force$minecraft:falling_block", "force$supplementaries:slingshot_projectile"), s -> s instanceof String);
+
+		entitiesAllowedToGrief = builder
+			.comment("Entities that can still destroy or place blocks (or sometimes affect entities) when claim mob griefing protection is enabled.")
+			.translation("gui.xaero_pac_config_entities_allowed_to_grief")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:villager", "minecraft:sheep"), s -> s instanceof String);
 
 		additionalBannedItemsList = builder
 			.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. For example [\"minecraft:trident\", \"minecraft:shield\"]")

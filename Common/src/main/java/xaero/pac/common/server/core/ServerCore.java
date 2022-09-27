@@ -268,4 +268,8 @@ public class ServerCore {
 		return actual;
 	}
 
+	public static boolean canDestroyBlock(Level level, BlockPos pos, Entity entity) {
+		return entity == null || !OpenPartiesAndClaims.INSTANCE.getCommonEvents().onEntityDestroyBlock(level, pos, entity);
+	}
+
 }

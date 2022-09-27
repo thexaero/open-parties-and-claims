@@ -794,6 +794,29 @@ function initializeCoreMod() {
                 insertBeforeReturn2(methodNode, insnToInsertGetter)
                 return methodNode
             }
+        },
+        'xaero_pac_level_destroyblock': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.Level',
+                'methodName': 'm_7740_',
+                'methodDesc' : '(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;I)Z'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'canDestroyBlock', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Z'))
+                insnToInsert.add(new InsnNode(Opcodes.DUP))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.IRETURN))
+                insnToInsert.add(MY_LABEL)
+                insnToInsert.add(new InsnNode(Opcodes.POP))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
         }
 	}
 }
