@@ -187,9 +187,20 @@ public class CommonEvents {
 	}
 
 	public boolean onDestroyBlock(LevelAccessor world, BlockPos pos, Player player) {
+		if(world instanceof ServerLevel serverLevel) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(world.getServer());
+			return serverData.getChunkProtection().onPlayerDestroyBlock(serverData, pos, serverLevel, player, true);
+		}
+		return false;
+	}
+
+	public boolean onEntityDestroyBlock(Level world, BlockPos pos, Entity entity) {
 		if(world instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(world.getServer());
-			return serverData.getChunkProtection().onDestroyBlock(serverData, pos, player);
+			if(entity instanceof Player player)
+				return serverData.getChunkProtection().onPlayerDestroyBlock(serverData, pos, world, player, false);
+			else
+				return serverData.getChunkProtection().onEntityDestroyBlock(serverData, world, entity, pos);
 		}
 		return false;
 	}
