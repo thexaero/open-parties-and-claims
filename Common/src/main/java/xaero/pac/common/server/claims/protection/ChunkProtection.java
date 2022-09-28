@@ -168,6 +168,10 @@ public class ChunkProtection
 	private boolean isProtectable(Entity e) {
 		return !(e instanceof Player) && isIncludedByProtectedEntityLists(e);
 	}
+
+	private boolean canGriefBlocks(Entity e, IPlayerConfig config){
+		return !config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING) || entitiesAllowedToGrief.contains(e.getType());
+	}
 	
 	public boolean hasChunkAccess(IPlayerConfig claimConfig, Entity e) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
@@ -216,13 +220,11 @@ public class ChunkProtection
 	public boolean onEntityDestroyBlock(IServerData<CM,P> serverData, Level world, Entity entity, BlockPos pos) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		if(entitiesAllowedToGrief.contains(entity.getType()))
-			return false;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
-		ChunkPos chunkPos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
+		ChunkPos chunkPos = new ChunkPos(pos);
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		return config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING) && blockAccessCheck(serverData, pos, entity, world, false, true);
+		return !canGriefBlocks(entity, config) && blockAccessCheck(pos, config, entity, world, false, true);
 	}
 	
 	public IPlayerConfig getClaimConfig(IPlayerConfigManager playerConfigs, IPlayerChunkClaim claim) {
@@ -231,17 +233,21 @@ public class ChunkProtection
 			return mainConfig;
 		return mainConfig.getEffectiveSubConfig(claim.getSubConfigIndex());
 	}
-	
-	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Entity entity, Level level, boolean emptyHand, boolean leftClick) {
-		ChunkPos chunkPos = new ChunkPos(pos);
-		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), chunkPos);
+
+	private boolean blockAccessCheck(IServerData<CM,P> serverData, BlockPos pos, Entity entity, Level world, boolean emptyHand, boolean leftClick) {
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		ChunkPos chunkPos = new ChunkPos(pos);
+		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		return blockAccessCheck(pos, config, entity, world, emptyHand, leftClick);
+	}
+	
+	private boolean blockAccessCheck(BlockPos pos, IPlayerConfig config, Entity entity, Level world, boolean emptyHand, boolean leftClick) {
 		boolean chunkAccess = hasChunkAccess(config, entity);
 		if(chunkAccess)
 			return false;
 		else {
-			Block block = level.getBlockState(pos).getBlock();
+			Block block = world.getBlockState(pos).getBlock();
 			if(leftClick && forcedBreakExceptionBlocks.contains(block) || !leftClick && emptyHand && forcedEmptyHandExceptionBlocks.contains(block))
 				return false;
 			if(
@@ -254,8 +260,8 @@ public class ChunkProtection
 		}
 	}
 	
-	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, Level level, InteractionHand hand, boolean emptyHand, boolean leftClick, boolean direct, Component message) {
-		if(blockAccessCheck(serverData, pos, player, level, emptyHand, leftClick)) {
+	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, Level world, InteractionHand hand, boolean emptyHand, boolean leftClick, boolean direct, Component message) {
+		if(blockAccessCheck(serverData, pos, player, world, emptyHand, leftClick)) {
 			if(direct) {
 				player.sendSystemMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF);
 				if (message != null)
@@ -277,7 +283,8 @@ public class ChunkProtection
 			return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, null);
 		BlockPos placePos = pos.offset(blockHit.getDirection().getNormal());
 		Component message = hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
-		return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, message) || onBlockAccess(serverData, placePos, player, player.getLevel(), hand, emptyHand, false, true, message);
+		return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, message) ||
+				onBlockAccess(serverData, placePos, player, player.getLevel(), hand, emptyHand, false, true, message);
 	}
 
 	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, Level level, BlockPos pos) {
@@ -285,7 +292,12 @@ public class ChunkProtection
 			return false;
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
-		return blockAccessCheck(serverData, pos, entity, level, false, false);
+		ChunkPos chunkPos = new ChunkPos(pos);
+		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), chunkPos);
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		return (entity instanceof Player || !canGriefBlocks(entity, config))
+				&& blockAccessCheck(pos, config, entity, level, false, false);
 	}
 	
 	public boolean onItemRightClick(IServerData<CM,P> serverData, InteractionHand hand, ItemStack itemStack, BlockPos pos, Player player) {
@@ -342,7 +354,7 @@ public class ChunkProtection
 				IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
 				if(i == 0 && j == 0 || claim != null) {//wilderness neighbors don't have to be protected this much
 					IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-					if (config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING) && !hasChunkAccess(config, entity))
+					if (!canGriefBlocks(entity, config) && !hasChunkAccess(config, entity))
 						return true;
 				}
 			}
@@ -547,7 +559,8 @@ public class ChunkProtection
 		BlockPos pos2 = null;
 		if(direction != null)
 			pos2 = pos.offset(direction.getNormal());
-		if(blockAccessCheck(serverData, pos, entity, entity.getLevel(), false, false) || pos2 != null && blockAccessCheck(serverData, pos2, entity, entity.getLevel(), false, false)){
+		if(blockAccessCheck(serverData, pos, entity, entity.getLevel(), false, false) ||
+				pos2 != null && blockAccessCheck(serverData, pos2, entity, entity.getLevel(), false, false)){
 			if(entity instanceof ServerPlayer player)
 				player.sendSystemMessage(CANT_APPLY_ITEM);
 			return true;
