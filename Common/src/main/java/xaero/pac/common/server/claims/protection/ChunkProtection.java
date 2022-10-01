@@ -84,6 +84,7 @@ public class ChunkProtection
 
 	private final Component CANT_INTERACT_BLOCK_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component USE_ITEM_ANY_HAND = new TranslatableComponent("gui.xaero_claims_protection_use_item_any_hand").withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component USE_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_use_item", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_INTERACT_ENTITY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
@@ -273,13 +274,15 @@ public class ChunkProtection
 		return false;
 	}
 
-	public boolean onRightClickBlock(IServerData<CM,P> serverData, Player player, InteractionHand hand, BlockPos pos, BlockHitResult blockHit) {
+	public boolean onRightClickBlock(IServerData<CM,P> serverData, Player player, InteractionHand hand, BlockPos pos, BlockHitResult blockHit, boolean justBlockUse, boolean justItemUse) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
 			return false;
-		ItemStack stack = player.getItemInHand(hand);
-		boolean emptyHand = stack.getItem() == Items.AIR;
+		ItemStack itemStack = player.getItemInHand(hand);
+		boolean emptyHand = justBlockUse || itemStack.getItem() == Items.AIR;
+		if(justItemUse)
+			return !emptyHand && onUseItemAt(serverData, player, pos, blockHit.getDirection(), itemStack, hand);
 		if(emptyHand)
 			return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, null);
 		BlockPos placePos = pos.offset(blockHit.getDirection().getNormal());
@@ -339,7 +342,7 @@ public class ChunkProtection
 				}
 		}
 		if(shouldProtect)
-			player.sendMessage(hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
+			player.sendMessage(hand == null ? USE_ITEM_ANY_HAND : hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
 		return shouldProtect;
 	}
 	
@@ -549,14 +552,18 @@ public class ChunkProtection
 			direction = blockHitResult.getDirection();
 		} else
 			pos = new BlockPos(hitResult.getLocation());
-		return onUseItemAt(serverData, entity, pos, direction, itemStack);
+		return onUseItemAt(serverData, entity, pos, direction, itemStack, null);
 	}
 
-	public boolean onUseItemAt(IServerData<CM, P> serverData, Entity entity, BlockPos pos, Direction direction, ItemStack itemStack) {
+	public boolean onUseItemAt(IServerData<CM, P> serverData, Entity entity, BlockPos pos, Direction direction, ItemStack itemStack, InteractionHand hand) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
+		if(itemUseProtectionExceptions.contains(itemStack.getItem()))
+			return false;
+		if(entity instanceof Player player && additionalBannedItems.contains(itemStack.getItem()) && onItemRightClick(serverData, hand, itemStack, pos, player))
+			return true;
 		BlockPos pos2 = null;
 		if(direction != null)
 			pos2 = pos.offset(direction.getNormal());

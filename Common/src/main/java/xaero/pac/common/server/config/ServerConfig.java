@@ -261,7 +261,7 @@ public class ServerConfig {
 			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:villager", "minecraft:sheep"), s -> s instanceof String);
 
 		additionalBannedItemsList = builder
-			.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. For example [\"minecraft:trident\", \"minecraft:shield\"]")
+			.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. This list applies to both using an item at air and using it at a block. For example [\"minecraft:trident\", \"minecraft:shield\"]")
 			.translation("gui.xaero_pac_config_banned_item_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList("supplementaries:slingshot"), s -> s instanceof String);

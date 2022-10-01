@@ -205,10 +205,10 @@ public class CommonEvents {
 		return false;
 	}
 
-	public boolean onRightClickBlock(boolean isServerSide, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitVec) {
+	public boolean onRightClickBlock(boolean isServerSide, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitVec, boolean justBlockUse, boolean justItemUse) {
 		if(isServerSide) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(world.getServer());
-			return serverData.getChunkProtection().onRightClickBlock(serverData, player, hand, pos, hitVec);
+			return serverData.getChunkProtection().onRightClickBlock(serverData, player, hand, pos, hitVec, justBlockUse, justItemUse);
 		}
 		return false;
 	}
