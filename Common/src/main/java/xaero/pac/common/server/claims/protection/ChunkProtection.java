@@ -303,15 +303,12 @@ public class ChunkProtection
 		return (entity instanceof Player || !canGriefBlocks(entity, config))
 				&& blockAccessCheck(pos, config, entity, level, false, false);
 	}
-	
-	public boolean onItemRightClick(IServerData<CM,P> serverData, InteractionHand hand, ItemStack itemStack, BlockPos pos, Player player) {
-		if(!ServerConfig.CONFIG.claimsEnabled.get())
-			return false;
-		boolean shouldProtect = false;
-		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
-		ChunkPos chunkPos = new ChunkPos(pos);
+
+	private boolean isItemUseRestricted(ItemStack itemStack){
 		Item item = itemStack.getItem();
-		if((item.getFoodProperties() == null &&
+		if(itemUseProtectionExceptions.contains(item))
+			return false;
+		return item.getFoodProperties() == null &&
 				!(item instanceof PotionItem) &&
 				!(item instanceof ProjectileWeaponItem) &&
 				!(item instanceof TridentItem) &&
@@ -319,14 +316,20 @@ public class ChunkProtection
 				!(item instanceof SwordItem) &&
 				!(item instanceof BoatItem) &&
 				!itemStack.is(ItemTags.BOATS) &&
-				!(item instanceof BucketItem) &&
-				!(item instanceof SolidBucketItem) &&
 				!(item instanceof MilkBucketItem) &&
 				!(item instanceof ArmorItem)
 				||
-				additionalBannedItems.contains(item)
-			) && !itemUseProtectionExceptions.contains(item)
-		) {
+				additionalBannedItems.contains(item);
+	}
+	
+	public boolean onItemRightClick(IServerData<CM,P> serverData, InteractionHand hand, ItemStack itemStack, BlockPos pos, Player player) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		boolean shouldProtect = false;
+		Item item = itemStack.getItem();
+		if(isItemUseRestricted(itemStack) && !(item instanceof BucketItem) && !(item instanceof SolidBucketItem)) {
+			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+			ChunkPos chunkPos = new ChunkPos(pos);
 			for(int i = -1; i < 2; i++)
 				for(int j = -1; j < 2; j++) {//checking neighboring chunks too because of items that affect a high range
 					IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), new ChunkPos(chunkPos.x + i, chunkPos.z + j));
@@ -560,9 +563,9 @@ public class ChunkProtection
 			return false;
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
-		if(itemUseProtectionExceptions.contains(itemStack.getItem()))
+		if(!isItemUseRestricted(itemStack))
 			return false;
-		if(entity instanceof Player player && additionalBannedItems.contains(itemStack.getItem()) && onItemRightClick(serverData, hand, itemStack, pos, player))
+		if(entity instanceof Player player && additionalBannedItems.contains(itemStack.getItem()) && onItemRightClick(serverData, hand, itemStack, pos, player))//only configured items on purpose
 			return true;
 		BlockPos pos2 = null;
 		if(direction != null)

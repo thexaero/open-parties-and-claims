@@ -136,6 +136,8 @@ public class CommonEventsForge extends CommonEvents {
 			event.setUseBlock(Result.DENY);
 		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec(), false, true))
 			event.setUseItem(Result.DENY);
+		if(event.getUseBlock() == Result.DENY && event.getUseItem() == Result.DENY)
+			event.setCanceled(true);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
