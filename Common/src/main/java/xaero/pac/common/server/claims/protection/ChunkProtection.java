@@ -314,6 +314,9 @@ public class ChunkProtection
 				!(item instanceof TridentItem) &&
 				!(item instanceof ShieldItem) &&
 				!(item instanceof SwordItem) &&
+				!(item instanceof AxeItem) &&
+				!(item instanceof HoeItem) &&
+				!(item instanceof PickaxeItem) &&
 				!(item instanceof BoatItem) &&
 				!itemStack.is(ItemTags.BOATS) &&
 				!(item instanceof MilkBucketItem) &&
