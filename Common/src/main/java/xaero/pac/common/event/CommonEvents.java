@@ -27,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
@@ -207,6 +208,8 @@ public class CommonEvents {
 
 	public boolean onRightClickBlock(boolean isServerSide, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitVec, boolean justBlockUse, boolean justItemUse) {
 		if(isServerSide) {
+			if(player.isSpectator())
+				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(world.getServer());
 			return serverData.getChunkProtection().onRightClickBlock(serverData, player, hand, pos, hitVec, justBlockUse, justItemUse);
 		}
@@ -249,6 +252,8 @@ public class CommonEvents {
 
 	protected boolean onEntityAttack(Player player, Entity target) {
 		if(target.getLevel() instanceof ServerLevel) {
+			if(player.isSpectator())
+				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(target.getServer());
 			return serverData.getChunkProtection().onEntityInteract(serverData, player, target, InteractionHand.MAIN_HAND, true, true, false);
 		}
@@ -257,6 +262,8 @@ public class CommonEvents {
 
 	public boolean onEntityInteract(Entity source, Entity target, InteractionHand hand) {
 		if(target.getLevel() instanceof ServerLevel) {
+			if(source.isSpectator())
+				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(target.getServer());
 			return serverData.getChunkProtection().onEntityInteract(serverData, source, target, hand, true, false, false);
 		}

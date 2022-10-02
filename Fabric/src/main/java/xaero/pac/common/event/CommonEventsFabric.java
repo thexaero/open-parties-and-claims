@@ -154,6 +154,8 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	private InteractionResult onRightClickBlock(Player player, Level level, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+		if(player.isSpectator())
+			return InteractionResult.PASS;
 		if(super.onRightClickBlock(level instanceof ServerLevel, level, blockHitResult.getBlockPos(), player, interactionHand, blockHitResult, false, false))
 			return InteractionResult.FAIL;
 		if(super.onRightClickBlock(level instanceof ServerLevel, level, blockHitResult.getBlockPos(), player, interactionHand, blockHitResult, false, true))
