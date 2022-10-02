@@ -267,7 +267,7 @@ public class ServerConfig {
 			.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList("supplementaries:slingshot"), s -> s instanceof String);
 
 		itemUseProtectionExceptionList = builder
-			.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\"]")
+			.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". This list applies to both using an item at air and using it at a block. For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\"]")
 			.translation("gui.xaero_pac_config_item_protection_exception")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("itemUseProtectionExceptionList"), () -> Lists.newArrayList(), s -> s instanceof String);
