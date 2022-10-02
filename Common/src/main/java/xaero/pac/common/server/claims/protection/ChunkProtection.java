@@ -94,12 +94,14 @@ public class ChunkProtection
 	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_APPLY_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_APPLY_ITEM_THIS_CLOSE_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_too_close", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component ITEM_DISABLED_MAIN = new TranslatableComponent("gui.xaero_claims_protection_item_disabled", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final Component CANT_INTERACT_BLOCK_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component USE_ITEM_OFF = new TranslatableComponent("gui.xaero_claims_protection_use_item", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_APPLY_ITEM_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_APPLY_ITEM_THIS_CLOSE_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_too_close", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component ITEM_DISABLED_OFF = new TranslatableComponent("gui.xaero_claims_protection_item_disabled", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_INTERACT_ENTITY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ENTITY_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
@@ -123,11 +125,12 @@ public class ChunkProtection
 	private final Set<EntityType<?>> forcedEntityClaimBarrierList;
 	private final Set<EntityType<?>> entitiesAllowedToGrief;
 	private final Set<Item> additionalBannedItems;
+	private final Set<Item> completelyDisabledItems;
 	private final Set<Item> itemUseProtectionExceptions;
 
 	private boolean ignoreChunkEnter = false;
 	
-	private ChunkProtection(CM claimsManager, IPartyManager<P> partyManager, ChunkProtectionEntityHelper entityHelper, Set<EntityType<?>> friendlyEntityList, Set<EntityType<?>> hostileEntityList, Set<Block> optionalInteractionExceptionBlocks, Set<Block> optionalBreakExceptionBlocks, Set<Block> forcedInteractionExceptionBlocks, Set<Block> forcedBreakExceptionBlocks, Set<Block> requiresEmptyHandBlocks, Set<EntityType<?>> optionalEmptyHandExceptionEntities, Set<EntityType<?>> optionalKillExceptionEntities, Set<EntityType<?>> forcedEmptyHandExceptionEntities, Set<EntityType<?>> forcedKillExceptionEntities, Set<EntityType<?>> optionalEntityClaimBarrierList, Set<EntityType<?>> forcedEntityClaimBarrierList, Set<EntityType<?>> entitiesAllowedToGrief, Set<Item> additionalBannedItems, Set<Item> itemUseProtectionExceptions) {
+	private ChunkProtection(CM claimsManager, IPartyManager<P> partyManager, ChunkProtectionEntityHelper entityHelper, Set<EntityType<?>> friendlyEntityList, Set<EntityType<?>> hostileEntityList, Set<Block> optionalInteractionExceptionBlocks, Set<Block> optionalBreakExceptionBlocks, Set<Block> forcedInteractionExceptionBlocks, Set<Block> forcedBreakExceptionBlocks, Set<Block> requiresEmptyHandBlocks, Set<EntityType<?>> optionalEmptyHandExceptionEntities, Set<EntityType<?>> optionalKillExceptionEntities, Set<EntityType<?>> forcedEmptyHandExceptionEntities, Set<EntityType<?>> forcedKillExceptionEntities, Set<EntityType<?>> optionalEntityClaimBarrierList, Set<EntityType<?>> forcedEntityClaimBarrierList, Set<EntityType<?>> entitiesAllowedToGrief, Set<Item> additionalBannedItems, Set<Item> completelyBannedItems, Set<Item> itemUseProtectionExceptions) {
 		this.claimsManager = claimsManager;
 		this.partyManager = partyManager;
 		this.entityHelper = entityHelper;
@@ -146,6 +149,7 @@ public class ChunkProtection
 		this.forcedEntityClaimBarrierList = forcedEntityClaimBarrierList;
 		this.entitiesAllowedToGrief = entitiesAllowedToGrief;
 		this.additionalBannedItems = additionalBannedItems;
+		this.completelyDisabledItems = completelyBannedItems;
 		this.itemUseProtectionExceptions = itemUseProtectionExceptions;
 	}
 	
@@ -340,6 +344,10 @@ public class ChunkProtection
 			return false;
 		boolean shouldProtect = false;
 		Item item = itemStack.getItem();
+		if(completelyDisabledItems.contains(item)) {
+			player.sendMessage(hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF, player.getUUID());
+			return true;
+		}
 		if(isItemUseRestricted(itemStack) && !(item instanceof BucketItem) && !(item instanceof SolidBucketItem)) {
 			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 			ChunkPos chunkPos = new ChunkPos(pos);
@@ -574,6 +582,11 @@ public class ChunkProtection
 	public boolean onUseItemAt(IServerData<CM, P> serverData, Entity entity, BlockPos pos, Direction direction, ItemStack itemStack, InteractionHand hand) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
+		if(completelyDisabledItems.contains(itemStack.getItem())) {
+			if(entity instanceof Player player)
+				player.sendMessage(hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF, player.getUUID());
+			return true;
+		}
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
 		if(!isItemUseRestricted(itemStack))
@@ -807,6 +820,7 @@ public class ChunkProtection
 			Set<EntityType<?>> forcedEntityClaimBarrierList = new HashSet<>();
 			Set<EntityType<?>> entitiesAllowedToGrief = new HashSet<>();
 			Set<Item> additionalBannedItems = new HashSet<>();
+			Set<Item> completelyBannedItems = new HashSet<>();
 			Set<Item> itemUseProtectionExceptions = new HashSet<>();
 			ServerConfig.CONFIG.friendlyChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(friendlyEntityList::add));
 			ServerConfig.CONFIG.hostileChunkProtectedEntityList.get().forEach(s -> EntityType.byString(s).ifPresent(hostileEntityList::add));
@@ -868,12 +882,17 @@ public class ChunkProtection
 				if(item != null)
 					additionalBannedItems.add(item);
 			});
+			ServerConfig.CONFIG.completelyDisabledItemsList.get().forEach(s -> {
+				Item item = Services.PLATFORM.getItemRegistry().getValue(new ResourceLocation(s));
+				if(item != null)
+					completelyBannedItems.add(item);
+			});
 			ServerConfig.CONFIG.itemUseProtectionExceptionList.get().forEach(s -> {
 				Item item = Services.PLATFORM.getItemRegistry().getValue(new ResourceLocation(s));
 				if(item != null)
 					itemUseProtectionExceptions.add(item);
 			});
-			return new ChunkProtection<>(claimsManager, partyManager, new ChunkProtectionEntityHelper(), friendlyEntityList, hostileEntityList, optionalInteractionExceptionBlocks, optionalBreakExceptionBlocks, forcedInteractionExceptionBlocks, forcedBreakExceptionBlocks, requiresEmptyHandBlocks, optionalEmptyHandExceptionEntities, optionalKillExceptionEntities, forcedEmptyHandExceptionEntities, forcedKillExceptionEntities, optionalEntityClaimBarrierList, forcedEntityClaimBarrierList, entitiesAllowedToGrief, additionalBannedItems, itemUseProtectionExceptions);
+			return new ChunkProtection<>(claimsManager, partyManager, new ChunkProtectionEntityHelper(), friendlyEntityList, hostileEntityList, optionalInteractionExceptionBlocks, optionalBreakExceptionBlocks, forcedInteractionExceptionBlocks, forcedBreakExceptionBlocks, requiresEmptyHandBlocks, optionalEmptyHandExceptionEntities, optionalKillExceptionEntities, forcedEmptyHandExceptionEntities, forcedKillExceptionEntities, optionalEntityClaimBarrierList, forcedEntityClaimBarrierList, entitiesAllowedToGrief, additionalBannedItems, completelyBannedItems, itemUseProtectionExceptions);
 		}
 
 		private <T> void onExceptionListElement(String element, Consumer<T> optionalInteractionException, Consumer<T> optionalBreakException, Consumer<T> optionalHandException, Consumer<T> forcedInteractionException, Consumer<T> forcedBreakException, Consumer<T> forcedHandException, Function<ResourceLocation, T> objectGetter){

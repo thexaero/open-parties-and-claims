@@ -44,6 +44,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
@@ -265,6 +266,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_banned_item_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList("supplementaries:slingshot"), s -> s instanceof String);
+
+		completelyDisabledItemsList = builder
+			.comment("Items that are completely banned from usage on the server, claimed or not. This list applies to both using an item at air and using it at a block. For example [\"minecraft:trident\", \"minecraft:shield\"]")
+			.translation("gui.xaero_pac_config_completely_banned_item_list")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledItemsList"), () -> Lists.newArrayList(), s -> s instanceof String);
 
 		itemUseProtectionExceptionList = builder
 			.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". This list applies to both using an item at air and using it at a block. For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\"]")
