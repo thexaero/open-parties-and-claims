@@ -132,11 +132,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec(), true, false))
-			event.setUseBlock(Result.DENY);
-		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec(), false, true))
-			event.setUseItem(Result.DENY);
-		if(event.getUseBlock() == Result.DENY && event.getUseItem() == Result.DENY)
+		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec()))
 			event.setCanceled(true);
 	}
 

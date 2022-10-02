@@ -27,7 +27,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
@@ -206,12 +205,13 @@ public class CommonEvents {
 		return false;
 	}
 
-	public boolean onRightClickBlock(boolean isServerSide, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitVec, boolean justBlockUse, boolean justItemUse) {
+	public boolean onRightClickBlock(boolean isServerSide, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitVec) {
 		if(isServerSide) {
 			if(player.isSpectator())
 				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(world.getServer());
-			return serverData.getChunkProtection().onRightClickBlock(serverData, player, hand, pos, hitVec, justBlockUse, justItemUse);
+			//cancelling both item and block use because players don't expect to use the item when the block would normally be used (and isn't because of protection)
+			return serverData.getChunkProtection().onRightClickBlock(serverData, player, hand, pos, hitVec);
 		}
 		return false;
 	}
@@ -219,7 +219,7 @@ public class CommonEvents {
 	public boolean onItemRightClick(boolean isServerSide, Level world, BlockPos pos, Player player, InteractionHand hand, ItemStack itemStack) {
 		if(isServerSide) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(world.getServer());
-			return serverData.getChunkProtection().onItemRightClick(serverData, hand, itemStack, pos, player);
+			return serverData.getChunkProtection().onItemRightClick(serverData, hand, itemStack, pos, player, true);
 		}
 		return false;
 	}

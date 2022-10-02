@@ -85,19 +85,23 @@ public class ChunkProtection
 	private static final String HAND_PREFIX = "hand$";
 	private static final String FORCE_HAND_PREFIX = "force_hand$";
 
-	private final Component CANT_INTERACT_BLOCK_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component BLOCK_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component USE_ITEM_ANY_HAND = new TranslatableComponent("gui.xaero_claims_protection_use_item_any_hand").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component USE_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_use_item", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_INTERACT_ENTITY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", new TranslatableComponent("gui.xaero_claims_protection_main_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_APPLY_ITEM = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component MAIN_HAND = new TranslatableComponent("gui.xaero_claims_protection_main_hand");
+	private final Component OFF_HAND = new TranslatableComponent("gui.xaero_claims_protection_off_hand");
+	private final Component CANT_INTERACT_BLOCK_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component BLOCK_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component USE_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_use_item", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_INTERACT_ENTITY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_APPLY_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_APPLY_ITEM_THIS_CLOSE_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_too_close", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
-	private final Component CANT_INTERACT_BLOCK_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block", new TranslatableComponent("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component BLOCK_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", new TranslatableComponent("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component USE_ITEM_OFF = new TranslatableComponent("gui.xaero_claims_protection_use_item", new TranslatableComponent("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_INTERACT_ENTITY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", new TranslatableComponent("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ENTITY_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", new TranslatableComponent("gui.xaero_claims_protection_off_hand")).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_INTERACT_BLOCK_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component BLOCK_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component USE_ITEM_OFF = new TranslatableComponent("gui.xaero_claims_protection_use_item", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_APPLY_ITEM_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_APPLY_ITEM_THIS_CLOSE_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_too_close", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_INTERACT_ENTITY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component ENTITY_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final Component CANT_CHORUS = new TranslatableComponent("gui.xaero_claims_protection_chorus").withStyle(s -> s.withColor(ChatFormatting.RED));
 
@@ -279,22 +283,22 @@ public class ChunkProtection
 		return false;
 	}
 
-	public boolean onRightClickBlock(IServerData<CM,P> serverData, Player player, InteractionHand hand, BlockPos pos, BlockHitResult blockHit, boolean justBlockUse, boolean justItemUse) {
+	public boolean onRightClickBlock(IServerData<CM,P> serverData, Player player, InteractionHand hand, BlockPos pos, BlockHitResult blockHit) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
 			return false;
 		ItemStack itemStack = player.getItemInHand(hand);
-		boolean emptyHand = justBlockUse && !requiresEmptyHandBlocks.contains(player.getLevel().getBlockState(pos).getBlock())
-				|| itemStack.getItem() == Items.AIR;
-		if(justItemUse)
-			return !emptyHand && onUseItemAt(serverData, player, pos, blockHit.getDirection(), itemStack, hand);
-		if(emptyHand)
-			return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, null);
-		BlockPos placePos = pos.offset(blockHit.getDirection().getNormal());
-		Component message = hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
-		return onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, message) ||
-				onBlockAccess(serverData, placePos, player, player.getLevel(), hand, emptyHand, false, true, message);
+		boolean emptyHand = itemStack.getItem() == Items.AIR;
+		if(emptyHand || !requiresEmptyHandBlocks.contains(player.getLevel().getBlockState(pos).getBlock())) {
+			if (onBlockAccess(serverData, pos, player, player.getLevel(), hand, true, false, true, null))
+				return true;
+		} else {
+			Component message = hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
+			if(onBlockAccess(serverData, pos, player, player.getLevel(), hand, false, false, true, message))
+				return true;
+		}
+		return !emptyHand && onUseItemAt(serverData, player, pos, blockHit.getDirection(), itemStack, hand);
 	}
 
 	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, Level level, BlockPos pos) {
@@ -331,7 +335,7 @@ public class ChunkProtection
 				additionalBannedItems.contains(item);
 	}
 	
-	public boolean onItemRightClick(IServerData<CM,P> serverData, InteractionHand hand, ItemStack itemStack, BlockPos pos, Player player) {
+	public boolean onItemRightClick(IServerData<CM,P> serverData, InteractionHand hand, ItemStack itemStack, BlockPos pos, Player player, boolean message) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		boolean shouldProtect = false;
@@ -353,8 +357,8 @@ public class ChunkProtection
 					}
 				}
 		}
-		if(shouldProtect)
-			player.sendMessage(hand == null ? USE_ITEM_ANY_HAND : hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
+		if(message && shouldProtect)
+			player.sendMessage(hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
 		return shouldProtect;
 	}
 	
@@ -574,15 +578,22 @@ public class ChunkProtection
 			return false;
 		if(!isItemUseRestricted(itemStack))
 			return false;
-		if(entity instanceof Player player && additionalBannedItems.contains(itemStack.getItem()) && onItemRightClick(serverData, hand, itemStack, pos, player))//only configured items on purpose
-			return true;
+		if(entity instanceof Player player) {
+			if (hand == null)
+				hand = player.getItemInHand(InteractionHand.MAIN_HAND) == itemStack ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+			if (additionalBannedItems.contains(itemStack.getItem()) &&
+					onItemRightClick(serverData, hand, itemStack, pos, player, false)) {//only configured items on purpose
+				player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_THIS_CLOSE_MAIN : CANT_APPLY_ITEM_THIS_CLOSE_OFF, player.getUUID());
+				return true;
+			}
+		}
 		BlockPos pos2 = null;
 		if(direction != null)
 			pos2 = pos.offset(direction.getNormal());
 		if(blockAccessCheck(serverData, pos, entity, entity.getLevel(), false, false) ||
 				pos2 != null && blockAccessCheck(serverData, pos2, entity, entity.getLevel(), false, false)){
 			if(entity instanceof ServerPlayer player)
-				player.sendMessage(CANT_APPLY_ITEM, player.getUUID());
+				player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_MAIN : CANT_APPLY_ITEM_OFF, player.getUUID());
 			return true;
 		}
 		return false;
