@@ -23,6 +23,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.PartyAlly;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.io.serialization.SimpleSerializer;
 import xaero.pac.common.server.parties.party.PartyManager;
@@ -31,7 +32,6 @@ import xaero.pac.common.server.parties.party.io.serialization.nbt.member.PartyMe
 import xaero.pac.common.server.parties.party.io.serialization.nbt.member.PartyPlayerInfoNbtSerializer;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,7 +57,7 @@ public final class PartyNbtSerializer implements SimpleSerializer<CompoundTag, S
 		ListTag alliesTag = new ListTag();
 		
 		party.getInvitedPlayersStream().forEach(p -> invitesTag.add(partyPlayerInfoNbtSerializer.serialize((PartyPlayerInfo) p)));
-		party.getAllyPartiesStream().forEach(a -> alliesTag.add(NbtUtils.createUUID(a)));
+		party.getAllyPartiesStream().forEach(a -> alliesTag.add(NbtUtils.createUUID(a.getPartyId())));
 		party.getMemberInfoStream().filter(mi -> mi != party.getOwner()).forEach(mi -> membersTag.add(partyMemberNbtSerializer.serialize((PartyMember) mi)));
 
 		result.put("invites", invitesTag);
@@ -77,18 +77,18 @@ public final class PartyNbtSerializer implements SimpleSerializer<CompoundTag, S
 
 		Map<UUID, PartyMember> members = new HashMap<>(32);
 		Map<UUID, PartyPlayerInfo> invites = new HashMap<>(32);
-		HashSet<UUID> allies = new HashSet<>();
+		Map<UUID, PartyAlly> allies = new HashMap<>();
 		membersTag.forEach(t -> {
-				PartyMember member = partyMemberNbtSerializer.deserialize((CompoundTag) t, false);
-				members.put(member.getUUID(), member);
-			});
+			PartyMember member = partyMemberNbtSerializer.deserialize((CompoundTag) t, false);
+			members.put(member.getUUID(), member);
+		});
 		invitesTag.forEach(t -> {
 			PartyPlayerInfo invite = partyPlayerInfoNbtSerializer.deserialize((CompoundTag) t);
 			invites.put(invite.getUUID(), invite);
 		});
 		alliesTag.forEach(t -> {
 			UUID ally = NbtUtils.loadUUID(t);
-			allies.add(ally);
+			allies.put(ally, new PartyAlly(ally));
 		});
 		ServerParty result = ServerParty.Builder.begin().setManagedBy(manager).setOwner(owner).setId(UUID.fromString(id)).setMemberInfo(members).setInvitedPlayers(invites).setAllyParties(allies).build();
 		result.setLastConfirmedActivity(lastConfirmedActivity);

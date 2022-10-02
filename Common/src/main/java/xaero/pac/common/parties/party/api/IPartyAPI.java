@@ -18,6 +18,7 @@
 
 package xaero.pac.common.parties.party.api;
 
+import xaero.pac.common.parties.party.ally.api.IPartyAllyAPI;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.parties.party.member.api.IPartyMemberAPI;
 
@@ -29,7 +30,7 @@ import java.util.stream.Stream;
 /**
  * API for a party
  */
-public interface IPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlayerInfoAPI> {
+public interface IPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlayerInfoAPI, A extends IPartyAllyAPI> {
 
 	/**
 	 * Gets the number of members in this party.
@@ -115,7 +116,7 @@ public interface IPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlayerInfo
 	 * @return a {@link Stream} of all allies, not null
 	 */
 	@Nonnull
-	public Stream<UUID> getAllyPartiesStream();
+	public Stream<A> getAllyPartiesStream();
 
 	/**
 	 * Gets the member info for the owner of this party.

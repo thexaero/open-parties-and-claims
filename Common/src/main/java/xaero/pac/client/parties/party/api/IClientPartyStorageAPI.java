@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  */
 public interface IClientPartyStorageAPI
 <
-	P extends IClientPartyAPI<?,?>,
+	P extends IClientPartyAPI<?,?,?>,
 		MISS extends IClientPartyMemberDynamicInfoSyncableStorageAPI<?>
 > {
 

@@ -73,8 +73,8 @@ public class ChunkProtection
 <
 	CM extends IServerClaimsManager<?, ?, ?>,
 	M extends IPartyMember, 
-	I extends IPartyPlayerInfo, 
-	P extends IServerParty<M, I>
+	I extends IPartyPlayerInfo,
+	P extends IServerParty<M, I, ?>
 > {
 
 	public static final UUID CREATE_DEPLOYER_UUID = UUID.fromString("9e2faded-cafe-4ec2-c314-dad129ae971d");
@@ -777,7 +777,7 @@ public class ChunkProtection
 		CM extends IServerClaimsManager<?, ?, ?>,
 		M extends IPartyMember,
 		I extends IPartyPlayerInfo,
-		P extends IServerParty<M, I>
+		P extends IServerParty<M, I, ?>
 	> {
 
 		private CM claimsManager;
@@ -925,7 +925,7 @@ public class ChunkProtection
 			CM extends IServerClaimsManager<?, ?, ?>,
 			M extends IPartyMember,
 			I extends IPartyPlayerInfo,
-			P extends IServerParty<M, I>
+			P extends IServerParty<M, I, ?>
 		> Builder<CM,M,I,P> begin(){
 			return new Builder<CM,M,I,P>().setDefault();
 		}

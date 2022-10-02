@@ -35,6 +35,7 @@ import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.PartySearch;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.IServerData;
@@ -61,9 +62,9 @@ public class KickPartyCommand {
 						.suggests((context, builder) -> {
 							//limited at 16 to reduce synced data for super large parties
 							ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(context.getSource().getServer());
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
+							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
+							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
 							String lowercaseInput = builder.getRemainingLowerCase();
 							return SharedSuggestionProvider.suggest(Stream.concat(playerParty.getMemberInfoStream(), playerParty.getInvitedPlayersStream())
 									.map(IPartyPlayerInfo::getUsername)
@@ -74,9 +75,9 @@ public class KickPartyCommand {
 							ServerPlayer player = context.getSource().getPlayerOrException();
 							UUID playerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(playerId);
+							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 							
 							String targetUsername = StringArgumentType.getString(context, "name");
 							IPartyPlayerInfo targetPlayerInfo = new PartySearch().searchForPlayer(playerParty, ppi -> ppi.getUsername().equalsIgnoreCase(targetUsername));

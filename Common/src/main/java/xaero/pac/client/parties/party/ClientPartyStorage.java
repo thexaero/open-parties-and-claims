@@ -130,7 +130,7 @@ public class ClientPartyStorage implements IClientPartyStorage<ClientPartyAllyIn
 	}
 
 	@Override
-	public void setPartyCast(IParty<?, ?> party) {
+	public void setPartyCast(IParty<?, ?, ?> party) {
 		setParty((ClientParty) party);
 	}
 	

@@ -26,6 +26,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -46,8 +47,8 @@ public class PartyOnCommandUpdater {
 	
 	public 
 	<
-		M extends IPartyMember, I extends IPartyPlayerInfo
-	> void update(UUID commandCasterId, MinecraftServer server, IServerParty<M, I> party, IPlayerConfigManager configs, Predicate<IPartyMember> shouldUpdateCommandsForMember, Component massMessageContent) {
+		M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly
+	> void update(UUID commandCasterId, MinecraftServer server, IServerParty<M, I, A> party, IPlayerConfigManager configs, Predicate<IPartyMember> shouldUpdateCommandsForMember, Component massMessageContent) {
 		String partyName = party.getDefaultName();
 		String partyCustomName = configs.getLoadedConfig(party.getOwner().getUUID()).getEffective(PlayerConfigOptions.PARTY_NAME);
 		if(!partyCustomName.isEmpty())

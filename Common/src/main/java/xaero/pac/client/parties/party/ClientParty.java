@@ -20,18 +20,19 @@ package xaero.pac.client.parties.party;
 
 import xaero.pac.common.parties.party.Party;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.PartyAlly;
 import xaero.pac.common.parties.party.member.PartyMember;
+import xaero.pac.common.util.linked.LinkedChain;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ClientParty extends Party implements IClientParty<PartyMember, PartyPlayerInfo> {
+public class ClientParty extends Party implements IClientParty<PartyMember, PartyPlayerInfo, PartyAlly> {
 
 	protected ClientParty(PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo,
-			Map<UUID, PartyPlayerInfo> invitedPlayers, HashSet<UUID> allyParties) {
-		super(owner, id, staffInfo, memberInfo, invitedPlayers, allyParties);
+			Map<UUID, PartyPlayerInfo> invitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties) {
+		super(owner, id, staffInfo, memberInfo, invitedPlayers, allyParties, linkedAllyParties);
 	}
 	
 	public static final class Builder extends Party.Builder {
@@ -70,7 +71,7 @@ public class ClientParty extends Party implements IClientParty<PartyMember, Part
 		}
 
 		@Override
-		public Builder setAllyParties(HashSet<UUID> allyParties) {
+		public Builder setAllyParties(Map<UUID, PartyAlly> allyParties) {
 			super.setAllyParties(allyParties);
 			return this;
 		}
@@ -85,8 +86,8 @@ public class ClientParty extends Party implements IClientParty<PartyMember, Part
 		}
 
 		@Override
-		protected ClientParty buildInternally(List<PartyMember> staffInfo) {
-			return new ClientParty(owner, id, staffInfo, memberInfo, invitedPlayers, allyParties);
+		protected ClientParty buildInternally(List<PartyMember> staffInfo, LinkedChain<PartyAlly> linkedAllyParties) {
+			return new ClientParty(owner, id, staffInfo, memberInfo, invitedPlayers, allyParties, linkedAllyParties);
 		}
 		
 	}

@@ -23,7 +23,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 
 public interface IPartySynchronizer
 <
-	P extends IServerParty<?, ?>
+	P extends IServerParty<?, ?, ?>
 > {
 	
 	//internal api

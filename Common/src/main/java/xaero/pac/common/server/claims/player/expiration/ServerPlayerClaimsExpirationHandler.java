@@ -24,6 +24,7 @@ import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -56,7 +57,7 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 	}
 
 	@Override
-	protected void handle(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
+	protected void handle(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return;
 		super.handle(serverData);
@@ -77,7 +78,7 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 	}
 
 	@Override
-	public boolean expire(ServerPlayerClaimInfo playerInfo, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
+	public boolean expire(ServerPlayerClaimInfo playerInfo, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		PlayerChunkClaim toReplaceWith = ServerConfig.CONFIG.playerClaimsConvertExpiredClaims.get() ?
 			new PlayerChunkClaim(PlayerConfig.EXPIRED_CLAIM_UUID, -1, false, 0) : null;
 		SpreadoutTaskCallback spreadoutTaskCallback = new SpreadoutTaskCallback(playerInfo);
@@ -140,7 +141,7 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 		}
 
 		@Override
-		public void onFinish(PlayerClaimReplaceSpreadoutTask.ResultType resultType, int tickCount, int totalCount, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
+		public void onFinish(PlayerClaimReplaceSpreadoutTask.ResultType resultType, int tickCount, int totalCount, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 			if(resultType.isSuccess())
 				manager.tryRemove(playerInfo.getPlayerId());
 			onElementExpirationDone();

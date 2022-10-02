@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.player.api.IPlayerClaimPosListAPI;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
+import xaero.pac.common.parties.party.ally.api.IPartyAllyAPI;
 import xaero.pac.common.parties.party.api.IPartyPlayerInfoAPI;
 import xaero.pac.common.parties.party.member.api.IPartyMemberAPI;
 import xaero.pac.common.server.IOpenPACMinecraftServer;
@@ -49,7 +50,7 @@ public class OpenPACServerAPI {
 	private final IServerDataAPI
 			<
 			IServerClaimsManagerAPI<IPlayerChunkClaimAPI, IServerPlayerClaimInfoAPI<IPlayerDimensionClaimsAPI<IPlayerClaimPosListAPI>>, IServerDimensionClaimsManagerAPI<IServerRegionClaimsAPI>>,
-			IServerPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI>
+			IServerPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI, IPartyAllyAPI>
 		> serverData;
 
 	/**
@@ -61,7 +62,7 @@ public class OpenPACServerAPI {
 	public OpenPACServerAPI(
 			IServerDataAPI<?, ?> serverData) {
 		super();
-		this.serverData = (IServerDataAPI<IServerClaimsManagerAPI<IPlayerChunkClaimAPI, IServerPlayerClaimInfoAPI<IPlayerDimensionClaimsAPI<IPlayerClaimPosListAPI>>, IServerDimensionClaimsManagerAPI<IServerRegionClaimsAPI>>, IServerPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI>>) serverData;
+		this.serverData = (IServerDataAPI<IServerClaimsManagerAPI<IPlayerChunkClaimAPI, IServerPlayerClaimInfoAPI<IPlayerDimensionClaimsAPI<IPlayerClaimPosListAPI>>, IServerDimensionClaimsManagerAPI<IServerRegionClaimsAPI>>, IServerPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI, IPartyAllyAPI>>) serverData;
 	}
 
 	/**
@@ -70,7 +71,7 @@ public class OpenPACServerAPI {
 	 * @return instance of the server-side player party manager API, not null
 	 */
 	@Nonnull
-	public IPartyManagerAPI<IServerPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI>> getPartyManager(){
+	public IPartyManagerAPI<IServerPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI, IPartyAllyAPI>> getPartyManager(){
 		return serverData.getPartyManager();
 	}
 

@@ -16,23 +16,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.parties.party;
+package xaero.pac.common.parties.party.ally;
 
-import xaero.pac.common.parties.party.IParty;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
-import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
+import xaero.pac.common.parties.party.ally.api.IPartyAllyAPI;
 
-public interface IServerParty
-<
-	M extends IPartyMember, 
-	I extends IPartyPlayerInfo,
-	A extends IPartyAlly
-> extends IServerPartyAPI<M, I, A>, IParty<M, I, A> {
-	
+public interface IPartyAlly extends IPartyAllyAPI {
+
 	//internal api
-	
-	public boolean updateUsername(M member, String username);
-	
+
 }

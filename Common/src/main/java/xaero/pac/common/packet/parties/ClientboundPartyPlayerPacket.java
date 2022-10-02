@@ -25,6 +25,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.lazypacket.LazyPacket;
@@ -103,7 +104,7 @@ public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPla
 		
 		@Override
 		public void accept(ClientboundPartyPlayerPacket t) {
-			IClientParty<IPartyMember, IPartyPlayerInfo> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
+			IClientParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
 			if(party == null)
 				return;
 			if(t.type == Type.MEMBER) {

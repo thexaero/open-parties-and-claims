@@ -162,10 +162,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		if(getPartyByOwner(partyOwnerId) == party)//might not be true when there are inconsistencies in the saved data
 			partiesByOwner.remove(partyOwnerId);
 		partiesById.remove(party.getId());
-		party.getMemberInfoStream().forEach(mi -> onMemberRemoved((ServerParty) party, mi));
+		party.getMemberInfoStream().forEach(mi -> onMemberRemoved(party, mi));
 		io.delete(party);
 		toSave.remove(party);
-		party.getAllyPartiesStream().forEach(allyId -> onAllyRemoved(party, allyId, true));
+		party.getAllyPartiesStream().forEach(ally -> onAllyRemoved(party, ally.getPartyId(), true));
 
 		//removing this party from ally lists
 		Set<UUID> alliersCopy = new HashSet<>(getPartiesByAlly(party.getId()));
@@ -182,10 +182,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		ServerParty currentOwnerParty = getPartyByOwner(party.getOwner().getUUID());
 		if(currentOwnerParty != null)
 			removeParty(currentOwnerParty);//it has a different ID and needs to be removed
-		partiesByOwner.put(party.getOwner().getUUID(), (ServerParty) party);
-		partiesById.put(party.getId(), (ServerParty) party);
-		party.getMemberInfoStream().forEach(mi -> onMemberAdded((ServerParty) party, mi));
-		party.getAllyPartiesStream().forEach(allyId -> onAllyAdded(party, allyId));
+		partiesByOwner.put(party.getOwner().getUUID(), party);
+		partiesById.put(party.getId(), party);
+		party.getMemberInfoStream().forEach(mi -> onMemberAdded(party, mi));
+		party.getAllyPartiesStream().forEach(ally -> onAllyAdded(party, ally.getPartyId()));
 		partyChain.add(party);
 	}
 	

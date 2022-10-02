@@ -16,23 +16,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.parties.party;
+package xaero.pac.common.parties.party.ally.api;
 
-import xaero.pac.common.parties.party.IParty;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
-import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
+import javax.annotation.Nonnull;
+import java.util.UUID;
 
-public interface IServerParty
-<
-	M extends IPartyMember, 
-	I extends IPartyPlayerInfo,
-	A extends IPartyAlly
-> extends IServerPartyAPI<M, I, A>, IParty<M, I, A> {
-	
-	//internal api
-	
-	public boolean updateUsername(M member, String username);
-	
+/**
+ * An ally of a party
+ */
+public interface IPartyAllyAPI {
+
+	/**
+	 * Gets the UUID of the ally party.
+	 *
+	 * @return the UUID of the ally, not null
+	 */
+	@Nonnull
+	public UUID getPartyId();
+
 }

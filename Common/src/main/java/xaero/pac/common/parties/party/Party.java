@@ -18,14 +18,16 @@
 
 package xaero.pac.common.parties.party;
 
+import xaero.pac.common.parties.party.ally.PartyAlly;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Stream;
 
-public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
+public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, PartyAlly> {
 
 	protected final PartyMember owner;
 	private final UUID id;
@@ -33,15 +35,17 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 	protected final Map<UUID, PartyMember> memberInfo;
 	private final Map<UUID, PartyPlayerInfo> invitedPlayers;
 	
-	private final HashSet<UUID> allyParties;
+	private final Map<UUID, PartyAlly> allyParties;
+	private final LinkedChain<PartyAlly> linkedAllyParties;
 
-	protected Party(PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo, Map<UUID, PartyPlayerInfo> invitedPlayers, HashSet<UUID> allyParties) {
+	protected Party(PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo, Map<UUID, PartyPlayerInfo> invitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties) {
 		this.owner = owner;
 		this.id = id;
 		this.sortedStaffInfo = staffInfo;
 		this.memberInfo = memberInfo;
 		this.invitedPlayers = invitedPlayers;
 		this.allyParties = allyParties;
+		this.linkedAllyParties = linkedAllyParties;
 	}
 
 	@Override
@@ -102,7 +106,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 	public PartyMember getMemberInfo(@Nonnull UUID memberUUID) {
 		if(owner.getUUID().equals(memberUUID))
 			return owner;
-		return (PartyMember) memberInfo.get(memberUUID);
+		return memberInfo.get(memberUUID);
 	}
 
 	@Override
@@ -111,17 +115,23 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 	}
 	
 	public void addAllyPartyClean(UUID partyId) {
-		allyParties.add(partyId);
+		if(!allyParties.containsKey(partyId)) {
+			PartyAlly ally = new PartyAlly(partyId);
+			allyParties.put(partyId, ally);
+			linkedAllyParties.add(ally);
+		}
 	}
 
 	@Override
 	public void removeAllyParty(UUID partyId) {
-		allyParties.remove(partyId);
+		PartyAlly ally = allyParties.remove(partyId);
+		if(ally != null)
+			linkedAllyParties.remove(ally);
 	}
 
 	@Override
 	public boolean isAlly(@Nonnull UUID partyId) {
-		return allyParties.contains(partyId);
+		return allyParties.containsKey(partyId);
 	}
 
 	@Override
@@ -151,11 +161,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 	}
 
 	protected PartyPlayerInfo removeInvitedPlayer(UUID playerId) {
-		return (PartyPlayerInfo) invitedPlayers.remove(playerId);
-	}
-	
-	public Iterator<UUID> getAllyPartiesIteratorModifiable(){
-		return allyParties.iterator();
+		return invitedPlayers.remove(playerId);
 	}
 
 	@Nonnull
@@ -182,8 +188,12 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 
 	@Nonnull
 	@Override
-	public Stream<UUID> getAllyPartiesStream(){
-		return allyParties.stream();
+	public Stream<PartyAlly> getAllyPartiesStream(){
+		return allyParties.values().stream();
+	}
+
+	public Iterator<PartyAlly> getAllyPartiesIterator(){
+		return linkedAllyParties.iterator();
 	}
 
 	@Nonnull
@@ -245,7 +255,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 		protected UUID id;
 		protected Map<UUID, PartyMember> memberInfo;
 		protected Map<UUID, PartyPlayerInfo> invitedPlayers;
-		protected HashSet<UUID> allyParties;
+		protected Map<UUID, PartyAlly> allyParties;
 		
 		protected Builder() {
 		}
@@ -281,7 +291,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 			return this;
 		}
 
-		public Builder setAllyParties(HashSet<UUID> allyParties) {
+		public Builder setAllyParties(Map<UUID, PartyAlly> allyParties) {
 			this.allyParties = allyParties;
 			return this;
 		}
@@ -294,9 +304,11 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 			if(invitedPlayers == null)
 				invitedPlayers = new HashMap<>();
 			if(allyParties == null)
-				allyParties = new HashSet<>();
+				allyParties = new HashMap<>();
 			owner.setRank(PartyMemberRank.ADMIN);
-			Party result = buildInternally(new ArrayList<>());
+			LinkedChain<PartyAlly> linkedAllyParties = new LinkedChain<>();
+			allyParties.values().forEach(linkedAllyParties::add);
+			Party result = buildInternally(new ArrayList<>(), linkedAllyParties);
 			memberInfo.forEach((id, m) -> {
 				if(m.getRank() != PartyMemberRank.MEMBER)
 					result.addStaff(m);
@@ -305,7 +317,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo> {
 			return result;
 		}
 		
-		protected abstract Party buildInternally(List<PartyMember> staffInfo);
+		protected abstract Party buildInternally(List<PartyMember> staffInfo, LinkedChain<PartyAlly> linkedPartyAllies);
 		
 	}
 	

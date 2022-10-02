@@ -34,6 +34,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.IServerData;
@@ -67,9 +68,9 @@ public class InviteAcceptPartyCommand {
 							ServerPlayer player = context.getSource().getPlayerOrException();
 							UUID playerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(playerId);
+							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 							if(playerParty != null) {
 								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_party_already_in_one"));
 								return 0;
@@ -82,7 +83,7 @@ public class InviteAcceptPartyCommand {
 								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_invalid_id"));
 								return 0;
 							}
-							IServerParty<IPartyMember, IPartyPlayerInfo> targetParty = partyManager.getPartyById(targetPartyId);
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetParty = partyManager.getPartyById(targetPartyId);
 							if(targetParty == null) {
 								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_join_party_not_exist"));
 								return 0;

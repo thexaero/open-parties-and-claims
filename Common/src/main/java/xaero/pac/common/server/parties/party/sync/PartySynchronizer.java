@@ -166,7 +166,7 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		syncToClientUpdateName(player, fetchConfiguredPartyName(playerConfigs, party));
 		if(party != null) {
 			party.getMemberInfoStream().filter(mi -> mi != party.getOwner()).forEach(mi -> syncToClientPlayerInfo(player, Type.MEMBER, Action.ADD, mi));
-			party.getAllyPartiesStream().forEach(allyId -> syncToClientAlly(player, ClientboundPartyAllyPacket.Action.ADD, partyManager.getPartyById(allyId)));
+			party.getAllyPartiesStream().forEach(ally -> syncToClientAlly(player, ClientboundPartyAllyPacket.Action.ADD, partyManager.getPartyById(ally.getPartyId())));
 			party.getInvitedPlayersStream().forEach(invite -> syncToClientPlayerInfo(player, Type.INVITE, Action.ADD, invite));
 			dynamicInfoSync.syncToClientAllDynamicInfoIncludingMutualAllies(player, party);
 		}

@@ -18,6 +18,7 @@
 
 package xaero.pac.common.parties.party;
 
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
@@ -30,8 +31,8 @@ public class PartySearch {
 	
 	public 
 	<
-		M extends IPartyMember, I extends IPartyPlayerInfo
-	> IPartyPlayerInfo searchForPlayer(IServerParty<M, I> party, Predicate<IPartyPlayerInfo> isSearchedFor) {
+		M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly
+	> IPartyPlayerInfo searchForPlayer(IServerParty<M, I, A> party, Predicate<IPartyPlayerInfo> isSearchedFor) {
 		Iterator<M> membersIterator = party.getMemberInfoStream().iterator();
 		while(membersIterator.hasNext()) {
 			IPartyMember member = membersIterator.next();
@@ -50,12 +51,12 @@ public class PartySearch {
 	
 	public 
 	<
-		M extends IPartyMember, I extends IPartyPlayerInfo, P extends IServerParty<M, I>
-	> IServerParty<M, I> searchForAlly(IServerParty<M, I> party, IPartyManager<P> partyManager, Predicate<IServerParty<M, I>> isSearchedFor) {
-		Iterator<UUID> allyIterator = party.getAllyPartiesStream().iterator();
+		M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly, P extends IServerParty<M, I, A>
+	> IServerParty<M, I, A> searchForAlly(IServerParty<M, I, A> party, IPartyManager<P> partyManager, Predicate<IServerParty<M, I, A>> isSearchedFor) {
+		Iterator<A> allyIterator = party.getAllyPartiesStream().iterator();
 		while(allyIterator.hasNext()) {
-			UUID allyId = allyIterator.next();
-			IServerParty<M, I> ally = partyManager.getPartyById(allyId);
+			UUID allyId = allyIterator.next().getPartyId();
+			IServerParty<M, I, A> ally = partyManager.getPartyById(allyId);
 			if(ally != null && isSearchedFor.test(ally))
 				return ally;
 		}

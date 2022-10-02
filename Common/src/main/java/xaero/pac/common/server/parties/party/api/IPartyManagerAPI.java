@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  */
 public interface IPartyManagerAPI
 <
-	P extends IServerPartyAPI<?, ?>
+	P extends IServerPartyAPI<?, ?, ?>
 > {
 
 	/**

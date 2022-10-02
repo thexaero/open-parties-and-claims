@@ -38,6 +38,7 @@ import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 import xaero.pac.common.capability.api.ICapabilityHelperAPI;
 import xaero.pac.common.claims.player.api.IPlayerClaimPosListAPI;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
+import xaero.pac.common.parties.party.ally.api.IPartyAllyAPI;
 import xaero.pac.common.parties.party.api.IPartyMemberDynamicInfoSyncableAPI;
 import xaero.pac.common.parties.party.api.IPartyPlayerInfoAPI;
 import xaero.pac.common.parties.party.member.api.IPartyMemberAPI;
@@ -64,12 +65,12 @@ public final class OpenPACClientAPI {
 	private IClientDataAPI
 			<
 			IPlayerConfigClientStorageManagerAPI<IPlayerConfigClientStorageAPI<IPlayerConfigStringableOptionClientStorageAPI<?>>>,
-			IClientPartyStorageAPI<IClientPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI>, IClientPartyMemberDynamicInfoSyncableStorageAPI<IPartyMemberDynamicInfoSyncableAPI>>,
+			IClientPartyStorageAPI<IClientPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI, IPartyAllyAPI>, IClientPartyMemberDynamicInfoSyncableStorageAPI<IPartyMemberDynamicInfoSyncableAPI>>,
 			IClientClaimsManagerAPI<IClientPlayerClaimInfoAPI<IPlayerDimensionClaimsAPI<IPlayerClaimPosListAPI>>, IClientDimensionClaimsManagerAPI<IClientRegionClaimsAPI>>
 		> getClientData() {
 		return (IClientDataAPI<
 				IPlayerConfigClientStorageManagerAPI<IPlayerConfigClientStorageAPI<IPlayerConfigStringableOptionClientStorageAPI<?>>>,
-				IClientPartyStorageAPI<IClientPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI>, IClientPartyMemberDynamicInfoSyncableStorageAPI<IPartyMemberDynamicInfoSyncableAPI>>,
+				IClientPartyStorageAPI<IClientPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI, IPartyAllyAPI>, IClientPartyMemberDynamicInfoSyncableStorageAPI<IPartyMemberDynamicInfoSyncableAPI>>,
 				IClientClaimsManagerAPI<IClientPlayerClaimInfoAPI<IPlayerDimensionClaimsAPI<IPlayerClaimPosListAPI>>, IClientDimensionClaimsManagerAPI<IClientRegionClaimsAPI>>>
 		)
 				(Object) OpenPartiesAndClaims.INSTANCE.getClientDataInternal();
@@ -92,7 +93,7 @@ public final class OpenPACClientAPI {
 	 * @return instance of the client-side party API, not null
 	 */
 	@Nonnull
-	public IClientPartyStorageAPI<IClientPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI>, IClientPartyMemberDynamicInfoSyncableStorageAPI<IPartyMemberDynamicInfoSyncableAPI>>
+	public IClientPartyStorageAPI<IClientPartyAPI<IPartyMemberAPI, IPartyPlayerInfoAPI, IPartyAllyAPI>, IClientPartyMemberDynamicInfoSyncableStorageAPI<IPartyMemberDynamicInfoSyncableAPI>>
 	getClientPartyStorage(){
 		return getClientData().getClientPartyStorage();
 	}

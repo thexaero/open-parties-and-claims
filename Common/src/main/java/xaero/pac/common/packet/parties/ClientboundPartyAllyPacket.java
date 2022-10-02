@@ -90,7 +90,7 @@ public class ClientboundPartyAllyPacket extends LazyPacket<LazyPacket.Encoder<Cl
 		
 		@Override
 		public void accept(ClientboundPartyAllyPacket t) {
-			IClientParty<?, ?> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
+			IClientParty<?, ?, ?> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
 			if(party == null)
 				return;
 			if(t.action == Action.ADD)

@@ -27,7 +27,7 @@ import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
 public interface IServerDataAPI
 <
 	CM extends IServerClaimsManagerAPI<?, ?, ?>,
-	P extends IServerPartyAPI<?, ?>
+	P extends IServerPartyAPI<?, ?, ?>
 > {
 	
 	public IPartyManagerAPI<P> getPartyManager();

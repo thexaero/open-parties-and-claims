@@ -22,18 +22,23 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.parties.party.Party;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.PartyAlly;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.util.linked.ILinkedChainNode;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-public final class ServerParty extends Party implements IServerParty<PartyMember, PartyPlayerInfo>, ObjectManagerIOExpirableObject, ILinkedChainNode<ServerParty> {
+public final class ServerParty extends Party implements IServerParty<PartyMember, PartyPlayerInfo, PartyAlly>, ObjectManagerIOExpirableObject, ILinkedChainNode<ServerParty> {
 
 	private final PartyManager managedBy;
 	private boolean dirty;
@@ -44,8 +49,8 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	private boolean destroyed;
 
 	protected ServerParty(PartyManager managedBy, PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo,
-			Map<UUID, PartyPlayerInfo> invitedPlayers, HashSet<UUID> allyParties) {
-		super(owner, id, staffInfo, memberInfo, invitedPlayers, allyParties);
+			Map<UUID, PartyPlayerInfo> invitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties) {
+		super(owner, id, staffInfo, memberInfo, invitedPlayers, allyParties, linkedAllyParties);
 		this.managedBy = managedBy;
 		confirmActivity(managedBy.getExpirationHandler().getServerInfo());
 	}
@@ -298,7 +303,7 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		}
 
 		@Override
-		public Builder setAllyParties(HashSet<UUID> allyParties) {
+		public Builder setAllyParties(Map<UUID, PartyAlly> allyParties) {
 			super.setAllyParties(allyParties);
 			return this;
 		}
@@ -315,8 +320,8 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		}
 
 		@Override
-		protected ServerParty buildInternally(List<PartyMember> staffInfo) {
-			return new ServerParty(managedBy, owner, id, staffInfo, memberInfo, invitedPlayers, allyParties);
+		protected ServerParty buildInternally(List<PartyMember> staffInfo, LinkedChain<PartyAlly> linkedAllyParties) {
+			return new ServerParty(managedBy, owner, id, staffInfo, memberInfo, invitedPlayers, allyParties, linkedAllyParties);
 		}
 		
 	}

@@ -26,7 +26,6 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,6 +33,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.ServerData;
@@ -108,7 +108,7 @@ public class ClaimsSubClaimCurrentCommand {
 			UUID configPlayerUUID = inputPlayer.getId();
 
 			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;
 			sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_sub_current", playerConfig.getEffective(option)), sourcePlayer.getUUID());

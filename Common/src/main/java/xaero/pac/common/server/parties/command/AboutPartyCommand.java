@@ -39,6 +39,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.IServerData;
@@ -104,9 +105,9 @@ public class AboutPartyCommand {
 			}
 			final GameProfile profile = targetProfile;
 			UUID casterPlayerId = casterPlayer.getUUID();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(context.getSource().getServer());
-			IPartyManager<IServerParty<IPartyMember,IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
-			IServerParty<IPartyMember,IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(profile.getId());
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
+			IPartyManager<IServerParty<IPartyMember,IPartyPlayerInfo,IPartyAlly>> partyManager = serverData.getPartyManager();
+			IServerParty<IPartyMember,IPartyPlayerInfo,IPartyAlly> playerParty = partyManager.getPartyByMember(profile.getId());
 			if(playerParty == null) {
 				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_about_no_party", profile.getName()));
 				return 0;
@@ -144,8 +145,8 @@ public class AboutPartyCommand {
 			
 			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_parties_party_allies", playerParty.getAllyCount() + "/" + ServerConfig.CONFIG.maxPartyAllies.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
 			TextComponent partyAlliesComponent = new TextComponent("");
-			createLimitedList(partyAlliesComponent, MAX_ALLY_COUNT, playerParty.getAllyPartiesStream().iterator(), allyId -> {
-				IServerParty<IPartyMember, IPartyPlayerInfo> allyParty = partyManager.getPartyById(allyId);
+			createLimitedList(partyAlliesComponent, MAX_ALLY_COUNT, playerParty.getAllyPartiesStream().iterator(), ally -> {
+				IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> allyParty = partyManager.getPartyById(ally.getPartyId());
 				if(allyParty != null) {
 					if(!partyAlliesComponent.getSiblings().isEmpty())
 						partyAlliesComponent.getSiblings().add(new TextComponent(", "));

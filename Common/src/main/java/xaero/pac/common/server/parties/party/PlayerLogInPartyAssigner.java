@@ -20,15 +20,17 @@ package xaero.pac.common.server.parties.party;
 
 import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 
 public final class PlayerLogInPartyAssigner {
 	
 	public <
 		M extends IPartyMember,
-		I extends IPartyPlayerInfo
-	> void assign(IPartyManager<IServerParty<M,I>> partyManager, Player player, PartyPlayerInfoUpdater partyMemberInfoUpdater) {
-		IServerParty<M,I> playerParty = partyManager.getPartyByMember(player.getUUID());
+		I extends IPartyPlayerInfo,
+		A extends IPartyAlly
+	> void assign(IPartyManager<IServerParty<M,I,A>> partyManager, Player player, PartyPlayerInfoUpdater partyMemberInfoUpdater) {
+		IServerParty<M,I,?> playerParty = partyManager.getPartyByMember(player.getUUID());
 		if(playerParty != null) {
 			partyMemberInfoUpdater.update(playerParty, playerParty.getMemberInfo(player.getUUID()), player.getGameProfile());
 			((ServerParty) (Object)playerParty).registerActivity();

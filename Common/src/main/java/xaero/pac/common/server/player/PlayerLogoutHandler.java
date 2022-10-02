@@ -23,6 +23,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -35,13 +36,13 @@ import xaero.pac.common.server.parties.party.sync.IPartyMemberDynamicInfoSynchro
 
 public class PlayerLogoutHandler {
 	
-	public void handle(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) {
+	public void handle(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), true);
 		//PlayerMainCapability playerMainCap = (PlayerMainCapability) player.getCapability(PlayerCapabilityProvider.MAIN_CAP).orElse(null);
-		IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = serverData.getPartyManager().getPartyByMember(player.getUUID());
+		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = serverData.getPartyManager().getPartyByMember(player.getUUID());
 		if(playerParty != null) {
 			((ServerParty)(Object)playerParty).registerActivity();
-			IPartyMemberDynamicInfoSynchronizer<IServerParty<IPartyMember, IPartyPlayerInfo>> partyOftenSyncedSync = serverData.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync();
+			IPartyMemberDynamicInfoSynchronizer<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyOftenSyncedSync = serverData.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync();
 			partyOftenSyncedSync.handlePlayerLeave(playerParty, player);
 		}
 		if(serverData.getServerClaimsManager().hasPlayerInfo(player.getUUID())) {
