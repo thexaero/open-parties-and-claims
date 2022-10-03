@@ -18,26 +18,26 @@
 
 package xaero.pac.common.server.parties.party.io.serialization.snapshot;
 
-import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.io.serialization.data.SnapshotConverter;
 import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
+import xaero.pac.common.server.parties.party.io.serialization.snapshot.member.PartyInviteSnapshotConverter;
 import xaero.pac.common.server.parties.party.io.serialization.snapshot.member.PartyMemberSnapshotConverter;
-import xaero.pac.common.server.parties.party.io.serialization.snapshot.member.PartyPlayerInfoSnapshotConverter;
 
 import java.util.UUID;
 
 public class PartySnapshotConverter extends SnapshotConverter<PartySnapshot, String, ServerParty, PartyManager>{
 	
 	private final PartyMemberSnapshotConverter partyMemberSnapshotConverter;
-	private final PartyPlayerInfoSnapshotConverter partyPlayerInfoSnapshotConverter;
+	private final PartyInviteSnapshotConverter partyInviteSnapshotConverter;
 
 	public PartySnapshotConverter(PartyMemberSnapshotConverter partyMemberSnapshotConverter,
-			PartyPlayerInfoSnapshotConverter partyPlayerInfoSnapshotConverter) {
+			PartyInviteSnapshotConverter partyInviteSnapshotConverter) {
 		super();
 		this.partyMemberSnapshotConverter = partyMemberSnapshotConverter;
-		this.partyPlayerInfoSnapshotConverter = partyPlayerInfoSnapshotConverter;
+		this.partyInviteSnapshotConverter = partyInviteSnapshotConverter;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class PartySnapshotConverter extends SnapshotConverter<PartySnapshot, Str
 		ServerParty result = ServerParty.Builder.begin().setManagedBy(manager).setOwner(partyMemberSnapshotConverter.convert(data.getOwner(), true)).setId(UUID.fromString(id)).build();
 		result.setLastConfirmedActivity(data.getLastConfirmedActivity());
 		data.getInvitedPlayers().forEach(pi -> {
-			PartyPlayerInfo ppi = partyPlayerInfoSnapshotConverter.convert(pi);
+			PartyInvite ppi = partyInviteSnapshotConverter.convert(pi);
 			result.invitePlayerClean(ppi.getUUID(), ppi.getUsername());
 			});
 		data.getAllyParties().forEach(a -> result.addAllyPartyClean(UUID.fromString(a)));
@@ -60,7 +60,7 @@ public class PartySnapshotConverter extends SnapshotConverter<PartySnapshot, Str
 	public PartySnapshot convert(ServerParty party) {
 		PartySnapshot result = new PartySnapshot(partyMemberSnapshotConverter.convert(party.getOwner()));
 		result.setLastConfirmedActivity(party.getLastConfirmedActivity());
-		party.getInvitedPlayersStream().forEach(p -> result.addInvitedPlayer(partyPlayerInfoSnapshotConverter.convert((PartyPlayerInfo) p)));
+		party.getInvitedPlayersStream().forEach(p -> result.addInvitedPlayer(partyInviteSnapshotConverter.convert(p)));
 		party.getAllyPartiesStream().forEach(a -> result.addAllyParty(a.toString()));
 		party.getMemberInfoStream().filter(mi -> mi != party.getOwner()).forEach(mi -> result.addMember(partyMemberSnapshotConverter.convert((PartyMember) mi)));
 		return result;

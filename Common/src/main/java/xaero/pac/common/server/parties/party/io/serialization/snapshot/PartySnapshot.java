@@ -19,8 +19,8 @@
 package xaero.pac.common.server.parties.party.io.serialization.snapshot;
 
 import xaero.pac.common.server.io.serialization.human.gson.GsonSnapshot;
+import xaero.pac.common.server.parties.party.io.serialization.snapshot.member.PartyInviteSnapshot;
 import xaero.pac.common.server.parties.party.io.serialization.snapshot.member.PartyMemberSnapshot;
-import xaero.pac.common.server.parties.party.io.serialization.snapshot.member.PartyPlayerInfoSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class PartySnapshot implements GsonSnapshot {
 	
 	private final PartyMemberSnapshot owner;
 	private final List<PartyMemberSnapshot> members;
-	private final List<PartyPlayerInfoSnapshot> invitedPlayers;
+	private final List<PartyInviteSnapshot> invitedPlayers;
 	private final List<String> allyParties;
 	private long lastConfirmedActivity;
 	
@@ -45,7 +45,7 @@ public class PartySnapshot implements GsonSnapshot {
 		members.add(member);
 	}
 	
-	public void addInvitedPlayer(PartyPlayerInfoSnapshot player) {
+	public void addInvitedPlayer(PartyInviteSnapshot player) {
 		invitedPlayers.add(player);
 	}
 	
@@ -57,7 +57,7 @@ public class PartySnapshot implements GsonSnapshot {
 		return members;
 	}
 	
-	public Iterable<PartyPlayerInfoSnapshot> getInvitedPlayers(){
+	public Iterable<PartyInviteSnapshot> getInvitedPlayers(){
 		return invitedPlayers;
 	}
 	

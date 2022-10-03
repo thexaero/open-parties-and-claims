@@ -30,7 +30,7 @@ import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket;
 import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket.Action;
 import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket.Type;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.PartyManager;
@@ -110,11 +110,11 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		syncToPartyPlayerInfo(party, Type.MEMBER, Action.UPDATE, member);
 	}
 	
-	public void syncToPartyAddInvite(ServerParty party, PartyPlayerInfo invite) {
+	public void syncToPartyAddInvite(ServerParty party, PartyInvite invite) {
 		syncToPartyPlayerInfo(party, Type.INVITE, Action.ADD, invite);
 	}
 	
-	public void syncToPartyRemoveInvite(ServerParty party, PartyPlayerInfo invite) {
+	public void syncToPartyRemoveInvite(ServerParty party, PartyInvite invite) {
 		syncToPartyPlayerInfo(party, Type.INVITE, Action.REMOVE, invite);
 	}
 	

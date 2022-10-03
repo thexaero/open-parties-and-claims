@@ -27,6 +27,7 @@ import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
@@ -58,7 +59,7 @@ public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPla
 		CompoundTag tag = new CompoundTag();
 		tag.putString("t", type.toString());
 		tag.putString("a", action.toString());
-		CompoundTag playerTag = type == Type.INVITE ? encoder.playerInfoCodec.toPlayerInfoTag((PartyPlayerInfo) playerInfo) : encoder.playerInfoCodec.toMemberTag((PartyMember) playerInfo);
+		CompoundTag playerTag = type == Type.INVITE ? encoder.playerInfoCodec.toPartyInviteTag((PartyInvite) playerInfo) : encoder.playerInfoCodec.toMemberTag((PartyMember) playerInfo);
 		tag.put("pi", playerTag);
 		u.writeNbt(tag);
 	}
@@ -86,7 +87,7 @@ public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPla
 					return null;
 				Action action = Action.valueOf(actionString);
 				CompoundTag playerTag = tag.getCompound("pi");
-				PartyPlayerInfo playerInfo = type == Type.INVITE ? playerInfoCodec.fromPlayerInfoTag(playerTag) : playerInfoCodec.fromMemberTag(playerTag, type == Type.OWNER);
+				PartyPlayerInfo<?> playerInfo = type == Type.INVITE ? playerInfoCodec.fromPartyInviteTag(playerTag) : playerInfoCodec.fromMemberTag(playerTag, type == Type.OWNER);
 				if(playerInfo == null) {
 					OpenPartiesAndClaims.LOGGER.info("Received party player packet with invalid data.");
 					return null;

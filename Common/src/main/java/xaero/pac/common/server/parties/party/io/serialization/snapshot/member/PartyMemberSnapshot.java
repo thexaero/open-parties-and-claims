@@ -20,7 +20,7 @@ package xaero.pac.common.server.parties.party.io.serialization.snapshot.member;
 
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 
-public class PartyMemberSnapshot extends PartyPlayerInfoSnapshot {
+public class PartyMemberSnapshot extends PartyInviteSnapshot {
 	
 	private final PartyMemberRank rank;
 	

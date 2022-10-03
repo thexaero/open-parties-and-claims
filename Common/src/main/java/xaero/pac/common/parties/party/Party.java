@@ -19,6 +19,7 @@
 package xaero.pac.common.parties.party;
 
 import xaero.pac.common.parties.party.ally.PartyAlly;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.util.linked.LinkedChain;
@@ -27,23 +28,27 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Stream;
 
-public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, PartyAlly> {
+public abstract class Party implements IParty<PartyMember, PartyInvite, PartyAlly> {
 
 	protected final PartyMember owner;
 	private final UUID id;
 	private final List<PartyMember> sortedStaffInfo;
-	protected final Map<UUID, PartyMember> memberInfo;
-	private final Map<UUID, PartyPlayerInfo> invitedPlayers;
+	private final Map<UUID, PartyMember> memberInfo;
+	private final LinkedChain<PartyMember> linkedMemberInfo;
+	private final Map<UUID, PartyInvite> invitedPlayers;
+	private final LinkedChain<PartyInvite> linkedInvitedPlayers;
 	
 	private final Map<UUID, PartyAlly> allyParties;
 	private final LinkedChain<PartyAlly> linkedAllyParties;
 
-	protected Party(PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo, Map<UUID, PartyPlayerInfo> invitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties) {
+	protected Party(PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo, LinkedChain<PartyMember> linkedMemberInfo, Map<UUID, PartyInvite> invitedPlayers, LinkedChain<PartyInvite> linkedInvitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties) {
 		this.owner = owner;
 		this.id = id;
 		this.sortedStaffInfo = staffInfo;
 		this.memberInfo = memberInfo;
+		this.linkedMemberInfo = linkedMemberInfo;
 		this.invitedPlayers = invitedPlayers;
+		this.linkedInvitedPlayers = linkedInvitedPlayers;
 		this.allyParties = allyParties;
 		this.linkedAllyParties = linkedAllyParties;
 	}
@@ -87,6 +92,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 				return null;
 		}
 		memberInfo.put(memberUUID, m);
+		linkedMemberInfo.add(m);
 		return m;
 	}
 
@@ -97,6 +103,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 		if(!memberInfo.containsKey(memberUUID))
 			return null;
 		PartyMember m = memberInfo.remove(memberUUID);
+		linkedMemberInfo.remove(m);
 		if(m.getRank() != PartyMemberRank.MEMBER)
 			removeStaff(m);
 		return m;
@@ -135,21 +142,21 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 	}
 
 	@Override
-	public PartyPlayerInfo invitePlayer(UUID playerUUID, String playerUsername) {
+	public PartyInvite invitePlayer(UUID playerUUID, String playerUsername) {
 		return invitePlayerClean(playerUUID, playerUsername);
 	}
 	
-	public PartyPlayerInfo invitePlayerClean(UUID playerUUID, String playerUsername) {
+	public PartyInvite invitePlayerClean(UUID playerUUID, String playerUsername) {
 		if(isInvited(playerUUID))
 			return null;
-		PartyPlayerInfo playerInfo = new PartyPlayerInfo(playerUUID);
+		PartyInvite playerInfo = new PartyInvite(playerUUID);
 		playerInfo.setUsername(playerUsername);
 		invitedPlayers.put(playerUUID, playerInfo);
 		return playerInfo;
 	}
 
 	@Override
-	public PartyPlayerInfo uninvitePlayer(UUID playerUUID) {
+	public PartyInvite uninvitePlayer(UUID playerUUID) {
 		if(!isInvited(playerUUID))
 			return null;
 		return removeInvitedPlayer(playerUUID);
@@ -160,7 +167,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 		return invitedPlayers.containsKey(playerId);
 	}
 
-	protected PartyPlayerInfo removeInvitedPlayer(UUID playerId) {
+	protected PartyInvite removeInvitedPlayer(UUID playerId) {
 		return invitedPlayers.remove(playerId);
 	}
 
@@ -182,7 +189,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 
 	@Nonnull
 	@Override
-	public Stream<PartyPlayerInfo> getInvitedPlayersStream() {
+	public Stream<PartyInvite> getInvitedPlayersStream() {
 		return invitedPlayers.values().stream();
 	}
 
@@ -190,6 +197,14 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 	@Override
 	public Stream<PartyAlly> getAllyPartiesStream(){
 		return allyParties.values().stream();
+	}
+
+	public Iterator<PartyMember> getPartyMemberIterator(){
+		return linkedMemberInfo.iterator();
+	}
+
+	public Iterator<PartyInvite> getPartyInviteIterator(){
+		return linkedInvitedPlayers.iterator();
 	}
 
 	public Iterator<PartyAlly> getAllyPartiesIterator(){
@@ -254,7 +269,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 		protected PartyMember owner;
 		protected UUID id;
 		protected Map<UUID, PartyMember> memberInfo;
-		protected Map<UUID, PartyPlayerInfo> invitedPlayers;
+		protected Map<UUID, PartyInvite> invitedPlayers;
 		protected Map<UUID, PartyAlly> allyParties;
 		
 		protected Builder() {
@@ -286,7 +301,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 			return this;
 		}
 
-		public Builder setInvitedPlayers(Map<UUID, PartyPlayerInfo> invitedPlayers) {
+		public Builder setInvitedPlayers(Map<UUID, PartyInvite> invitedPlayers) {
 			this.invitedPlayers = invitedPlayers;
 			return this;
 		}
@@ -306,9 +321,13 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 			if(allyParties == null)
 				allyParties = new HashMap<>();
 			owner.setRank(PartyMemberRank.ADMIN);
+			LinkedChain<PartyMember> linkedMemberInfo = new LinkedChain<>();
+			LinkedChain<PartyInvite> linkedInvitedPlayers = new LinkedChain<>();
 			LinkedChain<PartyAlly> linkedAllyParties = new LinkedChain<>();
+			memberInfo.values().forEach(linkedMemberInfo::add);
+			invitedPlayers.values().forEach(linkedInvitedPlayers::add);
 			allyParties.values().forEach(linkedAllyParties::add);
-			Party result = buildInternally(new ArrayList<>(), linkedAllyParties);
+			Party result = buildInternally(new ArrayList<>(), linkedMemberInfo, linkedInvitedPlayers, linkedAllyParties);
 			memberInfo.forEach((id, m) -> {
 				if(m.getRank() != PartyMemberRank.MEMBER)
 					result.addStaff(m);
@@ -317,7 +336,7 @@ public abstract class Party implements IParty<PartyMember, PartyPlayerInfo, Part
 			return result;
 		}
 		
-		protected abstract Party buildInternally(List<PartyMember> staffInfo, LinkedChain<PartyAlly> linkedPartyAllies);
+		protected abstract Party buildInternally(List<PartyMember> staffInfo, LinkedChain<PartyMember> linkedMemberInfo, LinkedChain<PartyInvite> linkedInvitedPlayers, LinkedChain<PartyAlly> linkedPartyAllies);
 		
 	}
 	

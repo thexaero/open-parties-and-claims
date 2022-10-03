@@ -18,23 +18,23 @@
 
 package xaero.pac.common.server.parties.party.io.serialization.snapshot.member;
 
-import xaero.pac.common.parties.party.PartyPlayerInfo;
-import xaero.pac.common.parties.party.member.PartyMember;
-
-import java.util.UUID;
-
-public class PartyMemberSnapshotConverter {
-
-	public PartyMember convert(PartyMemberSnapshot data, boolean isOwner) {
-		PartyMember result = new PartyMember(UUID.fromString(data.getUUID()), isOwner);
-		result.setUsername(data.getUsername());
-		result.setRank(data.getRank());
-		return result;
+public class PartyInviteSnapshot {
+	
+	private final String UUID;
+	private final String username;//needs to be updated when a member changes their name
+	
+	public PartyInviteSnapshot(String UUID, String username) {
+		super();
+		this.UUID = UUID;
+		this.username = username;
 	}
-
-	public PartyMemberSnapshot convert(PartyPlayerInfo<?> partyMember) {
-		PartyMemberSnapshot result = new PartyMemberSnapshot(partyMember.getUUID().toString(), partyMember.getUsername(), ((PartyMember) partyMember).getRank());
-		return result;
+	
+	public String getUUID() {
+		return UUID;
 	}
-
+	
+	public String getUsername() {
+		return username;
+	}
+	
 }

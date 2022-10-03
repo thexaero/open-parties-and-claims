@@ -22,14 +22,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import xaero.pac.common.parties.party.PartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.PartyAlly;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.io.serialization.SimpleSerializer;
 import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
+import xaero.pac.common.server.parties.party.io.serialization.nbt.member.PartyInviteNbtSerializer;
 import xaero.pac.common.server.parties.party.io.serialization.nbt.member.PartyMemberNbtSerializer;
-import xaero.pac.common.server.parties.party.io.serialization.nbt.member.PartyPlayerInfoNbtSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,13 +38,13 @@ import java.util.UUID;
 public final class PartyNbtSerializer implements SimpleSerializer<CompoundTag, String, ServerParty, PartyManager>{
 	
 	private final PartyMemberNbtSerializer partyMemberNbtSerializer;
-	private final PartyPlayerInfoNbtSerializer partyPlayerInfoNbtSerializer;
+	private final PartyInviteNbtSerializer partyInviteNbtSerializer;
 
 	public PartyNbtSerializer(PartyMemberNbtSerializer partyMemberNbtSerializer,
-			PartyPlayerInfoNbtSerializer partyPlayerInfoNbtSerializer) {
+			PartyInviteNbtSerializer partyInviteNbtSerializer) {
 		super();
 		this.partyMemberNbtSerializer = partyMemberNbtSerializer;
-		this.partyPlayerInfoNbtSerializer = partyPlayerInfoNbtSerializer;
+		this.partyInviteNbtSerializer = partyInviteNbtSerializer;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public final class PartyNbtSerializer implements SimpleSerializer<CompoundTag, S
 		ListTag invitesTag = new ListTag();
 		ListTag alliesTag = new ListTag();
 		
-		party.getInvitedPlayersStream().forEach(p -> invitesTag.add(partyPlayerInfoNbtSerializer.serialize((PartyPlayerInfo) p)));
+		party.getInvitedPlayersStream().forEach(p -> invitesTag.add(partyInviteNbtSerializer.serialize(p)));
 		party.getAllyPartiesStream().forEach(a -> alliesTag.add(NbtUtils.createUUID(a.getPartyId())));
 		party.getMemberInfoStream().filter(mi -> mi != party.getOwner()).forEach(mi -> membersTag.add(partyMemberNbtSerializer.serialize((PartyMember) mi)));
 
@@ -76,14 +76,14 @@ public final class PartyNbtSerializer implements SimpleSerializer<CompoundTag, S
 		ListTag alliesTag = serializedData.getList("allies", Tag.TAG_INT_ARRAY);
 
 		Map<UUID, PartyMember> members = new HashMap<>(32);
-		Map<UUID, PartyPlayerInfo> invites = new HashMap<>(32);
+		Map<UUID, PartyInvite> invites = new HashMap<>(32);
 		Map<UUID, PartyAlly> allies = new HashMap<>();
 		membersTag.forEach(t -> {
 			PartyMember member = partyMemberNbtSerializer.deserialize((CompoundTag) t, false);
 			members.put(member.getUUID(), member);
 		});
 		invitesTag.forEach(t -> {
-			PartyPlayerInfo invite = partyPlayerInfoNbtSerializer.deserialize((CompoundTag) t);
+			PartyInvite invite = partyInviteNbtSerializer.deserialize((CompoundTag) t);
 			invites.put(invite.getUUID(), invite);
 		});
 		alliesTag.forEach(t -> {
@@ -105,7 +105,7 @@ public final class PartyNbtSerializer implements SimpleSerializer<CompoundTag, S
 		}
 
 		public PartyNbtSerializer build() {
-			return new PartyNbtSerializer(new PartyMemberNbtSerializer(), new PartyPlayerInfoNbtSerializer());
+			return new PartyNbtSerializer(new PartyMemberNbtSerializer(), new PartyInviteNbtSerializer());
 		}
 
 		public static Builder begin() {

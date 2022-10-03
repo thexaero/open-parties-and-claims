@@ -24,9 +24,9 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.PartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.api.OpenPACServerAPI;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -73,7 +73,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final ObjectManagerLiveSaver playerClaimInfoLiveSaver;
 	private final ServerClaimsManager serverClaimsManager;
 	private final ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler;
-	private final ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection;
+	private final ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection;
 	private final ServerStartingCallback serverLoadCallback;
 	private final ForceLoadTicketManager forceLoadManager;
 	private final PlayerWorldJoinHandler playerWorldJoinHandler;
@@ -89,7 +89,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 					  PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs, PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO,
 					  ObjectManagerLiveSaver playerConfigLiveSaver, PlayerClaimInfoManagerIO<?> playerClaimInfoManagerIO,
 					  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
-					  ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
+					  ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
 					  ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
 					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler) {
 		super();
@@ -204,7 +204,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	}
 
 	@Override
-	public ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> getChunkProtection() {
+	public ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> getChunkProtection() {
 		return chunkProtection;
 	}
 	

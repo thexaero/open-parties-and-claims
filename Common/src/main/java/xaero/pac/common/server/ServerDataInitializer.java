@@ -21,7 +21,7 @@ package xaero.pac.common.server;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
@@ -190,8 +190,8 @@ public class ServerDataInitializer {
 			serverClaimsManager.setExpirationHandler(claimsExpirationHandler);
 			
 			ObjectManagerLiveSaver playerClaimInfoLiveSaver = new ObjectManagerLiveSaver(playerClaimInfoManagerIO, autosaveInterval, autosaveInterval / 3 * 2);
-			ChunkProtection<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty> chunkProtection = ChunkProtection.Builder
-					.<ServerClaimsManager, PartyMember, PartyPlayerInfo, ServerParty>begin()
+			ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection = ChunkProtection.Builder
+					.<ServerClaimsManager, PartyMember, PartyInvite, ServerParty>begin()
 					.setClaimsManager(serverClaimsManager)
 					.setPartyManager(partyManager)
 					.build();

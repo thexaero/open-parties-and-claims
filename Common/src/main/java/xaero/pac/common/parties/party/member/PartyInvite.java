@@ -16,24 +16,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.parties.party.io.serialization.nbt.member;
+package xaero.pac.common.parties.party.member;
 
-import net.minecraft.nbt.CompoundTag;
 import xaero.pac.common.parties.party.PartyPlayerInfo;
 
-public class PartyPlayerInfoNbtSerializer {
-	
-	public CompoundTag serialize(PartyPlayerInfo info) {
-		CompoundTag nbt = new CompoundTag();
-		nbt.putUUID("uuid", info.getUUID());
-		nbt.putString("username", info.getUsername());
-		return nbt;
-	}
-	
-	public PartyPlayerInfo deserialize(CompoundTag nbt) {
-		PartyPlayerInfo result = new PartyPlayerInfo(nbt.getUUID("uuid"));
-		result.setUsername(nbt.getString("username"));
-		return result;
+public class PartyInvite extends PartyPlayerInfo<PartyInvite> {
+
+	public PartyInvite(java.util.UUID playerUUID) {
+		super(playerUUID);
 	}
 
 }

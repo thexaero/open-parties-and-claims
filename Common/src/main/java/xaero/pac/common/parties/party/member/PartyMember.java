@@ -23,13 +23,13 @@ import xaero.pac.common.parties.party.PartyPlayerInfo;
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-public class PartyMember extends PartyPlayerInfo implements IPartyMember, Comparable<PartyMember> {
+public class PartyMember extends PartyPlayerInfo<PartyMember> implements IPartyMember, Comparable<PartyMember> {
 	
 	private final static int OWNER_ORDINAL = PartyMemberRank.values().length;
 	
 	private PartyMemberRank rank;
 	private final boolean owner;
-	
+
 	public PartyMember(UUID playerUUID, boolean owner) {
 		super(playerUUID);
 		this.rank = PartyMemberRank.MEMBER;
@@ -64,5 +64,4 @@ public class PartyMember extends PartyPlayerInfo implements IPartyMember, Compar
 			return thisRankNumber > otherRankNumber ? -1 : 1;
 		return getUsername().compareTo(o.getUsername());
 	}
-	
 }
