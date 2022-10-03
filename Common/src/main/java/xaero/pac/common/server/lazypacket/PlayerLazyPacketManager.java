@@ -73,6 +73,7 @@ public class PlayerLazyPacketManager {
 
 	protected void onDropped(ServerPlayer serverPlayer){
 		IServerData<?,?> serverData = ServerData.from(server);
+		serverData.getPartyManager().getPartySynchronizer().onLazyPacketsDropped(serverPlayer);
 		serverData.getServerClaimsManager().getClaimsManagerSynchronizer().onLazyPacketsDropped(serverPlayer);
 	}
 	

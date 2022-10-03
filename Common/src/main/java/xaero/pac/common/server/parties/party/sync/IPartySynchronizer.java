@@ -31,5 +31,6 @@ public interface IPartySynchronizer
 	void syncToClient(ServerPlayer player, P party);
 	void syncToPartyAndAlliersUpdateName(P party, String value);
 	public IPartyMemberDynamicInfoSynchronizer<P> getOftenSyncedInfoSync();
-
+	public void onServerTick();
+	public void onLazyPacketsDropped(ServerPlayer player);
 }

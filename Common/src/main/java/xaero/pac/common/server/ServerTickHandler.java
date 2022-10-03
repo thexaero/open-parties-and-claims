@@ -62,7 +62,8 @@ public final class ServerTickHandler {
 				serverData.getPlayerClaimInfoLiveSaver().onServerTick();
 		
 		lazyPacketSender.onServerTick();
-		
+
+		serverData.getPartyManager().getPartySynchronizer().onServerTick();
 		serverData.getServerClaimsManager().getClaimsManagerSynchronizer().onServerTick();
 		
 		long time = System.currentTimeMillis();

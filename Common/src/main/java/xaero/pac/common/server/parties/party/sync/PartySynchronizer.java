@@ -30,25 +30,34 @@ import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket;
 import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket.Action;
 import xaero.pac.common.packet.parties.ClientboundPartyPlayerPacket.Type;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.PartyAlly;
 import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.lazypacket.task.schedule.LazyPacketScheduleTaskHandler;
 import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 
+import java.util.List;
 import java.util.UUID;
 
 public class PartySynchronizer extends AbstractPartySynchronizer implements IPartySynchronizer<ServerParty> {
 
+	public static final int PARTY_ELEMENTS_PER_TICK = 8192;
+	public static final int PARTY_ELEMENTS_PER_TICK_PER_PLAYER = 512;
+
 	private PartyManager partyManager;
 	private final PartyMemberDynamicInfoSynchronizer dynamicInfoSync;
+	private final List<LazyPacketScheduleTaskHandler> schedulers;
 	
-	private PartySynchronizer(MinecraftServer server, PartyMemberDynamicInfoSynchronizer dynamicInfoSync) {
+	private PartySynchronizer(MinecraftServer server, PartyMemberDynamicInfoSynchronizer dynamicInfoSync, List<LazyPacketScheduleTaskHandler> schedulers) {
 		super(server);
 		this.dynamicInfoSync = dynamicInfoSync;
+		this.schedulers = schedulers;
 	}
 
 	public void setPartyManager(PartyManager partyManager) {
@@ -63,7 +72,7 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		syncToParty(party, action == Action.ADD ? mi -> mi == playerInfo : mi -> false, packet, false);
 	}
 
-	private void syncToClientPlayerInfo(ServerPlayer player, Type type, Action action, IPartyPlayerInfo playerInfo) {
+	public void syncToClientPlayerInfo(ServerPlayer player, Type type, Action action, IPartyPlayerInfo playerInfo) {
 		Object packet = new ClientboundPartyPlayerPacket(type, action, playerInfo);
 		sendToClient(player, packet, false);
 	}
@@ -79,7 +88,7 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		syncToParty(party, mi -> false, packet, false);
 	}
 	
-	private void syncToClientAlly(ServerPlayer player, ClientboundPartyAllyPacket.Action action, ServerParty ally) {
+	public void syncToClientAlly(ServerPlayer player, ClientboundPartyAllyPacket.Action action, ServerParty ally) {
 		syncToClientAlly(player, action, ally, fetchConfiguredPartyName(ally));
 	}
 	
@@ -152,25 +161,36 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 			dynamicInfoSync.syncToPartyAnotherPartyDynamicInfo(ally, party, true);
 		}
 	}
+
+	public void sendSyncStart(ServerPlayer player){
+		sendToClient(player, ClientboundLoadingPacket.START_PARTY, false);
+	}
+
+	public void sendBasePartyPackets(ServerPlayer player, ServerParty party){
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		sendToClient(player,
+				party == null ?
+						new ClientboundPartyPacket(null, null, 0, 0, 0, 0, 0, 0) :
+						new ClientboundPartyPacket(party.getId(), party.getOwner(), party.getMemberCount(), party.getInviteCount(), party.getAllyCount(),
+								ServerConfig.CONFIG.maxPartyMembers.get(), ServerConfig.CONFIG.maxPartyInvites.get(), ServerConfig.CONFIG.maxPartyAllies.get())
+				, false);
+		syncToClientUpdateName(player, fetchConfiguredPartyName(playerConfigs, party));
+	}
+
+	public void sendToClientAllyAdd(ServerPlayer player, PartyAlly ally){
+		syncToClientAlly(player, ClientboundPartyAllyPacket.Action.ADD, partyManager.getPartyById(ally.getPartyId()));
+	}
+
+	public void sendSyncEnd(ServerPlayer player){
+		sendToClient(player, ClientboundLoadingPacket.END_PARTY, false);
+	}
 	
 	@Override
 	public void syncToClient(ServerPlayer player, ServerParty party) {
-		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
-		sendToClient(player, ClientboundLoadingPacket.START_PARTY, false);
-		sendToClient(player, 
-				party == null ? 
-						new ClientboundPartyPacket(null, null, 0, 0, 0, 0, 0, 0) : 
-							new ClientboundPartyPacket(party.getId(), party.getOwner(), party.getMemberCount(), party.getInviteCount(), party.getAllyCount(), 
-									ServerConfig.CONFIG.maxPartyMembers.get(), ServerConfig.CONFIG.maxPartyInvites.get(), ServerConfig.CONFIG.maxPartyAllies.get())
-					, false);
-		syncToClientUpdateName(player, fetchConfiguredPartyName(playerConfigs, party));
-		if(party != null) {
-			party.getMemberInfoStream().filter(mi -> mi != party.getOwner()).forEach(mi -> syncToClientPlayerInfo(player, Type.MEMBER, Action.ADD, mi));
-			party.getAllyPartiesStream().forEach(ally -> syncToClientAlly(player, ClientboundPartyAllyPacket.Action.ADD, partyManager.getPartyById(ally.getPartyId())));
-			party.getInvitedPlayersStream().forEach(invite -> syncToClientPlayerInfo(player, Type.INVITE, Action.ADD, invite));
+		if(party != null)
 			dynamicInfoSync.syncToClientAllDynamicInfoIncludingMutualAllies(player, party);
-		}
-		sendToClient(player, ClientboundLoadingPacket.END_PARTY, false);
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+		playerData.getFullPartyPlayerSync().startPartySync(player, party);
 	}
 	
 	public void syncToMember(PartyMember member, ServerParty party) {
@@ -189,6 +209,16 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		IPlayerConfig ownerConfig = party == null ? null : playerConfigs.getLoadedConfig(party.getOwner().getUUID());
 		String configuredName = ownerConfig == null ? null : ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 		return configuredName;
+	}
+
+	@Override
+	public void onLazyPacketsDropped(ServerPlayer player){
+		schedulers.forEach(s -> s.onLazyPacketsDropped(player));
+	}
+
+	@Override
+	public void onServerTick() {
+		schedulers.forEach(s -> s.onTick(serverData));
 	}
 
 	@Override
@@ -213,7 +243,13 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		public PartySynchronizer build() {
 			if(server == null)
 				throw new IllegalStateException();
-			return new PartySynchronizer(server, new PartyMemberDynamicInfoSynchronizer(server));
+			LazyPacketScheduleTaskHandler fullPartySyncScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
+					.setPlayerTaskGetter(ServerPlayerData::getFullPartyPlayerSync)
+					.setPerTickLimit(PARTY_ELEMENTS_PER_TICK)
+					.setPerTickPerTaskLimit(PARTY_ELEMENTS_PER_TICK_PER_PLAYER)
+					.build();
+			List<LazyPacketScheduleTaskHandler> schedulers = List.of(fullPartySyncScheduler);
+			return new PartySynchronizer(server, new PartyMemberDynamicInfoSynchronizer(server), schedulers);
 		}
 		
 		public static Builder begin() {
