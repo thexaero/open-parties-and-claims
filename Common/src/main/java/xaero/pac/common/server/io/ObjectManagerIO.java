@@ -145,8 +145,9 @@ public abstract class ObjectManagerIO
 	public boolean save() {
 		Iterator<T> iter = manager.getToSave().iterator();
 		int saves = 0;
+		long before = System.currentTimeMillis();
 		while(iter.hasNext()){
-			if(saves++ >= MAX_PER_TICK)
+			if(saves++ >= MAX_PER_TICK || saves > 1 && System.currentTimeMillis() - before > 10)
 				return false;
 			T object = iter.next();
 			iter.remove();
