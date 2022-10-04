@@ -46,7 +46,7 @@ public class ClientClaimsSyncHandler {
 	}
 	
 	public void onPlayerInfo(UUID playerId, String username) {
-		claimsManager.getPlayerClaimInfoManager().updatePlayerInfo(playerId, username);
+		claimsManager.getPlayerClaimInfoManager().updatePlayerInfo(playerId, username, claimsManager);
 	}
 
 	public void onSubClaimInfo(UUID playerId, int subConfigIndex, String claimsName, Integer claimsColor) {
