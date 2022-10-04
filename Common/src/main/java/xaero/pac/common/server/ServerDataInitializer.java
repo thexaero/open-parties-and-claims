@@ -48,6 +48,7 @@ import xaero.pac.common.server.parties.party.*;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.io.serialization.nbt.PartyNbtSerializer;
+import xaero.pac.common.server.parties.party.task.PartyRemovalSpreadoutTask;
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
@@ -79,10 +80,43 @@ public class ServerDataInitializer {
 				serverInfoIO.save();
 			} else
 				serverInfo = serverInfoHolder.getServerInfo();
-			
+
+			ServerTickHandler serverTickHandler = ServerTickHandler.Builder.begin().setServer(server).build();
+
+			ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler =
+					ServerSpreadoutQueuedTaskHandler.Builder
+					.<PlayerClaimReplaceSpreadoutTask>begin()
+					.setPerTickLimit(256)
+					.setPerTickPerTaskLimit(32)
+					.build();
+			serverTickHandler.registerSpreadoutTaskHandler(claimReplaceTaskHandler);
+			ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler =
+					ServerSpreadoutQueuedTaskHandler.Builder
+					.<ObjectExpirationCheckSpreadoutTask<?>>begin()
+					.setPerTickLimit(512)
+					.setPerTickPerTaskLimit(Integer.MAX_VALUE)
+					.build();
+			serverTickHandler.registerSpreadoutTaskHandler(objectExpirationCheckTaskHandler);
+			ServerPlayerSpreadoutTaskHandler<PlayerConfigSyncSpreadoutTask> playerConfigSyncTaskHandler =
+					ServerPlayerSpreadoutTaskHandler.FinalBuilder
+					.<PlayerConfigSyncSpreadoutTask>begin()
+					.setPerTickLimit(128)
+					.setPerTickPerTaskLimit(1)
+					.setPlayerTaskGetter(ServerPlayerData::getConfigSyncSpreadoutTask)
+					.build();
+			serverTickHandler.registerSpreadoutTaskHandler(playerConfigSyncTaskHandler);
+			ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler =
+					ServerSpreadoutQueuedTaskHandler.Builder
+					.<PartyRemovalSpreadoutTask>begin()
+					.setPerTickLimit(8192)
+					.setPerTickPerTaskLimit(512)
+					.build();
+			serverTickHandler.registerSpreadoutTaskHandler(partyRemovalTaskHandler);
+
 			PartyPlayerInfoUpdater partyMemberInfoUpdater = new PartyPlayerInfoUpdater();
 			PartyManager partyManager = PartyManager.Builder.begin()
 					.setServer(server)
+					.setPartyRemovalTaskHandler(partyRemovalTaskHandler)
 					.build();
 			PartyExpirationHandler partyExpirationHandler = PartyExpirationHandler.Builder.begin()
 					.setManager(partyManager)
@@ -106,7 +140,6 @@ public class ServerDataInitializer {
 			partyManager.setIo(partyManagerIO);
 			
 			PlayerLogInPartyAssigner playerPartyAssigner = new PlayerLogInPartyAssigner();
-			ServerTickHandler serverTickHandler = ServerTickHandler.Builder.begin().setServer(server).build();
 			PlayerTickHandler playerTickHandler = PlayerTickHandler.Builder.begin().build();
 			PlayerLoginHandler playerLoginHandler = new PlayerLoginHandler();
 			PlayerLogoutHandler playerLogoutHandler = new PlayerLogoutHandler();
@@ -134,29 +167,6 @@ public class ServerDataInitializer {
 				partyManagerIO.load();
 				new PartyManagerFixer().fix(partyManager);
 			}
-
-			ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler =
-					ServerSpreadoutQueuedTaskHandler.Builder
-							.<PlayerClaimReplaceSpreadoutTask>begin()
-							.setPerTickLimit(256)
-							.setPerTickPerTaskLimit(32)
-							.build();
-			serverTickHandler.registerSpreadoutTaskHandler(claimReplaceTaskHandler);
-			ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler =
-					ServerSpreadoutQueuedTaskHandler.Builder
-							.<ObjectExpirationCheckSpreadoutTask<?>>begin()
-							.setPerTickLimit(128)
-							.setPerTickPerTaskLimit(Integer.MAX_VALUE)
-							.build();
-			serverTickHandler.registerSpreadoutTaskHandler(objectExpirationCheckTaskHandler);
-			ServerPlayerSpreadoutTaskHandler<PlayerConfigSyncSpreadoutTask> playerConfigSyncTaskHandler =
-					ServerPlayerSpreadoutTaskHandler.FinalBuilder
-							.<PlayerConfigSyncSpreadoutTask>begin()
-							.setPerTickLimit(128)
-							.setPerTickPerTaskLimit(1)
-							.setPlayerTaskGetter(ServerPlayerData::getConfigSyncSpreadoutTask)
-							.build();
-			serverTickHandler.registerSpreadoutTaskHandler(playerConfigSyncTaskHandler);
 
 			ForceLoadTicketManager forceLoadManager = playerConfigs.getForceLoadTicketManager();
 			ClaimsManagerSynchronizer claimsSynchronizer = ClaimsManagerSynchronizer.Builder.begin().setServer(server).build();
