@@ -26,7 +26,7 @@ import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerP
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPropertiesSync;
-import xaero.pac.common.server.parties.party.sync.player.FullPartyPlayerSync;
+import xaero.pac.common.server.parties.party.sync.player.PlayerFullPartySync;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
@@ -45,7 +45,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private boolean checkedBaseForceloadLimitOnce;
 	private boolean shouldResyncPlayerConfigs;
 	private PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo;
-	private FullPartyPlayerSync fullPartyPlayerSync;
+	private PlayerFullPartySync playerFullPartySync;
 	private ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync;
 	private ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync;
 	private ClaimsManagerPlayerStateSync claimsManagerPlayerStateSync;
@@ -61,13 +61,13 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		super();
 	}
 
-	public void onLogin(FullPartyPlayerSync fullPartyPlayerSync, ClaimsManagerPlayerRegionSync claimsManagerPlayerSyncHandler,
+	public void onLogin(PlayerFullPartySync playerFullPartySync, ClaimsManagerPlayerRegionSync claimsManagerPlayerSyncHandler,
 						ClaimsManagerPlayerStateSync claimsManagerPlayerStateSyncHandler,
 						ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync,
 						ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync,
 						PlayerClaimActionRequestHandler claimActionRequestHandler, PlayerConfigSyncSpreadoutTask configSyncSpreadoutTask) {
 		//won't be called for fake players, e.g. turtles from cc
-		this.fullPartyPlayerSync = fullPartyPlayerSync;
+		this.playerFullPartySync = playerFullPartySync;
 		this.claimsManagerPlayerRegionSync = claimsManagerPlayerSyncHandler;
 		this.claimsManagerPlayerStateSync = claimsManagerPlayerStateSyncHandler;
 		this.claimsManagerPlayerClaimOwnerPropertiesSync = claimsManagerPlayerClaimOwnerPropertiesSync;
@@ -119,8 +119,8 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return oftenSyncedPartyMemberInfo;
 	}
 
-	public FullPartyPlayerSync getFullPartyPlayerSync() {
-		return fullPartyPlayerSync;
+	public PlayerFullPartySync getFullPartyPlayerSync() {
+		return playerFullPartySync;
 	}
 
 	public ClaimsManagerPlayerRegionSync getClaimsManagerPlayerRegionSync() {

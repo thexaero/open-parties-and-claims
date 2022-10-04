@@ -43,7 +43,7 @@ import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPro
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.sync.PartySynchronizer;
-import xaero.pac.common.server.parties.party.sync.player.FullPartyPlayerSync;
+import xaero.pac.common.server.parties.party.sync.player.PlayerFullPartySync;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
@@ -62,7 +62,7 @@ public class PlayerLoginHandler {
 		
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 
-		FullPartyPlayerSync fullPartyPlayerSync = new FullPartyPlayerSync((PartySynchronizer)(Object)serverData.getPartyManager().getPartySynchronizer());
+		PlayerFullPartySync playerFullPartySync = new PlayerFullPartySync((PartySynchronizer)(Object)serverData.getPartyManager().getPartySynchronizer());
 
 		ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync = ClaimsManagerPlayerClaimOwnerPropertiesSync.Builder.begin()
 				.setPlayer(player)
@@ -80,7 +80,7 @@ public class PlayerLoginHandler {
 				.build();
 
 		playerData.onLogin(
-				fullPartyPlayerSync,
+				playerFullPartySync,
 				ClaimsManagerPlayerRegionSync.Builder.begin()
 						.setClaimsManager(serverData.getServerClaimsManager())
 						.setStateSyncHandler(claimsManagerPlayerStateSync)

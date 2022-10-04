@@ -40,11 +40,11 @@ import xaero.pac.common.server.parties.party.sync.PartySynchronizer;
 
 import java.util.Iterator;
 
-public final class FullPartyPlayerSync extends PartyPlayerLazyPacketScheduler {
+public final class PlayerFullPartySync extends PartyPlayerLazyPacketScheduler {
 
 	private State currentState;
 
-	public FullPartyPlayerSync(PartySynchronizer synchronizer) {
+	public PlayerFullPartySync(PartySynchronizer synchronizer) {
 		super(synchronizer);
 	}
 
