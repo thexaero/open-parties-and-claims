@@ -61,33 +61,26 @@ public final class PlayerFullPartySync extends PartyPlayerLazyPacketScheduler {
 	@Override
 	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, ServerPlayer player, int limit) {
 		int stepsLeft = limit;
-		if(currentState.memberIterator == null && currentState.inviteIterator == null && currentState.allyIterator == null){
+		if(currentState.memberIterator == null){
+			currentState.start();
 			synchronizer.sendBasePartyPackets(player, currentState.party);
 			stepsLeft -= 5;
 		}
-		currentState.updateState();
-		while(stepsLeft > 0) {
-			if(currentState.memberIterator != null){
-				if(currentState.memberIterator.hasNext()){
-					PartyMember memberInfo = currentState.memberIterator.next();
-					synchronizer.syncToClientPlayerInfo(player, ClientboundPartyPlayerPacket.Type.MEMBER, ClientboundPartyPlayerPacket.Action.ADD, memberInfo);
-					stepsLeft--;
-				}
-			} else if(currentState.inviteIterator != null){
-				if(currentState.inviteIterator.hasNext()){
-					PartyInvite invite = currentState.inviteIterator.next();
-					synchronizer.syncToClientPlayerInfo(player, ClientboundPartyPlayerPacket.Type.INVITE, ClientboundPartyPlayerPacket.Action.ADD, invite);
-					stepsLeft--;
-				}
-			} else if(currentState.allyIterator != null){
-				if(currentState.allyIterator.hasNext()){
-					PartyAlly ally = currentState.allyIterator.next();
-					synchronizer.sendToClientAllyAdd(player, ally);
-					stepsLeft--;
-				}
+		while(!currentState.done && stepsLeft > 0) {
+			if(currentState.memberIterator.hasNext()){
+				PartyMember memberInfo = currentState.memberIterator.next();
+				synchronizer.syncToClientPlayerInfo(player, ClientboundPartyPlayerPacket.Type.MEMBER, ClientboundPartyPlayerPacket.Action.ADD, memberInfo);
+				stepsLeft--;
+			} else if(currentState.inviteIterator.hasNext()){
+				PartyInvite invite = currentState.inviteIterator.next();
+				synchronizer.syncToClientPlayerInfo(player, ClientboundPartyPlayerPacket.Type.INVITE, ClientboundPartyPlayerPacket.Action.ADD, invite);
+				stepsLeft--;
+			} else if(currentState.allyIterator.hasNext()){
+				PartyAlly ally = currentState.allyIterator.next();
+				synchronizer.sendToClientAllyAdd(player, ally);
+				stepsLeft--;
 			} else
-				break;
-			currentState.updateState();
+				currentState.end();
 		}
 		if(currentState.done) {
 			synchronizer.sendSyncEnd(player);
@@ -112,25 +105,21 @@ public final class PlayerFullPartySync extends PartyPlayerLazyPacketScheduler {
 			this.party = party;
 		}
 
-		private void updateState(){
-			if(party == null)
+		private void start(){
+			if(party == null) {
 				done = true;
-			if(done)
 				return;
-			if(memberIterator == null && inviteIterator == null && allyIterator == null)
-				memberIterator = party.getPartyMemberIterator();
-			if(memberIterator != null && !memberIterator.hasNext()) {
-				memberIterator = null;
-				inviteIterator = party.getPartyInviteIterator();
 			}
-			if(inviteIterator != null && !inviteIterator.hasNext()){
-				inviteIterator = null;
-				allyIterator = party.getAllyPartiesIterator();
-			}
-			if(allyIterator != null && !allyIterator.hasNext()) {
-				allyIterator = null;
-				done = true;
-			}
+			memberIterator = party.getPartyMemberIterator();
+			inviteIterator = party.getPartyInviteIterator();
+			allyIterator = party.getAllyPartiesIterator();
+		}
+
+		private void end(){
+			done = true;
+			memberIterator = null;
+			inviteIterator = null;
+			allyIterator = null;
 		}
 
 	}
