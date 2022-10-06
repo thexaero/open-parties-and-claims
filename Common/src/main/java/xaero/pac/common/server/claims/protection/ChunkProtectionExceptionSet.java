@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.protection;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.tags.TagKey;
 
 import java.util.HashSet;
@@ -72,6 +73,12 @@ public final class ChunkProtectionExceptionSet<T> {
 
 		public Builder<T> addTag(TagKey<T> exceptionTag){
 			exceptionTags.add(exceptionTag);
+			return this;
+		}
+
+		public Builder<T> addEither(Either<T, TagKey<T>> eitherException){
+			eitherException.left().ifPresent(exceptions::add);
+			eitherException.right().ifPresent(exceptionTags::add);
 			return this;
 		}
 

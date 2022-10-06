@@ -21,6 +21,7 @@ package xaero.pac.common.platform.services;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.common.entity.IEntityAccess;
 import xaero.pac.common.registry.block.IBlockRegistry;
+import xaero.pac.common.registry.entity.IEntityRegistry;
 import xaero.pac.common.registry.item.IItemRegistry;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 
@@ -49,6 +50,8 @@ public interface IPlatformHelper {
 	boolean isDevelopmentEnvironment();
 
 	IBlockRegistry getBlockRegistry();
+
+	IEntityRegistry getEntityRegistry();
 
 	IItemRegistry getItemRegistry();
 

@@ -16,18 +16,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.registry.registry;
+package xaero.pac.common.registry.entity;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
-import xaero.pac.common.registry.item.IItemRegistry;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 
-public class ItemRegistryForge implements IItemRegistry {
+import java.util.stream.Stream;
 
-	@Override
-	public Item getValue(ResourceLocation id) {
-		return ForgeRegistries.ITEMS.getValue(id);
-	}
+public interface IEntityRegistry {
+
+	public EntityType<?> getValue(ResourceLocation id);
+
+	public Stream<EntityType<?>> getTagStream(TagKey<EntityType<?>> tagKey);
 
 }

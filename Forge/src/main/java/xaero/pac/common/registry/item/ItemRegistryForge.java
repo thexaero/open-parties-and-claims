@@ -18,24 +18,23 @@
 
 package xaero.pac.common.registry.item;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.stream.Stream;
 
-public class ItemRegistryFabric implements IItemRegistry {
+public class ItemRegistryForge implements IItemRegistry {
+
 	@Override
 	public Item getValue(ResourceLocation id) {
-		return Registry.ITEM.get(id);
+		return ForgeRegistries.ITEMS.getValue(id);
 	}
 
 	@Override
 	public Stream<Item> getTagStream(TagKey<Item> tagKey) {
-		return Registry.ITEM.getTag(tagKey).stream().flatMap(HolderSet.Named::stream).map(Holder::value);
+		return ForgeRegistries.ITEMS.tags().getTag(tagKey).stream();
 	}
 
 }

@@ -16,26 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.registry.item;
+package xaero.pac.common.registry.entity;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.stream.Stream;
 
-public class ItemRegistryFabric implements IItemRegistry {
+public class EntityRegistryForge implements IEntityRegistry {
+
 	@Override
-	public Item getValue(ResourceLocation id) {
-		return Registry.ITEM.get(id);
+	public EntityType<?> getValue(ResourceLocation id) {
+		return ForgeRegistries.ENTITIES.getValue(id);
 	}
 
 	@Override
-	public Stream<Item> getTagStream(TagKey<Item> tagKey) {
-		return Registry.ITEM.getTag(tagKey).stream().flatMap(HolderSet.Named::stream).map(Holder::value);
+	public Stream<EntityType<?>> getTagStream(TagKey<EntityType<?>> tagKey) {
+		return ForgeRegistries.ENTITIES.tags().getTag(tagKey).stream();
 	}
 
 }
