@@ -19,14 +19,22 @@
 package xaero.pac.common.registry.block;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.stream.Stream;
 
 public class BlockRegistryForge implements IBlockRegistry {
 
 	@Override
 	public Block getValue(ResourceLocation id) {
 		return ForgeRegistries.BLOCKS.getValue(id);
+	}
+
+	@Override
+	public Stream<Block> getTagStream(TagKey<Block> tagKey) {
+		return ForgeRegistries.BLOCKS.tags().getTag(tagKey).stream();
 	}
 
 }

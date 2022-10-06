@@ -16,27 +16,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.registry.block;
+package xaero.pac.common.mixin;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.server.ReloadableServerResources;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 
-import java.util.stream.Stream;
+@Mixin(ReloadableServerResources.class)
+public class MixinReloadableServerResources {
 
-public class BlockRegistryFabric implements IBlockRegistry {
-
-	@Override
-	public Block getValue(ResourceLocation id) {
-		return Registry.BLOCK.get(id);
-	}
-
-	@Override
-	public Stream<Block> getTagStream(TagKey<Block> tagKey) {
-		return Registry.BLOCK.getTag(tagKey).stream().flatMap(HolderSet.Named::stream).map(Holder::value);
+	@Inject(at = @At("RETURN"), method = "updateRegistryTags")
+	public void onUpdateRegistryTags(CallbackInfo ci){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onTagsUpdate();
 	}
 
 }

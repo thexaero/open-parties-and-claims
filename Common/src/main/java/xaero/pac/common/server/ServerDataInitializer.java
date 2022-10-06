@@ -205,6 +205,7 @@ public class ServerDataInitializer {
 					.setClaimsManager(serverClaimsManager)
 					.setPartyManager(partyManager)
 					.build();
+			chunkProtection.updateTagExceptions();
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
 
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 

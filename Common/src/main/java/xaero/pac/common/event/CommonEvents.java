@@ -367,4 +367,17 @@ public class CommonEvents {
 		}
 		return false;
 	}
+
+	protected void onTagsUpdate(){
+		if(lastServerStarted == null)
+			return;
+		if(!lastServerStarted.isRunning() || !lastServerStarted.isSameThread())
+			return;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(lastServerStarted);
+		if(serverData == null)
+			return;
+		serverData.getChunkProtection().updateTagExceptions();
+	}
+
 }

@@ -217,6 +217,10 @@ public class CommonEventsFabric extends CommonEvents {
 		return super.onBucketUse(entity, hitResult, itemStack);
 	}
 
+	public void onTagsUpdate() {
+		super.onTagsUpdate();
+	}
+
 	public MinecraftServer getLastServerStarted(){
 		return lastServerStarted;
 	}
