@@ -93,9 +93,11 @@ public class ChunkProtection
 	private final Component OFF_HAND = new TranslatableComponent("gui.xaero_claims_protection_off_hand");
 	private final Component CANT_INTERACT_BLOCK_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component BLOCK_DISABLED = new TranslatableComponent("gui.xaero_claims_protection_block_disabled").withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component USE_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_use_item", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_INTERACT_ENTITY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component ENTITY_DISABLED = new TranslatableComponent("gui.xaero_claims_protection_entity_disabled").withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_APPLY_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component CANT_APPLY_ITEM_THIS_CLOSE_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_too_close", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ITEM_DISABLED_MAIN = new TranslatableComponent("gui.xaero_claims_protection_item_disabled", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
@@ -129,8 +131,10 @@ public class ChunkProtection
 	private final ChunkProtectionExceptionSet<EntityType<?>> forcedEntityClaimBarrierList;
 	private final ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGrief;
 	private final ChunkProtectionExceptionSet<Item> additionalBannedItems;
-	private final ChunkProtectionExceptionSet<Item> completelyDisabledItems;
 	private final ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions;
+	private final ChunkProtectionExceptionSet<Item> completelyDisabledItems;
+	private final ChunkProtectionExceptionSet<Block> completelyDisabledBlocks;
+	private final ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities;
 
 	private boolean ignoreChunkEnter = false;
 	
@@ -142,6 +146,7 @@ public class ChunkProtection
 							ChunkProtectionExceptionSet<Block> forcedInteractionExceptionBlocks,
 							ChunkProtectionExceptionSet<Block> forcedBreakExceptionBlocks,
 							ChunkProtectionExceptionSet<Block> requiresEmptyHandBlocks,
+							ChunkProtectionExceptionSet<Block> completelyDisabledBlocks,
 							ChunkProtectionExceptionSet<EntityType<?>> optionalEmptyHandExceptionEntities,
 							ChunkProtectionExceptionSet<EntityType<?>> optionalKillExceptionEntities,
 							ChunkProtectionExceptionSet<EntityType<?>> forcedEmptyHandExceptionEntities,
@@ -151,7 +156,7 @@ public class ChunkProtection
 							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGrief,
 							ChunkProtectionExceptionSet<Item> additionalBannedItems,
 							ChunkProtectionExceptionSet<Item> completelyBannedItems,
-							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions) {
+							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions, ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities) {
 		this.claimsManager = claimsManager;
 		this.partyManager = partyManager;
 		this.entityHelper = entityHelper;
@@ -162,6 +167,7 @@ public class ChunkProtection
 		this.forcedInteractionExceptionBlocks = forcedInteractionExceptionBlocks;
 		this.forcedBreakExceptionBlocks = forcedBreakExceptionBlocks;
 		this.requiresEmptyHandBlocks = requiresEmptyHandBlocks;
+		this.completelyDisabledBlocks = completelyDisabledBlocks;
 		this.optionalEmptyHandExceptionEntities = optionalEmptyHandExceptionEntities;
 		this.optionalKillExceptionEntities = optionalKillExceptionEntities;
 		this.forcedEmptyHandExceptionEntities = forcedEmptyHandExceptionEntities;
@@ -172,6 +178,7 @@ public class ChunkProtection
 		this.additionalBannedItems = additionalBannedItems;
 		this.completelyDisabledItems = completelyBannedItems;
 		this.itemUseProtectionExceptions = itemUseProtectionExceptions;
+		this.completelyDisabledEntities = completelyDisabledEntities;
 	}
 	
 	private boolean shouldProtectEntity(IPlayerConfig claimConfig, Entity e, Entity from) {
@@ -311,7 +318,12 @@ public class ChunkProtection
 	public boolean onRightClickBlock(IServerData<CM,P> serverData, Player player, InteractionHand hand, BlockPos pos, BlockHitResult blockHit) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
+		BlockState blockState = player.getLevel().getBlockState(pos);
+		if(completelyDisabledBlocks.contains(blockState.getBlock())){
+			player.sendMessage(BLOCK_DISABLED, player.getUUID());
+			return true;
+		}
+		if(CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
 			return false;
 		ItemStack itemStack = player.getItemInHand(hand);
 		boolean emptyHand = itemStack.getItem() == Items.AIR;
@@ -426,6 +438,11 @@ public class ChunkProtection
 	public boolean onEntityInteract(IServerData<CM,P> serverData, Entity entity, Entity target, InteractionHand hand, boolean direct, boolean attack, boolean posSpecific) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
+		if(!attack && completelyDisabledEntities.contains(target.getType())){
+			if(hand == InteractionHand.MAIN_HAND && entity instanceof Player player)
+				player.sendMessage(ENTITY_DISABLED, player.getUUID());
+			return true;
+		}
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
@@ -809,8 +826,10 @@ public class ChunkProtection
 		forcedEntityClaimBarrierList.updateTagExceptions();
 		entitiesAllowedToGrief.updateTagExceptions();
 		additionalBannedItems.updateTagExceptions();
-		completelyDisabledItems.updateTagExceptions();
 		itemUseProtectionExceptions.updateTagExceptions();
+		completelyDisabledItems.updateTagExceptions();
+		completelyDisabledBlocks.updateTagExceptions();
+		completelyDisabledEntities.updateTagExceptions();
 	}
 
 	public static final class Builder
@@ -876,10 +895,14 @@ public class ChunkProtection
 					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
 			ChunkProtectionExceptionSet.Builder<Item> additionalBannedItems =
 					ChunkProtectionExceptionSet.Builder.<Item>begin().setTagStreamGetter(Services.PLATFORM.getItemRegistry()::getTagStream);
-			ChunkProtectionExceptionSet.Builder<Item> completelyBannedItems =
-					ChunkProtectionExceptionSet.Builder.<Item>begin().setTagStreamGetter(Services.PLATFORM.getItemRegistry()::getTagStream);
 			ChunkProtectionExceptionSet.Builder<Item> itemUseProtectionExceptions =
 					ChunkProtectionExceptionSet.Builder.<Item>begin().setTagStreamGetter(Services.PLATFORM.getItemRegistry()::getTagStream);
+			ChunkProtectionExceptionSet.Builder<Item> completelyDisabledItems =
+					ChunkProtectionExceptionSet.Builder.<Item>begin().setTagStreamGetter(Services.PLATFORM.getItemRegistry()::getTagStream);
+			ChunkProtectionExceptionSet.Builder<Block> completelyDisabledBlocks =
+					ChunkProtectionExceptionSet.Builder.<Block>begin().setTagStreamGetter(Services.PLATFORM.getBlockRegistry()::getTagStream);
+			ChunkProtectionExceptionSet.Builder<EntityType<?>> completelyDisabledEntities =
+					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
 
 			Function<ResourceLocation, Block> blockGetter = Services.PLATFORM.getBlockRegistry()::getValue;
 			Function<ResourceLocation, TagKey<Block>> blockTagGetter = rl -> TagKey.create(Registry.BLOCK_REGISTRY, rl);
@@ -889,14 +912,12 @@ public class ChunkProtection
 			Function<ResourceLocation, TagKey<Item>> itemTagGetter = rl -> TagKey.create(Registry.ITEM_REGISTRY, rl);
 			ServerConfig.CONFIG.friendlyChunkProtectedEntityList.get().forEach(s -> onExceptionListElement(
 					s,
-					friendlyEntityList::addEither, null, null,
-					null, null, null,
+					friendlyEntityList::addEither, null, null, null, null, null,
 					entityGetter, entityTagGetter
 			));
 			ServerConfig.CONFIG.hostileChunkProtectedEntityList.get().forEach(s -> onExceptionListElement(
 					s,
-					hostileEntityList::addEither, null, null,
-					null, null, null,
+					hostileEntityList::addEither, null, null, null, null, null,
 					entityGetter, entityTagGetter
 			));
 			ServerConfig.CONFIG.blockProtectionExceptionList.get()
@@ -930,38 +951,44 @@ public class ChunkProtection
 			ServerConfig.CONFIG.entitiesAllowedToGrief.get()
 					.forEach(s -> onExceptionListElement(
 							s,
-							entitiesAllowedToGrief::addEither, null, null,
-							null, null, null,
+							entitiesAllowedToGrief::addEither, null, null, null, null, null,
 							entityGetter, entityTagGetter
 					));
 			ServerConfig.CONFIG.additionalBannedItemsList.get().forEach(s -> onExceptionListElement(
 							s,
-							additionalBannedItems::addEither, null, null,
-							null, null, null,
-							itemGetter, itemTagGetter
-					));
-			ServerConfig.CONFIG.completelyDisabledItemsList.get().forEach(s -> onExceptionListElement(
-							s,
-							completelyBannedItems::addEither, null, null,
-							null, null, null,
+							additionalBannedItems::addEither, null, null, null, null, null,
 							itemGetter, itemTagGetter
 					));
 			ServerConfig.CONFIG.itemUseProtectionExceptionList.get().forEach(s -> onExceptionListElement(
 							s,
-							itemUseProtectionExceptions::addEither, null, null,
-							null, null, null,
+							itemUseProtectionExceptions::addEither, null, null, null, null, null,
 							itemGetter, itemTagGetter
+					));
+			ServerConfig.CONFIG.completelyDisabledItemInteractions.get().forEach(s -> onExceptionListElement(
+							s,
+							completelyDisabledItems::addEither, null, null, null, null, null,
+							itemGetter, itemTagGetter
+					));
+			ServerConfig.CONFIG.completelyDisabledBlockInteractions.get().forEach(s -> onExceptionListElement(
+							s,
+							completelyDisabledBlocks::addEither, null, null, null, null, null,
+							blockGetter, blockTagGetter
+					));
+			ServerConfig.CONFIG.completelyDisabledEntityInteractions.get().forEach(s -> onExceptionListElement(
+							s,
+							completelyDisabledEntities::addEither, null, null, null, null, null,
+							entityGetter, entityTagGetter
 					));
 			return new ChunkProtection<>(claimsManager, partyManager, new ChunkProtectionEntityHelper(),
 					friendlyEntityList.build(), hostileEntityList.build(),
 					optionalInteractionExceptionBlocksBuilder.build(), optionalBreakExceptionBlocksBuilder.build(),
 					forcedInteractionExceptionBlocksBuilder.build(), forcedBreakExceptionBlocksBuilder.build(),
-					requiresEmptyHandBlocksBuilder.build(), optionalEmptyHandExceptionEntities.build(),
+					requiresEmptyHandBlocksBuilder.build(), completelyDisabledBlocks.build(), optionalEmptyHandExceptionEntities.build(),
 					optionalKillExceptionEntities.build(), forcedEmptyHandExceptionEntities.build(),
 					forcedKillExceptionEntities.build(), optionalEntityClaimBarrierList.build(),
 					forcedEntityClaimBarrierList.build(), entitiesAllowedToGrief.build(),
-					additionalBannedItems.build(), completelyBannedItems.build(),
-					itemUseProtectionExceptions.build());
+					additionalBannedItems.build(), completelyDisabledItems.build(),
+					itemUseProtectionExceptions.build(), completelyDisabledEntities.build());
 		}
 
 		private <T> void onExceptionListElement(String element, Consumer<Either<T,TagKey<T>>> defaultInteractionException,

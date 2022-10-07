@@ -44,8 +44,10 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemInteractions;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
@@ -267,17 +269,29 @@ public class ServerConfig {
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList("supplementaries:slingshot"), s -> s instanceof String);
 
-		completelyDisabledItemsList = builder
-			.comment("Items that are completely banned from usage on the server, claimed or not. This list applies to both using an item at air and using it at a block. Supports item tags. For example [\"minecraft:trident\", \"minecraft:shield\", \"#minecraft:boats\"]")
-			.translation("gui.xaero_pac_config_completely_banned_item_list")
-			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledItemsList"), () -> Lists.newArrayList(), s -> s instanceof String);
-
 		itemUseProtectionExceptionList = builder
 			.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". This list applies to both using an item at air and using it at a block. Supports item tags. For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\", \"#minecraft:beds\"]")
 			.translation("gui.xaero_pac_config_item_protection_exception")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("itemUseProtectionExceptionList"), () -> Lists.newArrayList("minecraft:firework_rocket"), s -> s instanceof String);
+
+		completelyDisabledItemInteractions = builder
+			.comment("Items that are completely banned from right-click usage on the server, claimed or not. This list applies to both using an item at air and using it at a block. Supports item tags. For example [\"minecraft:trident\", \"minecraft:shield\", \"#minecraft:boats\"]")
+			.translation("gui.xaero_pac_config_completely_disabled_item_interactions")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledItemInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
+
+		completelyDisabledBlockInteractions = builder
+			.comment("Blocks that are completely banned from being interacted with on the server, claimed or not. Does not affect block breaking. Supports block tags. For example [\"minecraft:dirt\", \"minecraft:cartography_table\", \"#minecraft:buttons\"]")
+			.translation("gui.xaero_pac_config_completely_disabled_block_interactions")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledBlockInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
+
+		completelyDisabledEntityInteractions = builder
+			.comment("Entities that are completely banned from being interacted with on the server, claimed or not. Does not affect killing the entities. Supports entity tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.translation("gui.xaero_pac_config_completely_disabled_entity_interactions")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledEntityInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
 
 		builder.pop();
 
