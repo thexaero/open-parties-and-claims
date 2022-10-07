@@ -47,9 +47,11 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 		return new ClientPlayerClaimInfo(username, playerId, claims, this, new Int2ObjectOpenHashMap<>());
 	}
 	
-	public void updatePlayerInfo(UUID playerId, String username) {
+	public void updatePlayerInfo(UUID playerId, String username, ClientClaimsManager claimsManager) {
 		ClientPlayerClaimInfo playerInfo = getInfo(playerId);
 		playerInfo.setPlayerUsername(username);
+		if(playerInfo.getClaimsColor(-1) == null)
+			updateSubClaimInfo(playerId, -1, "", 0, claimsManager);//ensuring something is always there for the main sub
 	}
 
 	public void updateSubClaimInfo(UUID playerId, int subConfigIndex, String claimsName, Integer claimsColor, ClientClaimsManager claimsManager) {

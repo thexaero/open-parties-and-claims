@@ -33,6 +33,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.IServerData;
@@ -65,12 +66,12 @@ public class AllyPartyCommand {
 							ServerPlayer player = context.getSource().getPlayerOrException();
 							UUID playerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData = ServerData.from(server);
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo> playerParty = partyManager.getPartyByMember(playerId);
+							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 							
 							ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
-							IServerParty<IPartyMember, IPartyPlayerInfo> targetPlayerParty = partyManager.getPartyByMember(targetPlayer.getUUID());
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetPlayerParty = partyManager.getPartyByMember(targetPlayer.getUUID());
 							if(targetPlayerParty == playerParty) {
 								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_ally_player_target_in_your_party", targetPlayer.getGameProfile().getName()));
 								return 0;

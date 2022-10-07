@@ -25,14 +25,17 @@ import xaero.pac.client.controls.keybinding.KeyBindingHelperForge;
 import xaero.pac.common.entity.EntityAccessForge;
 import xaero.pac.common.registry.block.BlockRegistryForge;
 import xaero.pac.common.registry.block.IBlockRegistry;
+import xaero.pac.common.registry.entity.EntityRegistryForge;
+import xaero.pac.common.registry.entity.IEntityRegistry;
 import xaero.pac.common.registry.item.IItemRegistry;
-import xaero.pac.common.registry.registry.ItemRegistryForge;
+import xaero.pac.common.registry.item.ItemRegistryForge;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessForge;
 
 public class PlatformHelperForge implements IPlatformHelper {
 
 	private final BlockRegistryForge blockRegistryForge = new BlockRegistryForge();
+	private final EntityRegistryForge entityRegistryForge = new EntityRegistryForge();
 	private final ItemRegistryForge itemRegistryForge = new ItemRegistryForge();
 	private final KeyBindingHelperForge keyBindingRegistryForge = new KeyBindingHelperForge();
 	private final ServerChunkCacheAccessForge serverChunkCacheAccessForge = new ServerChunkCacheAccessForge();
@@ -56,6 +59,11 @@ public class PlatformHelperForge implements IPlatformHelper {
 	@Override
 	public IBlockRegistry getBlockRegistry() {
 		return blockRegistryForge;
+	}
+
+	@Override
+	public IEntityRegistry getEntityRegistry() {
+		return entityRegistryForge;
 	}
 
 	@Override

@@ -71,7 +71,7 @@ public class ClientboundPartyAllyPacket extends LazyPacket<LazyPacket.Encoder<Cl
 				if(allyName.length() > 512)
 					return null;
 				String allyDefaultName = tag.getString("dn");
-				if(allyDefaultName.isEmpty() || allyDefaultName.length() > 512)
+				if(allyDefaultName.length() > 512)
 					return null;
 				String actionString = tag.getString("a");
 				if(actionString.isEmpty() || actionString.length() > 128)
@@ -90,7 +90,7 @@ public class ClientboundPartyAllyPacket extends LazyPacket<LazyPacket.Encoder<Cl
 		
 		@Override
 		public void accept(ClientboundPartyAllyPacket t) {
-			IClientParty<?, ?> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
+			IClientParty<?, ?, ?> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
 			if(party == null)
 				return;
 			if(t.action == Action.ADD)

@@ -42,7 +42,7 @@ import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 public interface IServerData
 <
 	CM extends IServerClaimsManager<?, ?, ?>,
-	P extends IServerParty<?, ?>
+	P extends IServerParty<?, ?, ?>
 >
 extends IServerDataAPI<CM,P> {
 	

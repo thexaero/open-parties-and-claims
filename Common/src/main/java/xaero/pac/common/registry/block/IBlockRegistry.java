@@ -19,10 +19,15 @@
 package xaero.pac.common.registry.block;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+
+import java.util.stream.Stream;
 
 public interface IBlockRegistry {
 
 	public Block getValue(ResourceLocation id);
+
+	public Stream<Block> getTagStream(TagKey<Block> tagKey);
 
 }

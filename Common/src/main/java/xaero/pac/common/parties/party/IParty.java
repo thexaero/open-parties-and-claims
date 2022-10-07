@@ -18,13 +18,14 @@
 
 package xaero.pac.common.parties.party;
 
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.api.IPartyAPI;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 
 import java.util.UUID;
 
-public interface IParty<M extends IPartyMember, I extends IPartyPlayerInfo> extends IPartyAPI<M,I> {
+public interface IParty<M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly> extends IPartyAPI<M,I,A> {
 	
 	//internal api
 	

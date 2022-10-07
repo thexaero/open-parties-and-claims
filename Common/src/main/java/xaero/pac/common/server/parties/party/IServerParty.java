@@ -20,14 +20,16 @@ package xaero.pac.common.server.parties.party;
 
 import xaero.pac.common.parties.party.IParty;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 
 public interface IServerParty
 <
 	M extends IPartyMember, 
-	I extends IPartyPlayerInfo
-> extends IServerPartyAPI<M, I>, IParty<M, I> {
+	I extends IPartyPlayerInfo,
+	A extends IPartyAlly
+> extends IServerPartyAPI<M, I, A>, IParty<M, I, A> {
 	
 	//internal api
 	

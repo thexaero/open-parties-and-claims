@@ -16,27 +16,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.parties.party.io.serialization.snapshot.member;
+package xaero.pac.common.mixin;
 
-import xaero.pac.common.parties.party.PartyPlayerInfo;
+import net.minecraft.server.ReloadableServerResources;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 
-import java.util.UUID;
+@Mixin(ReloadableServerResources.class)
+public class MixinReloadableServerResources {
 
-public class PartyPlayerInfoSnapshotConverter {
-
-	public PartyPlayerInfo convert(PartyPlayerInfoSnapshot data) {
-		PartyPlayerInfo result = create(UUID.fromString(data.getUUID()));
-		result.setUsername(data.getUsername());
-		return result;
-	}
-	
-	public PartyPlayerInfoSnapshot convert(PartyPlayerInfo partyPlayerInfo) {
-		PartyPlayerInfoSnapshot result = new PartyPlayerInfoSnapshot(partyPlayerInfo.getUUID().toString(), partyPlayerInfo.getUsername());
-		return result;
-	}
-	
-	protected PartyPlayerInfo create(UUID playerId) {
-		return new PartyPlayerInfo(playerId);
+	@Inject(at = @At("RETURN"), method = "updateRegistryTags")
+	public void onUpdateRegistryTags(CallbackInfo ci){
+		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onTagsUpdate();
 	}
 
 }

@@ -45,6 +45,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemInteractions;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
@@ -219,7 +222,7 @@ public class ServerConfig {
 		   	.defineEnum("friendlyChunkProtectedEntityListType", ConfigListType.ALL_BUT);
 		
 		friendlyChunkProtectedEntityList = builder
-			.comment("Friendly entities to include/exclude in chunk protection, depending on the list type. For example [\"minecraft:cow\", \"minecraft:rabbit\"]. By default the list is empty with the type set to ALL_BUT, which means that all friendly entities are included.")
+			.comment("Friendly entities to fully include/exclude in chunk protection, depending on the list type. Supports entity type tags. For example [\"minecraft:cow\", \"minecraft:rabbit\", \"#minecraft:axolotl_hunt_targets\"]. By default the list is empty with the type set to ALL_BUT, which means that all friendly entities are included.")
 			.translation("gui.xaero_pac_config_friendly_protected_entities")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("friendlyChunkProtectedEntityList"), () -> Lists.newArrayList("minecraft:boat"), s -> s instanceof String);
@@ -231,46 +234,64 @@ public class ServerConfig {
 		   	.defineEnum("hostileChunkProtectedEntityListType", ConfigListType.ONLY);
 		
 		hostileChunkProtectedEntityList = builder
-			.comment("Hostile entities to include/exclude in chunk protection, depending on the list type. For example [\"minecraft:creeper\", \"minecraft:zombie\"]")
+			.comment("Hostile entities to fully include/exclude in chunk protection, depending on the list type. Supports entity type tags. For example [\"minecraft:creeper\", \"minecraft:zombie\", \"#minecraft:raiders\"]")
 			.translation("gui.xaero_pac_config_hostile_protected_entities")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("hostileChunkProtectedEntityList"), ArrayList::new, s -> s instanceof String);
 
 		blockProtectionExceptionList = builder
-			.comment("Blocks to exclude from chunk protection. Just a block ID in the list, e.g. \"minecraft:level\" allows block interaction with an empty hand if a claim owner's config agrees. A block ID with a prefix \"force$\" allows empty hand interactions without asking the claim owner's config. Prefix \"break$\" allows breaking the block, if the claim owner's config agrees. Prefix \"force_break$\" allows breaking across the server. Add the same block multiple times to use multiple prefixes. For example [\"minecraft:lever\", \"force$minecraft:stone_button\", \"force_break$minecraft:stone_button\"]")
+			.comment("Blocks to exclude from chunk protection. Supports block tags. Just a block/tag ID in the list, e.g. \"minecraft:level\" allows block interaction if a claim owner's config agrees and the item in the used hand isn't blocking it. A block/tag ID with a prefix \"force$\" allows interactions without asking the claim owner's config. Prefix \"hand$\" is the same as no prefix but enforces an empty hand requirement. Prefix \"force_hand$\" is the same as the prefix \"force$\" but enforces an empty hand requirement. Prefix \"break$\" allows breaking the block(s), if the claim owner's config agrees. Prefix \"force_break$\" allows breaking across the server. Add the same block/tag multiple times to use multiple prefixes. For example [\"minecraft:lever\", \"force$minecraft:stone_button\", \"force_break$minecraft:stone_button\"]")
 			.translation("gui.xaero_pac_config_block_protection_exception_empty_hand")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("blockProtectionExceptionList"), () -> Lists.newArrayList("minecraft:lever", "minecraft:stone_button", "minecraft:polished_blackstone_button", "minecraft:oak_button", "minecraft:spruce_button", "minecraft:birch_button", "minecraft:jungle_button", "minecraft:acacia_button", "minecraft:dark_oak_button", "minecraft:crimson_button", "minecraft:warped_button"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("blockProtectionExceptionList"), () -> Lists.newArrayList("minecraft:lever", "force$minecraft:crafting_table", "#minecraft:buttons"), s -> s instanceof String);
 
 		entityProtectionExceptionList = builder
-			.comment("Entities to exclude from chunk protection. Just an entity ID in the list, e.g. \"minecraft:horse\" allows entity interaction with an empty hand if a claim owner's config agrees. An entity ID with a prefix \"force$\" allows empty hand interactions without asking the claim owner's config. Prefix \"break$\" allows killing the entity, if the claim owner's config agrees. Prefix \"force_break$\" allows killing the entity across the server. Add the same entity multiple times to use multiple prefixes. For example [\"minecraft:villager\", \"break$minecraft:villager\"]")
+			.comment("Entities to partially exclude from chunk protection. Supports entity type tags. Just an entity/tag ID in the list, e.g. \"minecraft:horse\" allows entity interaction with an empty hand if a claim owner's config agrees. An entity/tag ID with a prefix \"force$\" allows empty hand interactions without asking the claim owner's config. Prefix \"break$\" allows killing the entities, if the claim owner's config agrees. Prefix \"force_break$\" allows killing the entities across the server. Add the same entity/tag multiple times to use multiple prefixes. For example [\"minecraft:villager\", \"break$minecraft:villager\"]")
 			.translation("gui.xaero_pac_config_entity_protection_exception")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), () -> Lists.newArrayList("minecraft:villager", "force$minecraft:minecart"), s -> s instanceof String);
 
 		entityClaimBarrierList = builder
-			.comment("Entities that can be prevented from entering the claim. Just an entity ID in the list, e.g. \"minecraft:falling_block\" prevents the entity from entering if the optional entity barrier is enabled in the claim owner's config. An entity ID with a prefix \"force$\" prevents the entity from entering without asking the claim owner's config.")
+			.comment("Entities that can be prevented from entering the claim. Supports entity type tags. Just an entity/tag ID in the list, e.g. \"minecraft:falling_block\" prevents the entities from entering if the optional entity barrier is enabled in the claim owner's config. An entity/tag ID with a prefix \"force$\" prevents the entity from entering without asking the claim owner's config.")
 			.translation("gui.xaero_pac_config_entity_claim_barrier_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entityClaimBarrierList"), () -> Lists.newArrayList("force$minecraft:falling_block", "force$supplementaries:slingshot_projectile"), s -> s instanceof String);
 
 		entitiesAllowedToGrief = builder
-			.comment("Entities that can still destroy or place blocks (or sometimes affect entities) when claim mob griefing protection is enabled.")
+			.comment("Entities that can still destroy or place blocks (or sometimes affect entities) when claim mob griefing protection is enabled. Supports entity type tags.")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:villager", "minecraft:sheep"), s -> s instanceof String);
 
 		additionalBannedItemsList = builder
-			.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. For example [\"minecraft:trident\", \"minecraft:shield\"]")
+			.comment("By default, use of some items is allowed in protected chunks, e.g. bows, shield, tridents, splash potions, to let the players protect themselves. To remove such exceptions for specific items, add them to this list. This list applies to both using an item at air and using it at a block. Supports item tags. For example [\"minecraft:trident\", \"minecraft:shield\", \"#minecraft:boats\"]")
 			.translation("gui.xaero_pac_config_banned_item_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList("supplementaries:slingshot"), s -> s instanceof String);
 
 		itemUseProtectionExceptionList = builder
-			.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\"]")
+			.comment("By default, most item uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". This list applies to both using an item at air and using it at a block. Supports item tags. For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\", \"#minecraft:beds\"]")
 			.translation("gui.xaero_pac_config_item_protection_exception")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("itemUseProtectionExceptionList"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("itemUseProtectionExceptionList"), () -> Lists.newArrayList("minecraft:firework_rocket"), s -> s instanceof String);
+
+		completelyDisabledItemInteractions = builder
+			.comment("Items that are completely banned from right-click usage on the server, claimed or not. This list applies to both using an item at air and using it at a block. Supports item tags. For example [\"minecraft:trident\", \"minecraft:shield\", \"#minecraft:boats\"]")
+			.translation("gui.xaero_pac_config_completely_disabled_item_interactions")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledItemInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
+
+		completelyDisabledBlockInteractions = builder
+			.comment("Blocks that are completely banned from being interacted with on the server, claimed or not. Does not affect block breaking. Supports block tags. For example [\"minecraft:dirt\", \"minecraft:cartography_table\", \"#minecraft:buttons\"]")
+			.translation("gui.xaero_pac_config_completely_disabled_block_interactions")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledBlockInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
+
+		completelyDisabledEntityInteractions = builder
+			.comment("Entities that are completely banned from being interacted with on the server, claimed or not. Does not affect killing the entities. Supports entity tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.translation("gui.xaero_pac_config_completely_disabled_entity_interactions")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledEntityInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
 
 		builder.pop();
 

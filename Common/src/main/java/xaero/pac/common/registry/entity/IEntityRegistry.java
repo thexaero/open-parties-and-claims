@@ -16,25 +16,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.parties.party.io.serialization.snapshot.member;
+package xaero.pac.common.registry.entity;
 
-public class PartyPlayerInfoSnapshot {
-	
-	private final String UUID;
-	private final String username;//needs to be updated when a member changes their name
-	
-	public PartyPlayerInfoSnapshot(String UUID, String username) {
-		super();
-		this.UUID = UUID;
-		this.username = username;
-	}
-	
-	public String getUUID() {
-		return UUID;
-	}
-	
-	public String getUsername() {
-		return username;
-	}
-	
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
+
+import java.util.stream.Stream;
+
+public interface IEntityRegistry {
+
+	public EntityType<?> getValue(ResourceLocation id);
+
+	public Stream<EntityType<?>> getTagStream(TagKey<EntityType<?>> tagKey);
+
 }

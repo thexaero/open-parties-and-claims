@@ -26,7 +26,7 @@ import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 public final class PlayerConfigSerializationHandler<
-	P extends IServerParty<?, ?>, 
+	P extends IServerParty<?, ?, ?>, 
 	CM extends IServerClaimsManager<?, ?, ?>//needed in this class because of some weird compilation error when gradle building (not displayed by the IDE)
 > extends SerializationHandler<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>> {
 
@@ -53,7 +53,7 @@ public final class PlayerConfigSerializationHandler<
 	}
 	
 	public static final class Builder<
-		P extends IServerParty<?, ?>, 
+		P extends IServerParty<?, ?, ?>, 
 		CM extends IServerClaimsManager<?, ?, ?>//needed in this class because of some weird compilation error when gradle building (not displayed by the IDE)
 	>  {
 
@@ -70,7 +70,7 @@ public final class PlayerConfigSerializationHandler<
 
 		public static
 		<
-			P extends IServerParty<?, ?>, 
+			P extends IServerParty<?, ?, ?>, 
 			CM extends IServerClaimsManager<?, ?, ?>//needed in this class because of some weird compilation error when gradle building (not displayed by the IDE)
 		> Builder<P, CM> begin() {
 			return new Builder<P, CM>().setDefault();

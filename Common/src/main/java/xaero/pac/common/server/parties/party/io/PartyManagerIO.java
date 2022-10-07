@@ -21,6 +21,7 @@ package xaero.pac.common.server.parties.party.io;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.parties.party.ally.PartyAlly;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.io.FileIOHelper;
 import xaero.pac.common.server.io.FilePathConfig;
@@ -60,15 +61,15 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 		OpenPartiesAndClaims.LOGGER.info("Loading parties...");
 		super.load();
 		manager.getAllStream().forEach(p -> {
-			Iterator<UUID> allyPartyIterator = p.getAllyPartiesIteratorModifiable();
+			Iterator<PartyAlly> allyPartyIterator = p.getAllyPartiesIterator();
 			List<UUID> alliesToRemove = null;
 			while(allyPartyIterator.hasNext()) {
-				UUID ally = allyPartyIterator.next();
-				ServerParty allyParty = manager.getPartyById(ally);
+				UUID allyId = allyPartyIterator.next().getPartyId();
+				ServerParty allyParty = manager.getPartyById(allyId);
 				if(allyParty == null) {
 					if(alliesToRemove == null)
 						alliesToRemove = new ArrayList<>();
-					alliesToRemove.add(ally);
+					alliesToRemove.add(allyId);
 				}
 			}
 			if(alliesToRemove != null)

@@ -51,7 +51,7 @@ import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.*;
 
 public class PlayerConfig
 <
-	P extends IServerParty<?, ?>
+	P extends IServerParty<?, ?, ?>
 > implements IPlayerConfig, ObjectManagerIOObject {
 
 	private static final Map<String, IPlayerConfigOptionSpecAPI<?>> OPTIONS = PlayerConfigOptions.OPTIONS;//here so that SPEC gets a value
@@ -467,7 +467,7 @@ public class PlayerConfig
 
 	public static abstract class Builder
 	<
-		P extends IServerParty<?, ?>,
+		P extends IServerParty<?, ?, ?>,
 		B extends Builder<P, B>
 	> {
 
@@ -524,7 +524,7 @@ public class PlayerConfig
 
 	public static final class FinalBuilder
 	<
-		P extends IServerParty<?, ?>
+		P extends IServerParty<?, ?, ?>
 	> extends Builder<P, FinalBuilder<P>> {
 
 		@Override
@@ -535,7 +535,7 @@ public class PlayerConfig
 			return new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
 		}
 
-		public static <P extends IServerParty<?, ?>> FinalBuilder<P> begin(){
+		public static <P extends IServerParty<?, ?, ?>> FinalBuilder<P> begin(){
 			return new FinalBuilder<P>().setDefault();
 		}
 

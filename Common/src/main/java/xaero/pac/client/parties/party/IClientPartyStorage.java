@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 public interface IClientPartyStorage
 <
 	A extends IClientPartyAllyInfo, 
-	P extends IClientParty<?,?>,
+	P extends IClientParty<?,?,?>,
 	MISS extends IClientPartyMemberDynamicInfoSyncableStorage<?>
 > extends IClientPartyStorageAPI<P, MISS> {
 	
@@ -34,7 +34,7 @@ public interface IClientPartyStorage
 
 	public void setParty(P party);
 	
-	public void setPartyCast(IParty<?,?> party);
+	public void setPartyCast(IParty<?,?,?> party);
 	
 	public void setPartyName(String partyName);
 	

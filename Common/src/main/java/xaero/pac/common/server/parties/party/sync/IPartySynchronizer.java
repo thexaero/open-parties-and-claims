@@ -23,7 +23,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 
 public interface IPartySynchronizer
 <
-	P extends IServerParty<?, ?>
+	P extends IServerParty<?, ?, ?>
 > {
 	
 	//internal api
@@ -31,5 +31,6 @@ public interface IPartySynchronizer
 	void syncToClient(ServerPlayer player, P party);
 	void syncToPartyAndAlliersUpdateName(P party, String value);
 	public IPartyMemberDynamicInfoSynchronizer<P> getOftenSyncedInfoSync();
-
+	public void onServerTick();
+	public void onLazyPacketsDropped(ServerPlayer player);
 }

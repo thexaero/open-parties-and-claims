@@ -23,6 +23,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
@@ -48,7 +49,7 @@ public final class ServerTickHandler {
 		this.lastUseTimeUpdate = System.currentTimeMillis();
 	}
 	
-	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo>> serverData) throws Throwable {
+	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) throws Throwable {
 		serverData.getIoThreadWorker().checkCrashes();
 		serverData.getPartyManagerIO().onServerTick();
 		serverData.getPlayerConfigsIO().onServerTick();
@@ -61,7 +62,8 @@ public final class ServerTickHandler {
 				serverData.getPlayerClaimInfoLiveSaver().onServerTick();
 		
 		lazyPacketSender.onServerTick();
-		
+
+		serverData.getPartyManager().getPartySynchronizer().onServerTick();
 		serverData.getServerClaimsManager().getClaimsManagerSynchronizer().onServerTick();
 		
 		long time = System.currentTimeMillis();

@@ -41,7 +41,7 @@ import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.*;
 
 public class PlayerSubConfig
 <
-	P extends IServerParty<?, ?>
+	P extends IServerParty<?, ?, ?>
 > extends PlayerConfig<P> implements ILinkedChainNode<PlayerSubConfig<P>>, IPlayerConfig {
 
 	public static final Set<IPlayerConfigOptionSpecAPI<?>> OVERRIDABLE_OPTIONS;
@@ -246,7 +246,7 @@ public class PlayerSubConfig
 
 	public static final class Builder
 	<
-		P extends IServerParty<?, ?>
+		P extends IServerParty<?, ?, ?>
 	> extends PlayerConfig.Builder<P, Builder<P>> {
 
 		private PlayerConfig<P> mainConfig;
@@ -291,7 +291,7 @@ public class PlayerSubConfig
 			return new PlayerSubConfig<>(mainConfig, subId, type, playerId, manager, automaticDefaultValues, null, null, null, null, null, subIndex);
 		}
 
-		public static <P extends IServerParty<?, ?>> Builder<P> begin(){
+		public static <P extends IServerParty<?, ?, ?>> Builder<P> begin(){
 			return new Builder<P>().setDefault();
 		}
 

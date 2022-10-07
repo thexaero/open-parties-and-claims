@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 public final class PlayerConfigManager
 <
-	P extends IServerParty<?, ?>,
+	P extends IServerParty<?, ?, ?>,
 	CM extends IServerClaimsManager<?, ?, ?>
 >
 implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerConfigManager<P, CM>> {
@@ -189,7 +189,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 
 	public static final class Builder
 	<
-		P extends IServerParty<?, ?>,
+		P extends IServerParty<?, ?, ?>,
 		CM extends IServerClaimsManager<?, ?, ?>
 	> {
 		private MinecraftServer server;
@@ -226,7 +226,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 
 		public static 
 		<
-			P extends IServerParty<?, ?>,
+			P extends IServerParty<?, ?, ?>,
 			CM extends IServerClaimsManager<?, ?, ?>
 		> Builder<P, CM> begin() {
 			return new Builder<P, CM>().setDefault();

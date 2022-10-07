@@ -45,6 +45,7 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.packet.LazyPacketsConfirmationPacket;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.claims.command.ClaimsCommandRegister;
@@ -253,7 +254,7 @@ public class MainMenu extends XPACScreen {
 	}
 
 	private void drawPartyInfo(PoseStack poseStack, int mouseX, int mouseY, float partial){
-		IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>
+		IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>
 				partyStorage = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage();
 		String actualPartyName = partyStorage.getPartyName();
 		if(actualPartyName == null || actualPartyName.isEmpty())

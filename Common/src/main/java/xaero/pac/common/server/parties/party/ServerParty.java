@@ -21,19 +21,24 @@ package xaero.pac.common.server.parties.party;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.parties.party.Party;
-import xaero.pac.common.parties.party.PartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.PartyAlly;
+import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.util.linked.ILinkedChainNode;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-public final class ServerParty extends Party implements IServerParty<PartyMember, PartyPlayerInfo>, ObjectManagerIOExpirableObject, ILinkedChainNode<ServerParty> {
+public final class ServerParty extends Party implements IServerParty<PartyMember, PartyInvite, PartyAlly>, ObjectManagerIOExpirableObject, ILinkedChainNode<ServerParty> {
 
 	private final PartyManager managedBy;
 	private boolean dirty;
@@ -44,8 +49,8 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	private boolean destroyed;
 
 	protected ServerParty(PartyManager managedBy, PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo,
-			Map<UUID, PartyPlayerInfo> invitedPlayers, HashSet<UUID> allyParties) {
-		super(owner, id, staffInfo, memberInfo, invitedPlayers, allyParties);
+						  LinkedChain<PartyMember> linkedMemberInfo, Map<UUID, PartyInvite> invitedPlayers, LinkedChain<PartyInvite> linkedInvitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties) {
+		super(owner, id, staffInfo, memberInfo, linkedMemberInfo, invitedPlayers, linkedInvitedPlayers, allyParties, linkedAllyParties);
 		this.managedBy = managedBy;
 		confirmActivity(managedBy.getExpirationHandler().getServerInfo());
 	}
@@ -108,15 +113,15 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	}
 
 	@Override
-	public PartyPlayerInfo invitePlayer(@Nonnull UUID playerUUID, @Nonnull String playerUsername) {
-		PartyPlayerInfo result = super.invitePlayer(playerUUID, playerUsername);
+	public PartyInvite invitePlayer(@Nonnull UUID playerUUID, @Nonnull String playerUsername) {
+		PartyInvite result = super.invitePlayer(playerUUID, playerUsername);
 		if(result != null)
 			setDirty(true);
 		return result;
 	}
 	
-	public PartyPlayerInfo invitePlayerClean(UUID playerUUID, String playerUsername) {
-		PartyPlayerInfo playerInfo = super.invitePlayerClean(playerUUID, playerUsername);
+	public PartyInvite invitePlayerClean(UUID playerUUID, String playerUsername) {
+		PartyInvite playerInfo = super.invitePlayerClean(playerUUID, playerUsername);
 		if(playerInfo == null)
 			return null;
 		if(managedBy.isLoaded())
@@ -125,8 +130,8 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	}
 
 	@Override
-	public PartyPlayerInfo uninvitePlayer(@Nonnull UUID playerUUID) {
-		PartyPlayerInfo playerInfo = super.uninvitePlayer(playerUUID);
+	public PartyInvite uninvitePlayer(@Nonnull UUID playerUUID) {
+		PartyInvite playerInfo = super.uninvitePlayer(playerUUID);
 		if(playerInfo == null)
 			return null;
 		setDirty(true);
@@ -134,8 +139,8 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	}
 
 	@Override
-	protected PartyPlayerInfo removeInvitedPlayer(UUID playerId) {
-		PartyPlayerInfo playerInfo = super.removeInvitedPlayer(playerId);
+	protected PartyInvite removeInvitedPlayer(UUID playerId) {
+		PartyInvite playerInfo = super.removeInvitedPlayer(playerId);
 		if(playerInfo != null && managedBy.isLoaded())
 			managedBy.getPartySynchronizer().syncToPartyRemoveInvite(this, playerInfo);
 		return playerInfo;
@@ -170,7 +175,7 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 
 	@Override
 	public boolean updateUsername(PartyMember member, String username) {
-		if(Objects.equals(member.getUsername(), username) || memberInfo.get(member.getUUID()) != member && owner != member)
+		if(Objects.equals(member.getUsername(), username) || getMemberInfo(member.getUUID()) != member)
 			return false;
 		member.setUsername(username);
 		setDirty(true);
@@ -292,13 +297,13 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		}
 
 		@Override
-		public Builder setInvitedPlayers(Map<UUID, PartyPlayerInfo> invitedPlayers) {
+		public Builder setInvitedPlayers(Map<UUID, PartyInvite> invitedPlayers) {
 			super.setInvitedPlayers(invitedPlayers);
 			return this;
 		}
 
 		@Override
-		public Builder setAllyParties(HashSet<UUID> allyParties) {
+		public Builder setAllyParties(Map<UUID, PartyAlly> allyParties) {
 			super.setAllyParties(allyParties);
 			return this;
 		}
@@ -315,8 +320,8 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		}
 
 		@Override
-		protected ServerParty buildInternally(List<PartyMember> staffInfo) {
-			return new ServerParty(managedBy, owner, id, staffInfo, memberInfo, invitedPlayers, allyParties);
+		protected ServerParty buildInternally(List<PartyMember> staffInfo, LinkedChain<PartyMember> linkedMemberInfo, LinkedChain<PartyInvite> linkedInvitedPlayers, LinkedChain<PartyAlly> linkedAllyParties) {
+			return new ServerParty(managedBy, owner, id, staffInfo, memberInfo, linkedMemberInfo, invitedPlayers, linkedInvitedPlayers, allyParties, linkedAllyParties);
 		}
 		
 	}

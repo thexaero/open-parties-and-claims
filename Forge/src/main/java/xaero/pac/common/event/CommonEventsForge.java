@@ -21,6 +21,7 @@ package xaero.pac.common.event;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
@@ -204,5 +205,9 @@ public class CommonEventsForge extends CommonEvents {
 		if(super.onBucketUse(event.getEntity(), event.getTarget(), event.getEmptyBucket()))
 			event.setCanceled(true);
 	}
-	
+
+	@SubscribeEvent
+	public void onTagsUpdate(TagsUpdatedEvent event) {
+		super.onTagsUpdate();
+	}
 }

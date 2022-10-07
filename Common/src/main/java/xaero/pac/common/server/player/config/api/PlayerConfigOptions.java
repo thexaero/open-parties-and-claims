@@ -358,7 +358,7 @@ public class PlayerConfigOptions {
 		ALLOW_SOME_BLOCK_INTERACTIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockInteractions")
 				.setDefaultValue(false)
-				.setComment("When enabled, in addition to some forced exceptions across the server, more block interactions with an empty hand are allowed, which are also configured by the server. It is meant for things like levers, doors etc. You can use the non-ally mode to test it out.")
+				.setComment("When enabled, in addition to some forced exceptions across the server, even more block interactions are allowed, which are also configured by the server. It is meant for things like levers, doors etc. Sometimes interactions require an empty hand. You can use the non-ally mode to test it out.")
 				.build(allOptions).applyToForgeSpec(builder);
 		ALLOW_SOME_BLOCK_BREAKING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId("playerConfig.claims.protection.allowSomeBlockBreaking")

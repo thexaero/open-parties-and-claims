@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 
 public final class PlayerConfigIO
 <
-	P extends IServerParty<?, ?>, 
+	P extends IServerParty<?, ?, ?>, 
 	CM extends IServerClaimsManager<?, ?, ?>//needed in this class because of some weird compilation error when gradle building (not displayed by the IDE)
 > extends ObjectManagerIO<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>, PlayerConfigIO<P, CM>> {
 	
@@ -193,7 +193,7 @@ public final class PlayerConfigIO
 	
 	public static final class Builder
 	<
-		P extends IServerParty<?, ?>, 
+		P extends IServerParty<?, ?, ?>, 
 		CM extends IServerClaimsManager<?, ?, ?>
 	> extends ObjectManagerIO.Builder<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>, PlayerConfigIO<P, CM>>{
 
@@ -220,7 +220,7 @@ public final class PlayerConfigIO
 		}
 
 		public static <
-			P extends IServerParty<?, ?>, 
+			P extends IServerParty<?, ?, ?>, 
 			CM extends IServerClaimsManager<?, ?, ?>//needed in this class because of some weird compilation error when gradle building (not displayed by the IDE)
 		> Builder<P, CM> begin() {
 			return new Builder<P, CM>().setDefault();

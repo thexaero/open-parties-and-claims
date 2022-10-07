@@ -23,7 +23,7 @@ import xaero.pac.common.server.parties.party.sync.IPartySynchronizer;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 
 public interface IPartyManager<
-	P extends IServerParty<?, ?>
+	P extends IServerParty<?, ?, ?>
 > extends IPartyManagerAPI<P> {
 
 	//internal API

@@ -25,7 +25,7 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 
 public interface IPartyMemberDynamicInfoSynchronizer
 <
-	P extends IServerParty<?, ?>
+	P extends IServerParty<?, ?, ?>
 > {
 
 	//internal api

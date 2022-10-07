@@ -18,15 +18,25 @@
 
 package xaero.pac.common.registry.block;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+
+import java.util.stream.Stream;
 
 public class BlockRegistryFabric implements IBlockRegistry {
 
 	@Override
 	public Block getValue(ResourceLocation id) {
 		return Registry.BLOCK.get(id);
+	}
+
+	@Override
+	public Stream<Block> getTagStream(TagKey<Block> tagKey) {
+		return Registry.BLOCK.getTag(tagKey).stream().flatMap(HolderSet.Named::stream).map(Holder::value);
 	}
 
 }

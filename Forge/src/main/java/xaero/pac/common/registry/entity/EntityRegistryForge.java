@@ -16,24 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.parties.party.io.serialization.nbt.member;
+package xaero.pac.common.registry.entity;
 
-import net.minecraft.nbt.CompoundTag;
-import xaero.pac.common.parties.party.PartyPlayerInfo;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.registries.ForgeRegistries;
 
-public class PartyPlayerInfoNbtSerializer {
-	
-	public CompoundTag serialize(PartyPlayerInfo info) {
-		CompoundTag nbt = new CompoundTag();
-		nbt.putUUID("uuid", info.getUUID());
-		nbt.putString("username", info.getUsername());
-		return nbt;
+import java.util.stream.Stream;
+
+public class EntityRegistryForge implements IEntityRegistry {
+
+	@Override
+	public EntityType<?> getValue(ResourceLocation id) {
+		return ForgeRegistries.ENTITIES.getValue(id);
 	}
-	
-	public PartyPlayerInfo deserialize(CompoundTag nbt) {
-		PartyPlayerInfo result = new PartyPlayerInfo(nbt.getUUID("uuid"));
-		result.setUsername(nbt.getString("username"));
-		return result;
+
+	@Override
+	public Stream<EntityType<?>> getTagStream(TagKey<EntityType<?>> tagKey) {
+		return ForgeRegistries.ENTITIES.tags().getTag(tagKey).stream();
 	}
 
 }

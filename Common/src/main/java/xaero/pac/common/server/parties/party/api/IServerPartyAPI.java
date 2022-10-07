@@ -19,6 +19,7 @@
 package xaero.pac.common.server.parties.party.api;
 
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.parties.party.ally.api.IPartyAllyAPI;
 import xaero.pac.common.parties.party.api.IPartyAPI;
 import xaero.pac.common.parties.party.api.IPartyPlayerInfoAPI;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
@@ -32,7 +33,7 @@ import java.util.stream.Stream;
 /**
  * API for a party on the server side
  */
-public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlayerInfoAPI> extends IPartyAPI<M, I> {
+public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlayerInfoAPI, A extends IPartyAllyAPI> extends IPartyAPI<M, I, A> {
 
 	@Override
 	public int getMemberCount();
@@ -71,7 +72,7 @@ public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlay
 
 	@Nonnull
 	@Override
-	public Stream<UUID> getAllyPartiesStream();
+	public Stream<A> getAllyPartiesStream();
 
 	@Nonnull
 	@Override

@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.PartyMemberDynamicInfoSyncable;
+import xaero.pac.common.parties.party.ally.PartyAlly;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
@@ -33,7 +34,6 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.Iterator;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -64,9 +64,9 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
 		if(syncedInfo.isActive() && !configManager.getLoadedConfig(syncedInfo.getPlayerId()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES))
 			return;
-		Iterator<UUID> allyIdIterator = party.getAllyPartiesStream().iterator();
-		while(allyIdIterator.hasNext()){
-			ServerParty allyParty = partyManager.getPartyById(allyIdIterator.next());
+		Iterator<PartyAlly> allyIterator = party.getAllyPartiesStream().iterator();
+		while(allyIterator.hasNext()){
+			ServerParty allyParty = partyManager.getPartyById(allyIterator.next().getPartyId());
 			if(allyParty != null && allyParty.isAlly(party.getId()))
 				syncToPartyDynamicInfo(allyParty, syncedInfo, party);
 		}
@@ -100,8 +100,8 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 	@Override
 	public void syncToClientMutualAlliesDynamicInfo(ServerPlayer player, ServerParty party, boolean removers) {
 		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
-		party.getAllyPartiesStream().forEach(allyId -> {
-			ServerParty allyParty = partyManager.getPartyById(allyId);
+		party.getAllyPartiesStream().forEach(ally -> {
+			ServerParty allyParty = partyManager.getPartyById(ally.getPartyId());
 			if(allyParty != null && allyParty.isAlly(party.getId()))
 				syncToClientAllDynamicInfo(configManager, player, allyParty, party, removers);
 		});

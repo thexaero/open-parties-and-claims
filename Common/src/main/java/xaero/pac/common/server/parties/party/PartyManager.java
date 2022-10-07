@@ -22,13 +22,16 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
+import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.sync.PartySynchronizer;
+import xaero.pac.common.server.parties.party.task.PartyRemovalSpreadoutTask;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -50,9 +53,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	private IPlayerConfigManager playerConfigs;
 	private boolean loaded;
 	private PartyExpirationHandler expirationHandler;
+	private final ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler;
 	
 	private PartyManager(MinecraftServer server, PartySynchronizer partySynchronizer, Map<UUID, ServerParty> partiesByOwner, Map<UUID, ServerParty> partiesById,
-						 Map<UUID, ServerParty> partiesByMember, Map<UUID, Set<UUID>> partiesByAlly, LinkedChain<ServerParty> partyChain, Set<ServerParty> toSave) {
+						 Map<UUID, ServerParty> partiesByMember, Map<UUID, Set<UUID>> partiesByAlly, LinkedChain<ServerParty> partyChain, Set<ServerParty> toSave, ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler) {
 		super();
 		this.server = server;
 		this.partySynchronizer = partySynchronizer;
@@ -62,6 +66,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		this.partiesByAlly = partiesByAlly;
 		this.partyChain = partyChain;
 		this.toSave = toSave;
+		this.partyRemovalTaskHandler = partyRemovalTaskHandler;
 	}
 	
 	public void setExpirationHandler(PartyExpirationHandler expirationHandler) {
@@ -108,11 +113,18 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	@Nullable
 	@Override
 	public ServerParty getPartyByMember(@Nonnull UUID member) {
-		return partiesByMember.get(member);
+		ServerParty result = partiesByMember.get(member);
+		if(result != null && result.isDestroyed())//party removal still in progress
+			return null;
+		return result;
 	}
 	
 	private Set<UUID> getPartiesByAlly(UUID id){//a set of parties that ally the argument party
 		return partiesByAlly.computeIfAbsent(id, i -> new HashSet<>());
+	}
+
+	public boolean isAlliedByAnyone(UUID id){
+		return partiesByAlly.containsKey(id);
 	}
 
 	@Override
@@ -162,19 +174,12 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		if(getPartyByOwner(partyOwnerId) == party)//might not be true when there are inconsistencies in the saved data
 			partiesByOwner.remove(partyOwnerId);
 		partiesById.remove(party.getId());
-		party.getMemberInfoStream().forEach(mi -> onMemberRemoved((ServerParty) party, mi));
+		partyChain.remove(party);
+		party.getOnlineMemberStream().forEach(p -> onMemberRemoved(party, party.getMemberInfo(p.getUUID())));
+		onMemberRemoved(party, party.getOwner());
 		io.delete(party);
 		toSave.remove(party);
-		party.getAllyPartiesStream().forEach(allyId -> onAllyRemoved(party, allyId, true));
-
-		//removing this party from ally lists
-		Set<UUID> alliersCopy = new HashSet<>(getPartiesByAlly(party.getId()));
-		alliersCopy.forEach(allierId -> {
-			ServerParty allier = getPartyById(allierId);
-			if(allier != null)
-				allier.removeAllyParty(party.getId());
-		});
-		partyChain.remove(party);
+		partyRemovalTaskHandler.addTask(new PartyRemovalSpreadoutTask(this, party), ServerData.from(server));
 	}
 
 	public void addParty(ServerParty party) {
@@ -182,10 +187,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		ServerParty currentOwnerParty = getPartyByOwner(party.getOwner().getUUID());
 		if(currentOwnerParty != null)
 			removeParty(currentOwnerParty);//it has a different ID and needs to be removed
-		partiesByOwner.put(party.getOwner().getUUID(), (ServerParty) party);
-		partiesById.put(party.getId(), (ServerParty) party);
-		party.getMemberInfoStream().forEach(mi -> onMemberAdded((ServerParty) party, mi));
-		party.getAllyPartiesStream().forEach(allyId -> onAllyAdded(party, allyId));
+		partiesByOwner.put(party.getOwner().getUUID(), party);
+		partiesById.put(party.getId(), party);
+		party.getMemberInfoStream().forEach(mi -> onMemberAdded(party, mi));
+		party.getAllyPartiesStream().forEach(ally -> onAllyAdded(party, ally.getPartyId()));
 		partyChain.add(party);
 	}
 	
@@ -198,7 +203,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	public void onAllyRemoved(ServerParty party, UUID allyId, boolean onPartyRemoval) {
 		if(loaded)
 			getPartySynchronizer().syncToPartyAllyRemove(party, allyId, onPartyRemoval);
-		getPartiesByAlly(allyId).remove(party.getId());
+		Set<UUID> alliers = getPartiesByAlly(allyId);
+		alliers.remove(party.getId());
+		if(alliers.isEmpty())
+			partiesByAlly.remove(allyId);
 	}
 
 	public void onMemberAdded(ServerParty party, PartyMember m) {
@@ -208,10 +216,11 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	}
 
 	public void onMemberRemoved(ServerParty party, PartyMember m) {
-		if(getPartyByMember(m.getUUID()) == party)//might not be true when there are inconsistencies in the saved data
+		if(partiesByMember.get(m.getUUID()) == party) {//might not be true when there are inconsistencies in the saved data or during party spreadout removal
 			partiesByMember.remove(m.getUUID());
-		if(loaded)
-			getPartySynchronizer().syncToMember(m, null);
+			if (loaded)
+				getPartySynchronizer().syncToMember(m, null);
+		}
 	}
 
 	@Override
@@ -233,7 +242,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	@Nonnull
 	@Override
 	public Stream<ServerParty> getPartiesThatAlly(@Nonnull UUID allyId) {
-		return getPartiesByAlly(allyId).stream().map(partiesById::get).filter(Objects::nonNull);
+		return getPartiesByAlly(allyId).stream().map(this::getPartyById).filter(Objects::nonNull);
 	}
 	
 	public void debug() {
@@ -265,6 +274,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	public static final class Builder {
 
 		private MinecraftServer server;
+		private ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler;
 		
 		public Builder setDefault() {
 			setServer(null);
@@ -275,15 +285,20 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 			this.server = server;
 			return this;
 		}
-		
+
+		public Builder setPartyRemovalTaskHandler(ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler) {
+			this.partyRemovalTaskHandler = partyRemovalTaskHandler;
+			return this;
+		}
+
 		public PartyManager build() {
-			if(server == null)
+			if(server == null || partyRemovalTaskHandler == null)
 				throw new IllegalStateException();
 
 			PartySynchronizer partySynchronizer = PartySynchronizer.Builder.begin()
 					.setServer(server)
 					.build();
-			PartyManager result = new PartyManager(server, partySynchronizer, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new LinkedChain<>(), new HashSet<>());
+			PartyManager result = new PartyManager(server, partySynchronizer, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new LinkedChain<>(), new HashSet<>(), partyRemovalTaskHandler);
 			partySynchronizer.setPartyManager(result);
 			return result;
 		}

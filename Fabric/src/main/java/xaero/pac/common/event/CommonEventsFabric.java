@@ -156,6 +156,8 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	private InteractionResult onRightClickBlock(Player player, Level level, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+		if(player.isSpectator())
+			return InteractionResult.PASS;
 		if(super.onRightClickBlock(level instanceof ServerLevel, level, blockHitResult.getBlockPos(), player, interactionHand, blockHitResult))
 			return InteractionResult.FAIL;
 		return InteractionResult.PASS;
@@ -215,6 +217,10 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public boolean onBucketUse(Entity entity, HitResult hitResult, ItemStack itemStack){
 		return super.onBucketUse(entity, hitResult, itemStack);
+	}
+
+	public void onTagsUpdate() {
+		super.onTagsUpdate();
 	}
 
 	public MinecraftServer getLastServerStarted(){
