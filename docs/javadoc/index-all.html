@@ -696,6 +696,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the owned party from the UUID of a party's owner.</div>
 </dd>
+<dt><a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html#getPartyId()" class="member-name-link">getPartyId()</a> - Method in interface xaero.pac.common.parties.party.ally.api.<a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html" title="interface in xaero.pac.common.parties.party.ally.api">IPartyAllyAPI</a></dt>
+<dd>
+<div class="block">Gets the UUID of the ally party.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/api/OpenPACServerAPI.html#getPartyManager()" class="member-name-link">getPartyManager()</a> - Method in class xaero.pac.common.server.api.<a href="xaero/pac/common/server/api/OpenPACServerAPI.html" title="class in xaero.pac.common.server.api">OpenPACServerAPI</a></dt>
 <dd>
 <div class="block">Gets the API for the server-side player party manager.</div>
@@ -1110,7 +1114,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for party ally info storage</div>
 </dd>
-<dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" class="type-name-link" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a>&lt;<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="type parameter in IClientPartyAPI">M</a> extends <a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a>,<wbr><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="type parameter in IClientPartyAPI">I</a> extends <a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyPlayerInfoAPI</a>&gt; - Interface in <a href="xaero/pac/client/parties/party/api/package-summary.html">xaero.pac.client.parties.party.api</a></dt>
+<dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" class="type-name-link" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a>&lt;<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="type parameter in IClientPartyAPI">M</a> extends <a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a>,<wbr><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="type parameter in IClientPartyAPI">I</a> extends <a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyPlayerInfoAPI</a>,<wbr><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="type parameter in IClientPartyAPI">A</a> extends <a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html" title="interface in xaero.pac.common.parties.party.ally.api">IPartyAllyAPI</a>&gt; - Interface in <a href="xaero/pac/client/parties/party/api/package-summary.html">xaero.pac.client.parties.party.api</a></dt>
 <dd>
 <div class="block">API for a party on the client side</div>
 </dd>
@@ -1118,7 +1122,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for dynamic info (locations) of ally players</div>
 </dd>
-<dt><a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" class="type-name-link" title="interface in xaero.pac.client.parties.party.api">IClientPartyStorageAPI</a>&lt;<a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" title="type parameter in IClientPartyStorageAPI">P</a> extends <a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a>&lt;?,<wbr>?&gt;,<wbr><a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" title="type parameter in IClientPartyStorageAPI">MISS</a> extends <a href="xaero/pac/client/parties/party/api/IClientPartyMemberDynamicInfoSyncableStorageAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyMemberDynamicInfoSyncableStorageAPI</a>&lt;?&gt;&gt; - Interface in <a href="xaero/pac/client/parties/party/api/package-summary.html">xaero.pac.client.parties.party.api</a></dt>
+<dt><a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" class="type-name-link" title="interface in xaero.pac.client.parties.party.api">IClientPartyStorageAPI</a>&lt;<a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" title="type parameter in IClientPartyStorageAPI">P</a> extends <a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a>&lt;?,<wbr>?,<wbr>?&gt;,<wbr><a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" title="type parameter in IClientPartyStorageAPI">MISS</a> extends <a href="xaero/pac/client/parties/party/api/IClientPartyMemberDynamicInfoSyncableStorageAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyMemberDynamicInfoSyncableStorageAPI</a>&lt;?&gt;&gt; - Interface in <a href="xaero/pac/client/parties/party/api/package-summary.html">xaero.pac.client.parties.party.api</a></dt>
 <dd>
 <div class="block">API for the party storage on the client side</div>
 </dd>
@@ -1150,11 +1154,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Invites the player with specified player UUID and username to this party.</div>
 </dd>
-<dt><a href="xaero/pac/common/parties/party/api/IPartyAPI.html" class="type-name-link" title="interface in xaero.pac.common.parties.party.api">IPartyAPI</a>&lt;<a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="type parameter in IPartyAPI">M</a> extends <a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a>,<wbr><a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="type parameter in IPartyAPI">I</a> extends <a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyPlayerInfoAPI</a>&gt; - Interface in <a href="xaero/pac/common/parties/party/api/package-summary.html">xaero.pac.common.parties.party.api</a></dt>
+<dt><a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html" class="type-name-link" title="interface in xaero.pac.common.parties.party.ally.api">IPartyAllyAPI</a> - Interface in <a href="xaero/pac/common/parties/party/ally/api/package-summary.html">xaero.pac.common.parties.party.ally.api</a></dt>
+<dd>
+<div class="block">An ally of a party</div>
+</dd>
+<dt><a href="xaero/pac/common/parties/party/api/IPartyAPI.html" class="type-name-link" title="interface in xaero.pac.common.parties.party.api">IPartyAPI</a>&lt;<a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="type parameter in IPartyAPI">M</a> extends <a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a>,<wbr><a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="type parameter in IPartyAPI">I</a> extends <a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyPlayerInfoAPI</a>,<wbr><a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="type parameter in IPartyAPI">A</a> extends <a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html" title="interface in xaero.pac.common.parties.party.ally.api">IPartyAllyAPI</a>&gt; - Interface in <a href="xaero/pac/common/parties/party/api/package-summary.html">xaero.pac.common.parties.party.api</a></dt>
 <dd>
 <div class="block">API for a party</div>
 </dd>
-<dt><a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.party.api">IPartyManagerAPI</a>&lt;<a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html" title="type parameter in IPartyManagerAPI">P</a> extends <a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a>&lt;?,<wbr>?&gt;&gt; - Interface in <a href="xaero/pac/common/server/parties/party/api/package-summary.html">xaero.pac.common.server.parties.party.api</a></dt>
+<dt><a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.party.api">IPartyManagerAPI</a>&lt;<a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html" title="type parameter in IPartyManagerAPI">P</a> extends <a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a>&lt;?,<wbr>?,<wbr>?&gt;&gt; - Interface in <a href="xaero/pac/common/server/parties/party/api/package-summary.html">xaero.pac.common.server.parties.party.api</a></dt>
 <dd>
 <div class="block">API for the party manager on the server side</div>
 </dd>
@@ -1272,7 +1280,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for a dimension claims manager on the server side</div>
 </dd>
-<dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a>&lt;<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="type parameter in IServerPartyAPI">M</a> extends <a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a>,<wbr><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="type parameter in IServerPartyAPI">I</a> extends <a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyPlayerInfoAPI</a>&gt; - Interface in <a href="xaero/pac/common/server/parties/party/api/package-summary.html">xaero.pac.common.server.parties.party.api</a></dt>
+<dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a>&lt;<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="type parameter in IServerPartyAPI">M</a> extends <a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a>,<wbr><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="type parameter in IServerPartyAPI">I</a> extends <a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyPlayerInfoAPI</a>,<wbr><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="type parameter in IServerPartyAPI">A</a> extends <a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html" title="interface in xaero.pac.common.parties.party.ally.api">IPartyAllyAPI</a>&gt; - Interface in <a href="xaero/pac/common/server/parties/party/api/package-summary.html">xaero.pac.common.server.parties.party.api</a></dt>
 <dd>
 <div class="block">API for a party on the server side</div>
 </dd>
@@ -1815,6 +1823,8 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/claims/result/api/package-summary.html">xaero.pac.common.claims.result.api</a> - package xaero.pac.common.claims.result.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/tracker/api/package-summary.html">xaero.pac.common.claims.tracker.api</a> - package xaero.pac.common.claims.tracker.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/parties/party/ally/api/package-summary.html">xaero.pac.common.parties.party.ally.api</a> - package xaero.pac.common.parties.party.ally.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/parties/party/api/package-summary.html">xaero.pac.common.parties.party.api</a> - package xaero.pac.common.parties.party.api</dt>
 <dd>&nbsp;</dd>
