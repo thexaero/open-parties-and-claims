@@ -29,12 +29,12 @@ public class EntityRegistryForge implements IEntityRegistry {
 
 	@Override
 	public EntityType<?> getValue(ResourceLocation id) {
-		return ForgeRegistries.ENTITIES.getValue(id);
+		return ForgeRegistries.ENTITY_TYPES.getValue(id);
 	}
 
 	@Override
 	public Stream<EntityType<?>> getTagStream(TagKey<EntityType<?>> tagKey) {
-		return ForgeRegistries.ENTITIES.tags().getTag(tagKey).stream();
+		return ForgeRegistries.ENTITY_TYPES.tags().getTag(tagKey).stream();
 	}
 
 }
