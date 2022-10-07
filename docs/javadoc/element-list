@@ -12,6 +12,7 @@ xaero.pac.common.claims.api
 xaero.pac.common.claims.player.api
 xaero.pac.common.claims.result.api
 xaero.pac.common.claims.tracker.api
+xaero.pac.common.parties.party.ally.api
 xaero.pac.common.parties.party.api
 xaero.pac.common.parties.party.member.api
 xaero.pac.common.server.api
