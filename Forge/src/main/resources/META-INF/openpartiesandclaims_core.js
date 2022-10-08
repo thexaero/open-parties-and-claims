@@ -776,7 +776,7 @@ function initializeCoreMod() {
                 return methodNode
             }
         },
-        'xaero_pac_servergamepacketlistenerimpl_handleinteract': {
+        'xaero_pac_entity_isinvulnerable': {
             'target' : {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.entity.Entity',
