@@ -185,10 +185,10 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			};
 		}
 
-		private <HT, T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, HT currentValue, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
+		private <HT, T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
 			return (el, xy) -> CycleButton.<HT>builder(v -> option.getOption().getValueDisplayName(holderToValue.apply(v)))
 					.withValues(values)
-					.withInitialValue(currentValue)
+					.withInitialValue(valueToHolder.apply(getOptionValue(option)))
 					.create(xy.getX(), xy.getY(), elementWidth, elementHeight, optionTitle, getRegularValueChangeListener(el, option, holderToValue, data));
 		}
 
@@ -210,14 +210,14 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				T nullPlaceholder = (T) NULL_PLACEHOLDER;
 				values.add(0, nullPlaceholder);
 			}
-			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, currentValue, Function.identity(), data);
+			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, Function.identity(), Function.identity(), data);
 		}
 
 		private BiFunction<SimpleValueWidgetListElement.Final<Boolean>, Vec3i, AbstractWidget> getOnOffWidgetSupplier(PlayerConfigStringableOptionClientStorage<Boolean> option, int elementWidth, int elementHeight, Component optionTitle, BooleanValueHolder currentValue, PlayerConfigClientStorage data){
 			List<BooleanValueHolder> values = Lists.newArrayList(BooleanValueHolder.FALSE, BooleanValueHolder.TRUE);
 			if(data instanceof PlayerSubConfigClientStorage)
 				values.add(0, BooleanValueHolder.NULL);
-			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, currentValue, BooleanValueHolder::getValue, data);
+			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, BooleanValueHolder::of, BooleanValueHolder::getValue, data);
 		}
 
 		private <T extends Comparable<T>> SimpleValueWidgetListElement<T, ?> createIterationWidgetListElement(
