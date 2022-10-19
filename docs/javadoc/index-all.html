@@ -60,22 +60,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds a new party member with specified player UUID, rank and username.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#ALLOW_SOME_BLOCK_BREAKING" class="member-name-link">ALLOW_SOME_BLOCK_BREAKING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether some optional block breaking by players with no claim access is allowed.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#ALLOW_SOME_BLOCK_INTERACTIONS" class="member-name-link">ALLOW_SOME_BLOCK_INTERACTIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether some optional block interactions by players with no claim access are allowed.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#ALLOW_SOME_ENTITY_INTERACTIONS" class="member-name-link">ALLOW_SOME_ENTITY_INTERACTIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether some optional entity interactions by players with no claim access are allowed.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#ALLOW_SOME_ENTITY_KILLING" class="member-name-link">ALLOW_SOME_ENTITY_KILLING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether some optional entity killing by players with no claim access is allowed.</div>
-</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ALREADY_CLAIMED" class="member-name-link">ALREADY_CLAIMED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The chunk is already claimed</div>
@@ -246,6 +230,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the server-side Open Parties and Claims API instance.</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#getAllOptionsStream()" class="member-name-link">getAllOptionsStream()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
+<dd>
+<div class="block">Gets a stream of all player config option types, including the dynamic ones.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigManagerAPI.html#getAllOptionsStream()" class="member-name-link">getAllOptionsStream()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigManagerAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigManagerAPI</a></dt>
+<dd>
+<div class="block">Gets a stream of all player config option types, including the dynamic ones.</div>
+</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyMemberDynamicInfoSyncableStorageAPI.html#getAllStream()" class="member-name-link">getAllStream()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyMemberDynamicInfoSyncableStorageAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyMemberDynamicInfoSyncableStorageAPI</a></dt>
 <dd>
 <div class="block">Gets a stream of all player dynamic info (e.g.</div>
@@ -411,6 +403,22 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getComment()" class="member-name-link">getComment()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
 <div class="block">Gets the default en_us comment for this option.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#getCommentTranslation()" class="member-name-link">getCommentTranslation()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
+<dd>
+<div class="block">Gets the translation key for the comment of this option.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getCommentTranslation()" class="member-name-link">getCommentTranslation()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets the translation key for the comment of this option.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#getCommentTranslationArgs()" class="member-name-link">getCommentTranslationArgs()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
+<dd>
+<div class="block">Gets the translation key arguments for the comment of this option.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getCommentTranslationArgs()" class="member-name-link">getCommentTranslationArgs()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets the translation key arguments for the comment of this option.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getConfigTypeFilter()" class="member-name-link">getConfigTypeFilter()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
@@ -660,6 +668,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html#getOption()" class="member-name-link">getOption()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#getOptionForId(java.lang.String)" class="member-name-link">getOptionForId(String)</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the option type specification with a specified string option id, including dynamic options.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigManagerAPI.html#getOptionForId(java.lang.String)" class="member-name-link">getOptionForId(String)</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigManagerAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the option type specification with a specified string option id, including dynamic options.</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#getOptionStorage(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI)" class="member-name-link">getOptionStorage(IPlayerConfigOptionSpecAPI&lt;T&gt;)</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
 <dd>
 <div class="block">Gets the config option value storage for a specified config option in this config.</div>
@@ -846,6 +862,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the server-side validator for potential values of this option.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getShortenedId()" class="member-name-link">getShortenedId()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets the shortened ID of this option, without the "playerConfig." prefix.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/AreaClaimResult.html#getSize()" class="member-name-link">getSize()</a> - Method in class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></dt>
 <dd>
 <div class="block">Gets the number of result types (<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api"><code>ClaimResult.Type</code></a>).</div>
@@ -961,6 +981,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getTranslation()" class="member-name-link">getTranslation()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
 <div class="block">Gets the translation key for the name of this option.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#getTranslationArgs()" class="member-name-link">getTranslationArgs()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
+<dd>
+<div class="block">Gets the translation key arguments for the name of this option.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getTranslationArgs()" class="member-name-link">getTranslationArgs()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets the translation key arguments for the name of this option.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#getType()" class="member-name-link">getType()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
 <dd>
@@ -1432,7 +1460,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#OPTIONS" class="member-name-link">OPTIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
-<div class="block">An ID->specification map of all player config options.</div>
+<div class="block">An ID->specification map of all static player config options.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#optionStream()" class="member-name-link">optionStream()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
 <dd>
@@ -1455,7 +1483,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" class="type-name-link" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a> - Class in <a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a></dt>
 <dd>
-<div class="block">An access point for all player config option specifications/representations.</div>
+<div class="block">An access point for all static player config option specifications/representations.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#%3Cinit%3E()" class="member-name-link">PlayerConfigOptions()</a> - Constructor for class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>&nbsp;</dd>
@@ -1527,10 +1555,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
  neighbor chunks of the claim.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against optional entities entering the claim.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
@@ -1648,10 +1672,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES" class="member-name-link">SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the player shares their in-game location with their party's mutual allies.</div>
-</dd>
-<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#size()" class="member-name-link">size()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
-<dd>
-<div class="block">Gets the number of config option value storages.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#subConfigExists(int)" class="member-name-link">subConfigExists(int)</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>

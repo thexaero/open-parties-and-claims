@@ -49,12 +49,25 @@ public class PlayerConfigSerializer {
 		CommentedConfig parsedData = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
 		parser.parse(serializedData, parsedData, ParsingMode.ADD);
 		if(!(config instanceof PlayerSubConfig))
-			PlayerConfig.SPEC.correct(parsedData);
-		Config loadedConfig = parsedData;
+			config.getManager().getPlayerConfigSpec().correct(parsedData);
+		Config loadedConfig;
 		if(config.getPlayerId() != null && !Objects.equals(config.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) && !Objects.equals(config.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID)) {
 			loadedConfig = ConfigUtil.deepCopy(parsedData, LinkedHashMap::new);//removes comments
-		}
+		} else
+			loadedConfig = parsedData;
 		config.setStorage(loadedConfig);
+
+		//fixing incorrect value types
+		config.getManager().getAllOptionsStream().forEach(o -> {
+			Object rawOptionValue = loadedConfig.get(o.getPath());
+			if(rawOptionValue != null && rawOptionValue.getClass() != o.getType()) {
+				Object defaultRawValue = config.getDefaultRawValue(o);
+				if(defaultRawValue == null)
+					loadedConfig.remove(o.getPath());
+				else
+					loadedConfig.set(o.getPath(), defaultRawValue);
+			}
+		});
 	}
 	
 }

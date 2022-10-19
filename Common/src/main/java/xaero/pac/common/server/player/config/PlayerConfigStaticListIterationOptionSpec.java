@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.config;
 
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import java.util.List;
@@ -31,8 +32,18 @@ import java.util.function.Predicate;
 
 public final class PlayerConfigStaticListIterationOptionSpec<T extends Comparable<T>> extends PlayerConfigListIterationOptionSpec<T> {
 
-	private PlayerConfigStaticListIterationOptionSpec(Class<T> type, String id, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment, String translation, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, Function<PlayerConfig<?>, List<T>> serverSideListGetter, Function<PlayerConfigClientStorage, List<T>> clientSideListGetter) {
-		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter, clientSideListGetter);
+	private final List<T> list;
+
+	private PlayerConfigStaticListIterationOptionSpec(Class<T> type, String id, String shortenedId, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment, String translation,
+													  String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter,
+													  BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter,
+													  Function<PlayerConfig<?>, List<T>> serverSideListGetter, Function<PlayerConfigClientStorage, List<T>> clientSideListGetter, List<T> list, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
+		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter, clientSideListGetter, syncOptionType);
+		this.list = list;
+	}
+
+	public List<T> getList() {
+		return list;
 	}
 
 	public static final class Builder<T extends Comparable<T>> extends PlayerConfigListIterationOptionSpec.Builder<T, Builder<T>> {
@@ -56,17 +67,17 @@ public final class PlayerConfigStaticListIterationOptionSpec<T extends Comparabl
 		}
 
 		@Override
-		public PlayerConfigListIterationOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
+		public PlayerConfigStaticListIterationOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
 			if(list == null)
 				throw new IllegalStateException();
 			setServerSideListGetter(c -> list);
 			setClientSideListGetter(c -> list);
-			return super.build(dest);
+			return (PlayerConfigStaticListIterationOptionSpec<T>) super.build(dest);
 		}
 
 		@Override
-		protected PlayerConfigListIterationOptionSpec<T> buildInternally(List<String> path, Function<String, T> commandInputParser) {
-			return new PlayerConfigStaticListIterationOptionSpec<>(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter, clientSideListGetter);
+		protected PlayerConfigListIterationOptionSpec<T> buildInternally(List<String> path, String shortenedId, Function<String, T> commandInputParser) {
+			return new PlayerConfigStaticListIterationOptionSpec<>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter, clientSideListGetter, list, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STATIC_LIST);
 		}
 
 		public static <T extends Comparable<T>> Builder<T> begin(Class<T> valueType){

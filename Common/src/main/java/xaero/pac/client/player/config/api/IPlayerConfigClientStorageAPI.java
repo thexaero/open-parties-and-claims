@@ -70,13 +70,6 @@ public interface IPlayerConfigClientStorageAPI<OS extends IPlayerConfigStringabl
 	public Stream<OS> optionStream();
 
 	/**
-	 * Gets the number of config option value storages.
-	 *
-	 * @return the number of config option value storages
-	 */
-	public int size();
-
-	/**
 	 * Gets an unmodifiable list of all string IDs of this config's sub-configs.
 	 *
 	 * @return an unmodifiable {@code List<String>} of sub-config IDs

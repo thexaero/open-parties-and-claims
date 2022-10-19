@@ -21,6 +21,7 @@ package xaero.pac.common.server.player.config;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import java.util.List;
@@ -32,9 +33,9 @@ import java.util.function.Predicate;
 
 public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Integer> {
 
-	private PlayerConfigHexOptionSpec(Class<Integer> type, String id, List<String> path, Integer defaultValue, BiFunction<PlayerConfig<?>, Integer, Integer> defaultReplacer, String comment,
-									  String translation, Function<String, Integer> commandInputParser, Function<Integer, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, Integer> serverSideValidator, BiPredicate<PlayerConfigClientStorage, Integer> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter) {
-		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
+	private PlayerConfigHexOptionSpec(Class<Integer> type, String id, String shortenedId, List<String> path, Integer defaultValue, BiFunction<PlayerConfig<?>, Integer, Integer> defaultReplacer, String comment,
+									  String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, Function<String, Integer> commandInputParser, Function<Integer, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, Integer> serverSideValidator, BiPredicate<PlayerConfigClientStorage, Integer> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
+		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType);
 	}
 
 	public final static class Builder extends PlayerConfigOptionSpec.Builder<Integer, Builder> {
@@ -62,7 +63,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 		}
 
 		@Override
-		protected PlayerConfigHexOptionSpec buildInternally(List<String> path, Function<String, Integer> commandInputParser) {
+		protected PlayerConfigHexOptionSpec buildInternally(List<String> path, String shortenedId, Function<String, Integer> commandInputParser) {
 			commandInputParser = s -> {
 				try {
 					return Integer.parseUnsignedInt(s, 16);
@@ -70,7 +71,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 					throw new IllegalArgumentException(nfe);
 				}
 			};
-			return new PlayerConfigHexOptionSpec(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
+			return new PlayerConfigHexOptionSpec(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.HEX);
 		}
 		
 	}

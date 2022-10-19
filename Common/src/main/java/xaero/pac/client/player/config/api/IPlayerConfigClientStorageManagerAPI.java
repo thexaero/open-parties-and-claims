@@ -19,9 +19,11 @@
 package xaero.pac.client.player.config.api;
 
 import net.minecraft.client.gui.screens.Screen;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.stream.Stream;
 
 /**
  * API for the player config storage manager on the client side
@@ -116,5 +118,24 @@ public interface IPlayerConfigClientStorageManagerAPI<CS extends IPlayerConfigCl
 	 * @param playerName  the username of the player, not null
 	 */
 	public void openOtherPlayerConfigScreen(@Nullable Screen escape, @Nullable Screen parent, @Nonnull String playerName);
+
+	/**
+	 * Gets a stream of all player config option types, including the dynamic ones.
+	 *
+	 * @return a stream of all player config options, not null
+	 */
+	@Nonnull
+	public Stream<IPlayerConfigOptionSpecAPI<?>> getAllOptionsStream();
+
+	/**
+	 * Gets the option type specification with a specified string option id, including dynamic options.
+	 * <p>
+	 * Returns null if no such option exists.
+	 *
+	 * @param id  the option id, not null
+	 * @return the option type specification instance, null when doesn't exist
+	 */
+	@Nullable
+	public IPlayerConfigOptionSpecAPI<?> getOptionForId(@Nonnull String id);
 	
 }

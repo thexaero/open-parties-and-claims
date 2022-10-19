@@ -26,7 +26,6 @@ import xaero.pac.common.misc.MapFactory;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
@@ -36,7 +35,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<PlayerConfigStringableOptionClientStorage<?>> {
-	
+
+	private final PlayerConfigClientStorageManager manager;
 	private final PlayerConfigType type;
 	private final UUID owner;
 	private final Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options;
@@ -48,8 +48,9 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 	private boolean beingDeleted;
 	private int subConfigLimit;
 
-	protected PlayerConfigClientStorage(PlayerConfigType type, UUID owner, Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options, List<String> subConfigIdsUnmodifiable, SortedValueList<String> subConfigIds, Map<String, PlayerSubConfigClientStorage> subConfigs) {
+	protected PlayerConfigClientStorage(PlayerConfigClientStorageManager manager, PlayerConfigType type, UUID owner, Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options, List<String> subConfigIdsUnmodifiable, SortedValueList<String> subConfigIds, Map<String, PlayerSubConfigClientStorage> subConfigs) {
 		super();
+		this.manager = manager;
 		this.type = type;
 		this.owner = owner;
 		this.options = options;
@@ -58,11 +59,22 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		this.subConfigs = subConfigs;
 	}
 
+	protected <T extends Comparable<T>> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
+		return option.getDefaultValue();
+	}
+
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Comparable<T>> PlayerConfigStringableOptionClientStorage<T> getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option){
-		return (PlayerConfigStringableOptionClientStorage<T>) options.get(option);
+	public <T extends Comparable<T>> PlayerConfigStringableOptionClientStorage<T> getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
+		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
+		PlayerConfigStringableOptionClientStorage<T> result = (PlayerConfigStringableOptionClientStorage<T>) options.get(option);
+		if(result == null){
+			PlayerConfigStringableOptionClientStorage.Builder<T> builder = PlayerConfigStringableOptionClientStorage.Builder.begin();
+			builder.setOption(option).setValue(getDefaultValue(option));
+			options.put(option, result = builder.build());
+		}
+		return result;
 	}
 	
 	@Nonnull
@@ -80,12 +92,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 	@Nonnull
 	@Override
 	public Stream<PlayerConfigStringableOptionClientStorage<?>> optionStream(){
-		return options.values().stream();
-	}
-
-	@Override
-	public int size() {
-		return options.size();
+		return manager.getAllOptionsStream().map(this::getOptionStorage);
 	}
 
 	@Override
@@ -95,6 +102,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 			result = PlayerSubConfigClientStorage.Builder.begin(LinkedHashMap::new)
 					.setSubID(subId)
 					.setOwner(owner)
+					.setManager(manager)
 					.setType(type).build();
 			subConfigs.put(subId, result);
 			subConfigIds.add(subId);
@@ -167,7 +175,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 
 	@Override
 	public void reset() {
-		options.forEach((k, os) -> os.setValue(null));
+		options.clear();
 		selectedSubConfig = null;
 		if(subConfigs != null) {
 			subConfigIds.clear();
@@ -218,6 +226,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		protected final B self;
 		protected PlayerConfigType type;
 		protected UUID owner;
+		protected PlayerConfigClientStorageManager manager;
 		protected final MapFactory mapFactory;
 
 		@SuppressWarnings("unchecked")
@@ -231,6 +240,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		public B setDefault() {
 			setOwner(null);
 			setType(null);
+			setManager(null);
 			return self;
 		}
 
@@ -246,21 +256,15 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 			return self;
 		}
 
-		protected abstract <T extends Comparable<T>> T getDefaultValue(PlayerConfigOptionSpec<T> option);
-
-		protected <T extends Comparable<T>> PlayerConfigStringableOptionClientStorage<T> buildOptionStorage(PlayerConfigOptionSpec<T> option){
-			PlayerConfigStringableOptionClientStorage.Builder<T> builder = PlayerConfigStringableOptionClientStorage.Builder.begin();
-			builder.setOption(option).setValue(getDefaultValue(option));
-			return builder.build();
+		public B setManager(PlayerConfigClientStorageManager manager) {
+			this.manager = manager;
+			return self;
 		}
 
 		public PlayerConfigClientStorage build() {
-			if(type == null)
+			if(type == null || manager == null)
 				throw new IllegalStateException();
 			Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options = mapFactory.get();
-			PlayerConfigOptions.OPTIONS.forEach((k, option) -> {
-				options.put((PlayerConfigOptionSpec<?>)option, buildOptionStorage((PlayerConfigOptionSpec<?>)option));
-			});
 			return buildInternally(options);
 		}
 
@@ -275,18 +279,13 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		}
 
 		@Override
-		protected <T extends Comparable<T>> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
-			return option.getDefaultValue();
-		}
-
-		@Override
 		protected PlayerConfigClientStorage buildInternally(Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options) {
 			List<String> subConfigIdsStorage = Lists.newArrayList(PlayerConfig.MAIN_SUB_ID);
 			List<String> subConfigIdsUnmodifiable = Collections.unmodifiableList(subConfigIdsStorage);
 			SortedValueList<String> subConfigIds = SortedValueList.Builder.<String>begin()
 					.setContent(subConfigIdsStorage)
 					.build();
-			return new PlayerConfigClientStorage(type, owner, options, subConfigIdsUnmodifiable, subConfigIds, mapFactory.get());
+			return new PlayerConfigClientStorage(manager, type, owner, options, subConfigIdsUnmodifiable, subConfigIds, mapFactory.get());
 		}
 
 		public static FinalBuilder begin(MapFactory mapFactory) {

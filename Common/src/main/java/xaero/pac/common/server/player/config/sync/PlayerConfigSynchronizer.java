@@ -23,16 +23,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.client.player.config.PlayerConfigOptionClientStorage;
-import xaero.pac.common.packet.config.ClientboundPlayerConfigGeneralStatePacket;
-import xaero.pac.common.packet.config.ClientboundPlayerConfigRemoveSubPacket;
-import xaero.pac.common.packet.config.ClientboundPlayerConfigSyncStatePacket;
-import xaero.pac.common.packet.config.PlayerConfigOptionValuePacket;
-import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.packet.config.*;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
@@ -63,47 +59,44 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 	}
 	
-	private <T extends Comparable<T>> PlayerConfigOptionClientStorage<T> getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, PlayerConfigOptionSpec<T> option, boolean afterReset) {
+	private <T extends Comparable<T>> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, IPlayerConfigOptionSpecAPI<T> option, boolean afterReset) {
 		boolean isOp = player.hasPermissions(2);
 		boolean mutable = isOp && syncedConfig.getType() != PlayerConfigType.PLAYER;
 		boolean defaulted = !mutable && syncedConfig.getType() == PlayerConfigType.PLAYER;
 		if(defaulted) {
-			mutable = syncedConfig.isPlayerConfigurable(option);
+			mutable = PlayerConfig.isPlayerConfigurable(option);
 			defaulted = !mutable;
 			if(defaulted) {
-				defaulted = !ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getId());
+				defaulted = !PlayerConfig.isOptionOPConfigurable(option);
 				mutable = !defaulted && isOp;
 			}
 		}
 		T value = syncedConfig.getRaw(option);
-		if(mutable && syncedConfig instanceof PlayerSubConfig && !PlayerSubConfig.OVERRIDABLE_OPTIONS.contains(option)) {
+		if(mutable && syncedConfig instanceof PlayerSubConfig && !configManager.getOverridableOptions().contains(option)) {
 			mutable = false;
 			value = null;
 		}
 		if(afterReset && defaulted)
 			return null;
-		PlayerConfigOptionClientStorage<T> entry = new PlayerConfigOptionClientStorage<>(option, defaulted ? null : value);
-		entry.setMutable(mutable);
-		entry.setDefaulted(defaulted);
-		return entry;
+		return new PlayerConfigOptionValuePacket.Entry(option.getId(), option.getType(), defaulted ? null : value, mutable, defaulted);
 	}
 	
-	private void syncOptionsToClient(ServerPlayer player, PlayerConfig<?> config, List<PlayerConfigOptionClientStorage<?>> entries) {
+	private void syncOptionsToClient(ServerPlayer player, PlayerConfig<?> config, List<PlayerConfigOptionValuePacket.Entry> entries) {
 		UUID ownerId = Objects.equals(player.getUUID(), config.getPlayerId()) ? null : config.getPlayerId();
-		PlayerConfigOptionValuePacket packet = new PlayerConfigOptionValuePacket(config.getType(), config.getSubId(), ownerId, entries);
+		ClientboundPlayerConfigOptionValuePacket packet = new ClientboundPlayerConfigOptionValuePacket(config.getType(), config.getSubId(), ownerId, entries);
 		sendToClient(player, packet);
 	}
 	
-	public <T extends Comparable<T>> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, PlayerConfigOptionSpec<T> option) {
-		PlayerConfigOptionClientStorage<T> packetOptionEntry = getPacketOptionEntry(player, (PlayerConfig<?>)config, option, false);
+	public <T extends Comparable<T>> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option) {
+		PlayerConfigOptionValuePacket.Entry packetOptionEntry = getPacketOptionEntry(player, (PlayerConfig<?>)config, option, false);
 		if(packetOptionEntry != null)
 			syncOptionsToClient(player, (PlayerConfig<?>)config, Lists.newArrayList(packetOptionEntry));
 	}
 
 	public void syncToClient(ServerPlayer player, PlayerConfig<?> config, boolean afterReset) {
-		List<PlayerConfigOptionClientStorage<?>> entries = new ArrayList<>(PlayerConfigOptions.OPTIONS.size());
-		PlayerConfigOptions.OPTIONS.forEach((key, option) -> {
-			PlayerConfigOptionClientStorage<?> packetOptionEntry = getPacketOptionEntry(player, config, (PlayerConfigOptionSpec<?>)option, afterReset);
+		List<PlayerConfigOptionValuePacket.Entry> entries = new ArrayList<>(PlayerConfigOptions.OPTIONS.size());
+		configManager.getAllOptionsStream().forEach(option -> {
+			PlayerConfigOptionValuePacket.Entry packetOptionEntry = getPacketOptionEntry(player, config, (PlayerConfigOptionSpec<?>)option, afterReset);
 			if(packetOptionEntry != null)
 				entries.add(packetOptionEntry);
 		});
@@ -123,6 +116,15 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		playerData.getConfigSyncSpreadoutTask().addConfigToSync(configManager.getWildernessConfig());
 		playerData.getConfigSyncSpreadoutTask().addConfigToSync(configManager.getServerClaimConfig());
 		playerData.getConfigSyncSpreadoutTask().addConfigToSync(configManager.getExpiredClaimConfig());
+	}
+
+	@Override
+	public void syncOnLogin(ServerPlayer player) {
+		List<PlayerConfigOptionSpec<?>> dynamicOptionEntries = new ArrayList<>(configManager.getDynamicOptions().getOptions().size());
+		configManager.getDynamicOptions().getOptions().values().forEach(
+				option -> dynamicOptionEntries.add((PlayerConfigOptionSpec<?>) option));
+		sendToClient(player, new ClientboundPlayerConfigDynamicOptionsPacket(dynamicOptionEntries));
+		syncAllToClient(player);
 	}
 
 	public void sendSyncState(ServerPlayer player, PlayerConfig<?> config, boolean state){

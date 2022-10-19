@@ -62,6 +62,29 @@ public interface IPlayerConfigOptionClientStorageAPI<T extends Comparable<T>> {
 	public String getTranslation();
 
 	/**
+	 * Gets the translation key arguments for the name of this option.
+	 *
+	 * @return the translation key arguments, not null
+	 */
+	public Object[] getTranslationArgs();
+
+	/**
+	 * Gets the translation key for the comment of this option.
+	 *
+	 * @return the comment translation key, not null
+	 */
+	@Nonnull
+	public String getCommentTranslation();
+
+	/**
+	 * Gets the translation key arguments for the comment of this option.
+	 *
+	 * @return the comment translation key arguments, not null
+	 */
+	@Nonnull
+	public Object[] getCommentTranslationArgs();
+
+	/**
 	 * Gets the type of the option value that this storage holds.
 	 *
 	 * @return the type of the option value, not null

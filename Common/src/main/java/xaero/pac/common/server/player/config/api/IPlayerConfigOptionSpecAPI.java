@@ -45,6 +45,14 @@ public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
 	public String getId();
 
 	/**
+	 * Gets the shortened ID of this option, without the "playerConfig." prefix.
+	 *
+	 * @return the shortened string ID, not null
+	 */
+	@Nonnull
+	public String getShortenedId();
+
+	/**
 	 * Gets the path of this option, which is just the ID from {@link #getId()} but separated into elements.
 	 *
 	 * @return the path, not null
@@ -67,6 +75,30 @@ public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
 	 */
 	@Nonnull
 	public String getTranslation();
+
+	/**
+	 * Gets the translation key arguments for the name of this option.
+	 *
+	 * @return the translation key arguments, not null
+	 */
+	@Nonnull
+	public String[] getTranslationArgs();
+
+	/**
+	 * Gets the translation key for the comment of this option.
+	 *
+	 * @return the comment translation key, not null
+	 */
+	@Nonnull
+	public String getCommentTranslation();
+
+	/**
+	 * Gets the translation key arguments for the comment of this option.
+	 *
+	 * @return the comment translation key arguments, not null
+	 */
+	@Nonnull
+	public String[] getCommentTranslationArgs();
 
 	/**
 	 * Gets the default en_us comment for this option.

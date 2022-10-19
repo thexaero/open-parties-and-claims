@@ -16,26 +16,27 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.config.sync;
+package xaero.pac.common.server.claims.protection;
 
-import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+public enum ChunkProtectionExceptionType {
 
-public interface IPlayerConfigSynchronizer {
+	INTERACTION("interact$"),
+	BARRIER("barrier$"),
+	EMPTY_HAND_INTERACTION(ChunkProtection.HAND_PREFIX),
+	BREAK(ChunkProtection.BREAK_PREFIX);
 
-	//internal api
+	private final String prefix;
 
-	public void syncAllToClient(ServerPlayer player);
+	ChunkProtectionExceptionType(String prefix) {
+		this.prefix = prefix;
+	}
 
-	public void syncOnLogin(ServerPlayer player);
+	public String getPrefix() {
+		return prefix;
+	}
 
-	public void confirmSubConfigCreationSync(ServerPlayer player, IPlayerConfig mainConfig);
-
-	public void syncGeneralState(ServerPlayer player, IPlayerConfig config);
-
-	public void syncSubExistence(ServerPlayer player, IPlayerConfig subConfig, boolean create);
-
-	public <T extends Comparable<T>> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option);
+	public boolean is(String prefixedName){
+		return prefixedName.startsWith(prefix);
+	}
 
 }

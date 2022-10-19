@@ -39,8 +39,8 @@ public class PacketRegister {
 		ClientboundPacDimensionHandshakePacket.Codec handshakeCodec = new ClientboundPacDimensionHandshakePacket.Codec();
 		packetHandler.register(1, ClientboundPacDimensionHandshakePacket.class, handshakeCodec, handshakeCodec, null, new ClientboundPacDimensionHandshakePacket.ClientHandler());
 		
-		PlayerConfigOptionValuePacket.Codec playerConfigOptionValueCodec = new PlayerConfigOptionValuePacket.Codec();
-		packetHandler.register(2, PlayerConfigOptionValuePacket.class, playerConfigOptionValueCodec, playerConfigOptionValueCodec, new PlayerConfigOptionValuePacket.ServerHandler(), new PlayerConfigOptionValuePacket.ClientHandler());
+		ClientboundPlayerConfigOptionValuePacket.Codec clientPlayerConfigOptionValueCodec = new ClientboundPlayerConfigOptionValuePacket.Codec();
+		packetHandler.register(2, ClientboundPlayerConfigOptionValuePacket.class, clientPlayerConfigOptionValueCodec, clientPlayerConfigOptionValueCodec, null, new ClientboundPlayerConfigOptionValuePacket.ClientHandler());
 		
 		ServerboundOtherPlayerConfigPacket.Codec serverboundOtherPlayerConfigPacketCodec = new ServerboundOtherPlayerConfigPacket.Codec();
 		packetHandler.register(3, ServerboundOtherPlayerConfigPacket.class, serverboundOtherPlayerConfigPacketCodec, serverboundOtherPlayerConfigPacketCodec, new ServerboundOtherPlayerConfigPacket.ServerHandler(), null);
@@ -107,6 +107,11 @@ public class PacketRegister {
 
 		packetHandler.register(31, ClientboundCurrentSubClaimPacket.class, ClientboundCurrentSubClaimPacket.ENCODER, new ClientboundCurrentSubClaimPacket.Decoder(), null, new ClientboundCurrentSubClaimPacket.ClientHandler());
 
+		ServerboundPlayerConfigOptionValuePacket.Codec serverPlayerConfigOptionValueCodec = new ServerboundPlayerConfigOptionValuePacket.Codec();
+		packetHandler.register(32, ServerboundPlayerConfigOptionValuePacket.class, serverPlayerConfigOptionValueCodec, serverPlayerConfigOptionValueCodec, new ServerboundPlayerConfigOptionValuePacket.ServerHandler(), null);
+
+		ClientboundPlayerConfigDynamicOptionsPacket.Codec playerConfigDynamicOptionsCodec = new ClientboundPlayerConfigDynamicOptionsPacket.Codec();
+		packetHandler.register(33, ClientboundPlayerConfigDynamicOptionsPacket.class, playerConfigDynamicOptionsCodec, playerConfigDynamicOptionsCodec, null, new ClientboundPlayerConfigDynamicOptionsPacket.ClientHandler());
 
 	}
 

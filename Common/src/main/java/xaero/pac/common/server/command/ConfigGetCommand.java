@@ -48,11 +48,10 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.*;
@@ -61,7 +60,9 @@ public class ConfigGetCommand {
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		SuggestionProvider<CommandSourceStack> optionSuggestor = (context, builder) -> {
-			return SharedSuggestionProvider.suggest(new ArrayList<>(PlayerConfigOptions.OPTIONS.values()).stream().map(r -> r.getId()), builder);
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(context.getSource().getServer());
+			return SharedSuggestionProvider.suggest(serverData.getPlayerConfigs().getAllOptionsStream().map(IPlayerConfigOptionSpecAPI::getShortenedId), builder);
 		};
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
@@ -159,7 +160,9 @@ public class ConfigGetCommand {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
 			
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
-			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) PlayerConfigOptions.OPTIONS.get(targetConfigOptionId);
+			MinecraftServer server = context.getSource().getServer();
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigs().getOptionForId(targetConfigOptionId);
 			if(option == null) {
 				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_get_invalid_key"));
 				return 0;
@@ -175,8 +178,6 @@ public class ConfigGetCommand {
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
 			}
-			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			IPlayerConfig playerConfig =
 					type == PlayerConfigType.DEFAULT_PLAYER ?
 							serverData.getPlayerConfigs().getDefaultConfig() : 

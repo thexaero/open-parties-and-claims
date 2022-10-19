@@ -73,7 +73,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">PlayerConfigOptions</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">An access point for all player config option specifications/representations.</div>
+<div class="block">An access point for all static player config option specifications/representations.
+ <p>
+ Use the client/server sided player config manager API to access the dynamic options generated
+ based on the server config values.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -86,26 +89,6 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#ALLOW_SOME_BLOCK_BREAKING" class="member-name-link">ALLOW_SOME_BLOCK_BREAKING</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Whether some optional block breaking by players with no claim access is allowed.</div>
-</div>
-<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#ALLOW_SOME_BLOCK_INTERACTIONS" class="member-name-link">ALLOW_SOME_BLOCK_INTERACTIONS</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">Whether some optional block interactions by players with no claim access are allowed.</div>
-</div>
-<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#ALLOW_SOME_ENTITY_INTERACTIONS" class="member-name-link">ALLOW_SOME_ENTITY_INTERACTIONS</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Whether some optional entity interactions by players with no claim access are allowed.</div>
-</div>
-<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#ALLOW_SOME_ENTITY_KILLING" class="member-name-link">ALLOW_SOME_ENTITY_KILLING</a></code></div>
-<div class="col-last odd-row-color">
-<div class="block">Whether some optional entity killing by players with no claim access is allowed.</div>
-</div>
 <div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#BONUS_CHUNK_CLAIMS" class="member-name-link">BONUS_CHUNK_CLAIMS</a></code></div>
 <div class="col-last even-row-color">
@@ -139,7 +122,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;?&gt;&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#OPTIONS" class="member-name-link">OPTIONS</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">An ID->specification map of all player config options.</div>
+<div class="block">An ID->specification map of all static player config options.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#PARTY_NAME" class="member-name-link">PARTY_NAME</a></code></div>
@@ -227,49 +210,44 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
  neighbor chunks of the claim.</div>
 </div>
-<div class="col-first even-row-color"><code>static final xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Whether the claimed chunk protection includes protection against optional entities entering the claim.</div>
-</div>
-<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER</a></code></div>
-<div class="col-last odd-row-color">
 <div class="block">Whether the claimed chunk protection includes protection against pistons pushing into the claim.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Whether the claimed chunk protection includes protection against player-caused lightnings.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#RECEIVE_LOCATIONS_FROM_PARTY" class="member-name-link">RECEIVE_LOCATIONS_FROM_PARTY</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#RECEIVE_LOCATIONS_FROM_PARTY" class="member-name-link">RECEIVE_LOCATIONS_FROM_PARTY</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Whether the player receives the in-game locations shared by their fellow party members.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES" class="member-name-link">RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES" class="member-name-link">RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Whether the player receives the in-game locations shared by their party's mutual allies.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#SHARE_LOCATION_WITH_PARTY" class="member-name-link">SHARE_LOCATION_WITH_PARTY</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#SHARE_LOCATION_WITH_PARTY" class="member-name-link">SHARE_LOCATION_WITH_PARTY</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Whether the player shares their in-game location with their party.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES" class="member-name-link">SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES" class="member-name-link">SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Whether the player shares their in-game location with their party's mutual allies.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#USED_SERVER_SUBCLAIM" class="member-name-link">USED_SERVER_SUBCLAIM</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#USED_SERVER_SUBCLAIM" class="member-name-link">USED_SERVER_SUBCLAIM</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The current sub-config ID that the player uses for new server claims.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#USED_SUBCLAIM" class="member-name-link">USED_SUBCLAIM</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#USED_SUBCLAIM" class="member-name-link">USED_SUBCLAIM</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The current sub-config ID that the player uses for their own new claims.</div>
 </div>
 </div>
@@ -310,7 +288,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="OPTIONS">
 <h3>OPTIONS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">OPTIONS</span></div>
-<div class="block">An ID->specification map of all player config options.</div>
+<div class="block">An ID->specification map of all static player config options.</div>
 </section>
 </li>
 <li>
@@ -482,46 +460,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER">
-<h3>PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">xaero.pac.common.server.player.config.PlayerConfigOptionSpec&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</span>&nbsp;<span class="element-name">PROTECT_CLAIMED_CHUNKS_OPTIONAL_ENTITY_BARRIER</span></div>
-<div class="block">Whether the claimed chunk protection includes protection against optional entities entering the claim.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE">
 <h3>PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</span>&nbsp;<span class="element-name">PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE</span></div>
 <div class="block">Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
  neighbor chunks of the claim.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ALLOW_SOME_BLOCK_INTERACTIONS">
-<h3>ALLOW_SOME_BLOCK_INTERACTIONS</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</span>&nbsp;<span class="element-name">ALLOW_SOME_BLOCK_INTERACTIONS</span></div>
-<div class="block">Whether some optional block interactions by players with no claim access are allowed.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ALLOW_SOME_BLOCK_BREAKING">
-<h3>ALLOW_SOME_BLOCK_BREAKING</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</span>&nbsp;<span class="element-name">ALLOW_SOME_BLOCK_BREAKING</span></div>
-<div class="block">Whether some optional block breaking by players with no claim access is allowed.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ALLOW_SOME_ENTITY_INTERACTIONS">
-<h3>ALLOW_SOME_ENTITY_INTERACTIONS</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</span>&nbsp;<span class="element-name">ALLOW_SOME_ENTITY_INTERACTIONS</span></div>
-<div class="block">Whether some optional entity interactions by players with no claim access are allowed.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ALLOW_SOME_ENTITY_KILLING">
-<h3>ALLOW_SOME_ENTITY_KILLING</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</span>&nbsp;<span class="element-name">ALLOW_SOME_ENTITY_KILLING</span></div>
-<div class="block">Whether some optional entity killing by players with no claim access is allowed.</div>
 </section>
 </li>
 <li>

@@ -35,6 +35,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.widget.value.BooleanValueHolder;
+import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.client.player.config.PlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.player.config.sub.PlayerSubConfigClientStorage;
@@ -45,8 +46,9 @@ import xaero.pac.common.server.player.config.PlayerConfigListIterationOptionSpec
 import xaero.pac.common.server.player.config.PlayerConfigStringOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
-import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
+import xaero.pac.common.server.player.config.dynamic.PlayerConfigExceptionDynamicOptionsLoader;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -57,7 +59,12 @@ import java.util.stream.Stream;
 
 public final class PlayerConfigScreen extends WidgetListScreen {
 
-	private static final Object NULL_PLACEHOLDER = new Object();
+	private static final Object NULL_PLACEHOLDER = new Comparable<Object>() {
+		@Override
+		public int compareTo(@Nonnull Object o) {
+			return 0;
+		}
+	};
 	public static final Component SYNCING_IN_PROGRESS = new TranslatableComponent("gui.xaero_pac_ui_player_config_syncing");
 	public static final Component BEING_DELETED = new TranslatableComponent("gui.xaero_pac_ui_player_config_being_deleted");
 	private final BiConsumer<PlayerConfigScreen, Button> refreshHandler;
@@ -105,6 +112,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	public final static class Builder {
 		
 		private final ListFactory listFactory;
+		private IPlayerConfigClientStorageManager<?> manager;
 		private PlayerConfigClientStorage data;
 		private PlayerConfigClientStorage defaultPlayerConfigData;
 		private PlayerConfigClientStorage mainPlayerConfigData;
@@ -119,6 +127,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		}
 
 		public Builder setDefault() {
+			setManager(null);
 			setEscape(null);
 			setParent(null);
 			setData(null);
@@ -126,7 +135,12 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			setMainPlayerConfigData(null);
 			return this;
 		}
-		
+
+		public Builder setManager(IPlayerConfigClientStorageManager<?> manager) {
+			this.manager = manager;
+			return this;
+		}
+
 		public Builder setData(PlayerConfigClientStorage data) {
 			this.data = data;
 			return this;
@@ -186,7 +200,16 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		}
 
 		private <HT, T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
-			return (el, xy) -> CycleButton.<HT>builder(v -> option.getOption().getValueDisplayName(holderToValue.apply(v)))
+			return (el, xy) -> CycleButton.<HT>builder(v -> {
+						Component defaultDisplay = option.getOption().getValueDisplayName(holderToValue.apply(v));
+						if(option.getType() == Integer.class){
+							String translationKey = option.getTranslation() + "_" + defaultDisplay.getString();
+							String translatedText = I18n.get(translationKey);
+							if(!translatedText.equals("default") && !translatedText.equals(translationKey))
+								return new TranslatableComponent(translationKey);
+						}
+						return defaultDisplay;
+					})
 					.withValues(values)
 					.withInitialValue(valueToHolder.apply(getOptionValue(option)))
 					.create(xy.getX(), xy.getY(), elementWidth, elementHeight, optionTitle, getRegularValueChangeListener(el, option, holderToValue, data));
@@ -203,14 +226,22 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				values = listIterationOptionSpec.getClientSideListGetter().apply(valueSourceConfig);
 				if(values == null)
 					values = Lists.newArrayList(currentValue);
+				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER &&
+						option.getId().startsWith(PlayerConfigExceptionDynamicOptionsLoader.OPTION_ROOT))
+					values = List.of(
+							values.get(0),
+							values.get(option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + ".") ? 1 : values.size() - 1)
+					);
+				else
+					values = Lists.newArrayList(values);
 			} else
 				values = Lists.newArrayList(currentValue);
+			@SuppressWarnings("unchecked")
+			T nullPlaceholder = (T) NULL_PLACEHOLDER;
 			if(data instanceof PlayerSubConfigClientStorage) {
-				@SuppressWarnings("unchecked")
-				T nullPlaceholder = (T) NULL_PLACEHOLDER;
 				values.add(0, nullPlaceholder);
 			}
-			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, Function.identity(), Function.identity(), data);
+			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, v -> v == null ? nullPlaceholder : v, h -> h == NULL_PLACEHOLDER ? null : h, data);
 		}
 
 		private BiFunction<SimpleValueWidgetListElement.Final<Boolean>, Vec3i, AbstractWidget> getOnOffWidgetSupplier(PlayerConfigStringableOptionClientStorage<Boolean> option, int elementWidth, int elementHeight, Component optionTitle, BooleanValueHolder currentValue, PlayerConfigClientStorage data){
@@ -355,7 +386,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		}
 
 		public PlayerConfigScreen build() {
-			if(data == null
+			if(manager == null || data == null
 					|| data.getType() == PlayerConfigType.PLAYER && defaultPlayerConfigData == null
 					|| data.getType() == PlayerConfigType.SERVER && mainPlayerConfigData == null)
 				throw new IllegalStateException();
@@ -394,11 +425,11 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_SUBCLAIM
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_SERVER_SUBCLAIM)
 					return;
-				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !PlayerSubConfig.OVERRIDABLE_OPTIONS.contains(optionStorage.getOption()))
+				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !manager.getOverridableOptions().contains(optionStorage.getOption()))
 					return;
 				Class<?> type = optionStorage.getType();
-				Component optionTitle = new TranslatableComponent(optionStorage.getTranslation());
-				String commentTranslated = I18n.get("gui.xaero_pac_player_config_tooltip_" + optionStorage.getId());
+				Component optionTitle = new TranslatableComponent(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
+				String commentTranslated = I18n.get(optionStorage.getCommentTranslation(), optionStorage.getCommentTranslationArgs());
 				if(commentTranslated.equals("default"))
 					commentTranslated = optionStorage.getComment();
 				if(optionStorage.getTooltipPrefix() != null)

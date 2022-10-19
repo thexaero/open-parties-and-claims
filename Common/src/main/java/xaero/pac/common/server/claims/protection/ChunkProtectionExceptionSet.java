@@ -49,6 +49,10 @@ public final class ChunkProtectionExceptionSet<T> {
 		exceptionTags.stream().flatMap(tagStreamGetter).forEach(tagBasedExceptions::add);
 	}
 
+	public Stream<Either<T, TagKey<T>>> stream(){
+		return Stream.concat(exceptions.stream().map(Either::left), exceptionTags.stream().map(Either::right));
+	}
+
 	public static class Builder<T> {
 
 		private final Set<T> exceptions;
@@ -63,6 +67,7 @@ public final class ChunkProtectionExceptionSet<T> {
 		public Builder<T> setDefault(){
 			exceptions.clear();
 			exceptionTags.clear();
+			setTagStreamGetter(null);
 			return this;
 		}
 

@@ -23,6 +23,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * API for the player config manager on the server side
@@ -73,5 +74,24 @@ public interface IPlayerConfigManagerAPI {
 	 */
 	@Nonnull
 	public IPlayerConfigAPI getExpiredClaimConfig();
+
+	/**
+	 * Gets a stream of all player config option types, including the dynamic ones.
+	 *
+	 * @return a stream of all player config options, not null
+	 */
+	@Nonnull
+	public Stream<IPlayerConfigOptionSpecAPI<?>> getAllOptionsStream();
+
+	/**
+	 * Gets the option type specification with a specified string option id, including dynamic options.
+	 * <p>
+	 * Returns null if no such option exists.
+	 *
+	 * @param id  the option id, not null
+	 * @return the option type specification instance, null when doesn't exist
+	 */
+	@Nullable
+	public IPlayerConfigOptionSpecAPI<?> getOptionForId(@Nonnull String id);
 
 }
