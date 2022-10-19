@@ -40,10 +40,7 @@ import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.client.player.config.PlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.player.config.sub.PlayerSubConfigClientStorage;
 import xaero.pac.common.misc.ListFactory;
-import xaero.pac.common.server.player.config.PlayerConfig;
-import xaero.pac.common.server.player.config.PlayerConfigHexOptionSpec;
-import xaero.pac.common.server.player.config.PlayerConfigListIterationOptionSpec;
-import xaero.pac.common.server.player.config.PlayerConfigStringOptionSpec;
+import xaero.pac.common.server.player.config.*;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.dynamic.PlayerConfigExceptionDynamicOptionsLoader;
@@ -224,14 +221,17 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			List<T> values;
 			if(option.getOption() instanceof PlayerConfigListIterationOptionSpec<T> listIterationOptionSpec) {
 				values = listIterationOptionSpec.getClientSideListGetter().apply(valueSourceConfig);
+				boolean staticProtectionLevelOption = option.getOption() instanceof PlayerConfigStaticListIterationOptionSpec iterationOptionSpec && iterationOptionSpec.getList() == PlayerConfig.EXCEPTION_LEVELS;//won't detect dynamic ones because their option list is recreated
 				if(values == null)
 					values = Lists.newArrayList(currentValue);
 				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER &&
-						option.getId().startsWith(PlayerConfigExceptionDynamicOptionsLoader.OPTION_ROOT))
+						(option.getId().startsWith(PlayerConfigExceptionDynamicOptionsLoader.OPTION_ROOT) || staticProtectionLevelOption)) {
+					boolean enablesProtection = option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + ".") || staticProtectionLevelOption;
 					values = List.of(
 							values.get(0),
-							values.get(option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + ".") ? 1 : values.size() - 1)
+							values.get(enablesProtection ? 1 : values.size() - 1)
 					);
+				}
 				else
 					values = Lists.newArrayList(values);
 			} else

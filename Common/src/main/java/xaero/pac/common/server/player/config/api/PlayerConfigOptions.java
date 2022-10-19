@@ -94,7 +94,7 @@ public class PlayerConfigOptions {
 	/**
 	 * Whether the claimed chunk protection includes entity protection against players.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS;
 	/**
 	 * Whether the claimed chunk protection includes entity protection against mobs.
 	 */
@@ -114,11 +114,11 @@ public class PlayerConfigOptions {
 	/**
 	 * Whether the claimed chunk protection includes protection against chorus fruit teleportation into the claim.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT;
 	/**
 	 * Whether the claimed chunk protection includes protection against player-caused lightnings.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING;
 	/**
 	 * Whether the claimed chunk protection includes protection against crop trample.
 	 */
@@ -272,10 +272,14 @@ public class PlayerConfigOptions {
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against fire spread.")
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromPlayers")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against players who don't have access to the chunks.")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromMobs")
@@ -297,15 +301,23 @@ public class PlayerConfigOptions {
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against fire.")
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.chorusFruitTeleport")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes chorus fruit teleportation prevention for players who don't have access to the chunks.")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes chorus fruit teleportation prevention for players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playerLightning")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the protected chunks are also partially protected.")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the protected chunks are also partially protected.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.cropTrample")

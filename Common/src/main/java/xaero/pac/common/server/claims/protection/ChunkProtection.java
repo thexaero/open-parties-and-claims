@@ -184,7 +184,7 @@ public class ChunkProtection
 					(
 						from instanceof LivingEntity &&
 						(
-							from instanceof Player && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS) && !hasChunkAccess(claimConfig, from)
+							from instanceof Player && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS, claimConfig, from) && !hasChunkAccess(claimConfig, from)
 						||
 							!(from instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS)
 						)
@@ -192,6 +192,14 @@ public class ChunkProtection
 				||
 					!(from instanceof LivingEntity) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS)
 				);
+	}
+
+	private boolean checkProtectionLeveledOption(IPlayerConfigOptionSpecAPI<Integer> option, IPlayerConfig claimConfig, Entity player){
+		int optionValue = claimConfig.getEffective(option);
+		if(optionValue <= 0)
+			return false;
+		int exceptionLevel = getExceptionAccessLevel(claimConfig, player);
+		return exceptionLevel >= optionValue;
 	}
 	
 	private boolean isIncludedByProtectedEntityLists(Entity e) {
@@ -614,7 +622,7 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
-		if(claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT) && !hasChunkAccess(claimConfig, entity)) {
+		if(checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT, claimConfig, entity) && !hasChunkAccess(claimConfig, entity)) {
 			if(entity instanceof Player)
 				entity.sendMessage(CANT_CHORUS, entity.getUUID());
 			//OpenPartiesAndClaims.LOGGER.info("stopped {} from teleporting to {}", entity, pos);
@@ -633,7 +641,7 @@ public class ChunkProtection
 				IPlayerChunkClaim claim = claimsManager.get(bolt.getLevel().dimension().location(), chunkPos);
 				if(i == 0 && j == 0 || claim != null) {//wilderness neighbors don't have to be protected this much
 					IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-					if (config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING) && !hasChunkAccess(config, bolt.getCause())) {
+					if (checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING, config, bolt.getCause()) && !hasChunkAccess(config, bolt.getCause())) {
 						bolt.setVisualOnly(true);
 						break;
 					}

@@ -59,6 +59,11 @@ public class PlayerConfig
 	public final static String MAIN_SUB_ID = "main";
 	public final static String PLAYER_CONFIG_ROOT = "playerConfig";
 	public final static String PLAYER_CONFIG_ROOT_DOT = PLAYER_CONFIG_ROOT + ".";
+	public static final List<Integer> EXCEPTION_LEVELS = List.of(0, 1, 2, 3);
+	public static final String PROTECTION_LEVELS_TOOLTIP = """
+					Everyone - protected from all players that don't have chunk access.
+					Not Party - only players not in the same party as you.
+					Not Ally - only players not in any party allied by yours.""";
 
 	protected final PlayerConfigManager<P, ?> manager;
 	private final PlayerConfigType type;

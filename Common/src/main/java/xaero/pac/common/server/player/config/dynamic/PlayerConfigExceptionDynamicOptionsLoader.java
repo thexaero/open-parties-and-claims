@@ -29,7 +29,6 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigStaticListIterationOptionSpec;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Function;
 
 public class PlayerConfigExceptionDynamicOptionsLoader {
@@ -41,7 +40,6 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 	public static final String HAND_INTERACT = "handInteract";
 	public static final String BREAK = "break";
 	public static final String BARRIER = "barrier";
-	private static final List<Integer> optionList = List.of(0, 1, 2, 3);
 
 	<T> void handleGroup(ChunkProtectionExceptionGroup<T> group, PlayerConfigDynamicOptions.Builder builder, String category, String categoryPlural, Function<T, String> objectNameGetter){
 		String optionId;
@@ -90,7 +88,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 		comment = String.format(comment, listString);
 		PlayerConfigStaticListIterationOptionSpec<Integer> option = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(optionId)
-				.setList(optionList)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
 				.setTranslation(translation, group.getName())
 				.setCommentTranslation(commentTranslation, listString)
 				.setDefaultValue(0)
