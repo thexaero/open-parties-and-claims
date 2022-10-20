@@ -92,6 +92,18 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS;
 	/**
+	 * Whether the claimed chunk protection includes protection of buttons being pressed by projectiles.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES;
+	/**
+	 * Whether the claimed chunk protection includes protection of target blocks being pressed by projectiles.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES;
+	/**
+	 * Whether the claimed chunk protection includes protection of pressure plates being pressed by entities.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLATES_FROM_ENTITIES;
+	/**
 	 * Whether the claimed chunk protection includes entity protection against players.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS;
@@ -271,6 +283,33 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFireSpread")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against fire spread.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.buttonsFromProjectiles")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes buttons being protected against projectiles not owned by any player who has access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.targetsFromProjectiles")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes target blocks being protected against projectiles not owned by any player who has access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_ENTITIES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromEntities")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes pressure plates being protected against entities not owned by any player who has access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromPlayers")

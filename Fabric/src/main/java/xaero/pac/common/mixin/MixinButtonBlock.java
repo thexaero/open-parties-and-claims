@@ -16,20 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.core;
+package xaero.pac.common.mixin;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ButtonBlock;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import xaero.pac.common.server.core.ServerCore;
 
-public class ServerCoreFabric {
+import java.util.List;
 
-	public static Entity MOB_GRIEFING_GAME_RULE_ENTITY = null;
-	public static Block CALCULATING_PRESSURE_PLATE_WEIGHT = null;
+@Mixin(value = ButtonBlock.class, priority = 1000001)
+public class MixinButtonBlock {
 
-	public static void tryToSetMobGriefingEntity(Entity entity){
-		if(entity != null && entity.level instanceof ServerLevel)
-			MOB_GRIEFING_GAME_RULE_ENTITY = entity;
+	@ModifyVariable(method = "checkPressed", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
+	public List<Entity> onCheckPressed(List<Entity> list){
+		ServerCore.onEntitiesPushBlock(list, (Block) (Object)this);
+		return list;
 	}
 
 }

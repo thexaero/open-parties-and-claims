@@ -210,6 +210,30 @@ function transformCreateMechArmSearch(methodNode, listFieldName) {
     methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 }
 
+function transformForEntitiesPushBlock(methodNode, includeClassFiltered, includeNonClassFiltered){
+    var invokeTargetClass = 'net/minecraft/world/level/Level'
+    var insnToInsertGetter = function() {
+        var insnToInsert = new InsnList()
+        insnToInsert.add(new InsnNode(Opcodes.DUP))
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushBlock', '(Ljava/util/List;Lnet/minecraft/world/level/block/Block;)V'))
+        return insnToInsert
+    }
+    if(includeClassFiltered){
+        var invokeTargetName = 'getEntitiesOfClass'
+        var invokeTargetNameObf = 'm_45976_'
+        var invokeTargetDesc = '(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;'
+        insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+    }
+    if(includeNonClassFiltered){
+        var invokeTargetName = 'getEntities'
+        var invokeTargetNameObf = 'm_45933_'
+        var invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;'
+        insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+    }
+    return methodNode
+}
+
 function initializeCoreMod() {
 	return {
 		'xaero_pac_minecraftserverclass': {
@@ -814,6 +838,59 @@ function initializeCoreMod() {
                 insnToInsert.add(new InsnNode(Opcodes.IRETURN))
                 insnToInsert.add(MY_LABEL)
                 insnToInsert.add(new InsnNode(Opcodes.POP))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_buttonblock_checkpressed': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.ButtonBlock',
+                'methodName': 'm_51120_',
+                'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformForEntitiesPushBlock(methodNode, true, false)
+            }
+        },
+        'xaero_pac_pressureplateblock_getsignalstrength': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.PressurePlateBlock',
+                'methodName': 'm_6693_',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I'
+            },
+            'transformer' : function(methodNode){
+                return transformForEntitiesPushBlock(methodNode, true, true)
+            }
+        },
+        'xaero_pac_weightedpressureplateblock_getsignalstrength': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.WeightedPressurePlateBlock',
+                'methodName': 'm_6693_',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I'
+            },
+            'transformer' : function(methodNode){
+                return transformForEntitiesPushBlock(methodNode, true, false)
+            }
+        },
+        'xaero_pac_targetblock_onprojectilehit': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.TargetBlock',
+                'methodName': 'm_5581_',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/entity/projectile/Projectile;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 4))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntityPushBlock', '(Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/entity/Entity;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFEQ, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
             }

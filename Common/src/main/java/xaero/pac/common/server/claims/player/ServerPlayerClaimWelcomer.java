@@ -55,7 +55,7 @@ public class ServerPlayerClaimWelcomer {
 			UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();
 			IPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = currentClaim == null ? null : serverData.getServerClaimsManager().getPlayerInfo(currentClaimId);
 			boolean isOwner = !mainCap.isClaimsNonallyMode() && currentClaim != null && Objects.equals(currentClaimId, player.getUUID());
-			boolean hasAccess = isOwner || serverData.getChunkProtection().hasChunkAccess(serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigs(), currentClaim), player);
+			boolean hasAccess = isOwner || serverData.getChunkProtection().hasChunkAccess(serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigs(), currentClaim), player, null);
 
 			IPlayerConfig claimConfig = serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigs(), currentClaim);
 			String customName = claimConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
