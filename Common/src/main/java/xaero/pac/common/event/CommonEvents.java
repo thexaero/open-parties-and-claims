@@ -343,7 +343,9 @@ public class CommonEvents {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 			if(serverData == null)
 				return false;
-			return serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, level, pos);
+			if(ServerCore.HANDLING_FROSTWALK)
+				return false;
+			return serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, level, pos, null);
 		}
 		return false;
 	}
@@ -354,12 +356,14 @@ public class CommonEvents {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 			if(serverData == null)
 				return false;
+			if(ServerCore.HANDLING_FROSTWALK)
+				return false;
 			Set<ChunkPos> chunkPositions = new HashSet<>();
 			Iterator<BlockPos> iterator = positions.iterator();
 			while(iterator.hasNext()){
 				BlockPos pos = iterator.next();
 				if(chunkPositions.add(new ChunkPos(pos))) {
-					if (serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, level, pos))
+					if (serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, level, pos, null))
 						return true;
 				}
 			}

@@ -894,6 +894,40 @@ function initializeCoreMod() {
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
             }
+        },
+        'xaero_pac_frostwalkerenchantment_onentitymove': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.item.enchantment.FrostWalkerEnchantment',
+                'methodName': 'm_45018_',
+                'methodDesc' : '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;I)V'
+            },
+            'transformer' : function(methodNode){
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preFrostWalkHandle', '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;)V'))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+
+                var invokeTargetClass = 'net/minecraft/world/level/Level'
+                var invokeTargetName = 'getBlockState'
+                var invokeTargetNameObf = 'm_8055_'
+                var invokeTargetDesc = '(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;'
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preBlockStateFetchOnFrostwalk', '(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/BlockPos;'))
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+
+                insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'postFrostWalkHandle', '()V'))
+                    return insnToInsert
+                }
+                insertBeforeReturn2(methodNode, insnToInsertGetter)
+                return methodNode
+            }
         }
 	}
 }

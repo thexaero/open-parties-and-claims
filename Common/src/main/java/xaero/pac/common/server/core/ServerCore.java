@@ -297,4 +297,33 @@ public class ServerCore {
 		return helpList.isEmpty();
 	}
 
+	public static BlockPos.MutableBlockPos FROSTWALK_BLOCKPOS = new BlockPos.MutableBlockPos();
+	private static LivingEntity FROSTWALK_ENTITY;
+	private static Level FROSTWALK_LEVEL;
+	public static boolean HANDLING_FROSTWALK = false;
+
+	public static void preFrostWalkHandle(LivingEntity living, Level level){
+		HANDLING_FROSTWALK = true;
+		FROSTWALK_ENTITY = living;
+		FROSTWALK_LEVEL = level;
+	}
+
+	public static BlockPos preBlockStateFetchOnFrostwalk(BlockPos pos){
+		FROSTWALK_BLOCKPOS.set(pos);
+		if(FROSTWALK_ENTITY == null || !(FROSTWALK_LEVEL instanceof ServerLevel))
+			return pos;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(FROSTWALK_LEVEL.getServer());
+		if(serverData == null)
+			return pos;
+		if(serverData.getChunkProtection().onFrostWalk(serverData, FROSTWALK_ENTITY, FROSTWALK_LEVEL, FROSTWALK_BLOCKPOS))
+			return FROSTWALK_BLOCKPOS.setY(FROSTWALK_LEVEL.getMaxBuildHeight());//won't be water here lol
+		return pos;
+	}
+
+	public static void postFrostWalkHandle(){
+		HANDLING_FROSTWALK = false;
+		FROSTWALK_ENTITY = null;
+		FROSTWALK_LEVEL = null;
+	}
+
 }

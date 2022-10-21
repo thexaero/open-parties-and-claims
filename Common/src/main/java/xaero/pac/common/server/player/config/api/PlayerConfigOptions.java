@@ -104,6 +104,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLATES_FROM_ENTITIES;
 	/**
+	 * Whether the claimed chunk protection includes protection from frost walking.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING;
+	/**
 	 * Whether the claimed chunk protection includes entity protection against players.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS;
@@ -308,6 +312,15 @@ public class PlayerConfigOptions {
 				.setList(PlayerConfig.EXCEPTION_LEVELS)
 				.setComment(
 						"When enabled, claimed chunk protection includes pressure plates being protected against entities not owned by any player who has access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFrostWalking")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection against frost walking by players/entities who don't have access to the chunks.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
 				)
 				.build(allOptions);

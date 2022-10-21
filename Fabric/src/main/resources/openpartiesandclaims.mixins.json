@@ -25,6 +25,7 @@
         "MixinFireBlock",
         "MixinFlowingFluid",
         "MixinFoxEatBerriesGoal",
+        "MixinFrostWalkerEnchantment",
         "MixinGameRules",
         "MixinHarvestFarmland",
         "MixinLargeFireball",

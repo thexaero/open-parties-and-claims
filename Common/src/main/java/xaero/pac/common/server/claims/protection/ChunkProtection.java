@@ -363,7 +363,7 @@ public class ChunkProtection
 		return !emptyHand && onUseItemAt(serverData, player, pos, blockHit.getDirection(), itemStack, hand, true);
 	}
 
-	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, Level level, BlockPos pos) {
+	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, Level level, BlockPos pos, IPlayerConfigOptionSpecAPI<Integer> option) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
@@ -372,8 +372,12 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		return (entity instanceof Player || !canGriefBlocks(entity, config))
+		return (option == null || checkProtectionLeveledOption(option, config, entity, null)) && (entity instanceof Player || !canGriefBlocks(entity, config))
 				&& blockAccessCheck(pos, config, entity, level, false, false);
+	}
+
+	public boolean onFrostWalk(IServerData<CM, P> serverData, LivingEntity living, Level level, BlockPos pos) {
+		return onEntityPlaceBlock(serverData, living, level, pos, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING);
 	}
 
 	private boolean isItemUseRestricted(ItemStack itemStack){
