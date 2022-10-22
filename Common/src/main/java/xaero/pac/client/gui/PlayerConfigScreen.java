@@ -41,6 +41,7 @@ import xaero.pac.client.player.config.PlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.player.config.sub.PlayerSubConfigClientStorage;
 import xaero.pac.common.misc.ListFactory;
 import xaero.pac.common.server.player.config.*;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.dynamic.PlayerConfigExceptionDynamicOptionsLoader;
@@ -104,6 +105,15 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			refreshButton.onPress();
 		else if(optionValueSourceData.isBeingDeleted())
 			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 6 + 64, -1);
+	}
+
+	public static TextComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){
+		String commentTranslated = I18n.get(option.getCommentTranslation(), option.getCommentTranslationArgs());
+		if(commentTranslated.equals("default"))
+			commentTranslated = option.getComment();
+		if(option.getTooltipPrefix() != null)
+			commentTranslated = option.getTooltipPrefix() + "\n" + commentTranslated;
+		return new TextComponent(commentTranslated);
 	}
 
 	public final static class Builder {
@@ -429,12 +439,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					return;
 				Class<?> type = optionStorage.getType();
 				Component optionTitle = new TranslatableComponent(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
-				String commentTranslated = I18n.get(optionStorage.getCommentTranslation(), optionStorage.getCommentTranslationArgs());
-				if(commentTranslated.equals("default"))
-					commentTranslated = optionStorage.getComment();
-				if(optionStorage.getTooltipPrefix() != null)
-					commentTranslated = optionStorage.getTooltipPrefix() + "\n" + commentTranslated;
-				List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(new TextComponent(commentTranslated), 200);
+				List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(getUICommentForOption(optionStorage.getOption()), 200);
 				if(type == Boolean.class) {
 					@SuppressWarnings("unchecked")
 					PlayerConfigStringableOptionClientStorage<Boolean> booleanOption = (PlayerConfigStringableOptionClientStorage<Boolean>) optionStorage;

@@ -33,8 +33,8 @@ public class PacketRegister {
 	public void register(LoadCommon context) {
 		IPacketHandler packetHandler = OpenPartiesAndClaims.INSTANCE.getPacketHandler();
 
-		ClientboundPacServerLoginResetPacket.Codec serverHandshakeCodec = new ClientboundPacServerLoginResetPacket.Codec();
-		packetHandler.register(0, ClientboundPacServerLoginResetPacket.class, serverHandshakeCodec, serverHandshakeCodec, null, new ClientboundPacServerLoginResetPacket.ClientHandler());
+		ServerLoginHandshakePacket.Codec serverHandshakeCodec = new ServerLoginHandshakePacket.Codec();
+		packetHandler.register(0, ServerLoginHandshakePacket.class, serverHandshakeCodec, serverHandshakeCodec, new ServerLoginHandshakePacket.ServerHandler(), new ServerLoginHandshakePacket.ClientHandler());
 
 		ClientboundPacDimensionHandshakePacket.Codec handshakeCodec = new ClientboundPacDimensionHandshakePacket.Codec();
 		packetHandler.register(1, ClientboundPacDimensionHandshakePacket.class, handshakeCodec, handshakeCodec, null, new ClientboundPacDimensionHandshakePacket.ClientHandler());
@@ -112,6 +112,9 @@ public class PacketRegister {
 
 		ClientboundPlayerConfigDynamicOptionsPacket.Codec playerConfigDynamicOptionsCodec = new ClientboundPlayerConfigDynamicOptionsPacket.Codec();
 		packetHandler.register(33, ClientboundPlayerConfigDynamicOptionsPacket.class, playerConfigDynamicOptionsCodec, playerConfigDynamicOptionsCodec, null, new ClientboundPlayerConfigDynamicOptionsPacket.ClientHandler());
+
+		ClientboundPlayerConfigHelpPacket.Codec playerConfigHelpCodec = new ClientboundPlayerConfigHelpPacket.Codec();
+		packetHandler.register(34, ClientboundPlayerConfigHelpPacket.class, playerConfigHelpCodec, playerConfigHelpCodec, null, new ClientboundPlayerConfigHelpPacket.ClientHandler());
 
 	}
 

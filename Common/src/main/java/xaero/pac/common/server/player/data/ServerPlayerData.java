@@ -56,6 +56,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private ResourceLocation lastClaimUpdateDimension;
 	private IPlayerChunkClaim lastClaimUpdateState;
 	private UUID lastOtherConfigRequest;
+	private boolean hasMod;
 
 	public ServerPlayerData() {
 		super();
@@ -201,4 +202,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		this.lastOtherConfigRequest = lastOtherConfigRequest;
 	}
 
+	public void setHasMod(boolean hasMod) {
+		this.hasMod = hasMod;
+	}
+
+	public boolean hasMod() {
+		return hasMod;
+	}
 }

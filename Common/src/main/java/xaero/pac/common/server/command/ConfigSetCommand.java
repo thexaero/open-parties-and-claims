@@ -28,7 +28,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -51,7 +50,6 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI.SetResult;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
@@ -81,11 +79,7 @@ public class ConfigSetCommand {
 	}
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
-		SuggestionProvider<CommandSourceStack> optionSuggestor = (context, builder) -> {
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(context.getSource().getServer());
-			return SharedSuggestionProvider.suggest(serverData.getPlayerConfigs().getAllOptionsStream().map(IPlayerConfigOptionSpecAPI::getShortenedId), builder);
-		};
+		SuggestionProvider<CommandSourceStack> optionSuggestor = ConfigGetOrHelpCommand.getOptionSuggestor();
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
 
