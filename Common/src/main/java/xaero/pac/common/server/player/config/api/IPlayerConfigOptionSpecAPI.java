@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -135,9 +136,9 @@ public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
 	/**
 	 * Gets the prefix applied to the tooltip of this option on the UI.
 	 *
-	 * @return the tooltip prefix, not null
+	 * @return the tooltip prefix, null if no prefix
 	 */
-	@Nonnull
+	@Nullable
 	public String getTooltipPrefix();
 
 	/**

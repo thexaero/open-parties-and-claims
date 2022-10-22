@@ -31,6 +31,7 @@ import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +196,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		return clientSideValidator;
 	}
 
-	@Nonnull
+	@Nullable
 	@Override
 	public String getTooltipPrefix() {
 		return tooltipPrefix;
