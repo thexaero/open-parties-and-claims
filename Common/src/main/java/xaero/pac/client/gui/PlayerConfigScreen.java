@@ -221,7 +221,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			List<T> values;
 			if(option.getOption() instanceof PlayerConfigListIterationOptionSpec<T> listIterationOptionSpec) {
 				values = listIterationOptionSpec.getClientSideListGetter().apply(valueSourceConfig);
-				boolean staticProtectionLevelOption = option.getOption() instanceof PlayerConfigStaticListIterationOptionSpec iterationOptionSpec && iterationOptionSpec.getList() == PlayerConfig.EXCEPTION_LEVELS;//won't detect dynamic ones because their option list is recreated
+				boolean staticProtectionLevelOption = option.getOption() instanceof PlayerConfigStaticListIterationOptionSpec iterationOptionSpec && iterationOptionSpec.getList() == PlayerConfig.PROTECTION_LEVELS;//won't detect dynamic ones because their option list is recreated
 				if(values == null)
 					values = Lists.newArrayList(currentValue);
 				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER &&

@@ -928,6 +928,32 @@ function initializeCoreMod() {
                 insertBeforeReturn2(methodNode, insnToInsertGetter)
                 return methodNode
             }
+        },
+        'xaero_pac_entity_handlenetherportal': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.Entity',
+                'methodName': 'm_20157_',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                var invokeTargetClass = 'net/minecraft/world/entity/Entity'
+                var invokeTargetName = 'changeDimension'
+                var invokeTargetNameObf = 'm_5489_'
+                var invokeTargetDesc = '(Lnet/minecraft/server/level/ServerLevel;)Lnet/minecraft/world/entity/Entity;'
+                var insnToInsertGetter = function() {
+                    var MY_LABEL = new LabelNode(new Label())
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onHandleNetherPortal', '(Lnet/minecraft/world/entity/Entity;)Z'))
+                    insnToInsert.add(new JumpInsnNode(Opcodes.IFEQ, MY_LABEL))
+                    insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                    insnToInsert.add(MY_LABEL)
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                return methodNode
+            }
         }
 	}
 }

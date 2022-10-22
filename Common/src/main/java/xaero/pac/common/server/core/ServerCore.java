@@ -53,6 +53,7 @@ import xaero.pac.common.packet.ClientboundPacDimensionHandshakePacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.reflect.Reflection;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -65,6 +66,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -324,6 +326,21 @@ public class ServerCore {
 		HANDLING_FROSTWALK = false;
 		FROSTWALK_ENTITY = null;
 		FROSTWALK_LEVEL = null;
+	}
+
+	private static final Field ENTITY_INSIDE_PORTAL_FIELD = Reflection.getFieldReflection(Entity.class, "field_5963", "f_19817_", "isInsidePortal");
+
+	public static boolean onHandleNetherPortal(Entity entity) {
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(entity.getServer());
+		if(serverData == null)
+			return false;
+		if(serverData.getChunkProtection().onNetherPortal(serverData, entity, (ServerLevel) entity.getLevel(), entity.blockPosition())){
+			entity.level.getProfiler().pop();
+			Reflection.setReflectFieldValue(entity, ENTITY_INSIDE_PORTAL_FIELD, false);
+			return true;
+		}
+		return false;
 	}
 
 }

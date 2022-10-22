@@ -254,6 +254,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		private Predicate<T> valueValidator;
 		protected String tooltipPrefix;
 		protected Function<T, Component> commandOutputWriter;
+		protected Function<String, T> commandInputReader;
 		protected Predicate<PlayerConfigType> configTypeFilter;
 		
 		@SuppressWarnings("unchecked")
@@ -275,6 +276,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 			setTooltipPrefix(null);
 			setConfigTypeFilter(t -> true);
 			setCommandOutputWriter(null);
+			setCommandInputReader(null);
 			return self;
 		}
 		
@@ -335,6 +337,11 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 			return self;
 		}
 
+		public B setCommandInputReader(Function<String, T> commandInputReader) {
+			this.commandInputReader = commandInputReader;
+			return self;
+		}
+
 		public B setConfigTypeFilter(Predicate<PlayerConfigType> configTypeFilter) {
 			this.configTypeFilter = configTypeFilter;
 			return self;
@@ -390,13 +397,14 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 				setTranslation("gui.xaero_pac_player_config_" + id);
 			if(commentTranslation == null)
 				setCommentTranslation("gui.xaero_pac_player_config_tooltip_" + id);
-			Function<String, T> commandInputParser = getCommandInputParser();
-			if(commandInputParser == null)
+			if(commandInputReader == null)
+				commandInputReader = getCommandInputParser();
+			if(commandInputReader == null)
 				throw new IllegalStateException();
 			valueValidator = buildValueValidator();
 			serverSideValidator = buildServerSideValidator();
 			clientSideValidator = buildClientSideValidator();
-			PlayerConfigOptionSpec<T> spec = buildInternally(Collections.unmodifiableList(StringUtils.split(id, '.')), id.substring(PlayerConfig.PLAYER_CONFIG_ROOT_DOT.length()), commandInputParser);
+			PlayerConfigOptionSpec<T> spec = buildInternally(Collections.unmodifiableList(StringUtils.split(id, '.')), id.substring(PlayerConfig.PLAYER_CONFIG_ROOT_DOT.length()), commandInputReader);
 			if(dest != null)
 				dest.put(spec.getId(), spec);
 			return spec;

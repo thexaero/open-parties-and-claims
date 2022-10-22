@@ -843,7 +843,22 @@ public class ChunkProtection
 		return false;
 	}
 
+	private Object getOwnerInfo(Entity entity){
+		Object result = entity;
+		if(entity instanceof Projectile){
+			result = ((Projectile) entity).getOwner();
+		} else if(entity instanceof ItemEntity){
+			UUID ownerId = ((ItemEntity) entity).getOwner();
+			if(ownerId == null)
+				ownerId = ((ItemEntity) entity).getThrower();
+			result = ownerId;
+		}
+		return result == null ? entity : result;
+	}
+
 	public void onEntitiesPushBlock(IServerData<CM, P> serverData, ServerLevel world, BlockPos pos, Block block, List<? extends Entity> entities) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return;
 		Iterator<? extends Entity> iterator = entities.iterator();
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), new ChunkPos(pos));
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
@@ -861,27 +876,21 @@ public class ChunkProtection
 		Set<UUID> ownersToIgnore = null;
 		while(iterator.hasNext()){
 			Entity e = iterator.next();
-			Entity owner = null;
-			UUID ownerId = null;
-			if(e instanceof Projectile){
-				owner = ((Projectile) e).getOwner();
-				if(owner != null)
-					ownerId = owner.getUUID();
-			} else if(e instanceof ItemEntity){
-				ownerId = ((ItemEntity) e).getOwner();
-				if(ownerId == null)
-					ownerId = ((ItemEntity) e).getThrower();
-				owner = ownerId == null ? null : world.getServer().getPlayerList().getPlayer(ownerId);
-			}
-			if(ownerId == null) {
-				ownerId = e.getUUID();
-				owner = e;
+			Entity owner;
+			UUID ownerId;
+			Object ownerInfo = getOwnerInfo(e);
+			if (ownerInfo instanceof UUID) {
+				ownerId = (UUID) ownerInfo;
+				owner = world.getServer().getPlayerList().getPlayer(ownerId);
+			} else {
+				owner = (Entity) ownerInfo;
+				ownerId = owner.getUUID();
 			}
 			if(ownersToIgnore != null && ownersToIgnore.contains(ownerId)){
 				iterator.remove();
 				continue;
 			}
-			if(!hasChunkAccess(config, owner, ownerId) && (everyoneExceptAccessHavers || checkProtectionLeveledOption(blockSpecificOption, config, owner, ownerId))){
+			if((everyoneExceptAccessHavers || checkProtectionLeveledOption(blockSpecificOption, config, owner, ownerId)) && !hasChunkAccess(config, owner, ownerId)){
 				if(iterator.hasNext()){
 					if(ownersToIgnore == null)
 						ownersToIgnore = new HashSet<>();
@@ -894,6 +903,29 @@ public class ChunkProtection
 			)
 				break;//for these blocks 1 allowed entity is enough info
 		}
+	}
+
+	public boolean onNetherPortal(IServerData<CM, P> serverData, Entity entity, ServerLevel world, BlockPos pos) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), new ChunkPos(pos));
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
+			return false;
+		Entity owner;
+		UUID ownerId;
+		Object ownerInfo = getOwnerInfo(entity);
+		if (ownerInfo instanceof UUID) {
+			ownerId = (UUID) ownerInfo;
+			owner = world.getServer().getPlayerList().getPlayer(ownerId);
+		} else {
+			owner = (Entity) ownerInfo;
+			ownerId = owner.getUUID();
+		}
+		IPlayerConfigOptionSpecAPI<Integer> option = entity instanceof Player ? PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS :
+				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER;
+		return checkProtectionLeveledOption(option, config, owner, ownerId) && !hasChunkAccess(config, owner, ownerId);
 	}
 
 	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, IPlayerChunkClaim posClaim, int posChunkX, int posChunkZ, int anchorChunkX, int anchorChunkZ) {

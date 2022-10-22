@@ -46,7 +46,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 		String comment;
 		String translation;
 		String commentTranslation;
-		String interactionOptionsTooltip = "\n\nParty - only members of the same party as you.\nAllies - only members of parties allied by the one you're in.\nEveryone - any player.";
+		String interactionOptionsTooltip = "\n\n1) Party - only members of the same party as you.\n2) Allies - only members of parties allied by the one you're in.\n3) Everyone - any player.";
 		if(group.getType() == ChunkProtectionExceptionType.INTERACTION) {
 			optionId = OPTION_ROOT + category + "." + INTERACT;
 			comment = "When enabled, claimed chunk protection makes an exception for interaction with the following " + categoryPlural + ": %1$s." + interactionOptionsTooltip;
@@ -64,8 +64,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + BREAK;
 		} else if(group.getType() == ChunkProtectionExceptionType.BARRIER){
 			optionId = OPTION_ROOT + category + "." + BARRIER;
-			String barrierOptionsTooltip = "\n\nEveryone - block any matched entity.\nNot Party - only entities not owned by players in the same party as you.\nNot Ally - only entities not owned by any player in any party allied by yours.";
-			comment = "When enabled, claimed chunk protection prevents the following additional " + categoryPlural + " from entering the claim (except wilderness): %1$s." + barrierOptionsTooltip;
+			comment = "When enabled, claimed chunk protection prevents the following additional " + categoryPlural + " from entering the claim (except wilderness): %1$s.\n\n" + PlayerConfig.PROTECTION_LEVELS_TOOLTIP;
 			translation = TRANSLATION_ROOT + category + "." + BARRIER;
 			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + BARRIER;
 		} else {
@@ -88,7 +87,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 		comment = String.format(comment, listString);
 		PlayerConfigStaticListIterationOptionSpec<Integer> option = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(optionId)
-				.setList(PlayerConfig.EXCEPTION_LEVELS)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setTranslation(translation, group.getName())
 				.setCommentTranslation(commentTranslation, listString)
 				.setDefaultValue(0)

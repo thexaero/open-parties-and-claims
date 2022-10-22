@@ -60,6 +60,17 @@ public class Reflection {
 		field.setAccessible(accessibleBU);
 		return result;
 	}
+
+	public static <A, B> void setReflectFieldValue(A parentObject, Field field, B value) {
+		boolean accessibleBU = field.isAccessible();
+		field.setAccessible(true);
+		try {
+			field.set(parentObject, value);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		field.setAccessible(accessibleBU);
+	}
 	
 	public static Method getMethodReflection(Class<?> c, String obfuscatedName, String shortObfuscatedName, String name, Class<?>... parameters) {
 		Method method = null;
