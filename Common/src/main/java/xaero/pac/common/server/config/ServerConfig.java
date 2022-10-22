@@ -271,7 +271,7 @@ public class ServerConfig {
 							"Hoppers{minecraft:hopper}",
 							"Dispenser-like{minecraft:dispenser, minecraft:dropper}",
 							"Anvils{#minecraft:anvil}",
-							"Beds{minecraft:bed}",
+							"Beds{#minecraft:beds}",
 							"Beacons{minecraft:beacon}",
 							"Enchanting_Tables{minecraft:enchanting_table}",
 							"break$Crops{#minecraft:crops}"
