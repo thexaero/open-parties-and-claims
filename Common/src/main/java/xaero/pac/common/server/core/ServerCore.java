@@ -95,7 +95,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(world.getServer());
 		if(serverData == null)
 			return true;
-		boolean shouldProtect = serverData.getChunkProtection().onEntityInteract(serverData, source, target, InteractionHand.MAIN_HAND, false, true, false);
+		boolean shouldProtect = serverData.getChunkProtection().onEntityInteract(serverData, source, source, target, InteractionHand.MAIN_HAND, false, true, false);
 		return !shouldProtect;
 	}
 
@@ -264,6 +264,8 @@ public class ServerCore {
 		ServerPlayer player = packetListener.player;
 		ServerLevel level = player.getLevel();
 		final Entity entity = packet.getTarget(level);
+		if(entity == null)
+			return true;
 		return !OpenPartiesAndClaims.INSTANCE.getCommonEvents().onInteractEntitySpecific(player, entity, ENTITY_INTERACTION_HAND);
 	}
 

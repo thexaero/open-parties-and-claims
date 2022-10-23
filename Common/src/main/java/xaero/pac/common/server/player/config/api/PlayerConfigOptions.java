@@ -126,11 +126,11 @@ public class PlayerConfigOptions {
 	/**
 	 * Whether the claimed chunk protection includes entity protection against mobs.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS;
 	/**
-	 * Whether the claimed chunk protection includes entity protection against anonymous attacks.
+	 * Whether the claimed chunk protection includes entity protection against non-living entities.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER;
 	/**
 	 * Whether the claimed chunk protection includes entity protection against explosions.
 	 */
@@ -384,15 +384,23 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromMobs")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs.")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromAnonymousAttacks")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against non-player entities without a living owner (e.g. dispenser-fired arrows, falling anvils, redstone-activated TNT).")
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromOther")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against non-living entities (e.g. arrows, falling anvils, activated TNT).\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromExplosions")

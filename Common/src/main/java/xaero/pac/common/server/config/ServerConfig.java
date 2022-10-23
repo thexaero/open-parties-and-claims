@@ -398,7 +398,7 @@ public class ServerConfig {
 							"claims.protection.fromFrostWalking",
 							"claims.protection.entitiesFromPlayers",
 							"claims.protection.entitiesFromMobs",
-							"claims.protection.entitiesFromAnonymousAttacks",
+							"claims.protection.entitiesFromOther",
 							"claims.protection.entitiesFromExplosions",
 							"claims.protection.fluidBarrier",
 							"claims.protection.dispenserBarrier",
