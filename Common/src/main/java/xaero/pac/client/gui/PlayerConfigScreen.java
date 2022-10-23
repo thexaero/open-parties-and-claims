@@ -108,7 +108,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	}
 
 	public static TextComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){
-		String commentTranslated = I18n.get(option.getCommentTranslation(), option.getCommentTranslationArgs());
+		String commentTranslated = I18n.get(option.getCommentTranslation(), (Object[]) option.getCommentTranslationArgs());
 		if(commentTranslated.equals("default"))
 			commentTranslated = option.getComment();
 		if(option.getTooltipPrefix() != null)
