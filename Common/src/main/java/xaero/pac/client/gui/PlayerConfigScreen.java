@@ -237,7 +237,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER &&
 						(option.getId().startsWith(PlayerConfigExceptionDynamicOptionsLoader.OPTION_ROOT) || staticProtectionLevelOption)) {
 					boolean enablesProtection = option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + ".") || staticProtectionLevelOption;
-					values = List.of(
+					values = Lists.newArrayList(
 							values.get(0),
 							values.get(enablesProtection ? 1 : values.size() - 1)
 					);
