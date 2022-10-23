@@ -80,9 +80,13 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES;
 	/**
-	 * Whether the claimed chunk protection includes protection against mob griefing.
+	 * Whether the claimed chunk protection includes protection against mobs breaking/placing blocks.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS;
+	/**
+	 * Whether the claimed chunk protection includes protection against non-living entities breaking/placing blocks.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER;
 	/**
 	 * Whether the claimed chunk protection includes protection against fire spread.
 	 */
@@ -100,9 +104,17 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES;
 	/**
-	 * Whether the claimed chunk protection includes protection of pressure plates being pressed by entities.
+	 * Whether the claimed chunk protection includes protection of pressure plates being pressed by players.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLATES_FROM_ENTITIES;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS;
+	/**
+	 * Whether the claimed chunk protection includes protection of pressure plates being pressed by mobs.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS;
+	/**
+	 * Whether the claimed chunk protection includes protection of pressure plates being pressed by non-living entities.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER;
 	/**
 	 * Whether the claimed chunk protection includes protection from frost walking.
 	 */
@@ -286,10 +298,23 @@ public class PlayerConfigOptions {
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the mob griefing option.")
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromMobGriefing")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against mob griefing (e.g. endermen). Chunks directly next to the protected chunks are also partially protected. Should work for vanilla mob behavior, unless another mod breaks it. Modded mob behavior is unlikely to be included. Feel free to set the vanilla game rule for mob griefing to be safe. Keep in mind that creeper explosions are also affected by the explosion-related options. ")
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromMobs")
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setDefaultValue(1)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection against mobs, who don't have access to the chunks, breaking/placing blocks (e.g. endermen). Chunks directly next to the protected chunks are sometimes also partially protected. Should work for vanilla mob behavior. Modded mob behavior is likely not to be included. Feel free to set the vanilla game rule for mob griefing for extra safety. Keep in mind that creeper explosions are also affected by the explosion-related options.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromOther")
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setDefaultValue(1)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection against non-living entities, who don't have access to the chunks, breaking/placing blocks. Should work for vanilla entity behavior, unless another mod breaks it. Modded entity behavior is likely not to be included. Keep in mind that explosions are also affected by the explosion-related options.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFireSpread")
@@ -314,13 +339,31 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_ENTITIES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromEntities")
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromPlayers")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes pressure plates being protected against players/entities who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+						"When enabled, claimed chunk protection includes pressure plates being protected against players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromMobs")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes pressure plates being protected against mobs who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromOther")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes pressure plates being protected against non-living entities who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
@@ -366,8 +409,8 @@ public class PlayerConfigOptions {
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes chorus fruit teleportation prevention for players who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+						"When enabled, claimed chunk protection includes chorus fruit teleportation prevention for entities/players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
 				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
