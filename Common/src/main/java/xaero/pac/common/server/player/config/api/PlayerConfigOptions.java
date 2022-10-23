@@ -148,7 +148,11 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS;
 	/**
-	 * Whether the claimed chunk protection includes protection against non-player entities using nether portals.
+	 * Whether the claimed chunk protection includes protection against mobs using nether portals.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS;
+	/**
+	 * Whether the claimed chunk protection includes protection against non-living entities using nether portals.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER;
 	/**
@@ -430,12 +434,21 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsMobs")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes nether portal usage prevention for mobs who don't have access to the chunks. Even after the protection is turned off, a recently stopped entity is still on a short cooldown. You must let it finish without constantly retrying to push it through the portal, which restarts the cooldown.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsOther")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes nether portal usage prevention for non-player entities who don't have access to the chunks. Even after the protection is turned off, a recently stopped entity is still on a short cooldown. You must let it finish without constantly retrying to push it through the portal, which restarts the cooldown.\n\n"
+						"When enabled, claimed chunk protection includes nether portal usage prevention for non-living entities who don't have access to the chunks. Even after the protection is turned off, a recently stopped entity is still on a short cooldown. You must let it finish without constantly retrying to push it through the portal, which restarts the cooldown.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
