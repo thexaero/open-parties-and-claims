@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(Raid.class)
+@Mixin(value = Raid.class, priority = 1000001)
 public class MixinRaid {
 
 	@Inject(method = "findRandomSpawnPos", at = @At("HEAD"))

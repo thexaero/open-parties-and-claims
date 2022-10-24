@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.world.IServerLevel;
 
-@Mixin(ServerLevel.class)
+@Mixin(value = ServerLevel.class, priority = 1000001)
 public class MixinServerLevel implements IServerLevel {
 
 	private LongSet xaero_OPAC_forceloadTickets;
