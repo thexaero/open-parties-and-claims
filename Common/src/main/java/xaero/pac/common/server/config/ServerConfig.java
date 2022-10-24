@@ -399,6 +399,7 @@ public class ServerConfig {
 							"claims.protection.entitiesFromPlayers",
 							"claims.protection.entitiesFromMobs",
 							"claims.protection.entitiesFromOther",
+							"claims.protection.entitiesRedirect",
 							"claims.protection.entitiesFromExplosions",
 							"claims.protection.fluidBarrier",
 							"claims.protection.dispenserBarrier",

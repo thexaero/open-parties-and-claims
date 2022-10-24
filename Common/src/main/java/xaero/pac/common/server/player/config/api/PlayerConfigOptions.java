@@ -132,6 +132,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER;
 	/**
+	 * Whether the claimed chunk entity protection redirects the used config option to the owner of the attacking entity.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT;
+	/**
 	 * Whether the claimed chunk protection includes entity protection against explosions.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS;
@@ -151,6 +155,10 @@ public class PlayerConfigOptions {
 	 * Whether the claimed chunk protection includes player protection against non-living entities.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER;
+	/**
+	 * Whether the claimed chunk player protection redirects the used config option to the owner of the attacking entity.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT;
 	/**
 	 * Whether the claimed chunk protection includes protection against chorus fruit teleportation into the claim.
 	 */
@@ -422,6 +430,11 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesRedirect")
+				.setDefaultValue(true)
+				.setComment("When enabled, instead of always simply using the direct \"Protect Entities From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has a living owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Entities From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
+				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromExplosions")
 				.setDefaultValue(true)
@@ -446,6 +459,11 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersFromOther")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes players being protected against non-living entities.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersRedirect")
+				.setDefaultValue(true)
+				.setComment("When enabled, instead of always simply using the direct \"Protect Players From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has a living owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Players From Players\").")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.chorusFruitTeleport")

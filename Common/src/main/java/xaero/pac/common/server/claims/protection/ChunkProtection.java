@@ -181,26 +181,29 @@ public class ChunkProtection
 	private boolean shouldProtectEntity(IPlayerConfig claimConfig, Entity e, Entity from, Entity accessor, UUID accessorId) {
 		if(claimConfig == null || !claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return false;
+
 		if(e instanceof Player){
-			return from instanceof LivingEntity &&
+			Entity usedOptionBase = claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT) ? accessor : from;
+			return usedOptionBase instanceof LivingEntity &&
 					(
-						from instanceof Player && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS)
+						usedOptionBase instanceof Player && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS)
 					||
-						!(from instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS)
+						!(usedOptionBase instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS)
 					)
 				||
-					!(from instanceof LivingEntity) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER);
+					!(usedOptionBase instanceof LivingEntity) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER);
 		}
-		return isProtectable(e) &&
+		Entity usedOptionBase = claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT) ? accessor : from;
+		return isProtectable(e) && !hasChunkAccess(claimConfig, accessor, accessorId) &&
 				(
-					from instanceof LivingEntity && !(from instanceof Player && entityHelper.isTamed(e, (Player)from)) &&
+					usedOptionBase instanceof LivingEntity && !(accessor instanceof Player && entityHelper.isTamed(e, (Player)accessor)) &&
 					(
-						from instanceof Player && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS, claimConfig, accessor, accessorId) && !hasChunkAccess(claimConfig, accessor, accessorId)
+						usedOptionBase instanceof Player && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS, claimConfig, accessor, accessorId)
 					||
-						!(from instanceof Player) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS, claimConfig, accessor, accessorId)
+						!(usedOptionBase instanceof Player) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS, claimConfig, accessor, accessorId)
 					)
 				||
-					!(from instanceof LivingEntity) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER, claimConfig, accessor, accessorId)
+					!(usedOptionBase instanceof LivingEntity) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER, claimConfig, accessor, accessorId)
 				||
 					accessor instanceof Raider raider && raider.canJoinRaid() && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS)//based on the accessor on purpose
 				);
@@ -242,17 +245,18 @@ public class ChunkProtection
 		if(accessor != null) {
 			if(accessorId == null)
 				accessorId = accessor.getUUID();
-			if (accessor instanceof Player && ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsNonallyMode())
+			boolean isAPlayer = accessor instanceof Player;
+			if (isAPlayer && ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsNonallyMode())
 				return false;
 			if (accessorId.equals(claimConfig.getPlayerId()) ||
-					accessor instanceof Player && (ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsAdminMode() ||
+					isAPlayer && (ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsAdminMode() ||
 							ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsServerMode() &&
 									claimsManager.getPermissionHandler().playerHasServerClaimPermission((ServerPlayer) accessor) &&
 									claimConfig.getType() == PlayerConfigType.SERVER
 					)
 			)
 				return true;
-			if (!(accessor instanceof Player))
+			if (!isAPlayer)
 				return false;
 		} else if(accessorId == null)
 			return false;
@@ -554,10 +558,11 @@ public class ChunkProtection
 			accessorId = accessor == null ? null : accessor.getUUID();
 		}
 		if(
+			target != accessor &&
 			(
 				shouldProtectEntity(config, target, entity, accessor, accessorId)
 			||
-				target instanceof Player && target != accessor && accessor instanceof Player &&
+				target instanceof Player && accessor instanceof Player &&
 				shouldProtectEntity(getClaimConfig(playerConfigs, claimsManager.get(accessor.getLevel().dimension().location(), accessor.chunkPosition())), accessor, accessor == entity ? target : entity, target, null)
 			) && !isEntityException(accessor, accessorId, target, config, emptyHand, attack)
 		) {
