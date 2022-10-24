@@ -345,4 +345,26 @@ public class ServerCore {
 		return false;
 	}
 
+	private static boolean FINDING_RAID_SPAWN_POS;
+	public static void onFindRandomSpawnPosPre(){
+		FINDING_RAID_SPAWN_POS = true;
+	}
+
+	public static void onFindRandomSpawnPosPost(){
+		FINDING_RAID_SPAWN_POS = false;
+	}
+
+	public static boolean replaceIsPositionEntityTicking(boolean currentReturn, ServerLevel level, BlockPos pos){
+		if(!currentReturn)
+			return false;
+		if(FINDING_RAID_SPAWN_POS) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(level.getServer());
+			if (serverData == null)
+				return true;
+			return !serverData.getChunkProtection().onRaidSpawn(serverData, level, pos);
+		}
+		return true;
+	}
+
 }

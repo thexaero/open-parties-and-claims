@@ -181,6 +181,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE;
 	/**
+	 * Whether the claimed chunk protection includes protection against village raids.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_RAIDS;
+	/**
 	 * Whether the player's forceloadable claims are forceloaded, at least while the player is online.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> FORCELOAD;
@@ -485,6 +489,11 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection from \"item use\" for chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_RAIDS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.raids")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection from village raids. It stops raiders from spawning inside the protected chunks, from entering them and from hurting protectable entities, even if entity protection is turned off.")
 				.build(allOptions);
 
 		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)

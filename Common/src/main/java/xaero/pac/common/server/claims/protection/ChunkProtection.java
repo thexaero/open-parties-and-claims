@@ -40,8 +40,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
@@ -191,6 +194,8 @@ public class ChunkProtection
 					)
 				||
 					!(from instanceof LivingEntity) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER, claimConfig, accessor, accessorId)
+				||
+					accessor instanceof Raider raider && raider.canJoinRaid() && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS)
 				);
 	}
 
@@ -620,6 +625,8 @@ public class ChunkProtection
 			isBlockedEntity = hitsAnotherClaim(serverData, fromClaim, toClaim, null);
 			madeAnException = true;
 		}
+		if(!isBlockedEntity)
+			isBlockedEntity = accessor instanceof Raider raider && raider.canJoinRaid() && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
 		if(!isBlockedEntity && madeAnException && accessor != entity){
 			//testing if the barrier protection affects the entity's owner
 			//this is for cases where a player enters a claim with no player barrier and sends an entity to another claimed chunk
@@ -937,6 +944,10 @@ public class ChunkProtection
 			if(ownerId == null)
 				ownerId = ((ItemEntity) entity).getThrower();
 			result = ownerId;
+		} else if(entity instanceof Vex){
+			result = ((Vex) entity).getOwner();
+		} else if(entity instanceof EvokerFangs){
+			result = ((EvokerFangs) entity).getOwner();
 		}
 		return result == null ? entity : result;
 	}
@@ -1027,6 +1038,15 @@ public class ChunkProtection
 						PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS :
 						PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER;
 		return checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId);
+	}
+
+	public boolean onRaidSpawn(IServerData<CM, P> serverData, ServerLevel world, BlockPos pos) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), new ChunkPos(pos));
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		return config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
 	}
 
 	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, IPlayerChunkClaim posClaim, int posChunkX, int posChunkZ, int anchorChunkX, int anchorChunkZ) {

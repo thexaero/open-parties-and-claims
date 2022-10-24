@@ -43,6 +43,7 @@
         "MixinPressurePlateBlock",
         "MixinProjectile",
         "MixinRabbitRaidGardenGoal",
+        "MixinRaid",
         "MixinRandomStrollGoal",
         "MixinRavager",
         "MixinReloadableServerResources",

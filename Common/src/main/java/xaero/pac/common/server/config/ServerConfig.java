@@ -404,6 +404,7 @@ public class ServerConfig {
 							"claims.protection.dispenserBarrier",
 							"claims.protection.pistonBarrier",
 							"claims.protection.entitiesFromFire",
+							"claims.protection.raids",
 							"parties.name",
 							"parties.shareLocationWithParty",
 							"parties.shareLocationWithMutualAllyParties",

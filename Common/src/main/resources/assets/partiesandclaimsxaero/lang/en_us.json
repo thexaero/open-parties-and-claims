@@ -357,6 +357,8 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.pistonBarrier" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.neighborChunksItemUse" : "Protect Item Use in Neighbors",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.neighborChunksItemUse" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.protection.raids" : "Protect From Village Raids",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.raids" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.exceptionGroups.block.interact" : "Interact (%1$s)",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.protection.exceptionGroups.block.interact" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.protection.exceptionGroups.block.interact_0" : "OFF",

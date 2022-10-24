@@ -20,12 +20,14 @@ package xaero.pac.common.mixin;
 
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.world.IServerLevel;
 
 @Mixin(ServerLevel.class)
@@ -45,6 +47,11 @@ public class MixinServerLevel implements IServerLevel {
 		LongSet forceloadTickets = getXaero_OPAC_forceloadTickets();
 		if(forceloadTickets.contains(chunkPos.toLong()))
 			infoReturnable.setReturnValue(true);
+	}
+
+	@Inject(method = "isPositionEntityTicking", at = @At("RETURN"), cancellable = true)
+	public void onIsPositionEntityTicking(BlockPos pos, CallbackInfoReturnable<Boolean> infoReturnable){
+		infoReturnable.setReturnValue(ServerCore.replaceIsPositionEntityTicking(infoReturnable.getReturnValue(), (ServerLevel)(Object)this, pos));
 	}
 
 }

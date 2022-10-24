@@ -954,6 +954,44 @@ function initializeCoreMod() {
                 insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
                 return methodNode
             }
+        },
+        'xaero_pac_serverlevel_ispositionentityticking': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.server.level.ServerLevel',
+                'methodName': 'm_143340_',
+                'methodDesc' : '(Lnet/minecraft/core/BlockPos;)Z'
+            },
+            'transformer' : function(methodNode){
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'replaceIsPositionEntityTicking', '(ZLnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;)Z'))
+                    return insnToInsert
+                }
+                insertBeforeReturn2(methodNode, insnToInsertGetter)
+                return methodNode
+            }
+        },
+        'xaero_pac_raid_findrandomspawnpos': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.raid.Raid',
+                'methodName': 'm_37707_',
+                'methodDesc' : '(II)Lnet/minecraft/core/BlockPos;'
+            },
+            'transformer' : function(methodNode){
+                methodNode.instructions.insert(methodNode.instructions.get(0), (new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onFindRandomSpawnPosPre', '()V')))
+
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onFindRandomSpawnPosPost', '()V'))
+                    return insnToInsert
+                }
+                insertBeforeReturn2(methodNode, insnToInsertGetter)
+                return methodNode
+            }
         }
 	}
 }
