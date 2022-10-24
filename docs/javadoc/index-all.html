@@ -1499,6 +1499,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection against explosions.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against mobs breaking/placing blocks.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against non-living entities breaking/placing blocks.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection of buttons being pressed by projectiles.</div>
@@ -1515,10 +1523,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection against directly dispensing into the claim.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_ANONYMOUS_ATTACKS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes entity protection against anonymous attacks.</div>
-</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection includes entity protection against explosions.</div>
@@ -1530,6 +1534,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection includes entity protection against mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes entity protection against non-living entities.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
@@ -1551,10 +1559,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection from frost walking.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FROM_MOB_GRIEFING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against mob griefing.</div>
-</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FROM_PARTY" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FROM_PARTY</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection against the party that the player is in.</div>
@@ -1564,17 +1568,41 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
  neighbor chunks of the claim.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against mobs using nether portals.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against non-living entities using nether portals.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against players using nether portals.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection against pistons pushing into the claim.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLATES_FROM_ENTITIES" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLATES_FROM_ENTITIES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
-<div class="block">Whether the claimed chunk protection includes protection of pressure plates being pressed by entities.</div>
+<div class="block">Whether the claimed chunk protection includes protection of pressure plates being pressed by mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection of pressure plates being pressed by non-living entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection of pressure plates being pressed by players.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection against player-caused lightnings.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_RAIDS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_RAIDS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against village raids.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES" class="member-name-link">PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
