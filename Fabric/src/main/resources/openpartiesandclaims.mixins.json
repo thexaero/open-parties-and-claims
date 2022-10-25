@@ -34,6 +34,7 @@
         "MixinMinecraftServer",
         "MixinMob",
         "MixinMoveToBlockGoal",
+        "MixinPersistentEntitySectionManager",
         "MixinPersistentEntitySectionManagerCallback",
         "MixinPiglin",
         "MixinPistonBaseBlock",

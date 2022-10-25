@@ -31,6 +31,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -201,7 +202,7 @@ public class CommonEvents {
 			if(entity instanceof Player player)
 				return serverData.getChunkProtection().onPlayerDestroyBlock(serverData, pos, world, player, false);
 			else
-				return serverData.getChunkProtection().onEntityDestroyBlock(serverData, world, entity, pos);
+				return serverData.getChunkProtection().onEntityDestroyBlock(serverData, (ServerLevel) world, entity, pos);
 		}
 		return false;
 	}
@@ -293,11 +294,12 @@ public class CommonEvents {
 		return false;
 	}
 
-	public void onEntityJoinWorld(Entity entity, Level world) {
+	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk) {
 		if(world instanceof ServerLevel){
 			if(entity instanceof LightningBolt bolt) {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
 				serverData.getChunkProtection().onLightningBolt(serverData, bolt);
+				return false;
 			} else if(entity instanceof Projectile projectile && projectile.getOwner() != null && projectile.getOwner().getLevel() == entity.getLevel()){
 				SectionPos oldSection = SectionPos.of(projectile.getOwner().blockPosition());
 				SectionPos newSection = SectionPos.of(entity.blockPosition());
@@ -306,8 +308,16 @@ public class CommonEvents {
 							serverData = ServerData.from(entity.getServer());
 					serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, projectile.getOwner().getX(), projectile.getOwner().getZ(), newSection, oldSection);
 				}
+				return false;
+			} else if(!fromDisk && entity instanceof ItemEntity itemEntity){
+				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+						serverData = ServerData.from(world.getServer());
+				if(serverData == null)
+					return false;
+				return serverData.getChunkProtection().onItemAddedToWorld(serverData, itemEntity);
 			}
 		}
+		return false;
 	}
 
 	protected void onEntityEnteringSection(Entity entity, SectionPos oldSection, SectionPos newSection, boolean chunkChanged){

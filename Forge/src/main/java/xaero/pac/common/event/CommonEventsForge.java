@@ -180,7 +180,8 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onEntityJoinWorld(EntityJoinWorldEvent event){
-		super.onEntityJoinWorld(event.getEntity(), event.getWorld());
+		if(super.onEntityJoinWorld(event.getEntity(), event.getWorld(), event.loadedFromDisk()))
+			event.setCanceled(true);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -210,4 +211,5 @@ public class CommonEventsForge extends CommonEvents {
 	public void onTagsUpdate(TagsUpdatedEvent event) {
 		super.onTagsUpdate();
 	}
+
 }

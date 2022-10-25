@@ -24,7 +24,6 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.*;
@@ -88,7 +87,6 @@ public class CommonEventsFabric extends CommonEvents {
 		UseBlockCallback.EVENT.register(PROTECTION_PHASE, this::onRightClickBlock);
 		UseItemCallback.EVENT.register(PROTECTION_PHASE, this::onItemRightClick);
 		AttackEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityAttack);
-		ServerEntityEvents.ENTITY_LOAD.register(this::onEntityJoinWorld);
 	}
 
 	public void onServerAboutToStart(MinecraftServer server) throws Throwable {
@@ -194,8 +192,8 @@ public class CommonEventsFabric extends CommonEvents {
 		return super.onChorusFruit(entity, target);
 	}
 
-	public void onEntityJoinWorld(Entity entity, Level world){
-		super.onEntityJoinWorld(entity, world);
+	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk){
+		return super.onEntityJoinWorld(entity, world, fromDisk);
 	}
 
 	public void onEntityEnteringSection(Entity entity, long oldSectionKey, long newSectionKey){

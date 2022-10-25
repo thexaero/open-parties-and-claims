@@ -319,7 +319,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(FROSTWALK_LEVEL.getServer());
 		if(serverData == null)
 			return pos;
-		if(serverData.getChunkProtection().onFrostWalk(serverData, FROSTWALK_ENTITY, FROSTWALK_LEVEL, FROSTWALK_BLOCKPOS))
+		if(serverData.getChunkProtection().onFrostWalk(serverData, FROSTWALK_ENTITY, (ServerLevel) FROSTWALK_LEVEL, FROSTWALK_BLOCKPOS))
 			return FROSTWALK_BLOCKPOS.setY(FROSTWALK_LEVEL.getMaxBuildHeight());//won't be water here lol
 		return pos;
 	}
