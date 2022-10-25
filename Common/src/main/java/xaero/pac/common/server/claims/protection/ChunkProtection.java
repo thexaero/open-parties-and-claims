@@ -644,6 +644,13 @@ public class ChunkProtection
 		}
 		if(!isBlockedEntity)
 			isBlockedEntity = accessor instanceof Raider raider && raider.canJoinRaid() && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
+		if(!isBlockedEntity && entity instanceof ItemEntity itemEntity) {
+			UUID throwerId = itemEntity.getThrower();
+			if(throwerId != null) {
+				Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
+				isBlockedEntity = shouldPreventToss(config, itemEntity, thrower, throwerId) != itemEntity;
+			}
+		}
 		if(!isBlockedEntity && madeAnException && accessor != entity){
 			//testing if the barrier protection affects the entity's owner
 			//this is for cases where a player enters a claim with no player barrier and sends an entity to another claimed chunk
@@ -1080,11 +1087,22 @@ public class ChunkProtection
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return false;
-		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_PLAYERS) == 0 &&
-				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_MOBS) == 0 &&
-				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_OTHER) == 0)
-			return false;
 		Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
+		Entity result = shouldPreventToss(config, itemEntity, thrower, throwerId);
+		if(result != itemEntity){
+			if(result instanceof Player player && !player.isCreative()) {//causes weird dupe in creative + isn't really necessary to restore items
+				ItemStack itemStack = itemEntity.getItem();
+				if (!player.addItem(itemStack) && thrower != player && !thrower.chunkPosition().equals(player.chunkPosition()))
+					player.drop(itemStack, true);//try dropping the rest from the accessor
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private Entity shouldPreventToss(IPlayerConfig config, ItemEntity itemEntity, Entity thrower, UUID throwerId){//returns the accessor if protected, or the item entity if not protected
+		if(throwerId == null)
+			return itemEntity;
 		Entity accessor = null;
 		UUID accessorId;
 		if(thrower != null){
@@ -1105,15 +1123,9 @@ public class ChunkProtection
 				: usedOptionBase instanceof Player ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_PLAYERS
 				: PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_MOBS;
-		if(checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId)){
-			if(accessor instanceof Player player && !player.isCreative()) {//causes weird dupe in creative + isn't really necessary to restore items
-				ItemStack itemStack = itemEntity.getItem();
-				if (!player.addItem(itemStack) && thrower != player && !thrower.chunkPosition().equals(player.chunkPosition()))
-					player.drop(itemStack, true);//try dropping the rest from the accessor
-			}
-			return true;
-		}
-		return false;
+		if(checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId))
+			return accessor;
+		return itemEntity;
 	}
 
 	private Entity getEntityById(ServerLevel world, UUID id){
