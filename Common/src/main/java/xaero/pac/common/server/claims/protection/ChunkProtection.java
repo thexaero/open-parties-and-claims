@@ -1037,6 +1037,10 @@ public class ChunkProtection
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return false;
+		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS) == 0 &&
+				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS) == 0 &&
+				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER) == 0)
+			return false;
 		Entity accessor;
 		UUID accessorId;
 		Object accessorInfo = getAccessorInfo(entity);
@@ -1075,6 +1079,10 @@ public class ChunkProtection
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
+			return false;
+		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_PLAYERS) == 0 &&
+				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_MOBS) == 0 &&
+				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_DROP_OTHER) == 0)
 			return false;
 		Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
 		Entity accessor = null;
