@@ -551,7 +551,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes prevention of item tossing by players.\n\n"
+						"When enabled, claimed chunk protection includes prevention of item tossing by players.\nDying can be used to circumvent this, so it is recommended to enable keepInventory or use a gravestone mod.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.build(allOptions);
