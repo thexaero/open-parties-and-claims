@@ -96,22 +96,22 @@ public class ChunkProtectionEntityHelper {
 	}
 	
 	boolean isTamed(Entity e, Player p) {
-		if(e instanceof TamableAnimal) {
-			TamableAnimal tameable = (TamableAnimal)e;
-			if(tameable.isTame() && p.getUUID().equals(tameable.getOwnerUUID()))
+		UUID owner = getTamer(e);
+		if(p.getUUID().equals(owner))
 			return true;
-		} else if(e instanceof AbstractHorse) {
-			AbstractHorse horse = (AbstractHorse)e;
-			if(horse.isTamed() && p.getUUID().equals(horse.getOwnerUUID()))
-				return true;
-		} else if(e instanceof Fox) {
-			Fox fox = (Fox)e;
-			if(FOX_TRUSTED_UUID_SECONDARY != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null)))
-				return true;
-			else if(FOX_TRUSTED_UUID_MAIN != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null)))
-				return true;
-		}
+		if(e instanceof Fox fox)
+			return FOX_TRUSTED_UUID_SECONDARY != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null));
 		return false;
+	}
+
+	UUID getTamer(Entity e){
+		if(e instanceof TamableAnimal tameable)
+			return tameable.isTame() ? tameable.getOwnerUUID() : null;
+		else if(e instanceof AbstractHorse horse)
+			return horse.isTamed() ? horse.getOwnerUUID() : null;
+		else if(e instanceof Fox fox)
+			return FOX_TRUSTED_UUID_MAIN != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null) : null;
+		return null;
 	}
 
 }

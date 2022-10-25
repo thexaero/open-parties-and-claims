@@ -951,7 +951,7 @@ public class ChunkProtection
 	}
 
 	private Object getAccessorInfo(Entity entity){
-		Object result = entity;
+		Object result;
 		if(entity instanceof Projectile){
 			result = ((Projectile) entity).getOwner();
 		} else if(entity instanceof ItemEntity){
@@ -963,7 +963,8 @@ public class ChunkProtection
 			result = ((Vex) entity).getOwner();
 		} else if(entity instanceof EvokerFangs){
 			result = ((EvokerFangs) entity).getOwner();
-		}
+		} else
+			result = entityHelper.getTamer(entity);
 		return result == null ? entity : result;
 	}
 
