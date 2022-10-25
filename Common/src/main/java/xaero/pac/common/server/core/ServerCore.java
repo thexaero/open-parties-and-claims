@@ -44,6 +44,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -279,25 +280,23 @@ public class ServerCore {
 		return entity == null || !OpenPartiesAndClaims.INSTANCE.getCommonEvents().onEntityDestroyBlock(level, pos, entity);
 	}
 
-	public static void onEntitiesPushBlock(List<? extends Entity> entities, Block block){
+	public static void onEntitiesPushBlock(List<? extends Entity> entities, Block block, BlockPos pos){
 		if(entities.isEmpty() || !(entities.get(0).getLevel() instanceof ServerLevel level))
 			return;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return;
-		BlockPos pos = entities.get(0).blockPosition();
 		serverData.getChunkProtection().onEntitiesPushBlock(serverData, level, pos, block, entities);
 	}
 
-	public static boolean onEntityPushBlock(Block block, Entity entity){
+	public static boolean onEntityPushBlock(Block block, Entity entity, BlockHitResult blockHitResult){
 		if(entity == null || !(entity.getLevel() instanceof ServerLevel level))
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return false;
-		BlockPos pos = entity.blockPosition();
 		List<Entity> helpList = Lists.newArrayList(entity);
-		serverData.getChunkProtection().onEntitiesPushBlock(serverData, level, pos, block, helpList);
+		serverData.getChunkProtection().onEntitiesPushBlock(serverData, level, blockHitResult.getBlockPos(), block, helpList);
 		return helpList.isEmpty();
 	}
 

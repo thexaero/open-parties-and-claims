@@ -36,7 +36,7 @@ public interface MixinEntityGetter {
 	@Inject(at = @At("RETURN"), method = "getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;")
 	default void onGetEntitiesOfClass(Class<? extends Entity> c, AABB aabb, CallbackInfoReturnable<List<? extends Entity>> cir){
 		if(ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT != null){
-			ServerCore.onEntitiesPushBlock(cir.getReturnValue(), ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT);
+			ServerCore.onEntitiesPushBlock(cir.getReturnValue(), ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT, ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT_POS);
 			ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT = null;
 		}
 	}

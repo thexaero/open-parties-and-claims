@@ -18,7 +18,9 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,14 +34,14 @@ import java.util.List;
 public class MixinPressurePlateBlock {
 
 	@ModifyVariable(method = "getSignalStrength", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
-	public List<Entity> onGetSignalStrength1(List<Entity> list){
-		ServerCore.onEntitiesPushBlock(list, (Block) (Object)this);
+	public List<Entity> onGetSignalStrength1(List<Entity> list, Level level, BlockPos blockPos){
+		ServerCore.onEntitiesPushBlock(list, (Block) (Object)this, blockPos);
 		return list;
 	}
 
 	@ModifyVariable(method = "getSignalStrength", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
-	public List<Entity> onGetSignalStrength2(List<Entity> list){
-		ServerCore.onEntitiesPushBlock(list, (Block) (Object)this);
+	public List<Entity> onGetSignalStrength2(List<Entity> list, Level level, BlockPos blockPos){
+		ServerCore.onEntitiesPushBlock(list, (Block) (Object)this, blockPos);
 		return list;
 	}
 

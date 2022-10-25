@@ -210,13 +210,14 @@ function transformCreateMechArmSearch(methodNode, listFieldName) {
     methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 }
 
-function transformForEntitiesPushBlock(methodNode, includeClassFiltered, includeNonClassFiltered){
+function transformForEntitiesPushBlock(methodNode, includeClassFiltered, includeNonClassFiltered, blockPosArgIndex){
     var invokeTargetClass = 'net/minecraft/world/level/Level'
     var insnToInsertGetter = function() {
         var insnToInsert = new InsnList()
         insnToInsert.add(new InsnNode(Opcodes.DUP))
         insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushBlock', '(Ljava/util/List;Lnet/minecraft/world/level/block/Block;)V'))
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, blockPosArgIndex))
+        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushBlock', '(Ljava/util/List;Lnet/minecraft/world/level/block/Block;Lnet/minecraft/core/BlockPos;)V'))
         return insnToInsert
     }
     if(includeClassFiltered){
@@ -850,7 +851,7 @@ function initializeCoreMod() {
                 'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'
             },
             'transformer' : function(methodNode){
-                return transformForEntitiesPushBlock(methodNode, true, false)
+                return transformForEntitiesPushBlock(methodNode, true, false, 3)
             }
         },
         'xaero_pac_pressureplateblock_getsignalstrength': {
@@ -861,7 +862,7 @@ function initializeCoreMod() {
                 'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I'
             },
             'transformer' : function(methodNode){
-                return transformForEntitiesPushBlock(methodNode, true, true)
+                return transformForEntitiesPushBlock(methodNode, true, true, 2)
             }
         },
         'xaero_pac_weightedpressureplateblock_getsignalstrength': {
@@ -872,7 +873,7 @@ function initializeCoreMod() {
                 'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I'
             },
             'transformer' : function(methodNode){
-                return transformForEntitiesPushBlock(methodNode, true, false)
+                return transformForEntitiesPushBlock(methodNode, true, false, 2)
             }
         },
         'xaero_pac_targetblock_onprojectilehit': {
@@ -887,7 +888,8 @@ function initializeCoreMod() {
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 4))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntityPushBlock', '(Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/entity/Entity;)Z'))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntityPushBlock', '(Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/BlockHitResult;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFEQ, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)

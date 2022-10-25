@@ -34,7 +34,7 @@ public class MixinTargetBlock {
 
 	@Inject(method = "onProjectileHit", at = @At("HEAD"), cancellable = true)
 	public void onOnProjectileHit(Level level, BlockState blockState, BlockHitResult blockHitResult, Projectile projectile, CallbackInfo ci){
-		if(ServerCore.onEntityPushBlock(blockState.getBlock(), projectile))
+		if(ServerCore.onEntityPushBlock(blockState.getBlock(), projectile, blockHitResult))
 			ci.cancel();
 	}
 

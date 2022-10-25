@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.core;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
@@ -26,6 +27,7 @@ public class ServerCoreFabric {
 
 	public static Entity MOB_GRIEFING_GAME_RULE_ENTITY = null;
 	public static Block CALCULATING_PRESSURE_PLATE_WEIGHT = null;
+	public static BlockPos CALCULATING_PRESSURE_PLATE_WEIGHT_POS = null;
 
 	public static void tryToSetMobGriefingEntity(Entity entity){
 		if(entity != null && entity.level instanceof ServerLevel)

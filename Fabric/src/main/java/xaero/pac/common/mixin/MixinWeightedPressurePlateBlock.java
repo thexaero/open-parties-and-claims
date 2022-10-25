@@ -34,8 +34,10 @@ public class MixinWeightedPressurePlateBlock {
 
 	@Inject(method = "getSignalStrength", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
 	public void onGetSignalStrength(Level level, BlockPos blockPos, CallbackInfoReturnable<Integer> cir){
-		if(level instanceof ServerLevel)
-			ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT = (Block) (Object)this;
+		if(level instanceof ServerLevel) {
+			ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT = (Block) (Object) this;
+			ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT_POS = blockPos;
+		}
 	}
 
 }
