@@ -911,16 +911,12 @@ function initializeCoreMod() {
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preFrostWalkHandle', '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;)V'))
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 
-                var invokeTargetClass = 'net/minecraft/world/level/Level'
-                var invokeTargetName = 'getBlockState'
-                var invokeTargetNameObf = 'm_8055_'
-                var invokeTargetDesc = '(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;'
                 var insnToInsertGetter = function() {
                     var insnToInsert = new InsnList()
                     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preBlockStateFetchOnFrostwalk', '(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/BlockPos;'))
                     return insnToInsert
                 }
-                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc, false)
 
                 insnToInsertGetter = function() {
                     var insnToInsert = new InsnList()
