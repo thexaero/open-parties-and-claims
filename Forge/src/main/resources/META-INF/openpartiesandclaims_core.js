@@ -235,6 +235,23 @@ function transformForEntitiesPushBlock(methodNode, includeClassFiltered, include
     return methodNode
 }
 
+function transformPrePostLivingDeath(methodNode, preMethodName, postMethodName){
+    var insnToInsert = new InsnList()
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', preMethodName, "(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;)V"))
+    methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+
+    var insnToInsertGetter = function() {
+        var insnToInsert = new InsnList()
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', postMethodName, "(Lnet/minecraft/world/entity/LivingEntity;)V"))
+        return insnToInsert
+    }
+    insertBeforeReturn2(methodNode, insnToInsertGetter)
+    return methodNode
+}
+
 function initializeCoreMod() {
 	return {
 		'xaero_pac_minecraftserverclass': {
@@ -249,6 +266,20 @@ function initializeCoreMod() {
 				addGetter(classNode, "xaero_OPAC_ServerData", "Lxaero/pac/common/server/IServerDataAPI;")
 				addSetter(classNode, "xaero_OPAC_ServerData", "Lxaero/pac/common/server/IServerDataAPI;")
 				
+				return classNode
+			}
+		},
+		'xaero_pac_entity': {
+			'target' : {
+				'type' : 'CLASS',
+				'name' : 'net.minecraft.world.entity.Entity'
+			},
+			'transformer' : function(classNode){
+				var fields = classNode.fields
+				classNode.interfaces.add("xaero/pac/common/entity/IEntity")
+				fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "xaero_OPAC_mobLootOwner", "Ljava/util/UUID;", null, null))
+				addGetter(classNode, "xaero_OPAC_mobLootOwner", "Ljava/util/UUID;")
+				addSetter(classNode, "xaero_OPAC_mobLootOwner", "Ljava/util/UUID;")
 				return classNode
 			}
 		},
@@ -989,6 +1020,28 @@ function initializeCoreMod() {
                 }
                 insertBeforeReturn2(methodNode, insnToInsertGetter)
                 return methodNode
+            }
+        },
+        'xaero_pac_livingentity_die': {
+            'target' : {
+                 'type': 'METHOD',
+                 'class': 'net.minecraft.world.entity.LivingEntity',
+                 'methodName': 'm_6667_',
+                 'methodDesc' : '(Lnet/minecraft/world/damagesource/DamageSource;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformPrePostLivingDeath(methodNode, "onLivingEntityDiePre", "onLivingEntityDiePost")
+            }
+        },
+        'xaero_pac_livingentity_dropalldeathloot': {
+            'target' : {
+                 'type': 'METHOD',
+                 'class': 'net.minecraft.world.entity.LivingEntity',
+                 'methodName': 'm_6668_',
+                 'methodDesc' : '(Lnet/minecraft/world/damagesource/DamageSource;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformPrePostLivingDeath(methodNode, "onLivingEntityDropDeathLootPre", "onLivingEntityDropDeathLootPost")
             }
         }
 	}

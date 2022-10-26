@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,10 +26,34 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.entity.IEntityFabric;
 import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(Entity.class)
-public class MixinEntity {
+import java.util.UUID;
+
+@Mixin(value = Entity.class, priority = 1000001)
+public class MixinEntity implements IEntityFabric {
+
+	private UUID xaero_OPAC_mobLootOwner;
+	private CompoundTag xaero_OPAC_persistentData;
+
+	@Override
+	public CompoundTag getXaero_OPAC_PersistentData() {
+		if(xaero_OPAC_persistentData == null)
+			xaero_OPAC_persistentData = new CompoundTag();
+		return xaero_OPAC_persistentData;
+	}
+
+	@Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
+	public void onAddAdditionalSaveData(CompoundTag tag, CallbackInfoReturnable<CompoundTag> info) {
+		if(xaero_OPAC_persistentData != null && !xaero_OPAC_persistentData.isEmpty())
+			tag.put("xaero_OPAC_PersistentData", xaero_OPAC_persistentData.copy());
+	}
+
+	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
+	public void onReadAdditionalSaveData(CompoundTag tag, CallbackInfo info) {
+		xaero_OPAC_persistentData = tag.getCompound("xaero_OPAC_PersistentData");
+	}
 
 	@Inject(at = @At("RETURN"), method = "isInvulnerableTo", cancellable = true)
 	public void onIsInvulnerableTo(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
@@ -39,6 +64,16 @@ public class MixinEntity {
 	public void onHandleNetherPortal(CallbackInfo ci){
 		if(ServerCore.onHandleNetherPortal((Entity)(Object)this))
 			ci.cancel();
+	}
+
+	@Override
+	public UUID getXaero_OPAC_mobLootOwner() {
+		return xaero_OPAC_mobLootOwner;
+	}
+
+	@Override
+	public void setXaero_OPAC_mobLootOwner(UUID mobLootOwner) {
+		this.xaero_OPAC_mobLootOwner = mobLootOwner;
 	}
 
 }

@@ -18,10 +18,11 @@
 
 package xaero.pac.common.entity;
 
-import net.minecraft.nbt.CompoundTag;
+import java.util.UUID;
 
-public interface ILivingEntity {
+public interface IEntity {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	UUID getXaero_OPAC_mobLootOwner();
+	void setXaero_OPAC_mobLootOwner(UUID mobLootOwner);
 
 }

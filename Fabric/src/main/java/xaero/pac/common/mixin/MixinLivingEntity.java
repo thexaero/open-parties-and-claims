@@ -18,13 +18,10 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,32 +29,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.entity.ILivingEntity;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.core.ServerCoreFabric;
 
 @Mixin(value = LivingEntity.class, priority = 1000001)
-public class MixinLivingEntity implements ILivingEntity {
-
-	private CompoundTag xaero_OPAC_persistentData;
-
-	@Inject(at = @At("HEAD"), method = "addAdditionalSaveData")
-	public void onAddAdditionalSaveData(CompoundTag tag, CallbackInfo info) {
-		if(xaero_OPAC_persistentData != null && !xaero_OPAC_persistentData.isEmpty())
-			tag.put("xaero_OPAC_PersistentData", xaero_OPAC_persistentData.copy());
-	}
-
-	@Inject(at = @At("HEAD"), method = "readAdditionalSaveData")
-	public void onReadAdditionalSaveData(CompoundTag tag, CallbackInfo info) {
-		xaero_OPAC_persistentData = tag.getCompound("xaero_OPAC_PersistentData");
-	}
-
-	@Override
-	public CompoundTag getXaero_OPAC_PersistentData() {
-		if(xaero_OPAC_persistentData == null)
-			xaero_OPAC_persistentData = new CompoundTag();
-		return xaero_OPAC_persistentData;
-	}
+public class MixinLivingEntity {
 
 	@Inject(at = @At("HEAD"), method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", cancellable = true)
 	public void onAddEffect(MobEffectInstance mobEffectInstance, Entity entity, CallbackInfoReturnable<Boolean> info){
@@ -74,6 +50,26 @@ public class MixinLivingEntity implements ILivingEntity {
 	public void onHurt(DamageSource source, float f, CallbackInfoReturnable<Boolean> info) {
 		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onLivingHurt(source, (Entity)(Object)this))
 			info.setReturnValue(false);
+	}
+
+	@Inject(at = @At("HEAD"), method = "die")
+	public void onDiePre(DamageSource source, CallbackInfo info) {
+		ServerCore.onLivingEntityDiePre((LivingEntity) (Object)this, source);
+	}
+
+	@Inject(at = @At("RETURN"), method = "die")
+	public void onDiePost(DamageSource source, CallbackInfo info) {
+		ServerCore.onLivingEntityDiePost((LivingEntity) (Object)this);
+	}
+
+	@Inject(at = @At("HEAD"), method = "dropAllDeathLoot")
+	public void onDropAllDeathLoot(DamageSource source, CallbackInfo info) {
+		ServerCore.onLivingEntityDropDeathLootPre((LivingEntity) (Object)this, source);
+	}
+
+	@Inject(at = @At("RETURN"), method = "dropAllDeathLoot")
+	public void onDie(DamageSource source, CallbackInfo info) {
+		ServerCore.onLivingEntityDropDeathLootPost((LivingEntity) (Object)this);
 	}
 
 }

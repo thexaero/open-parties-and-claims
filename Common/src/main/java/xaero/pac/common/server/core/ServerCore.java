@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -50,10 +51,12 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.entity.IEntity;
 import xaero.pac.common.packet.ClientboundPacDimensionHandshakePacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.platform.Services;
 import xaero.pac.common.reflect.Reflection;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.ServerData;
@@ -71,6 +74,7 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ServerCore {
 	
@@ -364,6 +368,72 @@ public class ServerCore {
 			return !serverData.getChunkProtection().onRaidSpawn(serverData, level, pos);
 		}
 		return true;
+	}
+
+	private static LivingEntity DYING_LIVING;
+	private static DamageSource DYING_LIVING_FROM;
+	private static LivingEntity DROPPING_LOOT_LIVING;
+	private static DamageSource DROPPING_LOOT_LIVING_FROM;
+	public static void onLivingEntityDiePre(LivingEntity living, DamageSource source) {
+		if(living.getServer() != null) {
+			DYING_LIVING_FROM = source;
+			DYING_LIVING = living;
+		}
+	}
+
+	public static void onLivingEntityDiePost(LivingEntity living) {
+		if(living.getServer() != null) {
+			DYING_LIVING_FROM = null;
+			DYING_LIVING = null;
+		}
+	}
+
+	public static void onLivingEntityDropDeathLootPre(LivingEntity living, DamageSource source) {
+		if(living.getServer() != null) {
+			DROPPING_LOOT_LIVING_FROM = source;
+			DROPPING_LOOT_LIVING = living;
+		}
+	}
+
+	public static void onLivingEntityDropDeathLootPost(LivingEntity living) {
+		if(living.getServer() != null) {
+			DROPPING_LOOT_LIVING_FROM = null;
+			DROPPING_LOOT_LIVING = null;
+		}
+	}
+
+	public static DamageSource getDyingDamageSourceForCurrentEntitySpawns(){
+		if(DYING_LIVING_FROM != null)
+			return DYING_LIVING_FROM;
+		return DROPPING_LOOT_LIVING_FROM;
+	}
+
+	public static LivingEntity getDyingLivingForCurrentEntitySpawns(){
+		if(DYING_LIVING != null)
+			return DYING_LIVING;
+		return DROPPING_LOOT_LIVING;
+	}
+
+	private final static String LOOT_OWNER_KEY = "xaero_OPAC_lootOwnerId";
+	public static void setMobLootOwner(Entity entity, UUID lootOwner){
+		((IEntity)entity).setXaero_OPAC_mobLootOwner(lootOwner);
+		CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
+		if(lootOwner == null)
+			persistentData.remove(LOOT_OWNER_KEY);
+		else
+			persistentData.putUUID(LOOT_OWNER_KEY, lootOwner);
+	}
+
+	public static UUID getMobLootOwner(Entity entity){
+		UUID result = ((IEntity)entity).getXaero_OPAC_mobLootOwner();
+		if(result == null) {
+			CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
+			if(persistentData.contains(LOOT_OWNER_KEY)) {
+				result = persistentData.getUUID(LOOT_OWNER_KEY);
+				((IEntity)entity).setXaero_OPAC_mobLootOwner(result);
+			}
+		}
+		return result;
 	}
 
 }

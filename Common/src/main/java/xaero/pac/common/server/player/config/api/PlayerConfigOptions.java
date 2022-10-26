@@ -212,6 +212,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ITEM_DROP_REDIRECT;
 	/**
+	 * Whether the claimed chunk protection includes protection from mob loot being dropped unless killed by players with access.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_MOB_LOOT;
+	/**
 	 * Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
 	 * neighbor chunks of the claim.
 	 */
@@ -577,6 +581,15 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Mob/Other Item Toss\" option for item tosses coming from non-player entities, if the tossing entity (e.g. a special arrow) has a living owner (e.g. a player), then the item toss protection option corresponding to the owner is used (e.g. \"Protect Player Item Toss\").")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_MOB_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.mobLoot")
+				.setDefaultValue(0)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection from loot being dropped when mobs die unless they are killed by players who have access to the chunks. Any non-living entity spawned on a mob's death is considered loot.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")

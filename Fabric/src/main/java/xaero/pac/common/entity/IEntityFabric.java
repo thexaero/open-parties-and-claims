@@ -19,13 +19,9 @@
 package xaero.pac.common.entity;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
 
-public class EntityAccessFabric implements IEntityAccess {
+public interface IEntityFabric extends IEntity {
 
-	@Override
-	public CompoundTag getPersistentData(Entity entity) {
-		return ((IEntityFabric)entity).getXaero_OPAC_PersistentData();
-	}
+	public CompoundTag getXaero_OPAC_PersistentData();
 
 }

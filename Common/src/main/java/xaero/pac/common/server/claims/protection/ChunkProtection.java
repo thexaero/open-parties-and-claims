@@ -62,6 +62,7 @@ import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
@@ -651,6 +652,11 @@ public class ChunkProtection
 				isBlockedEntity = shouldPreventToss(config, itemEntity, thrower, throwerId) != itemEntity;
 			}
 		}
+		if(!isBlockedEntity) {
+			UUID mobLootOwnerId = ServerCore.getMobLootOwner(entity);
+			if (mobLootOwnerId != null)
+				isBlockedEntity = shouldStopMobLoot(config, getEntityById((ServerLevel) entity.getLevel(), mobLootOwnerId), mobLootOwnerId);
+		}
 		if(!isBlockedEntity && madeAnException && accessor != entity){
 			//testing if the barrier protection affects the entity's owner
 			//this is for cases where a player enters a claim with no player barrier and sends an entity to another claimed chunk
@@ -1128,6 +1134,32 @@ public class ChunkProtection
 		return itemEntity;
 	}
 
+	public boolean onMobLootEntity(IServerData<CM, P> serverData, Entity lootEntity, DamageSource source){
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		Entity accessor;
+		UUID accessorId;
+		Object accessorInfo = getAccessorInfo(source.getEntity() == null ? lootEntity : source.getEntity());
+		if (accessorInfo instanceof UUID) {
+			accessorId = (UUID) accessorInfo;
+			accessor = getEntityById((ServerLevel) lootEntity.getLevel(), accessorId);
+		} else {
+			accessor = (Entity) accessorInfo;
+			accessorId = accessor.getUUID();
+		}
+		ServerCore.setMobLootOwner(lootEntity, accessorId);
+		IPlayerChunkClaim claim = claimsManager.get(lootEntity.getLevel().dimension().location(), lootEntity.chunkPosition());
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
+			return false;
+		return shouldStopMobLoot(config, accessor, accessorId);
+	}
+
+	private boolean shouldStopMobLoot(IPlayerConfig config, Entity accessor, UUID accessorId){
+		return !hasChunkAccess(config, accessor, accessorId) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_MOB_LOOT, config, accessor, accessorId);
+	}
+
 	private Entity getEntityById(ServerLevel world, UUID id){
 		Entity result = world.getServer().getPlayerList().getPlayer(id);
 		return result != null ? result : world.getEntity(id);
@@ -1222,6 +1254,7 @@ public class ChunkProtection
 		itemExceptionGroups.values().forEach(ChunkProtectionExceptionGroup::updateTagExceptions);
 		entityBarrierGroups.values().forEach(ChunkProtectionExceptionGroup::updateTagExceptions);
 	}
+
 	public static final class Builder
 	<
 		CM extends IServerClaimsManager<?, ?, ?>,

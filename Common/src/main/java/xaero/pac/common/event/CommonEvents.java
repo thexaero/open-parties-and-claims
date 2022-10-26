@@ -31,6 +31,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -296,7 +297,14 @@ public class CommonEvents {
 
 	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk) {
 		if(world instanceof ServerLevel){
-			if(entity instanceof LightningBolt bolt) {
+			if(!(entity instanceof LivingEntity) && ServerCore.getDyingDamageSourceForCurrentEntitySpawns() != null) {
+				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+						serverData = ServerData.from(world.getServer());
+				if(serverData == null)
+					return false;
+				if(!(ServerCore.getDyingLivingForCurrentEntitySpawns() instanceof Player))
+					return serverData.getChunkProtection().onMobLootEntity(serverData, entity, ServerCore.getDyingDamageSourceForCurrentEntitySpawns());
+			} else if(entity instanceof LightningBolt bolt) {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
 				serverData.getChunkProtection().onLightningBolt(serverData, bolt);
 				return false;
