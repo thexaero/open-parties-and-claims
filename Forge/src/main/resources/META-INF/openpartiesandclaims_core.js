@@ -1111,6 +1111,33 @@ function initializeCoreMod() {
                 insertBeforeReturn2(methodNode, insnToInsertGetter)
                 return methodNode
             }
+        },
+        'xaero_pac_behaviorutils_throwitem': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.ai.behavior.BehaviorUtils',
+                'methodName': 'm_22613_',
+                'methodDesc' : '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;)V'
+            },
+            'transformer' : function(methodNode){
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preThrowItem', '(Lnet/minecraft/world/entity/LivingEntity;)V'))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+
+                invokeTargetClass = 'net/minecraft/world/level/Level'
+                invokeTargetName = 'addFreshEntity'
+                invokeTargetNameObf = 'm_7967_'
+                invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;)Z'
+                insnToInsertGetter = function() {
+                     var insnToInsert = new InsnList()
+                     insnToInsert.add(new InsnNode(Opcodes.DUP))
+                     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onThrowItem', '(Lnet/minecraft/world/entity/item/ItemEntity;)V'))
+                     return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                return methodNode
+            }
         }
 	}
 }

@@ -100,7 +100,7 @@ public class ChunkProtectionEntityHelper {
 		if(p.getUUID().equals(owner))
 			return true;
 		if(e instanceof Fox fox)
-			return FOX_TRUSTED_UUID_SECONDARY != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null));
+			return FOX_TRUSTED_UUID_MAIN != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null));
 		return false;
 	}
 
@@ -110,7 +110,7 @@ public class ChunkProtectionEntityHelper {
 		else if(e instanceof AbstractHorse horse)
 			return horse.isTamed() ? horse.getOwnerUUID() : null;
 		else if(e instanceof Fox fox)
-			return FOX_TRUSTED_UUID_MAIN != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null) : null;
+			return FOX_TRUSTED_UUID_SECONDARY != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null) : null;
 		return null;
 	}
 

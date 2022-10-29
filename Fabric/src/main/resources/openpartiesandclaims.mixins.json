@@ -4,6 +4,7 @@
     "package": "xaero.pac.common.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "MixinBehaviorUtils",
         "MixinBreakDoorGoal",
         "MixinBucketItem",
         "MixinButtonBlock",

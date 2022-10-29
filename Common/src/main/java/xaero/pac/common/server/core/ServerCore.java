@@ -463,4 +463,16 @@ public class ServerCore {
 		return MOB_GRIEFING_IS_FOR_ITEMS;
 	}
 
+	private static LivingEntity BEHAVIOR_UTILS_THROW_ITEM_LIVING;
+	public static void preThrowItem(LivingEntity livingEntity) {
+		BEHAVIOR_UTILS_THROW_ITEM_LIVING = livingEntity;
+	}
+
+	public static void onThrowItem(ItemEntity itemEntity) {
+		if(BEHAVIOR_UTILS_THROW_ITEM_LIVING != null) {
+			itemEntity.setThrower(BEHAVIOR_UTILS_THROW_ITEM_LIVING.getUUID());
+			BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
+		}
+	}
+
 }

@@ -1185,19 +1185,8 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
-		if(lootEntity instanceof ItemEntity itemEntity) {
-			UUID throwerId;
-			if(noKiller)
-				throwerId = accessorId;
-			else {
-				Object throwerInfo = getAccessorInfo(livingEntity);
-				if (throwerInfo instanceof UUID)
-					throwerId = (UUID) throwerInfo;
-				else
-					throwerId = ((Entity) throwerInfo).getUUID();
-			}
-			itemEntity.setThrower(throwerId);
-		}
+		if(lootEntity instanceof ItemEntity itemEntity)
+			itemEntity.setThrower(livingEntity.getUUID());
 		ServerCore.setLootOwner(lootEntity, accessorId);
 		if(livingEntity instanceof Player)
 			return false;
