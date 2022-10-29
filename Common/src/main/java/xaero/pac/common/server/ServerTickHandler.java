@@ -51,6 +51,7 @@ public final class ServerTickHandler {
 	
 	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) throws Throwable {
 		serverData.getIoThreadWorker().checkCrashes();
+		serverData.getChunkProtection().onServerTick();
 		serverData.getPartyManagerIO().onServerTick();
 		serverData.getPlayerConfigsIO().onServerTick();
 

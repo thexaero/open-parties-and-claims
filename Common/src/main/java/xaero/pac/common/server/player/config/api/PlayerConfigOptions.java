@@ -198,28 +198,44 @@ public class PlayerConfigOptions {
 	/**
 	 * Whether the claimed chunk protection includes protection against items being dropped by players.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_DROP_PLAYERS;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS;
 	/**
 	 * Whether the claimed chunk protection includes protection against items being dropped by mobs.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_DROP_MOBS;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS;
 	/**
 	 * Whether the claimed chunk protection includes protection against items being dropped by non-living entities.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_DROP_OTHER;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER;
 	/**
 	 * Whether the claimed chunk item drop protection redirects the used config option to the owner of the dropping entity.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ITEM_DROP_REDIRECT;
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT;
 	/**
 	 * Whether the claimed chunk protection includes protection from mob loot being dropped unless killed by players with access.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_MOB_LOOT;
 	/**
+	 * Whether the claimed chunk protection includes protection against items being picked up by players.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS;
+	/**
+	 * Whether the claimed chunk protection includes protection against items being picked up by mobs.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS;
+	/**
+	 * Whether the claimed chunk item pickup protection redirects the used config option to the owner of the entity picking up the item.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT;
+	/**
 	 * Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
 	 * neighbor chunks of the claim.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE;
+	/**
+	 * Whether the claimed chunk protection options for block/entity/items override the value of the vanilla "mob griefing" game rule.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE;
 	/**
 	 * Whether the claimed chunk protection includes protection against village raids.
 	 */
@@ -344,7 +360,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromExplosions")
 				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the mob griefing option.")
+				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the block mob protection option.")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromMobs")
@@ -550,7 +566,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against being affected by pistons outside of the protected chunks. This does not protect wilderness.")
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_DROP_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossPlayers")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -559,7 +575,7 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_DROP_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossMobs")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -568,7 +584,7 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_DROP_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossOther")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -577,7 +593,7 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_DROP_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Mob/Other Item Toss\" option for item tosses coming from non-player entities, if the tossing entity (e.g. a special arrow) has a living owner (e.g. a player), then the item toss protection option corresponding to the owner is used (e.g. \"Protect Player Item Toss\").")
@@ -591,10 +607,44 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupPlayers")
+				.setDefaultValue(0)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection from players picking up items, unless they have access to the chunks or own the items.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupMobs")
+				.setDefaultValue(0)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection from mobs picking up items, unless they have access to the chunks or own the items. Might not work for some mobs.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupRedirect")
+				.setDefaultValue(false)
+				.setComment("When enabled, instead of always simply using the direct \"Protect Items From Mobs\" option for item pickups coming from mobs, if the mob (e.g. an allay) has a living owner (e.g. a player), then the item protection option corresponding to the owner is used (e.g. \"Protect Items From Players\").")
+				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection from \"item use\" for chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.overrideMobGriefingRule")
+				.setDefaultValue(true)
+				.setComment(
+						"Override the value of the vanilla \"mob griefing\" game rule with either block, entity or dropped item protection in the protected chunks and their neighbors.\n" +
+						"By default, all \"mob griefing\" game rule checks, except for evokers (sheep conversion spell) and for most item pickups, are overridden with the block protection option. " +
+						"By default, the game rule is not overridden for item pickups (e.g. piglins picking up gold) because the basic item protection is already enough for most cases. " +
+						"When using the Forge version of the mod, this can be used for modded mobs. The main server config can be used to change which options are checked (even all 3) for specific mobs. Fabric/Quilt does not fire an event for all mob griefing rule checks. " +
+						"Fabric/Quilt modded mobs would simply check the game rule directly, which cannot be overridden by this mod."
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_RAIDS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.raids")

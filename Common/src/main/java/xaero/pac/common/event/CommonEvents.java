@@ -302,8 +302,7 @@ public class CommonEvents {
 						serverData = ServerData.from(world.getServer());
 				if(serverData == null)
 					return false;
-				if(!(ServerCore.getDyingLivingForCurrentEntitySpawns() instanceof Player))
-					return serverData.getChunkProtection().onMobLootEntity(serverData, entity, ServerCore.getDyingDamageSourceForCurrentEntitySpawns());
+				return serverData.getChunkProtection().onLivingLootEntity(serverData, ServerCore.getDyingLivingForCurrentEntitySpawns(), entity, ServerCore.getDyingDamageSourceForCurrentEntitySpawns());
 			} else if(entity instanceof LightningBolt bolt) {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
 				serverData.getChunkProtection().onLightningBolt(serverData, bolt);
@@ -399,6 +398,13 @@ public class CommonEvents {
 		if(serverData == null)
 			return;
 		serverData.getChunkProtection().updateTagExceptions();
+	}
+
+	public boolean onItemPickup(Entity entity, ItemEntity itemEntity) {
+		if(itemEntity.getServer() == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(itemEntity.getServer());
+		return serverData.getChunkProtection().onItemPickup(serverData, entity, itemEntity);
 	}
 
 }

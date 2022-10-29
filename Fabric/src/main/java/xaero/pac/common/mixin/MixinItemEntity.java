@@ -18,21 +18,21 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import xaero.pac.common.server.core.ServerCoreFabric;
+import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(Piglin.class)
-public class MixinPiglin {
+@Mixin(ItemEntity.class)
+public class MixinItemEntity {
 
-	@Inject(method = "wantsToPickUp", at = @At("HEAD"))
-	public void onMobGriefGameRuleMethod(CallbackInfoReturnable<Boolean> callbackInfo){
-		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
+	@Inject(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;getItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
+	public void onPlayerTouch(Player player, CallbackInfo ci){
+		if(ServerCore.onEntityItemPickup(player, (ItemEntity)(Object)this))
+			ci.cancel();
 	}
 
 }

@@ -46,6 +46,11 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forcedEntityClaimBarrierList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierOptionalGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefEntities;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefDroppedItems;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> nonBlockGriefingMobs;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityGriefingMobs;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionOptionalExceptionGroups;
@@ -323,10 +328,52 @@ public class ServerConfig {
 					), s -> s instanceof String);
 
 		entitiesAllowedToGrief = builder
-			.comment("Entities that can still destroy or place blocks (or sometimes affect entities) when claim mob griefing protection is enabled. Supports entity type tags.")
+			.comment("Entities that can bypass all block protection. Supports entity type tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:villager", "minecraft:sheep"), s -> s instanceof String);
+		entitiesAllowedToGriefEntities = builder
+			.comment("Entities that can bypass all protection of other entities. Supports entity type tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.translation("gui.xaero_pac_config_entities_allowed_to_grief_entities")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), () -> Lists.newArrayList(), s -> s instanceof String);
+		entitiesAllowedToGriefDroppedItems = builder
+			.comment("Entities that can bypass all dropped item protection. Supports entity type tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.translation("gui.xaero_pac_config_entities_allowed_to_grief_items")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefDroppedItems"), () -> Lists.newArrayList(), s -> s instanceof String);
+		nonBlockGriefingMobs = builder
+			.comment(
+					"""
+					(Forge-only option) Mobs that can grief entities/items but not blocks. This list is used when overriding the vanilla "mob griefing" game rule value.
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection. This means that the "Protect Blocks From Mobs" option might cause entity or item protection, if that's what the mob is trying to affect. By adding a mob to this list, you're removing the block protection check for it.
+					Supports entity type tags. For example ["minecraft:villager", "#minecraft:raiders"]"""
+			)
+			.translation("gui.xaero_pac_config_non_block_griefers")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("nonBlockGriefingMobs"), () -> Lists.newArrayList(), s -> s instanceof String);
+		entityGriefingMobs = builder
+			.comment(
+					"""
+					(Forge-only option) Mobs that can grief entities in ways other than attacking them, e.g. how evokers can change the color of sheep. This list is used when overriding the vanilla "mob griefing" game rule value.
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the entity protection option to be checked as well when it attempts to grief.
+					Check out the "nonBlockGriefingMobs" option if you want to also remove the default block protection check for the mob.
+					Supports entity type tags. For example ["minecraft:villager", "#minecraft:raiders"]"""
+			)
+			.translation("gui.xaero_pac_config_entity_griefers")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entityGriefingMobs"), () -> Lists.newArrayList(), s -> s instanceof String);
+		droppedItemGriefingMobs = builder
+			.comment(
+					"""
+					(Forge-only option) Mobs that can grief dropped items. This list is used when overriding the vanilla "mob griefing" game rule value.
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the item pickup protection option to be checked as well when it attempts to grief.
+					This mod should detect most mobs picking up items by default, but if it doesn't already detect a specific mob, this option might help. Check out the "nonBlockGriefingMobs" option if you want to also remove the default block protection check for the mob.
+					Supports entity type tags. For example ["minecraft:villager", "#minecraft:raiders"]"""
+			)
+			.translation("gui.xaero_pac_config_gropped_item_griefers")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("droppedItemGriefingMobs"), () -> Lists.newArrayList(), s -> s instanceof String);
 
 		additionalBannedItemsList = builder
 			.comment("By default, right-click use of some items is allowed in protected chunks, e.g. swords, pickaxes, bows, shield, tridents, splash potions, to let the players protect themselves or interact with some blocks/entities. To remove such exceptions for specific items, add them to this list. This list applies to both using an item at air and using it at a block/entity. Supports item tags. For example [\"minecraft:trident\", \"minecraft:shield\", \"#minecraft:boats\"]")

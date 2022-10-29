@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public interface IEntity {
 
-	UUID getXaero_OPAC_mobLootOwner();
-	void setXaero_OPAC_mobLootOwner(UUID mobLootOwner);
+	UUID getXaero_OPAC_lootOwner();
+	void setXaero_OPAC_lootOwner(UUID lootOwner);
 
 }

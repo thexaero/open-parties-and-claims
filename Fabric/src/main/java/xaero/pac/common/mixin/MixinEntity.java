@@ -67,13 +67,13 @@ public class MixinEntity implements IEntityFabric {
 	}
 
 	@Override
-	public UUID getXaero_OPAC_mobLootOwner() {
+	public UUID getXaero_OPAC_lootOwner() {
 		return xaero_OPAC_mobLootOwner;
 	}
 
 	@Override
-	public void setXaero_OPAC_mobLootOwner(UUID mobLootOwner) {
-		this.xaero_OPAC_mobLootOwner = mobLootOwner;
+	public void setXaero_OPAC_lootOwner(UUID lootOwner) {
+		this.xaero_OPAC_mobLootOwner = lootOwner;
 	}
 
 }

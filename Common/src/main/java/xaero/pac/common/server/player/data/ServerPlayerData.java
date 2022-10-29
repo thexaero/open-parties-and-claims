@@ -209,4 +209,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public boolean hasMod() {
 		return hasMod;
 	}
+
+	public void onTick(){
+	}
 }

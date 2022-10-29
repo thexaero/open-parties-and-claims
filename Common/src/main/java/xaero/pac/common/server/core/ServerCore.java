@@ -33,6 +33,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -415,8 +417,8 @@ public class ServerCore {
 	}
 
 	private final static String LOOT_OWNER_KEY = "xaero_OPAC_lootOwnerId";
-	public static void setMobLootOwner(Entity entity, UUID lootOwner){
-		((IEntity)entity).setXaero_OPAC_mobLootOwner(lootOwner);
+	public static void setLootOwner(Entity entity, UUID lootOwner){
+		((IEntity)entity).setXaero_OPAC_lootOwner(lootOwner);
 		CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
 		if(lootOwner == null)
 			persistentData.remove(LOOT_OWNER_KEY);
@@ -425,15 +427,40 @@ public class ServerCore {
 	}
 
 	public static UUID getMobLootOwner(Entity entity){
-		UUID result = ((IEntity)entity).getXaero_OPAC_mobLootOwner();
+		UUID result = ((IEntity)entity).getXaero_OPAC_lootOwner();
 		if(result == null) {
 			CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
 			if(persistentData.contains(LOOT_OWNER_KEY)) {
 				result = persistentData.getUUID(LOOT_OWNER_KEY);
-				((IEntity)entity).setXaero_OPAC_mobLootOwner(result);
+				((IEntity)entity).setXaero_OPAC_lootOwner(result);
 			}
 		}
 		return result;
+	}
+
+	public static boolean onEntityItemPickup(Entity entity, ItemEntity itemEntity) {
+		return OpenPartiesAndClaims.INSTANCE.getCommonEvents().onItemPickup(entity, itemEntity);
+	}
+
+	public static boolean onMobItemPickup(ItemEntity itemEntity, Mob mob) {
+		if (OpenPartiesAndClaims.INSTANCE.getCommonEvents().onItemPickup(mob, itemEntity)) {
+			mob.level.getProfiler().pop();
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean MOB_GRIEFING_IS_FOR_ITEMS;
+	public static void forgePreItemMobGriefingCheck(){
+		MOB_GRIEFING_IS_FOR_ITEMS = true;
+	}
+
+	public static void forgePostItemMobGriefingCheck(){
+		MOB_GRIEFING_IS_FOR_ITEMS = false;
+	}
+
+	public static boolean isMobGriefingForItems(){
+		return MOB_GRIEFING_IS_FOR_ITEMS;
 	}
 
 }
