@@ -640,17 +640,13 @@ public class ChunkProtection
 		return false;
 	}
 
-	public void onEntityEnterChunk(IServerData<CM, P> serverData, Entity entity, double goodX, double goodZ, SectionPos newSection, SectionPos oldSection) {
-		if(!ServerConfig.CONFIG.claimsEnabled.get())
-			return;
-		if(ignoreChunkEnter)
-			return;
-		IPlayerChunkClaim toClaim = claimsManager.get(entity.getLevel().dimension().location(), newSection.x(), newSection.z());
+	private boolean shouldPreventEntityChunkEntry(IServerData<CM, P> serverData, IPlayerConfigManager playerConfigs, IPlayerChunkClaim toClaim, IPlayerChunkClaim fromClaim, IPlayerConfig config, IPlayerConfig fromConfig, Entity entity, SectionPos newSection, SectionPos oldSection){
+		if(toClaim == null)
+			toClaim = claimsManager.get(entity.getLevel().dimension().location(), newSection.x(), newSection.z());
 		if(toClaim == null)//wilderness is fine
-			return;
-		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
-		IPlayerConfig config = getClaimConfig(playerConfigs, toClaim);
-
+			return false;
+		if(config == null)
+			config = getClaimConfig(playerConfigs, toClaim);
 		Entity accessor;
 		UUID accessorId;
 		Object accessorInfo = getAccessorInfo(entity);
@@ -662,12 +658,12 @@ public class ChunkProtection
 			accessorId = accessor.getUUID();
 		}
 		if(hasChunkAccess(config, accessor, accessorId))
-			return;
+			return false;
 
-		IPlayerChunkClaim fromClaim = claimsManager.get(entity.getLevel().dimension().location(), oldSection.x(), oldSection.z());
+		if(fromClaim == null && oldSection != null)
+			fromClaim = claimsManager.get(entity.getLevel().dimension().location(), oldSection.x(), oldSection.z());
 		boolean isBlockedEntity = forcedEntityClaimBarrierList.contains(entity.getType());
 		boolean madeAnException = false;
-		IPlayerConfig fromConfig = null;
 		if(!isBlockedEntity){
 			isBlockedEntity = blockedByBarrierGroups(config, entity, accessor, accessorId);
 			if(isBlockedEntity && !hitsAnotherClaim(serverData, fromClaim, toClaim, null)){
@@ -685,14 +681,19 @@ public class ChunkProtection
 		if(!isBlockedEntity && entity instanceof ItemEntity itemEntity) {
 			UUID throwerId = itemEntity.getThrower();
 			if(throwerId != null) {
+				if(fromConfig == null)
+					fromConfig = getClaimConfig(playerConfigs, fromClaim);
 				Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
-				isBlockedEntity = shouldPreventToss(config, itemEntity, thrower, throwerId) != itemEntity;
+				isBlockedEntity = fromConfig != config && shouldPreventToss(config, itemEntity, thrower, throwerId) != itemEntity;
 			}
 		}
 		if(!isBlockedEntity) {
 			UUID mobLootOwnerId = ServerCore.getMobLootOwner(entity);
-			if (mobLootOwnerId != null)
-				isBlockedEntity = shouldStopMobLoot(config, getEntityById((ServerLevel) entity.getLevel(), mobLootOwnerId), mobLootOwnerId);
+			if (mobLootOwnerId != null) {
+				if(fromConfig == null)
+					fromConfig = getClaimConfig(playerConfigs, fromClaim);
+				isBlockedEntity = fromConfig != config && shouldStopMobLoot(config, getEntityById((ServerLevel) entity.getLevel(), mobLootOwnerId), mobLootOwnerId);
+			}
 		}
 		if(!isBlockedEntity && madeAnException && accessor != entity){
 			//testing if the barrier protection affects the entity's owner
@@ -706,6 +707,16 @@ public class ChunkProtection
 				isBlockedEntity = !blockedByBarrierGroups(fromConfig, accessor, accessor, accessorId);
 			}
 		}
+		return isBlockedEntity;
+	}
+
+	public void onEntityEnterChunk(IServerData<CM, P> serverData, Entity entity, double goodX, double goodZ, SectionPos newSection, SectionPos oldSection) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return;
+		if(ignoreChunkEnter)
+			return;
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		boolean isBlockedEntity = shouldPreventEntityChunkEntry(serverData, playerConfigs, null, null, null, null, entity, newSection, oldSection);
 		if(isBlockedEntity){
 			ignoreChunkEnter = true;
 			int goodXInt = (int)Math.floor(goodX);
@@ -1217,8 +1228,7 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(itemEntity.getLevel().dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
-			return false;
+		boolean shouldPrevent = false;
 		Entity accessor;
 		UUID accessorId;
 		Object accessorInfo = getAccessorInfo(entity);
@@ -1229,18 +1239,38 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
-		if(hasChunkAccess(config, accessor, accessorId))
-			return false;
-		IPlayerConfigOptionSpecAPI<Integer> usedOption = getUsedDroppedItemProtectionOption(config, entity, accessor);
-		if(checkProtectionLeveledOption(usedOption, config, accessor, accessorId)){
-			if(cantPickupCached == null) {
+		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)) {
+			if (!hasChunkAccess(config, accessor, accessorId)) {
+				IPlayerConfigOptionSpecAPI<Integer> usedOption = getUsedDroppedItemProtectionOption(config, entity, accessor);
+				shouldPrevent = checkProtectionLeveledOption(usedOption, config, accessor, accessorId);
+			}
+		}
+		if(!shouldPrevent && !(entity instanceof Player)){
+			ChunkPos entityChunkPos = entity.chunkPosition();
+			if(!chunkPos.equals(entityChunkPos)) {
+				//Additional check to stop mobs pulling dropped items into a protected claim through a barrier.
+				//Foxes pick items up and then throw away some at their own position.
+				//Not all item dropping is considered to be tossing, and tamed/owned mobs have the permission to toss
+				//items inside their owner's claims, which is why this can be a problem.
+				//And, if there is an item barrier, then you probably don't want anything inside the protected chunks to
+				//be able to pick the items up either.
+				//
+				//This does not prevent mobs from leaving the protected chunks, picking items up, going back in and dropping them though.
+				//In that case item toss protection is all you have, but it doesn't stop mobs tamed by the claim owner.
+				IPlayerChunkClaim entityPosClaim = claimsManager.get(itemEntity.getLevel().dimension().location(), entityChunkPos);
+				IPlayerConfig entityPosConfig = getClaimConfig(playerConfigs, entityPosClaim);
+				if(entityPosConfig != config)
+					shouldPrevent = shouldPreventEntityChunkEntry(serverData, playerConfigs, entityPosClaim, claim, entityPosConfig, config, itemEntity, null, null);
+			}
+		}
+		if(shouldPrevent){
+			if (cantPickupCached == null) {
 				cantPickupCached = new HashSet<>();
 				cantPickupItemsInTickCache.put(entity, cantPickupCached);
 			}
 			cantPickupCached.add(chunkPos);
-			return true;
 		}
-		return false;
+		return shouldPrevent;
 	}
 
 	private IPlayerConfigOptionSpecAPI<Integer> getUsedDroppedItemProtectionOption(IPlayerConfig config, Entity entity, Entity accessor){
