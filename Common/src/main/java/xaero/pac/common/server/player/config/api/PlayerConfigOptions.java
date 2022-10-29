@@ -469,7 +469,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesRedirect")
 				.setDefaultValue(true)
-				.setComment("When enabled, instead of always simply using the direct \"Protect Entities From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has a living owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Entities From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
+				.setComment("When enabled, instead of always simply using the direct \"Protect Entities From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Entities From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromExplosions")
@@ -499,7 +499,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersRedirect")
 				.setDefaultValue(true)
-				.setComment("When enabled, instead of always simply using the direct \"Protect Players From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has a living owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Players From Players\").")
+				.setComment("When enabled, instead of always simply using the direct \"Protect Players From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Players From Players\").")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.chorusFruitTeleport")
@@ -596,7 +596,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossRedirect")
 				.setDefaultValue(true)
-				.setComment("When enabled, instead of always simply using the direct \"Protect Mob/Other Item Toss\" option for item tosses coming from non-player entities, if the tossing entity (e.g. a special arrow) has a living owner (e.g. a player), then the item toss protection option corresponding to the owner is used (e.g. \"Protect Player Item Toss\").")
+				.setComment("When enabled, instead of always simply using the direct \"Protect Mob/Other Item Toss\" option for item tosses coming from non-player entities, if the tossing entity (e.g. a special arrow) has an owner (e.g. a player), then the item toss protection option corresponding to the owner is used (e.g. \"Protect Player Item Toss\").")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_MOB_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.mobLoot")
@@ -628,7 +628,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupRedirect")
 				.setDefaultValue(false)
-				.setComment("When enabled, instead of always simply using the direct \"Protect Items From Mobs\" option for item pickups coming from mobs, if the mob (e.g. an allay) has a living owner (e.g. a player), then the item protection option corresponding to the owner is used (e.g. \"Protect Items From Players\").")
+				.setComment("When enabled, instead of always simply using the direct \"Protect Items From Mobs\" option for item pickups coming from mobs, if the mob (e.g. an allay) has an owner (e.g. a player), then the item protection option corresponding to the owner is used (e.g. \"Protect Items From Players\").")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")

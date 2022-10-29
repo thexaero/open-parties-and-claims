@@ -198,6 +198,8 @@ public class ChunkProtection
 
 		if(e instanceof Player){
 			Entity usedOptionBase = claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT) ? accessor : from;
+			if(usedOptionBase == null)
+				return hasAnEnabledOption(claimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER);
 			IPlayerConfigOptionSpecAPI<Boolean> option =
 					usedOptionBase instanceof Player ?
 					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS :
@@ -217,6 +219,8 @@ public class ChunkProtection
 
 	private IPlayerConfigOptionSpecAPI<Integer> getUsedEntityProtectionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
 		Entity usedOptionBase = claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT) ? accessor : entity;
+		if(usedOptionBase == null)
+			return getToughestProtectionLevelOption(claimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER);
 		return usedOptionBase instanceof Player ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS :
 				usedOptionBase instanceof LivingEntity ?
@@ -1170,16 +1174,44 @@ public class ChunkProtection
 			}
 		} else
 			accessorId = throwerId;
-		Entity usedOptionBase = accessor == null || !config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT) ?
+		Entity usedOptionBase = !config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT) ?
 				thrower : accessor;
-		IPlayerConfigOptionSpecAPI<Integer> option = !(usedOptionBase instanceof LivingEntity) ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER
-				: usedOptionBase instanceof Player ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS
-				: PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS;
+		IPlayerConfigOptionSpecAPI<Integer> option;
+		if(usedOptionBase != null) {
+			option = !(usedOptionBase instanceof LivingEntity) ?
+					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER
+					: usedOptionBase instanceof Player ?
+					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS
+					: PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS;
+		} else
+			option = getToughestProtectionLevelOption(config, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER);
 		if(checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId))
 			return accessor;
 		return itemEntity;
+	}
+
+	private boolean hasAnEnabledOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<Boolean> option1, IPlayerConfigOptionSpecAPI<Boolean> option2, IPlayerConfigOptionSpecAPI<Boolean> option3){
+		//the used option base is offline; or possibly in another dimension, if it's not a player
+		//assume the worst and use the toughest protection
+		return config.getEffective(option1) || config.getEffective(option2) || config.getEffective(option3);
+	}
+
+	private IPlayerConfigOptionSpecAPI<Integer> getToughestProtectionLevelOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<Integer> option1, IPlayerConfigOptionSpecAPI<Integer> option2, IPlayerConfigOptionSpecAPI<Integer> option3){
+		//the used option base is offline; or possibly in another dimension, if it's not a player
+		//assume the worst and use the toughest protection
+		int toughestProtectionLevel = config.getEffective(option1);
+		IPlayerConfigOptionSpecAPI<Integer> toughestOption = option1;
+		int protectionLevel = config.getEffective(option2);
+		if(protectionLevel != 0 && (toughestProtectionLevel == 0 || protectionLevel < toughestProtectionLevel)){
+			toughestProtectionLevel = protectionLevel;
+			toughestOption = option2;
+		}
+		if(option3 != null) {
+			protectionLevel = config.getEffective(option3);
+			if (protectionLevel != 0 && (toughestProtectionLevel == 0 || protectionLevel < toughestProtectionLevel))
+				return option3;
+		}
+		return toughestOption;
 	}
 
 	public boolean onLivingLootEntity(IServerData<CM, P> serverData, LivingEntity livingEntity, Entity lootEntity, DamageSource source){
@@ -1276,6 +1308,8 @@ public class ChunkProtection
 	private IPlayerConfigOptionSpecAPI<Integer> getUsedDroppedItemProtectionOption(IPlayerConfig config, Entity entity, Entity accessor){
 		Entity usedOptionBase = config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT) ?
 				accessor : entity;
+		if(usedOptionBase == null)
+			return getToughestProtectionLevelOption(config, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS, null);
 		return usedOptionBase instanceof Player ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS :
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS;
