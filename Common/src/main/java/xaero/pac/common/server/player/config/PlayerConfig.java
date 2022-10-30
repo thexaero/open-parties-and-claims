@@ -74,6 +74,11 @@ public class PlayerConfig
 					2) Not Party - all entities, except owned by a player in the same party as you.
 					3) Not Ally - all entities, except owned by a player in any party allied by yours.""";
 
+	public static final String EXCEPTION_LEVELS_TOOLTIP_PLAYERS = """
+					1) Party - players in the same party as you.
+					2) Allies - players in parties that are allied by yours.
+					3) Everyone - all players.""";
+
 	protected final PlayerConfigManager<P, ?> manager;
 	private final PlayerConfigType type;
 	private final UUID playerId;

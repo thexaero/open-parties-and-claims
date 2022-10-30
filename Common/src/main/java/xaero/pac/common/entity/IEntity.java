@@ -24,5 +24,7 @@ public interface IEntity {
 
 	UUID getXaero_OPAC_lootOwner();
 	void setXaero_OPAC_lootOwner(UUID lootOwner);
+	UUID getXaero_OPAC_deadPlayer();
+	void setXaero_OPAC_deadPlayer(UUID deadPlayer);
 
 }

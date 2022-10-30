@@ -34,7 +34,8 @@ import java.util.UUID;
 @Mixin(value = Entity.class, priority = 1000001)
 public class MixinEntity implements IEntityFabric {
 
-	private UUID xaero_OPAC_mobLootOwner;
+	private UUID xaero_OPAC_lootOwner;
+	private UUID xaero_OPAC_deadPlayer;
 	private CompoundTag xaero_OPAC_persistentData;
 
 	@Override
@@ -68,12 +69,22 @@ public class MixinEntity implements IEntityFabric {
 
 	@Override
 	public UUID getXaero_OPAC_lootOwner() {
-		return xaero_OPAC_mobLootOwner;
+		return xaero_OPAC_lootOwner;
 	}
 
 	@Override
 	public void setXaero_OPAC_lootOwner(UUID lootOwner) {
-		this.xaero_OPAC_mobLootOwner = lootOwner;
+		this.xaero_OPAC_lootOwner = lootOwner;
+	}
+
+	@Override
+	public UUID getXaero_OPAC_deadPlayer() {
+		return xaero_OPAC_deadPlayer;
+	}
+
+	@Override
+	public void setXaero_OPAC_deadPlayer(UUID xaero_OPAC_deadPlayer) {
+		this.xaero_OPAC_deadPlayer = xaero_OPAC_deadPlayer;
 	}
 
 }

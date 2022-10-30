@@ -229,6 +229,7 @@ public class ChunkProtection
 	}
 
 	private boolean checkProtectionLeveledOption(IPlayerConfigOptionSpecAPI<Integer> option, IPlayerConfig claimConfig, Entity accessor, UUID accessorId){
+		//for options where each level increases protection
 		int optionValue = claimConfig.getEffective(option);
 		if(optionValue <= 0)
 			return false;
@@ -236,6 +237,17 @@ public class ChunkProtection
 			return true;
 		int exceptionLevel = getExceptionAccessLevel(claimConfig, accessor, accessorId);
 		return exceptionLevel >= optionValue;
+	}
+
+	private boolean checkExceptionLeveledOption(IPlayerConfigOptionSpecAPI<Integer> option, IPlayerConfig claimConfig, Entity accessor, UUID accessorId){
+		//for options where each level decreases protection
+		int optionValue = claimConfig.getEffective(option);
+		if(optionValue >= 3)
+			return true;
+		if(optionValue == 0)
+			return false;
+		int exceptionLevel = getExceptionAccessLevel(claimConfig, accessor, accessorId);
+		return exceptionLevel <= optionValue;
 	}
 	
 	private boolean isIncludedByProtectedEntityLists(Entity e) {
@@ -647,8 +659,6 @@ public class ChunkProtection
 	private boolean shouldPreventEntityChunkEntry(IServerData<CM, P> serverData, IPlayerConfigManager playerConfigs, IPlayerChunkClaim toClaim, IPlayerChunkClaim fromClaim, IPlayerConfig config, IPlayerConfig fromConfig, Entity entity, SectionPos newSection, SectionPos oldSection){
 		if(toClaim == null)
 			toClaim = claimsManager.get(entity.getLevel().dimension().location(), newSection.x(), newSection.z());
-		if(toClaim == null)//wilderness is fine
-			return false;
 		if(config == null)
 			config = getClaimConfig(playerConfigs, toClaim);
 		Entity accessor;
@@ -661,54 +671,65 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
-		if(hasChunkAccess(config, accessor, accessorId))
-			return false;
 
 		if(fromClaim == null && oldSection != null)
 			fromClaim = claimsManager.get(entity.getLevel().dimension().location(), oldSection.x(), oldSection.z());
-		boolean isBlockedEntity = forcedEntityClaimBarrierList.contains(entity.getType());
+
+		boolean enteringProtectedChunk = toClaim != null && !hasChunkAccess(config, accessor, accessorId);//wilderness is fine
+		boolean isBlockedEntity = enteringProtectedChunk && forcedEntityClaimBarrierList.contains(entity.getType());
 		boolean madeAnException = false;
-		if(!isBlockedEntity){
-			isBlockedEntity = blockedByBarrierGroups(config, entity, accessor, accessorId);
-			if(isBlockedEntity && !hitsAnotherClaim(serverData, fromClaim, toClaim, null)){
-				//the "from" claim might be blocking the same entity with a different option, so we don't just check the same one
-				fromConfig = getClaimConfig(playerConfigs, fromClaim);
-				isBlockedEntity = !blockedByBarrierGroups(fromConfig, entity, accessor, accessorId);
+		if(enteringProtectedChunk) {
+			if (!isBlockedEntity) {
+				isBlockedEntity = blockedByBarrierGroups(config, entity, accessor, accessorId);
+				if (isBlockedEntity && !hitsAnotherClaim(serverData, fromClaim, toClaim, null)) {
+					//the "from" claim might be blocking the same entity with a different option, so we don't just check the same one
+					fromConfig = getClaimConfig(playerConfigs, fromClaim);
+					isBlockedEntity = !blockedByBarrierGroups(fromConfig, entity, accessor, accessorId);
+					madeAnException = true;
+				}
+			} else {
+				isBlockedEntity = hitsAnotherClaim(serverData, fromClaim, toClaim, null);
 				madeAnException = true;
 			}
-		} else {
-			isBlockedEntity = hitsAnotherClaim(serverData, fromClaim, toClaim, null);
-			madeAnException = true;
-		}
-		if(!isBlockedEntity)
-			isBlockedEntity = accessor instanceof Raider raider && raider.canJoinRaid() && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
-		if(!isBlockedEntity && entity instanceof ItemEntity itemEntity) {
-			UUID throwerId = itemEntity.getThrower();
-			if(throwerId != null) {
-				if(fromConfig == null)
-					fromConfig = getClaimConfig(playerConfigs, fromClaim);
-				Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
-				isBlockedEntity = fromConfig != config && shouldPreventToss(config, itemEntity, thrower, throwerId) != itemEntity;
+			if (!isBlockedEntity)
+				isBlockedEntity = accessor instanceof Raider raider && raider.canJoinRaid() && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
+			if (!isBlockedEntity && entity instanceof ItemEntity itemEntity) {
+				UUID throwerId = itemEntity.getThrower();
+				if (throwerId != null) {
+					if (fromConfig == null)
+						fromConfig = getClaimConfig(playerConfigs, fromClaim);
+					Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
+					isBlockedEntity = fromConfig != config && shouldPreventToss(config, itemEntity, thrower, throwerId) != itemEntity;
+				}
 			}
 		}
 		if(!isBlockedEntity) {
-			UUID mobLootOwnerId = ServerCore.getMobLootOwner(entity);
-			if (mobLootOwnerId != null) {
-				if(fromConfig == null)
+			UUID lootOwnerId = ServerCore.getLootOwner(entity);
+			if (lootOwnerId != null) {
+				if (fromConfig == null)
 					fromConfig = getClaimConfig(playerConfigs, fromClaim);
-				isBlockedEntity = fromConfig != config && shouldStopMobLoot(config, getEntityById((ServerLevel) entity.getLevel(), mobLootOwnerId), mobLootOwnerId);
+				if(fromConfig != config) {
+					UUID deadPlayerId = ServerCore.getDeadPlayer(entity);
+					if(deadPlayerId != null) {
+						Entity deadPlayer = getEntityById((ServerLevel) entity.getLevel(), deadPlayerId);
+						isBlockedEntity = checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, fromConfig, deadPlayer, deadPlayerId);
+					} else if(enteringProtectedChunk)
+						isBlockedEntity = shouldStopMobLoot(config, getEntityById((ServerLevel) entity.getLevel(), lootOwnerId), lootOwnerId);
+				}
 			}
 		}
-		if(!isBlockedEntity && madeAnException && accessor != entity){
-			//testing if the barrier protection affects the entity's owner
-			//this is for cases where a player enters a claim with no player barrier and sends an entity to another claimed chunk
-			//of the same owner and barrier protection for the sent entity, but with a player barrier
-			//kinda similar to how the main protection option is checked for piston barriers, but a player is the piston here
-			isBlockedEntity = blockedByBarrierGroups(config, accessor, accessor, accessorId);
-			if(isBlockedEntity){
-				if(fromConfig == null)
-					fromConfig = getClaimConfig(playerConfigs, fromClaim);
-				isBlockedEntity = !blockedByBarrierGroups(fromConfig, accessor, accessor, accessorId);
+		if(enteringProtectedChunk) {
+			if (!isBlockedEntity && madeAnException && accessor != entity) {//(!isBlockedEntity && madeAnException) means that there is a barrier for this entity but it was so in the old chunk too
+				//testing if the barrier protection affects the entity's owner
+				//this is for cases where a player enters a claim with no player barrier and sends an entity to another claimed chunk
+				//of the same owner and barrier protection for the sent entity, but with a player barrier
+				//kinda similar to how the main protection option is checked for piston barriers, but a player is the piston here
+				isBlockedEntity = blockedByBarrierGroups(config, accessor, accessor, accessorId);
+				if (isBlockedEntity) {
+					if (fromConfig == null)
+						fromConfig = getClaimConfig(playerConfigs, fromClaim);
+					isBlockedEntity = !blockedByBarrierGroups(fromConfig, accessor, accessor, accessorId);
+				}
 			}
 		}
 		return isBlockedEntity;
@@ -1251,8 +1272,10 @@ public class ChunkProtection
 		if(lootEntity instanceof ItemEntity itemEntity)
 			itemEntity.setThrower(livingEntity.getUUID());
 		ServerCore.setLootOwner(lootEntity, accessorId);
-		if(livingEntity instanceof Player)
+		if(livingEntity instanceof Player) {
+			ServerCore.setDeadPlayer(lootEntity, livingEntity.getUUID());
 			return false;
+		}
 		IPlayerChunkClaim claim = claimsManager.get(lootEntity.getLevel().dimension().location(), lootEntity.chunkPosition());
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
@@ -1269,9 +1292,7 @@ public class ChunkProtection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(entity.getUUID().equals(itemEntity.getThrower()) || entity.getUUID().equals(itemEntity.getOwner()) ||
-				entity.getUUID().equals(ServerCore.getMobLootOwner(itemEntity)))
-			return false;
-		if(entitiesAllowedToGriefDroppedItems.contains(entity.getType()))
+				entity.getUUID().equals(ServerCore.getLootOwner(itemEntity)))
 			return false;
 		ChunkPos chunkPos = itemEntity.chunkPosition();
 		Set<ChunkPos> cantPickupCached = cantPickupItemsInTickCache.get(entity);//avoiding rechecking every tick for a billion pickupable items in the same chunk
@@ -1280,6 +1301,14 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(itemEntity.getLevel().dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		UUID deadPlayerId = ServerCore.getDeadPlayer(itemEntity);
+		if(deadPlayerId != null){
+			Entity deadPlayer = getEntityById((ServerLevel) itemEntity.getLevel(), deadPlayerId);
+			if(checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, config, deadPlayer, deadPlayerId))
+				return true;
+		}
+		if(entitiesAllowedToGriefDroppedItems.contains(entity.getType()))
+			return false;
 		boolean shouldPrevent = false;
 		Entity accessor;
 		UUID accessorId;

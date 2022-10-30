@@ -228,6 +228,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_MOB_LOOT;
 	/**
+	 * Whether the claimed chunk protection includes protection for items dropped on player death.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT;
+	/**
 	 * Whether the claimed chunk protection includes protection against items being picked up by players.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS;
@@ -644,6 +648,15 @@ public class PlayerConfigOptions {
 				.setComment(
 						"When enabled, claimed chunk protection includes protection from loot being dropped when mobs die unless they are killed by players who have access to the chunks. Any non-living entity spawned on a mob's death is considered loot.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playerDeathLoot")
+				.setDefaultValue(0)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection for items and experience that have been dropped on a player death, even if the standard item pickup protection is disabled. The protected items are only accessible to the player that dropped them and the entity/player that killed the player.\n\n"
+						+ PlayerConfig.EXCEPTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)

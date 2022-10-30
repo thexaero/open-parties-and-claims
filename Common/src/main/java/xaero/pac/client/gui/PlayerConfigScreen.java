@@ -236,7 +236,8 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					values = Lists.newArrayList(currentValue);
 				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER &&
 						(option.getId().startsWith(PlayerConfigExceptionDynamicOptionsLoader.OPTION_ROOT) || staticProtectionLevelOption)) {
-					boolean enablesProtection = option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + ".") || staticProtectionLevelOption;
+					boolean enablesProtection = (option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + ".") || staticProtectionLevelOption)
+							&& option.getOption() != PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT;
 					values = Lists.newArrayList(
 							values.get(0),
 							values.get(enablesProtection ? 1 : values.size() - 1)

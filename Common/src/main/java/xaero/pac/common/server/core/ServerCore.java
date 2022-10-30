@@ -77,6 +77,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class ServerCore {
 	
@@ -417,25 +419,47 @@ public class ServerCore {
 	}
 
 	private final static String LOOT_OWNER_KEY = "xaero_OPAC_lootOwnerId";
-	public static void setLootOwner(Entity entity, UUID lootOwner){
-		((IEntity)entity).setXaero_OPAC_lootOwner(lootOwner);
+	private final static BiConsumer<IEntity, UUID> LOOT_OWNER_SETTER = IEntity::setXaero_OPAC_lootOwner;
+	private final static Function<IEntity, UUID> LOOT_OWNER_GETTER = IEntity::getXaero_OPAC_lootOwner;
+	private final static String DEAD_PLAYER_KEY = "xaero_OPAC_deadPlayer";
+	private final static BiConsumer<IEntity, UUID> DEAD_PLAYER_SETTER = IEntity::setXaero_OPAC_deadPlayer;
+	private final static Function<IEntity, UUID> DEAD_PLAYER_GETTER = IEntity::getXaero_OPAC_deadPlayer;
+
+	public static void setEntityGenericUUID(Entity entity, String key, UUID uuid, BiConsumer<IEntity, UUID> setter){
+		setter.accept((IEntity) entity, uuid);
 		CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
-		if(lootOwner == null)
-			persistentData.remove(LOOT_OWNER_KEY);
+		if(uuid == null)
+			persistentData.remove(key);
 		else
-			persistentData.putUUID(LOOT_OWNER_KEY, lootOwner);
+			persistentData.putUUID(key, uuid);
 	}
 
-	public static UUID getMobLootOwner(Entity entity){
-		UUID result = ((IEntity)entity).getXaero_OPAC_lootOwner();
+	public static UUID getEntityGenericUUID(Entity entity, String key, Function<IEntity, UUID> getter, BiConsumer<IEntity, UUID> setter){
+		UUID result = getter.apply((IEntity) entity);
 		if(result == null) {
 			CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
-			if(persistentData.contains(LOOT_OWNER_KEY)) {
-				result = persistentData.getUUID(LOOT_OWNER_KEY);
-				((IEntity)entity).setXaero_OPAC_lootOwner(result);
+			if(persistentData.contains(key)) {
+				result = persistentData.getUUID(key);
+				setter.accept((IEntity) entity, result);
 			}
 		}
 		return result;
+	}
+
+	public static void setLootOwner(Entity entity, UUID lootOwner){
+		setEntityGenericUUID(entity, LOOT_OWNER_KEY, lootOwner, LOOT_OWNER_SETTER);
+	}
+
+	public static UUID getLootOwner(Entity entity){
+		return getEntityGenericUUID(entity, LOOT_OWNER_KEY, LOOT_OWNER_GETTER, LOOT_OWNER_SETTER);
+	}
+
+	public static void setDeadPlayer(Entity entity, UUID deadPlayer){
+		setEntityGenericUUID(entity, DEAD_PLAYER_KEY, deadPlayer, DEAD_PLAYER_SETTER);
+	}
+
+	public static UUID getDeadPlayer(Entity entity){
+		return getEntityGenericUUID(entity, DEAD_PLAYER_KEY, DEAD_PLAYER_GETTER, DEAD_PLAYER_SETTER);
 	}
 
 	public static boolean onEntityItemPickup(Entity entity, ItemEntity itemEntity) {
