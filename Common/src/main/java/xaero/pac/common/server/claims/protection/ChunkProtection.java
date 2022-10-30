@@ -1042,18 +1042,21 @@ public class ChunkProtection
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return;
-		IPlayerConfigOptionSpecAPI<Integer> blockSpecificOption = block instanceof ButtonBlock ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES :
+		IPlayerConfigOptionSpecAPI<Integer> blockSpecificOption =
+				block instanceof ButtonBlock ?
+					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES :
 				block instanceof TargetBlock ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES :
+					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES :
 				null;
 		if(blockSpecificOption != null && config.getEffective(blockSpecificOption) <= 0)
 			return;
 		boolean everyoneExceptAccessHavers = blockSpecificOption != null && config.getEffective(blockSpecificOption) == 1;
 		Map<UUID, Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean>> cachedAccessorOptionResults = null;
+		boolean isWeighted = block instanceof WeightedPressurePlateBlock;
+		boolean isTripwire = block instanceof TripWireBlock;
 		while(iterator.hasNext()){
 			Entity e = iterator.next();
-			if(blockSpecificOption == null && !(block instanceof WeightedPressurePlateBlock) && e.isIgnoringBlockTriggers())//already ignored in vanilla
+			if(blockSpecificOption == null && !isWeighted && e.isIgnoringBlockTriggers())//already ignored in vanilla
 				continue;
 			Entity accessor;
 			UUID accessorId;
@@ -1066,13 +1069,23 @@ public class ChunkProtection
 				accessorId = accessor.getUUID();
 			}
 			IPlayerConfigOptionSpecAPI<Integer> entitySpecificOption = blockSpecificOption;
-			if(entitySpecificOption == null)
-				entitySpecificOption =
-						e instanceof Player ?
-							PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS :
-						e instanceof LivingEntity ?
-							PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS :
-							PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER;
+			if(entitySpecificOption == null) {
+				if(isTripwire){
+					entitySpecificOption =
+							e instanceof Player ?
+								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS :
+							e instanceof LivingEntity ?
+								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS :
+								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER;
+				} else {
+					entitySpecificOption =
+							e instanceof Player ?
+								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS :
+							e instanceof LivingEntity ?
+								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS :
+								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER;
+				}
+			}
 			Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean> resultsCachedForAccessor;
 			if(cachedAccessorOptionResults != null && (resultsCachedForAccessor = cachedAccessorOptionResults.get(accessorId)) != null){
 				Boolean cachedResult = resultsCachedForAccessor.get(entitySpecificOption);
@@ -1085,7 +1098,7 @@ public class ChunkProtection
 			boolean protect = (everyoneExceptAccessHavers || checkProtectionLeveledOption(entitySpecificOption, config, accessor, accessorId)) && !hasChunkAccess(config, accessor, accessorId);
 			if(!protect &&
 					(blockSpecificOption == PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES ||
-					blockSpecificOption == null && !(block instanceof WeightedPressurePlateBlock))
+					blockSpecificOption == null && !isWeighted)
 			)
 				break;//for these blocks 1 allowed entity is enough info
 			if(iterator.hasNext()){

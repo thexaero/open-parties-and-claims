@@ -116,6 +116,18 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER;
 	/**
+	 * Whether the claimed chunk protection includes protection of tripwires being pressed by players.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS;
+	/**
+	 * Whether the claimed chunk protection includes protection of tripwires being pressed by mobs.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS;
+	/**
+	 * Whether the claimed chunk protection includes protection of tripwires being pressed by non-living entities.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER;
+	/**
 	 * Whether the claimed chunk protection includes protection from frost walking.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING;
@@ -427,6 +439,33 @@ public class PlayerConfigOptions {
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
 						"When enabled, claimed chunk protection includes pressure plates being protected against non-living entities who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromPlayers")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes tripwires being protected against players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromMobs")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes tripwires being protected against mobs who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromOther")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes tripwires being protected against non-living entities who don't have access to the chunks.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);

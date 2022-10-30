@@ -907,6 +907,17 @@ function initializeCoreMod() {
                 return transformForEntitiesPushBlock(methodNode, true, false, 2)
             }
         },
+        'xaero_pac_tripwireblock_checkpressed': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.TripWireBlock',
+                'methodName': 'm_57607_',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformForEntitiesPushBlock(methodNode, false, true, 2)
+            }
+        },
         'xaero_pac_targetblock_onprojectilehit': {
             'target' : {
                 'type': 'METHOD',

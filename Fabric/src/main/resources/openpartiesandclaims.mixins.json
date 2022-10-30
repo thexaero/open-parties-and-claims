@@ -59,6 +59,7 @@
         "MixinSnowGolem",
         "MixinTargetBlock",
         "MixinTransientEntitySectionManagerCallback",
+        "MixinTripWireBlock",
         "MixinTurtleEggBlock",
         "MixinWeightedPressurePlateBlock",
         "MixinWitherBoss",
