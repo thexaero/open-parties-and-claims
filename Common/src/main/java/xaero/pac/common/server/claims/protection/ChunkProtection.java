@@ -1050,9 +1050,11 @@ public class ChunkProtection
 		if(blockSpecificOption != null && config.getEffective(blockSpecificOption) <= 0)
 			return;
 		boolean everyoneExceptAccessHavers = blockSpecificOption != null && config.getEffective(blockSpecificOption) == 1;
-		Map<UUID, Set<IPlayerConfigOptionSpecAPI<Integer>>> accessorOptionsToIgnore = null;
+		Map<UUID, Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean>> cachedAccessorOptionResults = null;
 		while(iterator.hasNext()){
 			Entity e = iterator.next();
+			if(blockSpecificOption == null && !(block instanceof WeightedPressurePlateBlock) && e.isIgnoringBlockTriggers())//already ignored in vanilla
+				continue;
 			Entity accessor;
 			UUID accessorId;
 			Object accessorInfo = getAccessorInfo(e);
@@ -1071,26 +1073,31 @@ public class ChunkProtection
 						e instanceof LivingEntity ?
 							PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS :
 							PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER;
-			Set<IPlayerConfigOptionSpecAPI<Integer>> optionsIgnoredForAccessor;
-			if(accessorOptionsToIgnore != null && (optionsIgnoredForAccessor = accessorOptionsToIgnore.get(accessorId)) != null && optionsIgnoredForAccessor.contains(entitySpecificOption)){
-				iterator.remove();
-				continue;
-			}
-			if((everyoneExceptAccessHavers || checkProtectionLeveledOption(entitySpecificOption, config, accessor, accessorId)) && !hasChunkAccess(config, accessor, accessorId)){
-				if(iterator.hasNext()){
-					if(accessorOptionsToIgnore == null)
-						accessorOptionsToIgnore = new HashMap<>();
-					optionsIgnoredForAccessor = accessorOptionsToIgnore.get(accessorId);
-					if(optionsIgnoredForAccessor == null)
-						accessorOptionsToIgnore.put(accessorId, optionsIgnoredForAccessor = new HashSet<>());
-					optionsIgnoredForAccessor.add(entitySpecificOption);
+			Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean> resultsCachedForAccessor;
+			if(cachedAccessorOptionResults != null && (resultsCachedForAccessor = cachedAccessorOptionResults.get(accessorId)) != null){
+				Boolean cachedResult = resultsCachedForAccessor.get(entitySpecificOption);
+				if(cachedResult != null){
+					if(cachedResult)
+						iterator.remove();
+					continue;
 				}
-				iterator.remove();
-			} else if(
-					blockSpecificOption == PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES ||
-					blockSpecificOption == null && !(block instanceof WeightedPressurePlateBlock)
+			}
+			boolean protect = (everyoneExceptAccessHavers || checkProtectionLeveledOption(entitySpecificOption, config, accessor, accessorId)) && !hasChunkAccess(config, accessor, accessorId);
+			if(!protect &&
+					(blockSpecificOption == PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES ||
+					blockSpecificOption == null && !(block instanceof WeightedPressurePlateBlock))
 			)
 				break;//for these blocks 1 allowed entity is enough info
+			if(iterator.hasNext()){
+				if(cachedAccessorOptionResults == null)
+					cachedAccessorOptionResults = new HashMap<>();
+				resultsCachedForAccessor = cachedAccessorOptionResults.get(accessorId);
+				if(resultsCachedForAccessor == null)
+					cachedAccessorOptionResults.put(accessorId, resultsCachedForAccessor = new HashMap<>());
+				resultsCachedForAccessor.put(entitySpecificOption, protect);
+			}
+			if(protect)
+				iterator.remove();
 		}
 	}
 
