@@ -1152,6 +1152,26 @@ function initializeCoreMod() {
                 insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
                 return methodNode
             }
+        },
+        'xaero_pac_itementity_merge': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.item.ItemEntity',
+                'methodName': 'm_32017_',
+                'methodDesc' : '(Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/world/item/ItemStack;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onItemMerge', '(Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/world/entity/item/ItemEntity;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFEQ, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
         }
 	}
 }

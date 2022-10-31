@@ -229,7 +229,7 @@ public class ChunkProtection
 	}
 
 	private boolean checkProtectionLeveledOption(IPlayerConfigOptionSpecAPI<Integer> option, IPlayerConfig claimConfig, Entity accessor, UUID accessorId){
-		//for options where each level increases protection
+		//nobody -> everyone -> not party -> not allies
 		int optionValue = claimConfig.getEffective(option);
 		if(optionValue <= 0)
 			return false;
@@ -240,7 +240,7 @@ public class ChunkProtection
 	}
 
 	private boolean checkExceptionLeveledOption(IPlayerConfigOptionSpecAPI<Integer> option, IPlayerConfig claimConfig, Entity accessor, UUID accessorId){
-		//for options where each level decreases protection
+		//nobody -> party -> allies -> everyone
 		int optionValue = claimConfig.getEffective(option);
 		if(optionValue >= 3)
 			return true;
@@ -657,7 +657,7 @@ public class ChunkProtection
 	}
 
 	private boolean shouldPreventEntityChunkEntry(IServerData<CM, P> serverData, IPlayerConfigManager playerConfigs, IPlayerChunkClaim toClaim, IPlayerChunkClaim fromClaim, IPlayerConfig config, IPlayerConfig fromConfig, Entity entity, SectionPos newSection, SectionPos oldSection){
-		if(toClaim == null)
+		if(toClaim == null && newSection != null)
 			toClaim = claimsManager.get(entity.getLevel().dimension().location(), newSection.x(), newSection.z());
 		if(config == null)
 			config = getClaimConfig(playerConfigs, toClaim);
@@ -1362,6 +1362,61 @@ public class ChunkProtection
 		return usedOptionBase instanceof Player ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS :
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS;
+	}
+
+	public boolean onItemStackMerge(IServerData<CM, P> serverData, ItemEntity first, ItemEntity second){
+		//needs to reflect any future changes to item pickup protection
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		ChunkPos firstChunkPos = first.chunkPosition();
+		IPlayerChunkClaim firstClaim = claimsManager.get(first.getLevel().dimension().location(), firstChunkPos);
+		IPlayerConfig firstConfig = getClaimConfig(playerConfigs, firstClaim);
+		boolean differentThrower = !Objects.equals(first.getThrower(), second.getThrower());
+		boolean differentOwner =  !Objects.equals(first.getOwner(), second.getOwner());
+		boolean differentLootOwner = !Objects.equals(ServerCore.getLootOwner(first), ServerCore.getLootOwner(second));
+		boolean firstProtected = firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
+		int firstItemPlayerProtection = !firstProtected ? 0 : firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS);
+		int firstItemMobsProtection = !firstProtected ? 0 : firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS);
+		if(differentThrower || differentOwner || differentLootOwner) {
+			if(firstItemPlayerProtection > 0 || firstItemMobsProtection > 0)
+				return true;
+			//if dead player ID exists it will be the same as thrower
+			UUID firstDeadPlayerId = ServerCore.getDeadPlayer(first);
+			if (firstDeadPlayerId != null) {
+				Entity firstDeadPlayer = getEntityById((ServerLevel) first.getLevel(), firstDeadPlayerId);
+				if (checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, firstConfig, firstDeadPlayer, firstDeadPlayerId))
+					return true;
+			}
+		}
+
+		ChunkPos secondChunkPos = second.chunkPosition();
+		if(secondChunkPos.equals(firstChunkPos))
+			return false;
+		IPlayerChunkClaim secondClaim = claimsManager.get(first.getLevel().dimension().location(), secondChunkPos);
+		if(firstClaim == secondClaim)
+			return false;
+		IPlayerConfig secondConfig = getClaimConfig(playerConfigs, secondClaim);
+		if(firstConfig == secondConfig)
+			return false;
+		UUID firstClaimOwner = firstConfig.getPlayerId();
+		UUID secondClaimOwner = secondConfig.getPlayerId();
+		boolean sameClaimOwner = Objects.equals(firstClaimOwner, secondClaimOwner);
+		boolean secondProtected = secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
+		int secondItemPlayerProtection = !secondProtected ? 0 : secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS);
+		if(firstItemPlayerProtection != secondItemPlayerProtection || !sameClaimOwner && secondItemPlayerProtection > 1)//party-based protection still matters even if it's equal
+			return true;
+		int secondItemMobsProtection = !secondProtected ? 0 : secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS);
+		if(firstItemMobsProtection != secondItemMobsProtection || !sameClaimOwner && secondItemMobsProtection > 1)//party-based protection still matters even if it's equal
+			return true;
+		if(firstItemPlayerProtection != firstItemMobsProtection) {//redirect matters
+			boolean firstItemProtectionRedirect = firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
+			boolean secondItemProtectionRedirect = secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
+			if (firstItemProtectionRedirect != secondItemProtectionRedirect)
+				return true;
+		}
+		//death loot is further protected by the entity barrier vvv along with some other stuff
+		return shouldPreventEntityChunkEntry(serverData, playerConfigs, firstClaim, secondClaim, firstConfig, secondConfig, second, null, null);
 	}
 
 	private Entity getEntityById(ServerLevel world, UUID id){

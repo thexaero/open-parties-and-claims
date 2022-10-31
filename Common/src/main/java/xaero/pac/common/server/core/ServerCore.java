@@ -499,4 +499,14 @@ public class ServerCore {
 		}
 	}
 
+	public static boolean onItemMerge(ItemEntity first, ItemEntity second){
+		if(first.getServer() == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(first.getServer());
+		if (serverData == null)
+			return true;
+		return serverData.getChunkProtection().onItemStackMerge(serverData, first, second);
+	}
+
 }
