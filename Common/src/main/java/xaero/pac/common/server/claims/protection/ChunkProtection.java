@@ -35,10 +35,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Evoker;
 import net.minecraft.world.entity.monster.Vex;
@@ -56,6 +53,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.function.TriFunction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -93,6 +91,8 @@ public class ChunkProtection
 	public static final String TAG_PREFIX = "#";
 	public static final String BREAK_PREFIX = "break$";
 	public static final String HAND_PREFIX = "hand$";
+	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> usedDroppedItemProtectionOptionGetter = this::getUsedDroppedItemProtectionOption;
+	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> usedExperienceOrbProtectionOptionGetter = (c, e, a) -> PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_XP_PICKUP;
 
 	private final Component MAIN_HAND = new TranslatableComponent("gui.xaero_claims_protection_main_hand");
 	private final Component OFF_HAND = new TranslatableComponent("gui.xaero_claims_protection_off_hand");
@@ -148,6 +148,7 @@ public class ChunkProtection
 
 	private boolean ignoreChunkEnter = false;
 	private final Map<Entity, Set<ChunkPos>> cantPickupItemsInTickCache;
+	private final Map<Entity, Set<ChunkPos>> cantPickupXPInTickCache;
 	
 	private ChunkProtection(CM claimsManager, IPartyManager<P> partyManager, ChunkProtectionEntityHelper entityHelper,
 							ChunkProtectionExceptionSet<EntityType<?>> friendlyEntityList,
@@ -162,7 +163,7 @@ public class ChunkProtection
 							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGrief,
 							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefEntities, ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefDroppedItems, ChunkProtectionExceptionSet<EntityType<?>> nonBlockGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> entityGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs, ChunkProtectionExceptionSet<Item> additionalBannedItems,
 							ChunkProtectionExceptionSet<Item> completelyBannedItems,
-							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions, ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities, Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups, Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups, Map<Entity, Set<ChunkPos>> cantPickItemsCache) {
+							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions, ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities, Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups, Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups, Map<Entity, Set<ChunkPos>> cantPickItemsCache, Map<Entity, Set<ChunkPos>> cantPickupXPInTickCache) {
 		this.claimsManager = claimsManager;
 		this.partyManager = partyManager;
 		this.entityHelper = entityHelper;
@@ -191,6 +192,7 @@ public class ChunkProtection
 		this.itemExceptionGroups = itemExceptionGroups;
 		this.entityBarrierGroups = entityBarrierGroups;
 		this.cantPickupItemsInTickCache = cantPickItemsCache;
+		this.cantPickupXPInTickCache = cantPickupXPInTickCache;
 	}
 	
 	private boolean shouldProtectEntity(IPlayerConfig claimConfig, Entity e, Entity from, Entity accessor, UUID accessorId) {
@@ -1292,22 +1294,22 @@ public class ChunkProtection
 		return !hasChunkAccess(config, accessor, accessorId) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_MOB_LOOT, config, accessor, accessorId);
 	}
 
-	public boolean onItemPickup(IServerData<CM, P> serverData, Entity entity, ItemEntity itemEntity) {
+	public boolean onEntityPickup(IServerData<CM, P> serverData, Entity entity, Entity pickedEntity, UUID pickedEntityThrower, UUID pickedEntityOwner, Map<Entity, Set<ChunkPos>> cantPickupCache, TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> protectionOptionGetter) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		if(entity.getUUID().equals(itemEntity.getThrower()) || entity.getUUID().equals(itemEntity.getOwner()) ||
-				entity.getUUID().equals(ServerCore.getLootOwner(itemEntity)))
+		if(entity.getUUID().equals(pickedEntityThrower) || entity.getUUID().equals(pickedEntityOwner) ||
+				entity.getUUID().equals(ServerCore.getLootOwner(pickedEntity)))
 			return false;
-		ChunkPos chunkPos = itemEntity.chunkPosition();
-		Set<ChunkPos> cantPickupCached = cantPickupItemsInTickCache.get(entity);//avoiding rechecking every tick for a billion pickupable items in the same chunk
+		ChunkPos chunkPos = pickedEntity.chunkPosition();
+		Set<ChunkPos> cantPickupCached = cantPickupCache.get(entity);//avoiding rechecking every tick for a billion pickupable items in the same chunk
 		if(cantPickupCached != null && cantPickupCached.contains(chunkPos))
 			return true;
-		IPlayerChunkClaim claim = claimsManager.get(itemEntity.getLevel().dimension().location(), chunkPos);
+		IPlayerChunkClaim claim = claimsManager.get(pickedEntity.getLevel().dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		UUID deadPlayerId = ServerCore.getDeadPlayer(itemEntity);
+		UUID deadPlayerId = ServerCore.getDeadPlayer(pickedEntity);
 		if(deadPlayerId != null){
-			Entity deadPlayer = getEntityById((ServerLevel) itemEntity.getLevel(), deadPlayerId);
+			Entity deadPlayer = getEntityById((ServerLevel) pickedEntity.getLevel(), deadPlayerId);
 			if(checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, config, deadPlayer, deadPlayerId))
 				return true;
 		}
@@ -1326,7 +1328,7 @@ public class ChunkProtection
 		}
 		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)) {
 			if (!hasChunkAccess(config, accessor, accessorId)) {
-				IPlayerConfigOptionSpecAPI<Integer> usedOption = getUsedDroppedItemProtectionOption(config, entity, accessor);
+				IPlayerConfigOptionSpecAPI<Integer> usedOption = protectionOptionGetter.apply(config, entity, accessor);
 				shouldPrevent = checkProtectionLeveledOption(usedOption, config, accessor, accessorId);
 			}
 		}
@@ -1342,20 +1344,24 @@ public class ChunkProtection
 				//
 				//This does not prevent mobs from leaving the protected chunks, picking items up, going back in and dropping them though.
 				//In that case item toss protection is all you have, but it doesn't stop mobs tamed by the claim owner.
-				IPlayerChunkClaim entityPosClaim = claimsManager.get(itemEntity.getLevel().dimension().location(), entityChunkPos);
+				IPlayerChunkClaim entityPosClaim = claimsManager.get(pickedEntity.getLevel().dimension().location(), entityChunkPos);
 				IPlayerConfig entityPosConfig = getClaimConfig(playerConfigs, entityPosClaim);
 				if(entityPosConfig != config)
-					shouldPrevent = shouldPreventEntityChunkEntry(serverData, playerConfigs, entityPosClaim, claim, entityPosConfig, config, itemEntity, null, null);
+					shouldPrevent = shouldPreventEntityChunkEntry(serverData, playerConfigs, entityPosClaim, claim, entityPosConfig, config, pickedEntity, null, null);
 			}
 		}
 		if(shouldPrevent){
 			if (cantPickupCached == null) {
 				cantPickupCached = new HashSet<>();
-				cantPickupItemsInTickCache.put(entity, cantPickupCached);
+				cantPickupCache.put(entity, cantPickupCached);
 			}
 			cantPickupCached.add(chunkPos);
 		}
 		return shouldPrevent;
+	}
+
+	public boolean onItemPickup(IServerData<CM, P> serverData, Entity entity, ItemEntity itemEntity) {
+		return onEntityPickup(serverData, entity, itemEntity, itemEntity.getThrower(), itemEntity.getOwner(), cantPickupItemsInTickCache, usedDroppedItemProtectionOptionGetter);
 	}
 
 	private IPlayerConfigOptionSpecAPI<Integer> getUsedDroppedItemProtectionOption(IPlayerConfig config, Entity entity, Entity accessor){
@@ -1368,7 +1374,7 @@ public class ChunkProtection
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS;
 	}
 
-	public boolean onItemStackMerge(IServerData<CM, P> serverData, ItemEntity first, ItemEntity second){
+	public boolean onEntityMerge(IServerData<CM, P> serverData, Entity first, UUID firstThrower, UUID firstOwner, Entity second, UUID secondThrower, UUID secondOwner, IPlayerConfigOptionSpecAPI<Integer> playerOption, IPlayerConfigOptionSpecAPI<Integer> mobOption, IPlayerConfigOptionSpecAPI<Boolean> redirectOption){
 		//needs to reflect any future changes to item pickup protection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
@@ -1376,12 +1382,12 @@ public class ChunkProtection
 		ChunkPos firstChunkPos = first.chunkPosition();
 		IPlayerChunkClaim firstClaim = claimsManager.get(first.getLevel().dimension().location(), firstChunkPos);
 		IPlayerConfig firstConfig = getClaimConfig(playerConfigs, firstClaim);
-		boolean differentThrower = !Objects.equals(first.getThrower(), second.getThrower());
-		boolean differentOwner =  !Objects.equals(first.getOwner(), second.getOwner());
+		boolean differentThrower = !Objects.equals(firstThrower, secondThrower);
+		boolean differentOwner =  !Objects.equals(firstOwner, secondOwner);
 		boolean differentLootOwner = !Objects.equals(ServerCore.getLootOwner(first), ServerCore.getLootOwner(second));
 		boolean firstProtected = firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
-		int firstItemPlayerProtection = !firstProtected ? 0 : firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS);
-		int firstItemMobsProtection = !firstProtected ? 0 : firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS);
+		int firstItemPlayerProtection = !firstProtected ? 0 : firstConfig.getEffective(playerOption);
+		int firstItemMobsProtection = !firstProtected || mobOption == null ? 0 : firstConfig.getEffective(mobOption);
 		if(differentThrower || differentOwner || differentLootOwner) {
 			if(firstItemPlayerProtection > 0 || firstItemMobsProtection > 0)
 				return true;
@@ -1407,20 +1413,32 @@ public class ChunkProtection
 		UUID secondClaimOwner = secondConfig.getPlayerId();
 		boolean sameClaimOwner = Objects.equals(firstClaimOwner, secondClaimOwner);
 		boolean secondProtected = secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
-		int secondItemPlayerProtection = !secondProtected ? 0 : secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS);
+		int secondItemPlayerProtection = !secondProtected ? 0 : secondConfig.getEffective(playerOption);
 		if(firstItemPlayerProtection != secondItemPlayerProtection || !sameClaimOwner && secondItemPlayerProtection > 1)//party-based protection still matters even if it's equal
 			return true;
-		int secondItemMobsProtection = !secondProtected ? 0 : secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS);
+		int secondItemMobsProtection = !secondProtected || mobOption == null ? 0 : secondConfig.getEffective(mobOption);
 		if(firstItemMobsProtection != secondItemMobsProtection || !sameClaimOwner && secondItemMobsProtection > 1)//party-based protection still matters even if it's equal
 			return true;
-		if(firstItemPlayerProtection != firstItemMobsProtection) {//redirect matters
-			boolean firstItemProtectionRedirect = firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
-			boolean secondItemProtectionRedirect = secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
+		if(firstItemPlayerProtection != firstItemMobsProtection && redirectOption != null) {//redirect matters
+			boolean firstItemProtectionRedirect = firstConfig.getEffective(redirectOption);
+			boolean secondItemProtectionRedirect = secondConfig.getEffective(redirectOption);
 			if (firstItemProtectionRedirect != secondItemProtectionRedirect)
 				return true;
 		}
 		//death loot is further protected by the entity barrier vvv along with some other stuff
 		return shouldPreventEntityChunkEntry(serverData, playerConfigs, firstClaim, secondClaim, firstConfig, secondConfig, second, null, null);
+	}
+
+	public boolean onItemStackMerge(IServerData<CM, P> serverData, ItemEntity first, ItemEntity second) {
+		return onEntityMerge(serverData, first, first.getThrower(), first.getOwner(), second, second.getThrower(), second.getOwner(), PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
+	}
+
+	public boolean onExperiencePickup(IServerData<CM, P> serverData, ExperienceOrb orb, Player player) {
+		return onEntityPickup(serverData, player, orb, null, null, cantPickupXPInTickCache, usedExperienceOrbProtectionOptionGetter);
+	}
+
+	public boolean onExperienceMerge(IServerData<CM, P> serverData, ExperienceOrb from, ExperienceOrb into) {
+		return onEntityMerge(serverData, into, null, null, from, null, null, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_XP_PICKUP, null, null);
 	}
 
 	private Entity getEntityById(ServerLevel world, UUID id){
@@ -1525,6 +1543,7 @@ public class ChunkProtection
 
 	public void onServerTick(){
 		cantPickupItemsInTickCache.clear();
+		cantPickupXPInTickCache.clear();
 	}
 
 	public static final class Builder
@@ -1732,7 +1751,7 @@ public class ChunkProtection
 					requiresEmptyHandBlocksBuilder.build(), completelyDisabledBlocks.build(), forcedInteractionExceptionEntities.build(),
 					forcedKillExceptionEntities.build(), requiresEmptyHandEntitiesBuilder.build(), forcedEntityClaimBarrierList.build(), entitiesAllowedToGrief.build(),
 					entitiesAllowedToGriefEntities.build(), entitiesAllowedToGriefDroppedItems.build(), nonBlockGriefingMobs.build(), entityGriefingMobs.build(), droppedItemGriefingMobs.build(), additionalBannedItems.build(), completelyDisabledItems.build(),
-					itemUseProtectionExceptions.build(), completelyDisabledEntities.build(), blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, new HashMap<>());
+					itemUseProtectionExceptions.build(), completelyDisabledEntities.build(), blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, new HashMap<>(), new HashMap<>());
 		}
 
 		private <T> void onExceptionListElement(String element, Consumer<Either<T,TagKey<T>>> interactionException,

@@ -21,6 +21,7 @@
         "MixinEntity",
         "MixinEntityGetter",
         "MixinEvokerWololoSpellGoal",
+        "MixinExperienceOrb",
         "MixinExplosion",
         "MixinFarmBlock",
         "MixinFireBlock",

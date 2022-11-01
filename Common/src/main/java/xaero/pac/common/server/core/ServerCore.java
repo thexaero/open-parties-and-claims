@@ -32,6 +32,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -475,6 +476,20 @@ public class ServerCore {
 		return false;
 	}
 
+	public static Player onExperiencePickup(Player player, ExperienceOrb orb) {
+		if(orb == null || player == null)
+			return player;
+		if(orb.getServer() == null)
+			return player;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(orb.getServer());
+		if (serverData == null)
+			return player;
+		if(serverData.getChunkProtection().onExperiencePickup(serverData, orb, player))
+			return null;
+		return player;
+	}
+
 	private static boolean MOB_GRIEFING_IS_FOR_ITEMS;
 	public static void forgePreItemMobGriefingCheck(){
 		MOB_GRIEFING_IS_FOR_ITEMS = true;
@@ -515,6 +530,16 @@ public class ServerCore {
 		if (serverData == null)
 			return false;
 		return serverData.getChunkProtection().onItemStackMerge(serverData, first, second);
+	}
+
+	public static boolean onExperienceMerge(ExperienceOrb from, ExperienceOrb into){
+		if(into.getServer() == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(into.getServer());
+		if (serverData == null)
+			return false;
+		return serverData.getChunkProtection().onExperienceMerge(serverData, from, into);
 	}
 
 	public static boolean onSetFishingHookedEntity(FishingHook hook, Entity entity) {
