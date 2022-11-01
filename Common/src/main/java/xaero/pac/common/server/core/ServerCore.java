@@ -36,6 +36,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -487,9 +488,9 @@ public class ServerCore {
 		return MOB_GRIEFING_IS_FOR_ITEMS;
 	}
 
-	private static LivingEntity BEHAVIOR_UTILS_THROW_ITEM_LIVING;
-	public static void preThrowItem(LivingEntity livingEntity) {
-		BEHAVIOR_UTILS_THROW_ITEM_LIVING = livingEntity;
+	private static Entity BEHAVIOR_UTILS_THROW_ITEM_LIVING;
+	public static void preThrowItem(Entity entity) {
+		BEHAVIOR_UTILS_THROW_ITEM_LIVING = entity;
 	}
 
 	public static void onThrowItem(ItemEntity itemEntity) {
@@ -499,14 +500,32 @@ public class ServerCore {
 		}
 	}
 
+	public static void onFishingHookAddEntity(Entity entity, FishingHook hook){
+		if(entity instanceof ItemEntity itemEntity) {
+			preThrowItem(hook.getOwner());
+			onThrowItem(itemEntity);
+		}
+	}
+
 	public static boolean onItemMerge(ItemEntity first, ItemEntity second){
 		if(first.getServer() == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(first.getServer());
 		if (serverData == null)
-			return true;
+			return false;
 		return serverData.getChunkProtection().onItemStackMerge(serverData, first, second);
 	}
 
+	public static boolean onSetFishingHookedEntity(FishingHook hook, Entity entity) {
+		if(entity == null)
+			return false;
+		if(entity.getServer() == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(entity.getServer());
+		if (serverData == null)
+			return false;
+		return serverData.getChunkProtection().onFishingHookedEntity(serverData, hook, entity);
+	}
 }

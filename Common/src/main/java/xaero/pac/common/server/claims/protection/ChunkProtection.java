@@ -44,6 +44,7 @@ import net.minecraft.world.entity.monster.Evoker;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.*;
@@ -635,6 +636,9 @@ public class ChunkProtection
 		return !attack && !emptyHand && onUseItemAt(serverData, entity, target.blockPosition(), null, itemStack, hand, posSpecific);
 	}
 
+	public boolean onFishingHookedEntity(IServerData<CM, P> serverData, FishingHook hook, Entity entity) {
+		return onEntityInteract(serverData, hook.getOwner(), hook, entity, InteractionHand.MAIN_HAND, false, true, false);
+	}
 	public boolean onEntityFire(IServerData<CM, P> serverData, Entity target) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;

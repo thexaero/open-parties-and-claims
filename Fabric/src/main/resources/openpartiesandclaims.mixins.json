@@ -24,6 +24,7 @@
         "MixinExplosion",
         "MixinFarmBlock",
         "MixinFireBlock",
+        "MixinFishingHook",
         "MixinFlowingFluid",
         "MixinFoxEatBerriesGoal",
         "MixinFrostWalkerEnchantment",

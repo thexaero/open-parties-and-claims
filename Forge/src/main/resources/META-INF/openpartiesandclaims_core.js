@@ -16,6 +16,10 @@ var getBlockStateName = 'getBlockState'
 var getBlockStateNameObf = 'm_8055_'
 var getBlockStateDesc = '(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;'
 
+var addFreshEntityName = 'addFreshEntity'
+var addFreshEntityNameObf = 'm_7967_'
+var addFreshEntityDesc = '(Lnet/minecraft/world/entity/Entity;)Z'
+
 function addCustomGetter(classNode, fieldName, fieldDesc, methodName){
 	var methods = classNode.methods
 	var getterNode = new MethodNode(Opcodes.ACC_PUBLIC, methodName, "()" + fieldDesc, null, null)
@@ -1136,20 +1140,16 @@ function initializeCoreMod() {
             'transformer' : function(methodNode){
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preThrowItem', '(Lnet/minecraft/world/entity/LivingEntity;)V'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preThrowItem', '(Lnet/minecraft/world/entity/Entity;)V'))
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 
-                invokeTargetClass = 'net/minecraft/world/level/Level'
-                invokeTargetName = 'addFreshEntity'
-                invokeTargetNameObf = 'm_7967_'
-                invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;)Z'
                 insnToInsertGetter = function() {
                      var insnToInsert = new InsnList()
                      insnToInsert.add(new InsnNode(Opcodes.DUP))
                      insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onThrowItem', '(Lnet/minecraft/world/entity/item/ItemEntity;)V'))
                      return insnToInsert
                 }
-                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, levelClass, addFreshEntityName, addFreshEntityNameObf, addFreshEntityDesc, false)
                 return methodNode
             }
         },
@@ -1170,6 +1170,45 @@ function initializeCoreMod() {
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_fishinghook_sethookedentity': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.projectile.FishingHook',
+                'methodName': 'm_150157_',
+                'methodDesc' : '(Lnet/minecraft/world/entity/Entity;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onSetFishingHookedEntity', '(Lnet/minecraft/world/entity/projectile/FishingHook;Lnet/minecraft/world/entity/Entity;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFEQ, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_fishinghook_retrieve': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.projectile.FishingHook',
+                'methodName': 'm_37156_',
+                'methodDesc' : '(Lnet/minecraft/world/item/ItemStack;)I'
+            },
+            'transformer' : function(methodNode){
+                insnToInsertGetter = function() {
+                     var insnToInsert = new InsnList()
+                     insnToInsert.add(new InsnNode(Opcodes.DUP))
+                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onFishingHookAddEntity', '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/projectile/FishingHook;)V'))
+                     return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, levelClass, addFreshEntityName, addFreshEntityNameObf, addFreshEntityDesc, false)
                 return methodNode
             }
         }
