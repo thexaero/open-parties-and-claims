@@ -261,6 +261,22 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_RAIDS;
 	/**
+	 * Whether the claimed chunk protection includes natural spawn prevention for hostile mobs.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN;
+	/**
+	 * Whether the claimed chunk protection includes natural spawn prevention for friendly mobs.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN;
+	/**
+	 * Whether the claimed chunk protection disables spawners for hostile mobs.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS;
+	/**
+	 * Whether the claimed chunk protection disables spawners for friendly mobs.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS;
+	/**
 	 * Whether the player's forceloadable claims are forceloaded, at least while the player is online.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> FORCELOAD;
@@ -715,6 +731,26 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.raids")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection from village raids. It stops raiders from spawning inside the protected chunks, from entering them and from hurting protectable entities, even if entity protection is turned off.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.naturalSpawnHostile")
+				.setDefaultValue(false)
+				.setComment("When enabled, claimed chunk protection disables the natural spawning of hostile mobs.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.naturalSpawnFriendly")
+				.setDefaultValue(false)
+				.setComment("When enabled, claimed chunk protection disables the natural spawning of friendly mobs.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.spawnersHostile")
+				.setDefaultValue(false)
+				.setComment("When enabled, claimed chunk protection disables hostile mob spawners.")
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.spawnersFriendly")
+				.setDefaultValue(false)
+				.setComment("When enabled, claimed chunk protection disables friendly mob spawners.")
 				.build(allOptions);
 
 		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)

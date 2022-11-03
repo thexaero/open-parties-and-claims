@@ -30,6 +30,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -219,6 +220,12 @@ public class CommonEventsForge extends CommonEvents {
 	public void onItemPickup(EntityItemPickupEvent event){
 		if(super.onItemPickup(event.getPlayer(), event.getItem()))
 			event.setCanceled(true);
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onMobCheckSpawn(LivingSpawnEvent.CheckSpawn event){
+		if(super.onMobSpawn(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getSpawnReason()))
+			event.setResult(Result.DENY);
 	}
 
 }

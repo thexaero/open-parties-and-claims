@@ -4,6 +4,7 @@
     "package": "xaero.pac.common.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "MixinBaseSpawner",
         "MixinBehaviorUtils",
         "MixinBreakDoorGoal",
         "MixinBucketItem",
@@ -38,6 +39,7 @@
         "MixinMinecraftServer",
         "MixinMob",
         "MixinMoveToBlockGoal",
+        "MixinNaturalSpawner",
         "MixinPersistentEntitySectionManager",
         "MixinPersistentEntitySectionManagerCallback",
         "MixinPistonBaseBlock",

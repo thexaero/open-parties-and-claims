@@ -1181,6 +1181,30 @@ public class ChunkProtection
 		return config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
 	}
 
+	public boolean onMobSpawn(IServerData<CM, P> serverData, Entity entity, double x, double y, double z, MobSpawnType spawnReason) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		IPlayerChunkClaim claim = claimsManager.get(entity.level.dimension().location(), new ChunkPos(new BlockPos(x, y, z)));
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
+			return false;
+		IPlayerConfigOptionSpecAPI<Boolean> option;
+		boolean hostile = entityHelper.isHostile(entity);
+		if(spawnReason == MobSpawnType.SPAWNER){
+			if(hostile)
+				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS;
+			else
+				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS;
+		} else {
+			if(hostile)
+				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN;
+			else
+				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN;
+		}
+		return config.getEffective(option);
+	}
+
 	public boolean onItemAddedToWorld(IServerData<CM, P> serverData, ItemEntity itemEntity) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;

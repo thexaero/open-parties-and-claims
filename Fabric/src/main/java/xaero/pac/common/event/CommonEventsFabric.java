@@ -42,6 +42,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -54,6 +56,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
 import java.util.List;
 
@@ -193,6 +196,11 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk){
+		if(!fromDisk && entity instanceof Mob && entity.tickCount == 0) {//is being spawned
+			MobSpawnType mobSpawnType = ServerCoreFabric.MOB_SPAWN_TYPE_FOR_NEW_ENTITIES;
+			if(mobSpawnType != null)
+				return super.onMobSpawn(entity, entity.getX(), entity.getY(), entity.getZ(), mobSpawnType);
+		}
 		return super.onEntityJoinWorld(entity, world, fromDisk);
 	}
 

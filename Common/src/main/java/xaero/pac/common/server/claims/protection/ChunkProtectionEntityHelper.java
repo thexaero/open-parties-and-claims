@@ -26,7 +26,6 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.player.Player;
 
@@ -92,7 +91,7 @@ public class ChunkProtectionEntityHelper {
 	}
 	
 	boolean isHostile(Entity e) {
-		return (e.getLevel().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Monster || e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
+		return (e.getLevel().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
 	}
 	
 	boolean isTamed(Entity e, Player p) {
