@@ -37,4 +37,19 @@ public class EntityRegistryForge implements IEntityRegistry {
 		return ForgeRegistries.ENTITIES.tags().getTag(tagKey).stream();
 	}
 
+	@Override
+	public ResourceLocation getKey(EntityType<?> entity) {
+		return ForgeRegistries.ENTITIES.getKey(entity);
+	}
+
+	@Override
+	public Iterable<EntityType<?>> getIterable(){
+		return ForgeRegistries.ENTITIES.getValues();
+	}
+
+	@Override
+	public Iterable<TagKey<EntityType<?>>> getTagIterable(){
+		return ForgeRegistries.ENTITIES.tags().getTagNames().toList();
+	}
+
 }

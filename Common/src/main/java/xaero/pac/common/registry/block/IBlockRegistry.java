@@ -30,4 +30,10 @@ public interface IBlockRegistry {
 
 	public Stream<Block> getTagStream(TagKey<Block> tagKey);
 
+	public ResourceLocation getKey(Block block);
+
+	public Iterable<Block> getIterable();
+
+	public Iterable<TagKey<Block>> getTagIterable();
+
 }

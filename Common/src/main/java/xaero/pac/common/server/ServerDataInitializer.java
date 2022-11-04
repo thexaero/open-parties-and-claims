@@ -18,17 +18,14 @@
 
 package xaero.pac.common.server;
 
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
-import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
@@ -37,6 +34,8 @@ import xaero.pac.common.server.claims.player.io.serialization.nbt.PlayerClaimInf
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
+import xaero.pac.common.server.claims.protection.ExceptionElementType;
+import xaero.pac.common.server.claims.protection.WildcardResolver;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroupLoader;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
@@ -160,19 +159,16 @@ public class ServerDataInitializer {
 			long autosaveInterval = ServerConfig.CONFIG.autosaveInterval.get() * 60000;
 			ObjectManagerLiveSaver partyLiveSaver = new ObjectManagerLiveSaver(partyManagerIO, autosaveInterval, 0);
 
+			WildcardResolver wildcardResolver = new WildcardResolver();
 			Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups = new LinkedHashMap<>();
 			ChunkProtectionExceptionGroupLoader exceptionGroupLoader = new ChunkProtectionExceptionGroupLoader();
-			exceptionGroupLoader.load(ServerConfig.CONFIG.blockProtectionOptionalExceptionGroups, Services.PLATFORM.getBlockRegistry()::getValue,
-					rl -> TagKey.create(Registry.BLOCK_REGISTRY, rl), Services.PLATFORM.getBlockRegistry()::getTagStream, blockExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER);
-			exceptionGroupLoader.load(ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups, Services.PLATFORM.getEntityRegistry()::getValue,
-					rl -> TagKey.create(Registry.ENTITY_TYPE_REGISTRY, rl), Services.PLATFORM.getEntityRegistry()::getTagStream, entityExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER);
-			exceptionGroupLoader.load(ServerConfig.CONFIG.itemUseProtectionOptionalExceptionGroups, Services.PLATFORM.getItemRegistry()::getValue,
-					rl -> TagKey.create(Registry.ITEM_REGISTRY, rl), Services.PLATFORM.getItemRegistry()::getTagStream, itemExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t == ChunkProtectionExceptionType.INTERACTION);
-			exceptionGroupLoader.load(ServerConfig.CONFIG.entityClaimBarrierOptionalGroups, Services.PLATFORM.getEntityRegistry()::getValue,
-					rl -> TagKey.create(Registry.ENTITY_TYPE_REGISTRY, rl), Services.PLATFORM.getEntityRegistry()::getTagStream, entityBarrierGroups, ChunkProtectionExceptionType.BARRIER, t -> t == ChunkProtectionExceptionType.BARRIER);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.blockProtectionOptionalExceptionGroups, ExceptionElementType.BLOCK, wildcardResolver, blockExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.itemUseProtectionOptionalExceptionGroups, ExceptionElementType.ITEM, wildcardResolver, itemExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t == ChunkProtectionExceptionType.INTERACTION);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.entityClaimBarrierOptionalGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityBarrierGroups, ChunkProtectionExceptionType.BARRIER, t -> t == ChunkProtectionExceptionType.BARRIER);
 
 			PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs = PlayerConfigManager.Builder.<ServerParty, ServerClaimsManager>begin()
 					.setServer(server)

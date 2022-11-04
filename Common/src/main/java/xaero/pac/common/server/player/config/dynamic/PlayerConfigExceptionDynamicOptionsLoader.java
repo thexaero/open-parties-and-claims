@@ -18,17 +18,13 @@
 
 package xaero.pac.common.server.player.config.dynamic;
 
-import com.mojang.datafixers.util.Either;
-import net.minecraft.tags.TagKey;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.player.config.dynamic.PlayerConfigDynamicOptions;
-import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigStaticListIterationOptionSpec;
 
-import java.util.Iterator;
 import java.util.function.Function;
 
 public class PlayerConfigExceptionDynamicOptionsLoader {
@@ -72,24 +68,12 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 			return;
 		}
 		optionId += "." + group.getName();
-		StringBuilder list = new StringBuilder();
-		Iterator<Either<T, TagKey<T>>> iterator = group.stream().iterator();
-		boolean first = true;
-		while(iterator.hasNext()){
-			if(!first)
-				list.append(", ");
-			Either<T, TagKey<T>> el = iterator.next();
-			el.ifLeft(b -> list.append(objectNameGetter.apply(b)));
-			el.ifRight(t -> list.append(ChunkProtection.TAG_PREFIX).append(t.location()));
-			first = false;
-		}
-		String listString = list.toString();
-		comment = String.format(comment, listString);
+		comment = String.format(comment, group.getContentString());
 		PlayerConfigStaticListIterationOptionSpec<Integer> option = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(optionId)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setTranslation(translation, group.getName())
-				.setCommentTranslation(commentTranslation, listString)
+				.setCommentTranslation(commentTranslation, group.getContentString())
 				.setDefaultValue(0)
 				.setComment(comment)
 				.build(null);

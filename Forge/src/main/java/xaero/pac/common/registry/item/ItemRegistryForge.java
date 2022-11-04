@@ -37,4 +37,19 @@ public class ItemRegistryForge implements IItemRegistry {
 		return ForgeRegistries.ITEMS.tags().getTag(tagKey).stream();
 	}
 
+	@Override
+	public ResourceLocation getKey(Item item) {
+		return ForgeRegistries.ITEMS.getKey(item);
+	}
+
+	@Override
+	public Iterable<Item> getIterable(){
+		return ForgeRegistries.ITEMS.getValues();
+	}
+
+	@Override
+	public Iterable<TagKey<Item>> getTagIterable(){
+		return ForgeRegistries.ITEMS.tags().getTagNames().toList();
+	}
+
 }

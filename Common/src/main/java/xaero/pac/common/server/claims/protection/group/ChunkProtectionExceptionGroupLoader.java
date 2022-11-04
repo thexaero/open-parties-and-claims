@@ -19,26 +19,26 @@
 package xaero.pac.common.server.claims.protection.group;
 
 import com.mojang.datafixers.util.Either;
-import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
+import xaero.pac.common.server.claims.protection.ExceptionElementType;
+import xaero.pac.common.server.claims.protection.WildcardResolver;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class ChunkProtectionExceptionGroupLoader {
 
 	public <T> void load(ForgeConfigSpec.ConfigValue<List<? extends String>> configOption,
-						 Function<ResourceLocation, T> objectGetter, Function<ResourceLocation, TagKey<T>> tagGetter,
-						 Function<TagKey<T>, Stream<T>> tagStreamGetter, Map<String, ChunkProtectionExceptionGroup<T>> destination,
-						 ChunkProtectionExceptionType defaultType, Predicate<ChunkProtectionExceptionType> typeFilter){
+						 ExceptionElementType<T> elementType, WildcardResolver wildcardResolver,
+						 Map<String, ChunkProtectionExceptionGroup<T>> destination, ChunkProtectionExceptionType defaultType,
+						 Predicate<ChunkProtectionExceptionType> typeFilter){
 		configOption.get().forEach(stringEntry -> {
 			int listStartIndex = stringEntry.indexOf('{');
 			int listEndIndex;
@@ -68,31 +68,41 @@ public class ChunkProtectionExceptionGroupLoader {
 				OpenPartiesAndClaims.LOGGER.error("Exception group name must be unique: " + prefixedName);
 				return;
 			}
-			ChunkProtectionExceptionGroup.Builder<T> builder = ChunkProtectionExceptionGroup.Builder.<T>begin()
+
+			Function<ResourceLocation, T> objectGetter = elementType.getGetter();
+			Function<ResourceLocation, TagKey<T>> tagGetter = elementType.getTagGetter();
+			Iterable<T> iterable = elementType.getIterable();
+			Iterable<TagKey<T>> tagIterable= elementType.getTagIterable();
+			Function<T, ResourceLocation> keyGetter = elementType.getKeyGetter();
+			Function<TagKey<T>, ResourceLocation> tagKeyGetter = elementType.getTagKeyGetter();
+
+			ChunkProtectionExceptionGroup.Builder<T> builder = ChunkProtectionExceptionGroup.Builder.begin(elementType)
 				.setName(name)
-				.setType(type)
-				.setTagStreamGetter(tagStreamGetter);
+				.setType(type);
 
 			String groupContent = stringEntry.substring(listStartIndex + 1, listEndIndex).trim();
 			String[] groupContentSplit = groupContent.split("\\s*,\\s*");
 			for(String element : groupContentSplit){
 				boolean tag = element.startsWith(ChunkProtection.TAG_PREFIX);
 				String id = element.substring(tag ? ChunkProtection.TAG_PREFIX.length() : 0);
-				try {
-					ResourceLocation elementResourceLocation = new ResourceLocation(id);
-					if(tag) {
-						TagKey<T> objectTag = tagGetter.apply(elementResourceLocation);
-						if(objectTag != null)
+				boolean invalidWildcard;
+				if(tag) {
+					List<TagKey<T>> objectTags = wildcardResolver.resolveResourceLocations(tagGetter, tagIterable, tagKeyGetter, id);
+					invalidWildcard = objectTags == null;
+					if(!invalidWildcard)
+						for(TagKey<T> objectTag : objectTags)
 							builder.addException(Either.right(objectTag));
-					} else {
-						T object = objectGetter.apply(elementResourceLocation);
-						if(object != null)
+				} else {
+					List<T> objects = wildcardResolver.resolveResourceLocations(objectGetter, iterable, keyGetter, id);
+					invalidWildcard = objects == null;
+					if(!invalidWildcard)
+						for(T object : objects)
 							builder.addException(Either.left(object));
-					}
-				} catch(ResourceLocationException rle){
-					OpenPartiesAndClaims.LOGGER.error("Invalid resource location in an exception group: " + element, rle);
 				}
+				if(invalidWildcard)
+					OpenPartiesAndClaims.LOGGER.error("Invalid resource location in an exception group: " + element);
 			}
+			builder.setContentString(groupContent);
 			ChunkProtectionExceptionGroup<T> group = builder.build();
 			destination.put(prefixedName, group);
 		});

@@ -23,7 +23,6 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -57,7 +56,6 @@ import org.apache.commons.lang3.function.TriFunction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.member.IPartyMember;
-import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
@@ -1629,61 +1627,56 @@ public class ChunkProtection
 					blockExceptionGroups == null || entityExceptionGroups == null || itemExceptionGroups == null || entityBarrierGroups == null)
 				throw new IllegalStateException();
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> friendlyEntityList =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> hostileEntityList =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<Block> forcedInteractionExceptionBlocksBuilder =
-					ChunkProtectionExceptionSet.Builder.<Block>begin().setTagStreamGetter(Services.PLATFORM.getBlockRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.BLOCK);
 			ChunkProtectionExceptionSet.Builder<Block> forcedBreakExceptionBlocksBuilder =
-					ChunkProtectionExceptionSet.Builder.<Block>begin().setTagStreamGetter(Services.PLATFORM.getBlockRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.BLOCK);
 			ChunkProtectionExceptionSet.Builder<Block> requiresEmptyHandBlocksBuilder =
-					ChunkProtectionExceptionSet.Builder.<Block>begin().setTagStreamGetter(Services.PLATFORM.getBlockRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.BLOCK);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> forcedInteractionExceptionEntities =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> forcedKillExceptionEntities =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> requiresEmptyHandEntitiesBuilder =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> forcedEntityClaimBarrierList =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> entitiesAllowedToGrief =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> entitiesAllowedToGriefEntities =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> entitiesAllowedToGriefDroppedItems =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> nonBlockGriefingMobs =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> entityGriefingMobs =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> droppedItemGriefingMobs =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 			ChunkProtectionExceptionSet.Builder<Item> additionalBannedItems =
-					ChunkProtectionExceptionSet.Builder.<Item>begin().setTagStreamGetter(Services.PLATFORM.getItemRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ITEM);
 			ChunkProtectionExceptionSet.Builder<Item> itemUseProtectionExceptions =
-					ChunkProtectionExceptionSet.Builder.<Item>begin().setTagStreamGetter(Services.PLATFORM.getItemRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ITEM);
 			ChunkProtectionExceptionSet.Builder<Item> completelyDisabledItems =
-					ChunkProtectionExceptionSet.Builder.<Item>begin().setTagStreamGetter(Services.PLATFORM.getItemRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ITEM);
 			ChunkProtectionExceptionSet.Builder<Block> completelyDisabledBlocks =
-					ChunkProtectionExceptionSet.Builder.<Block>begin().setTagStreamGetter(Services.PLATFORM.getBlockRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.BLOCK);
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> completelyDisabledEntities =
-					ChunkProtectionExceptionSet.Builder.<EntityType<?>>begin().setTagStreamGetter(Services.PLATFORM.getEntityRegistry()::getTagStream);
+					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
 
-			Function<ResourceLocation, Block> blockGetter = Services.PLATFORM.getBlockRegistry()::getValue;
-			Function<ResourceLocation, TagKey<Block>> blockTagGetter = rl -> TagKey.create(Registry.BLOCK_REGISTRY, rl);
-			Function<ResourceLocation, EntityType<?>> entityGetter = Services.PLATFORM.getEntityRegistry()::getValue;
-			Function<ResourceLocation, TagKey<EntityType<?>>> entityTagGetter = rl -> TagKey.create(Registry.ENTITY_TYPE_REGISTRY, rl);
-			Function<ResourceLocation, Item> itemGetter = Services.PLATFORM.getItemRegistry()::getValue;
-			Function<ResourceLocation, TagKey<Item>> itemTagGetter = rl -> TagKey.create(Registry.ITEM_REGISTRY, rl);
+			WildcardResolver wildcardResolver = new WildcardResolver();
 			ServerConfig.CONFIG.friendlyChunkProtectedEntityList.get().forEach(s -> onExceptionListElement(
 					s,
 					friendlyEntityList::addEither, null, null,
-					entityGetter, entityTagGetter
+					ExceptionElementType.ENTITY_TYPE, wildcardResolver
 			));
 			ServerConfig.CONFIG.hostileChunkProtectedEntityList.get().forEach(s -> onExceptionListElement(
 					s,
 					hostileEntityList::addEither, null, null,
-					entityGetter, entityTagGetter
+					ExceptionElementType.ENTITY_TYPE, wildcardResolver
 			));
 			ServerConfig.CONFIG.forcedBlockProtectionExceptionList.get()
 					.forEach(s -> onExceptionListElement(
@@ -1692,7 +1685,7 @@ public class ChunkProtection
 							o -> {
 								forcedInteractionExceptionBlocksBuilder.addEither(o);
 								requiresEmptyHandBlocksBuilder.addEither(o);
-							}, blockGetter, blockTagGetter
+							}, ExceptionElementType.BLOCK, wildcardResolver
 					));
 			ServerConfig.CONFIG.forcedEntityProtectionExceptionList.get()
 					.forEach(s -> onExceptionListElement(
@@ -1701,73 +1694,73 @@ public class ChunkProtection
 							o -> {
 								forcedInteractionExceptionEntities.addEither(o);
 								requiresEmptyHandEntitiesBuilder.addEither(o);
-							}, entityGetter, entityTagGetter
+							}, ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.forcedEntityClaimBarrierList.get()
 					.forEach(s -> onExceptionListElement(
 							s, forcedEntityClaimBarrierList::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.entitiesAllowedToGrief.get()
 					.forEach(s -> onExceptionListElement(
 							s,
 							entitiesAllowedToGrief::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.entitiesAllowedToGriefEntities.get()
 					.forEach(s -> onExceptionListElement(
 							s,
 							entitiesAllowedToGriefEntities::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.entitiesAllowedToGriefDroppedItems.get()
 					.forEach(s -> onExceptionListElement(
 							s,
 							entitiesAllowedToGriefDroppedItems::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.nonBlockGriefingMobs.get()
 					.forEach(s -> onExceptionListElement(
 							s,
 							nonBlockGriefingMobs::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.entityGriefingMobs.get()
 					.forEach(s -> onExceptionListElement(
 							s,
 							entityGriefingMobs::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.droppedItemGriefingMobs.get()
 					.forEach(s -> onExceptionListElement(
 							s,
 							droppedItemGriefingMobs::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			ServerConfig.CONFIG.additionalBannedItemsList.get().forEach(s -> onExceptionListElement(
 							s,
 							additionalBannedItems::addEither, null, null,
-							itemGetter, itemTagGetter
+							ExceptionElementType.ITEM, wildcardResolver
 					));
 			ServerConfig.CONFIG.itemUseProtectionExceptionList.get().forEach(s -> onExceptionListElement(
 							s,
 							itemUseProtectionExceptions::addEither, null, null,
-							itemGetter, itemTagGetter
+							ExceptionElementType.ITEM, wildcardResolver
 					));
 			ServerConfig.CONFIG.completelyDisabledItemInteractions.get().forEach(s -> onExceptionListElement(
 							s,
 							completelyDisabledItems::addEither, null, null,
-							itemGetter, itemTagGetter
+							ExceptionElementType.ITEM, wildcardResolver
 					));
 			ServerConfig.CONFIG.completelyDisabledBlockInteractions.get().forEach(s -> onExceptionListElement(
 							s,
 							completelyDisabledBlocks::addEither, null, null,
-							blockGetter, blockTagGetter
+							ExceptionElementType.BLOCK, wildcardResolver
 					));
 			ServerConfig.CONFIG.completelyDisabledEntityInteractions.get().forEach(s -> onExceptionListElement(
 							s,
 							completelyDisabledEntities::addEither, null, null,
-							entityGetter, entityTagGetter
+							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
 			return new ChunkProtection<>(claimsManager, partyManager, new ChunkProtectionEntityHelper(),
 					friendlyEntityList.build(), hostileEntityList.build(),
@@ -1781,8 +1774,8 @@ public class ChunkProtection
 		private <T> void onExceptionListElement(String element, Consumer<Either<T,TagKey<T>>> interactionException,
 												Consumer<Either<T,TagKey<T>>> breakException,
 												Consumer<Either<T,TagKey<T>>> handException,
-												Function<ResourceLocation, T> objectGetter,
-												Function<ResourceLocation, TagKey<T>> objectTagGetter){
+												ExceptionElementType<T> elementType,
+												WildcardResolver wildcardResolver){
 			String id = element;
 			Consumer<Either<T,TagKey<T>>> destination = interactionException;
 			if(element.startsWith(BREAK_PREFIX) || element.startsWith(HAND_PREFIX)){
@@ -1794,14 +1787,22 @@ public class ChunkProtection
 			}
 			if(destination != null) {
 				if (!id.startsWith(TAG_PREFIX)) {
-					T object = objectGetter.apply(new ResourceLocation(id));
-					if (object != null)
-						destination.accept(Either.left(object));
+					Function<ResourceLocation, T> objectGetter = elementType.getGetter();
+					Iterable<T> iterable = elementType.getIterable();
+					Function<T, ResourceLocation> keyGetter = elementType.getKeyGetter();
+					List<T> objects = wildcardResolver.resolveResourceLocations(objectGetter, iterable, keyGetter, id);
+					if(objects != null)
+						for(T object : objects)
+							destination.accept(Either.left(object));
 				} else {
 					id = id.substring(TAG_PREFIX.length());
-					TagKey<T> objectTag = objectTagGetter.apply(new ResourceLocation(id));
-					if (objectTag != null)
-						destination.accept(Either.right(objectTag));
+					Function<ResourceLocation, TagKey<T>> objectTagGetter = elementType.getTagGetter();
+					Iterable<TagKey<T>> tagIterable = elementType.getTagIterable();
+					Function<TagKey<T>, ResourceLocation> tagKeyGetter = elementType.getTagKeyGetter();
+					List<TagKey<T>> objectTags = wildcardResolver.resolveResourceLocations(objectTagGetter, tagIterable, tagKeyGetter, id);
+					if(objectTags != null)
+						for(TagKey<T> objectTag : objectTags)
+							destination.accept(Either.right(objectTag));
 				}
 			}
 		}

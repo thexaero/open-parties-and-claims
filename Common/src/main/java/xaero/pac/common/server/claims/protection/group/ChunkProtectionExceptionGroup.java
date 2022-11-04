@@ -22,9 +22,9 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.tags.TagKey;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionSet;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
+import xaero.pac.common.server.claims.protection.ExceptionElementType;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -35,11 +35,13 @@ public final class ChunkProtectionExceptionGroup<T> {
 	private final ChunkProtectionExceptionType type;
 	private final ChunkProtectionExceptionSet<T> exceptionSet;
 	private IPlayerConfigOptionSpecAPI<Integer> playerConfigOption;
+	private final String contentString;
 
-	private ChunkProtectionExceptionGroup(String name, ChunkProtectionExceptionType type, ChunkProtectionExceptionSet<T> exceptionSet) {
+	private ChunkProtectionExceptionGroup(String name, ChunkProtectionExceptionType type, ChunkProtectionExceptionSet<T> exceptionSet, String contentString) {
 		this.name = name;
 		this.type = type;
 		this.exceptionSet = exceptionSet;
+		this.contentString = contentString;
 	}
 
 	public String getName() {
@@ -70,14 +72,19 @@ public final class ChunkProtectionExceptionGroup<T> {
 		return exceptionSet.stream();
 	}
 
+	public String getContentString() {
+		return contentString;
+	}
+
 	public static final class Builder<T> {
 
 		private String name;
 		private ChunkProtectionExceptionType type;
 		private ChunkProtectionExceptionSet.Builder<T> exceptionSetBuilder;
+		private String contentString;
 
-		private Builder(){
-			exceptionSetBuilder = ChunkProtectionExceptionSet.Builder.begin();
+		private Builder(ExceptionElementType<T> elementType){
+			exceptionSetBuilder = ChunkProtectionExceptionSet.Builder.begin(elementType);
 		}
 
 		private Builder<T> setDefault() {
@@ -97,8 +104,8 @@ public final class ChunkProtectionExceptionGroup<T> {
 			return this;
 		}
 
-		public Builder<T> setTagStreamGetter(Function<TagKey<T>, Stream<T>> tagStreamGetter) {
-			this.exceptionSetBuilder.setTagStreamGetter(tagStreamGetter);
+		public Builder<T> setContentString(String contentString) {
+			this.contentString = contentString;
 			return this;
 		}
 
@@ -108,15 +115,15 @@ public final class ChunkProtectionExceptionGroup<T> {
 		}
 
 		public ChunkProtectionExceptionGroup<T> build(){
-			if(name == null || type == null)
+			if(name == null || type == null || contentString == null)
 				throw new IllegalStateException();
 			if(!GROUP_NAME_PATTERN.matcher(name).matches())
 				throw new IllegalArgumentException("Exception group name must consist of A - Z, numbers or the - and _ characters: " + name);
-			return new ChunkProtectionExceptionGroup<>(name, type, exceptionSetBuilder.build());
+			return new ChunkProtectionExceptionGroup<>(name, type, exceptionSetBuilder.build(), contentString);
 		}
 
-		public static <T> Builder<T> begin(){
-			return new Builder<T>().setDefault();
+		public static <T> Builder<T> begin(ExceptionElementType<T> elementType){
+			return new Builder<T>(elementType).setDefault();
 		}
 
 	}

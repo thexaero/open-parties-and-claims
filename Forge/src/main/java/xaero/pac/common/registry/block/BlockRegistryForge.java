@@ -37,4 +37,19 @@ public class BlockRegistryForge implements IBlockRegistry {
 		return ForgeRegistries.BLOCKS.tags().getTag(tagKey).stream();
 	}
 
+	@Override
+	public ResourceLocation getKey(Block block) {
+		return ForgeRegistries.BLOCKS.getKey(block);
+	}
+
+	@Override
+	public Iterable<Block> getIterable(){
+		return ForgeRegistries.BLOCKS.getValues();
+	}
+
+	@Override
+	public Iterable<TagKey<Block>> getTagIterable(){
+		return ForgeRegistries.BLOCKS.tags().getTagNames().toList();
+	}
+
 }

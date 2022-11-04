@@ -157,13 +157,17 @@ public class ServerConfig {
 		   	.define("playerClaimsConvertExpiredClaims", true);
 		
 		maxPlayerClaims = builder
-			.comment("The maximum number of chunks that a player can claim. Additional claims can be configured in the player config.\nThis value can be overridden with a FTB Ranks permission.")
+			.comment("""
+					The maximum number of chunks that a player can claim. Additional claims can be configured in the player config.
+					This value can be overridden with a FTB Ranks permission.""")
 			.translation("gui.xaero_pac_config_max_player_claims")
 			.worldRestart()
 			.defineInRange("maxPlayerClaims", 500, 0, Integer.MAX_VALUE);
 		
 		maxPlayerClaimForceloads = builder
-			.comment("The maximum number of claimed chunks that a player can forceload. Additional forceloads can be configured in the player config.\nThis value can be overridden with a FTB Ranks permission.")
+			.comment("""
+					The maximum number of claimed chunks that a player can forceload. Additional forceloads can be configured in the player config.
+					This value can be overridden with a FTB Ranks permission.""")
 			.translation("gui.xaero_pac_config_max_player_forceloads")
 			.worldRestart()
 			.defineInRange("maxPlayerClaimForceloads", 10, 0, Integer.MAX_VALUE);
@@ -175,7 +179,9 @@ public class ServerConfig {
 			.define("maxPlayerClaimsFTBPermission", "xaero.pac_max_claims");
 
 		maxPlayerClaimForceloadsFTBPermission = builder
-			.comment("The FTB Ranks permission that should override the default \"maxPlayerClaimForceloads\" value. Set it to an empty string to never check permissions. The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than \"maxPlayerClaimForceloads\".")
+			.comment("""
+					The FTB Ranks permission that should override the default "maxPlayerClaimForceloads" value. Set it to an empty string to never check permissions.
+					The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than "maxPlayerClaimForceloads".""")
 			.translation("gui.xaero_pac_config_max_claims_ftb_permission")
 			.worldRestart()
 			.define("maxPlayerClaimForceloadsFTBPermission", "xaero.pac_max_forceloads");
@@ -199,7 +205,10 @@ public class ServerConfig {
 		   	.defineEnum("claimableDimensionsListType", ConfigListType.ALL_BUT);
 		
 		claimableDimensionsList = builder
-			.comment("Dimensions to include/exclude from being claimable, depending on the list type. For example [\"minecraft:overworld\", \"minecraft:the_nether\"]. By default the list is empty and of type ALL_BUT, meaning that all dimensions are claimable.")
+			.comment("""
+					Dimensions to include/exclude from being claimable, depending on the list type in "claimableDimensionsListType".
+					For example ["minecraft:overworld", "minecraft:the_nether"].
+					By default the list is empty and of type ALL_BUT, meaning that all dimensions are claimable.""")
 			.translation("gui.xaero_pac_config_claimable_dimensions_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("claimableDimensionsList"), ArrayList::new, s -> s instanceof String);
@@ -217,7 +226,9 @@ public class ServerConfig {
 		   	.define("allowExistingForceloadsInUnclaimableDimensions", false);
 
 		claimsSynchronization = builder
-			.comment("Whether to synchronize world chunk claims to the game clients. Enables client-side mods to access the claims data, e.g. to display it on a map. ALL - all claims are synced. OWNED_ONLY - only the claims that the client player owns and server claims are synced. NOT_SYNCED - claims are not synced.")
+			.comment("""
+					Whether to synchronize world chunk claims to the game clients. Enables client-side mods to access the claims data, e.g. to display it on a map.
+					ALL - all claims are synced. OWNED_ONLY - only the claims that the client player owns and server claims are synced. NOT_SYNCED - claims are not synced.""")
 			.translation("gui.xaero_pac_config_claims_synchronization")
 			.worldRestart()
 		   	.defineEnum("claimsSynchronization", ClaimsSyncType.ALL);
@@ -231,7 +242,11 @@ public class ServerConfig {
 		   	.defineEnum("friendlyChunkProtectedEntityListType", ConfigListType.ALL_BUT);
 		
 		friendlyChunkProtectedEntityList = builder
-			.comment("Friendly entities to fully include/exclude in chunk protection, depending on the list type. Supports entity type tags. For example [\"minecraft:cow\", \"minecraft:rabbit\", \"#minecraft:axolotl_hunt_targets\"]. By default the list is empty with the type set to ALL_BUT, which means that all friendly entities are included.")
+			.comment("""
+					Friendly entities to fully include/exclude in chunk protection, depending on the list type in "friendlyChunkProtectedEntityListType". Supports entity type tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["*:villager", "minecraft:m(ule|ooshroom)", "#minecraft:axolotl_hunt_targets"].
+					By default the list is empty with the type set to ALL_BUT, which means that all friendly entities are included.""")
 			.translation("gui.xaero_pac_config_friendly_protected_entities")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("friendlyChunkProtectedEntityList"), () -> Lists.newArrayList("minecraft:boat"), s -> s instanceof String);
@@ -243,24 +258,34 @@ public class ServerConfig {
 		   	.defineEnum("hostileChunkProtectedEntityListType", ConfigListType.ONLY);
 		
 		hostileChunkProtectedEntityList = builder
-			.comment("Hostile entities to fully include/exclude in chunk protection, depending on the list type. Supports entity type tags. For example [\"minecraft:creeper\", \"minecraft:zombie\", \"#minecraft:raiders\"]")
+			.comment("""
+					Hostile entities to fully include/exclude in chunk protection, depending on the list type in "hostileChunkProtectedEntityListType". Supports entity type tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(|wither_)skeleton", "minecraft:zombie(_villager|)", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_hostile_protected_entities")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("hostileChunkProtectedEntityList"), ArrayList::new, s -> s instanceof String);
 
 		forcedBlockProtectionExceptionList = builder
-			.comment("Blocks to partially exclude from chunk protection. Supports block tags. Just a block/tag ID in the list, e.g. \"minecraft:level\" allows block interaction across the server if the item in the used hand isn't blocking it. Prefix \"hand$\" is the same as no prefix but enforces an empty hand requirement in protected chunks. Prefix \"break$\" allows breaking the block(s). Add the same block/tag multiple times to use multiple prefixes. For example [\"minecraft:lever\", \"minecraft:stone_button\", \"break$minecraft:stone_button\"]")
+			.comment("""
+					Blocks to partially exclude from chunk protection. Supports block tags.
+					Just a block/tag ID in the list, e.g. "minecraft:lever" allows block interaction across the server if the item in the used hand isn't blocking it.
+					Prefix "hand$" is the same as no prefix but enforces an empty hand requirement in protected chunks. Prefix "break$" allows breaking the block(s).
+					Add the same block/tag multiple times to use multiple prefixes. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:lever", "minecraft:*_button", "break$minecraft:*_button", "break$minecraft:(*_|)sand"]""")
 			.translation("gui.xaero_pac_config_block_protection_forced_exception")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("forcedBlockProtectionExceptionList"), () -> Lists.newArrayList("minecraft:crafting_table"), s -> s instanceof String);
 
 		blockProtectionOptionalExceptionGroups = builder
-			.comment("Custom groups of blocks that a player/claim config should be able to make protection exceptions for. Each group can consist of multiple blocks and block tags. " +
-					"A group without a prefix creates a player config option for the right-click interaction with the group blocks. The format for a block group is <group ID>{<blocks/tags separated by ,>}. " +
-					"The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. \"ePiC-DIRT35{minecraft:dirt, minecraft:grass_block}\". " +
-					"A group can be prefixed with \"hand$\" to create an option for the right-click interaction with an enforced empty hand requirement or \"break$\" for breaking the group blocks. " +
-					"The player config options created for the groups, like regular options, must be added in the \"playerConfigurablePlayerConfigOptions\" list for players to have access to them. " +
-					"The exact paths of the added options can be found in the default player config file after you start the server."
+			.comment("""
+					Custom groups of blocks that a player/claim config should be able to make protection exceptions for. Each group can consist of multiple blocks and block tags.
+					A group without a prefix creates a player config option for the right-click interaction with the group blocks. The format for a block group is <group ID>{<blocks/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-DIRT35{minecraft:dirt, minecraft:grass_block, minecraft:(oak|spruce)_*}".
+					A group can be prefixed with "hand$" to create an option for the right-click interaction with an enforced empty hand requirement or "break$" for breaking the group blocks.
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
 			)
 			.translation("gui.xaero_pac_config_block_protection_exception_groups")
 			.worldRestart()
@@ -283,18 +308,25 @@ public class ServerConfig {
 					), s -> s instanceof String);
 
 		forcedEntityProtectionExceptionList = builder
-			.comment("Entities to partially exclude from chunk protection. Supports entity type tags. Just an entity/tag ID in the list, e.g. \"minecraft:horse\" allows entity interaction across the server if the item in the used hand isn't blocking it. Prefix \"hand$\" is the same as no prefix but enforces an empty hand requirement in protected chunks. Prefix \"break$\" allows killing the entities across the server. Add the same entity/tag multiple times to use multiple prefixes. For example [\"minecraft:villager\", \"break$minecraft:villager\"]")
+			.comment("""
+					Entities to partially exclude from chunk protection. Supports entity type tags.
+					Just an entity/tag ID in the list, e.g. "minecraft:horse" allows entity interaction across the server if the item in the used hand isn't blocking it.
+					Prefix "hand$" is the same as no prefix but enforces an empty hand requirement in protected chunks. Prefix "break$" allows killing the entities across the server.
+					Add the same entity/tag multiple times to use multiple prefixes. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:villager", "break$minecraft:villager", "break$minecraft:(trader_|)llama"]""")
 			.translation("gui.xaero_pac_config_entity_protection_forced_exception")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("forcedEntityProtectionExceptionList"), () -> Lists.newArrayList("minecraft:minecart"), s -> s instanceof String);
 
 		entityProtectionOptionalExceptionGroups = builder
-			.comment("Custom groups of entities that a player/claim config should be able to make protection exceptions for. Each group can consist of multiple entities and entity tags. " +
-					"A group without a prefix creates a player config option for the right-click interaction with the group entities. The format for an entity group is <group ID>{<entities/tags separated by ,>}. " +
-					"The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. \"ePiC-GUYS98{minecraft:pig, minecraft:cow, #minecraft:beehive_inhabitors}\". " +
-					"A group can be prefixed with \"hand$\" to create an option for the right-click interaction with an enforced empty hand requirement or \"break$\" for destroying the group entities. " +
-					"The player config options created for the groups, like regular options, must be added in the \"playerConfigurablePlayerConfigOptions\" list for players to have access to them. " +
-					"The exact paths of the added options can be found in the default player config file after you start the server."
+			.comment("""
+					Custom groups of entities that a player/claim config should be able to make protection exceptions for. Each group can consist of multiple entities and entity tags.
+					A group without a prefix creates a player config option for the right-click interaction with the group entities. The format for an entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{minecraft:pig, minecraft:c(ow|at), #minecraft:beehive_inhabitors}".
+					A group can be prefixed with "hand$" to create an option for the right-click interaction with an enforced empty hand requirement or "break$" for destroying the group entities.
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
 			)
 			.translation("gui.xaero_pac_config_entity_protection_exception_groups")
 			.worldRestart()
@@ -307,17 +339,21 @@ public class ServerConfig {
 					), s -> s instanceof String);
 
 		forcedEntityClaimBarrierList = builder
-			.comment("Entities that are prevented from entering the claim. Supports entity type tags. An entity/tag ID in the list, e.g. \"minecraft:falling_block\" prevents the entities from entering.")
+			.comment("""
+					Entities that are prevented from entering the claim. Supports entity type tags. An entity/tag ID in the list, e.g. "minecraft:falling_block" prevents the entities from entering.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR. For example: "minecraft:zombie(_villager|)".""")
 			.translation("gui.xaero_pac_config_entity_claim_barrier_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("forcedEntityClaimBarrierList"), () -> Lists.newArrayList("minecraft:falling_block", "supplementaries:slingshot_projectile"), s -> s instanceof String);
 
 		entityClaimBarrierOptionalGroups = builder
-			.comment("Custom groups of entities that a player/claim config should be able to enable a barrier for. Each group can consist of multiple entities and entity tags. " +
-					"Each group creates a player config option for controlling the entity barrier. The format for a entity group is <group ID>{<entities/tags separated by ,>}. " +
-					"The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. \"ePiC-GUYS98{#minecraft:raiders, minecraft:zombie}\". " +
-					"The player config options created for the groups, like regular options, must be added in the \"playerConfigurablePlayerConfigOptions\" list for players to have access to them. " +
-					"The exact paths of the added options can be found in the default player config file after you start the server."
+			.comment("""
+					Custom groups of entities that a player/claim config should be able to enable a barrier for. Each group can consist of multiple entities and entity tags.
+					Each group creates a player config option for controlling the entity barrier. The format for a entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{#minecraft:raiders, minecraft:zombie(_villager|)}".
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
 			)
 			.translation("gui.xaero_pac_config_entity_claim_barrier_groups")
 			.worldRestart()
@@ -328,71 +364,95 @@ public class ServerConfig {
 					), s -> s instanceof String);
 
 		entitiesAllowedToGrief = builder
-			.comment("Entities that can bypass all block protection. Supports entity type tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.comment("""
+					Entities that can bypass all block protection. Supports entity type tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:villager", "minecraft:sheep"), s -> s instanceof String);
 		entitiesAllowedToGriefEntities = builder
-			.comment("Entities that can bypass all protection of other entities. Supports entity type tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.comment("""
+					Entities that can bypass all protection of other entities. Supports entity type tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief_entities")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), Lists::newArrayList, s -> s instanceof String);
 		entitiesAllowedToGriefDroppedItems = builder
-			.comment("Entities that can bypass all dropped item protection. Supports entity type tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.comment("""
+					Entities that can bypass all dropped item protection. Supports entity type tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief_items")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefDroppedItems"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefDroppedItems"), Lists::newArrayList, s -> s instanceof String);
 		nonBlockGriefingMobs = builder
 			.comment(
 					"""
 					(Forge-only option) Mobs that can grief entities/items but not blocks. This list is used when overriding the vanilla "mob griefing" game rule value.
-					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection. This means that the "Protect Blocks From Mobs" option might cause entity or item protection, if that's what the mob is trying to affect. By adding a mob to this list, you're removing the block protection check for it.
-					Supports entity type tags. For example ["minecraft:villager", "#minecraft:raiders"]"""
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection.
+					This means that the "Protect Blocks From Mobs" option might cause entity or item protection, if that's what the mob is trying to affect.
+					By adding a mob to this list, you're removing the block protection check for it during the "mob griefing" game rule check.
+					Supports entity type tags. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:*illager", "minecraft:(v|p)illager", "#minecraft:raiders"]"""
 			)
 			.translation("gui.xaero_pac_config_non_block_griefers")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("nonBlockGriefingMobs"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("nonBlockGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
 		entityGriefingMobs = builder
 			.comment(
 					"""
 					(Forge-only option) Mobs that can grief entities in ways other than attacking them, e.g. how evokers can change the color of sheep. This list is used when overriding the vanilla "mob griefing" game rule value.
-					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the entity protection option to be checked as well when it attempts to grief.
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the entity protection option to be checked as well when the rule is checked.
 					Check out the "nonBlockGriefingMobs" option if you want to also remove the default block protection check for the mob.
-					Supports entity type tags. For example ["minecraft:villager", "#minecraft:raiders"]"""
+					Supports entity type tags. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]"""
 			)
 			.translation("gui.xaero_pac_config_entity_griefers")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entityGriefingMobs"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entityGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
 		droppedItemGriefingMobs = builder
 			.comment(
 					"""
 					(Forge-only option) Mobs that can grief dropped items. This list is used when overriding the vanilla "mob griefing" game rule value.
-					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the item pickup protection option to be checked as well when it attempts to grief.
-					This mod should detect most mobs picking up items by default, but if it doesn't already detect a specific mob, this option might help. Check out the "nonBlockGriefingMobs" option if you want to also remove the default block protection check for the mob.
-					Supports entity type tags. For example ["minecraft:villager", "#minecraft:raiders"]"""
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the item pickup protection option to be checked as well when the rule is checked.
+					This mod should detect most mobs picking up items by default, but if it doesn't already detect a specific mob, this option might help.
+					Check out the "nonBlockGriefingMobs" option if you want to also remove the default block protection check for the mob.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]"""
 			)
 			.translation("gui.xaero_pac_config_gropped_item_griefers")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("droppedItemGriefingMobs"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("droppedItemGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
 
 		additionalBannedItemsList = builder
-			.comment("By default, right-click use of some items is allowed in protected chunks, e.g. swords, pickaxes, bows, shield, tridents, splash potions, to let the players protect themselves or interact with some blocks/entities. To remove such exceptions for specific items, add them to this list. This list applies to both using an item at air and using it at a block/entity. Supports item tags. For example [\"minecraft:trident\", \"minecraft:shield\", \"#minecraft:boats\"]")
+			.comment("""
+					By default, right-click use of some items is allowed in protected chunks, e.g. swords, pickaxes, bows, shield, tridents, splash potions, to let the players protect themselves or interact with some blocks/entities.
+					To remove such exceptions for specific items, add them to this list. This list applies to both using an item at air and using it at a block/entity. Supports item tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:trident", "minecraft:shield", "minecraft:(oak|spruce)_boat", "#minecraft:boats"]""")
 			.translation("gui.xaero_pac_config_banned_item_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("additionalBannedItemsList"), () -> Lists.newArrayList("supplementaries:slingshot"), s -> s instanceof String);
 
 		itemUseProtectionExceptionList = builder
-			.comment("By default, most item right-click uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than \"additionalBannedItemsList\". This list applies to both using an item at air and using it at a block/entity. Supports item tags. For example [\"minecraft:fishing_rod\", \"minecraft:ender_pearl\", \"#minecraft:beds\"]")
+			.comment("""
+					By default, most item right-click uses are disabled in protected chunks. To make an exception for a specific item, add it to this list. This option has a higher priority than "additionalBannedItemsList".
+					This list applies to both using an item at air and using it at a block/entity. Supports item tags. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:fishing_rod", "minecraft:ender_pearl", "minecraft:(red|green)_bed", "#minecraft:beds"]""")
 			.translation("gui.xaero_pac_config_item_protection_exception")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("itemUseProtectionExceptionList"), () -> Lists.newArrayList("minecraft:firework_rocket"), s -> s instanceof String);
 
 		itemUseProtectionOptionalExceptionGroups = builder
-			.comment("Custom groups of items that a player/claim config should be able to make protection exceptions for. Each group can consist of multiple items and item tags. " +
-					"Each group creates a player config option for the right-click use of the group items. The format for an item group is <group ID>{<items/tags separated by ,>}. " +
-					"The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. \"ePiC-stuff98{minecraft:writable_book, #minecraft:compasses}\". " +
-					"The player config options created for the groups, like regular options, must be added in the \"playerConfigurablePlayerConfigOptions\" list for players to have access to them. " +
-					"The exact paths of the added options can be found in the default player config file after you start the server."
+			.comment("""
+					Custom groups of items that a player/claim config should be able to make protection exceptions for. Each group can consist of multiple items and item tags.
+					Each group creates a player config option for the right-click use of the group items. The format for an item group is <group ID>{<items/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-stuff98{minecraft:(writable|written)_book, minecraft:*_book, #minecraft:compasses}".
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
 			)
 			.translation("gui.xaero_pac_config_item_protection_exception_groups")
 			.worldRestart()
@@ -402,29 +462,40 @@ public class ServerConfig {
 					), s -> s instanceof String);
 
 		completelyDisabledItemInteractions = builder
-			.comment("Items that are completely banned from right-click usage on the server, claimed or not. This list applies to both using an item at air and using it at a block/entity. Supports item tags. For example [\"minecraft:trident\", \"minecraft:shield\", \"#minecraft:boats\"]")
+			.comment("""
+					Items that are completely banned from right-click usage on the server, claimed or not. This list applies to both using an item at air and using it at a block/entity. Supports item tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:trident", "minecraft:shield", "minecraft:(oak|spruce)_boat", "#minecraft:boats"]""")
 			.translation("gui.xaero_pac_config_completely_disabled_item_interactions")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledItemInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledItemInteractions"), Lists::newArrayList, s -> s instanceof String);
 
 		completelyDisabledBlockInteractions = builder
-			.comment("Blocks that are completely banned from being interacted with on the server, claimed or not. Does not affect block breaking. Supports block tags. For example [\"minecraft:dirt\", \"minecraft:cartography_table\", \"#minecraft:buttons\"]")
+			.comment("""
+					Blocks that are completely banned from being interacted with on the server, claimed or not. Does not affect block breaking. Supports block tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:dirt", "minecraft:*_table", "minecraft:(cartography|fletching)_table", "#minecraft:buttons"]""")
 			.translation("gui.xaero_pac_config_completely_disabled_block_interactions")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledBlockInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledBlockInteractions"), Lists::newArrayList, s -> s instanceof String);
 
 		completelyDisabledEntityInteractions = builder
-			.comment("Entities that are completely banned from being interacted with on the server, claimed or not. Does not affect killing the entities. Supports entity tags. For example [\"minecraft:villager\", \"#minecraft:raiders\"]")
+			.comment("""
+					Entities that are completely banned from being interacted with on the server, claimed or not. Does not affect killing the entities. Supports entity tags.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_completely_disabled_entity_interactions")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledEntityInteractions"), () -> Lists.newArrayList(), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledEntityInteractions"), Lists::newArrayList, s -> s instanceof String);
 
 		builder.pop();
 
 		builder.pop();
 		
 		playerConfigurablePlayerConfigOptions = builder
-			.comment("A list of options in the player config that individual players can reconfigure. If an option is in neither of the configurable option lists, then the value in the default player config is used across the server. Check the default player config .toml file for the option names.")
+			.comment("""
+					A list of options in the player config that individual players can reconfigure. If an option is in neither of the configurable option lists,
+					then the value in the default player config is used across the server. Check the default player config .toml file for the option names.""")
 			.translation("gui.xaero_pac_config_player_configurable_player_options")
 			//.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("playerConfigurablePlayerConfigOptions"),
@@ -482,7 +553,11 @@ public class ServerConfig {
 							), s -> s instanceof String);
 
 		opConfigurablePlayerConfigOptions = builder
-			.comment("A list of additional options in the player config that OPs can reconfigure for players. This is meant for options that should be configured per player but not by the players. If an option is in neither of the configurable option lists, then the value in the default player config is used across the server. Check the default player config .toml file for the option names.")
+			.comment("""
+					A list of additional options in the player config that OPs can reconfigure for players.
+					This is meant for options that should be configured per player but not by the players.
+					If an option is in neither of the configurable option lists, then the value in the default player config is used across the server.
+					Check the default player config .toml file for the option names.""")
 			.translation("gui.xaero_pac_config_op_configurable_player_options")
 			//.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("opConfigurablePlayerConfigOptions"), () -> Lists.newArrayList("claims.bonusChunkClaims", "claims.bonusChunkForceloads"), s -> s instanceof String);
@@ -499,12 +574,12 @@ public class ServerConfig {
 		
 	}
 	
-	public static enum ConfigListType {
+	public enum ConfigListType {
 		ONLY,
 		ALL_BUT
 	}
 	
-	public static enum ClaimsSyncType {
+	public enum ClaimsSyncType {
 		NOT_SYNCED,
 		OWNED_ONLY,
 		ALL
