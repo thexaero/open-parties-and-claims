@@ -196,7 +196,7 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk){
-		if(!fromDisk && entity instanceof Mob && entity.tickCount == 0) {//is being spawned
+		if(!fromDisk && entity.tickCount == 0) {//is being spawned
 			MobSpawnType mobSpawnType = ServerCoreFabric.MOB_SPAWN_TYPE_FOR_NEW_ENTITIES;
 			if(mobSpawnType != null)
 				return super.onMobSpawn(entity, entity.getX(), entity.getY(), entity.getZ(), mobSpawnType);
