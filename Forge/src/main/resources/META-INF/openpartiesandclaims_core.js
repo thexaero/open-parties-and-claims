@@ -256,6 +256,22 @@ function transformPrePostLivingDeath(methodNode, preMethodName, postMethodName){
     return methodNode
 }
 
+function transformPrePostResourcesDrop(methodNode, entityParIndex){
+    var insnToInsert = new InsnList()
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, entityParIndex))
+    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preResourcesDrop', '(Lnet/minecraft/world/entity/Entity;)V'))
+    methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+
+    var insnToInsertGetter = function() {
+         var insnToInsert = new InsnList()
+         insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, entityParIndex))
+         insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'postResourcesDrop', '(Lnet/minecraft/world/entity/Entity;)V'))
+         return insnToInsert
+    }
+    insertBeforeReturn2(methodNode, insnToInsertGetter)
+    return methodNode
+}
+
 function initializeCoreMod() {
 	return {
 		'xaero_pac_minecraftserverclass': {
@@ -1272,6 +1288,28 @@ function initializeCoreMod() {
                 }
                 insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, levelClass, addFreshEntityName, addFreshEntityNameObf, addFreshEntityDesc, false)
                 return methodNode
+            }
+        },
+        'xaero_pac_block_dropresources': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.Block',
+                'methodName': 'm_49881_',
+                'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformPrePostResourcesDrop(methodNode, 4)
+            }
+        },
+        'xaero_pac_serverplayer_attack': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.server.level.ServerPlayer',
+                'methodName': 'm_5706_',
+                'methodDesc' : '(Lnet/minecraft/world/entity/Entity;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformPrePostResourcesDrop(methodNode, 0)
             }
         }
 	}

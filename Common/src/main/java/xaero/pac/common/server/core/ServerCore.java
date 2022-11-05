@@ -516,6 +516,31 @@ public class ServerCore {
 		}
 	}
 
+	private static boolean RESOURCES_DROP_OWNER_CAPTURE_USABLE = true;
+	private static Entity RESOURCES_DROP_OWNER;
+	private static int RESOURCES_DROP_OWNER_AGE;
+
+	public static void preResourcesDrop(Entity entity){
+		if(RESOURCES_DROP_OWNER_CAPTURE_USABLE && RESOURCES_DROP_OWNER == null && entity != null && entity.getServer() != null) {
+			RESOURCES_DROP_OWNER = entity;
+			RESOURCES_DROP_OWNER_AGE = entity.tickCount;
+		}
+	}
+
+	public static void postResourcesDrop(Entity entity){
+		if(entity == RESOURCES_DROP_OWNER)
+			RESOURCES_DROP_OWNER = null;
+	}
+
+	public static Entity getResourcesDropOwner() {
+		if(RESOURCES_DROP_OWNER != null && RESOURCES_DROP_OWNER_AGE != RESOURCES_DROP_OWNER.tickCount) {
+			OpenPartiesAndClaims.LOGGER.error("Block/entity resource drop owner capture isn't working properly. Likely a compatibility issue. Turning it off...");
+			RESOURCES_DROP_OWNER = null;
+			RESOURCES_DROP_OWNER_CAPTURE_USABLE = false;
+		}
+		return RESOURCES_DROP_OWNER;
+	}
+
 	public static void onFishingHookAddEntity(Entity entity, FishingHook hook){
 		if(entity instanceof ItemEntity itemEntity) {
 			preThrowItem(hook.getOwner());
