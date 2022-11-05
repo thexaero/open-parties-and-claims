@@ -505,11 +505,12 @@ public class ServerCore {
 
 	private static Entity BEHAVIOR_UTILS_THROW_ITEM_LIVING;
 	public static void preThrowItem(Entity entity) {
-		BEHAVIOR_UTILS_THROW_ITEM_LIVING = entity;
+		if(entity != null && entity.getServer() != null)
+			BEHAVIOR_UTILS_THROW_ITEM_LIVING = entity;
 	}
 
 	public static void onThrowItem(ItemEntity itemEntity) {
-		if(BEHAVIOR_UTILS_THROW_ITEM_LIVING != null) {
+		if(BEHAVIOR_UTILS_THROW_ITEM_LIVING != null && itemEntity.getServer() != null) {
 			itemEntity.setThrower(BEHAVIOR_UTILS_THROW_ITEM_LIVING.getUUID());
 			BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		}
