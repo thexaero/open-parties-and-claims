@@ -42,7 +42,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -138,6 +137,7 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public void onServerStopped(MinecraftServer server) {
 		super.onServerStopped(server);
+		ServerCoreFabric.reset();
 	}
 
 	private void onRegisterCommands(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
@@ -197,7 +197,7 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk){
 		if(!fromDisk && entity.tickCount == 0) {//is being spawned
-			MobSpawnType mobSpawnType = ServerCoreFabric.MOB_SPAWN_TYPE_FOR_NEW_ENTITIES;
+			MobSpawnType mobSpawnType = ServerCoreFabric.getMobSpawnTypeForNewEntities(world.getServer());
 			if(mobSpawnType != null)
 				return super.onMobSpawn(entity, entity.getX(), entity.getY(), entity.getZ(), mobSpawnType);
 		}

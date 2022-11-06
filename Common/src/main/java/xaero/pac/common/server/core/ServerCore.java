@@ -38,6 +38,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -310,21 +311,37 @@ public class ServerCore {
 		return helpList.isEmpty();
 	}
 
-	public static BlockPos.MutableBlockPos FROSTWALK_BLOCKPOS = new BlockPos.MutableBlockPos();
+	public static final BlockPos.MutableBlockPos FROSTWALK_BLOCKPOS = new BlockPos.MutableBlockPos();
 	private static LivingEntity FROSTWALK_ENTITY;
 	private static Level FROSTWALK_LEVEL;
-	public static boolean HANDLING_FROSTWALK = false;
+	private static boolean FROSTWALK_CAPTURE_USABLE = true;
 
-	public static void preFrostWalkHandle(LivingEntity living, Level level){
-		HANDLING_FROSTWALK = true;
-		FROSTWALK_ENTITY = living;
-		FROSTWALK_LEVEL = level;
+	public static boolean isHandlingFrostWalk(){
+		return FROSTWALK_ENTITY != null;
+	}
+
+	public static boolean preFrostWalkHandle(LivingEntity living, Level level){//returns whether to completely disable frostwalk (when capture isn't usable)
+		if(level instanceof ServerLevel) {
+			if(ServerConfig.CONFIG.completelyDisableFrostWalking.get())
+				return true;
+			if (!FROSTWALK_CAPTURE_USABLE)
+				return false;
+			if (FROSTWALK_ENTITY != null) {
+				OpenPartiesAndClaims.LOGGER.error("Frost walk capture isn't working properly. Likely a compatibility issue. Turning off frost walking protection... Please use the option in the main server config file to disable frost walking across the server.");
+				FROSTWALK_CAPTURE_USABLE = false;
+				postFrostWalkHandle(level);
+				return false;
+			}
+			FROSTWALK_ENTITY = living;
+			FROSTWALK_LEVEL = level;
+		}
+		return false;
 	}
 
 	public static BlockPos preBlockStateFetchOnFrostwalk(BlockPos pos){
-		FROSTWALK_BLOCKPOS.set(pos);
-		if(FROSTWALK_ENTITY == null || !(FROSTWALK_LEVEL instanceof ServerLevel))
+		if(FROSTWALK_ENTITY == null || !(FROSTWALK_LEVEL instanceof ServerLevel) || !FROSTWALK_LEVEL.getServer().isSameThread())
 			return pos;
+		FROSTWALK_BLOCKPOS.set(pos);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(FROSTWALK_LEVEL.getServer());
 		if(serverData == null)
 			return pos;
@@ -333,10 +350,11 @@ public class ServerCore {
 		return pos;
 	}
 
-	public static void postFrostWalkHandle(){
-		HANDLING_FROSTWALK = false;
-		FROSTWALK_ENTITY = null;
-		FROSTWALK_LEVEL = null;
+	public static void postFrostWalkHandle(Level level){
+		if(level instanceof ServerLevel) {
+			FROSTWALK_ENTITY = null;
+			FROSTWALK_LEVEL = null;
+		}
 	}
 
 	private static final Field ENTITY_INSIDE_PORTAL_FIELD = Reflection.getFieldReflection(Entity.class, "field_5963", "f_19817_", "isInsidePortal");
@@ -355,8 +373,13 @@ public class ServerCore {
 	}
 
 	private static boolean FINDING_RAID_SPAWN_POS;
-	public static void onFindRandomSpawnPosPre(){
+	private static boolean RAID_SPAWN_POS_CAPTURE_USABLE = true;
+	private static int RAID_SPAWN_POS_CAPTURE_TICK;
+	public static void onFindRandomSpawnPosPre(Raid raid){//returns whether to completely disable (when capture isn't usable)
+		if(!RAID_SPAWN_POS_CAPTURE_USABLE)
+			return;
 		FINDING_RAID_SPAWN_POS = true;
+		RAID_SPAWN_POS_CAPTURE_TICK = raid.getLevel().getServer().getTickCount();
 	}
 
 	public static void onFindRandomSpawnPosPost(){
@@ -367,6 +390,12 @@ public class ServerCore {
 		if(!currentReturn)
 			return false;
 		if(FINDING_RAID_SPAWN_POS) {
+			if(level.getServer().getTickCount() != RAID_SPAWN_POS_CAPTURE_TICK){
+				OpenPartiesAndClaims.LOGGER.error("Raid spawn capture isn't working properly. Likely a compatibility issue. Turning off raid protection... Please use the disableRaids game rule to disable raids across the server.");
+				RAID_SPAWN_POS_CAPTURE_USABLE = false;
+				onFindRandomSpawnPosPost();
+				return false;
+			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(level.getServer());
 			if (serverData == null)
@@ -378,17 +407,25 @@ public class ServerCore {
 
 	private static LivingEntity DYING_LIVING;
 	private static DamageSource DYING_LIVING_FROM;
+	private static boolean DYING_LIVING_USABLE = true;
+	private static int DYING_LIVING_TICK;
+	//below are the alternatives for DYING_LIVING stuff
 	private static LivingEntity DROPPING_LOOT_LIVING;
 	private static DamageSource DROPPING_LOOT_LIVING_FROM;
+	private static boolean DROPPING_LOOT_LIVING_USABLE = true;
+	private static int DROPPING_LOOT_LIVING_TICK;
 	public static void onLivingEntityDiePre(LivingEntity living, DamageSource source) {
 		if(living.getServer() != null) {
-			DYING_LIVING_FROM = source;
-			DYING_LIVING = living;
+			if(DYING_LIVING == null && DYING_LIVING_USABLE) {//checking that the current capture is null in case a mob kills other mobs on death
+				DYING_LIVING_FROM = source;
+				DYING_LIVING = living;
+				DYING_LIVING_TICK = living.getServer().getTickCount();
+			}
 		}
 	}
 
 	public static void onLivingEntityDiePost(LivingEntity living) {
-		if(living.getServer() != null) {
+		if(living.getServer() != null && DYING_LIVING == living) {
 			DYING_LIVING_FROM = null;
 			DYING_LIVING = null;
 		}
@@ -396,25 +433,48 @@ public class ServerCore {
 
 	public static void onLivingEntityDropDeathLootPre(LivingEntity living, DamageSource source) {
 		if(living.getServer() != null) {
-			DROPPING_LOOT_LIVING_FROM = source;
-			DROPPING_LOOT_LIVING = living;
+			if(DROPPING_LOOT_LIVING == null && DROPPING_LOOT_LIVING_USABLE) {//checking that the current capture is null in case a mob kills other mobs on death
+				DROPPING_LOOT_LIVING_FROM = source;
+				DROPPING_LOOT_LIVING = living;
+				DROPPING_LOOT_LIVING_TICK = living.getServer().getTickCount();
+			}
 		}
 	}
 
 	public static void onLivingEntityDropDeathLootPost(LivingEntity living) {
-		if(living.getServer() != null) {
+		if(living.getServer() != null && DROPPING_LOOT_LIVING == living) {
 			DROPPING_LOOT_LIVING_FROM = null;
 			DROPPING_LOOT_LIVING = null;
 		}
 	}
 
-	public static DamageSource getDyingDamageSourceForCurrentEntitySpawns(){
+	private static void testLivingLootCapture(int currentTickCount){
+		boolean disabledCapture = false;
+		if(DYING_LIVING_FROM != null && DYING_LIVING_TICK != currentTickCount) {
+			disabledCapture = !DROPPING_LOOT_LIVING_USABLE;
+			DYING_LIVING_USABLE = false;
+			DYING_LIVING_FROM = null;
+			DYING_LIVING = null;
+		}
+		if(DROPPING_LOOT_LIVING_FROM != null && DROPPING_LOOT_LIVING_TICK != currentTickCount) {
+			disabledCapture = !DYING_LIVING_USABLE;
+			DROPPING_LOOT_LIVING_USABLE = false;
+			DROPPING_LOOT_LIVING_FROM = null;
+			DROPPING_LOOT_LIVING = null;
+		}
+		if(disabledCapture)
+			OpenPartiesAndClaims.LOGGER.error("Living entity loot capture isn't working properly. Likely a compatibility issue. Turning off loot-related protection... Please use keepInventory and other stuff, if this is an issue.");
+	}
+
+	public static DamageSource getDyingDamageSourceForCurrentEntitySpawns(int currentTickCount){
+		testLivingLootCapture(currentTickCount);
 		if(DYING_LIVING_FROM != null)
 			return DYING_LIVING_FROM;
 		return DROPPING_LOOT_LIVING_FROM;
 	}
 
-	public static LivingEntity getDyingLivingForCurrentEntitySpawns(){
+	public static LivingEntity getDyingLivingForCurrentEntitySpawns(int currentTickCount){
+		testLivingLootCapture(currentTickCount);
 		if(DYING_LIVING != null)
 			return DYING_LIVING;
 		return DROPPING_LOOT_LIVING;
@@ -491,22 +551,48 @@ public class ServerCore {
 	}
 
 	private static boolean MOB_GRIEFING_IS_FOR_ITEMS;
-	public static void forgePreItemMobGriefingCheck(){
-		MOB_GRIEFING_IS_FOR_ITEMS = true;
+	private static boolean MOB_GRIEFING_IS_FOR_ITEMS_USABLE = true;
+	private static int MOB_GRIEFING_IS_FOR_ITEMS_TICK;
+	public static void forgePreItemMobGriefingCheck(Mob mob){
+		if(!MOB_GRIEFING_IS_FOR_ITEMS_USABLE)
+			return;
+		if(mob.getServer() != null) {
+			MOB_GRIEFING_IS_FOR_ITEMS = true;
+			MOB_GRIEFING_IS_FOR_ITEMS_TICK = mob.getServer().getTickCount();
+		}
 	}
 
-	public static void forgePostItemMobGriefingCheck(){
-		MOB_GRIEFING_IS_FOR_ITEMS = false;
+	public static void forgePostItemMobGriefingCheck(Mob mob){
+		if(mob.getServer() != null) {
+			MOB_GRIEFING_IS_FOR_ITEMS = false;
+		}
 	}
 
-	public static boolean isMobGriefingForItems(){
+	public static boolean isMobGriefingForItems(int currentTick){
+		if(MOB_GRIEFING_IS_FOR_ITEMS && MOB_GRIEFING_IS_FOR_ITEMS_TICK != currentTick){
+			OpenPartiesAndClaims.LOGGER.error("Mob griefing rule check for item pickups capture is not working properly. Turning it off... If this is a problem, please manually configure which mobs grief dropped items in the main server config file with options \"nonBlockGriefingMobs\" and \"droppedItemGriefingMobs\".");
+			MOB_GRIEFING_IS_FOR_ITEMS_USABLE = false;
+			MOB_GRIEFING_IS_FOR_ITEMS = false;
+		}
 		return MOB_GRIEFING_IS_FOR_ITEMS;
 	}
 
 	private static Entity BEHAVIOR_UTILS_THROW_ITEM_LIVING;
+	private static boolean BEHAVIOR_UTILS_THROW_ITEM_USABLE = true;
+	private static int BEHAVIOR_UTILS_THROW_ITEM_TICK;
 	public static void preThrowItem(Entity entity) {
-		if(entity != null && entity.getServer() != null)
-			BEHAVIOR_UTILS_THROW_ITEM_LIVING = entity;
+		if(!BEHAVIOR_UTILS_THROW_ITEM_USABLE)
+			return;
+		if(entity != null && entity.getServer() != null) {
+			if(BEHAVIOR_UTILS_THROW_ITEM_LIVING == null) {
+				BEHAVIOR_UTILS_THROW_ITEM_LIVING = entity;
+				BEHAVIOR_UTILS_THROW_ITEM_TICK = entity.getServer().getTickCount();
+			} else if(BEHAVIOR_UTILS_THROW_ITEM_TICK != entity.getServer().getTickCount()){
+				OpenPartiesAndClaims.LOGGER.error("Part of the non-player entity item toss capture isn't working properly. Turning it off...");
+				BEHAVIOR_UTILS_THROW_ITEM_USABLE = false;
+				BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
+			}
+		}
 	}
 
 	public static void onThrowItem(ItemEntity itemEntity) {
@@ -518,12 +604,12 @@ public class ServerCore {
 
 	private static boolean RESOURCES_DROP_OWNER_CAPTURE_USABLE = true;
 	private static Entity RESOURCES_DROP_OWNER;
-	private static int RESOURCES_DROP_OWNER_AGE;
+	private static int RESOURCES_DROP_OWNER_TICK;
 
 	public static void preResourcesDrop(Entity entity){
 		if(RESOURCES_DROP_OWNER_CAPTURE_USABLE && RESOURCES_DROP_OWNER == null && entity != null && entity.getServer() != null) {
 			RESOURCES_DROP_OWNER = entity;
-			RESOURCES_DROP_OWNER_AGE = entity.tickCount;
+			RESOURCES_DROP_OWNER_TICK = entity.getServer().getTickCount();
 		}
 	}
 
@@ -533,7 +619,7 @@ public class ServerCore {
 	}
 
 	public static Entity getResourcesDropOwner() {
-		if(RESOURCES_DROP_OWNER != null && RESOURCES_DROP_OWNER_AGE != RESOURCES_DROP_OWNER.tickCount) {
+		if(RESOURCES_DROP_OWNER != null && RESOURCES_DROP_OWNER_TICK != RESOURCES_DROP_OWNER.getServer().getTickCount()) {
 			OpenPartiesAndClaims.LOGGER.error("Block/entity resource drop owner capture isn't working properly. Likely a compatibility issue. Turning it off...");
 			RESOURCES_DROP_OWNER = null;
 			RESOURCES_DROP_OWNER_CAPTURE_USABLE = false;
@@ -579,4 +665,21 @@ public class ServerCore {
 			return false;
 		return serverData.getChunkProtection().onFishingHookedEntity(serverData, hook, entity);
 	}
+
+	public static void reset(){
+		CAPTURED_TARGET_POS = null;
+		CAPTURED_POS_STATE_MAP = null;
+		ENTITY_INTERACTION_HAND = null;
+		FROSTWALK_ENTITY = null;
+		FROSTWALK_LEVEL = null;
+		FINDING_RAID_SPAWN_POS = false;
+		DYING_LIVING = null;
+		DYING_LIVING_FROM = null;
+		DROPPING_LOOT_LIVING = null;
+		DROPPING_LOOT_LIVING_FROM = null;
+		MOB_GRIEFING_IS_FOR_ITEMS = false;
+		BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
+		RESOURCES_DROP_OWNER = null;
+	}
+
 }

@@ -32,9 +32,10 @@ import xaero.pac.common.server.core.ServerCore;
 @Mixin(FrostWalkerEnchantment.class)
 public class MixinFrostWalkerEnchantment {
 
-	@Inject(method = "onEntityMoved", at = @At("HEAD"))
+	@Inject(method = "onEntityMoved", at = @At("HEAD"), cancellable = true)
 	private static void onOnEntityMovedPre(LivingEntity living, Level level, BlockPos pos, int a, CallbackInfo ci){
-		ServerCore.preFrostWalkHandle(living, level);
+		if(ServerCore.preFrostWalkHandle(living, level))
+			ci.cancel();
 	}
 
 	@ModifyArg(method = "onEntityMoved", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
@@ -44,7 +45,7 @@ public class MixinFrostWalkerEnchantment {
 
 	@Inject(method = "onEntityMoved", at = @At("RETURN"))
 	private static void onOnEntityMovedPost(LivingEntity living, Level level, BlockPos pos, int a, CallbackInfo ci){
-		ServerCore.postFrostWalkHandle();
+		ServerCore.postFrostWalkHandle(level);
 	}
 
 }

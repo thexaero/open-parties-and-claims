@@ -48,14 +48,14 @@ public class MixinNaturalSpawner {
 	}
 
 	@ModifyVariable(method = "spawnMobsForChunkGeneration", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/NaturalSpawner;getTopNonCollidingPos(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/world/entity/EntityType;II)Lnet/minecraft/core/BlockPos;"))
-	private static BlockPos onSpawnMobsForChunkGenerationPre(BlockPos blockPos){
-		ServerCoreFabric.MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = MobSpawnType.CHUNK_GENERATION;
+	private static BlockPos onSpawnMobsForChunkGenerationPre(BlockPos blockPos, ServerLevelAccessor serverLevelAccessor, Holder<Biome> biomeHolder, ChunkPos chunkPos, Random random){
+		ServerCoreFabric.setMobSpawnTypeForNewEntities(MobSpawnType.CHUNK_GENERATION, serverLevelAccessor.getServer());
 		return blockPos;
 	}
 
 	@Inject(method = "spawnMobsForChunkGeneration", at = @At("RETURN"))
 	private static void onSpawnMobsForChunkGenerationPost(ServerLevelAccessor levelAccessor, Holder<Biome> biomeHolder, ChunkPos chunkPos, Random random, CallbackInfo ci){
-		ServerCoreFabric.MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = null;
+		ServerCoreFabric.resetMobSpawnTypeForNewEntities();
 	}
 
 }

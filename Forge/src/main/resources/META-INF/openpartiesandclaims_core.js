@@ -971,9 +971,13 @@ function initializeCoreMod() {
             },
             'transformer' : function(methodNode){
                 var insnToInsert = new InsnList()
+                var MY_LABEL = new LabelNode(new Label())
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preFrostWalkHandle', '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;)V'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preFrostWalkHandle', '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFEQ, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 
                 var insnToInsertGetter = function() {
@@ -985,7 +989,8 @@ function initializeCoreMod() {
 
                 insnToInsertGetter = function() {
                     var insnToInsert = new InsnList()
-                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'postFrostWalkHandle', '()V'))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'postFrostWalkHandle', '(Lnet/minecraft/world/level/Level;)V'))
                     return insnToInsert
                 }
                 insertBeforeReturn2(methodNode, insnToInsertGetter)
@@ -1045,7 +1050,10 @@ function initializeCoreMod() {
                 'methodDesc' : '(II)Lnet/minecraft/core/BlockPos;'
             },
             'transformer' : function(methodNode){
-                methodNode.instructions.insert(methodNode.instructions.get(0), (new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onFindRandomSpawnPosPre', '()V')))
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onFindRandomSpawnPosPre', '(Lnet/minecraft/world/entity/raid/Raid;)V'))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 
                 var insnToInsertGetter = function() {
                     var insnToInsert = new InsnList()
@@ -1092,7 +1100,8 @@ function initializeCoreMod() {
                 var invokeTargetDesc = '()V'
                 var insnToInsertGetter = function() {
                      var insnToInsert = new InsnList()
-                     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePreItemMobGriefingCheck', '()V'))
+                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePreItemMobGriefingCheck', '(Lnet/minecraft/world/entity/Mob;)V'))
                      return insnToInsert
                 }
                 insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
@@ -1118,7 +1127,8 @@ function initializeCoreMod() {
 
                 insnToInsertGetter = function() {
                     var insnToInsert = new InsnList()
-                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePostItemMobGriefingCheck', '()V'))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePostItemMobGriefingCheck', '(Lnet/minecraft/world/entity/Mob;)V'))
                     return insnToInsert
                 }
                 insertBeforeReturn2(methodNode, insnToInsertGetter)
@@ -1134,12 +1144,14 @@ function initializeCoreMod() {
             },
             'transformer' : function(methodNode){
                 var insnToInsert = new InsnList()
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePreItemMobGriefingCheck', '()V'))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePreItemMobGriefingCheck', '(Lnet/minecraft/world/entity/Mob;)V'))
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 
                 var insnToInsertGetter = function() {
                     var insnToInsert = new InsnList()
-                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePostItemMobGriefingCheck', '()V'))
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'forgePostItemMobGriefingCheck', '(Lnet/minecraft/world/entity/Mob;)V'))
                     return insnToInsert
                 }
                 insertBeforeReturn2(methodNode, insnToInsertGetter)

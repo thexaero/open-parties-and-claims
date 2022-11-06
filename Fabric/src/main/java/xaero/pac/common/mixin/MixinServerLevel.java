@@ -59,12 +59,12 @@ public class MixinServerLevel implements IServerLevel {
 
 	@Inject(method = "tickCustomSpawners", at = @At("HEAD"))
 	public void preTickCustomSpawners(boolean b1, boolean b2, CallbackInfo ci){
-		ServerCoreFabric.MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = MobSpawnType.NATURAL;
+		ServerCoreFabric.setMobSpawnTypeForNewEntities(MobSpawnType.NATURAL, ((ServerLevel)(Object)this).getServer());
 	}
 
 	@Inject(method = "tickCustomSpawners", at = @At("RETURN"))
 	public void postTickCustomSpawners(boolean b1, boolean b2, CallbackInfo ci){
-		ServerCoreFabric.MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = null;
+		ServerCoreFabric.resetMobSpawnTypeForNewEntities();
 	}
 
 }

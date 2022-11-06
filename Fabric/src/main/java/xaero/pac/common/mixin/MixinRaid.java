@@ -31,7 +31,7 @@ public class MixinRaid {
 
 	@Inject(method = "findRandomSpawnPos", at = @At("HEAD"))
 	public void onFindRandomSpawnPosPre(CallbackInfoReturnable<BlockPos> cir){
-		ServerCore.onFindRandomSpawnPosPre();
+		ServerCore.onFindRandomSpawnPosPre((Raid)(Object)this);
 	}
 
 	@Inject(method = "findRandomSpawnPos", at = @At("RETURN"))

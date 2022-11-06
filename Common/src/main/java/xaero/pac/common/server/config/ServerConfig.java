@@ -57,6 +57,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemInteractions;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
+	public final ForgeConfigSpec.BooleanValue completelyDisableFrostWalking;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
@@ -487,6 +488,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_completely_disabled_entity_interactions")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledEntityInteractions"), Lists::newArrayList, s -> s instanceof String);
+
+		completelyDisableFrostWalking = builder
+				.comment("Whether to completely disable frost walking on the server. Use this if the regular frost walking protection doesn't work, since there is no game rule for it.")
+				.translation("gui.xaero_pac_config_completely_disable_frost_walking")
+				.worldRestart()
+				.define("completelyDisableFrostWalking", false);
 
 		builder.pop();
 

@@ -147,7 +147,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onMobGrief(EntityMobGriefingEvent event) {
-		if(ServerCore.isMobGriefingForItems())//this means that the mob griefing rule is being checked for item pickup
+		if(ServerCore.isMobGriefingForItems(lastServerStarted.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
 			return;
 		if(super.onMobGrief(event.getEntity()))
 			event.setResult(Result.DENY);
