@@ -392,7 +392,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromParty")
-				.setDefaultValue(true)
+				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes protection against players from the same party as you.")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
