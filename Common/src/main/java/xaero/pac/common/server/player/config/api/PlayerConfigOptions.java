@@ -80,6 +80,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES;
 	/**
+	 * Whether the claimed chunk protection includes protection against players breaking and interacting with blocks.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS;
+	/**
 	 * Whether the claimed chunk protection includes protection against mobs breaking/placing blocks.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS;
@@ -248,6 +252,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_XP_PICKUP;
 	/**
+	 * Whether the claimed chunk protection includes protection against item use.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_ITEM_USE;
+	/**
 	 * Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
 	 * neighbor chunks of the claim.
 	 */
@@ -393,10 +401,14 @@ public class PlayerConfigOptions {
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against players from parties who are allied by the party that you are in.")
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromExplosions")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the block mob protection option.")
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromPlayers")
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setDefaultValue(1)
+				.setComment(
+						"When enabled, claimed chunk protection includes basic protection against players breaking or otherwise interacting with blocks if they don't have access to the chunks. Block placing is usually additionally controlled by the item use protection.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromMobs")
@@ -415,6 +427,11 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection against non-living entities, who don't have access to the chunks, breaking/placing blocks. Should work for vanilla entity behavior, unless another mod breaks it. Modded entity behavior is likely not to be included. Keep in mind that explosions are also affected by the explosion-related options.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromExplosions")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the block mob protection option.")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFireSpread")
@@ -711,10 +728,19 @@ public class PlayerConfigOptions {
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_ITEM_USE = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemUse")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection from right-click held item use inside protected chunks. On Fabric, this means being able to place blocks on blocks that have an exception for interaction! Right-click item use can also break blocks, if that is the item's right-click mechanic. Item use might still be prevented by neighbor item use protection in neighbor claims.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")
 				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection from \"item use\" for chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
+				.setComment("When enabled, the item use protection is extended to right-click held item use in chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.overrideMobGriefingRule")

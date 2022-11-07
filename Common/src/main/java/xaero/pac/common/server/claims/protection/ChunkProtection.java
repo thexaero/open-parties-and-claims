@@ -396,6 +396,8 @@ public class ChunkProtection
 		if(chunkAccess)
 			return false;
 		else {
+			if(!checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS, config, accessor, accessorId))
+				return false;
 			Block block = world.getBlockState(pos).getBlock();
 			if(leftClick && forcedBreakExceptionBlocks.contains(block) || !leftClick && forcedInteractionExceptionBlocks.contains(block) && (emptyHand || !requiresEmptyHandBlocks.contains(block)))
 				return false;
@@ -515,7 +517,8 @@ public class ChunkProtection
 					boolean isCurrentChunk = i == 0 && j == 0;
 					if (isCurrentChunk || claim != null){//wilderness neighbors don't have to be protected this much
 						IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-						if((isCurrentChunk || config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE))
+						if(checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, config, player, null) &&
+								(isCurrentChunk || config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE))
 								&& !hasChunkAccess(config, player, null)) {
 							if(shouldCheckGroups) {
 								int exceptionAccessLevel = getExceptionAccessLevel(config, player, null);
@@ -934,7 +937,8 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
-		return !hasChunkAccess(config, accessor, accessorId) && !isOptionalItemException(serverData, accessor, accessorId, itemStack, entity.getLevel(), chunkPos);
+		return checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId)
+				&& !isOptionalItemException(serverData, accessor, accessorId, itemStack, entity.getLevel(), chunkPos);
 	}
 
 	private boolean isOptionalItemException(IServerData<CM, P> serverData, Entity accessor, UUID accessorId, ItemStack itemStack, Level world, ChunkPos chunkPos){
