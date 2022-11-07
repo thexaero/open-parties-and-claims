@@ -1323,6 +1323,21 @@ function initializeCoreMod() {
             'transformer' : function(methodNode){
                 return transformPrePostResourcesDrop(methodNode, 0)
             }
+        },
+        'xaero_pac_itementity': {
+            'target' : {
+				'type' : 'CLASS',
+				'name' : 'net.minecraft.world.entity.item.ItemEntity'
+			},
+			'transformer' : function(classNode){
+				var fields = classNode.fields
+				classNode.interfaces.add("xaero/pac/common/entity/IItemEntity")
+				fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "xaero_OPAC_throwerAccessor", "Ljava/util/UUID;", null, null))
+				addGetter(classNode, "xaero_OPAC_throwerAccessor", "Ljava/util/UUID;")
+				addSetter(classNode, "xaero_OPAC_throwerAccessor", "Ljava/util/UUID;")
+
+				return classNode
+			}
         }
 	}
 }

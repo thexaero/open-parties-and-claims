@@ -703,7 +703,7 @@ public class ChunkProtection
 					if (fromConfig == null)
 						fromConfig = getClaimConfig(playerConfigs, fromClaim);
 					Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
-					isBlockedEntity = fromConfig != config && shouldPreventToss(config, itemEntity, thrower, throwerId) != itemEntity;
+					isBlockedEntity = fromConfig != config && shouldPreventToss(config, itemEntity, thrower, throwerId, ServerCore.getThrowerAccessor(itemEntity)) != itemEntity;
 				}
 			}
 		}
@@ -1215,7 +1215,7 @@ public class ChunkProtection
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return false;
 		Entity thrower = getEntityById((ServerLevel) itemEntity.getLevel(), throwerId);
-		Entity result = shouldPreventToss(config, itemEntity, thrower, throwerId);
+		Entity result = shouldPreventToss(config, itemEntity, thrower, throwerId, null);
 		if(result != itemEntity){
 			if(result instanceof Player player && !player.isCreative()) {//causes weird dupe in creative + isn't really necessary to restore items
 				ItemStack itemStack = itemEntity.getItem();
@@ -1227,22 +1227,27 @@ public class ChunkProtection
 		return false;
 	}
 
-	private Entity shouldPreventToss(IPlayerConfig config, ItemEntity itemEntity, Entity thrower, UUID throwerId){//returns the accessor if protected, or the item entity if not protected
+	private Entity shouldPreventToss(IPlayerConfig config, ItemEntity itemEntity, Entity thrower, UUID throwerId, UUID throwerAccessorId){//returns the accessor if protected, or the item entity if not protected
 		if(throwerId == null)
 			return itemEntity;
 		Entity accessor = null;
 		UUID accessorId;
-		if(thrower != null){
-			Object accessorInfo = getAccessorInfo(thrower);
-			if (accessorInfo instanceof UUID) {
-				accessorId = (UUID) accessorInfo;
-				accessor = getEntityById((ServerLevel) itemEntity.getLevel(), accessorId);
-			} else {
-				accessor = (Entity) accessorInfo;
-				accessorId = accessor.getUUID();
-			}
-		} else
-			accessorId = throwerId;
+		if(throwerAccessorId == null) {
+			if (thrower != null) {
+				Object accessorInfo = getAccessorInfo(thrower);
+				if (accessorInfo instanceof UUID) {
+					accessorId = (UUID) accessorInfo;
+					accessor = getEntityById((ServerLevel) itemEntity.getLevel(), accessorId);
+				} else {
+					accessor = (Entity) accessorInfo;
+					accessorId = accessor.getUUID();
+				}
+			} else
+				accessorId = throwerId;
+		} else {
+			accessorId = throwerAccessorId;
+			accessor = getEntityById((ServerLevel) itemEntity.level, accessorId);
+		}
 		Entity usedOptionBase = !config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT) ?
 				thrower : accessor;
 		IPlayerConfigOptionSpecAPI<Integer> option;
@@ -1316,10 +1321,10 @@ public class ChunkProtection
 		return !hasChunkAccess(config, accessor, accessorId) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_MOB_LOOT, config, accessor, accessorId);
 	}
 
-	public boolean onEntityPickup(IServerData<CM, P> serverData, Entity entity, Entity pickedEntity, UUID pickedEntityThrower, UUID pickedEntityOwner, Map<Entity, Set<ChunkPos>> cantPickupCache, TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> protectionOptionGetter) {
+	public boolean onEntityPickup(IServerData<CM, P> serverData, Entity entity, Entity pickedEntity, UUID pickedEntityThrowerId, UUID pickedEntityOwnerId, Map<Entity, Set<ChunkPos>> cantPickupCache, TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> protectionOptionGetter) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		if(entity.getUUID().equals(pickedEntityThrower) || entity.getUUID().equals(pickedEntityOwner) ||
+		if(entity.getUUID().equals(pickedEntityThrowerId) || entity.getUUID().equals(pickedEntityOwnerId) ||
 				entity.getUUID().equals(ServerCore.getLootOwner(pickedEntity)))
 			return false;
 		ChunkPos chunkPos = pickedEntity.chunkPosition();
@@ -1383,6 +1388,10 @@ public class ChunkProtection
 	}
 
 	public boolean onItemPickup(IServerData<CM, P> serverData, Entity entity, ItemEntity itemEntity) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		if(entity.getUUID().equals(ServerCore.getThrowerAccessor(itemEntity)))
+			return false;
 		return onEntityPickup(serverData, entity, itemEntity, itemEntity.getThrower(), itemEntity.getOwner(), cantPickupItemsInTickCache, usedDroppedItemProtectionOptionGetter);
 	}
 
@@ -1461,6 +1470,22 @@ public class ChunkProtection
 
 	public boolean onExperienceMerge(IServerData<CM, P> serverData, ExperienceOrb from, ExperienceOrb into) {
 		return onEntityMerge(serverData, into, null, null, from, null, null, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_XP_PICKUP, null, null);
+	}
+
+	public void setThrowerAccessor(ItemEntity itemEntity) {
+		//prevents protection circumvention (mostly entity barrier) when changing the owner of the thrower
+		UUID throwerId = itemEntity.getThrower();
+		Entity thrower = getEntityById((ServerLevel) itemEntity.level, throwerId);
+		UUID accessorId;
+		if(thrower != null){
+			Object accessorInfo = getAccessorInfo(thrower);
+			if (accessorInfo instanceof UUID)
+				accessorId = (UUID) accessorInfo;
+			else
+				accessorId = ((Entity) accessorInfo).getUUID();
+		} else
+			accessorId = throwerId;
+		ServerCore.setThrowerAccessor(itemEntity, accessorId);
 	}
 
 	private Entity getEntityById(ServerLevel world, UUID id){

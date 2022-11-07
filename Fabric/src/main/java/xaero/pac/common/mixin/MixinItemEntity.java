@@ -25,10 +25,15 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.common.entity.IItemEntity;
 import xaero.pac.common.server.core.ServerCore;
 
+import java.util.UUID;
+
 @Mixin(value = ItemEntity.class, priority = 1000001)
-public class MixinItemEntity {
+public class MixinItemEntity implements IItemEntity {
+
+	private UUID xaero_OPAC_throwerAccessor;
 
 	@Inject(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;getItem()Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
 	public void onPlayerTouch(Player player, CallbackInfo ci){
@@ -40,6 +45,16 @@ public class MixinItemEntity {
 	private static void onMerge(ItemEntity first, ItemStack firstStack, ItemEntity second, ItemStack secondStack, CallbackInfo ci){
 		if(ServerCore.onItemMerge(first, second))
 			ci.cancel();
+	}
+
+	@Override
+	public UUID getXaero_OPAC_throwerAccessor() {
+		return xaero_OPAC_throwerAccessor;
+	}
+
+	@Override
+	public void setXaero_OPAC_throwerAccessor(UUID xaero_OPAC_throwerAccessor) {
+		this.xaero_OPAC_throwerAccessor = xaero_OPAC_throwerAccessor;
 	}
 
 }

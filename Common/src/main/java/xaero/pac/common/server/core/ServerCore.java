@@ -57,6 +57,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.entity.IEntity;
+import xaero.pac.common.entity.IItemEntity;
 import xaero.pac.common.packet.ClientboundPacDimensionHandshakePacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -486,6 +487,9 @@ public class ServerCore {
 	private final static String DEAD_PLAYER_KEY = "xaero_OPAC_deadPlayer";
 	private final static BiConsumer<IEntity, UUID> DEAD_PLAYER_SETTER = IEntity::setXaero_OPAC_deadPlayer;
 	private final static Function<IEntity, UUID> DEAD_PLAYER_GETTER = IEntity::getXaero_OPAC_deadPlayer;
+	private final static String THROWER_ACCESSOR_KEY = "xaero_OPAC_throwerAccessor";
+	private final static BiConsumer<IEntity, UUID> THROWER_ACCESSOR_SETTER = (ie, id) -> ((IItemEntity)ie).setXaero_OPAC_throwerAccessor(id);
+	private final static Function<IEntity, UUID> THROWER_ACCESSOR_GETTER = ie -> ((IItemEntity)ie).getXaero_OPAC_throwerAccessor();
 
 	public static void setEntityGenericUUID(Entity entity, String key, UUID uuid, BiConsumer<IEntity, UUID> setter){
 		setter.accept((IEntity) entity, uuid);
@@ -522,6 +526,14 @@ public class ServerCore {
 
 	public static UUID getDeadPlayer(Entity entity){
 		return getEntityGenericUUID(entity, DEAD_PLAYER_KEY, DEAD_PLAYER_GETTER, DEAD_PLAYER_SETTER);
+	}
+
+	public static void setThrowerAccessor(ItemEntity entity, UUID throwerAccessor){
+		setEntityGenericUUID(entity, THROWER_ACCESSOR_KEY, throwerAccessor, THROWER_ACCESSOR_SETTER);
+	}
+
+	public static UUID getThrowerAccessor(ItemEntity entity){
+		return getEntityGenericUUID(entity, THROWER_ACCESSOR_KEY, THROWER_ACCESSOR_GETTER, THROWER_ACCESSOR_SETTER);
 	}
 
 	public static boolean onEntityItemPickup(Entity entity, ItemEntity itemEntity) {

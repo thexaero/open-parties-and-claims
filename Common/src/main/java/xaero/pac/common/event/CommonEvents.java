@@ -329,8 +329,17 @@ public class CommonEvents {
 					return serverData.getChunkProtection().onItemAddedToWorld(serverData, itemEntity);
 				}
 			} finally {
-				if (entity instanceof ItemEntity itemEntity && itemEntity.getThrower() == null && ServerCore.getResourcesDropOwner() != null)//after the protection checks so that this isn't immediately affected by toss protection
-					itemEntity.setThrower(ServerCore.getResourcesDropOwner().getUUID());
+				if (entity instanceof ItemEntity itemEntity) {
+					if (itemEntity.getThrower() == null && ServerCore.getResourcesDropOwner() != null)//after the protection checks so that this isn't immediately affected by toss protection
+						itemEntity.setThrower(ServerCore.getResourcesDropOwner().getUUID());
+
+					if(itemEntity.getThrower() != null && ServerCore.getThrowerAccessor(itemEntity) == null){
+						IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+								serverData = ServerData.from(world.getServer());
+						if (serverData != null)
+							serverData.getChunkProtection().setThrowerAccessor(itemEntity);
+					}
+				}
 			}
 		}
 		return false;
