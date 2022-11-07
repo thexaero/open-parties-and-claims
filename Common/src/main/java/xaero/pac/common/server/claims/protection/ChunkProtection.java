@@ -417,7 +417,8 @@ public class ChunkProtection
 	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, Level world, InteractionHand hand, boolean emptyHand, boolean leftClick, boolean direct, Component message) {
 		if(blockAccessCheck(serverData, pos, player, null, world, emptyHand, leftClick)) {
 			if(direct) {
-				player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF, player.getUUID());
+				if(hand != null)
+					player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF, player.getUUID());
 				if (message != null)
 					player.sendMessage(message, player.getUUID());
 			}
@@ -442,6 +443,19 @@ public class ChunkProtection
 		if(onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, message))
 			return true;
 		return !emptyHand && onUseItemAt(serverData, player, pos, blockHit.getDirection(), itemStack, hand, true);
+	}
+
+	public boolean onBlockSpecialInteraction(IServerData<CM,P> serverData, Player player, BlockPos pos) {//not left or right click, e.g. scrolling with Create wrench
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		BlockState blockState = player.getLevel().getBlockState(pos);
+		if(completelyDisabledBlocks.contains(blockState.getBlock())){
+			player.sendMessage(BLOCK_DISABLED, player.getUUID());
+			return true;
+		}
+		if(CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
+			return false;
+		return onBlockAccess(serverData, pos, player, player.getLevel(), null, true, false, true, null);
 	}
 
 	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, ServerLevel level, BlockPos pos, IPlayerConfigOptionSpecAPI<Integer> option) {
@@ -688,14 +702,14 @@ public class ChunkProtection
 		if(enteringProtectedChunk) {
 			if (!isBlockedEntity) {
 				isBlockedEntity = blockedByBarrierGroups(config, entity, accessor, accessorId);
-				if (isBlockedEntity && !hitsAnotherClaim(serverData, fromClaim, toClaim, null)) {
+				if (isBlockedEntity && !hitsAnotherClaim(serverData, fromClaim, toClaim, null, false)) {
 					//the "from" claim might be blocking the same entity with a different option, so we don't just check the same one
 					fromConfig = getClaimConfig(playerConfigs, fromClaim);
 					isBlockedEntity = !blockedByBarrierGroups(fromConfig, entity, accessor, accessorId);
 					madeAnException = true;
 				}
 			} else {
-				isBlockedEntity = hitsAnotherClaim(serverData, fromClaim, toClaim, null);
+				isBlockedEntity = hitsAnotherClaim(serverData, fromClaim, toClaim, null, false);
 				madeAnException = true;
 			}
 			if (!isBlockedEntity)
@@ -963,23 +977,55 @@ public class ChunkProtection
 		return chunkRelativeX == 0 || chunkRelativeX == 15 || chunkRelativeZ == 0 || chunkRelativeZ == 15;
 	}
 
-	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, IPlayerChunkClaim fromClaim, IPlayerChunkClaim toClaim, IPlayerConfigOptionSpecAPI<Boolean> optionSpec){
+	private boolean isProtectionEnabled(IPlayerConfig config, IPlayerConfigOptionSpecAPI<?> option){
+		Object value = config.getEffective(option);
+		return value instanceof Boolean bool && bool || value instanceof Integer integ && integ > 0;
+	}
+
+	private int compareProtectionLevels(IPlayerConfig config1, IPlayerConfig config2, IPlayerConfigOptionSpecAPI<? extends Comparable<?>> option){
+		Comparable<?> value1 = config1.getEffective(option);
+		Comparable<?> value2 = config2.getEffective(option);
+		if(value1 instanceof Boolean bool1)
+			return bool1.compareTo((Boolean) value2);
+		Integer int1 = (Integer) value1;
+		Integer int2 = (Integer) value2;
+		if(int1.equals(int2))
+			return 0;
+		if(int1 > 0 && int2 <= 0)
+			return 1;
+		if(int2 > 0 && int1 <= 0)
+			return -1;
+		return int2.compareTo(int1);//purposely reversed because when protection is > 0, lesser value means more protection
+	}
+
+	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, IPlayerChunkClaim fromClaim, IPlayerChunkClaim toClaim,
+									 IPlayerConfigOptionSpecAPI<? extends Comparable<?>> optionSpec, boolean withBuildCheck){
 		if(toClaim == null || fromClaim == toClaim || fromClaim != null && fromClaim.isSameClaimType(toClaim))
 			return false;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig toClaimConfig = getClaimConfig(playerConfigs, toClaim);
-		if(!toClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)
-				|| optionSpec != null && !toClaimConfig.getEffective(optionSpec))
+		if(!toClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) || optionSpec != null && !isProtectionEnabled(toClaimConfig, optionSpec))
 			return false;
 		if(fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId())){
 			IPlayerConfig fromClaimConfig = getClaimConfig(playerConfigs, fromClaim);
-			return !fromClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)
-					|| optionSpec != null && !fromClaimConfig.getEffective(optionSpec);
+			if(!fromClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)
+					|| optionSpec != null && compareProtectionLevels(fromClaimConfig, toClaimConfig, optionSpec) < 0)
+				return true;
+			if(withBuildCheck){
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS) < 0)
+					return true;
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS) < 0)
+					return true;
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER) < 0)
+					return true;
+				return compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE) < 0;
+			}
+			return false;
 		}
 		return true;
 	}
 
-	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to, IPlayerConfigOptionSpecAPI<Boolean> optionSpec){
+	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to, IPlayerConfigOptionSpecAPI<? extends Comparable<?>> optionSpec, boolean withBuildCheck){
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(!isOnChunkEdge(from))
@@ -992,11 +1038,11 @@ public class ChunkProtection
 			return false;
 		IPlayerChunkClaim toClaim = claimsManager.get(level.dimension().location(), toChunkX, toChunkZ);
 		IPlayerChunkClaim fromClaim = claimsManager.get(level.dimension().location(), fromChunkX, fromChunkZ);
-		return hitsAnotherClaim(serverData, fromClaim, toClaim, optionSpec);
+		return hitsAnotherClaim(serverData, fromClaim, toClaim, optionSpec, withBuildCheck);
 	}
 
 	public boolean onFluidSpread(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to) {
-		return hitsAnotherClaim(serverData, level, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER);
+		return hitsAnotherClaim(serverData, level, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER, true);
 	}
 
 	public boolean onDispenseFrom(IServerData<CM, P> serverData, ServerLevel serverLevel, BlockPos from) {
@@ -1007,7 +1053,7 @@ public class ChunkProtection
 		BlockState blockState = serverLevel.getBlockState(from);
 		Direction direction = blockState.getValue(DirectionalBlock.FACING);
 		BlockPos to = from.relative(direction);
-		return hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER);
+		return hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER, true);
 	}
 
 	private boolean shouldStopPistonPush(IServerData<CM, P> serverData, ServerLevel level, BlockPos pushPos, int pistonChunkX, int pistonChunkZ, IPlayerChunkClaim pistonClaim){
@@ -1016,7 +1062,7 @@ public class ChunkProtection
 		if(pushChunkX == pistonChunkX && pushChunkZ == pistonChunkZ)
 			return false;
 		IPlayerChunkClaim pushClaim = claimsManager.get(level.dimension().location(), pushChunkX, pushChunkZ);
-		return hitsAnotherClaim(serverData, pistonClaim, pushClaim, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER);
+		return hitsAnotherClaim(serverData, pistonClaim, pushClaim, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER, true);
 	}
 
 	public boolean onPistonPush(IServerData<CM, P> serverData, ServerLevel level, List<BlockPos> toPush, List<BlockPos> toDestroy, BlockPos pistonPos, Direction direction, boolean extending) {
@@ -1497,30 +1543,38 @@ public class ChunkProtection
 		return result != null ? result : world.getEntity(id);
 	}
 
-	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, IPlayerChunkClaim posClaim, int posChunkX, int posChunkZ, int anchorChunkX, int anchorChunkZ) {
+	private boolean onCreateMod(IServerData<CM, P> serverData, IPlayerChunkClaim posClaim, IPlayerChunkClaim anchorClaim, boolean affectsBlocks, boolean affectsEntities) {
+		if(!hitsAnotherClaim(serverData, anchorClaim, posClaim, null, true))
+			return false;
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig posClaimConfig = getClaimConfig(playerConfigs, posClaim);
+		if(affectsBlocks && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER))
+			return true;
+		return affectsEntities && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER);
+	}
+
+	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, IPlayerChunkClaim posClaim, int posChunkX, int posChunkZ, int anchorChunkX, int anchorChunkZ, boolean affectsBlocks, boolean affectsEntities) {
 		if(posChunkX == anchorChunkX && posChunkZ == anchorChunkZ)
 			return false;
 		IPlayerChunkClaim anchorClaim = claimsManager.get(level.dimension().location(), anchorChunkX, anchorChunkZ);
-		return hitsAnotherClaim(serverData, anchorClaim, posClaim, null);
+		return onCreateMod(serverData, posClaim, anchorClaim, affectsBlocks, affectsEntities);
 	}
 
-	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, int posChunkX, int posChunkZ, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, Player player) {
+	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel level, int posChunkX, int posChunkZ, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, boolean affectsBlocks, boolean affectsEntities) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		IPlayerChunkClaim posClaim = claimsManager.get(level.dimension().location(), posChunkX, posChunkZ);
 		if(posClaim == null)//wilderness not protected
 			return false;
-		if(player != null)
-			return !hasChunkAccess(getClaimConfig(serverData.getPlayerConfigs(), posClaim), player, null);
 		if(sourceOrAnchor == null)
-			return hitsAnotherClaim(serverData, null, posClaim, null);
+			return onCreateMod(serverData, posClaim, null, affectsBlocks, affectsEntities);
 
 		int anchorChunkRelativeX = sourceOrAnchor.getX() & 15;
 		int anchorChunkRelativeZ = sourceOrAnchor.getZ() & 15;
 		int anchorChunkX = sourceOrAnchor.getX() >> 4;
 		int anchorChunkZ = sourceOrAnchor.getZ() >> 4;
 		if(!checkNeighborBlocks || !isOnChunkEdge(sourceOrAnchor))
-			return onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, anchorChunkX, anchorChunkZ);
+			return onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, anchorChunkX, anchorChunkZ, affectsBlocks, affectsEntities);
 
 		//checking neighbor blocks as the effective anchor positions because the anchor is often offset by 1 block
 		int fromChunkOffX = anchorChunkRelativeX == 0 ? -1 : 0;
@@ -1531,13 +1585,13 @@ public class ChunkProtection
 			for(int offZ = fromChunkOffZ; offZ <= toChunkOffZ; offZ++){
 				int effectiveAnchorChunkX = anchorChunkX + offX;
 				int effectiveAnchorChunkZ = anchorChunkZ + offZ;
-				if(onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, effectiveAnchorChunkX, effectiveAnchorChunkZ))
+				if(onCreateMod(serverData, level, posClaim, posChunkX, posChunkZ, effectiveAnchorChunkX, effectiveAnchorChunkZ, affectsBlocks, affectsEntities))
 					return true;
 			}
 		return false;
 	}
 
-	public <E> boolean onCreateModAffectPositionedObjects(IServerData<CM, P> serverData, Level level, List<E> objects, Function<E, ChunkPos> positionGetter, BlockPos contraptionAnchor, boolean checkNeighborBlocks, boolean removeInvalid) {
+	public <E> boolean onCreateModAffectPositionedObjects(IServerData<CM, P> serverData, Level level, List<E> objects, Function<E, ChunkPos> positionGetter, BlockPos contraptionAnchor, boolean checkNeighborBlocks, boolean removeInvalid, boolean affectsBlocks, boolean affectsEntities) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		Iterator<E> objectIterator = objects.iterator();
@@ -1554,7 +1608,7 @@ public class ChunkProtection
 					objectIterator.remove();
 				continue;
 			}
-			boolean shouldProtect = onCreateMod(serverData, (ServerLevel) level, objectChunkPos.x, objectChunkPos.z, contraptionAnchor, checkNeighborBlocks, null);
+			boolean shouldProtect = onCreateMod(serverData, (ServerLevel) level, objectChunkPos.x, objectChunkPos.z, contraptionAnchor, checkNeighborBlocks, affectsBlocks, affectsEntities);
 			if(shouldProtect) {
 				result = true;
 				if(!removeInvalid)

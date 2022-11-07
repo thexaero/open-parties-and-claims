@@ -73,6 +73,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.core.accessor.ICreateArmInteractionPoint;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -164,23 +165,34 @@ public class ServerCore {
 		return !shouldProtect;
 	}
 
-	private static boolean isCreateModAllowed(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, Level level, int posChunkX, int posChunkZ, BlockPos sourceOrAnchor, boolean checkNeighborBlocks){
-		boolean shouldProtect = serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, posChunkX, posChunkZ, sourceOrAnchor, checkNeighborBlocks, null);
+	private static boolean isCreateModAllowed(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, Level level, int posChunkX, int posChunkZ, BlockPos sourceOrAnchor, boolean checkNeighborBlocks, boolean affectsBlocks, boolean affectsEntities){
+		boolean shouldProtect = serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, posChunkX, posChunkZ, sourceOrAnchor, checkNeighborBlocks, affectsBlocks, affectsEntities);
 		return !shouldProtect;
 	}
 
-	public static boolean isCreateModAllowed(Level level, BlockPos pos, BlockPos sourceOrAnchor){
+	private static boolean isCreateModAllowed(Level level, BlockPos pos, BlockPos sourceOrAnchor, boolean affectsBlocks, boolean affectsEntities){
 		if(level.getServer() == null)
 			return true;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return true;
-		return isCreateModAllowed(serverData, level, pos.getX() >> 4, pos.getZ() >> 4, sourceOrAnchor, true);
+		return isCreateModAllowed(serverData, level, pos.getX() >> 4, pos.getZ() >> 4, sourceOrAnchor, true, affectsBlocks, affectsEntities);
+	}
+
+	public static boolean isCreateModAllowed(Level level, BlockPos pos, BlockPos sourceOrAnchor){
+		//cant rename
+		//called when a contraption tries to move a block
+		if(level.getServer() == null)
+			return true;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
+		if(serverData == null)
+			return true;
+		return isCreateModAllowed(serverData, level, pos.getX() >> 4, pos.getZ() >> 4, sourceOrAnchor, true, true, false);
 	}
 
 	public static BlockPos CAPTURED_TARGET_POS;
 	public static BlockState replaceBlockFetchOnCreateModBreak(BlockState actual, Level level, BlockPos sourceOrAnchor){
-		if(!isCreateModAllowed(level, CAPTURED_TARGET_POS, sourceOrAnchor))
+		if(!isCreateModAllowed(level, CAPTURED_TARGET_POS, sourceOrAnchor, true, false))
 			return Blocks.BEDROCK.defaultBlockState();//fake bedrock won't be broken by create
 		return actual;
 	}
@@ -197,7 +209,7 @@ public class ServerCore {
 		Iterator<BlockPos> posIterator = CAPTURED_POS_STATE_MAP.keySet().iterator();
 		while(posIterator.hasNext()){
 			BlockPos pos = posIterator.next();
-			if(serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, pos.getX() >> 4, pos.getZ() >> 4, null, false, player))
+			if(serverData.getChunkProtection().onEntityPlaceBlock(serverData, player, (ServerLevel)level, pos, null))
 				posIterator.remove();
 		}
 	}
@@ -209,7 +221,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return true;
-		return isCreateModAllowed(serverData, level, pos.getX() >> 4, pos.getZ() >> 4, placer.getBlockPos(), false);
+		return isCreateModAllowed(serverData, level, pos.getX() >> 4, pos.getZ() >> 4, placer.getBlockPos(), false, true, false);
 	}
 
 	public static void onCreateCollideEntities(List<Entity> entities, Entity contraption, BlockPos contraptionAnchor){
@@ -219,7 +231,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return;
-		serverData.getChunkProtection().onCreateModAffectPositionedObjects(serverData, level, entities, Entity::chunkPosition, contraptionAnchor, true, true);
+		serverData.getChunkProtection().onCreateModAffectPositionedObjects(serverData, level, entities, Entity::chunkPosition, contraptionAnchor, true, true, false, true);
 	}
 
 	public static boolean isCreateMechanicalArmValid(BlockEntity arm, List<ICreateArmInteractionPoint> points){
@@ -229,7 +241,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
 			return true;
-		if(serverData.getChunkProtection().onCreateModAffectPositionedObjects(serverData, level, points, p -> new ChunkPos(p.xaero_OPAC_getPos()), arm.getBlockPos(), false, false)){
+		if(serverData.getChunkProtection().onCreateModAffectPositionedObjects(serverData, level, points, p -> new ChunkPos(p.xaero_OPAC_getPos()), arm.getBlockPos(), false, false, true, false)){
 			points.clear();
 			return false;
 		}
@@ -244,12 +256,12 @@ public class ServerCore {
 		if(serverData == null)
 			return true;
 		BlockPos pos = tileEntity.getBlockPos();
-		boolean shouldProtect = serverData.getChunkProtection().onCreateMod(serverData, (ServerLevel) level, pos.getX() >> 4, pos.getZ() >> 4, null, false, player);
+		boolean shouldProtect = serverData.getChunkProtection().onBlockSpecialInteraction(serverData, player, pos);
 		return !shouldProtect;
 	}
 
 	public static boolean isCreateDeployerBlockInteractionAllowed(Level level, BlockPos anchor, BlockPos pos){
-		return isCreateModAllowed(level, pos, anchor);
+		return isCreateModAllowed(level, pos, anchor, true, true);
 	}
 
 	public static boolean isCreateTileDeployerBlockInteractionAllowed(BlockEntity tileEntity){
