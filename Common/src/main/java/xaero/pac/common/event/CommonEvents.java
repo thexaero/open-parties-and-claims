@@ -65,6 +65,7 @@ import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.parties.command.PartyCommandRegister;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.HashSet;
@@ -133,6 +134,10 @@ public class CommonEvents {
 		if(player.getLevel() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 			if(serverData != null) {
+				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from((ServerPlayer) player);
+				if(playerData.hasReceivedLoginEvent())//can be true if login was already handled inside ServerPlayerDataAPI.from
+					return;
+				playerData.setReceivedLoginEvent(true);
 				serverData.getPlayerLoginHandler().handlePreWorldJoin((ServerPlayer) player, serverData);
 				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, (ServerLevel) player.getLevel(), (ServerPlayer) player);
 				serverData.getPlayerLoginHandler().handlePostWorldJoin((ServerPlayer) player, serverData);

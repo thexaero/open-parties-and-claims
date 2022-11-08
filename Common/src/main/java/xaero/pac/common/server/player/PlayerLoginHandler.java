@@ -51,6 +51,9 @@ import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 public class PlayerLoginHandler {
 	
 	public void handlePreWorldJoin(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+		playerData.setReceivedLoginEvent(true);
+
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ServerLoginHandshakePacket());
 
 		IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = serverData.getServerClaimsManager().getPlayerInfo(player.getUUID());
@@ -59,8 +62,6 @@ public class PlayerLoginHandler {
 		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), false);
 		
 		serverData.getPlayerPartyAssigner().assign(serverData.getPartyManager(), player, serverData.getPartyMemberInfoUpdater());
-		
-		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 
 		PlayerFullPartySync playerFullPartySync = new PlayerFullPartySync((PartySynchronizer)(Object)serverData.getPartyManager().getPartySynchronizer());
 
