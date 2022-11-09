@@ -33,7 +33,6 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.PartySearch;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
@@ -83,7 +82,8 @@ public class UnallyPartyCommand {
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 							
 							String targetOwnerName = StringArgumentType.getString(context, "owner");
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetPlayerParty = new PartySearch().searchForAlly(playerParty, partyManager, party -> party.getOwner().getUsername().equalsIgnoreCase(targetOwnerName));
+							IPartyAlly targetAlly = playerParty.getAlly(targetOwnerName);
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetPlayerParty = targetAlly == null ? null : partyManager.getPartyById(targetAlly.getPartyId());
 							
 							if(targetPlayerParty == null) {
 								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_unally_party_not_found", targetOwnerName));

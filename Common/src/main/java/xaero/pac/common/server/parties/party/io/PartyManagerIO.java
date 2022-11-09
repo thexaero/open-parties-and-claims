@@ -70,7 +70,8 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 					if(alliesToRemove == null)
 						alliesToRemove = new ArrayList<>();
 					alliesToRemove.add(allyId);
-				}
+				} else
+					p.updateAllyNameMap(allyParty.getId(), allyParty.getOwner().getUsername());
 			}
 			if(alliesToRemove != null)
 				alliesToRemove.forEach(p::removeAllyParty);

@@ -32,10 +32,7 @@ import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public final class ServerParty extends Party implements IServerParty<PartyMember, PartyInvite, PartyAlly>, ObjectManagerIOExpirableObject, ILinkedChainNode<ServerParty> {
@@ -47,11 +44,19 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	private ServerParty nextInChain;
 	private ServerParty prevInChain;
 	private boolean destroyed;
+	private final Map<String, PartyMember> memberInfoByUsername;
+	private final Map<String, PartyInvite> inviteByUsername;
+	private final Map<String, PartyAlly> allyByUsername;
+	private final Map<UUID, String> usernameByAlly;//because the actual party might be deleted
 
 	protected ServerParty(PartyManager managedBy, PartyMember owner, UUID id, List<PartyMember> staffInfo, Map<UUID, PartyMember> memberInfo,
-						  LinkedChain<PartyMember> linkedMemberInfo, Map<UUID, PartyInvite> invitedPlayers, LinkedChain<PartyInvite> linkedInvitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties) {
+						  LinkedChain<PartyMember> linkedMemberInfo, Map<UUID, PartyInvite> invitedPlayers, LinkedChain<PartyInvite> linkedInvitedPlayers, Map<UUID, PartyAlly> allyParties, LinkedChain<PartyAlly> linkedAllyParties, Map<String, PartyMember> memberInfoByUsername, Map<String, PartyInvite> inviteByUsername, Map<String, PartyAlly> allyByUsername, Map<UUID, String> usernameByAlly) {
 		super(owner, id, staffInfo, memberInfo, linkedMemberInfo, invitedPlayers, linkedInvitedPlayers, allyParties, linkedAllyParties);
 		this.managedBy = managedBy;
+		this.memberInfoByUsername = memberInfoByUsername;
+		this.inviteByUsername = inviteByUsername;
+		this.allyByUsername = allyByUsername;
+		this.usernameByAlly = usernameByAlly;
 		confirmActivity(managedBy.getExpirationHandler().getServerInfo());
 	}
 
@@ -72,6 +77,11 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		PartyMember m = super.addMemberClean(memberUUID, rank, playerUsername);
 		if(m == null)
 			return null;
+		String playerUsernameLowerCase = playerUsername.toLowerCase();
+		PartyMember sameNameMember = memberInfoByUsername.get(playerUsernameLowerCase);
+		if(sameNameMember != null)
+			updateUsername(sameNameMember, sameNameMember.getUUID() + "");//the old member no longer has the name
+		memberInfoByUsername.put(playerUsernameLowerCase, m);
 		if(managedBy != null) {
 			managedBy.onMemberAdded(this, m);
 			if(managedBy.isLoaded())
@@ -90,8 +100,14 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 			if(managedBy.isLoaded())
 				managedBy.getPartySynchronizer().syncToPartyRemoveMember(this, m);
 		}
+		memberInfoByUsername.remove(m.getUsername().toLowerCase());
 		setDirty(true);
 		return m;
+	}
+
+	@Override
+	public PartyMember getMemberInfo(@Nonnull String username){
+		return memberInfoByUsername.get(username.toLowerCase());
 	}
 
 	@Override
@@ -102,14 +118,22 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	
 	public void addAllyPartyClean(UUID partyId) {
 		super.addAllyPartyClean(partyId);
+		if(managedBy.isLoaded())
+			updateAllyNameMap(partyId, managedBy.getPartyById(partyId).getOwner().getUsername());
 		managedBy.onAllyAdded(this, partyId);
 	}
 
 	@Override
 	public void removeAllyParty(@Nonnull UUID partyId) {
 		super.removeAllyParty(partyId);
+		if(managedBy.isLoaded())
+			updateAllyNameMap(partyId, null);
 		setDirty(true);
 		managedBy.onAllyRemoved(this, partyId, false);
+	}
+
+	public PartyAlly getAlly(String ownerUsername){
+		return allyByUsername.get(ownerUsername.toLowerCase());
 	}
 
 	@Override
@@ -124,6 +148,11 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		PartyInvite playerInfo = super.invitePlayerClean(playerUUID, playerUsername);
 		if(playerInfo == null)
 			return null;
+		String playerUsernameLowercase = playerUsername.toLowerCase();
+		PartyInvite sameNameInvite = inviteByUsername.get(playerUsernameLowercase);
+		if(sameNameInvite != null)
+			sameNameInvite.setUsername(sameNameInvite.getUUID() + "");//this player no longer has the name
+		inviteByUsername.put(playerUsernameLowercase, playerInfo);
 		if(managedBy.isLoaded())
 			managedBy.getPartySynchronizer().syncToPartyAddInvite(this, playerInfo);
 		return playerInfo;
@@ -141,9 +170,15 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	@Override
 	protected PartyInvite removeInvitedPlayer(UUID playerId) {
 		PartyInvite playerInfo = super.removeInvitedPlayer(playerId);
+		if(playerInfo != null)
+			inviteByUsername.remove(playerInfo.getUsername().toLowerCase());
 		if(playerInfo != null && managedBy.isLoaded())
 			managedBy.getPartySynchronizer().syncToPartyRemoveInvite(this, playerInfo);
 		return playerInfo;
+	}
+
+	public PartyInvite getInvite(String username){
+		return inviteByUsername.get(username.toLowerCase());
 	}
 
 	@Override
@@ -175,16 +210,36 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 
 	@Override
 	public boolean updateUsername(PartyMember member, String username) {
-		if(Objects.equals(member.getUsername(), username) || getMemberInfo(member.getUUID()) != member)
+		String oldName = member.getUsername();
+		if(Objects.equals(oldName, username) || getMemberInfo(member.getUUID()) != member)
 			return false;
 		member.setUsername(username);
+		memberInfoByUsername.remove(oldName.toLowerCase());
+		memberInfoByUsername.put(username.toLowerCase(), member);
 		setDirty(true);
-		if(managedBy.isLoaded())
-			if(owner != member)
+		if(managedBy.isLoaded()) {
+			if (owner != member)
 				managedBy.getPartySynchronizer().syncToPartyUpdateMember(this, member);
-			else
+			else {
+				UUID partyId = getId();
+				managedBy.getPartiesThatAlly(partyId).forEach(allier -> allier.updateAllyNameMap(partyId, username));
 				managedBy.getPartySynchronizer().syncToPartyUpdateOwner(this);
+			}
+		}
 		return true;
+	}
+
+	public void updateAllyNameMap(UUID allyId, String username){
+		String oldName = usernameByAlly.get(allyId);
+		if(oldName != null)
+			allyByUsername.remove(oldName);
+		if(username == null){
+			usernameByAlly.remove(allyId);
+			return;
+		}
+		String usernameLowercase = username.toLowerCase();
+		allyByUsername.put(usernameLowercase, getAlly(allyId));
+		usernameByAlly.put(allyId, usernameLowercase);
 	}
 
 	@Nonnull
@@ -321,7 +376,14 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 
 		@Override
 		protected ServerParty buildInternally(List<PartyMember> staffInfo, LinkedChain<PartyMember> linkedMemberInfo, LinkedChain<PartyInvite> linkedInvitedPlayers, LinkedChain<PartyAlly> linkedAllyParties) {
-			return new ServerParty(managedBy, owner, id, staffInfo, memberInfo, linkedMemberInfo, invitedPlayers, linkedInvitedPlayers, allyParties, linkedAllyParties);
+			Map<String, PartyMember> memberInfoByUsername = new HashMap<>();
+			Map<String, PartyInvite> inviteByUsername = new HashMap<>();
+			Map<String, PartyAlly> allyByUsername = new HashMap<>();
+			Map<UUID, String> usernameByAlly = new HashMap<>();
+			memberInfoByUsername.put(owner.getUsername().toLowerCase(), owner);
+			memberInfo.values().forEach(m -> memberInfoByUsername.put(m.getUsername().toLowerCase(), m));
+			invitedPlayers.values().forEach(i -> inviteByUsername.put(i.getUsername().toLowerCase(), i));
+			return new ServerParty(managedBy, owner, id, staffInfo, memberInfo, linkedMemberInfo, invitedPlayers, linkedInvitedPlayers, allyParties, linkedAllyParties, memberInfoByUsername, inviteByUsername, allyByUsername, usernameByAlly);
 		}
 		
 	}

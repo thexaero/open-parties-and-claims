@@ -24,7 +24,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -34,7 +33,6 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.PartySearch;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
@@ -50,7 +48,6 @@ import xaero.pac.common.server.parties.party.IServerParty;
 
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class KickPartyCommand {
 	
@@ -59,18 +56,7 @@ public class KickPartyCommand {
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get()).then(Commands.literal("member")
 				.requires(requirement).then(Commands.literal("kick")
 				.then(Commands.argument("name", StringArgumentType.word())
-						.suggests((context, builder) -> {
-							//limited at 16 to reduce synced data for super large parties
-							ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
-							String lowercaseInput = builder.getRemainingLowerCase();
-							return SharedSuggestionProvider.suggest(Stream.concat(playerParty.getMemberInfoStream(), playerParty.getInvitedPlayersStream())
-									.map(IPartyPlayerInfo::getUsername)
-									.filter(name -> name.toLowerCase().startsWith(lowercaseInput))
-									.limit(16), builder);
-						})
+						.suggests(PartyCommands.getPartyMemberOrInviteSuggestor())
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
 							UUID playerId = player.getUUID();
@@ -80,8 +66,9 @@ public class KickPartyCommand {
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 							
 							String targetUsername = StringArgumentType.getString(context, "name");
-							IPartyPlayerInfo targetPlayerInfo = new PartySearch().searchForPlayer(playerParty, ppi -> ppi.getUsername().equalsIgnoreCase(targetUsername));
-							
+							IPartyPlayerInfo targetPlayerInfo = playerParty.getMemberInfo(targetUsername);
+							if(targetPlayerInfo == null)
+								targetPlayerInfo = playerParty.getInvite(targetUsername);
 							if(targetPlayerInfo == null) {
 								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_kick_not_member", targetUsername));
 								return 0;

@@ -141,6 +141,10 @@ public abstract class Party implements IParty<PartyMember, PartyInvite, PartyAll
 		return allyParties.containsKey(partyId);
 	}
 
+	public PartyAlly getAlly(@Nonnull UUID partyId) {
+		return allyParties.get(partyId);
+	}
+
 	@Override
 	public PartyInvite invitePlayer(UUID playerUUID, String playerUsername) {
 		return invitePlayerClean(playerUUID, playerUsername);

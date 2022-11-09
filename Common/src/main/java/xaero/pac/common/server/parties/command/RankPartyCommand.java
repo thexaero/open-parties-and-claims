@@ -33,7 +33,6 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.PartySearch;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
@@ -61,17 +60,7 @@ public class RankPartyCommand {
 					return SharedSuggestionProvider.suggest(Arrays.asList(PartyMemberRank.values()).stream().map(r -> r.toString()), builder);
 				})
 				.then(Commands.argument("name", StringArgumentType.word())
-						.suggests((context, builder) -> {
-							//limited at 16 to reduce synced data for super large parties
-							ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
-							String lowercaseInput = builder.getRemainingLowerCase();
-							return SharedSuggestionProvider.suggest(playerParty.getMemberInfoStream().map(IPartyPlayerInfo::getUsername)
-									.filter(name -> name.toLowerCase().startsWith(lowercaseInput))
-									.limit(16), builder);
-						})
+						.suggests(PartyCommands.getPartyMemberSuggestor())
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
 							UUID playerId = player.getUUID();
@@ -81,7 +70,7 @@ public class RankPartyCommand {
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 
 							String targetUsername = StringArgumentType.getString(context, "name");
-							IPartyPlayerInfo targetPlayerInfo = new PartySearch().searchForPlayer(playerParty, ppi -> ppi instanceof IPartyMember && ppi.getUsername().equalsIgnoreCase(targetUsername));
+							IPartyPlayerInfo targetPlayerInfo = playerParty.getMemberInfo(targetUsername);
 							
 							if(targetPlayerInfo == null) {
 								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_rank_not_member", targetUsername));

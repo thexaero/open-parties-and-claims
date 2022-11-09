@@ -111,6 +111,14 @@ public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlay
 	public M removeMember(@Nonnull UUID playerUUID);
 
 	/**
+	 * Gets info about the party member with a specified username.
+	 *
+	 * @param username  the username of a party member, not null
+	 * @return the member info, null if doesn't exist
+	 */
+	public M getMemberInfo(@Nonnull String username);
+
+	/**
 	 * Adds a new ally party to this party.
 	 *
 	 * @param partyId  the UUID of the party to ally, not null
