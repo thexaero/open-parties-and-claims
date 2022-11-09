@@ -295,15 +295,19 @@ public class ChunkProtection
 			boolean isAPlayer = accessor instanceof Player;
 			if (isAPlayer && ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsNonallyMode())
 				return false;
-			if (accessorId.equals(claimConfig.getPlayerId()) ||
-					isAPlayer && (ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsAdminMode() ||
-							ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsServerMode() &&
-									claimsManager.getPermissionHandler().playerHasServerClaimPermission((ServerPlayer) accessor) &&
-									claimConfig.getType() == PlayerConfigType.SERVER
-					)
-			)
+			if (accessorId.equals(claimConfig.getPlayerId()))
 				return true;
-			if (!isAPlayer)
+			if (isAPlayer){
+				ServerPlayerDataAPI playerData = ServerPlayerDataAPI.from((ServerPlayer) accessor);
+				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission((ServerPlayer) accessor, playerData);
+				if (
+						playerData.isClaimsAdminMode() ||
+						playerData.isClaimsServerMode() &&
+								claimsManager.getPermissionHandler().playerHasServerClaimPermission((ServerPlayer) accessor) &&
+								claimConfig.getType() == PlayerConfigType.SERVER
+				)
+					return true;
+			} else
 				return false;
 		} else if(accessorId == null)
 			return false;

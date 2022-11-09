@@ -82,6 +82,8 @@ public class ClaimsForceloadCommands {
 				playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
 
 				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
+
+				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 				boolean shouldReplace = opReplaceCurrent || playerData.isClaimsAdminMode();
 
 			 	ClaimResult<?> result = claimsManager.tryToForceload(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);

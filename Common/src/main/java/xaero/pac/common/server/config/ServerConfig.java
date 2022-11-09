@@ -75,6 +75,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsFTBPermission;
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsFTBPermission;
 	public final ForgeConfigSpec.ConfigValue<String> serverClaimFTBPermission;
+	public final ForgeConfigSpec.ConfigValue<String> adminModeFTBPermission;
 
 	private ServerConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -192,6 +193,12 @@ public class ServerConfig {
 				.translation("gui.xaero_pac_config_server_claim_ftb_permission")
 				.worldRestart()
 				.define("serverClaimFTBPermission", "xaero.pac_server_claims");
+
+		adminModeFTBPermission = builder
+				.comment("The FTB Ranks permission that gives non-OP players the ability to enable claim admin mode.")
+				.translation("gui.xaero_pac_config_admin_mode_ftb_permission")
+				.worldRestart()
+				.define("adminModeFTBPermission", "xaero.pac_admin_mode");
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")

@@ -24,6 +24,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.ClientboundModesPacket;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 public class ServerClaimsPermissionHandler {
 
@@ -37,16 +38,33 @@ public class ServerClaimsPermissionHandler {
 		return false;
 	}
 
-	public boolean shouldPreventServerClaim(ServerPlayer player, ServerPlayerData playerData, MinecraftServer server){
+	public boolean shouldPreventServerClaim(ServerPlayer player, ServerPlayerDataAPI playerData, MinecraftServer server){
 		if(!playerHasServerClaimPermission(player)) {
 			if (playerData.isClaimsServerMode()) {
-				playerData.setClaimsServerMode(false);
+				((ServerPlayerData)playerData).setClaimsServerMode(false);
 				OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(playerData.isClaimsAdminMode(), playerData.isClaimsServerMode()));
 				server.getCommands().sendCommands(player);
 			}
 			return true;
 		}
 		return false;
+	}
+
+	public boolean playerHasAdminModePermission(ServerPlayer player){
+		if(player.hasPermissions(2))
+			return true;
+		boolean hasFtbRanks = OpenPartiesAndClaims.INSTANCE.getModSupport().FTB_RANKS;
+		if(hasFtbRanks &&
+				OpenPartiesAndClaims.INSTANCE.getModSupport().getFTBRanksSupport().getPermissionHelper().getPermission(player, ServerConfig.CONFIG.adminModeFTBPermission.get()))
+			return true;
+		return false;
+	}
+
+	public void ensureAdminModeStatusPermission(ServerPlayer player, ServerPlayerDataAPI playerData){
+		if(playerData.isClaimsAdminMode() && !playerHasAdminModePermission(player)) {
+			((ServerPlayerData)playerData).setClaimsAdminMode(false);
+			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(playerData.isClaimsAdminMode(), playerData.isClaimsServerMode()));
+		}
 	}
 
 }
