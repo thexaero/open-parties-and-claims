@@ -225,7 +225,7 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 	public PartyMemberDynamicInfoSynchronizer getOftenSyncedInfoSync() {
 		return dynamicInfoSync;
 	}
-	
+
 	public static final class Builder {
 		
 		private MinecraftServer server;

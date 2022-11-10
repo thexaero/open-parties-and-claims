@@ -27,6 +27,8 @@ import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.info.ServerInfo;
+import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.util.linked.ILinkedChainNode;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -58,6 +60,26 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		this.allyByUsername = allyByUsername;
 		this.usernameByAlly = usernameByAlly;
 		confirmActivity(managedBy.getExpirationHandler().getServerInfo());
+	}
+
+	@Override
+	public boolean changeOwner(UUID newOwnerId, String newOwnerUsername) {
+		PartyMember oldOwner = getOwner();
+		boolean result = super.changeOwner(newOwnerId, newOwnerUsername);
+		if(result){
+			memberInfoByUsername.put(oldOwner.getUsername().toLowerCase(), getMemberInfo(oldOwner.getUUID()));
+			memberInfoByUsername.put(this.owner.getUsername().toLowerCase(), this.owner);
+			if(managedBy != null) {
+				managedBy.onOwnerChange(oldOwner, this.owner);
+				if (managedBy.isLoaded()) {
+					managedBy.getPartySynchronizer().syncToPartyUpdateOwner(this);
+					IPlayerConfig newOwnerConfig = managedBy.getPlayerConfigs().getLoadedConfig(newOwnerId);
+					managedBy.getPartySynchronizer().syncToPartyAndAlliersUpdateName(this, newOwnerConfig.getEffective(PlayerConfigOptions.PARTY_NAME));
+				}
+			}
+			setDirty(true);
+		}
+		return result;
 	}
 
 	@Override

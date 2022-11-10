@@ -44,7 +44,7 @@
 	"gui.xaero_parties_kick_target_message" : "You have been kicked from %1$s!",
 	"gui.xaero_parties_kick_party_message" : "%1$s kicked %2$s from the party!",
 	
-	"gui.xaero_parties_leave_own_party" : "You can't leave your own party. You will have to destroy it.",
+	"gui.xaero_parties_leave_own_party" : "You can't leave your own party. You will have to transfer the ownership to another member or destroy it.",
 	"gui.xaero_parties_leave_caster_message" : "You have successfully left %1$s!",
 	"gui.xaero_parties_leave_party_message" : "%1$s has left the party!",
 	
@@ -52,7 +52,13 @@
 	"gui.xaero_parties_rank_not_lower_rank_player" : "The target player must be of a lower rank than you!",
 	"gui.xaero_parties_rank_not_lower_rank" : "The assigned rank must be lower than your own rank!",
 	"gui.xaero_parties_rank_party_message" : "%1$s assigned %2$s rank %3$s!",
-	
+
+	"gui.xaero_parties_transfer_use_confirm" : "Please also add the keyword \"confirm\" after the command to confirm that you wish to transfer the ownership of your party.",
+	"gui.xaero_parties_transfer_not_member" : "%1$s is not a member of your party!",
+	"gui.xaero_parties_transfer_already_owner" : "You already own the party!",
+	"gui.xaero_parties_transfer_success" : "%1$s transferred the ownership of the party to %2$s!",
+	"gui.xaero_parties_transfer_failed" : "Failed to transfer the ownership of the party for an unknown reason!",
+
 	"gui.xaero_parties_about_no_party" : "The player %1$s is not in a party!",
 	"gui.xaero_parties_about_invalid_player" : "Invalid target player!",
 	

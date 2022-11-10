@@ -123,7 +123,10 @@ public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPla
 				}
 				IPartyMember newInfo = (IPartyMember) t.playerInfo;
 				IPartyMember owner = party.getOwner();
-				((PartyMember) owner).setUsername(newInfo.getUsername());
+				if(owner.getUUID() != newInfo.getUUID())
+					party.changeOwner(newInfo.getUUID(), newInfo.getUsername());
+				else
+					((PartyMember) party.getOwner()).setUsername(newInfo.getUsername());
 			} else {
 				if(t.action == Action.ADD) {
 					party.invitePlayer(t.playerInfo.getUUID(), t.playerInfo.getUsername());

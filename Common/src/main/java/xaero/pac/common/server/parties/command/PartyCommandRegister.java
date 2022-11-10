@@ -39,6 +39,7 @@ public class PartyCommandRegister {
 		new UnallyPartyCommand().register(dispatcher, environment, commandRequirementProvider);
 		new RankPartyCommand().register(dispatcher, environment, commandRequirementProvider);
 		new MessagePartyCommand().register(dispatcher, environment, commandRequirementProvider);
+		new TransferPartyCommand().register(dispatcher, environment, commandRequirementProvider);
 	}
 
 }

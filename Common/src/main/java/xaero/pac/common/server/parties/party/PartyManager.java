@@ -223,6 +223,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		}
 	}
 
+	public void onOwnerChange(PartyMember oldOwner, PartyMember newOwner) {
+		partiesByOwner.put(newOwner.getUUID(), partiesByOwner.remove(oldOwner.getUUID()));
+	}
+
 	@Override
 	public Iterable<ServerParty> getToSave(){
 		return toSave;
