@@ -420,7 +420,7 @@ public class ChunkProtection
 	
 	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, Level world, InteractionHand hand, boolean emptyHand, boolean leftClick, boolean direct, Component message) {
 		if(blockAccessCheck(serverData, pos, player, null, world, emptyHand, leftClick)) {
-			if(direct) {
+			if(direct && !ServerConfig.CONFIG.hideMessageCantInteractBlock.get()) {
 				if(hand != null)
 					player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF, player.getUUID());
 				if (message != null)
@@ -436,14 +436,18 @@ public class ChunkProtection
 			return false;
 		BlockState blockState = player.getLevel().getBlockState(pos);
 		if(completelyDisabledBlocks.contains(blockState.getBlock())){
-			player.sendMessage(BLOCK_DISABLED, player.getUUID());
+			if(!ServerConfig.CONFIG.hideMessageBlockDisabled.get())
+				player.sendMessage(BLOCK_DISABLED, player.getUUID());
 			return true;
 		}
 		if(CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
 			return false;
 		ItemStack itemStack = player.getItemInHand(hand);
 		boolean emptyHand = itemStack.getItem() == Items.AIR;
-		Component message = emptyHand ? null : hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
+
+		Component message = null;
+		if(!ServerConfig.CONFIG.hideMessageBlockTryEmpty.get())
+			message = emptyHand ? null : hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
 		if(onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, message))
 			return true;
 		return !emptyHand && onUseItemAt(serverData, player, pos, blockHit.getDirection(), itemStack, hand, true);
@@ -454,7 +458,8 @@ public class ChunkProtection
 			return false;
 		BlockState blockState = player.getLevel().getBlockState(pos);
 		if(completelyDisabledBlocks.contains(blockState.getBlock())){
-			player.sendMessage(BLOCK_DISABLED, player.getUUID());
+			if(!ServerConfig.CONFIG.hideMessageBlockDisabled.get())
+				player.sendMessage(BLOCK_DISABLED, player.getUUID());
 			return true;
 		}
 		if(CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
@@ -516,7 +521,8 @@ public class ChunkProtection
 		boolean shouldProtect = false;
 		Item item = itemStack.getItem();
 		if(completelyDisabledItems.contains(item)) {
-			player.sendMessage(hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF, player.getUUID());
+			if(!ServerConfig.CONFIG.hideMessageItemDisabled.get())
+				player.sendMessage(hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF, player.getUUID());
 			return true;
 		}
 		if(isItemUseRestricted(itemStack) && !(item instanceof BucketItem) && !(item instanceof SolidBucketItem)) {
@@ -551,8 +557,10 @@ public class ChunkProtection
 					}
 				}
 		}
-		if(message && shouldProtect)
-			player.sendMessage(hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
+		if(message && shouldProtect){
+			if(!ServerConfig.CONFIG.hideMessageUseItem.get())
+				player.sendMessage(hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
+		}
 		return shouldProtect;
 	}
 
@@ -612,7 +620,7 @@ public class ChunkProtection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(!attack && completelyDisabledEntities.contains(target.getType())){
-			if(hand == InteractionHand.MAIN_HAND && entity instanceof Player player)
+			if(hand == InteractionHand.MAIN_HAND && entity instanceof Player player && !ServerConfig.CONFIG.hideMessageEntityDisabled.get())
 				player.sendMessage(ENTITY_DISABLED, player.getUUID());
 			return true;
 		}
@@ -644,10 +652,11 @@ public class ChunkProtection
 		) {
 			if(direct && entity instanceof Player) {
 				if(attack || posSpecific) {//avoiding double messages
-					entity.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF, entity.getUUID());
+					if(!ServerConfig.CONFIG.hideMessageCantInteractEntity.get())
+						entity.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF, entity.getUUID());
 					if (!attack && !emptyHand) {
-						Component message = hand == InteractionHand.MAIN_HAND ? ENTITY_TRY_EMPTY_MAIN : ENTITY_TRY_EMPTY_OFF;
-						entity.sendMessage(message, entity.getUUID());
+						if(!ServerConfig.CONFIG.hideMessageEntityTryEmpty.get())
+							entity.sendMessage(hand == InteractionHand.MAIN_HAND ? ENTITY_TRY_EMPTY_MAIN : ENTITY_TRY_EMPTY_OFF, entity.getUUID());
 					}
 				}
 			}
@@ -834,7 +843,7 @@ public class ChunkProtection
 			accessorId = accessor.getUUID();
 		}
 		if(checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT, claimConfig, accessor, accessorId) && !hasChunkAccess(claimConfig, accessor, accessorId)) {
-			if(entity instanceof Player)
+			if(entity instanceof Player && !ServerConfig.CONFIG.hideMessageCantChorus.get())
 				entity.sendMessage(CANT_CHORUS, entity.getUUID());
 			//OpenPartiesAndClaims.LOGGER.info("stopped {} from teleporting to {}", entity, pos);
 			return true;
@@ -922,7 +931,8 @@ public class ChunkProtection
 				hand = player.getItemInHand(InteractionHand.MAIN_HAND) == itemStack ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 			if (additionalBannedItems.contains(itemStack.getItem()) &&
 					onItemRightClick(serverData, hand, itemStack, pos, player, false)) {//only configured items on purpose
-				player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_THIS_CLOSE_MAIN : CANT_APPLY_ITEM_THIS_CLOSE_OFF, player.getUUID());
+				if(!ServerConfig.CONFIG.hideMessageCantApplyItemThisClose.get())
+					player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_THIS_CLOSE_MAIN : CANT_APPLY_ITEM_THIS_CLOSE_OFF, player.getUUID());
 				return true;
 			}
 		}
@@ -934,8 +944,10 @@ public class ChunkProtection
 		if(applyItemAccessCheck(serverData, chunkPos = new ChunkPos(pos), entity, (ServerLevel) entity.getLevel(), itemStack)
 			|| pos2 != null && !(chunkPos2 = new ChunkPos(pos2)).equals(chunkPos) && applyItemAccessCheck(serverData, chunkPos2, entity, (ServerLevel) entity.getLevel(), itemStack)
 				){
-			if(message && entity instanceof ServerPlayer player)
-				player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_MAIN : CANT_APPLY_ITEM_OFF, player.getUUID());
+			if(message && entity instanceof ServerPlayer player) {
+				if(!ServerConfig.CONFIG.hideMessageCantApplyItem.get())
+					player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_MAIN : CANT_APPLY_ITEM_OFF, player.getUUID());
+			}
 			return true;
 		}
 		return false;
