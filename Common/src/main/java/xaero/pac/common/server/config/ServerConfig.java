@@ -508,16 +508,16 @@ public class ServerConfig {
 			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledEntityInteractions"), Lists::newArrayList, s -> s instanceof String);
 
 		completelyDisableFrostWalking = builder
-				.comment("Whether to completely disable frost walking on the server. Use this if the regular frost walking protection doesn't work, since there is no game rule for it.")
-				.translation("gui.xaero_pac_config_completely_disable_frost_walking")
-				.worldRestart()
-				.define("completelyDisableFrostWalking", false);
+			.comment("Whether to completely disable frost walking on the server. Use this if the regular frost walking protection doesn't work, since there is no game rule for it.")
+			.translation("gui.xaero_pac_config_completely_disable_frost_walking")
+			.worldRestart()
+			.define("completelyDisableFrostWalking", false);
 
 		hideMessageBlockDisabled = builder
-				.comment("Whether to send a warning message when the client tries to interact with a disabled block.")
-				.translation("gui.xaero_pac_config_hide_message_block_disabled")
-				.worldRestart()
-				.define("hideMessageBlockDisabled", false);
+			.comment("Whether to send a warning message when the client tries to interact with a disabled block.")
+			.translation("gui.xaero_pac_config_hide_message_block_disabled")
+			.worldRestart()
+			.define("hideMessageBlockDisabled", false);
 
 		hideMessageCantInteractBlock = builder
 			.comment("Whether to send a warning message to the client when not allowed to interact with a block.")
@@ -532,10 +532,10 @@ public class ServerConfig {
 			.define("hideMessageBlockTryEmpty", false);
 
 		hideMessageEntityDisabled = builder
-				.comment("Whether to send a warning message when the client tries to interact with a disabled entity.")
-				.translation("gui.xaero_pac_config_hide_message_entity_disabled")
-				.worldRestart()
-				.define("hideMessageEntityDisabled", false);
+			.comment("Whether to send a warning message when the client tries to interact with a disabled entity.")
+			.translation("gui.xaero_pac_config_hide_message_entity_disabled")
+			.worldRestart()
+			.define("hideMessageEntityDisabled", false);
 
 		hideMessageCantInteractEntity = builder
 			.comment("Whether to send a warning message when the client is not allowed to interact with an entity.")
@@ -556,10 +556,10 @@ public class ServerConfig {
 			.define("hideMessageItemDisabled", false);
 
 		hideMessageUseItem = builder
-				.comment("Whether to send a warning message to the client when trying to use an item close to someone else's claim.")
-				.translation("gui.xaero_pac_config_hide_message_use_item")
-				.worldRestart()
-				.define("hideMessageUseItem", false);
+			.comment("Whether to send a warning message to the client when trying to use an item close to someone else's claim.")
+			.translation("gui.xaero_pac_config_hide_message_use_item")
+			.worldRestart()
+			.define("hideMessageUseItem", false);
 
 		hideMessageCantApplyItem = builder
 			.comment("Whether to send a warning message when the client is not allowed to apply an item at this position.")
@@ -574,10 +574,10 @@ public class ServerConfig {
 			.define("hideMessageCantApplyItemThisClose", false);
 
 		hideMessageCantChorus = builder
-				.comment("Whether to send a warning message to the client when not allowed to eat a chorus fruit.")
-				.translation("gui.xaero_pac_config_hide_message_cant_chorus")
-				.worldRestart()
-				.define("hideMessageCantChorus", false);
+			.comment("Whether to send a warning message to the client when not allowed to eat a chorus fruit.")
+			.translation("gui.xaero_pac_config_hide_message_cant_chorus")
+			.worldRestart()
+			.define("hideMessageCantChorus", false);
 
 		builder.pop();
 
