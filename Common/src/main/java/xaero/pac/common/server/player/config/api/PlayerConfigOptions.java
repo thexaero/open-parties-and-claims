@@ -415,7 +415,7 @@ public class PlayerConfigOptions {
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setDefaultValue(1)
 				.setComment(
-						"When enabled, claimed chunk protection includes protection against mobs, who don't have access to the chunks, breaking/placing blocks (e.g. endermen). Chunks directly next to the protected chunks are sometimes also partially protected. Should work for vanilla mob behavior. Modded mob behavior is likely not to be included. Feel free to set the vanilla game rule for mob griefing for extra safety. Keep in mind that creeper explosions are also affected by the explosion-related options.\n\n"
+						"When enabled, claimed chunk protection includes protection against mobs, who don't have access to the chunks, breaking/placing blocks (e.g. endermen). Chunks directly next to the protected chunks are also partially protected when protection is based on the mob griefing rule check. Should work for vanilla mob behavior. Modded mob behavior is likely not to be included. Feel free to set the vanilla game rule for mob griefing for extra safety. Keep in mind that creeper explosions are also affected by the explosion-related options.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
@@ -533,7 +533,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs.\n\n"
+						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs. Chunks directly next to the protected chunks are also partially protected when protection is based on the mob griefing rule check.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
@@ -710,7 +710,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes protection from mobs picking up items, unless they have access to the chunks or own the items. Might not work for some mobs.\n\n"
+						"When enabled, claimed chunk protection includes protection from mobs picking up items, unless they have access to the chunks or own the items. Might not work for some mobs. Chunks directly next to the protected chunks are also partially protected when protection is based on the mob griefing rule check.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.build(allOptions);
