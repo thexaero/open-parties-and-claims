@@ -1062,19 +1062,23 @@ public class ChunkProtection
 		return value instanceof Boolean bool && bool || value instanceof Integer integ && integ > 0;
 	}
 
-	private int compareProtectionLevels(IPlayerConfig config1, IPlayerConfig config2, IPlayerConfigOptionSpecAPI<? extends Comparable<?>> option){
+	private int compareProtectionLevels(IPlayerConfig config1, IPlayerConfig config2, IPlayerConfigOptionSpecAPI<? extends Comparable<?>> option, boolean isExceptionOption){
 		Comparable<?> value1 = config1.getEffective(option);
 		Comparable<?> value2 = config2.getEffective(option);
-		if(value1 instanceof Boolean bool1)
-			return bool1.compareTo((Boolean) value2);
+		if(value1 instanceof Boolean bool1) {
+			int result = bool1.compareTo((Boolean) value2);
+			return isExceptionOption ? -result : result;
+		}
 		Integer int1 = (Integer) value1;
 		Integer int2 = (Integer) value2;
 		if(int1.equals(int2))
 			return 0;
-		if(int1 > 0 && int2 <= 0)
-			return 1;
-		if(int2 > 0 && int1 <= 0)
-			return -1;
+		if(!isExceptionOption) {
+			if (int1 > 0 && int2 <= 0)
+				return 1;
+			if (int2 > 0 && int1 <= 0)
+				return -1;
+		}
 		return int2.compareTo(int1);//purposely reversed because when protection is > 0, lesser value means more protection
 	}
 
@@ -1089,16 +1093,36 @@ public class ChunkProtection
 		if(fromClaim != null && fromClaim.getPlayerId().equals(toClaim.getPlayerId())){
 			IPlayerConfig fromClaimConfig = getClaimConfig(playerConfigs, fromClaim);
 			if(!fromClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)
-					|| optionSpec != null && compareProtectionLevels(fromClaimConfig, toClaimConfig, optionSpec) < 0)
+					|| optionSpec != null && compareProtectionLevels(fromClaimConfig, toClaimConfig, optionSpec, false) < 0)
 				return true;
 			if(withBuildCheck){
-				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS) < 0)
+				if(toClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS) == 0
+						&& toClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE) == 0)
+					return false;//basically no building protection, so no point in checking other options
+
+				//options that are likely to affect a player's ability to build in a chunk
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS, false) < 0)
 					return true;
-				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS) < 0)
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, false) < 0)
 					return true;
-				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER) < 0)
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS, false) < 0)
 					return true;
-				return compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE) < 0;
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER, false) < 0)
+					return true;
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER, false) < 0)
+					return true;
+				for(ChunkProtectionExceptionGroup<Item> itemExceptionGroup : itemExceptionGroups.values()){
+					if(compareProtectionLevels(fromClaimConfig, toClaimConfig, itemExceptionGroup.getPlayerConfigOption(), true) < 0)
+						return true;
+				}
+				for(ChunkProtectionExceptionGroup<EntityType<?>> entityBarrierGroup : entityBarrierGroups.values()){
+					if(compareProtectionLevels(fromClaimConfig, toClaimConfig, entityBarrierGroup.getPlayerConfigOption(), false) < 0)
+						return true;
+				}
+				for(ChunkProtectionExceptionGroup<Block> blockExceptionGroup : blockExceptionGroups.values()){
+					if(blockExceptionGroup.getType() == ChunkProtectionExceptionType.INTERACTION && compareProtectionLevels(fromClaimConfig, toClaimConfig, blockExceptionGroup.getPlayerConfigOption(), true) < 0)
+						return true;
+				}
 			}
 			return false;
 		}
