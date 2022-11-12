@@ -26,6 +26,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -40,6 +41,7 @@ public abstract class WidgetListScreen extends XPACScreen {
 	private final int pageCount;
 	protected final List<WidgetListElement<?>> elements;
 	private final List<EditBox> tickableBoxes;
+	private Component displayedTitle;
 	
 	private Button nextButton;
 	private Button prevButton;
@@ -75,6 +77,9 @@ public abstract class WidgetListScreen extends XPACScreen {
 			prevButton.active = page > 0;
 			nextButton.active = page < pageCount - 1;
 		}
+		displayedTitle = new TextComponent("");
+		displayedTitle.getSiblings().add(title);
+		displayedTitle.getSiblings().add(new TextComponent(" (" + (page + 1) + "/" + pageCount + ")"));
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 	
@@ -104,7 +109,7 @@ public abstract class WidgetListScreen extends XPACScreen {
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
+		drawCenteredString(poseStack, font, displayedTitle, width / 2, 16, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
 	}
 
