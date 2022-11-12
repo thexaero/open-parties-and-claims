@@ -23,7 +23,10 @@ public enum ChunkProtectionExceptionType {
 	INTERACTION("interact$"),
 	BARRIER("barrier$"),
 	EMPTY_HAND_INTERACTION(ChunkProtection.HAND_PREFIX),
-	BREAK(ChunkProtection.BREAK_PREFIX);
+	BREAK(ChunkProtection.BREAK_PREFIX),
+	BLOCK_ACCESS("access$"),
+	ENTITY_ACCESS("access$"),
+	DROPPED_ITEM_ACCESS("access$");
 
 	private final String prefix;
 

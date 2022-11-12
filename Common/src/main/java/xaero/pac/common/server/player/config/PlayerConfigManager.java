@@ -244,6 +244,9 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups;
 		private Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups;
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups;
+		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups;
+		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups;
+		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups;
 
 		private Builder() {
 		}
@@ -284,15 +287,31 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			return this;
 		}
 
+		public Builder<P, CM> setBlockAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups) {
+			this.blockAccessEntityGroups = blockAccessEntityGroups;
+			return this;
+		}
+
+		public Builder<P, CM> setEntityAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups) {
+			this.entityAccessEntityGroups = entityAccessEntityGroups;
+			return this;
+		}
+
+		public Builder<P, CM> setDroppedItemAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups) {
+			this.droppedItemAccessEntityGroups = droppedItemAccessEntityGroups;
+			return this;
+		}
+
 		public PlayerConfigManager<P, CM> build() {
 			if (server == null || partyManager == null || blockExceptionGroups == null || entityExceptionGroups == null ||
-					itemExceptionGroups == null || entityBarrierGroups == null)
+					itemExceptionGroups == null || entityBarrierGroups == null || blockAccessEntityGroups == null ||
+					entityAccessEntityGroups == null || droppedItemAccessEntityGroups == null)
 				throw new IllegalStateException();
 			PlayerConfigSynchronizer playerConfigSynchronizer = new PlayerConfigSynchronizer(server);
 			ForceLoadTicketManager forceLoadTicketManager = ForceLoadTicketManager.Builder.begin().setServer(server).build();
 
 			PlayerConfigDynamicOptions.Builder dynamicOptionsBuilder = PlayerConfigDynamicOptions.Builder.begin();
-			new PlayerConfigDynamicOptionsLoader().load(dynamicOptionsBuilder, blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups);
+			new PlayerConfigDynamicOptionsLoader().load(dynamicOptionsBuilder, blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, blockAccessEntityGroups, entityAccessEntityGroups, droppedItemAccessEntityGroups);
 			PlayerConfigDynamicOptions dynamicOptions = dynamicOptionsBuilder.build();
 
 			ForgeConfigSpec.Builder configSpecBuilder = new ForgeConfigSpec.Builder();

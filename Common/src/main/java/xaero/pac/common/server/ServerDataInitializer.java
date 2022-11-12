@@ -164,11 +164,17 @@ public class ServerDataInitializer {
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups = new LinkedHashMap<>();
 			ChunkProtectionExceptionGroupLoader exceptionGroupLoader = new ChunkProtectionExceptionGroupLoader();
 			exceptionGroupLoader.load(ServerConfig.CONFIG.blockProtectionOptionalExceptionGroups, ExceptionElementType.BLOCK, wildcardResolver, blockExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER);
 			exceptionGroupLoader.load(ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER);
 			exceptionGroupLoader.load(ServerConfig.CONFIG.itemUseProtectionOptionalExceptionGroups, ExceptionElementType.ITEM, wildcardResolver, itemExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t == ChunkProtectionExceptionType.INTERACTION);
 			exceptionGroupLoader.load(ServerConfig.CONFIG.entityClaimBarrierOptionalGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityBarrierGroups, ChunkProtectionExceptionType.BARRIER, t -> t == ChunkProtectionExceptionType.BARRIER);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.blockAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, blockAccessEntityGroups, ChunkProtectionExceptionType.BLOCK_ACCESS, t -> t == ChunkProtectionExceptionType.BLOCK_ACCESS);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.entityAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityAccessEntityGroups, ChunkProtectionExceptionType.ENTITY_ACCESS, t -> t == ChunkProtectionExceptionType.ENTITY_ACCESS);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.droppedItemAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, droppedItemAccessEntityGroups, ChunkProtectionExceptionType.DROPPED_ITEM_ACCESS, t -> t == ChunkProtectionExceptionType.DROPPED_ITEM_ACCESS);
 
 			PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs = PlayerConfigManager.Builder.<ServerParty, ServerClaimsManager>begin()
 					.setServer(server)
@@ -177,6 +183,9 @@ public class ServerDataInitializer {
 					.setEntityExceptionGroups(entityExceptionGroups)
 					.setItemExceptionGroups(itemExceptionGroups)
 					.setEntityBarrierGroups(entityBarrierGroups)
+					.setBlockAccessEntityGroups(blockAccessEntityGroups)
+					.setEntityAccessEntityGroups(entityAccessEntityGroups)
+					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
 			partyManager.setPlayerConfigs(playerConfigs);
 			PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO = PlayerConfigIO.Builder.<ServerParty, ServerClaimsManager>begin()
@@ -234,6 +243,9 @@ public class ServerDataInitializer {
 					.setEntityExceptionGroups(entityExceptionGroups)
 					.setItemExceptionGroups(itemExceptionGroups)
 					.setEntityBarrierGroups(entityBarrierGroups)
+					.setBlockAccessEntityGroups(blockAccessEntityGroups)
+					.setEntityAccessEntityGroups(entityAccessEntityGroups)
+					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
 			chunkProtection.updateTagExceptions();
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);

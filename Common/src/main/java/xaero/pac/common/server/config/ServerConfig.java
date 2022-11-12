@@ -51,6 +51,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> nonBlockGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemGriefingMobs;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockAccessEntityGroups;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityAccessEntityGroups;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemAccessEntityGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayers;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
@@ -379,7 +382,7 @@ public class ServerConfig {
 					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:villager", "minecraft:sheep"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:sheep"), s -> s instanceof String);
 		entitiesAllowedToGriefEntities = builder
 			.comment("""
 					Entities that can bypass all protection of other entities. Supports entity type tags.
@@ -434,6 +437,53 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_gropped_item_griefers")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("droppedItemGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
+		blockAccessEntityGroups = builder
+			.comment("""
+					Custom groups of entities that a player/claim config should be able to make block access exceptions for (e.g. letting sheep eat grass or endermen take blocks). Each group can consist of multiple entities and entity tags.
+					The format for an entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{minecraft:pig, minecraft:c(ow|at), #minecraft:beehive_inhabitors}".
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
+			)
+			.translation("gui.xaero_pac_config_block_access_entity_groups")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("blockAccessEntityGroups"),
+					() -> Lists.newArrayList(
+							"Villagers{minecraft:villager}"
+					), s -> s instanceof String);
+		entityAccessEntityGroups = builder
+			.comment("""
+					Custom groups of entities that a player/claim config should be able to make entity access exceptions for (e.g. letting zombies kill things).
+					The groups should consist of entities that are the ones accessing other entities. The groups should not contain entities that are being accessed. Check out the "entityProtectionOptionalExceptionGroups" option for that.
+					Each group can consist of multiple entities and entity tags. The format for an entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{minecraft:pig, minecraft:c(ow|at), #minecraft:beehive_inhabitors}".
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
+			)
+			.translation("gui.xaero_pac_config_entity_access_entity_groups")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entityAccessEntityGroups"),
+					() -> Lists.newArrayList(
+							"Zombies{minecraft:zombie, minecraft:zombie_villager, minecraft:husk, minecraft:drowned}"
+					), s -> s instanceof String);
+		droppedItemAccessEntityGroups = builder
+			.comment("""
+					Custom groups of entities that a player/claim config should be able to make dropped item access exceptions for (e.g. letting piglins pick up gold).
+					The groups should consist of entities that are the ones trying to pick up items, not consist of specific items.
+					Each group can consist of multiple entities and entity tags. The format for an entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{minecraft:pig, minecraft:c(ow|at), #minecraft:beehive_inhabitors}".
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
+			)
+			.translation("gui.xaero_pac_config_dropped_item_access_entity_groups")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("droppedItemAccessEntityGroups"),
+					() -> Lists.newArrayList(
+							"Piglins{minecraft:piglin}", "Foxes{minecraft:fox}"
+					), s -> s instanceof String);
 		staticFakePlayers = builder
 			.comment("""
 					A list of fake players (UUIDs or names) that shouldn't be affected by any chunk claim protection if they try to access a chunk with building protection compatible with
@@ -600,6 +650,10 @@ public class ServerConfig {
 							"claims.protection.exceptionGroups.entity.handInteract.Item_Frames",
 							"claims.protection.exceptionGroups.entity.interact.Armor_Stands",
 							"claims.protection.exceptionGroups.entity.break.Livestock",
+							"claims.protection.exceptionGroups.entity.blockAccess.Villagers",
+							"claims.protection.exceptionGroups.entity.entityAccess.Zombies",
+							"claims.protection.exceptionGroups.entity.droppedItemAccess.Piglins",
+							"claims.protection.exceptionGroups.entity.droppedItemAccess.Foxes",
 							"claims.protection.exceptionGroups.item.interact.Books",
 							"claims.protection.exceptionGroups.entity.barrier.Ender_Pearls",
 							"/*remove comment to enable*/claims.protection.exceptionGroups.entity.barrier.Players"

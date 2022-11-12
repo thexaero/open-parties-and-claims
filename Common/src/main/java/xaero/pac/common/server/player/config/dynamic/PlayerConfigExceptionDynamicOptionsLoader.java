@@ -36,13 +36,16 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 	public static final String HAND_INTERACT = "handInteract";
 	public static final String BREAK = "break";
 	public static final String BARRIER = "barrier";
+	public static final String BLOCK_ACCESS = "blockAccess";
+	public static final String ENTITY_ACCESS = "entityAccess";
+	public static final String DROPPED_ITEM_ACCESS = "droppedItemAccess";
 
 	<T> void handleGroup(ChunkProtectionExceptionGroup<T> group, PlayerConfigDynamicOptions.Builder builder, String category, String categoryPlural, Function<T, String> objectNameGetter){
 		String optionId;
 		String comment;
 		String translation;
 		String commentTranslation;
-		String interactionOptionsTooltip = "\n\n1) Party - only members of the same party as you.\n2) Allies - only members of parties allied by the one you're in.\n3) Everyone - any player.";
+		String interactionOptionsTooltip = "\n\n" + PlayerConfig.EXCEPTION_LEVELS_TOOLTIP;
 		if(group.getType() == ChunkProtectionExceptionType.INTERACTION) {
 			optionId = OPTION_ROOT + category + "." + INTERACT;
 			comment = "When enabled, claimed chunk protection makes an exception for interaction with the following " + categoryPlural + ": %1$s." + interactionOptionsTooltip;
@@ -63,6 +66,21 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 			comment = "When enabled, claimed chunk protection prevents the following additional " + categoryPlural + " from entering the claim (except wilderness): %1$s.\n\n" + PlayerConfig.PROTECTION_LEVELS_TOOLTIP;
 			translation = TRANSLATION_ROOT + category + "." + BARRIER;
 			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + BARRIER;
+		} else if(group.getType() == ChunkProtectionExceptionType.BLOCK_ACCESS){
+			optionId = OPTION_ROOT + category + "." + BLOCK_ACCESS;
+			comment = "When enabled, claimed chunk protection makes an exception for block access by the following " + categoryPlural + ": %1$s. If the block protection is based on the mob griefing rule check, then the claimed neighbor chunks must also allow the block access." + interactionOptionsTooltip;
+			translation = TRANSLATION_ROOT + category + "." + BLOCK_ACCESS;
+			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + BLOCK_ACCESS;
+		} else if(group.getType() == ChunkProtectionExceptionType.ENTITY_ACCESS){
+			optionId = OPTION_ROOT + category + "." + ENTITY_ACCESS;
+			comment = "When enabled, claimed chunk protection makes an exception for entity access BY the following " + categoryPlural + ": %1$s. If the entity protection is based on the mob griefing rule check, then the claimed neighbor chunks must also allow the entity access." + interactionOptionsTooltip;
+			translation = TRANSLATION_ROOT + category + "." + ENTITY_ACCESS;
+			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + ENTITY_ACCESS;
+		} else if(group.getType() == ChunkProtectionExceptionType.DROPPED_ITEM_ACCESS){
+			optionId = OPTION_ROOT + category + "." + DROPPED_ITEM_ACCESS;
+			comment = "When enabled, claimed chunk protection makes an exception for dropped item access by the following " + categoryPlural + ": %1$s. If the dropped item protection is based on the mob griefing rule check, then the claimed neighbor chunks must also allow the item access." + interactionOptionsTooltip;
+			translation = TRANSLATION_ROOT + category + "." + DROPPED_ITEM_ACCESS;
+			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + DROPPED_ITEM_ACCESS;
 		} else {
 			OpenPartiesAndClaims.LOGGER.error("Invalid group type " + group.getType() + " for " + category + " exception group " + group.getName());
 			return;

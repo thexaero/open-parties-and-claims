@@ -145,6 +145,9 @@ public class ChunkProtection
 	private final Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups;
 	private final Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups;
 	private final Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups;
+	private final Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups;
+	private final Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups;
+	private final Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups;
 
 	private boolean ignoreChunkEnter = false;
 	private final Map<Entity, Set<ChunkPos>> cantPickupItemsInTickCache;
@@ -163,7 +166,7 @@ public class ChunkProtection
 							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGrief,
 							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefEntities, ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefDroppedItems, ChunkProtectionExceptionSet<EntityType<?>> nonBlockGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> entityGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs, Set<String> staticFakePlayerUsernames, Set<UUID> staticFakePlayerIds, ChunkProtectionExceptionSet<Item> additionalBannedItems,
 							ChunkProtectionExceptionSet<Item> completelyBannedItems,
-							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions, ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities, Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups, Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups, Map<Entity, Set<ChunkPos>> cantPickItemsCache, Map<Entity, Set<ChunkPos>> cantPickupXPInTickCache) {
+							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions, ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities, Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups, Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups, Map<Entity, Set<ChunkPos>> cantPickItemsCache, Map<Entity, Set<ChunkPos>> cantPickupXPInTickCache) {
 		this.claimsManager = claimsManager;
 		this.partyManager = partyManager;
 		this.entityHelper = entityHelper;
@@ -193,6 +196,9 @@ public class ChunkProtection
 		this.entityExceptionGroups = entityExceptionGroups;
 		this.itemExceptionGroups = itemExceptionGroups;
 		this.entityBarrierGroups = entityBarrierGroups;
+		this.blockAccessEntityGroups = blockAccessEntityGroups;
+		this.entityAccessEntityGroups = entityAccessEntityGroups;
+		this.droppedItemAccessEntityGroups = droppedItemAccessEntityGroups;
 		this.cantPickupItemsInTickCache = cantPickItemsCache;
 		this.cantPickupXPInTickCache = cantPickupXPInTickCache;
 	}
@@ -269,23 +275,34 @@ public class ChunkProtection
 
 	private boolean canGrief(Entity e, IPlayerConfig config, Entity accessor, UUID accessorId, boolean blocks, boolean entities, boolean items){
 		IPlayerConfigOptionSpecAPI<Integer> option;
-		if(blocks && !entitiesAllowedToGrief.contains(e.getType())) {
+		if(blocks && !isAllowedToGrief(e, accessor, accessorId, config, entitiesAllowedToGrief, blockAccessEntityGroups)) {
 			option = e instanceof LivingEntity ? PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS :
 					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER;
 			if(checkProtectionLeveledOption(option, config, accessor, accessorId))
 				return false;
 		}
-		if(entities && !entitiesAllowedToGriefEntities.contains(e.getType())) {
+		if(entities && !isAllowedToGrief(e, accessor, accessorId, config, entitiesAllowedToGriefEntities, entityAccessEntityGroups)) {
 			option = getUsedEntityProtectionOption(config, e, accessor);
 			if(checkProtectionLeveledOption(option, config, accessor, accessorId))
 				return false;
 		}
-		if(items && !entitiesAllowedToGriefDroppedItems.contains(e.getType())) {
+		if(items && !isAllowedToGrief(e, accessor, accessorId, config, entitiesAllowedToGriefDroppedItems, droppedItemAccessEntityGroups)) {
 			option = getUsedDroppedItemProtectionOption(config, e, accessor);
 			if(checkProtectionLeveledOption(option, config, accessor, accessorId))
 				return false;
 		}
 		return true;
+	}
+
+	private boolean isAllowedToGrief(Entity e, Entity accessor, UUID accessorId, IPlayerConfig config, ChunkProtectionExceptionSet<EntityType<?>> forcedSet, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> groups){
+		EntityType<?> entityType = e.getType();
+		if(forcedSet.contains(entityType))
+			return true;
+		for(ChunkProtectionExceptionGroup<EntityType<?>> group : groups.values()){
+			if(group.contains(entityType) && checkExceptionLeveledOption(group.getPlayerConfigOption(), config, accessor, accessorId))
+				return true;
+		}
+		return false;
 	}
 	
 	public boolean hasChunkAccess(IPlayerConfig claimConfig, Entity accessor, UUID accessorId) {
@@ -707,7 +724,7 @@ public class ChunkProtection
 			accessorId = accessor == null ? null : accessor.getUUID();
 		}
 		if(
-			target != accessor && (entity == null || !entitiesAllowedToGriefEntities.contains(entity.getType())) &&
+			target != accessor && (entity == null || !isAllowedToGrief(entity, accessor, accessorId, config, entitiesAllowedToGriefEntities, entityAccessEntityGroups)) &&
 			(
 				shouldProtectEntity(config, target, entity, accessor, accessorId)
 			||
@@ -1493,8 +1510,6 @@ public class ChunkProtection
 			if(checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, config, deadPlayer, deadPlayerId))
 				return true;
 		}
-		if(entitiesAllowedToGriefDroppedItems.contains(entity.getType()))
-			return false;
 		boolean shouldPrevent = false;
 		Entity accessor;
 		UUID accessorId;
@@ -1506,6 +1521,8 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
+		if(isAllowedToGrief(entity, accessor, accessorId, config, entitiesAllowedToGriefDroppedItems, droppedItemAccessEntityGroups))
+			return false;
 		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)) {
 			if (!hasChunkAccess(config, accessor, accessorId)) {
 				IPlayerConfigOptionSpecAPI<Integer> usedOption = protectionOptionGetter.apply(config, entity, accessor);
@@ -1768,6 +1785,9 @@ public class ChunkProtection
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups;
 		private Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups;
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups;
+		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups;
+		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups;
+		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups;
 
 		private Builder(){
 		}
@@ -1808,9 +1828,27 @@ public class ChunkProtection
 			return this;
 		}
 
+		public Builder<CM,M,I,P> setBlockAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups) {
+			this.blockAccessEntityGroups = blockAccessEntityGroups;
+			return this;
+		}
+
+		public Builder<CM,M,I,P> setEntityAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups) {
+			this.entityAccessEntityGroups = entityAccessEntityGroups;
+			return this;
+		}
+
+		public Builder<CM,M,I,P> setDroppedItemAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups) {
+			this.droppedItemAccessEntityGroups = droppedItemAccessEntityGroups;
+			return this;
+		}
+
 		public ChunkProtection<CM,M,I,P> build(){
 			if(claimsManager == null || partyManager == null ||
-					blockExceptionGroups == null || entityExceptionGroups == null || itemExceptionGroups == null || entityBarrierGroups == null)
+					blockExceptionGroups == null || entityExceptionGroups == null ||
+					itemExceptionGroups == null || entityBarrierGroups == null || blockAccessEntityGroups == null ||
+					entityAccessEntityGroups == null || droppedItemAccessEntityGroups == null
+			)
 				throw new IllegalStateException();
 			ChunkProtectionExceptionSet.Builder<EntityType<?>> friendlyEntityList =
 					ChunkProtectionExceptionSet.Builder.begin(ExceptionElementType.ENTITY_TYPE);
@@ -1963,7 +2001,7 @@ public class ChunkProtection
 					requiresEmptyHandBlocksBuilder.build(), completelyDisabledBlocks.build(), forcedInteractionExceptionEntities.build(),
 					forcedKillExceptionEntities.build(), requiresEmptyHandEntitiesBuilder.build(), forcedEntityClaimBarrierList.build(), entitiesAllowedToGrief.build(),
 					entitiesAllowedToGriefEntities.build(), entitiesAllowedToGriefDroppedItems.build(), nonBlockGriefingMobs.build(), entityGriefingMobs.build(), droppedItemGriefingMobs.build(), staticFakePlayerUsernames, staticFakePlayerIds, additionalBannedItems.build(), completelyDisabledItems.build(),
-					itemUseProtectionExceptions.build(), completelyDisabledEntities.build(), blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, new HashMap<>(), new HashMap<>());
+					itemUseProtectionExceptions.build(), completelyDisabledEntities.build(), blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, blockAccessEntityGroups, entityAccessEntityGroups, droppedItemAccessEntityGroups, new HashMap<>(), new HashMap<>());
 		}
 
 		private <T> void onExceptionListElement(String element, Consumer<Either<T,TagKey<T>>> interactionException,
