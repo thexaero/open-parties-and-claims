@@ -51,6 +51,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> nonBlockGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemGriefingMobs;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayers;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionOptionalExceptionGroups;
@@ -433,6 +434,24 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_gropped_item_griefers")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("droppedItemGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
+		staticFakePlayers = builder
+			.comment("""
+					A list of fake players (UUIDs or names) that shouldn't be affected by any chunk claim protection if they try to access a chunk with building protection compatible with
+					the chunk that the fake player's origin block is positioned in, e.g. claims with the same owner and block protection option values.
+					This works great for fake players that are bound to the position of a specific placed block (origin block). Moreover, the mod supports fake players placed at a block
+					next to the origin block, even if that means entering another chunk, e.g. in the case of the Integrated Tunnels mod, or if the origin block is touching the target block.
+					The mod will try all positions next to the target block and the fake player as the possible position of the fake player origin block.
+					This will always protect the target block if it or the fake player touch a claim with incompatible build protection. Avoid building on such claim edges.
+					However, some fake players' origin blocks can be nowhere near the fake player or the target block, e.g. in the case of the Create mod, or there might be no origin block at all,
+					e.g. NPCs that can move around. In this case, the mods that use such fake players require explicit support to be implemented. Although they might also sometimes
+					be supported by default, if the fake players use UUIDs of actual players.
+					Explicit support exists for the Create mod (requires an extension on Fabric) and you are not required to add anything to this list.
+					Make sure to always test that claim edges are protected from outside interaction by fake players that you add to this list.
+					Wondering where to get the UUIDs or usernames of specific fake players? You can check the source code of the mods that use them or politely ask the mod authors.
+					For example ["41C82C87-7AfB-4024-BB57-13D2C99CAE77", "FakePlayerName"]""")
+			.translation("gui.xaero_pac_config_static_fake_players")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("staticFakePlayers"), () -> Lists.newArrayList("[IntegratedTunnels]"), s -> s instanceof String);
 
 		additionalBannedItemsList = builder
 			.comment("""

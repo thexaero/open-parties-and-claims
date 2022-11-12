@@ -191,7 +191,7 @@ public class CommonEvents {
 	public boolean onLeftClickBlock(boolean isServerSide, Level world, BlockPos pos, Player player) {
 		if(isServerSide) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(world.getServer());
-			return serverData.getChunkProtection().onLeftClickBlockServer(serverData, pos, player);
+			return serverData.getChunkProtection().onLeftClickBlockServer(serverData, world, pos, player);
 		}
 		return false;
 	}

@@ -134,6 +134,8 @@ public class ChunkProtection
 	private final ChunkProtectionExceptionSet<EntityType<?>> nonBlockGriefingMobs;
 	private final ChunkProtectionExceptionSet<EntityType<?>> entityGriefingMobs;
 	private final ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs;
+	private final Set<String> staticFakePlayerUsernames;
+	private final Set<UUID> staticFakePlayerIds;
 	private final ChunkProtectionExceptionSet<Item> additionalBannedItems;
 	private final ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions;
 	private final ChunkProtectionExceptionSet<Item> completelyDisabledItems;
@@ -159,7 +161,7 @@ public class ChunkProtection
 							ChunkProtectionExceptionSet<EntityType<?>> forcedKillExceptionEntities,
 							ChunkProtectionExceptionSet<EntityType<?>> requiresEmptyHandEntities, ChunkProtectionExceptionSet<EntityType<?>> forcedEntityClaimBarrierList,
 							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGrief,
-							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefEntities, ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefDroppedItems, ChunkProtectionExceptionSet<EntityType<?>> nonBlockGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> entityGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs, ChunkProtectionExceptionSet<Item> additionalBannedItems,
+							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefEntities, ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefDroppedItems, ChunkProtectionExceptionSet<EntityType<?>> nonBlockGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> entityGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs, Set<String> staticFakePlayerUsernames, Set<UUID> staticFakePlayerIds, ChunkProtectionExceptionSet<Item> additionalBannedItems,
 							ChunkProtectionExceptionSet<Item> completelyBannedItems,
 							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions, ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities, Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups, Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups, Map<Entity, Set<ChunkPos>> cantPickItemsCache, Map<Entity, Set<ChunkPos>> cantPickupXPInTickCache) {
 		this.claimsManager = claimsManager;
@@ -181,6 +183,8 @@ public class ChunkProtection
 		this.nonBlockGriefingMobs = nonBlockGriefingMobs;
 		this.entityGriefingMobs = entityGriefingMobs;
 		this.droppedItemGriefingMobs = droppedItemGriefingMobs;
+		this.staticFakePlayerUsernames = staticFakePlayerUsernames;
+		this.staticFakePlayerIds = staticFakePlayerIds;
 		this.additionalBannedItems = additionalBannedItems;
 		this.completelyDisabledItems = completelyBannedItems;
 		this.itemUseProtectionExceptions = itemUseProtectionExceptions;
@@ -342,19 +346,81 @@ public class ChunkProtection
 			return 2;//allies
 		return 3;//everyone
 	}
+
+	private boolean isAllowedStaticFakePlayerAction(IServerData<CM,P> serverData, Player player, BlockPos targetPos, BlockPos targetPos2){
+		if(player == null || !staticFakePlayerIds.contains(player.getUUID()) && !staticFakePlayerUsernames.contains(player.getGameProfile().getName()))
+			return false;
+		BlockPos playerPos = player.blockPosition();
+		if(BlockPos.ZERO.equals(playerPos))
+			playerPos = new BlockPos(player.getPosition(0));
+		//gotta check all sides, player rotation doesn't give us anything in the case of Integrated Tunnels
+		//works with either fake player or the target being positioned next to or at the origin block
+		BlockPos checkedPos = targetPos;
+		BlockPos.MutableBlockPos possibleFakePlayerOrigin = new BlockPos.MutableBlockPos();
+		boolean shouldCheckTargetPos2 = targetPos2 != null && ((targetPos.getX() >> 4) != (targetPos2.getX() >> 4) || (targetPos.getZ() >> 4) != (targetPos2.getZ() >> 4));
+		while(true) {
+			int minX = 0;
+			int maxX = 0;
+			int minZ = 0;
+			int maxZ = 0;
+			int localX = checkedPos.getX() & 15;
+			int localZ = checkedPos.getZ() & 15;
+			if (localX == 0)
+				minX = -1;
+			else if (localX == 15)
+				maxX = 1;
+			if (localZ == 0)
+				minZ = -1;
+			else if (localZ == 15)
+				maxZ = 1;
+			if (checkedPos == playerPos || minX != maxX || minZ != maxZ) {//on chunk edge or any fake player pos
+				for (int i = minX; i <= maxX; i++)
+					for (int j = minZ; j <= maxZ; j++) {
+						if (i == 0 && j == 0)
+							possibleFakePlayerOrigin.set(checkedPos);
+						else
+							possibleFakePlayerOrigin.set(checkedPos.getX() + i, checkedPos.getY(), checkedPos.getZ() + j);
+						if (possibleFakePlayerOrigin.equals(targetPos))
+							continue;
+						if (checkedPos == playerPos) {//actually the second check
+							int diffX = possibleFakePlayerOrigin.getX() - targetPos.getX();
+							int diffZ = possibleFakePlayerOrigin.getZ() - targetPos.getZ();
+							if (diffX * diffX <= 1 && diffZ * diffZ <= 1)//already checked
+								continue;
+						}
+						if (hitsAnotherClaim(serverData, (ServerLevel) player.getLevel(), possibleFakePlayerOrigin, targetPos, null, true))
+							return false;
+						if (shouldCheckTargetPos2 && hitsAnotherClaim(serverData, (ServerLevel) player.getLevel(), possibleFakePlayerOrigin, targetPos2, null, true))
+							return false;
+					}
+			}
+			if(checkedPos.equals(playerPos))//can be true on the targetPos check too!
+				break;
+			checkedPos = playerPos;
+		}
+		return true;
+	}
+
+	private boolean isAllowedStaticFakePlayerAction(IServerData<CM,P> serverData, Player player, BlockPos targetPos){
+		return isAllowedStaticFakePlayerAction(serverData, player, targetPos, null);
+	}
 	
-	public boolean onLeftClickBlockServer(IServerData<CM,P> serverData, BlockPos pos, Player player) {
+	public boolean onLeftClickBlockServer(IServerData<CM,P> serverData, Level level, BlockPos pos, Player player) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
 			return false;
-		return onBlockAccess(serverData, pos, player, player.getLevel(), InteractionHand.MAIN_HAND, false, true, true, null);
+		if(isAllowedStaticFakePlayerAction(serverData, player, pos))
+			return false;
+		return onBlockAccess(serverData, pos, player, level, InteractionHand.MAIN_HAND, false, true, true, null);
 	}
 	
 	public boolean onPlayerDestroyBlock(IServerData<CM,P> serverData, BlockPos pos, Level world, Player player, boolean direct) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(player != null && CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
+			return false;
+		if(isAllowedStaticFakePlayerAction(serverData, player, pos))
 			return false;
 		return onBlockAccess(serverData, pos, player, world, InteractionHand.MAIN_HAND, false, true, direct, null);
 	}
@@ -420,7 +486,7 @@ public class ChunkProtection
 	
 	private boolean onBlockAccess(IServerData<CM,P> serverData, BlockPos pos, Player player, Level world, InteractionHand hand, boolean emptyHand, boolean leftClick, boolean direct, Component message) {
 		if(blockAccessCheck(serverData, pos, player, null, world, emptyHand, leftClick)) {
-			if(direct) {
+			if(direct && player != null) {
 				if(hand != null)
 					player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF, player.getUUID());
 				if (message != null)
@@ -444,7 +510,7 @@ public class ChunkProtection
 		ItemStack itemStack = player.getItemInHand(hand);
 		boolean emptyHand = itemStack.getItem() == Items.AIR;
 		Component message = emptyHand ? null : hand == InteractionHand.MAIN_HAND ? BLOCK_TRY_EMPTY_MAIN : BLOCK_TRY_EMPTY_OFF;
-		if(onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, message))
+		if(!isAllowedStaticFakePlayerAction(serverData, player, pos) && onBlockAccess(serverData, pos, player, player.getLevel(), hand, emptyHand, false, true, message))
 			return true;
 		return !emptyHand && onUseItemAt(serverData, player, pos, blockHit.getDirection(), itemStack, hand, true);
 	}
@@ -458,6 +524,8 @@ public class ChunkProtection
 			return true;
 		}
 		if(CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
+			return false;
+		if(isAllowedStaticFakePlayerAction(serverData, player, pos))
 			return false;
 		return onBlockAccess(serverData, pos, player, player.getLevel(), null, true, false, true, null);
 	}
@@ -481,6 +549,8 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor == null ? null : accessor.getUUID();
 		}
+		if(entity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player)entity, pos))
+			return false;
 		return (option == null || checkProtectionLeveledOption(option, config, accessor, accessorId)) && (entity instanceof Player || !canGrief(entity, config, accessor, accessorId, true, false, false))
 				&& blockAccessCheck(pos, config, accessor, accessorId, level, false, false);
 	}
@@ -531,13 +601,14 @@ public class ChunkProtection
 			}
 			for(int i = -1; i < 2; i++)
 				j_loop: for(int j = -1; j < 2; j++) {//checking neighboring chunks too because of items that affect a high range
-					IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), new ChunkPos(chunkPos.x + i, chunkPos.z + j));
+					ChunkPos offsetChunkPos = new ChunkPos(chunkPos.x + i, chunkPos.z + j);
+					IPlayerChunkClaim claim = claimsManager.get(player.getLevel().dimension().location(), offsetChunkPos);
 					boolean isCurrentChunk = i == 0 && j == 0;
 					if (isCurrentChunk || claim != null){//wilderness neighbors don't have to be protected this much
 						IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 						if(checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, config, player, null) &&
 								(isCurrentChunk || config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE))
-								&& !hasChunkAccess(config, player, null)) {
+								&& !hasChunkAccess(config, player, null) && !isAllowedStaticFakePlayerAction(serverData, player, offsetChunkPos.getMiddleBlockPosition(0))) {
 							if(shouldCheckGroups) {
 								int exceptionAccessLevel = getExceptionAccessLevel(config, player, null);
 								for (ChunkProtectionExceptionGroup<Item> group : itemExceptionGroups.values()) {
@@ -617,6 +688,8 @@ public class ChunkProtection
 			return true;
 		}
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
+			return false;
+		if(entity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) entity, target.blockPosition()))
 			return false;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerChunkClaim claim = claimsManager.get(target.getLevel().dimension().location(), target.chunkPosition());
@@ -852,7 +925,8 @@ public class ChunkProtection
 				IPlayerChunkClaim claim = claimsManager.get(bolt.getLevel().dimension().location(), chunkPos);
 				if(i == 0 && j == 0 || claim != null) {//wilderness neighbors don't have to be protected this much
 					IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-					if (checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING, config, bolt.getCause(), null) && !hasChunkAccess(config, bolt.getCause(), null)) {
+					if (checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING, config, bolt.getCause(), null) &&
+							!hasChunkAccess(config, bolt.getCause(), null) && !isAllowedStaticFakePlayerAction(serverData, bolt.getCause(), chunkPos.getMiddleBlockPosition(0))) {
 						bolt.setVisualOnly(true);
 						break;
 					}
@@ -929,6 +1003,8 @@ public class ChunkProtection
 		BlockPos pos2 = null;
 		if(direction != null)
 			pos2 = pos.offset(direction.getNormal());
+		if(entity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) entity, pos, pos2))
+			return false;
 		ChunkPos chunkPos;
 		ChunkPos chunkPos2;
 		if(applyItemAccessCheck(serverData, chunkPos = new ChunkPos(pos), entity, (ServerLevel) entity.getLevel(), itemStack)
@@ -1030,10 +1106,6 @@ public class ChunkProtection
 	}
 
 	private boolean hitsAnotherClaim(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to, IPlayerConfigOptionSpecAPI<? extends Comparable<?>> optionSpec, boolean withBuildCheck){
-		if(!ServerConfig.CONFIG.claimsEnabled.get())
-			return false;
-		if(!isOnChunkEdge(from))
-			return false;
 		int fromChunkX = from.getX() >> 4;
 		int fromChunkZ = from.getZ() >> 4;
 		int toChunkX = to.getX() >> 4;
@@ -1046,7 +1118,9 @@ public class ChunkProtection
 	}
 
 	public boolean onFluidSpread(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to) {
-		return hitsAnotherClaim(serverData, level, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER, true);
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return false;
+		return isOnChunkEdge(from) && hitsAnotherClaim(serverData, level, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER, true);
 	}
 
 	public boolean onDispenseFrom(IServerData<CM, P> serverData, ServerLevel serverLevel, BlockPos from) {
@@ -1057,7 +1131,7 @@ public class ChunkProtection
 		BlockState blockState = serverLevel.getBlockState(from);
 		Direction direction = blockState.getValue(DirectionalBlock.FACING);
 		BlockPos to = from.relative(direction);
-		return hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER, true);
+		return isOnChunkEdge(from) && hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER, true);
 	}
 
 	private boolean shouldStopPistonPush(IServerData<CM, P> serverData, ServerLevel level, BlockPos pushPos, int pistonChunkX, int pistonChunkZ, IPlayerChunkClaim pistonClaim){
@@ -1368,7 +1442,8 @@ public class ChunkProtection
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return false;
-		return shouldStopMobLoot(config, accessor, accessorId);
+		return shouldStopMobLoot(config, accessor, accessorId) &&
+				(!(accessor instanceof Player player) || !isAllowedStaticFakePlayerAction(serverData, player, lootEntity.blockPosition()));
 	}
 
 	private boolean shouldStopMobLoot(IPlayerConfig config, Entity accessor, UUID accessorId){
@@ -1849,12 +1924,21 @@ public class ChunkProtection
 							completelyDisabledEntities::addEither, null, null,
 							ExceptionElementType.ENTITY_TYPE, wildcardResolver
 					));
+			Set<String> staticFakePlayerUsernames = new HashSet<>();
+			Set<UUID> staticFakePlayerIds = new HashSet<>();
+			ServerConfig.CONFIG.staticFakePlayers.get().forEach(e -> {
+				try {
+					staticFakePlayerIds.add(UUID.fromString(e));
+				} catch(IllegalArgumentException iae){
+					staticFakePlayerUsernames.add(e);
+				}
+			});
 			return new ChunkProtection<>(claimsManager, partyManager, new ChunkProtectionEntityHelper(),
 					friendlyEntityList.build(), hostileEntityList.build(),
 					forcedInteractionExceptionBlocksBuilder.build(), forcedBreakExceptionBlocksBuilder.build(),
 					requiresEmptyHandBlocksBuilder.build(), completelyDisabledBlocks.build(), forcedInteractionExceptionEntities.build(),
 					forcedKillExceptionEntities.build(), requiresEmptyHandEntitiesBuilder.build(), forcedEntityClaimBarrierList.build(), entitiesAllowedToGrief.build(),
-					entitiesAllowedToGriefEntities.build(), entitiesAllowedToGriefDroppedItems.build(), nonBlockGriefingMobs.build(), entityGriefingMobs.build(), droppedItemGriefingMobs.build(), additionalBannedItems.build(), completelyDisabledItems.build(),
+					entitiesAllowedToGriefEntities.build(), entitiesAllowedToGriefDroppedItems.build(), nonBlockGriefingMobs.build(), entityGriefingMobs.build(), droppedItemGriefingMobs.build(), staticFakePlayerUsernames, staticFakePlayerIds, additionalBannedItems.build(), completelyDisabledItems.build(),
 					itemUseProtectionExceptions.build(), completelyDisabledEntities.build(), blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, new HashMap<>(), new HashMap<>());
 		}
 
