@@ -274,6 +274,8 @@ public class ChunkProtection
 	}
 
 	private boolean canGrief(Entity e, IPlayerConfig config, Entity accessor, UUID accessorId, boolean blocks, boolean entities, boolean items){
+		if(e == null)
+			return false;
 		IPlayerConfigOptionSpecAPI<Integer> option;
 		if(blocks && !isAllowedToGrief(e, accessor, accessorId, config, entitiesAllowedToGrief, blockAccessEntityGroups)) {
 			option = e instanceof LivingEntity ? PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS :
@@ -445,6 +447,7 @@ public class ChunkProtection
 	public boolean onEntityDestroyBlock(IServerData<CM,P> serverData, ServerLevel world, Entity entity, BlockPos pos) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
+		//entity can be null!
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		ChunkPos chunkPos = new ChunkPos(pos);
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
@@ -550,6 +553,7 @@ public class ChunkProtection
 	public boolean onEntityPlaceBlock(IServerData<CM, P> serverData, Entity entity, ServerLevel level, BlockPos pos, IPlayerConfigOptionSpecAPI<Integer> option) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
+		//entity can be null!
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
 			return false;
 		ChunkPos chunkPos = new ChunkPos(pos);
