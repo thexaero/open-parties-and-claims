@@ -37,9 +37,9 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 	private final T maxValue;
 
 	private PlayerConfigRangedOptionSpec(Class<T> type, String id, String shortenedId, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment,
-										 String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, T minValue, T maxValue, String tooltipPrefix,
+										 String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, T minValue, T maxValue, String tooltipPrefix,
 										 Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
-		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType);
+		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
@@ -156,7 +156,7 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 		@Override
 		protected PlayerConfigRangedOptionSpec<T> buildInternally(List<String> path, String shortenedId, Function<String, T> commandInputParser) {
 			return new PlayerConfigRangedOptionSpec<T>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation,
-					translationArgs, commentTranslation, commentTranslationArgs, commandInputParser, commandOutputWriter, serverSideValidator,
+					translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator,
 					clientSideValidator, minValue, maxValue, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.RANGED);
 		}
 		

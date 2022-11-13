@@ -63,8 +63,8 @@ public abstract class WidgetListScreen extends XPACScreen {
 		tickableBoxes.clear();
 		for(int index = startIndex; index < endIndex; index++) {
 			int indexOff = index - startIndex;
-			int x = xAnchor - 205 + 210 * (indexOff & 1);
-			int y = yAnchor + (indexOff >> 1) * ROW_HEIGHT;
+			int x = xAnchor - 205 + 210 * (indexOff / 6);
+			int y = yAnchor + (indexOff % 6) * ROW_HEIGHT;
 			elements.get(index).screenInit(x, y, this, tickableBoxes);
 		}
 		addRenderableWidget(new Button(xAnchor - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));

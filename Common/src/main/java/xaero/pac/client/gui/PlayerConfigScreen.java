@@ -213,7 +213,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							String translationKey = option.getTranslation() + "_" + defaultDisplay.getString();
 							String translatedText = I18n.get(translationKey);
 							if(!translatedText.equals("default") && !translatedText.equals(translationKey))
-								return new TranslatableComponent(translationKey);
+								return new TranslatableComponent(translationKey).setStyle(defaultDisplay.getStyle());
 						}
 						return defaultDisplay;
 					})
@@ -344,26 +344,6 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			boolean isCurrentlyUsed = Objects.equals(usedSubConfigOptionStorage.getValue(), data.getSelectedSubConfig());
 			boolean canCreateSubs = data.getType() == PlayerConfigType.PLAYER || minecraft.player.hasPermissions(2);
 
-			WidgetListElement<?> createSubConfigWidget = TextWidgetListElement.Builder.begin()
-					.setW(elementWidth)
-					.setH(elementHeight)
-					.setTitle(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget"))
-					.setTooltip(minecraft.font.split(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget_tooltip", new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH)), 200))
-					.setMutable(canCreateSubs && data.getSubCount() < data.getSubConfigLimit())
-					.setStartValue("")
-					.setFilter(Objects::nonNull)
-					.setValidator(s -> PlayerConfig.isValidSubId(s) && !usedSubConfigOptionStorage.getValidator().test(data, s))
-					.setResponder((el, s) -> {
-						data.setSyncInProgress(true);
-						data.setSelectedSubConfig(s);
-						OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().requestCreateSubConfig(data, s);
-						minecraft.setScreen(build());
-					})
-					.setMaxLength(PlayerConfig.MAX_SUB_ID_LENGTH)
-					.setBoxWidth(75)
-					.build();
-			elements.add(createSubConfigWidget);
-
 			WidgetListElement<?> useSubConfigButtonWidget = SimpleWidgetListElement.Builder.begin()
 					.setW(elementWidth)
 					.setH(elementHeight)
@@ -394,6 +374,26 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 										new TranslatableComponent("gui.xaero_pac_ui_sub_config_delete_button_confirm2")));
 							})).build();
 			elements.add(deleteSubConfigButtonWidget);
+
+			WidgetListElement<?> createSubConfigWidget = TextWidgetListElement.Builder.begin()
+					.setW(elementWidth)
+					.setH(elementHeight)
+					.setTitle(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget"))
+					.setTooltip(minecraft.font.split(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget_tooltip", new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH)), 200))
+					.setMutable(canCreateSubs && data.getSubCount() < data.getSubConfigLimit())
+					.setStartValue("")
+					.setFilter(Objects::nonNull)
+					.setValidator(s -> PlayerConfig.isValidSubId(s) && !usedSubConfigOptionStorage.getValidator().test(data, s))
+					.setResponder((el, s) -> {
+						data.setSyncInProgress(true);
+						data.setSelectedSubConfig(s);
+						OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().requestCreateSubConfig(data, s);
+						minecraft.setScreen(build());
+					})
+					.setMaxLength(PlayerConfig.MAX_SUB_ID_LENGTH)
+					.setBoxWidth(75)
+					.build();
+			elements.add(createSubConfigWidget);
 		}
 
 		public PlayerConfigScreen build() {

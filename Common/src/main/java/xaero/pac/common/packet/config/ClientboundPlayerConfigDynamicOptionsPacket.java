@@ -49,13 +49,14 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 
 	public static class Codec implements BiConsumer<ClientboundPlayerConfigDynamicOptionsPacket, FriendlyByteBuf>, Function<FriendlyByteBuf, ClientboundPlayerConfigDynamicOptionsPacket> {
 
-		private <T extends Comparable<T>> PlayerConfigOptionSpec<T> getEntry(OptionType optionType, CompoundTag entryTag, Tag defaultValueTag, ValueType<T> type, String id, String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, String comment){
+		private <T extends Comparable<T>> PlayerConfigOptionSpec<T> getEntry(OptionType optionType, CompoundTag entryTag, Tag defaultValueTag, ValueType<T> type, String id, String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, String comment, PlayerConfigOptionCategory category){
 			return optionType.buildSpec(type, entryTag)
 					.setId(id)
 					.setTranslation(translation, translationArgs)
 					.setCommentTranslation(commentTranslation, commentTranslationArgs)
 					.setDefaultValue(type.valueUntagger.apply(defaultValueTag))
 					.setComment(comment)
+					.setCategory(category)
 					.build(null);
 		}
 
@@ -83,11 +84,12 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 					String[] commentTranslationArgs = new String[commentTranslationArgsTag.size()];
 					for(int i = 0; i < commentTranslationArgs.length; i++)
 						commentTranslationArgs[i] = commentTranslationArgsTag.getString(i);
+					PlayerConfigOptionCategory category = PlayerConfigOptionCategory.values()[entryTag.getInt("cat")];
 					Tag defaultValueTag = entryTag.get(DEFAULT_VALUE_KEY);
 					PlayerConfigOptionSpec<?> entry = null;
 					for(ValueType<?> valueType : ValueType.ALL.values()){
 						if(valueType.typeCheck.test(defaultValueTag)){
-							entry = getEntry(optionType, entryTag, defaultValueTag, valueType, id, translation, translationArgs, commentTranslation, commentTranslationArgs, comment);
+							entry = getEntry(optionType, entryTag, defaultValueTag, valueType, id, translation, translationArgs, commentTranslation, commentTranslationArgs, comment, category);
 							break;
 						}
 					}
@@ -126,6 +128,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 				for(String translationArg : entry.getCommentTranslationArgs())
 					commentTranslationArgsTag.add(StringTag.valueOf(translationArg));
 				entryTag.put("cta", commentTranslationArgsTag);
+				entryTag.putInt("cat", entry.getCategory().ordinal());
 				handleValueAndOptionTypes(entry, entryTag);
 				entryListTag.add(entryTag);
 			}

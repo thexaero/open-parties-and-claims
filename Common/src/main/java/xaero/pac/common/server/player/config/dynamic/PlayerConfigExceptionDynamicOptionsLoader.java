@@ -94,6 +94,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 				.setCommentTranslation(commentTranslation, group.getContentString())
 				.setDefaultValue(0)
 				.setComment(comment)
+				.setCategory(group.getOptionCategory())
 				.build(null);
 		group.setPlayerConfigOption(option);
 		builder.addOption(option);

@@ -27,6 +27,7 @@ import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
 import xaero.pac.common.server.claims.protection.ExceptionElementType;
 import xaero.pac.common.server.claims.protection.WildcardResolver;
+import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class ChunkProtectionExceptionGroupLoader {
 	public <T> void load(ForgeConfigSpec.ConfigValue<List<? extends String>> configOption,
 						 ExceptionElementType<T> elementType, WildcardResolver wildcardResolver,
 						 Map<String, ChunkProtectionExceptionGroup<T>> destination, ChunkProtectionExceptionType defaultType,
-						 Predicate<ChunkProtectionExceptionType> typeFilter){
+						 Predicate<ChunkProtectionExceptionType> typeFilter, PlayerConfigOptionCategory optionCategory){
 		configOption.get().forEach(stringEntry -> {
 			int listStartIndex = stringEntry.indexOf('{');
 			int listEndIndex;
@@ -103,6 +104,7 @@ public class ChunkProtectionExceptionGroupLoader {
 					OpenPartiesAndClaims.LOGGER.error("Invalid resource location in an exception group: " + element);
 			}
 			builder.setContentString(groupContent);
+			builder.setOptionCategory(optionCategory);
 			ChunkProtectionExceptionGroup<T> group = builder.build();
 			destination.put(prefixedName, group);
 		});

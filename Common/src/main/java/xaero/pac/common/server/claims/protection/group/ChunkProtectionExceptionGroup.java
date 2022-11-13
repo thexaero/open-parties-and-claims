@@ -23,6 +23,7 @@ import net.minecraft.tags.TagKey;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionSet;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
 import xaero.pac.common.server.claims.protection.ExceptionElementType;
+import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 import java.util.regex.Pattern;
@@ -36,12 +37,14 @@ public final class ChunkProtectionExceptionGroup<T> {
 	private final ChunkProtectionExceptionSet<T> exceptionSet;
 	private IPlayerConfigOptionSpecAPI<Integer> playerConfigOption;
 	private final String contentString;
+	private final PlayerConfigOptionCategory optionCategory;
 
-	private ChunkProtectionExceptionGroup(String name, ChunkProtectionExceptionType type, ChunkProtectionExceptionSet<T> exceptionSet, String contentString) {
+	private ChunkProtectionExceptionGroup(String name, ChunkProtectionExceptionType type, ChunkProtectionExceptionSet<T> exceptionSet, String contentString, PlayerConfigOptionCategory optionCategory) {
 		this.name = name;
 		this.type = type;
 		this.exceptionSet = exceptionSet;
 		this.contentString = contentString;
+		this.optionCategory = optionCategory;
 	}
 
 	public String getName() {
@@ -76,12 +79,17 @@ public final class ChunkProtectionExceptionGroup<T> {
 		return contentString;
 	}
 
+	public PlayerConfigOptionCategory getOptionCategory() {
+		return optionCategory;
+	}
+
 	public static final class Builder<T> {
 
 		private String name;
 		private ChunkProtectionExceptionType type;
 		private ChunkProtectionExceptionSet.Builder<T> exceptionSetBuilder;
 		private String contentString;
+		private PlayerConfigOptionCategory optionCategory;
 
 		private Builder(ExceptionElementType<T> elementType){
 			exceptionSetBuilder = ChunkProtectionExceptionSet.Builder.begin(elementType);
@@ -114,12 +122,17 @@ public final class ChunkProtectionExceptionGroup<T> {
 			return this;
 		}
 
+		public Builder<T> setOptionCategory(PlayerConfigOptionCategory optionCategory) {
+			this.optionCategory = optionCategory;
+			return this;
+		}
+
 		public ChunkProtectionExceptionGroup<T> build(){
-			if(name == null || type == null || contentString == null)
+			if(name == null || type == null || contentString == null || optionCategory == null)
 				throw new IllegalStateException();
 			if(!GROUP_NAME_PATTERN.matcher(name).matches())
 				throw new IllegalArgumentException("Exception group name must consist of A - Z, numbers or the - and _ characters: " + name);
-			return new ChunkProtectionExceptionGroup<>(name, type, exceptionSetBuilder.build(), contentString);
+			return new ChunkProtectionExceptionGroup<>(name, type, exceptionSetBuilder.build(), contentString, optionCategory);
 		}
 
 		public static <T> Builder<T> begin(ExceptionElementType<T> elementType){

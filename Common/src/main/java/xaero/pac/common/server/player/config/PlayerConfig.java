@@ -61,27 +61,27 @@ public class PlayerConfig
 	public final static String PLAYER_CONFIG_ROOT_DOT = PLAYER_CONFIG_ROOT + ".";
 	public static final List<Integer> PROTECTION_LEVELS = List.of(0, 1, 2, 3);
 	public static final String PROTECTION_LEVELS_TOOLTIP = """
-					1) Everyone - protected from all players/entities that don't have chunk access.
+					1) Every - protected from all players/entities that don't have chunk access.
 					2) Not Party - only players/entities not in the same party as you.
 					3) Not Ally - only players/entities not in any party allied by yours.""";
 
 	public static final String PROTECTION_LEVELS_TOOLTIP_PLAYERS = """
-					1) Everyone - protected from all players that don't have chunk access.
+					1) Every - protected from all players that don't have chunk access.
 					2) Not Party - only players not in the same party as you.
 					3) Not Ally - only players not in any party allied by yours.""";
 	public static final String PROTECTION_LEVELS_TOOLTIP_OWNED = """
-					1) Everyone - protected from all entities not owned by a player that has chunk access.
+					1) Every - protected from all entities not owned by a player that has chunk access.
 					2) Not Party - all entities, except owned by a player in the same party as you.
 					3) Not Ally - all entities, except owned by a player in any party allied by yours.""";
 
 	public static final String EXCEPTION_LEVELS_TOOLTIP = """
 					1) Party - players or entities owned by players in the same party as you.
 					2) Allies - players or entities owned by players in parties that are allied by yours.
-					3) Everyone - all players/entities.""";
+					3) Every - all players/entities.""";
 	public static final String EXCEPTION_LEVELS_TOOLTIP_PLAYERS = """
 					1) Party - players in the same party as you.
 					2) Allies - players in parties that are allied by yours.
-					3) Everyone - all players.""";
+					3) Every - all players.""";
 
 	protected final PlayerConfigManager<P, ?> manager;
 	private final PlayerConfigType type;

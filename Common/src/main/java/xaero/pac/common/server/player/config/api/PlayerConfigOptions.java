@@ -96,6 +96,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD;
 	/**
+	 * Whether the claimed chunk protection includes protection from frost walking.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING;
+	/**
 	 * Whether the claimed chunk protection includes protection against explosions.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS;
@@ -131,10 +135,6 @@ public class PlayerConfigOptions {
 	 * Whether the claimed chunk protection includes protection of tripwires being pressed by non-living entities.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER;
-	/**
-	 * Whether the claimed chunk protection includes protection from frost walking.
-	 */
-	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING;
 	/**
 	 * Whether the claimed chunk protection includes entity protection against players.
 	 */
@@ -321,6 +321,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(PlayerConfig.MAIN_SUB_ID)
 				.setValueValidator(PlayerConfig::isValidSubId)
 				.setComment("The current sub-config ID used for new chunk claims.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		USED_SERVER_SUBCLAIM = PlayerConfigListIterationOptionSpec.FinalBuilder.begin(String.class)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER)
@@ -333,27 +334,16 @@ public class PlayerConfigOptions {
 				.setDefaultValue(PlayerConfig.MAIN_SUB_ID)
 				.setValueValidator(PlayerConfig::isValidSubId)
 				.setComment("The current sub-config ID used for new server chunk claims.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
-		PARTY_NAME = PlayerConfigStringOptionSpec.Builder.begin()
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.name")
-				.setDefaultValue("")
-				.setValueValidator(s -> s.matches("^(\\p{L}|[0-9 _'\"!?,\\-&%*\\(\\):])*$"))
-				.setMaxLength(100)
-				.setComment("When not empty, used in some places as the name for the parties that you create.")
-				.build(allOptions);
+
 		CLAIMS_NAME = PlayerConfigStringOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.name")
 				.setDefaultValue("")
 				.setValueValidator(s -> s.matches("^(\\p{L}|[0-9 _'\"!?,\\-&%*\\(\\):])*$"))
 				.setMaxLength(100)
 				.setComment("When not empty, used as the name for your claimed chunks.")
-				.build(allOptions);
-		BONUS_CHUNK_CLAIMS = PlayerConfigOptionSpec.FinalBuilder.begin(Integer.class)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusChunkClaims")
-				.setDefaultValue(0)
-				.setComment("The number of additional chunk claims that you can make on top of the normal limit.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		CLAIMS_COLOR = PlayerConfigHexOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.color")
@@ -377,29 +367,78 @@ public class PlayerConfigOptions {
 					return autoColor;
 				})
 				.setComment("Used as the color for your claims. Set to 0 to use the default automatic color.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.build(allOptions);
+		PARTY_NAME = PlayerConfigStringOptionSpec.Builder.begin()
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.name")
+				.setDefaultValue("")
+				.setValueValidator(s -> s.matches("^(\\p{L}|[0-9 _'\"!?,\\-&%*\\(\\):])*$"))
+				.setMaxLength(100)
+				.setComment("When not empty, used in some places as the name for the parties that you create.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.build(allOptions);
+		SHARE_LOCATION_WITH_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.shareLocationWithParty")
+				.setDefaultValue(true)
+				.setComment("When enabled, your location in the game is shared with players from the same party as you, which can be used by other mods, e.g. to display party members on a map.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.build(allOptions);
+		SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.shareLocationWithMutualAllyParties")
+				.setDefaultValue(false)
+				.setComment("When enabled, your location in the game is shared with the mutual ally parties of the party that you are in, which can be used by other mods, e.g. to display party members on a map.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.build(allOptions);
+		RECEIVE_LOCATIONS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.receiveLocationsFromParty")
+				.setDefaultValue(true)
+				.setComment("When enabled, the sharable locations of players from the same party as you are shared with your game client, which can be used by other mods, e.g. to display party members on a map.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.build(allOptions);
+		RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.receiveLocationsFromMutualAllyParties")
+				.setDefaultValue(false)
+				.setComment("When enabled, the sharable locations of players from the mutual ally parties of the party that you are in are shared with your game client, which can be used by other mods, e.g. to display allies on a map.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protectClaimedChunks")
+				.setDefaultValue(true)
+				.setComment("When enabled, the mod tries to protect your claimed chunks from other players. Workarounds are possible, especially with mods.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.build(allOptions);
+		BONUS_CHUNK_CLAIMS = PlayerConfigOptionSpec.FinalBuilder.begin(Integer.class)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusChunkClaims")
+				.setDefaultValue(0)
+				.setComment("The number of additional chunk claims that you can make on top of the normal limit.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		BONUS_CHUNK_FORCELOADS = PlayerConfigOptionSpec.FinalBuilder.begin(Integer.class)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusChunkForceloads")
 				.setDefaultValue(0)
 				.setComment("The number of additional chunk claim forceloads that you can make on top of the normal limit.")
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protectClaimedChunks")
-				.setDefaultValue(true)
-				.setComment("When enabled, the mod tries to protect your claimed chunks from other players. Workarounds are possible, especially with mods.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromParty")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes protection against players from the same party as you.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromAllyParties")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against players from parties who are allied by the party that you are in.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromPlayers")
@@ -409,6 +448,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes basic protection against players breaking or otherwise interacting with blocks if they don't have access to the chunks. Block placing is usually additionally controlled by the item use protection.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromMobs")
@@ -418,6 +458,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection against mobs, who don't have access to the chunks, breaking/placing blocks (e.g. endermen). Chunks directly next to the protected chunks are also partially protected when protection is based on the mob griefing rule check. Should work for vanilla mob behavior. Modded mob behavior is likely not to be included. Feel free to set the vanilla game rule for mob griefing for extra safety. Keep in mind that creeper explosions are also affected by the explosion-related options.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromOther")
@@ -427,88 +468,19 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection against non-living entities, who don't have access to the chunks, breaking/placing blocks. Should work for vanilla entity behavior, unless another mod breaks it. Modded entity behavior is likely not to be included. Keep in mind that explosions are also affected by the explosion-related options.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromExplosions")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the block mob protection option.")
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFireSpread")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against fire spread.")
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.buttonsFromProjectiles")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes buttons being protected against projectiles not owned by any player who has access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.targetsFromProjectiles")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes target blocks being protected against projectiles not owned by any player who has access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromPlayers")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes pressure plates being protected against players who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromMobs")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes pressure plates being protected against mobs who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromOther")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes pressure plates being protected against non-living entities who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromPlayers")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes tripwires being protected against players who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromMobs")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes tripwires being protected against mobs who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromOther")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes tripwires being protected against non-living entities who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFrostWalking")
@@ -518,6 +490,105 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection against frost walking by players/entities who don't have access to the chunks.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
 				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.cropTrample")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for players that don't have access to the chunks.")
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fluidBarrier")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against fluids (e.g. lava) flowing into the protected chunks from outside. This does not protect wilderness.")
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.pistonBarrier")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection against being affected by pistons outside of the protected chunks. This does not protect wilderness.")
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.buttonsFromProjectiles")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes buttons being protected against projectiles not owned by any player who has access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.targetsFromProjectiles")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes target blocks being protected against projectiles not owned by any player who has access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromPlayers")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes pressure plates being protected against players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromMobs")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes pressure plates being protected against mobs who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromOther")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes pressure plates being protected against non-living entities who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromPlayers")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes tripwires being protected against players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromMobs")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes tripwires being protected against mobs who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromOther")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes tripwires being protected against non-living entities who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromPlayers")
@@ -527,6 +598,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against players who don't have access to the chunks.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromMobs")
@@ -536,6 +608,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against mobs. Chunks directly next to the protected chunks are also partially protected when protection is based on the mob griefing rule check.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromOther")
@@ -545,77 +618,55 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against non-living entities (e.g. arrows, falling anvils, activated TNT).\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Entities From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Entities From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromExplosions")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against all explosions not directly activated by the chunk owner.")
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromFire")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against fire.")
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_RAIDS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.raids")
+				.setDefaultValue(true)
+				.setComment("When enabled, claimed chunk protection includes protection from village raids. It stops raiders from spawning inside the protected chunks, from entering them and from hurting protectable entities, even if entity protection is turned off.")
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersFromPlayers")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes players being protected from player attacks.")
+				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersFromMobs")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes players being protected from mob attacks.")
+				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersFromOther")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes players being protected against non-living entities.")
+				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Players From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Players From Players\").")
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.chorusFruitTeleport")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes chorus fruit teleportation prevention for entities/players who don't have access to the chunks.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsPlayers")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes nether portal usage prevention for players who don't have access to the chunks. \n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsMobs")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes nether portal usage prevention for mobs who don't have access to the chunks. Even after the protection is turned off, a recently stopped entity is still on a short cooldown. You must let it finish without constantly retrying to push it through the portal, which restarts the cooldown.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsOther")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes nether portal usage prevention for non-living entities who don't have access to the chunks. Even after the protection is turned off, a recently stopped entity is still on a short cooldown. You must let it finish without constantly retrying to push it through the portal, which restarts the cooldown.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
-				)
+				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playerLightning")
@@ -625,26 +676,69 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes blocks and entities being protected against lightning directly caused by players who don't have access to the chunks (e.g. with the trident). Chunks directly next to the protected chunks are also partially protected.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.cropTrample")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for players that don't have access to the chunks.")
+		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.chorusFruitTeleport")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes chorus fruit teleportation prevention for entities/players who don't have access to the chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP
+				)
+				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fluidBarrier")
+		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsPlayers")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes nether portal usage prevention for players who don't have access to the chunks. \n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsMobs")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes nether portal usage prevention for mobs who don't have access to the chunks. Even after the protection is turned off, a recently stopped entity is still on a short cooldown. You must let it finish without constantly retrying to push it through the portal, which restarts the cooldown.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsOther")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes nether portal usage prevention for non-living entities who don't have access to the chunks. Even after the protection is turned off, a recently stopped entity is still on a short cooldown. You must let it finish without constantly retrying to push it through the portal, which restarts the cooldown.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
+				)
+				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_ITEM_USE = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemUse")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection from right-click held item use inside protected chunks. On Fabric, this means being able to place blocks on blocks that have an exception for interaction! Right-click item use can also break blocks, if that is the item's right-click mechanic. Item use might still be prevented by neighbor item use protection in neighbor claims.\n\n"
+								+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")
 				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against fluids (e.g. lava) flowing into the protected chunks from outside. This does not protect wilderness.")
+				.setComment("When enabled, the item use protection is extended to right-click held item use in chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
+				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.dispenserBarrier")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against dispensers \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.pistonBarrier")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against being affected by pistons outside of the protected chunks. This does not protect wilderness.")
+				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossPlayers")
@@ -654,6 +748,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes prevention of item tossing by players.\nDying can be used to circumvent this, so it is recommended to enable keepInventory or use a gravestone mod.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossMobs")
@@ -663,6 +758,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes prevention of item tossing by some mobs. Requires the tossing mob to be set as the item's thrower.\n Modded mobs are pretty likely to do it themselves or have it done by this mod. Otherwise, the toss won't be prevented.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossOther")
@@ -672,11 +768,13 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes prevention of item tossing by non-living entities. Requires the tossing mob to be set as the item's thrower. Some entities might not that.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Mob/Other Item Toss\" option for item tosses coming from non-player entities, if the tossing entity (e.g. a special arrow) has an owner (e.g. a player), then the item toss protection option corresponding to the owner is used (e.g. \"Protect Player Item Toss\").")
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_MOB_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.mobLoot")
@@ -686,6 +784,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection from loot being dropped when mobs die unless they are killed by players who have access to the chunks. Any non-living entity spawned on a mob's death is considered loot.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playerDeathLoot")
@@ -695,6 +794,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection for items and experience that have been dropped on a player death, even if the standard item pickup protection is disabled. The protected items are only accessible to the player that dropped them and the entity/player that killed the player.\n\n"
 						+ PlayerConfig.EXCEPTION_LEVELS_TOOLTIP_PLAYERS
 				)
+				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupPlayers")
@@ -704,6 +804,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection from players picking up items, unless they have access to the chunks or own the items.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
+				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupMobs")
@@ -713,11 +814,13 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection from mobs picking up items, unless they have access to the chunks or own the items. Might not work for some mobs. Chunks directly next to the protected chunks are also partially protected when protection is based on the mob griefing rule check.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
+				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupRedirect")
 				.setDefaultValue(false)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Items From Mobs\" option for item pickups coming from mobs, if the mob (e.g. an allay) has an owner (e.g. a player), then the item protection option corresponding to the owner is used (e.g. \"Protect Items From Players\").")
+				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_XP_PICKUP = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.xpPickup")
@@ -727,20 +830,7 @@ public class PlayerConfigOptions {
 						"When enabled, claimed chunk protection includes protection from players picking up experience orbs, unless they have access to the chunks or own the orbs.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_USE = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemUse")
-				.setDefaultValue(1)
-				.setList(PlayerConfig.PROTECTION_LEVELS)
-				.setComment(
-						"When enabled, claimed chunk protection includes protection from right-click held item use inside protected chunks. On Fabric, this means being able to place blocks on blocks that have an exception for interaction! Right-click item use can also break blocks, if that is the item's right-click mechanic. Item use might still be prevented by neighbor item use protection in neighbor claims.\n\n"
-						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
-				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")
-				.setDefaultValue(true)
-				.setComment("When enabled, the item use protection is extended to right-click held item use in chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
+				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.overrideMobGriefingRule")
@@ -752,72 +842,44 @@ public class PlayerConfigOptions {
 						"When using the Forge version of the mod, this can be used for modded mobs. The main server config can be used to change which options are checked (even all 3) for specific mobs. Fabric/Quilt does not fire an event for all mob griefing rule checks. " +
 						"Fabric/Quilt modded mobs would simply check the game rule directly, which cannot be overridden by this mod."
 				)
-				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_RAIDS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.raids")
-				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection from village raids. It stops raiders from spawning inside the protected chunks, from entering them and from hurting protectable entities, even if entity protection is turned off.")
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.naturalSpawnHostile")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables the natural spawning of hostile mobs.")
+				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.naturalSpawnFriendly")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables the natural spawning of friendly mobs.")
+				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.spawnersHostile")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables hostile mob spawners.")
+				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.spawnersFriendly")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables friendly mob spawners.")
+				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
 
 		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.forceload.enabled")
 				.setDefaultValue(true)
 				.setComment("When enabled, the chunks you have marked for forceloading are forceloaded.\nIf the forceload limit has changed and you have more chunks marked than the new limit, then some of the chunks won't be forceloaded. Unmark any chunks until you are within the limit to ensure that all marked chunks are forceloaded.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		OFFLINE_FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.forceload.offlineForceload")
 				.setDefaultValue(false)
 				.setComment("When enabled, the chunks you have marked for forceloading stay loaded even when you are offline (can significantly affect server performance!).\nIf your forceload limit is affected by your FTB Ranks rank/permissions, then you need to login at least once after a server (re)launch for it to take effect while you are offline.")
-				.build(allOptions);
-
-
-		SHARE_LOCATION_WITH_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.shareLocationWithParty")
-				.setDefaultValue(true)
-				.setComment("When enabled, your location in the game is shared with players from the same party as you, which can be used by other mods, e.g. to display party members on a map.")
-				.build(allOptions);
-
-		SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.shareLocationWithMutualAllyParties")
-				.setDefaultValue(false)
-				.setComment("When enabled, your location in the game is shared with the mutual ally parties of the party that you are in, which can be used by other mods, e.g. to display party members on a map.")
-				.build(allOptions);
-
-
-		RECEIVE_LOCATIONS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.receiveLocationsFromParty")
-				.setDefaultValue(true)
-				.setComment("When enabled, the sharable locations of players from the same party as you are shared with your game client, which can be used by other mods, e.g. to display party members on a map.")
-				.build(allOptions);
-
-		RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.receiveLocationsFromMutualAllyParties")
-				.setDefaultValue(false)
-				.setComment("When enabled, the sharable locations of players from the mutual ally parties of the party that you are in are shared with your game client, which can be used by other mods, e.g. to display allies on a map.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 
 		OPTIONS = Collections.unmodifiableMap(allOptions);
