@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.claims.player.task;
 
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -37,6 +36,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -139,6 +139,7 @@ public final class PlayerSubClaimDeletionSpreadoutTask extends PlayerClaimReplac
 		public void onFinish(ResultType resultType, int tickCount, int totalCount, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 			if(last) {
 				ServerPlayer onlinePlayer = callerUUID == null ? null : server.getPlayerList().getPlayer(callerUUID);
+				AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 				if (resultType.isSuccess()) {
 					IPlayerConfig config = serverData.getPlayerConfigs().getLoadedConfig(playerInfo.getPlayerId());
 					IPlayerConfig removedSub = config.removeSubConfig(subConfigIndex);
@@ -148,11 +149,11 @@ public final class PlayerSubClaimDeletionSpreadoutTask extends PlayerClaimReplac
 							if(Objects.equals(playerData.getLastOtherConfigRequest(), removedSub.getPlayerId()))
 								serverData.getPlayerConfigs().getSynchronizer().syncSubExistence(onlinePlayer, removedSub, false);//notify the "other player" config
 						}
-						onlinePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()), onlinePlayer.getUUID());
+						onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, "gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()), onlinePlayer.getUUID());
 					}
 				} else {
 					if (onlinePlayer != null)
-						onlinePlayer.sendMessage(resultType.getMessage(), onlinePlayer.getUUID());
+						onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, resultType.getMessage()), onlinePlayer.getUUID());
 				}
 			}
 		}

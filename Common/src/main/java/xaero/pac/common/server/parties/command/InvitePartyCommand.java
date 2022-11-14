@@ -46,6 +46,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -68,22 +69,23 @@ public class InvitePartyCommand {
 							UUID playerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 							
 							ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
 							UUID targetPlayerId = targetPlayer.getUUID();
 							if(playerParty.getMemberInfo(targetPlayerId) != null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_already_your_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_already_your_party", targetPlayer.getGameProfile().getName()));
 								return 0;
 							} else if(partyManager.getPartyByMember(targetPlayerId) != null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_already_a_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_already_a_party", targetPlayer.getGameProfile().getName()));
 								return 0;
 							} else if(playerParty.getInviteCount() >= ServerConfig.CONFIG.maxPartyInvites.get()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_invite_limit"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_invite_limit"));
 								return 0;
 							} else if(playerParty.getMemberCount() >= ServerConfig.CONFIG.maxPartyMembers.get()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_invite_member_limit"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_member_limit"));
 								return 0;
 							}
 							
@@ -91,13 +93,13 @@ public class InvitePartyCommand {
 
 							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
 							
-							Component acceptComponent = new TranslatableComponent("gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
+							Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
 							acceptComponent.getSiblings().add(new TextComponent(" "));
-							acceptComponent.getSiblings().add(new TranslatableComponent("gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/openpac-parties join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("gui.xaero_parties_invite_target_message_accept_tooltip")))));
+							acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/openpac-parties join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept_tooltip")))));
 							targetPlayer.sendMessage(acceptComponent, playerId);
 							Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer).putUUID("xaero_OPAC_LastInviteId", playerParty.getId());
 
-							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_invite_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), new TextComponent(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_invite_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), new TextComponent(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 							return 1;
 						}))));
 		dispatcher.register(command);

@@ -508,9 +508,9 @@ public class ChunkProtection
 		if(blockAccessCheck(serverData, pos, player, null, world, emptyHand, leftClick)) {
 			if(direct && player != null) {
 				if(hand != null)
-					player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF, player.getUUID());
+					player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF), player.getUUID());
 				if (message != null)
-					player.sendMessage(message, player.getUUID());
+					player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, message), player.getUUID());
 			}
 			return true;
 		}
@@ -522,7 +522,7 @@ public class ChunkProtection
 			return false;
 		BlockState blockState = player.getLevel().getBlockState(pos);
 		if(completelyDisabledBlocks.contains(blockState.getBlock())){
-			player.sendMessage(BLOCK_DISABLED, player.getUUID());
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, BLOCK_DISABLED), player.getUUID());
 			return true;
 		}
 		if(CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
@@ -540,7 +540,7 @@ public class ChunkProtection
 			return false;
 		BlockState blockState = player.getLevel().getBlockState(pos);
 		if(completelyDisabledBlocks.contains(blockState.getBlock())){
-			player.sendMessage(BLOCK_DISABLED, player.getUUID());
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, BLOCK_DISABLED), player.getUUID());
 			return true;
 		}
 		if(CREATE_DEPLOYER_UUID.equals(player.getUUID()))//uses custom protection
@@ -607,7 +607,7 @@ public class ChunkProtection
 		boolean shouldProtect = false;
 		Item item = itemStack.getItem();
 		if(completelyDisabledItems.contains(item)) {
-			player.sendMessage(hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF, player.getUUID());
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF), player.getUUID());
 			return true;
 		}
 		if(isItemUseRestricted(itemStack) && !(item instanceof BucketItem) && !(item instanceof SolidBucketItem)) {
@@ -644,7 +644,7 @@ public class ChunkProtection
 				}
 		}
 		if(message && shouldProtect)
-			player.sendMessage(hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF, player.getUUID());
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF), player.getUUID());
 		return shouldProtect;
 	}
 
@@ -705,7 +705,7 @@ public class ChunkProtection
 			return false;
 		if(!attack && completelyDisabledEntities.contains(target.getType())){
 			if(hand == InteractionHand.MAIN_HAND && entity instanceof Player player)
-				player.sendMessage(ENTITY_DISABLED, player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, ENTITY_DISABLED), player.getUUID());
 			return true;
 		}
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
@@ -738,10 +738,10 @@ public class ChunkProtection
 		) {
 			if(direct && entity instanceof Player) {
 				if(attack || posSpecific) {//avoiding double messages
-					entity.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF, entity.getUUID());
+					entity.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF), entity.getUUID());
 					if (!attack && !emptyHand) {
 						Component message = hand == InteractionHand.MAIN_HAND ? ENTITY_TRY_EMPTY_MAIN : ENTITY_TRY_EMPTY_OFF;
-						entity.sendMessage(message, entity.getUUID());
+						entity.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, message), entity.getUUID());
 					}
 				}
 			}
@@ -929,7 +929,7 @@ public class ChunkProtection
 		}
 		if(checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT, claimConfig, accessor, accessorId) && !hasChunkAccess(claimConfig, accessor, accessorId)) {
 			if(entity instanceof Player)
-				entity.sendMessage(CANT_CHORUS, entity.getUUID());
+				entity.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, CANT_CHORUS), entity.getUUID());
 			//OpenPartiesAndClaims.LOGGER.info("stopped {} from teleporting to {}", entity, pos);
 			return true;
 		}
@@ -1005,7 +1005,7 @@ public class ChunkProtection
 			return false;
 		if(completelyDisabledItems.contains(itemStack.getItem())) {
 			if(entity instanceof Player player)
-				player.sendMessage(hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF, player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF), player.getUUID());
 			return true;
 		}
 		if(entity != null && CREATE_DEPLOYER_UUID.equals(entity.getUUID()))//uses custom protection
@@ -1017,7 +1017,7 @@ public class ChunkProtection
 				hand = player.getItemInHand(InteractionHand.MAIN_HAND) == itemStack ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 			if (additionalBannedItems.contains(itemStack.getItem()) &&
 					onItemRightClick(serverData, hand, itemStack, pos, player, false)) {//only configured items on purpose
-				player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_THIS_CLOSE_MAIN : CANT_APPLY_ITEM_THIS_CLOSE_OFF, player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_THIS_CLOSE_MAIN : CANT_APPLY_ITEM_THIS_CLOSE_OFF), player.getUUID());
 				return true;
 			}
 		}
@@ -1032,7 +1032,7 @@ public class ChunkProtection
 			|| pos2 != null && !(chunkPos2 = new ChunkPos(pos2)).equals(chunkPos) && applyItemAccessCheck(serverData, chunkPos2, entity, (ServerLevel) entity.getLevel(), itemStack)
 				){
 			if(message && entity instanceof ServerPlayer player)
-				player.sendMessage(hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_MAIN : CANT_APPLY_ITEM_OFF, player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_MAIN : CANT_APPLY_ITEM_OFF), player.getUUID());
 			return true;
 		}
 		return false;

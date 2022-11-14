@@ -27,8 +27,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -44,6 +42,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -55,22 +54,23 @@ public class DestroyPartyConfirmCommand {
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get()).then(Commands.literal("destroy")
 				.requires(requirement)
 				.executes(context -> {
-					context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_party_destroy_info"));
+					ServerPlayer player = context.getSource().getPlayerOrException();
+					MinecraftServer server = context.getSource().getServer();
+					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_party_destroy_info"));
 					return 0;
 				})
 				.then(Commands.literal("confirm")
 				.executes(context -> {
-					Entity entity = context.getSource().getEntity();
-					if(entity == null || !(entity instanceof Player))
-						return 0;
-					ServerPlayer player = (ServerPlayer) entity;
+					ServerPlayer player = context.getSource().getPlayerOrException();
 					UUID playerId = player.getUUID();
 					MinecraftServer server = context.getSource().getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 					partyManager.removeParty(playerParty);
-					new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> true, new TranslatableComponent("gui.xaero_parties_party_destroy_members_info", new TextComponent(playerParty.getOwner().getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+					new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> true, new TranslatableComponent("gui.xaero_parties_party_destroy_members_info", new TextComponent(playerParty.getOwner().getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 					return 1;
 				})));
 		dispatcher.register(command);

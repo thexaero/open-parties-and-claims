@@ -27,7 +27,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -46,6 +46,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.List;
 import java.util.UUID;
@@ -89,41 +90,42 @@ public class ConfigSubListCommand {
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			MinecraftServer server = context.getSource().getServer();
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			GameProfile inputPlayer;
 			UUID configPlayerUUID;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_sub_list_too_many_targets",
-						"gui.xaero_pac_config_sub_list_invalid_target");
+						"gui.xaero_pac_config_sub_list_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
 			} else
 				configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
 
-			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 
 			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 
 			List<String> subConfigIds =  playerConfig.getSubConfigIds();
 			int startAt = IntegerArgumentType.getInteger(context, "start-at");
 			if(startAt >= subConfigIds.size()){
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_sub_list_bad_start", subConfigIds.size()));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_bad_start", subConfigIds.size()));
 				return 0;
 			}
 			if(startAt < 0)
 				startAt = 0;
 			int endAt = Math.min(startAt + 64, subConfigIds.size());
-			MutableComponent listMessage = new TranslatableComponent("gui.xaero_pac_config_sub_list", startAt + 1, subConfigIds.size());
+			MutableComponent listMessage = adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list", startAt + 1, subConfigIds.size());
 			for(int i = startAt; i < endAt; i++) {
 				if(i != startAt)
-					listMessage.getSiblings().add(new TranslatableComponent("gui.xaero_pac_config_sub_list_separator"));
-				listMessage.getSiblings().add(new TranslatableComponent(subConfigIds.get(i)));
+					listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_separator"));
+				listMessage.getSiblings().add(new TextComponent(subConfigIds.get(i)));
 			}
 			if(endAt < subConfigIds.size())
-				listMessage.getSiblings().add(new TranslatableComponent("gui.xaero_pac_config_sub_list_there_is_more"));
+				listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_there_is_more"));
 			sourcePlayer.sendMessage(listMessage, sourcePlayer.getUUID());
 			return 1;
 		};

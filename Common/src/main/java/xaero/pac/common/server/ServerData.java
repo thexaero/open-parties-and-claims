@@ -49,6 +49,7 @@ import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 public final class ServerData implements IServerData<ServerClaimsManager, ServerParty> {
@@ -80,6 +81,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final ServerInfo serverInfo;
 	private final ServerInfoHolderIO serverInfoIO;
 	private final ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler;
+	private final AdaptiveLocalizer adaptiveLocalizer;
 	private final OpenPACServerAPI api;
 
 	public ServerData(MinecraftServer server, PartyManager partyManager, PartyManagerIO<?> partyManagerIO,
@@ -91,7 +93,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 					  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
 					  ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
 					  ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
-					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler) {
+					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler, AdaptiveLocalizer adaptiveLocalizer) {
 		super();
 		this.server = server;
 		this.partyManager = partyManager;
@@ -120,6 +122,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.serverInfoIO = serverInfoIO;
 		this.serverPlayerClaimsExpirationHandler = serverPlayerClaimsExpirationHandler;
 		this.objectExpirationCheckTaskHandler = objectExpirationCheckTaskHandler;
+		this.adaptiveLocalizer = adaptiveLocalizer;
 		api = new OpenPACServerAPI(this);
 	}
 
@@ -265,6 +268,11 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	public static IServerData<IServerClaimsManager<IPlayerChunkClaim,IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember,IPartyPlayerInfo, IPartyAlly>> from(MinecraftServer server) {
 		return (IServerData<IServerClaimsManager<IPlayerChunkClaim,IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember,IPartyPlayerInfo, IPartyAlly>>)
 				((IOpenPACMinecraftServer)server).getXaero_OPAC_ServerData();
+	}
+
+	@Override
+	public AdaptiveLocalizer getAdaptiveLocalizer() {
+		return adaptiveLocalizer;
 	}
 
 	@Override

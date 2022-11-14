@@ -30,7 +30,6 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -41,7 +40,6 @@ import xaero.pac.common.packet.config.ClientboundPlayerConfigHelpPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
-import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -56,6 +54,7 @@ import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 
@@ -177,9 +176,10 @@ public class ConfigGetOrHelpCommand {
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigs().getOptionForId(targetConfigOptionId);
 			if(option == null) {
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_get_invalid_key"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get_invalid_key"));
 				return 0;
 			}
 			
@@ -188,7 +188,7 @@ public class ConfigGetOrHelpCommand {
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_option_get_too_many_targets",
-						"gui.xaero_pac_config_option_get_invalid_target");
+						"gui.xaero_pac_config_option_get_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
@@ -201,7 +201,7 @@ public class ConfigGetOrHelpCommand {
 											serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfig effectivePlayerConfig = getEffectiveConfig(context, playerConfig);
 			if(effectivePlayerConfig == null) {
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_get_invalid_sub"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get_invalid_sub"));
 				return 0;
 			}
 			if(help){
@@ -215,7 +215,7 @@ public class ConfigGetOrHelpCommand {
 				return 1;
 			}
 			if(!effectivePlayerConfig.isOptionAllowed(option)){
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_option_get_not_allowed"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get_not_allowed"));
 				return 0;
 			}
 			Object optionValue = effectivePlayerConfig.getFromEffectiveConfig(option);
@@ -223,9 +223,9 @@ public class ConfigGetOrHelpCommand {
 				optionValue = null;
 			Component optionValueName = option.getValueDisplayName(optionValue);
 			if(type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
 			else
-				sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
 			return 1;
 		};
 	}

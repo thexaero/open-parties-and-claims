@@ -27,6 +27,7 @@ import java.util.List;
 
 public class ServerConfig {
 
+	public final ForgeConfigSpec.ConfigValue<String> defaultLanguage;
 	public final ForgeConfigSpec.BooleanValue partiesEnabled;
 	public final ForgeConfigSpec.BooleanValue claimsEnabled;
 	public final ForgeConfigSpec.IntValue autosaveInterval;
@@ -83,6 +84,12 @@ public class ServerConfig {
 
 	private ServerConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("serverConfig");
+
+		defaultLanguage = builder
+				.comment("The default language used for server-side localization for players that don't have the mod installed.")
+				.translation("gui.xaero_pac_config_default_language")
+				.worldRestart()
+				.define("defaultLanguage", "en_us");
 
 		autosaveInterval = builder
 			.comment("How often to auto-save modified data, e.g. parties, claims, player configs (in minutes).")

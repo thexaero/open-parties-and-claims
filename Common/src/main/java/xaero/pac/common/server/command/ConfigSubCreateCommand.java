@@ -26,7 +26,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -46,6 +45,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 
@@ -85,6 +85,9 @@ public class ConfigSubCreateCommand {
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			MinecraftServer server = context.getSource().getServer();
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
 			GameProfile inputPlayer = null;
@@ -92,14 +95,12 @@ public class ConfigSubCreateCommand {
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_create_sub_too_many_targets",
-						"gui.xaero_pac_config_create_sub_invalid_target");
+						"gui.xaero_pac_config_create_sub_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
 			}
 
-			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			if(serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
@@ -109,15 +110,15 @@ public class ConfigSubCreateCommand {
 			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 
 			if(playerConfig.getSubCount() >= playerConfig.getSubConfigLimit()){
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_create_sub_id_limit_reached", playerConfig.getSubConfigLimit()));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub_id_limit_reached", playerConfig.getSubConfigLimit()));
 				return 0;
 			}
 			PlayerSubConfig<?> result = playerConfig.createSubConfig(inputSubId);
 			if(result == null){
-				context.getSource().sendFailure(new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH));
 				return 0;
 			}
-			sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_create_sub"), sourcePlayer.getUUID());
+			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub"), sourcePlayer.getUUID());
 			return 1;
 		};
 	}

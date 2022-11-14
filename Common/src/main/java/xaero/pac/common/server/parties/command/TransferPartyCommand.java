@@ -43,6 +43,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -55,7 +56,11 @@ public class TransferPartyCommand {
 				Commands.literal("transfer").requires(requirement).then(Commands.argument("new-owner", StringArgumentType.word())
 						.suggests(PartyCommands.getPartyMemberSuggestor())
 						.executes(context -> {
-							context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_transfer_use_confirm"));
+							ServerPlayer player = context.getSource().getPlayerOrException();
+							MinecraftServer server = context.getSource().getServer();
+							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_transfer_use_confirm"));
 							return 0;
 						})
 						.then(Commands.literal("confirm")
@@ -64,6 +69,7 @@ public class TransferPartyCommand {
 							UUID playerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 
@@ -71,11 +77,11 @@ public class TransferPartyCommand {
 							IPartyMember targetMember = playerParty.getMemberInfo(targetUsername);
 							
 							if(targetMember == null) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_transfer_not_member", targetUsername));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_transfer_not_member", targetUsername));
 								return 0;
 							}
 							if(targetMember == playerParty.getOwner()) {
-								context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_transfer_already_owner", targetUsername));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_transfer_already_owner", targetUsername));
 								return 0;
 							}
 							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
@@ -85,10 +91,10 @@ public class TransferPartyCommand {
 								if (newOwnerPlayer != null)
 									server.getCommands().sendCommands(newOwnerPlayer);
 								server.getCommands().sendCommands(player);
-								new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_transfer_success", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+								new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_transfer_success", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 								return 1;
 							}
-							context.getSource().sendFailure(new TranslatableComponent("gui.xaero_parties_transfer_failed"));
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_transfer_failed"));
 							return 0;
 						}))));
 		dispatcher.register(command);

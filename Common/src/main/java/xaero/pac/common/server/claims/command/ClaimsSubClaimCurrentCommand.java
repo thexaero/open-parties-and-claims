@@ -26,7 +26,6 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -46,6 +45,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -100,18 +100,19 @@ public class ClaimsSubClaimCurrentCommand {
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			MinecraftServer server = context.getSource().getServer();
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			GameProfile inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 					"gui.xaero_claims_sub_current_too_many_targets",
-					"gui.xaero_claims_sub_current_invalid_target");
+					"gui.xaero_claims_sub_current_invalid_target", adaptiveLocalizer);
 			if(inputPlayer == null)
 				return 0;
 			UUID configPlayerUUID = inputPlayer.getId();
 
-			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;
-			sourcePlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_sub_current", playerConfig.getEffective(option)), sourcePlayer.getUUID());
+			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", playerConfig.getEffective(option)), sourcePlayer.getUUID());
 			return 1;
 		};
 	}

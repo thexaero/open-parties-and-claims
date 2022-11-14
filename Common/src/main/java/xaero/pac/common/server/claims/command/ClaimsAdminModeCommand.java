@@ -23,7 +23,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -44,6 +43,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 public class ClaimsAdminModeCommand {
 
@@ -66,10 +66,14 @@ public class ClaimsAdminModeCommand {
 					})
 				.executes(context -> {
 					ServerPlayer player = context.getSource().getPlayerOrException();
+					MinecraftServer server = player.getServer();
+					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+							serverData = ServerData.from(server);
 					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 					mainCapability.setClaimsAdminMode(!mainCapability.isClaimsAdminMode());
 					mainCapability.setClaimsNonallyMode(false);
-					player.sendMessage(new TranslatableComponent(mainCapability.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"), player.getUUID());
+					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+					player.sendMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"), player.getUUID());
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(mainCapability.isClaimsAdminMode(), mainCapability.isClaimsServerMode()));
 					return 1;
 				}));

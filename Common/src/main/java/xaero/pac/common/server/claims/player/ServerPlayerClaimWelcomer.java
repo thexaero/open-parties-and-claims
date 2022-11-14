@@ -22,7 +22,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -41,6 +40,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -52,6 +52,7 @@ public class ServerPlayerClaimWelcomer {
 		IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
 		IPlayerChunkClaim currentClaim = claimsManager.get(player.getLevel().dimension().location(), player.chunkPosition());
 		if (!Objects.equals(lastClaimCheck, currentClaim)) {
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();
 			IPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = currentClaim == null ? null : serverData.getServerClaimsManager().getPlayerInfo(currentClaimId);
 			boolean isOwner = !mainCap.isClaimsNonallyMode() && currentClaim != null && Objects.equals(currentClaimId, player.getUUID());
@@ -62,16 +63,16 @@ public class ServerPlayerClaimWelcomer {
 			int claimColor = claimConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
 			MutableComponent subTitleText;
 			if (playerClaimInfo == null)
-				subTitleText = customName == null || customName.isEmpty() ? new TranslatableComponent("gui.xaero_pac_title_entered_wilderness") : new TranslatableComponent(customName);
+				subTitleText = adaptiveLocalizer.getFor(player, customName == null || customName.isEmpty() ? "gui.xaero_pac_title_entered_wilderness" : customName);
 			else {
-				TranslatableComponent properDesc;
-				Component forceloadedComponent = currentClaim.isForceloadable() ? new TranslatableComponent("gui.xaero_pac_marked_for_forceload") : new TextComponent("");
+				MutableComponent properDesc;
+				Component forceloadedComponent = currentClaim.isForceloadable() ? adaptiveLocalizer.getFor(player, "gui.xaero_pac_marked_for_forceload") : new TextComponent("");
 				if (Objects.equals(currentClaimId, PlayerConfig.SERVER_CLAIM_UUID))
-					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_server_claim", forceloadedComponent);
+					properDesc = adaptiveLocalizer.getFor(player, "gui.xaero_pac_title_entered_server_claim", forceloadedComponent);
 				else if (Objects.equals(currentClaimId, PlayerConfig.EXPIRED_CLAIM_UUID))
-					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_expired_claim", forceloadedComponent);
+					properDesc = adaptiveLocalizer.getFor(player, "gui.xaero_pac_title_entered_expired_claim", forceloadedComponent);
 				else
-					properDesc = new TranslatableComponent("gui.xaero_pac_title_entered_claim", playerClaimInfo.getPlayerUsername(), forceloadedComponent);
+					properDesc = adaptiveLocalizer.getFor(player, "gui.xaero_pac_title_entered_claim", playerClaimInfo.getPlayerUsername(), forceloadedComponent);
 				if (customName != null && !customName.isEmpty()) {
 					subTitleText = new TextComponent(customName + " - ");
 					subTitleText.getSiblings().add(properDesc);

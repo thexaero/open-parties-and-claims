@@ -63,6 +63,8 @@ import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.player.localization.ServerTranslationLoader;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTaskHandler;
 
@@ -250,12 +252,14 @@ public class ServerDataInitializer {
 					.build();
 			chunkProtection.updateTagExceptions();
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
+			Map<String, String> serverTranslations = new ServerTranslationLoader().loadFromResources(server);
+			AdaptiveLocalizer adaptiveLocalizer = new AdaptiveLocalizer(serverTranslations);
 
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
 					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
 					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
 					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, playerWorldJoinHandler, serverInfo, serverInfoIO, 
-					claimsExpirationHandler, objectExpirationCheckTaskHandler);
+					claimsExpirationHandler, objectExpirationCheckTaskHandler, adaptiveLocalizer);
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);
 			return serverData;
