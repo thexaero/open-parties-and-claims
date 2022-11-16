@@ -765,7 +765,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes prevention of item tossing by some mobs. Requires the tossing mob to be set as the item's thrower.\n Modded mobs are pretty likely to do it themselves or have it done by this mod. Otherwise, the toss won't be prevented.\n\n"
+						"When enabled, claimed chunk protection includes prevention of item tossing by some mobs. Requires the tossing mob to be set as the item's thrower.\nModded mobs are pretty likely to do it themselves or have it done by this mod. Otherwise, the toss won't be prevented.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
