@@ -45,7 +45,9 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
+import java.awt.*;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -68,10 +70,11 @@ public class InviteAcceptPartyCommand {
 							UUID playerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 							if(playerParty != null) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_party_already_in_one"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_already_in_one"));
 								return 0;
 							}
 							String targetPartyStringId = context.getArgument("id", String.class);
@@ -79,28 +82,28 @@ public class InviteAcceptPartyCommand {
 							try {
 								targetPartyId = UUID.fromString(targetPartyStringId);
 							} catch(IllegalArgumentException iae) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_invalid_id"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_invalid_id"));
 								return 0;
 							}
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetParty = partyManager.getPartyById(targetPartyId);
 							if(targetParty == null) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_party_not_exist"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_not_exist"));
 								return 0;
 							}
 							if(!targetParty.isInvited(playerId)) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_party_not_invited"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_not_invited"));
 								return 0;
 							}
 							if(targetParty.getMemberCount() >= ServerConfig.CONFIG.maxPartyMembers.get()) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_join_member_limit"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_member_limit"));
 								return 0;
 							}
 							IPartyMember addedPartyMember = targetParty.addMember(playerId, null, player.getGameProfile().getName());
 							if(addedPartyMember == null)
 								return 0;
-							player.sendSystemMessage(Component.translatable("gui.xaero_parties_join_success", targetParty.getDefaultName()));
+							player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_success", targetParty.getDefaultName()), player.getUUID());
 							
-							new PartyOnCommandUpdater().update(playerId, server, targetParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_join_success_info", Component.literal(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
+							new PartyOnCommandUpdater().update(playerId, serverData, targetParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_join_success_info", new TextComponent(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
 							server.getCommands().sendCommands(player);
 							return 1;
 						})));

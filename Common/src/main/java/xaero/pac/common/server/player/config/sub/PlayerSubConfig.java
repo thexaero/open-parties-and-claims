@@ -44,22 +44,22 @@ public class PlayerSubConfig
 	P extends IServerParty<?, ?, ?>
 > extends PlayerConfig<P> implements ILinkedChainNode<PlayerSubConfig<P>>, IPlayerConfig {
 
-	public static final Set<IPlayerConfigOptionSpecAPI<?>> OVERRIDABLE_OPTIONS;
+	public static final Set<IPlayerConfigOptionSpecAPI<?>> STATIC_OVERRIDABLE_OPTIONS;
 
 	static {
-		OVERRIDABLE_OPTIONS = new HashSet<>();
-		OVERRIDABLE_OPTIONS.addAll(OPTIONS.values());
-		OVERRIDABLE_OPTIONS.remove(USED_SUBCLAIM);
-		OVERRIDABLE_OPTIONS.remove(USED_SERVER_SUBCLAIM);
-		OVERRIDABLE_OPTIONS.remove(PARTY_NAME);
-		OVERRIDABLE_OPTIONS.remove(BONUS_CHUNK_CLAIMS);
-		OVERRIDABLE_OPTIONS.remove(BONUS_CHUNK_FORCELOADS);
-		OVERRIDABLE_OPTIONS.remove(SHARE_LOCATION_WITH_PARTY);
-		OVERRIDABLE_OPTIONS.remove(SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES);
-		OVERRIDABLE_OPTIONS.remove(RECEIVE_LOCATIONS_FROM_PARTY);
-		OVERRIDABLE_OPTIONS.remove(RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES);
-		OVERRIDABLE_OPTIONS.remove(FORCELOAD);
-		OVERRIDABLE_OPTIONS.remove(OFFLINE_FORCELOAD);
+		STATIC_OVERRIDABLE_OPTIONS = new HashSet<>();
+		STATIC_OVERRIDABLE_OPTIONS.addAll(OPTIONS.values());
+		STATIC_OVERRIDABLE_OPTIONS.remove(USED_SUBCLAIM);
+		STATIC_OVERRIDABLE_OPTIONS.remove(USED_SERVER_SUBCLAIM);
+		STATIC_OVERRIDABLE_OPTIONS.remove(PARTY_NAME);
+		STATIC_OVERRIDABLE_OPTIONS.remove(BONUS_CHUNK_CLAIMS);
+		STATIC_OVERRIDABLE_OPTIONS.remove(BONUS_CHUNK_FORCELOADS);
+		STATIC_OVERRIDABLE_OPTIONS.remove(SHARE_LOCATION_WITH_PARTY);
+		STATIC_OVERRIDABLE_OPTIONS.remove(SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES);
+		STATIC_OVERRIDABLE_OPTIONS.remove(RECEIVE_LOCATIONS_FROM_PARTY);
+		STATIC_OVERRIDABLE_OPTIONS.remove(RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES);
+		STATIC_OVERRIDABLE_OPTIONS.remove(FORCELOAD);
+		STATIC_OVERRIDABLE_OPTIONS.remove(OFFLINE_FORCELOAD);
 	}
 
 	private final PlayerConfig<P> mainConfig;
@@ -87,12 +87,12 @@ public class PlayerSubConfig
 
 	@Override
 	public boolean isOptionAllowed(@Nonnull IPlayerConfigOptionSpecAPI<?> option) {
-		return super.isOptionAllowed(option) && OVERRIDABLE_OPTIONS.contains(option);
+		return super.isOptionAllowed(option) && manager.getOverridableOptions().contains(option);
 	}
 
 	private <T extends Comparable<T>> T getInner(IPlayerConfigOptionSpecAPI<T> o, boolean inherit){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
-		if(!OVERRIDABLE_OPTIONS.contains(option))
+		if(!manager.getOverridableOptions().contains(option))
 			return inherit ? mainConfig.getFromEffectiveConfig(option) : null;
 		if(isOptionDefaulted(option))
 			return inherit ? manager.getDefaultConfig().getFromEffectiveConfig(option) : null;

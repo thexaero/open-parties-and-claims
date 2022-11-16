@@ -24,7 +24,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
-import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.ConfigUtil;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
@@ -34,7 +33,6 @@ import xaero.pac.common.server.io.ObjectManagerIOObject;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
@@ -54,14 +52,36 @@ public class PlayerConfig
 	P extends IServerParty<?, ?, ?>
 > implements IPlayerConfig, ObjectManagerIOObject {
 
-	private static final Map<String, IPlayerConfigOptionSpecAPI<?>> OPTIONS = PlayerConfigOptions.OPTIONS;//here so that SPEC gets a value
-	public static ForgeConfigSpec SPEC;
-
 	public final static int MAX_SUB_ID_LENGTH = 16;
 	public final static String SUB_ID_REGEX = "[a-zA-Z\\d\\-_]+";
 	public final static UUID SERVER_CLAIM_UUID = new UUID(0, 0);
 	public final static UUID EXPIRED_CLAIM_UUID = new UUID(0, 1);
 	public final static String MAIN_SUB_ID = "main";
+	public final static String PLAYER_CONFIG_ROOT = "playerConfig";
+	public final static String PLAYER_CONFIG_ROOT_DOT = PLAYER_CONFIG_ROOT + ".";
+	public static final List<Integer> PROTECTION_LEVELS = List.of(0, 1, 2, 3);
+	public static final String PROTECTION_LEVELS_TOOLTIP = """
+					1) Every - protected from all players/entities that don't have chunk access.
+					2) Not Party - only players/entities not in the same party as you.
+					3) Not Ally - only players/entities not in any party allied by yours.""";
+
+	public static final String PROTECTION_LEVELS_TOOLTIP_PLAYERS = """
+					1) Every - protected from all players that don't have chunk access.
+					2) Not Party - only players not in the same party as you.
+					3) Not Ally - only players not in any party allied by yours.""";
+	public static final String PROTECTION_LEVELS_TOOLTIP_OWNED = """
+					1) Every - protected from all entities not owned by a player that has chunk access.
+					2) Not Party - all entities, except owned by a player in the same party as you.
+					3) Not Ally - all entities, except owned by a player in any party allied by yours.""";
+
+	public static final String EXCEPTION_LEVELS_TOOLTIP = """
+					1) Party - players or entities owned by players in the same party as you.
+					2) Allies - players or entities owned by players in parties that are allied by yours.
+					3) Every - all players/entities.""";
+	public static final String EXCEPTION_LEVELS_TOOLTIP_PLAYERS = """
+					1) Party - players in the same party as you.
+					2) Allies - players in parties that are allied by yours.
+					3) Every - all players.""";
 
 	protected final PlayerConfigManager<P, ?> manager;
 	private final PlayerConfigType type;
@@ -106,7 +126,8 @@ public class PlayerConfig
 			getStorage().remove(option.getPath());
 		else
 			getStorage().set(option.getPath(), value);
-		setDirty(true);
+		if(manager.isLoaded())
+			setDirty(true);
 	}
 
 	private <T extends Comparable<T>> T get(PlayerConfigOptionSpec<T> option) {
@@ -195,14 +216,26 @@ public class PlayerConfig
 		return serverPlayers.getPlayer(playerId);
 	}
 
-	public boolean isPlayerConfigurable(IPlayerConfigOptionSpecAPI<?> o){
-		return o == USED_SUBCLAIM || o == USED_SERVER_SUBCLAIM || ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getId());
+	public static boolean isPlayerConfigurable(IPlayerConfigOptionSpecAPI<?> o){
+		return o == USED_SUBCLAIM || o == USED_SERVER_SUBCLAIM ||
+				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getId()) ||
+				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getShortenedId());
 	}
 
 	protected boolean isOptionDefaulted(PlayerConfigOptionSpec<?> option){
 		return playerId != null && !Objects.equals(playerId, SERVER_CLAIM_UUID) && !Objects.equals(playerId, EXPIRED_CLAIM_UUID) &&
-				!ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getId()) &&
+				!isOptionOPConfigurable(option) &&
 				!isPlayerConfigurable(option);//kinda annoying that it iterates over the whole lists but the lists should be small
+	}
+
+	public static boolean isOptionOPConfigurable(IPlayerConfigOptionSpecAPI<?> option){
+		return ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getId()) ||
+				ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getShortenedId());
+	}
+
+	public static boolean isOptionOPConfigurable(String fullOptionId){
+		return ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(fullOptionId) ||
+				ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(fullOptionId.substring(PLAYER_CONFIG_ROOT_DOT.length()));
 	}
 
 	@Nonnull

@@ -223,6 +223,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		}
 	}
 
+	public void onOwnerChange(PartyMember oldOwner, PartyMember newOwner) {
+		partiesByOwner.put(newOwner.getUUID(), partiesByOwner.remove(oldOwner.getUUID()));
+	}
+
 	@Override
 	public Iterable<ServerParty> getToSave(){
 		return toSave;
@@ -242,7 +246,9 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	@Nonnull
 	@Override
 	public Stream<ServerParty> getPartiesThatAlly(@Nonnull UUID allyId) {
-		return getPartiesByAlly(allyId).stream().map(this::getPartyById).filter(Objects::nonNull);
+		if(isAlliedByAnyone(allyId))
+			return getPartiesByAlly(allyId).stream().map(this::getPartyById).filter(Objects::nonNull);
+		return Stream.empty();
 	}
 	
 	public void debug() {
@@ -270,7 +276,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	public PartyExpirationHandler getExpirationHandler() {
 		return expirationHandler;
 	}
-	
+
 	public static final class Builder {
 
 		private MinecraftServer server;

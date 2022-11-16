@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.player.config.sub;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -47,7 +46,7 @@ public class PlayerSubConfigDeletionStarter {
 		MinecraftServer server = serverData.getServer();
 		UUID callerUUID = caller == null ? null : caller.getUUID();
 		if(caller != null)
-			caller.sendSystemMessage(Component.translatable("gui.xaero_pac_config_delete_sub_started", subConfig.getSubId()));
+			caller.sendMessage(serverData.getAdaptiveLocalizer().getFor(caller, "gui.xaero_pac_config_delete_sub_started", subConfig.getSubId()), callerUUID);
 		subConfig.setBeingDeleted();
 		PlayerSubClaimDeletionSpreadoutTask taskNormal = PlayerSubClaimDeletionSpreadoutTask.Builder.begin()
 				.setForceloadable(false)

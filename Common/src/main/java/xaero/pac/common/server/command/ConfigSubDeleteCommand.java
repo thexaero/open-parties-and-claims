@@ -27,7 +27,6 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -47,6 +46,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfigDeletionStarter;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 
@@ -91,6 +91,10 @@ public class ConfigSubDeleteCommand {
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			MinecraftServer server = context.getSource().getServer();
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(server);
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
 			GameProfile inputPlayer = null;
@@ -98,16 +102,13 @@ public class ConfigSubDeleteCommand {
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_delete_sub_too_many_targets",
-						"gui.xaero_pac_config_delete_sub_invalid_target");
+						"gui.xaero_pac_config_delete_sub_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
 			} else
 				configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
 
-			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(server);
 
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			if(serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
@@ -117,16 +118,16 @@ public class ConfigSubDeleteCommand {
 			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			PlayerConfig<?> result = playerConfig.getSubConfig(inputSubId);
 			if(result == null){
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_delete_sub_not_exist"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_not_exist"));
 				return 0;
 			}
 			if(result == playerConfig){
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_delete_sub_cant_main"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_cant_main"));
 				return 0;
 			}
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(configPlayerUUID);
 			if(playerInfo.hasReplacementTasks()){
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_delete_sub_already_replacing"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_already_replacing"));
 				return 0;
 			}
 			new PlayerSubConfigDeletionStarter().start(sourcePlayer, playerInfo, result, serverData);

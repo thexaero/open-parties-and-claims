@@ -18,7 +18,9 @@
 
 package xaero.pac.common.server.player.data.api;
 
+import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -75,6 +77,16 @@ public abstract class ServerPlayerDataAPI {
 		if(result == null) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData());
+
+			if(player.connection != null){
+				Connection connection = player.connection.getConnection();
+				if(connection != null && connection.getDisconnectedReason() != null) {
+					//Disconnected players should never be fake players
+					//Disconnected before login was even handled by the mod (usually means an error)
+					//Minecraft leaves such players in the list, which causes crashes afterwards. This should help.
+					OpenPartiesAndClaims.INSTANCE.getCommonEvents().onPlayerLogIn(player);
+				}
+			}
 		}
 		return result;
 	}

@@ -71,6 +71,7 @@ public class PlayerClaimActionRequestHandler {
 					player);
 			return;
 		}
+		manager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 		UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(player.getServer());

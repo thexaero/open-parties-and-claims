@@ -23,7 +23,6 @@ import net.minecraft.tags.TagKey;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class ChunkProtectionExceptionSet<T> {
@@ -31,13 +30,13 @@ public final class ChunkProtectionExceptionSet<T> {
 	private final Set<T> exceptions;
 	private final Set<T> tagBasedExceptions;
 	private final Set<TagKey<T>> exceptionTags;
-	private final Function<TagKey<T>, Stream<T>> tagStreamGetter;
+	private final ExceptionElementType<T> elementType;
 
-	private ChunkProtectionExceptionSet(Set<T> exceptions, Set<T> tagBasedExceptions, Set<TagKey<T>> exceptionTags, Function<TagKey<T>, Stream<T>> tagStreamGetter) {
+	private ChunkProtectionExceptionSet(Set<T> exceptions, Set<T> tagBasedExceptions, Set<TagKey<T>> exceptionTags, ExceptionElementType<T> elementType) {
 		this.exceptions = exceptions;
 		this.tagBasedExceptions = tagBasedExceptions;
 		this.exceptionTags = exceptionTags;
-		this.tagStreamGetter = tagStreamGetter;
+		this.elementType = elementType;
 	}
 
 	public boolean contains(T object){
@@ -46,18 +45,27 @@ public final class ChunkProtectionExceptionSet<T> {
 
 	public void updateTagExceptions(){
 		tagBasedExceptions.clear();
-		exceptionTags.stream().flatMap(tagStreamGetter).forEach(tagBasedExceptions::add);
+		exceptionTags.stream().flatMap(elementType.getTagStreamGetter()).forEach(tagBasedExceptions::add);
+	}
+
+	public Stream<Either<T, TagKey<T>>> stream(){
+		return Stream.concat(exceptions.stream().map(Either::left), exceptionTags.stream().map(Either::right));
+	}
+
+	public ExceptionElementType<T> getElementType() {
+		return elementType;
 	}
 
 	public static class Builder<T> {
 
 		private final Set<T> exceptions;
 		private final Set<TagKey<T>> exceptionTags;
-		private Function<TagKey<T>, Stream<T>> tagStreamGetter;
+		private final ExceptionElementType<T> elementType;
 
-		private Builder(){
+		private Builder(ExceptionElementType<T> elementType){
 			exceptions = new HashSet<>();
 			exceptionTags = new HashSet<>();
+			this.elementType = elementType;
 		}
 
 		public Builder<T> setDefault(){
@@ -82,19 +90,12 @@ public final class ChunkProtectionExceptionSet<T> {
 			return this;
 		}
 
-		public Builder<T> setTagStreamGetter(Function<TagKey<T>, Stream<T>> tagStreamGetter) {
-			this.tagStreamGetter = tagStreamGetter;
-			return this;
-		}
-
 		public ChunkProtectionExceptionSet<T> build(){
-			if(tagStreamGetter == null)
-				throw new IllegalStateException();
-			return new ChunkProtectionExceptionSet<>(exceptions, new HashSet<>(), exceptionTags, tagStreamGetter);
+			return new ChunkProtectionExceptionSet<>(exceptions, new HashSet<>(), exceptionTags, elementType);
 		}
 
-		public static <T> Builder<T> begin(){
-			return new Builder<T>().setDefault();
+		public static <T> Builder<T> begin(ExceptionElementType<T> elementType){
+			return new Builder<T>(elementType).setDefault();
 		}
 
 	}

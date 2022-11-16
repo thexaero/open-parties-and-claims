@@ -56,6 +56,8 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private ResourceLocation lastClaimUpdateDimension;
 	private IPlayerChunkClaim lastClaimUpdateState;
 	private UUID lastOtherConfigRequest;
+	private boolean hasMod;
+	private boolean receivedLoginEvent;
 
 	public ServerPlayerData() {
 		super();
@@ -112,7 +114,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	}
 
 	public IPlayerChunkClaim getLastClaimCheck() {
-		return (IPlayerChunkClaim) lastClaimCheck;
+		return lastClaimCheck;
 	}
 	
 	public PartyMemberDynamicInfoSyncable getPartyMemberDynamicInfo() {
@@ -199,6 +201,25 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public void setLastOtherConfigRequest(UUID lastOtherConfigRequest) {
 		this.lastOtherConfigRequest = lastOtherConfigRequest;
+	}
+
+	public void setHasMod(boolean hasMod) {
+		this.hasMod = hasMod;
+	}
+
+	public boolean hasMod() {
+		return hasMod;
+	}
+
+	public void setReceivedLoginEvent(boolean receivedLoginEvent) {
+		this.receivedLoginEvent = receivedLoginEvent;
+	}
+
+	public boolean hasReceivedLoginEvent() {
+		return receivedLoginEvent;
+	}
+
+	public void onTick(){
 	}
 
 }

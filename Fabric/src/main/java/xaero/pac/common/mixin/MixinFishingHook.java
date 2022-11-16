@@ -19,20 +19,27 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.projectile.FishingHook;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import xaero.pac.common.server.core.ServerCoreFabric;
+import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(Piglin.class)
-public class MixinPiglin {
+@Mixin(value = FishingHook.class, priority = 1000001)
+public class MixinFishingHook {
 
-	@Inject(method = "wantsToPickUp", at = @At("HEAD"))
-	public void onMobGriefGameRuleMethod(CallbackInfoReturnable<Boolean> callbackInfo){
-		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
+	@Inject(method = "setHookedEntity", at = @At("HEAD"), cancellable = true)
+	public void onSetHookedEntity(Entity entity, CallbackInfo ci){
+		if(ServerCore.onSetFishingHookedEntity((FishingHook) (Object)this, entity))
+			ci.cancel();
+	}
+
+	@ModifyArg(method = "retrieve", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+	private Entity onRetrieve(Entity entity){
+		ServerCore.onFishingHookAddEntity(entity, (FishingHook)(Object)this);
+		return entity;
 	}
 
 }

@@ -18,6 +18,7 @@
 
 package xaero.pac.common.registry.item;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -36,6 +37,21 @@ public class ItemRegistryFabric implements IItemRegistry {
 	@Override
 	public Stream<Item> getTagStream(TagKey<Item> tagKey) {
 		return Registry.ITEM.getTag(tagKey).stream().flatMap(HolderSet.Named::stream).map(Holder::value);
+	}
+
+	@Override
+	public ResourceLocation getKey(Item item) {
+		return Registry.ITEM.getKey(item);
+	}
+
+	@Override
+	public Iterable<Item> getIterable(){
+		return Registry.ITEM.stream().toList();
+	}
+
+	@Override
+	public Iterable<TagKey<Item>> getTagIterable(){
+		return Registry.ITEM.getTags().map(Pair::getFirst).toList();
 	}
 
 }

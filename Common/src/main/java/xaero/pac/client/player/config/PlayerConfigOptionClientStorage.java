@@ -72,6 +72,24 @@ public class PlayerConfigOptionClientStorage<T extends Comparable<T>> implements
 
 	@Nonnull
 	@Override
+	public Object[] getTranslationArgs(){
+		return option.getTranslationArgs();
+	}
+
+	@Nonnull
+	@Override
+	public String getCommentTranslation() {
+		return option.getCommentTranslation();
+	}
+
+	@Nonnull
+	@Override
+	public Object[] getCommentTranslationArgs(){
+		return option.getCommentTranslationArgs();
+	}
+
+	@Nonnull
+	@Override
 	public Class<T> getType() {
 		return option.getType();
 	}

@@ -21,17 +21,15 @@ package xaero.pac.client.player.config;
 import com.google.common.collect.Lists;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.config.PlayerConfigOptionValuePacket;
+import xaero.pac.common.packet.config.ServerboundPlayerConfigOptionValuePacket;
 import xaero.pac.common.packet.config.ServerboundSubConfigExistencePacket;
-import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 
 public class PlayerConfigClientSynchronizer {
 	
 	public <T extends Comparable<T>> void syncToServer(PlayerConfigClientStorage config, IPlayerConfigStringableOptionClientStorage<T> option) {
-		PlayerConfigOptionClientStorage<T> packetOptionEntry = new PlayerConfigOptionClientStorage<>((PlayerConfigOptionSpec<T>) option.getOption(), option.getValue());
-		packetOptionEntry.setMutable(option.isMutable());
-		packetOptionEntry.setDefaulted(option.isDefaulted());
-		
-		PlayerConfigOptionValuePacket packet = new PlayerConfigOptionValuePacket(config.getType(), config.getSubId(), config.getOwner(), Lists.newArrayList(packetOptionEntry));
+		PlayerConfigOptionValuePacket.Entry packetOptionEntry = new PlayerConfigOptionValuePacket.Entry(option.getId(), option.getType(), option.getValue(), option.isMutable(), option.isDefaulted());
+
+		ServerboundPlayerConfigOptionValuePacket packet = new ServerboundPlayerConfigOptionValuePacket(config.getType(), config.getSubId(), config.getOwner(), Lists.newArrayList(packetOptionEntry));
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(packet);
 	}
 

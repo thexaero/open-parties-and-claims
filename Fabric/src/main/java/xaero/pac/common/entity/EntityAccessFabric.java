@@ -20,16 +20,12 @@ package xaero.pac.common.entity;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import org.apache.commons.lang3.NotImplementedException;
 
 public class EntityAccessFabric implements IEntityAccess {
 
 	@Override
 	public CompoundTag getPersistentData(Entity entity) {
-		if(entity instanceof ILivingEntity living){//this should be enough for the time being
-			return living.getXaero_OPAC_PersistentData();
-		} else
-			throw new NotImplementedException();
+		return ((IEntityFabric)entity).getXaero_OPAC_PersistentData();
 	}
 
 }

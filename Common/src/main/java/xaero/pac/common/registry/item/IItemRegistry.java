@@ -30,4 +30,10 @@ public interface IItemRegistry {
 
 	public Stream<Item> getTagStream(TagKey<Item> tagKey);
 
+	public ResourceLocation getKey(Item item);
+
+	public Iterable<Item> getIterable();
+
+	public Iterable<TagKey<Item>> getTagIterable();
+
 }

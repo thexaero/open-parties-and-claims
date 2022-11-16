@@ -26,7 +26,6 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.player.Player;
 
@@ -92,26 +91,26 @@ public class ChunkProtectionEntityHelper {
 	}
 	
 	boolean isHostile(Entity e) {
-		return (e.getLevel().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Monster || e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
+		return (e.getLevel().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
 	}
 	
 	boolean isTamed(Entity e, Player p) {
-		if(e instanceof TamableAnimal) {
-			TamableAnimal tameable = (TamableAnimal)e;
-			if(tameable.isTame() && p.getUUID().equals(tameable.getOwnerUUID()))
+		UUID owner = getTamer(e);
+		if(p.getUUID().equals(owner))
 			return true;
-		} else if(e instanceof AbstractHorse) {
-			AbstractHorse horse = (AbstractHorse)e;
-			if(horse.isTamed() && p.getUUID().equals(horse.getOwnerUUID()))
-				return true;
-		} else if(e instanceof Fox) {
-			Fox fox = (Fox)e;
-			if(FOX_TRUSTED_UUID_SECONDARY != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null)))
-				return true;
-			else if(FOX_TRUSTED_UUID_MAIN != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null)))
-				return true;
-		}
+		if(e instanceof Fox fox)
+			return FOX_TRUSTED_UUID_MAIN != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null));
 		return false;
+	}
+
+	UUID getTamer(Entity e){
+		if(e instanceof TamableAnimal tameable)
+			return tameable.isTame() ? tameable.getOwnerUUID() : null;
+		else if(e instanceof AbstractHorse horse)
+			return horse.isTamed() ? horse.getOwnerUUID() : null;
+		else if(e instanceof Fox fox)
+			return FOX_TRUSTED_UUID_SECONDARY != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null) : null;
+		return null;
 	}
 
 }

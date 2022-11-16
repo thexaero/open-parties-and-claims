@@ -18,55 +18,26 @@
 
 package xaero.pac.common.packet.config;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
-import xaero.pac.client.player.config.IPlayerConfigClientStorage;
-import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
-import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.client.player.config.PlayerConfigOptionClientStorage;
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
-import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.ServerData;
-import xaero.pac.common.server.claims.IServerClaimsManager;
-import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
-import xaero.pac.common.server.claims.IServerRegionClaims;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.config.ServerConfig;
-import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI.SetResult;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
-	
-	private final PlayerConfigType type;
-	private final String subId;
-	private final UUID owner;
-	private final List<PlayerConfigOptionClientStorage<?>> entries;
 
-	public PlayerConfigOptionValuePacket(PlayerConfigType type, String subId, UUID owner, List<PlayerConfigOptionClientStorage<?>> entries) {
+	protected final PlayerConfigType type;
+	protected final String subId;
+	protected final UUID owner;
+	protected final List<Entry> entries;
+
+	public PlayerConfigOptionValuePacket(PlayerConfigType type, String subId, UUID owner, List<Entry> entries) {
 		super();
 		this.type = type;
 		this.subId = subId;
@@ -82,7 +53,7 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 		return owner;
 	}
 	
-	public Stream<PlayerConfigOptionClientStorage<?>> entryStream(){
+	public Stream<Entry> entryStream(){
 		return entries.stream();
 	}
 	
@@ -94,12 +65,15 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 		return subId;
 	}
 
-	public static class Codec implements BiConsumer<PlayerConfigOptionValuePacket, FriendlyByteBuf>, Function<FriendlyByteBuf, PlayerConfigOptionValuePacket> {
-		
+	public static abstract class Codec<P extends PlayerConfigOptionValuePacket> implements BiConsumer<P, FriendlyByteBuf>, Function<FriendlyByteBuf, P> {
+
+		protected abstract int getNbtAccounterLimit();
+		protected abstract P create(PlayerConfigType type, String subId, UUID owner, List<Entry> entries);
+
 		@Override
-		public PlayerConfigOptionValuePacket apply(FriendlyByteBuf input) {
+		public P apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(524288));
+				CompoundTag nbt = input.readNbt(new NbtAccounter(getNbtAccounterLimit()));
 				if(nbt == null)
 					return null;
 				String typeString = nbt.getString("t");
@@ -127,7 +101,7 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 					OpenPartiesAndClaims.LOGGER.info("Received an illegal player config option entry number: " + entryListTag.size());
 					return null;
 				}
-				List<PlayerConfigOptionClientStorage<?>> entries = new ArrayList<>(entryListTag.size());
+				List<Entry> entries = new ArrayList<>(entryListTag.size());
 				String warningToOutput = null;
 				for(Tag e : entryListTag) {
 					CompoundTag entryTag = (CompoundTag) e;
@@ -136,53 +110,54 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 						OpenPartiesAndClaims.LOGGER.info("Received player config option id string is not allowed!");
 						return null;
 					}
-					PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) PlayerConfigOptions.OPTIONS.get(optionId);
 					Object value;
-					if(option == null) {
-						if(warningToOutput == null)
-							warningToOutput = "Received unknown player config option id: " + optionId;
-						continue;
+					Class<?> valueType;
+					if(!entryTag.contains("v")) {
+						value = null;
+						valueType = null;
 					} else {
-						if(!entryTag.contains("v"))
-							value = null;
-						else if(option.getType() == Boolean.class)
-							value = entryTag.getBoolean("v");
-						else if(option.getType() == Integer.class)
-							value = entryTag.getInt("v");
-						else if(option.getType() == Double.class)
-							value = entryTag.getDouble("v");
-						else if(option.getType() == Float.class)
-							value = entryTag.getFloat("v");
-						else if(option.getType() == String.class) {
-							value = entryTag.getString("v");
+						Tag valueTag = entryTag.get("v");
+						if(valueTag instanceof ByteTag byteTag) {
+							value = byteTag.getAsByte() != 0;
+							valueType = Boolean.class;
+						} else if(valueTag instanceof IntTag intTag) {
+							value = intTag.getAsInt();
+							valueType = Integer.class;
+						} else if(valueTag instanceof DoubleTag doubleTag) {
+							value = doubleTag.getAsDouble();
+							valueType = Double.class;
+						} else if(valueTag instanceof FloatTag floatTag) {
+							value = floatTag.getAsFloat();
+							valueType = Float.class;
+						} else if(valueTag instanceof StringTag stringTag) {
+							value = stringTag.getAsString();
+							valueType = String.class;
 							if(((String)value).length() > 1000) {
 								OpenPartiesAndClaims.LOGGER.info("Received a string option value that is too long: " + ((String)value).length());
 								return null;
 							}
 						} else {
 							if(warningToOutput == null)
-								warningToOutput = "Received unknown player config option type: " + option.getType();
+								warningToOutput = "Received unknown player config option value tag type: " + valueTag.getType();
 							continue;
 						}
 					}
 					boolean mutable = entryTag.getBoolean("m");
 					boolean defaulted = entryTag.getBoolean("d");
-					PlayerConfigOptionClientStorage<?> entry = PlayerConfigOptionClientStorage.createCast(option, value);
-					entry.setMutable(mutable);
-					entry.setDefaulted(defaulted);
+					Entry entry = new Entry(optionId, valueType, value, mutable, defaulted);
 					entries.add(entry);
 					
 				}
 				if(warningToOutput != null)
 					OpenPartiesAndClaims.LOGGER.info(warningToOutput);
-				return new PlayerConfigOptionValuePacket(type, subID, owner, entries);
+				return create(type, subID, owner, entries);
 			} catch(Throwable t) {
 				return null;
 			}
 		}
 
 		@Override
-		public void accept(PlayerConfigOptionValuePacket t, FriendlyByteBuf u) {
+		public void accept(P t, FriendlyByteBuf u) {
 			CompoundTag nbt = new CompoundTag();
 			nbt.putString("t", t.getType().name());
 			if(t.subId != null)
@@ -195,24 +170,23 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 			
 			ListTag entryListTag = new ListTag();
 			
-			for(PlayerConfigOptionClientStorage<?> entry : t.entries) {
+			for(Entry entry : t.entries) {
 				CompoundTag entryTag = new CompoundTag();
-				PlayerConfigOptionSpec<?> entryOption = entry.getOption();
 				Object entryValue = entry.getValue();
-				entryTag.putString("i", entryOption.getId());
+				entryTag.putString("i", entry.getId());
 				if(entryValue != null) {
-					if (entryOption.getType() == Boolean.class)
+					if (entry.getType() == Boolean.class)
 						entryTag.putBoolean("v", (boolean) entryValue);
-					else if (entryOption.getType() == Integer.class)
+					else if (entry.getType() == Integer.class)
 						entryTag.putInt("v", (int) entryValue);
-					else if (entryOption.getType() == Double.class)
+					else if (entry.getType() == Double.class)
 						entryTag.putDouble("v", (double) entryValue);
-					else if (entryOption.getType() == Float.class)
+					else if (entry.getType() == Float.class)
 						entryTag.putFloat("v", (float) entryValue);
-					else if (entryOption.getType() == String.class)
+					else if (entry.getType() == String.class)
 						entryTag.putString("v", (String) entryValue);
 					else
-						OpenPartiesAndClaims.LOGGER.info("Sending an unknown player config option type: " + entryOption.getType());
+						OpenPartiesAndClaims.LOGGER.info("Sending an unknown player config option type: " + entry.getType());
 				}
 				entryTag.putBoolean("m", entry.isMutable());
 				entryTag.putBoolean("d", entry.isDefaulted());
@@ -226,101 +200,42 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 		
 	}
 
-	public static class ClientHandler implements Consumer<PlayerConfigOptionValuePacket> {
+	public static final class Entry {
 
-		@Override
-		public void accept(PlayerConfigOptionValuePacket t) {
-			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
-					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
+		private final String id;
+		private final Class<?> type;
+		private final Object value;
+		private final boolean mutable;
+		private final boolean defaulted;
 
-			IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage = null;
-			boolean isForOtherPlayer = false;
-			if(t.getType() == PlayerConfigType.PLAYER) {
-				isForOtherPlayer = t.getOwner() != null;
-				if(isForOtherPlayer) {
-					if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen instanceof OtherPlayerConfigWaitScreen) {
-						if(t.subId == null) {
-							IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> prevOtherStorage = playerConfigStorageManager.getOtherPlayerConfig();
-							storage = playerConfigStorageManager.beginConfigStorageBuild(LinkedHashMap::new).setType(PlayerConfigType.PLAYER).setOwner(t.owner).build();
-							if(prevOtherStorage != null && t.getOwner().equals(prevOtherStorage.getOwner()))
-								storage.setSelectedSubConfig(prevOtherStorage.getSelectedSubConfig());
-							playerConfigStorageManager.setOtherPlayerConfig(storage);
-						} else
-							storage = playerConfigStorageManager.getOtherPlayerConfig();
-					}
-				} else
-					storage = playerConfigStorageManager.getMyPlayerConfig();
-			} else
-				storage =
-						t.getType() == PlayerConfigType.SERVER ? playerConfigStorageManager.getServerClaimsConfig() :
-								t.getType() == PlayerConfigType.EXPIRED ? playerConfigStorageManager.getExpiredClaimsConfig() :
-										t.getType() == PlayerConfigType.WILDERNESS ? playerConfigStorageManager.getWildernessConfig() :
-												playerConfigStorageManager.getDefaultPlayerConfig();
-			if(storage != null) {
-				if(t.subId != null)
-					storage = storage.getOrCreateSubConfig(t.subId);
-				final IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> forwardedStorage = storage;
-				t.entryStream().forEach(entry -> {
-					IPlayerConfigStringableOptionClientStorage<?> optionStorage = forwardedStorage.getOptionStorage(entry.getOption());
-					optionStorage.setCastValue(entry.getValue());
-					optionStorage.setMutable(entry.isMutable());
-					optionStorage.setDefaulted(entry.isDefaulted());
-				});
-			}
+		public Entry(String id, Class<?> type, Object value, boolean mutable, boolean defaulted) {
+			this.id = id;
+			this.type = type;
+			this.value = value;
+			this.mutable = mutable;
+			this.defaulted = defaulted;
 		}
 
-	}
-
-	public static class ServerHandler implements BiConsumer<PlayerConfigOptionValuePacket, ServerPlayer> {
-
-		@SuppressWarnings("unchecked")
-		private <T extends Comparable<T>> SetResult setConfigUnchecked(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value) {
-			return config.tryToSet(option, (T) value);
+		public String getId() {
+			return id;
 		}
 
-		@Override
-		public void accept(PlayerConfigOptionValuePacket t, ServerPlayer serverPlayer) {
-			if(t.entries.size() > 1) {
-				OpenPartiesAndClaims.LOGGER.info("A player is attempting to modify multiple options in a single packet! Name: " + serverPlayer.getGameProfile().getName());
-				return;
-			}
-			boolean isOP = serverPlayer.hasPermissions(2);
-			PlayerConfigOptionClientStorage<?> optionEntry = t.entries.get(0);
-			UUID ownerId = t.getType() != PlayerConfigType.PLAYER ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
-			if(!isOP) {
-				if(t.getType() != PlayerConfigType.PLAYER) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a config without required permissions! Name: " + serverPlayer.getGameProfile().getName());
-					return;
-				}
-				if(ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(optionEntry.getOption().getId())) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a op-only option! Name: " + serverPlayer.getGameProfile().getName());
-					return;
-				}
-				if(!Objects.equals(ownerId, serverPlayer.getUUID())) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify another player's config! Name: " + serverPlayer.getGameProfile().getName());
-					return;
-				}
-			}
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverPlayer.getServer());
-			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
-			IPlayerConfig config =
-					t.getType() == PlayerConfigType.PLAYER ?
-							playerConfigs.getLoadedConfig(ownerId) :
-							t.getType() == PlayerConfigType.SERVER ?
-									playerConfigs.getServerClaimConfig() :
-									t.getType() == PlayerConfigType.EXPIRED ?
-											playerConfigs.getExpiredClaimConfig() :
-											t.getType() == PlayerConfigType.WILDERNESS ?
-													playerConfigs.getWildernessConfig() :
-													playerConfigs.getDefaultConfig();
-			if(t.subId != null)
-				config = config.getSubConfig(t.subId);
-			if(config != null) {
-				SetResult result = setConfigUnchecked(config, optionEntry.getOption(), optionEntry.getValue());
-				if (result != SetResult.SUCCESS && (config.getType() != PlayerConfigType.PLAYER || serverPlayer.getUUID().equals(config.getPlayerId())))
-					playerConfigs.getSynchronizer().syncOptionToClient(serverPlayer, config, optionEntry.getOption());//restore the correct value
-			}
+		public Class<?> getType() {
+			return type;
 		}
+
+		public Object getValue() {
+			return value;
+		}
+
+		public boolean isMutable() {
+			return mutable;
+		}
+
+		public boolean isDefaulted() {
+			return defaulted;
+		}
+
 	}
 	
 }

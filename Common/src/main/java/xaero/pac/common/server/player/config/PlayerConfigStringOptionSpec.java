@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.config;
 
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import java.util.List;
@@ -33,9 +34,10 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 	
 	private final int maxLength;
 
-	private PlayerConfigStringOptionSpec(Class<String> type, String id, List<String> path, String defaultValue, BiFunction<PlayerConfig<?>, String, String> defaultReplacer, String comment,
-										 String translation, Function<String, String> commandInputParser, Function<String, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, String> serverSideValidator, BiPredicate<PlayerConfigClientStorage, String> clientSideValidator, int maxLength, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter) {
-		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
+	private PlayerConfigStringOptionSpec(Class<String> type, String id, String shortenedId, List<String> path, String defaultValue, BiFunction<PlayerConfig<?>, String, String> defaultReplacer, String comment,
+										 String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, String> commandInputParser, Function<String, Component> commandOutputWriter,
+										 BiPredicate<PlayerConfig<?>, String> serverSideValidator, BiPredicate<PlayerConfigClientStorage, String> clientSideValidator, int maxLength, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
+		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType);
 		this.maxLength = maxLength;
 	}
 	
@@ -84,8 +86,8 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 		}
 
 		@Override
-		protected PlayerConfigStringOptionSpec buildInternally(List<String> path, Function<String, String> commandInputParser) {
-			return new PlayerConfigStringOptionSpec(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, maxLength, tooltipPrefix, configTypeFilter);
+		protected PlayerConfigStringOptionSpec buildInternally(List<String> path, String shortenedId, Function<String, String> commandInputParser) {
+			return new PlayerConfigStringOptionSpec(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, maxLength, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STRING);
 		}
 
 	}

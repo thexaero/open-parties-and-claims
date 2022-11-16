@@ -20,6 +20,9 @@ package xaero.pac.common.server;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
@@ -30,6 +33,11 @@ import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.io.serialization.nbt.PlayerClaimInfoNbtSerializer;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
+import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
+import xaero.pac.common.server.claims.protection.ExceptionElementType;
+import xaero.pac.common.server.claims.protection.WildcardResolver;
+import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
+import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroupLoader;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.task.ObjectExpirationCheckSpreadoutTask;
@@ -51,11 +59,17 @@ import xaero.pac.common.server.parties.party.io.serialization.nbt.PartyNbtSerial
 import xaero.pac.common.server.parties.party.task.PartyRemovalSpreadoutTask;
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
+import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.player.localization.ServerTranslationLoader;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTaskHandler;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ServerDataInitializer {
 	
@@ -147,10 +161,34 @@ public class ServerDataInitializer {
 			PlayerWorldJoinHandler playerWorldJoinHandler = new PlayerWorldJoinHandler();
 			long autosaveInterval = ServerConfig.CONFIG.autosaveInterval.get() * 60000;
 			ObjectManagerLiveSaver partyLiveSaver = new ObjectManagerLiveSaver(partyManagerIO, autosaveInterval, 0);
-			
+
+			WildcardResolver wildcardResolver = new WildcardResolver();
+			Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups = new LinkedHashMap<>();
+			ChunkProtectionExceptionGroupLoader exceptionGroupLoader = new ChunkProtectionExceptionGroupLoader();
+			exceptionGroupLoader.load(ServerConfig.CONFIG.blockProtectionOptionalExceptionGroups, ExceptionElementType.BLOCK, wildcardResolver, blockExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER, PlayerConfigOptionCategory.BLOCK_PROTECTION);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t != ChunkProtectionExceptionType.BARRIER, PlayerConfigOptionCategory.ENTITY_PROTECTION);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.itemUseProtectionOptionalExceptionGroups, ExceptionElementType.ITEM, wildcardResolver, itemExceptionGroups, ChunkProtectionExceptionType.INTERACTION, t -> t == ChunkProtectionExceptionType.INTERACTION, PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.entityClaimBarrierOptionalGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityBarrierGroups, ChunkProtectionExceptionType.BARRIER, t -> t == ChunkProtectionExceptionType.BARRIER, PlayerConfigOptionCategory.MOVEMENT);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.blockAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, blockAccessEntityGroups, ChunkProtectionExceptionType.BLOCK_ACCESS, t -> t == ChunkProtectionExceptionType.BLOCK_ACCESS, PlayerConfigOptionCategory.BLOCK_PROTECTION);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.entityAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, entityAccessEntityGroups, ChunkProtectionExceptionType.ENTITY_ACCESS, t -> t == ChunkProtectionExceptionType.ENTITY_ACCESS, PlayerConfigOptionCategory.ENTITY_PROTECTION);
+			exceptionGroupLoader.load(ServerConfig.CONFIG.droppedItemAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, wildcardResolver, droppedItemAccessEntityGroups, ChunkProtectionExceptionType.DROPPED_ITEM_ACCESS, t -> t == ChunkProtectionExceptionType.DROPPED_ITEM_ACCESS, PlayerConfigOptionCategory.PICKUP_PROTECTION);
+
 			PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs = PlayerConfigManager.Builder.<ServerParty, ServerClaimsManager>begin()
 					.setServer(server)
 					.setPartyManager(partyManager)
+					.setBlockExceptionGroups(blockExceptionGroups)
+					.setEntityExceptionGroups(entityExceptionGroups)
+					.setItemExceptionGroups(itemExceptionGroups)
+					.setEntityBarrierGroups(entityBarrierGroups)
+					.setBlockAccessEntityGroups(blockAccessEntityGroups)
+					.setEntityAccessEntityGroups(entityAccessEntityGroups)
+					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
 			partyManager.setPlayerConfigs(playerConfigs);
 			PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO = PlayerConfigIO.Builder.<ServerParty, ServerClaimsManager>begin()
@@ -204,15 +242,24 @@ public class ServerDataInitializer {
 					.<ServerClaimsManager, PartyMember, PartyInvite, ServerParty>begin()
 					.setClaimsManager(serverClaimsManager)
 					.setPartyManager(partyManager)
+					.setBlockExceptionGroups(blockExceptionGroups)
+					.setEntityExceptionGroups(entityExceptionGroups)
+					.setItemExceptionGroups(itemExceptionGroups)
+					.setEntityBarrierGroups(entityBarrierGroups)
+					.setBlockAccessEntityGroups(blockAccessEntityGroups)
+					.setEntityAccessEntityGroups(entityAccessEntityGroups)
+					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
 			chunkProtection.updateTagExceptions();
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
+			Map<String, String> serverTranslations = new ServerTranslationLoader().loadFromResources(server);
+			AdaptiveLocalizer adaptiveLocalizer = new AdaptiveLocalizer(serverTranslations);
 
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
 					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
 					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
 					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, playerWorldJoinHandler, serverInfo, serverInfoIO, 
-					claimsExpirationHandler, objectExpirationCheckTaskHandler);
+					claimsExpirationHandler, objectExpirationCheckTaskHandler, adaptiveLocalizer);
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);
 			return serverData;

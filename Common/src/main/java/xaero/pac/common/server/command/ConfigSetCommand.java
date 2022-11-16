@@ -28,7 +28,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -45,24 +44,22 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI.SetResult;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.*;
 
 public class ConfigSetCommand {
 	
-	private <T extends Comparable<T>> SetResult tryToSet(CommandContext<CommandSourceStack> context, IPlayerConfig playerConfig, PlayerConfigOptionSpec<T> option, String valueInput, boolean reset) {
+	private <T extends Comparable<T>> SetResult tryToSet(CommandContext<CommandSourceStack> context, ServerPlayer player, AdaptiveLocalizer adaptiveLocalizer, IPlayerConfig playerConfig, PlayerConfigOptionSpec<T> option, String valueInput, boolean reset) {
 		SetResult result;
 		if(reset) {
 			result = playerConfig.tryToReset(option);
@@ -71,20 +68,18 @@ public class ConfigSetCommand {
 			try {
 				value = option.getCommandInputParser().apply(valueInput);
 			} catch (Throwable t) {
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_value_format"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_pac_config_option_set_invalid_value_format"));
 				return SetResult.INVALID;
 			}
 			result = playerConfig.tryToSet(option, value);
 		}
 		if(result == SetResult.INVALID)
-			context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_value"));
+			context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_pac_config_option_set_invalid_value"));
 		return result;
 	}
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
-		SuggestionProvider<CommandSourceStack> optionSuggestor = (context, builder) -> {
-			return SharedSuggestionProvider.suggest(new ArrayList<>(PlayerConfigOptions.OPTIONS.values()).stream().map(r -> r.getId()), builder);
-		};
+		SuggestionProvider<CommandSourceStack> optionSuggestor = ConfigGetOrHelpCommand.getOptionSuggestor();
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
 
@@ -198,9 +193,13 @@ public class ConfigSetCommand {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
 			
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
-			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) PlayerConfigOptions.OPTIONS.get(targetConfigOptionId);
+			MinecraftServer server = context.getSource().getServer();
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(server);
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigs().getOptionForId(targetConfigOptionId);
 			if(option == null) {
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_key"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_key"));
 				return 0;
 			}
 			GameProfile inputPlayer = null;
@@ -208,7 +207,7 @@ public class ConfigSetCommand {
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_option_set_too_many_targets",
-						"gui.xaero_pac_config_option_set_invalid_target");
+						"gui.xaero_pac_config_option_set_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
@@ -216,10 +215,7 @@ public class ConfigSetCommand {
 
 			String valueInput = reset ? null : StringArgumentType.getString(context, "value");
 			
-			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(server);
-			IPlayerConfig playerConfig = 
+			IPlayerConfig playerConfig =
 					type == PlayerConfigType.DEFAULT_PLAYER ?
 						serverData.getPlayerConfigs().getDefaultConfig() : 
 							type == PlayerConfigType.EXPIRED ?
@@ -227,20 +223,20 @@ public class ConfigSetCommand {
 										serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfig effectivePlayerConfig = getEffectiveConfig(context, playerConfig);
 			if(effectivePlayerConfig == null) {
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_invalid_sub"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_sub"));
 				return 0;
 			}
 			boolean isOP = context.getSource().hasPermission(2);
-			if(!isOP && ServerConfig.CONFIG.opConfigurablePlayerConfigOptions.get().contains(option.getId())) {
+			if(!isOP && PlayerConfig.isOptionOPConfigurable(option)) {
 				//such options are not redirected to the default config, so they need a separate check
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_op_option"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_op_option"));
 				return 0;
 			}
-			SetResult result = tryToSet(context, effectivePlayerConfig, option, valueInput, reset);
+			SetResult result = tryToSet(context, sourcePlayer, adaptiveLocalizer, effectivePlayerConfig, option, valueInput, reset);
 			if(result == SetResult.INVALID)
 				return 0;
 			if(result == SetResult.ILLEGAL_OPTION){
-				context.getSource().sendFailure(Component.translatable("gui.xaero_pac_config_option_set_illegal_option"));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_illegal_option"));
 				return 0;
 			}
 			Object wantedValue = reset ? effectivePlayerConfig.getDefaultRawValue(option) : option.getCommandInputParser().apply(valueInput);
@@ -250,12 +246,12 @@ public class ConfigSetCommand {
 
 			Component wantedValueName = option.getValueDisplayName(wantedValue);
 			if (type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName));
+				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName), sourcePlayer.getUUID());
 			else
-				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName));
+				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName), sourcePlayer.getUUID());
 			if (result == SetResult.DEFAULTED && wantedValue != null && wantedValue != actualValue) {
 				Component actualValueName = option.getValueDisplayName(actualValue);
-				sourcePlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_option_set_server_force", actualValueName));
+				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), sourcePlayer.getUUID());
 			}
 			return 1;
 		};

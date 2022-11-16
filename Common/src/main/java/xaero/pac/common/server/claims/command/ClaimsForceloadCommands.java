@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
@@ -46,6 +45,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 
@@ -68,11 +68,12 @@ public class ClaimsForceloadCommands {
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+				AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 				boolean shouldServerClaim = serverClaim;
 				if(playerData.isClaimsServerMode())
 					shouldServerClaim = true;
 				if(shouldServerClaim && serverData.getServerClaimsManager().getPermissionHandler().shouldPreventServerClaim(player, playerData, server)){
-					context.getSource().sendFailure(Component.translatable("gui.xaero_claims_claim_no_server_permission"));
+					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_claims_claim_no_server_permission"));
 					return 0;
 				}
 				UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
@@ -82,6 +83,8 @@ public class ClaimsForceloadCommands {
 				playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
 
 				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
+
+				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 				boolean shouldReplace = opReplaceCurrent || playerData.isClaimsAdminMode();
 
 			 	ClaimResult<?> result = claimsManager.tryToForceload(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);
@@ -89,16 +92,16 @@ public class ClaimsForceloadCommands {
 			 	try {
 				 	if(!result.getResultType().success) {
 						if(result.getResultType().fail)
-							context.getSource().sendFailure(result.getResultType().message);
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, result.getResultType().message));
 						else
-							player.sendSystemMessage(result.getResultType().message);
+							player.sendMessage(adaptiveLocalizer.getFor(player, result.getResultType().message), player.getUUID());
 				 		return 0;
 				 	}
 					
 				 	if(enable)
-				 		player.sendSystemMessage(Component.translatable("gui.xaero_claims_forceloaded_at", chunkX, chunkZ));
+				 		player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_claims_forceloaded_at", chunkX, chunkZ), player.getUUID());
 				 	else
-				 		player.sendSystemMessage(Component.translatable("gui.xaero_claims_unforceloaded_at", chunkX, chunkZ));
+				 		player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unforceloaded_at", chunkX, chunkZ), player.getUUID());
 				 	return 1;
 			 	} finally {
 					((ClaimsManagerSynchronizer)claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(

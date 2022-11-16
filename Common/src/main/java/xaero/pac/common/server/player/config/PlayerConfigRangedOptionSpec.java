@@ -21,6 +21,7 @@ package xaero.pac.common.server.player.config;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import java.util.List;
@@ -35,9 +36,10 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 	private final T minValue;
 	private final T maxValue;
 
-	private PlayerConfigRangedOptionSpec(Class<T> type, String id, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment,
-										 String translation, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, T minValue, T maxValue, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter) {
-		super(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter);
+	private PlayerConfigRangedOptionSpec(Class<T> type, String id, String shortenedId, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment,
+										 String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, T minValue, T maxValue, String tooltipPrefix,
+										 Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
+		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
@@ -52,7 +54,15 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 		return this;
 	}
 
-	final static class Builder<T extends Comparable<T>> extends PlayerConfigOptionSpec.Builder<T, Builder<T>> {
+	public T getMinValue() {
+		return minValue;
+	}
+
+	public T getMaxValue() {
+		return maxValue;
+	}
+
+	public final static class Builder<T extends Comparable<T>> extends PlayerConfigOptionSpec.Builder<T, Builder<T>> {
 
 		private T minValue;
 		private T maxValue;
@@ -127,7 +137,7 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 		}
 
 		@Override
-		public PlayerConfigOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
+		public PlayerConfigRangedOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
 			if(minValue == null || maxValue == null)
 				throw new IllegalStateException();
 			if(tooltipPrefix == null) {
@@ -140,12 +150,14 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 				else if(!absoluteMax)
 					tooltipPrefix = String.format("<= %s", maxValue);
 			}
-			return super.build(dest);
+			return (PlayerConfigRangedOptionSpec<T>) super.build(dest);
 		}
 
 		@Override
-		protected PlayerConfigRangedOptionSpec<T> buildInternally(List<String> path, Function<String, T> commandInputParser) {
-			return new PlayerConfigRangedOptionSpec<T>(type, id, path, defaultValue, defaultReplacer, comment, translation, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, minValue, maxValue, tooltipPrefix, configTypeFilter);
+		protected PlayerConfigRangedOptionSpec<T> buildInternally(List<String> path, String shortenedId, Function<String, T> commandInputParser) {
+			return new PlayerConfigRangedOptionSpec<T>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation,
+					translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator,
+					clientSideValidator, minValue, maxValue, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.RANGED);
 		}
 		
 	}

@@ -28,7 +28,9 @@ import java.util.UUID;
 public interface IParty<M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly> extends IPartyAPI<M,I,A> {
 	
 	//internal api
-	
+
+	public boolean changeOwner(UUID newOwnerId, String newOwnerUsername);
+
 	public M addMember(UUID playerUUID, PartyMemberRank rank, String playerUsername);
 	
 	public M removeMember(UUID playerUUID);

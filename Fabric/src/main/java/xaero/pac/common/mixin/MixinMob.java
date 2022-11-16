@@ -18,20 +18,25 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.common.server.core.ServerCoreFabric;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(Mob.class)
+import java.util.Iterator;
+import java.util.List;
+
+@Mixin(value = Mob.class, priority = 1000001)
 public class MixinMob {
 
-	@Inject(method = "aiStep", at = @At("HEAD"))
-	public void onAiStep(CallbackInfo callbackInfo){
-		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
+	@Inject(method = "aiStep", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;pickUpItem(Lnet/minecraft/world/entity/item/ItemEntity;)V"), cancellable = true)
+	public void onAiStepItemPickup(CallbackInfo ci, List list, Iterator var2, ItemEntity itemEntity){
+		if(ServerCore.onMobItemPickup(itemEntity, (Mob)(Object)this))
+			ci.cancel();
 	}
 
 }

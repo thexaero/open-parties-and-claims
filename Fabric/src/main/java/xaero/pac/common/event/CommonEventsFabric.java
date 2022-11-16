@@ -24,7 +24,6 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.*;
@@ -44,6 +43,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -56,6 +56,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
 import java.util.List;
 
@@ -89,7 +90,6 @@ public class CommonEventsFabric extends CommonEvents {
 		UseBlockCallback.EVENT.register(PROTECTION_PHASE, this::onRightClickBlock);
 		UseItemCallback.EVENT.register(PROTECTION_PHASE, this::onItemRightClick);
 		AttackEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityAttack);
-		ServerEntityEvents.ENTITY_LOAD.register(this::onEntityJoinWorld);
 	}
 
 	public void onServerAboutToStart(MinecraftServer server) throws Throwable {
@@ -138,6 +138,7 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public void onServerStopped(MinecraftServer server) {
 		super.onServerStopped(server);
+		ServerCoreFabric.reset();
 	}
 
 
@@ -196,8 +197,13 @@ public class CommonEventsFabric extends CommonEvents {
 		return super.onChorusFruit(entity, target);
 	}
 
-	public void onEntityJoinWorld(Entity entity, Level world){
-		super.onEntityJoinWorld(entity, world);
+	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk){
+		if(!fromDisk && entity.tickCount == 0) {//is being spawned
+			MobSpawnType mobSpawnType = ServerCoreFabric.getMobSpawnTypeForNewEntities(world.getServer());
+			if(mobSpawnType != null)
+				return super.onMobSpawn(entity, entity.getX(), entity.getY(), entity.getZ(), mobSpawnType);
+		}
+		return super.onEntityJoinWorld(entity, world, fromDisk);
 	}
 
 	public void onEntityEnteringSection(Entity entity, long oldSectionKey, long newSectionKey){

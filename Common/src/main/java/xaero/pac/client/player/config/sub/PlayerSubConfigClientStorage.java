@@ -20,6 +20,7 @@ package xaero.pac.client.player.config.sub;
 
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.client.player.config.PlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.PlayerConfigStringableOptionClientStorage;
 import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.MapFactory;
@@ -36,9 +37,14 @@ public final class PlayerSubConfigClientStorage extends PlayerConfigClientStorag
 
 	private final String subID;
 
-	private PlayerSubConfigClientStorage(PlayerConfigType type, UUID owner, Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options, String subID, List<String> subConfigIdsUnmodifiable, SortedValueList<String> subConfigIds, Map<String, PlayerSubConfigClientStorage> subConfigs) {
-		super(type, owner, options, subConfigIdsUnmodifiable, subConfigIds, subConfigs);
+	private PlayerSubConfigClientStorage(PlayerConfigClientStorageManager manager, PlayerConfigType type, UUID owner, Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options, String subID, List<String> subConfigIdsUnmodifiable, SortedValueList<String> subConfigIds, Map<String, PlayerSubConfigClientStorage> subConfigs) {
+		super(manager, type, owner, options, subConfigIdsUnmodifiable, subConfigIds, subConfigs);
 		this.subID = subID;
+	}
+
+	@Override
+	protected <T extends Comparable<T>> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
+		return null;
 	}
 
 	@Override
@@ -99,11 +105,6 @@ public final class PlayerSubConfigClientStorage extends PlayerConfigClientStorag
 		}
 
 		@Override
-		protected <T extends Comparable<T>> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
-			return null;
-		}
-
-		@Override
 		public PlayerSubConfigClientStorage build() {
 			if(subID == null)
 				throw new IllegalStateException();
@@ -112,7 +113,7 @@ public final class PlayerSubConfigClientStorage extends PlayerConfigClientStorag
 
 		@Override
 		protected PlayerConfigClientStorage buildInternally(Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options) {
-			return new PlayerSubConfigClientStorage(type, owner, options, subID, null, null, null);
+			return new PlayerSubConfigClientStorage(manager, type, owner, options, subID, null, null, null);
 		}
 
 		public static Builder begin(MapFactory mapFactory){

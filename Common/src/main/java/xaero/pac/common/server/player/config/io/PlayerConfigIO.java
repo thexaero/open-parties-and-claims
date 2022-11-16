@@ -115,7 +115,7 @@ public final class PlayerConfigIO
 					.setManager(manager)
 					.build();
 			CommentedConfig storage = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
-			PlayerConfig.SPEC.correct(storage);
+			manager.getPlayerConfigSpec().correct(storage);
 			config.setStorage(storage);
 			if(path == wildernessConfigPath)
 				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);

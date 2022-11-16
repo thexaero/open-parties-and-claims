@@ -26,6 +26,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public abstract class WidgetListScreen extends XPACScreen {
 	private final int pageCount;
 	protected final List<WidgetListElement<?>> elements;
 	private final List<EditBox> tickableBoxes;
+	private Component displayedTitle;
 	
 	private Button nextButton;
 	private Button prevButton;
@@ -60,8 +62,8 @@ public abstract class WidgetListScreen extends XPACScreen {
 		tickableBoxes.clear();
 		for(int index = startIndex; index < endIndex; index++) {
 			int indexOff = index - startIndex;
-			int x = xAnchor - 205 + 210 * (indexOff & 1);
-			int y = yAnchor + (indexOff >> 1) * ROW_HEIGHT;
+			int x = xAnchor - 205 + 210 * (indexOff / 6);
+			int y = yAnchor + (indexOff % 6) * ROW_HEIGHT;
 			elements.get(index).screenInit(x, y, this, tickableBoxes);
 		}
 		addRenderableWidget(new Button(xAnchor - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_back"), this::onBackButton));
@@ -74,6 +76,9 @@ public abstract class WidgetListScreen extends XPACScreen {
 			prevButton.active = page > 0;
 			nextButton.active = page < pageCount - 1;
 		}
+		displayedTitle = new TextComponent("");
+		displayedTitle.getSiblings().add(title);
+		displayedTitle.getSiblings().add(new TextComponent(" (" + (page + 1) + "/" + pageCount + ")"));
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 	
@@ -103,7 +108,7 @@ public abstract class WidgetListScreen extends XPACScreen {
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
+		drawCenteredString(poseStack, font, displayedTitle, width / 2, 16, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
 	}
 

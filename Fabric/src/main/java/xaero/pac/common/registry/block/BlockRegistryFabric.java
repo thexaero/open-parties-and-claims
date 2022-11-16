@@ -18,6 +18,7 @@
 
 package xaero.pac.common.registry.block;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -37,6 +38,21 @@ public class BlockRegistryFabric implements IBlockRegistry {
 	@Override
 	public Stream<Block> getTagStream(TagKey<Block> tagKey) {
 		return Registry.BLOCK.getTag(tagKey).stream().flatMap(HolderSet.Named::stream).map(Holder::value);
+	}
+
+	@Override
+	public ResourceLocation getKey(Block block){
+		return Registry.BLOCK.getKey(block);
+	}
+
+	@Override
+	public Iterable<Block> getIterable(){
+		return Registry.BLOCK.stream().toList();
+	}
+
+	@Override
+	public Iterable<TagKey<Block>> getTagIterable(){
+		return Registry.BLOCK.getTags().map(Pair::getFirst).toList();
 	}
 
 }

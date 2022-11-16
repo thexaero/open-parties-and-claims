@@ -22,7 +22,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -42,6 +41,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.function.Predicate;
 
@@ -58,9 +58,10 @@ public class CreatePartyCommand {
 					ServerPlayer player = (ServerPlayer) entity;
 					MinecraftServer server = context.getSource().getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 					partyManager.createPartyForOwner(player);
-					player.sendSystemMessage(Component.translatable("gui.xaero_parties_party_created"));
+					player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_party_created"), player.getUUID());
 					server.getCommands().sendCommands(player);
 					return 1;
 				}));

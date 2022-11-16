@@ -69,7 +69,7 @@ public class MessagePartyCommand {
 			messageComponent.getSiblings().add(rankComponent);
 			messageComponent.getSiblings().add(nameComponent);
 			messageComponent.getSiblings().add(contentComponent);
-			new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, messageComponent);
+			new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, messageComponent);
 			return 1;
 		};
 		

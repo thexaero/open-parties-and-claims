@@ -37,6 +37,7 @@ import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 public interface IServerData
@@ -54,6 +55,8 @@ extends IServerDataAPI<CM,P> {
 	public CM getServerClaimsManager();
 	@Override
 	public IPlayerConfigManager getPlayerConfigs();
+	@Override
+	public AdaptiveLocalizer getAdaptiveLocalizer();
 
 	public PlayerWorldJoinHandler getPlayerWorldJoinHandler();
 	public PlayerLoginHandler getPlayerLoginHandler();

@@ -23,6 +23,7 @@ import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
+import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 
 public interface IServerDataAPI
 <
@@ -37,5 +38,7 @@ public interface IServerDataAPI
 	public IPlayerConfigManagerAPI getPlayerConfigs();
 
 	public OpenPACServerAPI getAPI();
+
+	public IAdaptiveLocalizerAPI getAdaptiveLocalizer();
 
 }

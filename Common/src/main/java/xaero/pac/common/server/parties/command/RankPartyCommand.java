@@ -32,7 +32,6 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.PartySearch;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
@@ -45,7 +44,9 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -60,30 +61,21 @@ public class RankPartyCommand {
 					return SharedSuggestionProvider.suggest(Arrays.asList(PartyMemberRank.values()).stream().map(r -> r.toString()), builder);
 				})
 				.then(Commands.argument("name", StringArgumentType.word())
-						.suggests((context, builder) -> {
-							//limited at 16 to reduce synced data for super large parties
-							ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
-							String lowercaseInput = builder.getRemainingLowerCase();
-							return SharedSuggestionProvider.suggest(playerParty.getMemberInfoStream().map(IPartyPlayerInfo::getUsername)
-									.filter(name -> name.toLowerCase().startsWith(lowercaseInput))
-									.limit(16), builder);
-						})
+						.suggests(PartyCommands.getPartyMemberSuggestor())
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
 							UUID playerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 
 							String targetUsername = StringArgumentType.getString(context, "name");
-							IPartyPlayerInfo targetPlayerInfo = new PartySearch().searchForPlayer(playerParty, ppi -> ppi instanceof IPartyMember && ppi.getUsername().equalsIgnoreCase(targetUsername));
+							IPartyPlayerInfo targetPlayerInfo = playerParty.getMemberInfo(targetUsername);
 							
 							if(targetPlayerInfo == null) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_rank_not_member", targetUsername));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_rank_not_member", targetUsername));
 								return 0;
 							}
 							
@@ -92,7 +84,7 @@ public class RankPartyCommand {
 							IPartyMember targetMember = (IPartyMember) targetPlayerInfo;
 							
 							if(!casterIsOwner && targetMember.getRank().ordinal() >= casterInfo.getRank().ordinal() || targetMember == playerParty.getOwner()) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_rank_not_lower_rank_player"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_rank_not_lower_rank_player"));
 								return 0;
 							}
 
@@ -100,7 +92,7 @@ public class RankPartyCommand {
 							PartyMemberRank targetRank = PartyMemberRank.valueOf(targetRankString);
 							
 							if(!casterIsOwner && targetRank.ordinal() >= casterInfo.getRank().ordinal()) {
-								context.getSource().sendFailure(Component.translatable("gui.xaero_parties_rank_not_lower_rank"));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_rank_not_lower_rank"));
 								return 0;
 							}
 							
@@ -111,8 +103,8 @@ public class RankPartyCommand {
 							if(rankedPlayer != null)
 								server.getCommands().sendCommands(rankedPlayer);
 							
-							new PartyOnCommandUpdater().update(playerId, server, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
-							
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_rank_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), new TextComponent(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
+
 							return 1;
 						})))));
 		dispatcher.register(command);

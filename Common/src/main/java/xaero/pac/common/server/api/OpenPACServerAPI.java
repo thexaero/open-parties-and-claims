@@ -36,6 +36,7 @@ import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 
 import javax.annotation.Nonnull;
 
@@ -93,6 +94,16 @@ public class OpenPACServerAPI {
 	@Nonnull
 	public IPlayerConfigManagerAPI getPlayerConfigs() {
 		return serverData.getPlayerConfigs();
+	}
+
+	/**
+	 * Gets the API for the server-side adaptive text localizer that lets you create translated text components
+	 * that are readable even by players that don't have the mod installed.
+	 *
+	 * @return the adaptive text localizer API, not null
+	 */
+	public IAdaptiveLocalizerAPI getAdaptiveTextLocalizer(){
+		return serverData.getAdaptiveLocalizer();
 	}
 
 	/**

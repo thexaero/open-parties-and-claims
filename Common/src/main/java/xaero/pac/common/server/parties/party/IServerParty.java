@@ -34,5 +34,9 @@ public interface IServerParty
 	//internal api
 	
 	public boolean updateUsername(M member, String username);
+
+	public A getAlly(String ownerUsername);
+
+	public I getInvite(String username);
 	
 }

@@ -30,6 +30,7 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -45,6 +46,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.server.core.ServerCore;
 
 public class CommonEventsForge extends CommonEvents {
 
@@ -145,6 +147,8 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onMobGrief(EntityMobGriefingEvent event) {
+		if(ServerCore.isMobGriefingForItems(lastServerStarted.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
+			return;
 		if(super.onMobGrief(event.getEntity()))
 			event.setResult(Result.DENY);
 	}
@@ -180,7 +184,8 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onEntityJoinWorld(EntityJoinLevelEvent event){
-		super.onEntityJoinWorld(event.getEntity(), event.getLevel());
+		if(super.onEntityJoinWorld(event.getEntity(), event.getLevel(), event.loadedFromDisk()))
+			event.setCanceled(true);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -210,4 +215,17 @@ public class CommonEventsForge extends CommonEvents {
 	public void onTagsUpdate(TagsUpdatedEvent event) {
 		super.onTagsUpdate();
 	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onItemPickup(EntityItemPickupEvent event){
+		if(super.onItemPickup(event.getEntity(), event.getItem()))
+			event.setCanceled(true);
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onMobCheckSpawn(LivingSpawnEvent.CheckSpawn event){
+		if(super.onMobSpawn(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getSpawnReason()))
+			event.setResult(Result.DENY);
+	}
+
 }

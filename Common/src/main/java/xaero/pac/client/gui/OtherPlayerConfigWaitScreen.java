@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
+import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.packet.config.ServerboundOtherPlayerConfigPacket;
@@ -79,6 +80,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 		}
 		
 		public void onConfigDataSyncDone(IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> configData) {
+			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> manager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 			minecraft.setScreen(
 					PlayerConfigScreen.Builder
 					.begin(ArrayList::new)
@@ -86,7 +88,8 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 					.setEscape(escape)
 					.setTitle(Component.translatable("gui.xaero_pac_ui_other_player_config", otherPlayerName))
 					.setData((PlayerConfigClientStorage)(Object)configData)
-					.setDefaultPlayerConfigData((PlayerConfigClientStorage)(Object) OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().getDefaultPlayerConfig())
+					.setManager(manager)
+					.setDefaultPlayerConfigData((PlayerConfigClientStorage)(Object) manager.getDefaultPlayerConfig())
 					.setOtherPlayerName(otherPlayerName)
 					.build()
 					);

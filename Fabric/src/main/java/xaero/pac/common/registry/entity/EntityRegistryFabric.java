@@ -18,6 +18,7 @@
 
 package xaero.pac.common.registry.entity;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -37,6 +38,21 @@ public class EntityRegistryFabric implements IEntityRegistry {
 	@Override
 	public Stream<EntityType<?>> getTagStream(TagKey<EntityType<?>> tagKey) {
 		return Registry.ENTITY_TYPE.getTag(tagKey).stream().flatMap(HolderSet.Named::stream).map(Holder::value);
+	}
+
+	@Override
+	public ResourceLocation getKey(EntityType<?> entity) {
+		return Registry.ENTITY_TYPE.getKey(entity);
+	}
+
+	@Override
+	public Iterable<EntityType<?>> getIterable(){
+		return Registry.ENTITY_TYPE.stream().toList();
+	}
+
+	@Override
+	public Iterable<TagKey<EntityType<?>>> getTagIterable(){
+		return Registry.ENTITY_TYPE.getTags().map(Pair::getFirst).toList();
 	}
 
 }

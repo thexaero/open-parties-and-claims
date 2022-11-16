@@ -30,4 +30,10 @@ public interface IEntityRegistry {
 
 	public Stream<EntityType<?>> getTagStream(TagKey<EntityType<?>> tagKey);
 
+	public ResourceLocation getKey(EntityType<?> entity);
+
+	public Iterable<EntityType<?>> getIterable();
+
+	public Iterable<TagKey<EntityType<?>>> getTagIterable();
+
 }

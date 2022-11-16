@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 public abstract class Party implements IParty<PartyMember, PartyInvite, PartyAlly> {
 
-	protected final PartyMember owner;
+	protected PartyMember owner;
 	private final UUID id;
 	private final List<PartyMember> sortedStaffInfo;
 	private final Map<UUID, PartyMember> memberInfo;
@@ -51,6 +51,35 @@ public abstract class Party implements IParty<PartyMember, PartyInvite, PartyAll
 		this.linkedInvitedPlayers = linkedInvitedPlayers;
 		this.allyParties = allyParties;
 		this.linkedAllyParties = linkedAllyParties;
+	}
+
+	@Override
+	public boolean changeOwner(UUID newOwnerId, String newOwnerUsername) {
+		PartyMember oldOwner = this.owner;
+		if(oldOwner.getUUID().equals(newOwnerId))
+			return false;
+		PartyMember newOwnerOldInfo = getMemberInfo(newOwnerId);
+		if(newOwnerOldInfo != null) {
+			memberInfo.remove(newOwnerId);
+			linkedMemberInfo.remove(newOwnerOldInfo);
+		} else
+			return false;
+		this.owner = new PartyMember(newOwnerId, true);
+		this.owner.setUsername(newOwnerUsername);
+		this.owner.setRank(PartyMemberRank.ADMIN);
+		PartyMember oldOwnerConverted = new PartyMember(oldOwner.getUUID(), false);
+		oldOwnerConverted.setRank(PartyMemberRank.ADMIN);
+		oldOwnerConverted.setUsername(oldOwner.getUsername());
+
+		oldOwner.onDestroyed();//just for convenience
+		removeStaff(oldOwner);
+		removeStaff(newOwnerOldInfo);
+		addStaff(oldOwnerConverted);
+		addStaff(this.owner);
+
+		memberInfo.put(oldOwnerConverted.getUUID(), oldOwnerConverted);
+		linkedMemberInfo.add(oldOwnerConverted);
+		return true;
 	}
 
 	@Override
@@ -139,6 +168,10 @@ public abstract class Party implements IParty<PartyMember, PartyInvite, PartyAll
 	@Override
 	public boolean isAlly(@Nonnull UUID partyId) {
 		return allyParties.containsKey(partyId);
+	}
+
+	public PartyAlly getAlly(@Nonnull UUID partyId) {
+		return allyParties.get(partyId);
 	}
 
 	@Override
