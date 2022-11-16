@@ -34,6 +34,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 	public static final String COMMENT_TRANSLATION_ROOT = "gui.xaero_pac_player_config_tooltip_" + PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptionGroups.";
 	public static final String INTERACT = "interact";
 	public static final String HAND_INTERACT = "handInteract";
+	public static final String ANY_ITEM_INTERACT = "anyItemInteract";
 	public static final String BREAK = "break";
 	public static final String BARRIER = "barrier";
 	public static final String BLOCK_ACCESS = "blockAccess";
@@ -56,6 +57,11 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 			comment = "When enabled, claimed chunk protection makes an exception for interaction with an empty hand with the following " + categoryPlural + ": %1$s." + interactionOptionsTooltip;
 			translation = TRANSLATION_ROOT + category + "." + HAND_INTERACT;
 			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + HAND_INTERACT;
+		} else if(group.getType() == ChunkProtectionExceptionType.ANY_ITEM_INTERACTION) {
+			optionId = OPTION_ROOT + category + "." + ANY_ITEM_INTERACT;
+			comment = "When enabled, claimed chunk protection makes an exception for interaction with any item held with the following " + categoryPlural + ": %1$s." + interactionOptionsTooltip;
+			translation = TRANSLATION_ROOT + category + "." + ANY_ITEM_INTERACT;
+			commentTranslation = COMMENT_TRANSLATION_ROOT + category + "." + ANY_ITEM_INTERACT;
 		} else if(group.getType() == ChunkProtectionExceptionType.BREAK){
 			optionId = OPTION_ROOT + category + "." + BREAK;
 			comment = "When enabled, claimed chunk protection makes an exception for destruction of the following " + categoryPlural + ": %1$s." + interactionOptionsTooltip;

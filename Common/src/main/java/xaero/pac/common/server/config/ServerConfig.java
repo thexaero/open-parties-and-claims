@@ -290,6 +290,7 @@ public class ServerConfig {
 					Blocks to partially exclude from chunk protection. Supports block tags.
 					Just a block/tag ID in the list, e.g. "minecraft:lever" allows block interaction across the server if the item in the used hand isn't blocking it.
 					Prefix "hand$" is the same as no prefix but enforces an empty hand requirement in protected chunks. Prefix "break$" allows breaking the block(s).
+					Prefix "anything$" is the same as no prefix but allows interaction with any item held in the hand. Please make sure that no item does anything bad when used at a block with such an exception.
 					Add the same block/tag multiple times to use multiple prefixes. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
 					For example ["minecraft:lever", "minecraft:*_button", "break$minecraft:*_button", "break$minecraft:(*_|)sand"]""")
 			.translation("gui.xaero_pac_config_block_protection_forced_exception")
@@ -302,6 +303,8 @@ public class ServerConfig {
 					A group without a prefix creates a player config option for the right-click interaction with the group blocks. The format for a block group is <group ID>{<blocks/tags/wildcards separated by ,>}.
 					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-DIRT35{minecraft:dirt, minecraft:grass_block, minecraft:(oak|spruce)_*}".
 					A group can be prefixed with "hand$" to create an option for the right-click interaction with an enforced empty hand requirement or "break$" for breaking the group blocks.
+					Moreover, prefix "anything$" creates an option for the right-click interaction with any item held in the hand, not just allowed items. Please make sure that no item does anything
+					bad when used at a block with such an exception.
 					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
 					The exact paths of the added options can be found in the default player config file after you start the server.
 					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
@@ -331,6 +334,7 @@ public class ServerConfig {
 					Entities to partially exclude from chunk protection. Supports entity type tags.
 					Just an entity/tag ID in the list, e.g. "minecraft:horse" allows entity interaction across the server if the item in the used hand isn't blocking it.
 					Prefix "hand$" is the same as no prefix but enforces an empty hand requirement in protected chunks. Prefix "break$" allows killing the entities across the server.
+					Prefix "anything$" is the same as no prefix but allows interaction with any item held in the hand. Please make sure that no item does anything bad when used at an entity with such an exception.
 					Add the same entity/tag multiple times to use multiple prefixes. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
 					For example ["minecraft:villager", "break$minecraft:villager", "break$minecraft:(trader_|)llama"]""")
 			.translation("gui.xaero_pac_config_entity_protection_forced_exception")
@@ -343,6 +347,8 @@ public class ServerConfig {
 					A group without a prefix creates a player config option for the right-click interaction with the group entities. The format for an entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
 					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{minecraft:pig, minecraft:c(ow|at), #minecraft:beehive_inhabitors}".
 					A group can be prefixed with "hand$" to create an option for the right-click interaction with an enforced empty hand requirement or "break$" for destroying the group entities.
+					Moreover, prefix "anything$" creates an option for the right-click interaction with any item held in the hand, not just allowed items. Please make sure that no item does anything
+					bad when used at an entity with such an exception.
 					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
 					The exact paths of the added options can be found in the default player config file after you start the server.
 					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""

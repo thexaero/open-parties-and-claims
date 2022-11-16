@@ -23,6 +23,7 @@ public enum ChunkProtectionExceptionType {
 	INTERACTION("interact$"),
 	BARRIER("barrier$"),
 	EMPTY_HAND_INTERACTION(ChunkProtection.HAND_PREFIX),
+	ANY_ITEM_INTERACTION(ChunkProtection.ANYTHING_PREFIX),
 	BREAK(ChunkProtection.BREAK_PREFIX),
 	BLOCK_ACCESS("access$"),
 	ENTITY_ACCESS("access$"),

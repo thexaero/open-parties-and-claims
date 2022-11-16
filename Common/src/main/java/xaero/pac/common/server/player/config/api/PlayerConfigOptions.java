@@ -92,6 +92,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER;
 	/**
+	 * Whether the claimed chunk block protection redirects the used config option to the owner of the entity.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT;
+	/**
 	 * Whether the claimed chunk protection includes protection against fire spread.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD;
@@ -470,6 +474,12 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksRedirect")
+				.setDefaultValue(true)
+				.setComment("When enabled, instead of always simply using the direct \"Protect Blocks From Mobs/Other\" option for block interactions coming from non-player entities, if the entity (e.g. an arrow) has an owner (e.g. a player), then the block protection option corresponding to the owner is used (e.g. \"Protect Blocks From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
+				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
+				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromExplosions")
 				.setDefaultValue(true)
@@ -623,7 +633,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesRedirect")
 				.setDefaultValue(true)
-				.setComment("When enabled, instead of always simply using the direct \"Protect Entities From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Entities From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
+				.setComment("When enabled, instead of always simply using the direct \"Protect Entities From Mobs/Other\" option for entity attacks/interactions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Entities From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)

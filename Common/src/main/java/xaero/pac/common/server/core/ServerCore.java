@@ -128,7 +128,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 		if(serverData == null)
 			return true;
-		boolean shouldProtect = serverData.getChunkProtection().onUseItemAt(serverData, player, pos, direction, itemStack, null, true);
+		boolean shouldProtect = serverData.getChunkProtection().onUseItemAt(serverData, player, pos, direction, itemStack, null, false, false, true);
 		return !shouldProtect;
 	}
 
