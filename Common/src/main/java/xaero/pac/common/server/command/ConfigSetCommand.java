@@ -246,12 +246,12 @@ public class ConfigSetCommand {
 
 			Component wantedValueName = option.getValueDisplayName(wantedValue);
 			if (type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName));
 			else
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName));
 			if (result == SetResult.DEFAULTED && wantedValue != null && wantedValue != actualValue) {
 				Component actualValueName = option.getValueDisplayName(actualValue);
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName));
 			}
 			return 1;
 		};

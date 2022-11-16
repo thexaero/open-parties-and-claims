@@ -21,7 +21,6 @@ package xaero.pac.common.server.claims.player;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -66,7 +65,7 @@ public class ServerPlayerClaimWelcomer {
 				subTitleText = adaptiveLocalizer.getFor(player, customName == null || customName.isEmpty() ? "gui.xaero_pac_title_entered_wilderness" : customName);
 			else {
 				MutableComponent properDesc;
-				Component forceloadedComponent = currentClaim.isForceloadable() ? adaptiveLocalizer.getFor(player, "gui.xaero_pac_marked_for_forceload") : new TextComponent("");
+				Component forceloadedComponent = currentClaim.isForceloadable() ? adaptiveLocalizer.getFor(player, "gui.xaero_pac_marked_for_forceload") : Component.literal("");
 				if (Objects.equals(currentClaimId, PlayerConfig.SERVER_CLAIM_UUID))
 					properDesc = adaptiveLocalizer.getFor(player, "gui.xaero_pac_title_entered_server_claim", forceloadedComponent);
 				else if (Objects.equals(currentClaimId, PlayerConfig.EXPIRED_CLAIM_UUID))

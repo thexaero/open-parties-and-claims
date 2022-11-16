@@ -130,7 +130,7 @@ public class ClaimsSubClaimUseCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_use_invalid_value"));
 				return 0;
 			}
-			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_use", inputSubId), sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_use", inputSubId));
 			return 1;
 		};
 	}

@@ -47,7 +47,6 @@ import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.awt.*;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -101,9 +100,9 @@ public class InviteAcceptPartyCommand {
 							IPartyMember addedPartyMember = targetParty.addMember(playerId, null, player.getGameProfile().getName());
 							if(addedPartyMember == null)
 								return 0;
-							player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_success", targetParty.getDefaultName()), player.getUUID());
+							player.sendSystemMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_success", targetParty.getDefaultName()));
 							
-							new PartyOnCommandUpdater().update(playerId, serverData, targetParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_join_success_info", new TextComponent(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
+							new PartyOnCommandUpdater().update(playerId, serverData, targetParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_join_success_info", Component.literal(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
 							server.getCommands().sendCommands(player);
 							return 1;
 						})));

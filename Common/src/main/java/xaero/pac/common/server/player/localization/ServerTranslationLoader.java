@@ -35,14 +35,15 @@ public class ServerTranslationLoader {
 	public Map<String, String> loadFromResources(MinecraftServer server){
 		Map<String, String> result = new HashMap<>();
 		try {
-			Resource enUSLanguageFileResource = server.getResourceManager().getResource(new ResourceLocation(OpenPartiesAndClaims.MOD_ID, "lang/en_us.json"));
-			try(BufferedInputStream inputStream = new BufferedInputStream(enUSLanguageFileResource.getInputStream())){
+			Resource enUSLanguageFileResource = server.getResourceManager().getResourceOrThrow(new ResourceLocation(OpenPartiesAndClaims.MOD_ID, "lang/en_us.json"));
+
+			try(BufferedInputStream inputStream = new BufferedInputStream(enUSLanguageFileResource.open())){
 				Language.loadFromJson(inputStream, result::put);
 			}
 			String configuredLanguage = ServerConfig.CONFIG.defaultLanguage.get();
 			if(!configuredLanguage.equalsIgnoreCase("en_us")) {
-				Resource languageFileResource = server.getResourceManager().getResource(new ResourceLocation(OpenPartiesAndClaims.MOD_ID, "lang/" + configuredLanguage + ".json"));
-				try (BufferedInputStream inputStream = new BufferedInputStream(languageFileResource.getInputStream())) {
+				Resource languageFileResource = server.getResourceManager().getResourceOrThrow(new ResourceLocation(OpenPartiesAndClaims.MOD_ID, "lang/" + configuredLanguage + ".json"));
+				try (BufferedInputStream inputStream = new BufferedInputStream(languageFileResource.open())) {
 					Language.loadFromJson(inputStream, result::put);
 				}
 			}

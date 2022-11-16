@@ -24,8 +24,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -91,7 +90,7 @@ public class TransferPartyCommand {
 								if (newOwnerPlayer != null)
 									server.getCommands().sendCommands(newOwnerPlayer);
 								server.getCommands().sendCommands(player);
-								new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_transfer_success", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+								new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_transfer_success", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 								return 1;
 							}
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_transfer_failed"));

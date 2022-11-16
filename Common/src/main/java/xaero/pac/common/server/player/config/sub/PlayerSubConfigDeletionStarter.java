@@ -46,7 +46,7 @@ public class PlayerSubConfigDeletionStarter {
 		MinecraftServer server = serverData.getServer();
 		UUID callerUUID = caller == null ? null : caller.getUUID();
 		if(caller != null)
-			caller.sendMessage(serverData.getAdaptiveLocalizer().getFor(caller, "gui.xaero_pac_config_delete_sub_started", subConfig.getSubId()), callerUUID);
+			caller.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(caller, "gui.xaero_pac_config_delete_sub_started", subConfig.getSubId()));
 		subConfig.setBeingDeleted();
 		PlayerSubClaimDeletionSpreadoutTask taskNormal = PlayerSubClaimDeletionSpreadoutTask.Builder.begin()
 				.setForceloadable(false)

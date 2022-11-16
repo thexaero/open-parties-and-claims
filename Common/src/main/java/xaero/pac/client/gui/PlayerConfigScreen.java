@@ -30,6 +30,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.widget.value.BooleanValueHolder;
@@ -45,7 +46,6 @@ import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.dynamic.PlayerConfigExceptionDynamicOptionsLoader;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -62,8 +62,8 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			return 0;
 		}
 	};
-	public static final Component SYNCING_IN_PROGRESS = new TranslatableComponent("gui.xaero_pac_ui_player_config_syncing");
-	public static final Component BEING_DELETED = new TranslatableComponent("gui.xaero_pac_ui_player_config_being_deleted");
+	public static final Component SYNCING_IN_PROGRESS = Component.translatable("gui.xaero_pac_ui_player_config_syncing");
+	public static final Component BEING_DELETED = Component.translatable("gui.xaero_pac_ui_player_config_being_deleted");
 	private final BiConsumer<PlayerConfigScreen, Button> refreshHandler;
 	private Button refreshButton;
 	private final PlayerConfigClientStorage data;
@@ -106,13 +106,13 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 6 + 64, -1);
 	}
 
-	public static TextComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){
+	public static MutableComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){
 		String commentTranslated = I18n.get(option.getCommentTranslation(), (Object[]) option.getCommentTranslationArgs());
 		if(commentTranslated.equals("default"))
 			commentTranslated = option.getComment();
 		if(option.getTooltipPrefix() != null)
 			commentTranslated = option.getTooltipPrefix() + "\n" + commentTranslated;
-		return new TextComponent(commentTranslated);
+		return Component.literal(commentTranslated);
 	}
 
 	public final static class Builder {
@@ -212,7 +212,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							String translationKey = option.getTranslation() + "_" + defaultDisplay.getString();
 							String translatedText = I18n.get(translationKey);
 							if(!translatedText.equals("default") && !translatedText.equals(translationKey))
-								return new TranslatableComponent(translationKey).setStyle(defaultDisplay.getStyle());
+								return Component.translatable(translationKey).setStyle(defaultDisplay.getStyle());
 						}
 						return defaultDisplay;
 					})
@@ -377,8 +377,8 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			WidgetListElement<?> createSubConfigWidget = TextWidgetListElement.Builder.begin()
 					.setW(elementWidth)
 					.setH(elementHeight)
-					.setTitle(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget"))
-					.setTooltip(minecraft.font.split(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget_tooltip", new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH)), 200))
+					.setTitle(Component.translatable("gui.xaero_pac_ui_sub_config_create_widget"))
+					.setTooltip(minecraft.font.split(Component.translatable("gui.xaero_pac_ui_sub_config_create_widget_tooltip", Component.translatable("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH)), 200))
 					.setMutable(canCreateSubs && data.getSubCount() < data.getSubConfigLimit())
 					.setStartValue("")
 					.setFilter(Objects::nonNull)
@@ -438,7 +438,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !manager.getOverridableOptions().contains(optionStorage.getOption()))
 					return;
 				Class<?> type = optionStorage.getType();
-				Component optionTitle = new TranslatableComponent(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
+				Component optionTitle = Component.translatable(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
 				List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(getUICommentForOption(optionStorage.getOption()), 200);
 				if(type == Boolean.class) {
 					@SuppressWarnings("unchecked")

@@ -22,13 +22,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.PlayerConfigScreen;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 import java.util.function.BiConsumer;
@@ -80,7 +79,7 @@ public class ClientboundPlayerConfigHelpPacket {
 			IPlayerConfigOptionSpecAPI<?> option = playerConfigStorageManager.getOptionForId(t.optionId);
 			if(option != null) {
 				Minecraft.getInstance().gui.getChat().addMessage(PlayerConfigScreen.getUICommentForOption(option));
-				Minecraft.getInstance().gui.getChat().addMessage(new TextComponent(""));
+				Minecraft.getInstance().gui.getChat().addMessage(Component.literal(""));
 			}
 		}
 

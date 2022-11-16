@@ -110,13 +110,13 @@ public class ClaimsClaimCommands {
 						}
 					}
 					if(result.getResultType().success) {
-						player.sendMessage(adaptiveLocalizer.getFor(player, shouldClaim ? "gui.xaero_claims_claimed_at" : "gui.xaero_claims_unclaimed_at", chunkX, chunkZ), player.getUUID());
+						player.sendSystemMessage(adaptiveLocalizer.getFor(player, shouldClaim ? "gui.xaero_claims_claimed_at" : "gui.xaero_claims_unclaimed_at", chunkX, chunkZ));
 						return 1;
 					} else {
 						if(result.getResultType().fail)
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, result.getResultType().message));
 						else
-							player.sendMessage(adaptiveLocalizer.getFor(player, result.getResultType().message), player.getUUID());
+							player.sendSystemMessage(adaptiveLocalizer.getFor(player, result.getResultType().message));
 						return 0;
 					}
 				} finally {

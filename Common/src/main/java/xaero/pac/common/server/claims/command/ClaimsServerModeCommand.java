@@ -57,7 +57,7 @@ public class ClaimsServerModeCommand {
 					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 					mainCapability.setClaimsServerMode(!mainCapability.isClaimsServerMode());
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-					player.sendMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsServerMode() ? "gui.xaero_claims_server_mode_enabled" : "gui.xaero_claims_server_mode_disabled"), player.getUUID());
+					player.sendSystemMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsServerMode() ? "gui.xaero_claims_server_mode_enabled" : "gui.xaero_claims_server_mode_disabled"));
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(mainCapability.isClaimsAdminMode(), mainCapability.isClaimsServerMode()));
 					return 1;
 				}));

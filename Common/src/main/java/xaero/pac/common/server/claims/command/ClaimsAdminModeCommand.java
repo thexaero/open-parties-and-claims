@@ -73,7 +73,7 @@ public class ClaimsAdminModeCommand {
 					mainCapability.setClaimsAdminMode(!mainCapability.isClaimsAdminMode());
 					mainCapability.setClaimsNonallyMode(false);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-					player.sendMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"), player.getUUID());
+					player.sendSystemMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"));
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(mainCapability.isClaimsAdminMode(), mainCapability.isClaimsServerMode()));
 					return 1;
 				}));

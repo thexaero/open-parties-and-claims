@@ -46,7 +46,6 @@ import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -103,7 +102,7 @@ public class RankPartyCommand {
 							if(rankedPlayer != null)
 								server.getCommands().sendCommands(rankedPlayer);
 							
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_rank_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), new TextComponent(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
 
 							return 1;
 						})))));

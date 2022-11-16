@@ -55,7 +55,6 @@ import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.awt.*;
 import java.util.UUID;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.*;
@@ -209,8 +208,8 @@ public class ConfigGetOrHelpCommand {
 				if(playerData.hasMod())
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(sourcePlayer, new ClientboundPlayerConfigHelpPacket(option.getId()));
 				else {
-					sourcePlayer.sendMessage(new TextComponent(option.getComment()), sourcePlayer.getUUID());
-					sourcePlayer.sendMessage(new TextComponent(""), sourcePlayer.getUUID());
+					sourcePlayer.sendSystemMessage(Component.literal(option.getComment()));
+					sourcePlayer.sendSystemMessage(Component.literal(""));
 				}
 				return 1;
 			}
@@ -223,9 +222,9 @@ public class ConfigGetOrHelpCommand {
 				optionValue = null;
 			Component optionValueName = option.getValueDisplayName(optionValue);
 			if(type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName));
 			else
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName));
 			return 1;
 		};
 	}

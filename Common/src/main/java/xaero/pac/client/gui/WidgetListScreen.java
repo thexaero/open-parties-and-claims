@@ -26,7 +26,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -76,9 +75,9 @@ public abstract class WidgetListScreen extends XPACScreen {
 			prevButton.active = page > 0;
 			nextButton.active = page < pageCount - 1;
 		}
-		displayedTitle = new TextComponent("");
+		displayedTitle = Component.literal("");
 		displayedTitle.getSiblings().add(title);
-		displayedTitle.getSiblings().add(new TextComponent(" (" + (page + 1) + "/" + pageCount + ")"));
+		displayedTitle.getSiblings().add(Component.literal(" (" + (page + 1) + "/" + pageCount + ")"));
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 	

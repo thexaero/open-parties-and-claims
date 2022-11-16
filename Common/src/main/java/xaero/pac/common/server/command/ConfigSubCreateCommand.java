@@ -118,7 +118,7 @@ public class ConfigSubCreateCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH));
 				return 0;
 			}
-			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub"), sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub"));
 			return 1;
 		};
 	}

@@ -112,7 +112,7 @@ public class ClaimsSubClaimCurrentCommand {
 
 			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;
-			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", playerConfig.getEffective(option)), sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", playerConfig.getEffective(option)));
 			return 1;
 		};
 	}

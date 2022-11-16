@@ -50,7 +50,6 @@ import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.awt.*;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -97,12 +96,12 @@ public class InvitePartyCommand {
 							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
 							
 							Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
-							acceptComponent.getSiblings().add(new TextComponent(" "));
+							acceptComponent.getSiblings().add(Component.literal(" "));
 							acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/openpac-parties join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept_tooltip")))));
-							targetPlayer.sendMessage(acceptComponent, playerId);
+							targetPlayer.sendSystemMessage(acceptComponent);
 							Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer).putUUID("xaero_OPAC_LastInviteId", playerParty.getId());
 
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_invite_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), new TextComponent(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 							return 1;
 						}))));
 		dispatcher.register(command);

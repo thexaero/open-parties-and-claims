@@ -26,8 +26,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -122,11 +122,11 @@ public class ConfigSubListCommand {
 			for(int i = startAt; i < endAt; i++) {
 				if(i != startAt)
 					listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_separator"));
-				listMessage.getSiblings().add(new TextComponent(subConfigIds.get(i)));
+				listMessage.getSiblings().add(Component.literal(subConfigIds.get(i)));
 			}
 			if(endAt < subConfigIds.size())
 				listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_there_is_more"));
-			sourcePlayer.sendMessage(listMessage, sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(listMessage);
 			return 1;
 		};
 	}

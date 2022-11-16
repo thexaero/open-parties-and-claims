@@ -94,14 +94,14 @@ public class ClaimsForceloadCommands {
 						if(result.getResultType().fail)
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, result.getResultType().message));
 						else
-							player.sendMessage(adaptiveLocalizer.getFor(player, result.getResultType().message), player.getUUID());
+							player.sendSystemMessage(adaptiveLocalizer.getFor(player, result.getResultType().message));
 				 		return 0;
 				 	}
 					
 				 	if(enable)
-				 		player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_claims_forceloaded_at", chunkX, chunkZ), player.getUUID());
+				 		player.sendSystemMessage(adaptiveLocalizer.getFor(player, "gui.xaero_claims_forceloaded_at", chunkX, chunkZ));
 				 	else
-				 		player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unforceloaded_at", chunkX, chunkZ), player.getUUID());
+				 		player.sendSystemMessage(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unforceloaded_at", chunkX, chunkZ));
 				 	return 1;
 			 	} finally {
 					((ClaimsManagerSynchronizer)claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(

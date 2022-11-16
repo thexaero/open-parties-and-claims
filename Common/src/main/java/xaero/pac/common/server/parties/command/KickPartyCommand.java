@@ -45,7 +45,6 @@ import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.awt.*;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -100,11 +99,11 @@ public class KickPartyCommand {
 								if(kickedPlayer != null) {
 									server.getCommands().sendCommands(kickedPlayer);
 									Component acceptComponent = adaptiveLocalizer.getFor(kickedPlayer, "gui.xaero_parties_kick_target_message", playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.RED));
-									kickedPlayer.sendMessage(acceptComponent, playerId);
+									kickedPlayer.sendSystemMessage(acceptComponent);
 								}
 							}
 							
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_kick_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.RED))));
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_kick_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.RED))));
 
 							return 1;
 						}))));

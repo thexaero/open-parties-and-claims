@@ -55,7 +55,7 @@ public class ClaimsNonAllyModeCommand {
 					mainCapability.setClaimsNonallyMode(!mainCapability.isClaimsNonallyMode());
 					mainCapability.setClaimsAdminMode(false);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-					player.sendMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsNonallyMode() ? "gui.xaero_claims_nonally_mode_enabled" : "gui.xaero_claims_nonally_mode_disabled"), player.getUUID());
+					player.sendSystemMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsNonallyMode() ? "gui.xaero_claims_nonally_mode_enabled" : "gui.xaero_claims_nonally_mode_disabled"));
 					return 1;
 				}));
 		dispatcher.register(command);

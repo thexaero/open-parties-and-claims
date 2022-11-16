@@ -149,11 +149,11 @@ public final class PlayerSubClaimDeletionSpreadoutTask extends PlayerClaimReplac
 							if(Objects.equals(playerData.getLastOtherConfigRequest(), removedSub.getPlayerId()))
 								serverData.getPlayerConfigs().getSynchronizer().syncSubExistence(onlinePlayer, removedSub, false);//notify the "other player" config
 						}
-						onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, "gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()), onlinePlayer.getUUID());
+						onlinePlayer.sendSystemMessage(adaptiveLocalizer.getFor(onlinePlayer, "gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()));
 					}
 				} else {
 					if (onlinePlayer != null)
-						onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, resultType.getMessage()), onlinePlayer.getUUID());
+						onlinePlayer.sendSystemMessage(adaptiveLocalizer.getFor(onlinePlayer, resultType.getMessage()));
 				}
 			}
 		}
