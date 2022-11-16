@@ -555,9 +555,9 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.shareLocationWithParty" : "default",
 	"gui.xaero_pac_player_config_playerConfig.parties.shareLocationWithMutualAllyParties" : "Share Location With Mutual Allies",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.shareLocationWithMutualAllyParties" : "default",
-	"gui.xaero_pac_player_config_playerConfig.parties.receiveLocationsFromParty" : "Receive Party Member Locations",
+	"gui.xaero_pac_player_config_playerConfig.parties.receiveLocationsFromParty" : "Receive Party Member Positions",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.receiveLocationsFromParty" : "default",
-	"gui.xaero_pac_player_config_playerConfig.parties.receiveLocationsFromMutualAllyParties" : "Receive Mutual Ally Locations",
+	"gui.xaero_pac_player_config_playerConfig.parties.receiveLocationsFromMutualAllyParties" : "Receive Mutual Ally Positions",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.receiveLocationsFromMutualAllyParties" : "default"
 	
 }
