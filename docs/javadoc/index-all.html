@@ -230,6 +230,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the server-side Open Parties and Claims API instance.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/api/OpenPACServerAPI.html#getAdaptiveTextLocalizer()" class="member-name-link">getAdaptiveTextLocalizer()</a> - Method in class xaero.pac.common.server.api.<a href="xaero/pac/common/server/api/OpenPACServerAPI.html" title="class in xaero.pac.common.server.api">OpenPACServerAPI</a></dt>
+<dd>
+<div class="block">Gets the API for the server-side adaptive text localizer that lets you create translated text components
+ that are readable even by players that don't have the mod installed.</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#getAllOptionsStream()" class="member-name-link">getAllOptionsStream()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
 <dd>
 <div class="block">Gets a stream of all player config option types, including the dynamic ones.</div>
@@ -535,6 +540,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#getExpiredClaimsConfig()" class="member-name-link">getExpiredClaimsConfig()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the read-only "player config" storage for the expired claims.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/localization/api/IAdaptiveLocalizerAPI.html#getFor(net.minecraft.server.level.ServerPlayer,java.lang.String,java.lang.Object...)" class="member-name-link">getFor(ServerPlayer, String, Object...)</a> - Method in interface xaero.pac.common.server.player.localization.api.<a href="xaero/pac/common/server/player/localization/api/IAdaptiveLocalizerAPI.html" title="interface in xaero.pac.common.server.player.localization.api">IAdaptiveLocalizerAPI</a></dt>
+<dd>
+<div class="block">Gets a text component for translatable text adapted to a specified player.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/localization/api/IAdaptiveLocalizerAPI.html#getFor(net.minecraft.server.level.ServerPlayer,net.minecraft.network.chat.Component)" class="member-name-link">getFor(ServerPlayer, Component)</a> - Method in interface xaero.pac.common.server.player.localization.api.<a href="xaero/pac/common/server/player/localization/api/IAdaptiveLocalizerAPI.html" title="interface in xaero.pac.common.server.player.localization.api">IAdaptiveLocalizerAPI</a></dt>
+<dd>
+<div class="block">Converts a text component to be readable by a specified player, if necessary.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html#getForceloadCount()" class="member-name-link">getForceloadCount()</a> - Method in interface xaero.pac.client.claims.player.api.<a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -1106,6 +1119,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/server/player/localization/api/IAdaptiveLocalizerAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.localization.api">IAdaptiveLocalizerAPI</a> - Interface in <a href="xaero/pac/common/server/player/localization/api/package-summary.html">xaero.pac.common.server.player.localization.api</a></dt>
+<dd>
+<div class="block">A text localizer that adapts to the player that the text is to be read by, whether the player has the mod installed or not.</div>
+</dd>
 <dt><a href="xaero/pac/common/capability/api/ICapabilityHelperAPI.html" class="type-name-link" title="interface in xaero.pac.common.capability.api">ICapabilityHelperAPI</a> - Interface in <a href="xaero/pac/common/capability/api/package-summary.html">xaero.pac.common.capability.api</a></dt>
 <dd>
 <div class="block">Helper API for getting capability values of objects</div>
@@ -1514,6 +1531,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection includes protection against players breaking and interacting with blocks.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk block protection redirects the used config option to the owner of the entity.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
@@ -2009,6 +2030,8 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a> - package xaero.pac.common.server.player.config.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/data/api/package-summary.html">xaero.pac.common.server.player.data.api</a> - package xaero.pac.common.server.player.data.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/localization/api/package-summary.html">xaero.pac.common.server.player.localization.api</a> - package xaero.pac.common.server.player.localization.api</dt>
 <dd>&nbsp;</dd>
 </dl>
 <a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:X">X</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
