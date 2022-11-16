@@ -55,6 +55,8 @@ extends IServerDataAPI<CM,P> {
 	public CM getServerClaimsManager();
 	@Override
 	public IPlayerConfigManager getPlayerConfigs();
+	@Override
+	public AdaptiveLocalizer getAdaptiveLocalizer();
 
 	public PlayerWorldJoinHandler getPlayerWorldJoinHandler();
 	public PlayerLoginHandler getPlayerLoginHandler();
@@ -79,7 +81,6 @@ extends IServerDataAPI<CM,P> {
 	public ServerInfoHolderIO getServerInfoIO();
 	public ServerPlayerClaimsExpirationHandler getServerPlayerClaimsExpirationHandler();
 	public ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> getObjectExpirationCheckTaskHandler();
-	public AdaptiveLocalizer getAdaptiveLocalizer();
 	public void onStop();
 
 }

@@ -23,10 +23,12 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class AdaptiveLocalizer {
+public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 
 	private final Map<String, String> defaultTranslations;
 
@@ -34,14 +36,18 @@ public class AdaptiveLocalizer {
 		this.defaultTranslations = defaultTranslations;
 	}
 
-	public MutableComponent getFor(ServerPlayer player, String key, Object... args){
+	@Override
+	@Nonnull
+	public MutableComponent getFor(@Nonnull ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
 		ServerPlayerData playerDataAPI = (ServerPlayerData) ServerPlayerData.from(player);
 		if(playerDataAPI.hasMod())
 			return new TranslatableComponent(key, args);
 		return getServerLocalizedComponent(key, args);
 	}
 
-	public Component getFor(ServerPlayer player, Component component){
+	@Override
+	@Nonnull
+	public Component getFor(@Nonnull ServerPlayer player, @Nonnull Component component){
 		if(!(component instanceof TranslatableComponent translatableComponent))
 			return component;
 		ServerPlayerData playerDataAPI = (ServerPlayerData) ServerPlayerData.from(player);
@@ -49,7 +55,10 @@ public class AdaptiveLocalizer {
 			return translatableComponent;
 		String key = translatableComponent.getKey();
 		Object[] args = translatableComponent.getArgs();
-		return getServerLocalizedComponent(key, args).setStyle(component.getStyle());
+		Component result = getServerLocalizedComponent(key, args).setStyle(component.getStyle());
+		if(component.getSiblings() != null)
+			result.getSiblings().addAll(component.getSiblings());
+		return result;
 	}
 
 	private MutableComponent getServerLocalizedComponent(String key, Object... args){
