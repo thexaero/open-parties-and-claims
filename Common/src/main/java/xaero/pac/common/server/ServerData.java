@@ -19,6 +19,7 @@
 package xaero.pac.common.server;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.resources.ResourceManager;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -50,7 +51,10 @@ import xaero.pac.common.server.player.*;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.player.localization.ServerTranslationLoader;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
+
+import java.util.Map;
 
 public final class ServerData implements IServerData<ServerClaimsManager, ServerParty> {
 	
@@ -81,7 +85,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final ServerInfo serverInfo;
 	private final ServerInfoHolderIO serverInfoIO;
 	private final ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler;
-	private final AdaptiveLocalizer adaptiveLocalizer;
+	private AdaptiveLocalizer adaptiveLocalizer;
 	private final OpenPACServerAPI api;
 
 	public ServerData(MinecraftServer server, PartyManager partyManager, PartyManagerIO<?> partyManagerIO,
@@ -93,7 +97,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 					  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
 					  ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
 					  ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
-					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler, AdaptiveLocalizer adaptiveLocalizer) {
+					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler) {
 		super();
 		this.server = server;
 		this.partyManager = partyManager;
@@ -122,8 +126,12 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.serverInfoIO = serverInfoIO;
 		this.serverPlayerClaimsExpirationHandler = serverPlayerClaimsExpirationHandler;
 		this.objectExpirationCheckTaskHandler = objectExpirationCheckTaskHandler;
-		this.adaptiveLocalizer = adaptiveLocalizer;
 		api = new OpenPACServerAPI(this);
+	}
+
+	public void onServerResourcesReload(ResourceManager resourceManager){
+		Map<String, String> serverTranslations = new ServerTranslationLoader().loadFromResources(resourceManager);
+		adaptiveLocalizer = new AdaptiveLocalizer(serverTranslations);
 	}
 
 	public void onStop() {

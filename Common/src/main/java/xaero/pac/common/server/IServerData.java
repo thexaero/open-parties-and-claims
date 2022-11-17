@@ -19,6 +19,7 @@
 package xaero.pac.common.server;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.resources.ResourceManager;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
@@ -82,5 +83,6 @@ extends IServerDataAPI<CM,P> {
 	public ServerPlayerClaimsExpirationHandler getServerPlayerClaimsExpirationHandler();
 	public ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> getObjectExpirationCheckTaskHandler();
 	public void onStop();
+	public void onServerResourcesReload(ResourceManager resourceManager);
 
 }

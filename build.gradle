@@ -50,9 +50,18 @@ subprojects {
 	}
 
 
+    File assetsLangFolder = project(":Common").sourceSets.main.resources.srcDirs[0].toPath().resolve("assets/${mod_id}/lang").toFile()
+    File dataLangFolder = new File("data/${mod_id}/lang")
+
     tasks.withType(Jar).configureEach {
         from(rootDir){
             include 'LICENSE'
+        }
+    }
+
+    tasks.withType(ProcessResources).configureEach {
+        from(assetsLangFolder) {
+            into(dataLangFolder)//copying lang files from client resources to server data
         }
     }
 

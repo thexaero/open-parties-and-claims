@@ -20,6 +20,8 @@ package xaero.pac;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.server.packs.PackType;
 import xaero.pac.client.LoadClientFabric;
 import xaero.pac.client.event.ClientEventsFabric;
 import xaero.pac.common.capability.CapabilityHelperFabric;
@@ -27,6 +29,7 @@ import xaero.pac.common.config.ForgeConfigHelperFabric;
 import xaero.pac.common.event.CommonEventsFabric;
 import xaero.pac.common.mods.ModSupportFabric;
 import xaero.pac.common.packet.PacketHandlerFabric;
+import xaero.pac.common.server.data.ServerDataReloadListenerFabric;
 import xaero.pac.server.LoadDedicatedServerFabric;
 
 public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements ClientModInitializer, DedicatedServerModInitializer {
@@ -37,6 +40,7 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 	public OpenPartiesAndClaimsFabric() {
 		super(new CapabilityHelperFabric(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
 		CapabilityHelperFabric.createCapabilities();
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ServerDataReloadListenerFabric());
 	}
 
 	@Override
