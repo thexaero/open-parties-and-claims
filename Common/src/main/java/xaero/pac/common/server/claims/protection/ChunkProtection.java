@@ -281,11 +281,10 @@ public class ChunkProtection
 	}
 
 	private IPlayerConfigOptionSpecAPI<Integer> getUsedEntityProtectionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
-		boolean isPlayer = entity instanceof Player;
-		Entity usedOptionBase = !isPlayer && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT) ? accessor : entity;
+		Entity usedOptionBase = !(entity instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT) ? accessor : entity;
 		if(usedOptionBase == null)
 			return getToughestProtectionLevelOption(claimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER);
-		return isPlayer ?
+		return usedOptionBase instanceof Player ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS :
 				usedOptionBase instanceof LivingEntity ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS :
@@ -293,11 +292,10 @@ public class ChunkProtection
 	}
 
 	private IPlayerConfigOptionSpecAPI<Integer> getUsedBlockProtectionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
-		boolean isPlayer = entity instanceof Player;
-		Entity usedOptionBase = !isPlayer && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT) ? accessor : entity;
+		Entity usedOptionBase = !(entity instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT) ? accessor : entity;
 		if(usedOptionBase == null)
 			return getToughestProtectionLevelOption(claimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER);
-		return isPlayer ?
+		return usedOptionBase instanceof Player ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS :
 				usedOptionBase instanceof LivingEntity ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS :
@@ -1669,12 +1667,11 @@ public class ChunkProtection
 	}
 
 	private IPlayerConfigOptionSpecAPI<Integer> getUsedDroppedItemProtectionOption(IPlayerConfig config, Entity entity, Entity accessor){
-		boolean isPlayer = entity instanceof Player;
-		Entity usedOptionBase = !isPlayer && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT) ?
+		Entity usedOptionBase = !(entity instanceof Player) && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT) ?
 				accessor : entity;
 		if(usedOptionBase == null)
 			return getToughestProtectionLevelOption(config, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS, null);
-		return isPlayer ?
+		return usedOptionBase instanceof Player ?
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS :
 				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS;
 	}
