@@ -50,6 +50,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
@@ -352,6 +353,9 @@ public class ServerCore {
 
 	public static BlockPos preBlockStateFetchOnFrostwalk(BlockPos pos){
 		if(FROSTWALK_ENTITY == null || !(FROSTWALK_LEVEL instanceof ServerLevel) || !FROSTWALK_LEVEL.getServer().isSameThread())
+			return pos;
+		BlockState actualState = FROSTWALK_LEVEL.getBlockState(pos);
+		if(actualState.getMaterial() != Material.WATER)
 			return pos;
 		FROSTWALK_BLOCKPOS.set(pos);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(FROSTWALK_LEVEL.getServer());
