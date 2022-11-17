@@ -20,6 +20,7 @@ package xaero.pac.common.event;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -47,6 +48,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.core.ServerCore;
+import xaero.pac.common.server.data.ServerDataReloadListenerForge;
 
 public class CommonEventsForge extends CommonEvents {
 
@@ -226,6 +228,11 @@ public class CommonEventsForge extends CommonEvents {
 	public void onMobCheckSpawn(LivingSpawnEvent.CheckSpawn event){
 		if(super.onMobSpawn(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getSpawnReason()))
 			event.setResult(Result.DENY);
+	}
+
+	@SubscribeEvent
+	public void onAddReloadListenerEvent(AddReloadListenerEvent event){
+		event.addListener(new ServerDataReloadListenerForge());
 	}
 
 }
