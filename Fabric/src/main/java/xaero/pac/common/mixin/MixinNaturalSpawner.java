@@ -21,6 +21,7 @@ package xaero.pac.common.mixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ChunkPos;
@@ -36,8 +37,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.core.ServerCoreFabric;
 
-import java.util.Random;
-
 @Mixin(NaturalSpawner.class)
 public class MixinNaturalSpawner {
 
@@ -48,13 +47,13 @@ public class MixinNaturalSpawner {
 	}
 
 	@ModifyVariable(method = "spawnMobsForChunkGeneration", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/NaturalSpawner;getTopNonCollidingPos(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/world/entity/EntityType;II)Lnet/minecraft/core/BlockPos;"))
-	private static BlockPos onSpawnMobsForChunkGenerationPre(BlockPos blockPos, ServerLevelAccessor serverLevelAccessor, Holder<Biome> biomeHolder, ChunkPos chunkPos, Random random){
+	private static BlockPos onSpawnMobsForChunkGenerationPre(BlockPos blockPos, ServerLevelAccessor serverLevelAccessor, Holder<Biome> biomeHolder, ChunkPos chunkPos, RandomSource random){
 		ServerCoreFabric.setMobSpawnTypeForNewEntities(MobSpawnType.CHUNK_GENERATION, serverLevelAccessor.getServer());
 		return blockPos;
 	}
 
 	@Inject(method = "spawnMobsForChunkGeneration", at = @At("RETURN"))
-	private static void onSpawnMobsForChunkGenerationPost(ServerLevelAccessor levelAccessor, Holder<Biome> biomeHolder, ChunkPos chunkPos, Random random, CallbackInfo ci){
+	private static void onSpawnMobsForChunkGenerationPost(ServerLevelAccessor levelAccessor, Holder<Biome> biomeHolder, ChunkPos chunkPos, RandomSource random, CallbackInfo ci){
 		ServerCoreFabric.resetMobSpawnTypeForNewEntities();
 	}
 

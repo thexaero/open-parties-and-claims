@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,7 +35,7 @@ import java.util.List;
 public class MixinMob {
 
 	@Inject(method = "aiStep", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;pickUpItem(Lnet/minecraft/world/entity/item/ItemEntity;)V"), cancellable = true)
-	public void onAiStepItemPickup(CallbackInfo ci, List list, Iterator var2, ItemEntity itemEntity){
+	public void onAiStepItemPickup(CallbackInfo ci, Vec3i vec3i, List list, Iterator var3, ItemEntity itemEntity){
 		if(ServerCore.onMobItemPickup(itemEntity, (Mob)(Object)this))
 			ci.cancel();
 	}

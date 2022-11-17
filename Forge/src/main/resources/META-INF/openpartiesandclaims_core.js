@@ -1163,7 +1163,7 @@ function initializeCoreMod() {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.entity.ai.behavior.BehaviorUtils',
                 'methodName': 'm_22613_',
-                'methodDesc' : '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;)V'
+                'methodDesc' : '(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;F)V'
             },
             'transformer' : function(methodNode){
                 var insnToInsert = new InsnList()

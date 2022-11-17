@@ -34,12 +34,12 @@ import xaero.pac.common.server.core.ServerCore;
 @Mixin(BehaviorUtils.class)
 public class MixinBehaviorUtils {
 
-	@Inject(method = "throwItem", at = @At("HEAD"))
-	private static void onThrowItem(LivingEntity livingEntity, ItemStack itemStack, Vec3 vec3, CallbackInfo ci){
+	@Inject(method = "throwItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;F)V", at = @At("HEAD"))
+	private static void onThrowItem(LivingEntity livingEntity, ItemStack itemStack, Vec3 vec3, Vec3 vec3_2, float f, CallbackInfo ci){
 		ServerCore.preThrowItem(livingEntity);
 	}
 
-	@ModifyArg(method = "throwItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+	@ModifyArg(method = "throwItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
 	private static Entity onThrowItem(Entity itemEntity){
 		ServerCore.onThrowItem((ItemEntity) itemEntity);
 		return itemEntity;
