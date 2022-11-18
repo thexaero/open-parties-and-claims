@@ -18,6 +18,9 @@
 
 package xaero.pac.common.entity;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+
 import java.util.UUID;
 
 public interface IEntity {
@@ -26,5 +29,7 @@ public interface IEntity {
 	void setXaero_OPAC_lootOwner(UUID lootOwner);
 	UUID getXaero_OPAC_deadPlayer();
 	void setXaero_OPAC_deadPlayer(UUID deadPlayer);
+	ResourceKey<Level> getXaero_OPAC_lastChunkEntryDimension();
+	void setXaero_OPAC_lastChunkEntryDimension(ResourceKey<Level> xaero_OPAC_lastChunkEntryDimension);
 
 }
