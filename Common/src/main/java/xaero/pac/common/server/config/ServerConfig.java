@@ -40,6 +40,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> friendlyChunkProtectedEntityList;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> hostileChunkProtectedEntityListType;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityProtectionExceptionList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forcedBlockProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionOptionalExceptionGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forcedEntityProtectionExceptionList;
@@ -285,6 +288,31 @@ public class ServerConfig {
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("hostileChunkProtectedEntityList"), ArrayList::new, s -> s instanceof String);
 
+		blockProtectionExceptionList = builder
+				.comment("""
+					No longer a working option. Please transfer anything you still have here to "forcedBlockProtectionExceptionList" or "blockProtectionOptionalExceptionGroups",
+					but keep in mind that those options work differently and please read their comments.
+					This option will be completely removed on the full release of the mod.""")
+				.translation("gui.xaero_pac_config_block_protection_exception")
+				.worldRestart()
+				.defineListAllowEmpty(Lists.newArrayList("blockProtectionExceptionList"), Lists::newArrayList, s -> s instanceof String);
+		entityProtectionExceptionList = builder
+				.comment("""
+					No longer a working option. Please transfer anything you still have here to "forcedEntityProtectionExceptionList" or "entityProtectionOptionalExceptionGroups",
+					but keep in mind that those options work differently and please read their comments.
+					This option will be completely removed on the full release of the mod.""")
+				.translation("gui.xaero_pac_config_entity_protection_exception")
+				.worldRestart()
+				.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), Lists::newArrayList, s -> s instanceof String);
+		entityClaimBarrierList = builder
+				.comment("""
+					No longer a working option. Please transfer anything you still have here to "forcedEntityClaimBarrierList" or "entityClaimBarrierOptionalGroups",
+					but keep in mind that those options work differently and please read their comments.
+					This option will be completely removed on the full release of the mod.""")
+				.translation("gui.xaero_pac_config_entity_claim_barrier_list")
+				.worldRestart()
+				.defineListAllowEmpty(Lists.newArrayList("entityClaimBarrierList"), Lists::newArrayList, s -> s instanceof String);
+
 		forcedBlockProtectionExceptionList = builder
 			.comment("""
 					Blocks to partially exclude from chunk protection. Supports block tags.
@@ -367,7 +395,7 @@ public class ServerConfig {
 			.comment("""
 					Entities that are prevented from entering the claim. Supports entity type tags. An entity/tag ID in the list, e.g. "minecraft:falling_block" prevents the entities from entering.
 					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR. For example: "minecraft:zombie(_villager|)".""")
-			.translation("gui.xaero_pac_config_entity_claim_barrier_list")
+			.translation("gui.xaero_pac_config_entity_forced_claim_barrier_list")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("forcedEntityClaimBarrierList"), () -> Lists.newArrayList("minecraft:falling_block", "supplementaries:slingshot_projectile"), s -> s instanceof String);
 
