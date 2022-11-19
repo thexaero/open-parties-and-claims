@@ -20,6 +20,8 @@ package xaero.pac.common.server;
 
 import xaero.pac.common.server.api.OpenPACServerAPI;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
+import xaero.pac.common.server.claims.protection.ChunkProtection;
+import xaero.pac.common.server.claims.protection.api.IChunkProtectionAPI;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
@@ -40,5 +42,7 @@ public interface IServerDataAPI
 	public OpenPACServerAPI getAPI();
 
 	public IAdaptiveLocalizerAPI getAdaptiveLocalizer();
+
+	public IChunkProtectionAPI getChunkProtection();
 
 }

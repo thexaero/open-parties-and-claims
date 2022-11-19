@@ -238,6 +238,7 @@ public class ServerDataInitializer {
 			ObjectManagerLiveSaver playerClaimInfoLiveSaver = new ObjectManagerLiveSaver(playerClaimInfoManagerIO, autosaveInterval, autosaveInterval / 3 * 2);
 			ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection = ChunkProtection.Builder
 					.<ServerClaimsManager, PartyMember, PartyInvite, ServerParty>begin()
+					.setServer(server)
 					.setClaimsManager(serverClaimsManager)
 					.setPartyManager(partyManager)
 					.setBlockExceptionGroups(blockExceptionGroups)
@@ -259,6 +260,7 @@ public class ServerDataInitializer {
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);
 			serverData.onServerResourcesReload(server.getResourceManager());
+			chunkProtection.setServerData(serverData);
 			return serverData;
 		} catch(Throwable t) {
 			modMain.startupCrashHandler.crash(t);

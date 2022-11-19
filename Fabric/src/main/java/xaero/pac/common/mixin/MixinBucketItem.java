@@ -38,7 +38,7 @@ public class MixinBucketItem {
 
 	@Inject(method = "use", locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/phys/BlockHitResult;getType()Lnet/minecraft/world/phys/HitResult$Type;"))
 	public void onUse(Level level, Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> infoReturnable, ItemStack itemStack, BlockHitResult blockHitResult) {
-		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onBucketUse(player, blockHitResult, itemStack))
+		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onBucketUse(player, level, blockHitResult, itemStack))
 			infoReturnable.setReturnValue(InteractionResultHolder.fail(itemStack));
 	}
 

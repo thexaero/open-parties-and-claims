@@ -32,7 +32,7 @@ import xaero.pac.common.registry.item.ItemRegistryFabric;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessFabric;
 
-public class PlatformHelperFabric implements IPlatformHelper{
+public class PlatformHelperFabric implements IPlatformHelper {
 
 	private final BlockRegistryFabric blockRegistryFabric = new BlockRegistryFabric();
 	private final EntityRegistryFabric entityRegistryFabric = new EntityRegistryFabric();

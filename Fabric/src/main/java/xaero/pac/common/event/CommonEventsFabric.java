@@ -219,8 +219,8 @@ public class CommonEventsFabric extends CommonEvents {
 		return super.onCropTrample(entity, pos);
 	}
 
-	public boolean onBucketUse(Entity entity, HitResult hitResult, ItemStack itemStack){
-		return super.onBucketUse(entity, hitResult, itemStack);
+	public boolean onBucketUse(Entity entity, Level world, HitResult hitResult, ItemStack itemStack){
+		return super.onBucketUse(entity, world, hitResult, itemStack);
 	}
 
 	public void onTagsUpdate() {

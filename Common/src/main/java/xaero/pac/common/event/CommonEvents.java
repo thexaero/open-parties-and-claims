@@ -80,7 +80,7 @@ public class CommonEvents {
 
 	protected final OpenPartiesAndClaims modMain;
 	protected MinecraftServer lastServerStarted;
-	
+
 	public CommonEvents(OpenPartiesAndClaims modMain) {
 		this.modMain = modMain;
 	}
@@ -193,7 +193,7 @@ public class CommonEvents {
 	public boolean onLeftClickBlock(boolean isServerSide, Level world, BlockPos pos, Player player) {
 		if(isServerSide) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(world.getServer());
-			return serverData.getChunkProtection().onLeftClickBlockServer(serverData, world, pos, player);
+			return serverData.getChunkProtection().onEntityDestroyBlock(serverData, player, (ServerLevel) world, pos, true);
 		}
 		return false;
 	}
@@ -201,7 +201,7 @@ public class CommonEvents {
 	public boolean onDestroyBlock(LevelAccessor world, BlockPos pos, Player player) {
 		if(world instanceof ServerLevel serverLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(world.getServer());
-			return serverData.getChunkProtection().onPlayerDestroyBlock(serverData, pos, serverLevel, player, true);
+			return serverData.getChunkProtection().onEntityDestroyBlock(serverData, player, serverLevel, pos, true);
 		}
 		return false;
 	}
@@ -209,10 +209,7 @@ public class CommonEvents {
 	public boolean onEntityDestroyBlock(Level world, BlockPos pos, Entity entity) {
 		if(world instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(world.getServer());
-			if(entity instanceof Player player)
-				return serverData.getChunkProtection().onPlayerDestroyBlock(serverData, pos, world, player, false);
-			else
-				return serverData.getChunkProtection().onEntityDestroyBlock(serverData, (ServerLevel) world, entity, pos);
+			return serverData.getChunkProtection().onEntityDestroyBlock(serverData, entity, (ServerLevel) world, pos, false);
 		}
 		return false;
 	}
@@ -223,7 +220,7 @@ public class CommonEvents {
 				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(world.getServer());
 			//cancelling both item and block use because players don't expect to use the item when the block would normally be used (and isn't because of protection)
-			return serverData.getChunkProtection().onRightClickBlock(serverData, player, hand, pos, hitVec);
+			return serverData.getChunkProtection().onBlockInteraction(serverData, player, hand, null, (ServerLevel)world, pos, hitVec.getDirection(), false, true);
 		}
 		return false;
 	}
@@ -255,7 +252,7 @@ public class CommonEvents {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
 			if(source.isFire())
 				return serverData.getChunkProtection().onEntityFire(serverData, target);
-			return serverData.getChunkProtection().onEntityInteract(serverData, source.getEntity(), source.getDirectEntity(), target, InteractionHand.MAIN_HAND, !source.isExplosion() && source.getEntity() == source.getDirectEntity(), true, false);
+			return serverData.getChunkProtection().onEntityInteraction(serverData, source.getEntity(), source.getDirectEntity(), target, null, InteractionHand.MAIN_HAND, true, true);
 		}
 		return false;
 	}
@@ -265,7 +262,7 @@ public class CommonEvents {
 		if(target.getLevel() instanceof ServerLevel) {
 			if(!player.isSpectator()){
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
-				result = serverData.getChunkProtection().onEntityInteract(serverData, player, player, target, InteractionHand.MAIN_HAND, true, true, false);
+				result = serverData.getChunkProtection().onEntityInteraction(serverData, player, player, target, null, InteractionHand.MAIN_HAND, true, true);
 			}
 			if(result)
 				ServerCore.postResourcesDrop(player);//protected attack won't reach this call otherwise
@@ -278,7 +275,7 @@ public class CommonEvents {
 			if(source.isSpectator())
 				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
-			return serverData.getChunkProtection().onEntityInteract(serverData, source, source, target, hand, true, false, false);
+			return serverData.getChunkProtection().onEntityInteraction(serverData, source, source, target, null, hand, false, false);
 		}
 		return false;
 	}
@@ -286,7 +283,7 @@ public class CommonEvents {
 	public boolean onInteractEntitySpecific(Entity source, Entity target, InteractionHand hand) {
 		if(target.getLevel() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
-			return serverData.getChunkProtection().onEntityInteract(serverData, source, source, target, hand, true, false, true);
+			return serverData.getChunkProtection().onEntityInteraction(serverData, source, source, target, null, hand, false, true);
 		}
 		return false;
 	}
@@ -373,11 +370,11 @@ public class CommonEvents {
 		return serverData.getChunkProtection().onCropTrample(serverData, entity, pos);
 	}
 
-	public boolean onBucketUse(Entity entity, HitResult hitResult, ItemStack itemStack){
+	public boolean onBucketUse(Entity entity, Level world, HitResult hitResult, ItemStack itemStack){
 		if(entity.getServer() == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
-		return serverData.getChunkProtection().onBucketUse(serverData, entity, hitResult, itemStack);
+		return serverData.getChunkProtection().onBucketUse(serverData, entity, world, hitResult, itemStack);
 	}
 
 	protected boolean onEntityPlaceBlock(LevelAccessor levelAccessor, BlockPos pos, Entity entity) {

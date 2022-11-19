@@ -32,6 +32,7 @@ import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.api.IServerDimensionClaimsManagerAPI;
 import xaero.pac.common.server.claims.api.IServerRegionClaimsAPI;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
+import xaero.pac.common.server.claims.protection.api.IChunkProtectionAPI;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
@@ -104,6 +105,15 @@ public class OpenPACServerAPI {
 	 */
 	public IAdaptiveLocalizerAPI getAdaptiveTextLocalizer(){
 		return serverData.getAdaptiveLocalizer();
+	}
+
+	/**
+	 * Gets the API for the chunk protection with some basic methods you can use.
+	 *
+	 * @return the chunk protection API
+	 */
+	public IChunkProtectionAPI getChunkProtection(){
+		return serverData.getChunkProtection();
 	}
 
 	/**
