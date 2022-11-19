@@ -94,6 +94,24 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#checkExceptionLeveledOption(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI,xaero.pac.common.server.player.config.api.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">checkExceptionLeveledOption(IPlayerConfigOptionSpecAPI&lt;Integer&gt;, IPlayerConfigAPI, UUID)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a player/claim config option with multiple exception levels includes the entity with a
+ specified UUID.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#checkExceptionLeveledOption(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI,xaero.pac.common.server.player.config.api.IPlayerConfigAPI,net.minecraft.world.entity.Entity)" class="member-name-link">checkExceptionLeveledOption(IPlayerConfigOptionSpecAPI&lt;Integer&gt;, IPlayerConfigAPI, Entity)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a player/claim config option with multiple exception levels includes a specified entity.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#checkProtectionLeveledOption(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI,xaero.pac.common.server.player.config.api.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">checkProtectionLeveledOption(IPlayerConfigOptionSpecAPI&lt;Integer&gt;, IPlayerConfigAPI, UUID)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a player/claim config option with multiple protection levels protects from the entity with a
+ specified UUID.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#checkProtectionLeveledOption(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI,xaero.pac.common.server.player.config.api.IPlayerConfigAPI,net.minecraft.world.entity.Entity)" class="member-name-link">checkProtectionLeveledOption(IPlayerConfigOptionSpecAPI&lt;Integer&gt;, IPlayerConfigAPI, Entity)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a player/claim config option with multiple protection levels protects from a specified entity.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#claim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,boolean)" class="member-name-link">claim(ResourceLocation, UUID, int, int, int, boolean)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Directly replaces the current claim state of a chunk.</div>
@@ -298,6 +316,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/api/OpenPACClientAPI.html#getCapabilityHelper()" class="member-name-link">getCapabilityHelper()</a> - Method in class xaero.pac.client.api.<a href="xaero/pac/client/api/OpenPACClientAPI.html" title="class in xaero.pac.client.api">OpenPACClientAPI</a></dt>
 <dd>
 <div class="block">Gets the capability API for accessing the data attached to some objects, e.g.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/api/OpenPACServerAPI.html#getChunkProtection()" class="member-name-link">getChunkProtection()</a> - Method in class xaero.pac.common.server.api.<a href="xaero/pac/common/server/api/OpenPACServerAPI.html" title="class in xaero.pac.common.server.api">OpenPACServerAPI</a></dt>
+<dd>
+<div class="block">Gets the API for the chunk protection with some basic methods you can use.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#getClaimConfig(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getClaimConfig(IPlayerChunkClaimAPI)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Gets the player/claim config used for a specified claim state.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html#getClaimCount()" class="member-name-link">getClaimCount()</a> - Method in interface xaero.pac.client.claims.player.api.<a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -1105,9 +1131,22 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerRegionClaimsAPI.html#getZ()" class="member-name-link">getZ()</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerRegionClaimsAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerRegionClaimsAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#giveFullPass(java.util.UUID)" class="member-name-link">giveFullPass(UUID)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Gives an entity UUID a full pass to circumvent claim protection when affecting entities/blocks/items,
+ except when the methods of this API are used, e.g.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#hasChunkAccess(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">hasChunkAccess(IPlayerConfigAPI, UUID)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Directly checks whether the entity with a specified UUID has full access to a claim with the specified config.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#hasChunkAccess(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,net.minecraft.world.entity.Entity)" class="member-name-link">hasChunkAccess(IPlayerConfigAPI, Entity)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Directly checks whether a specified entity has full access to a claim with the specified config.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo(UUID)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo(UUID)</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></dt>
@@ -1126,6 +1165,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/capability/api/ICapabilityHelperAPI.html" class="type-name-link" title="interface in xaero.pac.common.capability.api">ICapabilityHelperAPI</a> - Interface in <a href="xaero/pac/common/capability/api/package-summary.html">xaero.pac.common.capability.api</a></dt>
 <dd>
 <div class="block">Helper API for getting capability values of objects</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a> - Interface in <a href="xaero/pac/common/server/claims/protection/api/package-summary.html">xaero.pac.common.server.claims.protection.api</a></dt>
+<dd>
+<div class="block">API for the claim-based chunk protection.</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a>&lt;<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="type parameter in IClaimsManagerAPI">PCI</a> extends <a href="xaero/pac/common/claims/player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a>&lt;?&gt;,<wbr><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="type parameter in IClaimsManagerAPI">WCM</a> extends <a href="xaero/pac/common/claims/api/IDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IDimensionClaimsManagerAPI</a>&lt;?&gt;&gt; - Interface in <a href="xaero/pac/common/claims/api/package-summary.html">xaero.pac.common.claims.api</a></dt>
 <dd>
@@ -1417,6 +1460,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the player's forceloaded claims stay forceloaded when they go offline.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onBlockInteraction(net.minecraft.world.entity.Entity,net.minecraft.world.InteractionHand,net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerLevel,net.minecraft.core.BlockPos,net.minecraft.core.Direction,boolean,boolean)" class="member-name-link">onBlockInteraction(Entity, InteractionHand, ItemStack, ServerLevel, BlockPos, Direction, boolean, boolean)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a specified block interaction should be protected against.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html#onChunkChange(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">onChunkChange(ResourceLocation, int, int, IPlayerChunkClaimAPI)</a> - Method in interface xaero.pac.common.claims.tracker.api.<a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerListenerAPI</a></dt>
 <dd>
 <div class="block">Called after the claim state of a chunk is updated.</div>
@@ -1428,6 +1475,23 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html#onDimensionChange(net.minecraft.resources.ResourceLocation)" class="member-name-link">onDimensionChange(ResourceLocation)</a> - Method in interface xaero.pac.common.claims.tracker.api.<a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerListenerAPI</a></dt>
 <dd>
 <div class="block">Called after claim changes are made throughout a dimension.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onEntityInteraction(net.minecraft.world.entity.Entity,net.minecraft.world.entity.Entity,net.minecraft.world.entity.Entity,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand,boolean,boolean)" class="member-name-link">onEntityInteraction(Entity, Entity, Entity, ItemStack, InteractionHand, boolean, boolean)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether an entity interaction should be protected against.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onEntityPlaceBlock(net.minecraft.world.entity.Entity,net.minecraft.server.level.ServerLevel,net.minecraft.core.BlockPos)" class="member-name-link">onEntityPlaceBlock(Entity, ServerLevel, BlockPos)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a specified block placement should be protected against.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onItemPickup(net.minecraft.world.entity.Entity,net.minecraft.world.entity.item.ItemEntity)" class="member-name-link">onItemPickup(Entity, ItemEntity)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a specified entity picking up a specified item entity should be protected against.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onPosAffectedByAnotherPos(net.minecraft.server.level.ServerLevel,net.minecraft.world.level.ChunkPos,net.minecraft.server.level.ServerLevel,net.minecraft.world.level.ChunkPos,boolean,boolean,boolean)" class="member-name-link">onPosAffectedByAnotherPos(ServerLevel, ChunkPos, ServerLevel, ChunkPos, boolean, boolean, boolean)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether an anonymous action coming from one chunk position to another should be
+ protected against, based on protection that affects placing blocks and using items in both positions.</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html#onWholeRegionChange(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">onWholeRegionChange(ResourceLocation, int, int)</a> - Method in interface xaero.pac.common.claims.tracker.api.<a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerListenerAPI</a></dt>
 <dd>
@@ -1756,6 +1820,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Removes an ally party from this party.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#removeFullPass(java.util.UUID)" class="member-name-link">removeFullPass(UUID)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Removes a pass given with <a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#giveFullPass(java.util.UUID)"><code>IChunkProtectionAPI.giveFullPass(UUID)</code></a> from an entity UUID.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#removeMember(java.util.UUID)" class="member-name-link">removeMember(UUID)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>
 <div class="block">Removes the party member with a specified player UUID, unless the player is the owner of this party.</div>
@@ -2024,6 +2092,8 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/server/claims/api/package-summary.html">xaero.pac.common.server.claims.api</a> - package xaero.pac.common.server.claims.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/claims/player/api/package-summary.html">xaero.pac.common.server.claims.player.api</a> - package xaero.pac.common.server.claims.player.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/package-summary.html">xaero.pac.common.server.claims.protection.api</a> - package xaero.pac.common.server.claims.protection.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/package-summary.html">xaero.pac.common.server.parties.party.api</a> - package xaero.pac.common.server.parties.party.api</dt>
 <dd>&nbsp;</dd>
