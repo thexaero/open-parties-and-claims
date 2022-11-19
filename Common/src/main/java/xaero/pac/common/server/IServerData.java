@@ -58,6 +58,8 @@ extends IServerDataAPI<CM,P> {
 	public IPlayerConfigManager getPlayerConfigs();
 	@Override
 	public AdaptiveLocalizer getAdaptiveLocalizer();
+	@Override
+	public ChunkProtection<CM,?,?,P> getChunkProtection();
 
 	public PlayerWorldJoinHandler getPlayerWorldJoinHandler();
 	public PlayerLoginHandler getPlayerLoginHandler();
@@ -66,7 +68,6 @@ extends IServerDataAPI<CM,P> {
 	public ForceLoadTicketManager getForceLoadManager();
 	public ServerTickHandler getServerTickHandler();
 	public PlayerTickHandler getPlayerTickHandler();
-	public ChunkProtection<CM,?,?,P> getChunkProtection();
 	public IOThreadWorker getIoThreadWorker();
 	public PartyExpirationHandler getPartyExpirationHandler();
 	public PartyManagerIO<?> getPartyManagerIO();

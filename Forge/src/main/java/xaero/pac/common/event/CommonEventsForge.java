@@ -209,7 +209,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onBucketUse(FillBucketEvent event){
-		if(super.onBucketUse(event.getEntity(), event.getTarget(), event.getEmptyBucket()))
+		if(super.onBucketUse(event.getEntity(), event.getWorld(), event.getTarget(), event.getEmptyBucket()))
 			event.setCanceled(true);
 	}
 

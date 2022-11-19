@@ -19,8 +19,10 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,6 +39,7 @@ public class MixinEntity implements IEntityFabric {
 	private UUID xaero_OPAC_lootOwner;
 	private UUID xaero_OPAC_deadPlayer;
 	private CompoundTag xaero_OPAC_persistentData;
+	private ResourceKey<Level> xaero_OPAC_lastChunkEntryDimension;
 
 	@Override
 	public CompoundTag getXaero_OPAC_PersistentData() {
@@ -85,6 +88,16 @@ public class MixinEntity implements IEntityFabric {
 	@Override
 	public void setXaero_OPAC_deadPlayer(UUID xaero_OPAC_deadPlayer) {
 		this.xaero_OPAC_deadPlayer = xaero_OPAC_deadPlayer;
+	}
+
+	@Override
+	public ResourceKey<Level> getXaero_OPAC_lastChunkEntryDimension() {
+		return xaero_OPAC_lastChunkEntryDimension;
+	}
+
+	@Override
+	public void setXaero_OPAC_lastChunkEntryDimension(ResourceKey<Level> xaero_OPAC_lastChunkEntryDimension) {
+		this.xaero_OPAC_lastChunkEntryDimension = xaero_OPAC_lastChunkEntryDimension;
 	}
 
 }
