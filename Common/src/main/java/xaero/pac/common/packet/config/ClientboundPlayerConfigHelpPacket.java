@@ -79,8 +79,8 @@ public class ClientboundPlayerConfigHelpPacket {
 					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 			IPlayerConfigOptionSpecAPI<?> option = playerConfigStorageManager.getOptionForId(t.optionId);
 			if(option != null) {
-				Minecraft.getInstance().gui.getChat().addMessage(PlayerConfigScreen.getUICommentForOption(option));
 				Minecraft.getInstance().gui.getChat().addMessage(new TextComponent(""));
+				Minecraft.getInstance().gui.getChat().addMessage(PlayerConfigScreen.getUICommentForOption(option));
 			}
 		}
 
