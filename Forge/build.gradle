@@ -105,12 +105,6 @@ processResources {
     from project(":Common").sourceSets.main.resources
 }
 
-project.task('packageSources', type: Jar) {
-    archiveClassifier = 'sources'
-    from project(":Common").sourceSets.main.allSource
-    from project.sourceSets.main.allSource
-}
-
 jar.finalizedBy('reobfJar', 'packageSources')
 
 publishing {

@@ -70,12 +70,6 @@ jar {
     }
 }
 
-project.task('packageSources', type: Jar) {
-    archiveClassifier = 'sources'
-    from project(":Common").sourceSets.main.allSource
-    from project.sourceSets.main.allSource
-}
-
 jar.finalizedBy('packageSources')
 
 publishing {
