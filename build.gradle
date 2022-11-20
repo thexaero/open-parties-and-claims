@@ -65,6 +65,15 @@ subprojects {
         }
     }
 
+    project.task('packageSources', type: Jar) {
+        archiveClassifier = 'sources'
+        from project(":Common").sourceSets.main.allSource
+        from project.sourceSets.main.allSource
+        from(assetsLangFolder) {
+            into(dataLangFolder)//copying lang files from client resources to server data
+        }
+    }
+
     // Disables Gradle's custom module metadata from being published to maven. The
     // metadata includes mapped dependencies which are not reasonably consumable by
     // other mod developers.
