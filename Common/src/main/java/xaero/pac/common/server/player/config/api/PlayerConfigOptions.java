@@ -733,21 +733,21 @@ public class PlayerConfigOptions {
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes protection from right-click held item use inside protected chunks. On Fabric, this means being able to place blocks on blocks that have an exception for interaction! Right-click item use can also break blocks, if that is the item's right-click mechanic. Item use might still be prevented by neighbor item use protection in neighbor claims.\n\n"
-								+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
+						"When enabled, claimed chunk protection includes protection from right-click held item use. On Fabric, allowed item use means being able to place blocks on blocks that you can interact with, e.g. exception blocks, even if block protection is enabled! Right-click item use can also break blocks, if that is the item's right-click mechanic. Some item use in a chunk might also be prevented by neighbor item use protection in neighbor chunks.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")
 				.setDefaultValue(true)
-				.setComment("When enabled, the item use protection is extended to right-click held item use in chunks directly next to the claimed ones. Item use in this context usually means things that still work while looking at the sky (not block or entity) or items that use custom ray-tracing for blocks/fluids/entities (e.g. things you can place on water). Item use protection exceptions (e.g. food, potions etc) still apply.")
+				.setComment("When enabled, the item use protection is extended to some right-click held item use in chunks directly next to the claimed ones. Item use affected by this is usually things that still work while looking at the sky (not block or entity) or item use with custom ray-tracing for blocks/fluids/entities (e.g. placing things on water), but also any item use of \"additional banned items\" configured on the server. Item use protection exceptions (e.g. food, potions etc) still apply.")
 				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.dispenserBarrier")
 				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against dispensers \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
+				.setComment("When enabled, claimed chunk protection includes protection against dispensers that are \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
 				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
@@ -755,7 +755,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes prevention of item tossing by players.\nDying can be used to circumvent this, so it is recommended to enable keepInventory or use a gravestone mod.\n\n"
+						"When enabled, claimed chunk protection includes prevention of item tossing by players that don't have access to the chunks.\nDying can be used to circumvent this, so it is recommended to enable keepInventory or use a gravestone mod.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
@@ -765,7 +765,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes prevention of item tossing by some mobs. Requires the tossing mob to be set as the item's thrower.\nModded mobs are pretty likely to do it themselves or have it done by this mod. Otherwise, the toss won't be prevented.\n\n"
+						"When enabled, claimed chunk protection includes prevention of item tossing by some mobs that don't have access to the chunks. Requires the tossing mob to be set as the item's thrower.\nModded mobs are pretty likely to do it themselves or have it done by this mod. Otherwise, the toss won't be prevented.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
@@ -775,7 +775,7 @@ public class PlayerConfigOptions {
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setComment(
-						"When enabled, claimed chunk protection includes prevention of item tossing by non-living entities. Requires the tossing mob to be set as the item's thrower. Some entities might not that.\n\n"
+						"When enabled, claimed chunk protection includes prevention of item tossing by non-living entities that don't have access to the chunks. Requires the tossing mob to be set as the item's thrower. Some entities might not that.\n\n"
 						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_OWNED
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
