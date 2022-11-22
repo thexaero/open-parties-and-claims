@@ -18,21 +18,8 @@
 
 package xaero.pac.common.server.data;
 
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.Unit;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
-public class ServerDataReloadListenerForge extends ServerDataReloadListener implements PreparableReloadListener {
-
-	@Override
-	public CompletableFuture<Void> reload(PreparationBarrier p_10638_, ResourceManager manager, ProfilerFiller p_10640_, ProfilerFiller p_10641_, Executor p_10642_, Executor p_10643_) {
-		return p_10638_.wait(Unit.INSTANCE).thenRunAsync(() -> {
-			onResourceManagerReload(manager);
-		}, p_10643_);
-	}
+public class ServerDataReloadListenerForge extends ServerDataReloadListener implements ResourceManagerReloadListener {
 
 }
