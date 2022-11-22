@@ -333,6 +333,8 @@ public class CommonEvents {
 					return serverData.getChunkProtection().onItemAddedToWorld(serverData, itemEntity);
 				}
 			} finally {
+				if(((IEntity)entity).getXaero_OPAC_lastChunkEntryDimension() == null)
+					((IEntity)entity).setXaero_OPAC_lastChunkEntryDimension(entity.getLevel().dimension());
 				if (entity instanceof ItemEntity itemEntity) {
 					if (itemEntity.getThrower() == null && ServerCore.getResourcesDropOwner() != null)//after the protection checks so that this isn't immediately affected by toss protection
 						itemEntity.setThrower(ServerCore.getResourcesDropOwner().getUUID());
