@@ -440,7 +440,7 @@ public class CommonEvents {
 	}
 
 	public void onServerDataReload(ResourceManager resourceManager){
-		if(lastServerStarted != null){
+		if(lastServerStarted != null && lastServerStarted.isSameThread()){
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(lastServerStarted);
 			serverData.onServerResourcesReload(resourceManager);
