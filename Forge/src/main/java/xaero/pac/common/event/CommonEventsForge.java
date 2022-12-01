@@ -18,6 +18,7 @@
 
 package xaero.pac.common.event;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -75,7 +76,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onServerStarting(ServerStartingEvent event) {
-		super.onServerStarting();
+		super.onServerStarting(event.getServer());
 	}
 	
 	@SubscribeEvent
@@ -105,7 +106,10 @@ public class CommonEventsForge extends CommonEvents {
 	
 	@SubscribeEvent
 	public void onServerTick(ServerTickEvent event) throws Throwable {
-		super.onServerTick(event.phase == Phase.START);
+		//TODO probably need to stop using this event that doesn't provide the server instance
+		if(lastServerStarted == null || !lastServerStarted.isSameThread())
+			throw new RuntimeException("The last recorded server does not have the expected value!");
+		super.onServerTick(lastServerStarted, event.phase == Phase.START);
 	}
 	
 	@SubscribeEvent
@@ -149,7 +153,12 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onMobGrief(EntityMobGriefingEvent event) {
-		if(ServerCore.isMobGriefingForItems(lastServerStarted.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
+		if(event.getEntity() == null)
+			return;
+		MinecraftServer server = event.getEntity().getServer();
+		if(server == null || !server.isSameThread())
+			return;
+		if(ServerCore.isMobGriefingForItems(server.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
 			return;
 		if(super.onMobGrief(event.getEntity()))
 			event.setResult(Result.DENY);

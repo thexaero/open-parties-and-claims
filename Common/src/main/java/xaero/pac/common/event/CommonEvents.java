@@ -92,9 +92,9 @@ public class CommonEvents {
 		modMain.getPacketHandler().onServerAboutToStart();
 	}
 
-	public void onServerStarting() {
+	public void onServerStarting(MinecraftServer server) {
 		modMain.startupCrashHandler.check();
-		ServerData.from(lastServerStarted).getServerLoadCallback().onLoad();
+		ServerData.from(server).getServerLoadCallback().onLoad();
 //		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 //			serverData = ServerData.from(lastServerStarted);
 //		IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
@@ -163,9 +163,9 @@ public class CommonEvents {
 		}
 	}
 
-	public void onServerTick(boolean isTickStart) throws Throwable {
+	public void onServerTick(MinecraftServer server, boolean isTickStart) throws Throwable {
 		if(isTickStart) {
-			ServerCore.onServerTickStart(lastServerStarted);//also used by the core mod!
+			ServerCore.onServerTickStart(server);//also used by the core mod!
 		}
 	}
 
@@ -415,9 +415,8 @@ public class CommonEvents {
 	}
 
 	protected void onTagsUpdate(){
-		if(lastServerStarted == null)
-			return;
-		if(!lastServerStarted.isRunning() || !lastServerStarted.isSameThread())
+		//TODO should properly get the server instance that the tags are updated for
+		if(lastServerStarted == null || !lastServerStarted.isRunning() || !lastServerStarted.isSameThread())
 			return;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(lastServerStarted);
@@ -442,6 +441,7 @@ public class CommonEvents {
 	}
 
 	public void onServerDataReload(ResourceManager resourceManager){
+		//TODO should properly get the server instance that data is reloaded for
 		if(lastServerStarted != null && lastServerStarted.isSameThread()){
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(lastServerStarted);
