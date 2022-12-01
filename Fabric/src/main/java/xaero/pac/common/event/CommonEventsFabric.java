@@ -81,8 +81,8 @@ public class CommonEventsFabric extends CommonEvents {
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarting);
 		ServerLifecycleEvents.SERVER_STOPPED.register(this::onServerStopped);
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(this::onPlayerChangedDimension);
-		ServerTickEvents.START_SERVER_TICK.register(server -> onServerTick(true));
-		ServerTickEvents.END_SERVER_TICK.register(server -> onServerTick(false));
+		ServerTickEvents.START_SERVER_TICK.register(server -> onServerTick(server, true));
+		ServerTickEvents.END_SERVER_TICK.register(server -> onServerTick(server, false));
 		CommandRegistrationCallback.EVENT.register(this::onRegisterCommands);
 		AttackBlockCallback.EVENT.register(PROTECTION_PHASE, this::onLeftClickBlock);
 		PlayerBlockBreakEvents.BEFORE.register(PROTECTION_PHASE, this::onDestroyBlock);
@@ -91,12 +91,14 @@ public class CommonEventsFabric extends CommonEvents {
 		AttackEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityAttack);
 	}
 
+	@Override
 	public void onServerAboutToStart(MinecraftServer server) throws Throwable {
 		super.onServerAboutToStart(server);
 	}
 
-	private void onServerStarting(MinecraftServer minecraftServer) {
-		super.onServerStarting();
+	@Override
+	public void onServerStarting(MinecraftServer server) {
+		super.onServerStarting(server);
 	}
 
 	private void onPlayerRespawn(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
@@ -119,9 +121,10 @@ public class CommonEventsFabric extends CommonEvents {
 		super.onPlayerLogOut(player);
 	}
 
-	public void onServerTick(boolean isTickStart) {
+	@Override
+	public void onServerTick(MinecraftServer server, boolean isTickStart) {
 		try {
-			super.onServerTick(isTickStart);
+			super.onServerTick(server, isTickStart);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -225,10 +228,6 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public void onTagsUpdate() {
 		super.onTagsUpdate();
-	}
-
-	public MinecraftServer getLastServerStarted(){
-		return lastServerStarted;
 	}
 
 }

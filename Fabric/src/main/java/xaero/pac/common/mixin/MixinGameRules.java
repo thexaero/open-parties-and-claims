@@ -41,7 +41,7 @@ public class MixinGameRules {
 			CommonEventsFabric commonEventsFabric = modMain.getCommonEvents();
 			if(commonEventsFabric == null)
 				return;
-			MinecraftServer server = commonEventsFabric.getLastServerStarted();
+			MinecraftServer server = ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY.getServer();
 			if(server != null && server.isSameThread() && server.getGameRules() == (Object)this) {//making sure this is the server's game rules
 				if (((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onMobGrief(ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY))
 					callbackInfoReturnable.setReturnValue(false);
