@@ -72,11 +72,15 @@ public abstract class ServerPlayerDataAPI {
 	@Nonnull
 	public static ServerPlayerDataAPI from(@Nonnull ServerPlayer player) {
 		ServerPlayerDataAPI result = ((IOpenPACServerPlayer)player).getXaero_OPAC_PlayerData();
-		if(result == null) {
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(player.getServer());
+		if(result == null)
 			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData());
-			if(player.connection != null && player.connection.getConnection() != null && !player.connection.getConnection().isConnecting()) {//isConnecting() = the channel is null
+		ServerPlayerData data = (ServerPlayerData)result;
+		if(!data.hasHandledLogin() && player.connection != null && player.connection.getConnection() != null && !player.connection.getConnection().isConnecting()){//isConnecting() = the channel is null
+			ServerPlayer placedPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
+			if(placedPlayer == player) {//this method might be called before placing the player, when syncing commands, which is a problem, so we're making sure that the player has been placed
+				data.setHandledLogin(true);
+				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+						serverData = ServerData.from(player.getServer());
 				//Minecraft leaves players in the list on login exceptions, which causes this mod to crash afterwards.
 				//Putting this stuff here, instead of just the login event, to ensure that the login is handled for all real players.
 				serverData.getPlayerLoginHandler().handlePreWorldJoin(player, serverData);

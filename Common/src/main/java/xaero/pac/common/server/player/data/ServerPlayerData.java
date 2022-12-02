@@ -57,6 +57,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private IPlayerChunkClaim lastClaimUpdateState;
 	private UUID lastOtherConfigRequest;
 	private boolean hasMod;
+	private boolean handledLogin;
 
 	public ServerPlayerData() {
 		super();
@@ -208,6 +209,14 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public boolean hasMod() {
 		return hasMod;
+	}
+
+	public void setHandledLogin(boolean handledLogin) {
+		this.handledLogin = handledLogin;
+	}
+
+	public boolean hasHandledLogin() {
+		return handledLogin;
 	}
 
 	public void onTick(){
