@@ -52,7 +52,6 @@ public class PlayerLoginHandler {
 	
 	public void handlePreWorldJoin(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-		playerData.setReceivedLoginEvent(true);
 
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ServerLoginHandshakePacket());
 

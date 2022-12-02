@@ -18,9 +18,7 @@
 
 package xaero.pac.common.server.player.data.api;
 
-import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -75,17 +73,15 @@ public abstract class ServerPlayerDataAPI {
 	public static ServerPlayerDataAPI from(@Nonnull ServerPlayer player) {
 		ServerPlayerDataAPI result = ((IOpenPACServerPlayer)player).getXaero_OPAC_PlayerData();
 		if(result == null) {
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(player.getServer());
 			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData());
-
-			if(player.connection != null){
-				Connection connection = player.connection.getConnection();
-				if(connection != null && connection.getDisconnectedReason() != null) {
-					//Disconnected players should never be fake players
-					//Disconnected before login was even handled by the mod (usually means an error)
-					//Minecraft leaves such players in the list, which causes crashes afterwards. This should help.
-					OpenPartiesAndClaims.INSTANCE.getCommonEvents().onPlayerLogIn(player);
-				}
+			if(player.connection != null && player.connection.getConnection() != null && !player.connection.getConnection().isConnecting()) {//isConnecting() = the channel is null
+				//Minecraft leaves players in the list on login exceptions, which causes this mod to crash afterwards.
+				//Putting this stuff here, instead of just the login event, to ensure that the login is handled for all real players.
+				serverData.getPlayerLoginHandler().handlePreWorldJoin(player, serverData);
+				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, player.getLevel(), player);
+				serverData.getPlayerLoginHandler().handlePostWorldJoin(player, serverData);
 			}
 		}
 		return result;
