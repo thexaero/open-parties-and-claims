@@ -95,6 +95,7 @@ dependencies {
 
 //    implementation fg.deobf("curse.maven:create-328085:3872145")//source: https://github.com/Creators-of-Create/Create
 //    implementation fg.deobf("curse.maven:flywheel-486392:3871082")//source: https://github.com/Jozufozu/Flywheel
+//    implementation fg.deobf("curse.maven:cctweaked-282001:4061947")//source: https://github.com/cc-tweaked/CC-Tweaked
 }
 
 tasks.withType(JavaCompile) {
