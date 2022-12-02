@@ -347,7 +347,7 @@ public class ServerConfig {
 							"Barrels{minecraft:barrel}",
 							"Ender_Chests{minecraft:ender_chest}",
 							"Shulker_Boxes{#minecraft:shulker_boxes}",
-							"Furnaces{minecraft:furnace, minecraft:blast_furnace}",
+							"Furnaces{minecraft:furnace, minecraft:blast_furnace, minecraft:smoker}",
 							"Hoppers{minecraft:hopper}",
 							"Dispenser-like{minecraft:dispenser, minecraft:dropper}",
 							"Anvils{#minecraft:anvil}",
