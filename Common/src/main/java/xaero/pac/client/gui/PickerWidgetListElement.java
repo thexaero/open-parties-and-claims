@@ -53,9 +53,9 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 	@Override
 	public AbstractWidget screenInit(int x, int y, WidgetListScreen screen, List<EditBox> tickableBoxes) {
 		prevButton = (Button) super.screenInit(x, y, screen, tickableBoxes);
-		screen.addRenderableWidget(defaultButton = new Button(x + w - 20, y, 20, 20, Component.literal("-"), this::onDefaultButton));
+		screen.addRenderableWidget(defaultButton = Button.builder(Component.literal("-"), this::onDefaultButton).bounds(x + w - 20, y, 20, 20).build());
 		updateDefaultButton();
-		screen.addRenderableWidget(nextButton = new Button(x + w - 40, y, 20, 20, Component.literal(">"), this::onNextButton));
+		screen.addRenderableWidget(nextButton = Button.builder(Component.literal(">"), this::onNextButton).bounds(x + w - 40, y, 20, 20).build());
 		return prevButton;
 	}
 
@@ -152,7 +152,7 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		@Override
 		protected PickerWidgetListElement<T> buildInternal() {
 			BiFunction<PickerWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) ->
-					new Button(xy.getX(), xy.getY(), 20, 20, Component.literal("<"), el::onPrevButton);
+					Button.builder(Component.literal("<"), el::onPrevButton).bounds(xy.getX(), xy.getY(), 20, 20).build();
 			return new PickerWidgetListElement<>(w, h, mutable, widgetSupplier, tooltip, startValue, startIndex, options, defaultValue, valueChangeConsumer);
 		}
 		

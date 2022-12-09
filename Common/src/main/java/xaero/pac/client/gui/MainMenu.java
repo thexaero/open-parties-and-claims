@@ -22,6 +22,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -53,7 +54,6 @@ import xaero.pac.common.server.parties.command.PartyCommandRegister;
 import xaero.pac.common.server.player.config.PlayerConfig;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class MainMenu extends XPACScreen {
 	
@@ -136,41 +136,17 @@ public class MainMenu extends XPACScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(configsButton = new Button(width / 2 - 100, height / 7 + 8, 200, 20, Component.translatable("gui.xaero_pac_ui_config_menu"), this::onConfigsButton));
+		addRenderableWidget(configsButton = Button.builder(Component.translatable("gui.xaero_pac_ui_config_menu"), this::onConfigsButton).bounds(width / 2 - 100, height / 7 + 8, 200, 20).build());
 		
-		aboutPartyButton = new Button(width / 2 - 100, height / 7 + 40, 70, 20, Component.translatable("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton, new Button.OnTooltip() {
-			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
-				 MainMenu.this.renderTooltip(p_170020_, ABOUT_PARTY_COMMAND, p_170021_, p_170022_);
-			}
-
-			public void narrateTooltip(Consumer<Component> p_170017_) {
-				p_170017_.accept(ABOUT_PARTY_COMMAND);
-			}
-		});
+		aboutPartyButton = Button.builder(Component.translatable("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton).tooltip(Tooltip.create(ABOUT_PARTY_COMMAND)).bounds(width / 2 - 100, height / 7 + 40, 70, 20).build();
 		
-		claimButton = new Button(width / 2 - 100, height / 7 + 112, 70, 20, CLAIM, this::onClaimButton, new Button.OnTooltip() {
-			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
-				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND, p_170021_, p_170022_);
-			}
-
-			public void narrateTooltip(Consumer<Component> p_170017_) {
-				p_170017_.accept(claimButton.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND);
-			}
-		});
+		claimButton = Button.builder(CLAIM, this::onClaimButton).tooltip(Tooltip.create(CLAIM_COMMAND)).bounds(width / 2 - 100, height / 7 + 112, 70, 20).build();
 		
-		forceloadButton = new Button(width / 2 - 100, height / 7 + 136, 70, 20, FORCELOAD, this::onForceloadButton, new Button.OnTooltip() {
-			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
-				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND, p_170021_, p_170022_);
-			}
-
-			public void narrateTooltip(Consumer<Component> p_170017_) {
-				p_170017_.accept(claimButton.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND);
-			}
-		});
+		forceloadButton = Button.builder(FORCELOAD, this::onForceloadButton).tooltip(Tooltip.create(FORCELOAD_COMMAND)).bounds(width / 2 - 100, height / 7 + 136, 70, 20).build();
 		
-		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_back"), this::onBackButton));
+		addRenderableWidget(Button.builder(Component.translatable("gui.xaero_pac_back"), this::onBackButton).bounds(width / 2 - 100, this.height / 6 + 168, 200, 20).build());
 
-		//addRenderableWidget(new Button(0, 0, 40, 20, Component.literal("test toggle"), this::onTestToggle));
+		//addRenderableWidget(Button.builder(0, 0, 40, 20, Component.literal("test toggle"), this::onTestToggle));
 
 		updateButtons();
 
@@ -181,8 +157,6 @@ public class MainMenu extends XPACScreen {
 			addRenderableWidget(claimButton);
 			addRenderableWidget(forceloadButton);
 		}
-
-		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 
 	private void onTestToggle(Button button) {
@@ -206,10 +180,14 @@ public class MainMenu extends XPACScreen {
 			boolean serverMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isServerMode();
 			UUID claimTargetUUID = serverMode ? PlayerConfig.SERVER_CLAIM_UUID : minecraft.player.getUUID();
 			claimButton.active = adminMode || (currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID));
-			claimButton.setMessage(wouldClaim(currentClaim) ? CLAIM : UNCLAIM);
+			boolean wouldClaim = wouldClaim(currentClaim);
+			claimButton.setMessage(wouldClaim ? CLAIM : UNCLAIM);
+			claimButton.setTooltip(Tooltip.create(wouldClaim ? CLAIM_COMMAND : UNCLAIM_COMMAND));
 			
 			forceloadButton.active = adminMode || currentClaim != null && currentClaim.getPlayerId().equals(claimTargetUUID);
-			forceloadButton.setMessage(currentClaim == null || !currentClaim.isForceloadable() ? FORCELOAD : UNFORCELOAD);
+			boolean wouldForceload = currentClaim == null || !currentClaim.isForceloadable();
+			forceloadButton.setMessage(wouldForceload ? FORCELOAD : UNFORCELOAD);
+			forceloadButton.setTooltip(Tooltip.create(wouldForceload ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND));
 		}
 	}
 	

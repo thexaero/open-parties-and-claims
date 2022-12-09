@@ -19,13 +19,12 @@
 package xaero.pac.client.command.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 
 public class CommandUtil {
 
 	public static void sendCommand(Minecraft minecraft, String command){
-		if(!minecraft.player.commandUnsigned(command))
-			minecraft.player.commandSigned(command, Component.literal(command));
+		if(!minecraft.player.connection.sendUnsignedCommand(command))
+			minecraft.player.connection.sendCommand(command);
 	}
 
 }

@@ -46,7 +46,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_ui_other_player_config_waiting_cancel"), this::onCancelButton));
+		addRenderableWidget(Button.builder(Component.translatable("gui.xaero_pac_ui_other_player_config_waiting_cancel"), this::onCancelButton).bounds(width / 2 - 100, this.height / 6 + 168, 200, 20).build());
 		startListening();
 	}
 	

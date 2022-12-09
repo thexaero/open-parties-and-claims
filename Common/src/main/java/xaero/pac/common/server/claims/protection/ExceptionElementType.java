@@ -20,6 +20,7 @@ package xaero.pac.common.server.claims.protection;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
@@ -33,9 +34,9 @@ import java.util.List;
 public class ExceptionElementType<T> {
 
 	private static final List<ExceptionElementType<?>> TYPES = new ArrayList<>();
-	public static final ExceptionElementType<Block> BLOCK = new ExceptionElementType<>(Registry.BLOCK_REGISTRY);
-	public static final ExceptionElementType<EntityType<?>> ENTITY_TYPE = new ExceptionElementType<>(Registry.ENTITY_TYPE_REGISTRY);
-	public static final ExceptionElementType<Item> ITEM = new ExceptionElementType<>(Registry.ITEM_REGISTRY);
+	public static final ExceptionElementType<Block> BLOCK = new ExceptionElementType<>(Registries.BLOCK);
+	public static final ExceptionElementType<EntityType<?>> ENTITY_TYPE = new ExceptionElementType<>(Registries.ENTITY_TYPE);
+	public static final ExceptionElementType<Item> ITEM = new ExceptionElementType<>(Registries.ITEM);
 	private final ResourceKey<Registry<T>> registryResourceKey;
 	private Iterable<T> iterable;
 	private Iterable<TagKey<T>> tagIterable;

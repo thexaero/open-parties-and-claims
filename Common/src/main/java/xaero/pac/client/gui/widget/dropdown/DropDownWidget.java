@@ -82,11 +82,11 @@ public final class DropDownWidget extends AbstractWidget
 	}
 
 	public int getXWithOffset(){
-		return x + xOffset;
+		return getX() + xOffset;
 	}
 
 	public int getYWithOffset(){
-		return y + yOffset;
+		return getY() + yOffset;
 	}
 
 	private void drawSlot(PoseStack matrixStack, String text, int slotIndex, int pos, int mouseX, int mouseY, boolean scrolling, int optionLimit, int xWithOffset, int yWithOffset){
@@ -121,10 +121,10 @@ public final class DropDownWidget extends AbstractWidget
 		boolean scrolling = scrolling(optionLimit);
 		int totalH = LINE_HEIGHT * (amount + (scrolling ? 2 : 0));
 		int height = scaledHeight;
-		if(!openingUp && y + totalH + 1 > height) {
-			yOffset = height - y - totalH - 1;
-		} else if(openingUp && y - totalH < 0){
-			yOffset = totalH - y;
+		if(!openingUp && getY() + totalH + 1 > height) {
+			yOffset = height - getY() - totalH - 1;
+		} else if(openingUp && getY() - totalH < 0){
+			yOffset = totalH - getY();
 		} else
 			yOffset = 0;
 		int xWithOffset = getXWithOffset();
@@ -283,7 +283,7 @@ public final class DropDownWidget extends AbstractWidget
 	}
 
 	@Override
-	public void updateNarration(NarrationElementOutput narrationElementOutput) {
+	public void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
 		narrationElementOutput.add(NarratedElementType.TITLE, createNarrationMessage());
 	}
 

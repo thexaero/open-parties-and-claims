@@ -55,8 +55,8 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	@Override
 	public AbstractWidget screenInit(int x, int y, WidgetListScreen screen, List<EditBox> tickableBoxes) {
 		editBox = (EditBox) super.screenInit(x, y, screen, tickableBoxes);
-		screen.addRenderableWidget(confirmButton = new Button(x + w - 40, y, 20, 20, Component.literal("✔"), this::onConfirmButton));
-		screen.addRenderableWidget(cancelButton = new Button(x + w - 20, y, 20, 20, Component.literal("❌"), this::onCancelButton));
+		screen.addRenderableWidget(confirmButton = Button.builder(Component.literal("✔"), this::onConfirmButton).bounds(x + w - 40, y, 20, 20).build());
+		screen.addRenderableWidget(cancelButton = Button.builder(Component.literal("❌"), this::onCancelButton).bounds(x + w - 20, y, 20, 20).build());
 		confirmButton.active = !confirmedText.equals(draftValue);
 		cancelButton.active = !confirmedText.equals(draftValue);
 		return editBox;

@@ -21,7 +21,7 @@ package xaero.pac.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
@@ -65,10 +65,10 @@ public abstract class WidgetListScreen extends XPACScreen {
 			int y = yAnchor + (indexOff % 6) * ROW_HEIGHT;
 			elements.get(index).screenInit(x, y, this, tickableBoxes);
 		}
-		addRenderableWidget(new Button(xAnchor - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_back"), this::onBackButton));
+		addRenderableWidget(Button.builder(Component.translatable("gui.xaero_pac_back"), this::onBackButton).bounds(xAnchor - 100, this.height / 6 + 168, 200, 20).build());
 
-		prevButton = new Button(this.width / 2 - 205, yAnchor + 144, 75, 20, Component.translatable("gui.xaero_pac_previous", new Object[0]), this::onPrevButton);
-		nextButton = new Button(this.width / 2 + 131, yAnchor + 144, 75, 20, Component.translatable("gui.xaero_pac_next", new Object[0]), this::onNextButton);
+		prevButton = Button.builder(Component.translatable("gui.xaero_pac_previous", new Object[0]), this::onPrevButton).bounds(this.width / 2 - 205, yAnchor + 144, 75, 20).build();
+		nextButton = Button.builder(Component.translatable("gui.xaero_pac_next", new Object[0]), this::onNextButton).bounds(this.width / 2 + 131, yAnchor + 144, 75, 20).build();
 		if(pageCount > 1) {
 			this.addRenderableWidget(prevButton);
 			this.addRenderableWidget(nextButton);
@@ -78,7 +78,6 @@ public abstract class WidgetListScreen extends XPACScreen {
 		displayedTitle = Component.literal("");
 		displayedTitle.getSiblings().add(title);
 		displayedTitle.getSiblings().add(Component.literal(" (" + (page + 1) + "/" + pageCount + ")"));
-		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 	
 	private int getStartIndex() {
@@ -90,12 +89,12 @@ public abstract class WidgetListScreen extends XPACScreen {
 	}
 	
 	@Override
-	protected <T extends GuiEventListener & Widget & NarratableEntry> T addRenderableWidget(T widget) {
+	protected <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(T widget) {
 		return super.addRenderableWidget(widget);
 	}
 	
 	@Override
-	protected <T extends Widget> T addRenderableOnly(T widget) {
+	protected <T extends Renderable> T addRenderableOnly(T widget) {
 		return super.addRenderableOnly(widget);
 	}
 	

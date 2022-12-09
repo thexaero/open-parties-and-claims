@@ -37,7 +37,7 @@ public class FixedEditBox extends EditBox {
 	}
 
 	@Override
-	public void updateNarration(NarrationElementOutput $$0) {
+	public void updateWidgetNarration(NarrationElementOutput $$0) {
 		$$0.add(NarratedElementType.TITLE, createNarrationMessage());
 	}
 

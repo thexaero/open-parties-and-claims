@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.forceload;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -69,7 +69,7 @@ public final class ForceLoadTicketManager {
 			return false;
 		ChunkPos pos = new ChunkPos(ticket.getX(), ticket.getZ());
 
-		ResourceKey<Level> levelKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, ticket.getDimension());
+		ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
 		Services.PLATFORM.getServerChunkCacheAccess().addRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(true);
@@ -79,7 +79,7 @@ public final class ForceLoadTicketManager {
 
 	private void disableTicket(ClaimTicket ticket) {
 		ChunkPos pos = new ChunkPos(ticket.getX(), ticket.getZ());
-		ResourceKey<Level> levelKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, ticket.getDimension());
+		ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
 		Services.PLATFORM.getServerChunkCacheAccess().removeRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(false);

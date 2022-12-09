@@ -83,7 +83,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(refreshButton = new Button(5, 5, 60, 20, Component.translatable("gui.xaero_pac_ui_player_config_refresh"), b -> refreshHandler.accept(this, b)));
+		addRenderableWidget(refreshButton = Button.builder(Component.translatable("gui.xaero_pac_ui_player_config_refresh"), b -> refreshHandler.accept(this, b)).bounds(5, 5, 60, 20).build());
 	}
 
 	@Override
@@ -348,19 +348,19 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setH(elementHeight)
 					.setMutable(!isCurrentlyUsed && !subData.isBeingDeleted())
 					.setTooltip(minecraft.font.split(Component.translatable(isCurrentlyUsed? "gui.xaero_pac_ui_sub_config_use_button_used_tooltip" : "gui.xaero_pac_ui_sub_config_use_button_tooltip"), 200))
-					.setWidgetSupplier((el, xy) -> new Button(xy.getX(), xy.getY(), elementWidth, elementHeight, isCurrentlyUsed ? Component.translatable("gui.xaero_pac_ui_sub_config_use_button_used") : Component.translatable("gui.xaero_pac_ui_sub_config_use_button", data.getSelectedSubConfig()),
+					.setWidgetSupplier((el, xy) -> Button.builder(isCurrentlyUsed ? Component.translatable("gui.xaero_pac_ui_sub_config_use_button_used") : Component.translatable("gui.xaero_pac_ui_sub_config_use_button", data.getSelectedSubConfig()),
 							b -> {
 								usedSubConfigOptionStorage.setValue(data.getSelectedSubConfig());
 								OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().syncToServer(usedSubConfigSyncDest, usedSubConfigOptionStorage);
 								minecraft.setScreen(build());
-							})).build();
+							}).bounds(xy.getX(), xy.getY(), elementWidth, elementHeight).build()).build();
 			elements.add(useSubConfigButtonWidget);
 
 			WidgetListElement<?> deleteSubConfigButtonWidget = SimpleWidgetListElement.Builder.begin()
 					.setW(elementWidth)
 					.setH(elementHeight)
 					.setMutable(canCreateSubs && data.isSubConfigSelected() && !subData.isBeingDeleted())
-					.setWidgetSupplier((el, xy) -> new Button(xy.getX(), xy.getY(), elementWidth, elementHeight, Component.translatable("gui.xaero_pac_ui_sub_config_delete_button", data.getSelectedSubConfig()),
+					.setWidgetSupplier((el, xy) -> Button.builder(Component.translatable("gui.xaero_pac_ui_sub_config_delete_button", data.getSelectedSubConfig()),
 							b -> {
 								String s = data.getSelectedSubConfig();
 								minecraft.setScreen(new ConfirmScreen(result -> {
@@ -371,7 +371,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 									minecraft.setScreen(build());
 								}, Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm1", s),
 										Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm2")));
-							})).build();
+							}).bounds(xy.getX(), xy.getY(), elementWidth, elementHeight).build()).build();
 			elements.add(deleteSubConfigButtonWidget);
 
 			WidgetListElement<?> createSubConfigWidget = TextWidgetListElement.Builder.begin()
