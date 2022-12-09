@@ -425,7 +425,9 @@ public class CommonEvents {
 	}
 
 	public boolean onMobSpawn(Entity entity, double x, double y, double z, MobSpawnType spawnReason) {
-		if(entity == null || entity.getServer() == null)
+		if(spawnReason == MobSpawnType.CHUNK_GENERATION)
+			return false;
+		if(entity == null || entity.getServer() == null || !entity.getServer().isSameThread())
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(entity.getServer());
