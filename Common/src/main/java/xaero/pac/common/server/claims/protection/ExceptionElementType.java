@@ -18,68 +18,35 @@
 
 package xaero.pac.common.server.claims.protection;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import xaero.pac.common.platform.Services;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExceptionElementType<T> {
 
-	public static final ExceptionElementType<Block> BLOCK = new ExceptionElementType<Block>
-			(
-					Services.PLATFORM.getBlockRegistry()::getValue,
-					rl -> TagKey.create(Registry.BLOCK_REGISTRY, rl),
-					Services.PLATFORM.getBlockRegistry().getIterable(),
-					Services.PLATFORM.getBlockRegistry().getTagIterable(),
-					Services.PLATFORM.getBlockRegistry()::getKey,
-					Services.PLATFORM.getBlockRegistry()::getTagStream);
-	public static final ExceptionElementType<EntityType<?>> ENTITY_TYPE = new ExceptionElementType<EntityType<?>>
-			(
-					Services.PLATFORM.getEntityRegistry()::getValue,
-					rl -> TagKey.create(Registry.ENTITY_TYPE_REGISTRY, rl),
-					Services.PLATFORM.getEntityRegistry().getIterable(),
-					Services.PLATFORM.getEntityRegistry().getTagIterable(),
-					Services.PLATFORM.getEntityRegistry()::getKey,
-					Services.PLATFORM.getEntityRegistry()::getTagStream);
-	public static final ExceptionElementType<Item> ITEM = new ExceptionElementType<Item>
-			(
-					Services.PLATFORM.getItemRegistry()::getValue,
-					rl -> TagKey.create(Registry.ITEM_REGISTRY, rl),
-					Services.PLATFORM.getItemRegistry().getIterable(),
-					Services.PLATFORM.getItemRegistry().getTagIterable(),
-					Services.PLATFORM.getItemRegistry()::getKey,
-					Services.PLATFORM.getItemRegistry()::getTagStream);
+	private static final List<ExceptionElementType<?>> TYPES = new ArrayList<>();
+	public static final ExceptionElementType<Block> BLOCK = new ExceptionElementType<>(Registry.BLOCK_REGISTRY);
+	public static final ExceptionElementType<EntityType<?>> ENTITY_TYPE = new ExceptionElementType<>(Registry.ENTITY_TYPE_REGISTRY);
+	public static final ExceptionElementType<Item> ITEM = new ExceptionElementType<>(Registry.ITEM_REGISTRY);
+	private final ResourceKey<Registry<T>> registryResourceKey;
+	private Iterable<T> iterable;
+	private Iterable<TagKey<T>> tagIterable;
 
-	private final Function<ResourceLocation, T> getter;
-	private final Function<ResourceLocation, TagKey<T>> tagGetter;
-	private final Iterable<T> iterable;
-	private final Iterable<TagKey<T>> tagIterable;
-	private final Function<T, ResourceLocation> keyGetter;
-	private final Function<TagKey<T>, ResourceLocation> tagKeyGetter;
-	private final Function<TagKey<T>, Stream<T>> tagStreamGetter;
-
-	private ExceptionElementType(Function<ResourceLocation, T> getter, Function<ResourceLocation, TagKey<T>> tagGetter, Iterable<T> iterable, Iterable<TagKey<T>> tagIterable, Function<T, ResourceLocation> keyGetter, Function<TagKey<T>, Stream<T>> tagStreamGetter) {
-		this.getter = getter;
-		this.tagGetter = tagGetter;
-		this.iterable = iterable;
-		this.tagIterable = tagIterable;
-		this.keyGetter = keyGetter;
-		this.tagStreamGetter = tagStreamGetter;
-		this.tagKeyGetter = TagKey::location;
+	public ExceptionElementType(ResourceKey<Registry<T>> registryResourceKey) {
+		this.registryResourceKey = registryResourceKey;
+		TYPES.add(this);
 	}
 
-	public Function<ResourceLocation, T> getGetter() {
-		return getter;
-	}
-
-	public Function<ResourceLocation, TagKey<T>> getTagGetter() {
-		return tagGetter;
+	public Registry<T> getRegistry(MinecraftServer server){
+		return server.registryAccess().registry(registryResourceKey).orElseThrow();
 	}
 
 	public Iterable<T> getIterable() {
@@ -90,16 +57,21 @@ public class ExceptionElementType<T> {
 		return tagIterable;
 	}
 
-	public Function<T, ResourceLocation> getKeyGetter() {
-		return keyGetter;
+	public static void updateAllIterables(MinecraftServer server){
+		TYPES.forEach(type -> type.updateIterables(server));
 	}
 
-	public Function<TagKey<T>, ResourceLocation> getTagKeyGetter() {
-		return tagKeyGetter;
+	public static void clearAllIterables(){
+		TYPES.forEach(type -> {
+			type.iterable = null;
+			type.tagIterable = null;
+		});
 	}
 
-	public Function<TagKey<T>, Stream<T>> getTagStreamGetter() {
-		return tagStreamGetter;
+	private void updateIterables(MinecraftServer server){
+		Registry<T> registry = getRegistry(server);
+		iterable = registry.stream().toList();
+		tagIterable = registry.getTags().map(Pair::getFirst).toList();
 	}
 
 }
