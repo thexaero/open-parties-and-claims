@@ -19,25 +19,26 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import xaero.pac.common.server.core.ServerCore;
-
-import java.util.List;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
 @Mixin(value = ButtonBlock.class, priority = 1000001)
 public class MixinButtonBlock {
 
-	@ModifyVariable(method = "checkPressed", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
-	public List<Entity> onCheckPressed(List<Entity> list, BlockState blockState, Level level, BlockPos blockPos){
-		ServerCore.onEntitiesPushBlock(list, (Block) (Object)this, blockPos);
-		return list;
+	@Inject(method = "checkPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
+	public void onCheckPressed(BlockState blockState, Level level, BlockPos blockPos, CallbackInfo ci){
+		if(level instanceof ServerLevel) {
+			ServerCoreFabric.DETECTING_ENTITY_BLOCK_COLLISION = (Block) (Object) this;
+			ServerCoreFabric.DETECTING_ENTITY_BLOCK_COLLISION_POS = blockPos;
+		}
 	}
 
 }
