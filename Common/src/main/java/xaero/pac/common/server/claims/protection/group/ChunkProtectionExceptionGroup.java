@@ -19,6 +19,7 @@
 package xaero.pac.common.server.claims.protection.group;
 
 import com.mojang.datafixers.util.Either;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionSet;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
@@ -59,8 +60,8 @@ public final class ChunkProtectionExceptionGroup<T> {
 		return exceptionSet.contains(object);
 	}
 
-	public void updateTagExceptions(){
-		exceptionSet.updateTagExceptions();
+	public void updateTagExceptions(MinecraftServer server){
+		exceptionSet.updateTagExceptions(server);
 	}
 
 	public void setPlayerConfigOption(IPlayerConfigOptionSpecAPI<Integer> playerConfigOption) {

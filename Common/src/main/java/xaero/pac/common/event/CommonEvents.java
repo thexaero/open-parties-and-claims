@@ -414,7 +414,7 @@ public class CommonEvents {
 				serverData = ServerData.from(lastServerStarted);
 		if(serverData == null)
 			return;
-		serverData.getChunkProtection().updateTagExceptions();
+		serverData.getChunkProtection().updateTagExceptions(lastServerStarted);
 	}
 
 	public boolean onItemPickup(Entity entity, ItemEntity itemEntity) {

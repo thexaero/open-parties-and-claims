@@ -19,6 +19,10 @@
 package xaero.pac.common.server.claims.protection;
 
 import com.mojang.datafixers.util.Either;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 
 import java.util.HashSet;
@@ -43,9 +47,10 @@ public final class ChunkProtectionExceptionSet<T> {
 		return exceptions.contains(object) || tagBasedExceptions.contains(object);
 	}
 
-	public void updateTagExceptions(){
+	public void updateTagExceptions(MinecraftServer server){
 		tagBasedExceptions.clear();
-		exceptionTags.stream().flatMap(elementType.getTagStreamGetter()).forEach(tagBasedExceptions::add);
+		Registry<T> elementRegistry = elementType.getRegistry(server);
+		exceptionTags.stream().flatMap(tag -> elementRegistry.getTag(tag).stream().flatMap(HolderSet.Named::stream).map(Holder::value)).forEach(tagBasedExceptions::add);
 	}
 
 	public Stream<Either<T, TagKey<T>>> stream(){

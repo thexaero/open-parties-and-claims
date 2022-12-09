@@ -287,5 +287,5 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	public OpenPACServerAPI getAPI() {
 		return api;
 	}
-	
+
 }
