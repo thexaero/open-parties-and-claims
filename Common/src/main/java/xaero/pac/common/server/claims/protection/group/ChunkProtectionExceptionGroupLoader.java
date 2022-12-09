@@ -19,7 +19,9 @@
 package xaero.pac.common.server.claims.protection.group;
 
 import com.mojang.datafixers.util.Either;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;
@@ -36,10 +38,18 @@ import java.util.function.Predicate;
 
 public class ChunkProtectionExceptionGroupLoader {
 
-	public <T> void load(ForgeConfigSpec.ConfigValue<List<? extends String>> configOption,
+	public <T> void load(MinecraftServer server, ForgeConfigSpec.ConfigValue<List<? extends String>> configOption,
 						 ExceptionElementType<T> elementType, WildcardResolver wildcardResolver,
 						 Map<String, ChunkProtectionExceptionGroup<T>> destination, ChunkProtectionExceptionType defaultType,
 						 Predicate<ChunkProtectionExceptionType> typeFilter, PlayerConfigOptionCategory optionCategory){
+		Registry<T> elementRegistry = elementType.getRegistry(server);
+		Function<ResourceLocation, T> objectGetter = elementRegistry::get;
+		Iterable<T> iterable = elementType.getIterable();
+		Function<T, ResourceLocation> keyGetter = elementRegistry::getKey;
+		Function<ResourceLocation, TagKey<T>> tagGetter = rl -> TagKey.create(elementRegistry.key(), rl);
+		Iterable<TagKey<T>> tagIterable = elementType.getTagIterable();
+		Function<TagKey<T>, ResourceLocation> tagKeyGetter = TagKey::location;
+
 		configOption.get().forEach(stringEntry -> {
 			int listStartIndex = stringEntry.indexOf('{');
 			int listEndIndex;
@@ -69,13 +79,6 @@ public class ChunkProtectionExceptionGroupLoader {
 				OpenPartiesAndClaims.LOGGER.error("Exception group name must be unique: " + prefixedName);
 				return;
 			}
-
-			Function<ResourceLocation, T> objectGetter = elementType.getGetter();
-			Function<ResourceLocation, TagKey<T>> tagGetter = elementType.getTagGetter();
-			Iterable<T> iterable = elementType.getIterable();
-			Iterable<TagKey<T>> tagIterable= elementType.getTagIterable();
-			Function<T, ResourceLocation> keyGetter = elementType.getKeyGetter();
-			Function<TagKey<T>, ResourceLocation> tagKeyGetter = elementType.getTagKeyGetter();
 
 			ChunkProtectionExceptionGroup.Builder<T> builder = ChunkProtectionExceptionGroup.Builder.begin(elementType)
 				.setName(name)
