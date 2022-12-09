@@ -25,8 +25,6 @@ import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionG
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigStaticListIterationOptionSpec;
 
-import java.util.function.Function;
-
 public class PlayerConfigExceptionDynamicOptionsLoader {
 
 	public static final String OPTION_ROOT = PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptionGroups.";
@@ -41,7 +39,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 	public static final String ENTITY_ACCESS = "entityAccess";
 	public static final String DROPPED_ITEM_ACCESS = "droppedItemAccess";
 
-	<T> void handleGroup(ChunkProtectionExceptionGroup<T> group, PlayerConfigDynamicOptions.Builder builder, String category, String categoryPlural, Function<T, String> objectNameGetter){
+	<T> void handleGroup(ChunkProtectionExceptionGroup<T> group, PlayerConfigDynamicOptions.Builder builder, String category, String categoryPlural){
 		String optionId;
 		String comment;
 		String translation;
