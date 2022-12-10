@@ -43,7 +43,7 @@ public class ChunkProtectionExceptionGroupLoader {
 						 Map<String, ChunkProtectionExceptionGroup<T>> destination, ChunkProtectionExceptionType defaultType,
 						 Predicate<ChunkProtectionExceptionType> typeFilter, PlayerConfigOptionCategory optionCategory){
 		Registry<T> elementRegistry = elementType.getRegistry(server);
-		Function<ResourceLocation, T> objectGetter = elementRegistry::get;
+		Function<ResourceLocation, T> objectGetter = key -> elementRegistry.getOptional(key).orElse(null);
 		Iterable<T> iterable = elementType.getIterable();
 		Function<T, ResourceLocation> keyGetter = elementRegistry::getKey;
 		Function<ResourceLocation, TagKey<T>> tagGetter = rl -> TagKey.create(elementRegistry.key(), rl);
