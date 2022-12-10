@@ -296,7 +296,7 @@ public class CommonEvents {
 	}
 
 	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk) {
-		if(world instanceof ServerLevel){
+		if(world instanceof ServerLevel && world.getServer().isSameThread()){
 			try {
 				if (!(entity instanceof LivingEntity) && ServerCore.getDyingDamageSourceForCurrentEntitySpawns(world.getServer().getTickCount()) != null) {
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
