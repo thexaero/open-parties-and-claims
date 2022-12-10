@@ -2211,7 +2211,7 @@ public class ChunkProtection
 										 ExceptionElementType<T> elementType,
 										 WildcardResolver wildcardResolver){
 			Registry<T> elementRegistry = elementType.getRegistry(server);
-			Function<ResourceLocation, T> objectGetter = elementRegistry::get;
+			Function<ResourceLocation, T> objectGetter = key -> elementRegistry.getOptional(key).orElse(null);
 			Iterable<T> iterable = elementType.getIterable();
 			Function<T, ResourceLocation> keyGetter = elementRegistry::getKey;
 			Function<ResourceLocation, TagKey<T>> objectTagGetter = rl -> TagKey.create(elementRegistry.key(), rl);
