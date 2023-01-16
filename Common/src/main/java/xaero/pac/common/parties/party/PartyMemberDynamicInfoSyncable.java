@@ -129,7 +129,12 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 		setY(y);
 		setZ(z);
 	}
-	
+
+	@Override
+	public UUID getPartyId() {
+		return partyId;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}
