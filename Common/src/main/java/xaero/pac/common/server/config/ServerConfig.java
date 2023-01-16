@@ -523,7 +523,7 @@ public class ServerConfig {
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("droppedItemAccessEntityGroups"),
 					() -> Lists.newArrayList(
-							"Piglins{minecraft:piglin}", "Foxes{minecraft:fox}"
+							"Villagers{minecraft:villager}", "Piglins{minecraft:piglin}", "Foxes{minecraft:fox}"
 					), s -> s instanceof String);
 		staticFakePlayers = builder
 			.comment("""
@@ -693,6 +693,7 @@ public class ServerConfig {
 							"claims.protection.exceptionGroups.entity.break.Livestock",
 							"claims.protection.exceptionGroups.entity.blockAccess.Villagers",
 							"claims.protection.exceptionGroups.entity.entityAccess.Zombies",
+							"claims.protection.exceptionGroups.entity.droppedItemAccess.Villagers",
 							"claims.protection.exceptionGroups.entity.droppedItemAccess.Piglins",
 							"claims.protection.exceptionGroups.entity.droppedItemAccess.Foxes",
 							"claims.protection.exceptionGroups.item.interact.Books",
