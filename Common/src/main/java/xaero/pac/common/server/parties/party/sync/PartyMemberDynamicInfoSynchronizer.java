@@ -53,7 +53,9 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
 		if(syncedInfo.isActive() && party == fromParty && !configManager.getLoadedConfig(syncedInfo.getPlayerId()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY))
 			return;
-		PartyMember exceptionMemberInfo = party != fromParty ? null : party.getOwner().getUUID().equals(syncedInfo.getPlayerId()) ? party.getOwner() : party.getMemberInfo(syncedInfo.getPlayerId());
+		if(syncedInfo.isActive() && syncedInfo.getPartyId() == null)
+			return;
+		PartyMember exceptionMemberInfo = party != fromParty ? null : party.getMemberInfo(syncedInfo.getPlayerId());
 		PlayerConfigOptionSpec<Boolean> receiveConfigOption = (PlayerConfigOptionSpec<Boolean>) (party == fromParty ? PlayerConfigOptions.RECEIVE_LOCATIONS_FROM_PARTY : PlayerConfigOptions.RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES);
 		Predicate<IPartyPlayerInfo> exception = mi -> mi == exceptionMemberInfo || !configManager.getLoadedConfig(mi.getUUID()).getEffective(receiveConfigOption);
 		syncToParty(party, exception, syncedInfo, true);
@@ -63,6 +65,8 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 	public void syncToPartyMutualAlliesDynamicInfo(ServerParty party, IPartyMemberDynamicInfoSyncable syncedInfo) {
 		IPlayerConfigManager configManager = partyManager.getPlayerConfigs();
 		if(syncedInfo.isActive() && !configManager.getLoadedConfig(syncedInfo.getPlayerId()).getEffective(PlayerConfigOptions.SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES))
+			return;
+		if(syncedInfo.isActive() && syncedInfo.getPartyId() == null)
 			return;
 		Iterator<PartyAlly> allyIterator = party.getAllyPartiesStream().iterator();
 		while(allyIterator.hasNext()){
@@ -86,7 +90,8 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 			if(onlineMember != player && configManager.getLoadedConfig(onlineMember.getUUID()).getEffective(shareConfigOption)) {
 				ServerPlayerData partyMemberMainCap = (ServerPlayerData) ServerPlayerDataAPI.from(onlineMember);
 				IPartyMemberDynamicInfoSyncable syncedInfo = removers ? partyMemberMainCap.getPartyMemberDynamicInfo().getRemover() : partyMemberMainCap.getPartyMemberDynamicInfo();
-				sendToClient(player, syncedInfo, true);
+				if(removers || syncedInfo.getPartyId() != null)
+					sendToClient(player, syncedInfo, true);
 			}
 		};
 		party.getOnlineMemberStream().forEach(onlineMemberConsumer);

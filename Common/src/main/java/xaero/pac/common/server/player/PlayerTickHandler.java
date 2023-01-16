@@ -47,6 +47,8 @@ public class PlayerTickHandler {
 
 	public void onTick(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+		if(!mainCap.hasHandledLogin())
+			return;
 		mainCap.onTick();
 		if(mainCap.shouldResyncPlayerConfigs()) {
 			serverData.getPlayerConfigs().getSynchronizer().syncAllToClient(player);
