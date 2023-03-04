@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -59,6 +59,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityAccessEntityGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemAccessEntityGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayers;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayerClassExceptions;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionOptionalExceptionGroups;
@@ -543,6 +544,17 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_static_fake_players")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("staticFakePlayers"), () -> Lists.newArrayList("[IntegratedTunnels]"), s -> s instanceof String);
+		staticFakePlayerClassExceptions = builder
+				.comment("""
+					A list of Java classes of fake players that should be excluded from claim protection exceptions given to fake players with the "staticFakePlayers" option
+					or built-in fake player support, like in the case of Create mod deployers.
+					This option is meant for fake players similar to ComputerCraft's turtles, which take the UUID of the player that places them. It becomes a problem when a turtle takes
+					the UUID of a fake player from "staticFakePlayers" or a deployer because the turtle then gets the same privileges without actually being stationary itself nor a deployer.
+					Adding classes here should not break support of fake players that take the UUID of their owner. It simply takes away privileges which aren't meant for them.
+					For example ["dan200.computercraft.shared.turtle.core.TurtlePlayer"]""")
+				.translation("gui.xaero_pac_config_static_fake_player_class_exceptions")
+				.worldRestart()
+				.defineListAllowEmpty(Lists.newArrayList("staticFakePlayerClassExceptions"), () -> Lists.newArrayList("dan200.computercraft.shared.turtle.core.TurtlePlayer"), s -> s instanceof String);
 
 		additionalBannedItemsList = builder
 			.comment("""

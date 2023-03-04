@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -55,6 +55,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.function.TriFunction;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -145,6 +146,7 @@ public class ChunkProtection
 	private final ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs;
 	private final Set<String> staticFakePlayerUsernames;
 	private final Set<UUID> staticFakePlayerIds;
+	private final Set<Class<?>> staticFakePlayerClassExceptions;
 	private final ChunkProtectionExceptionSet<Item> additionalBannedItems;
 	private final ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions;
 	private final ChunkProtectionExceptionSet<Item> completelyDisabledItems;
@@ -175,7 +177,7 @@ public class ChunkProtection
 							ChunkProtectionExceptionSet<EntityType<?>> forcedKillExceptionEntities,
 							ChunkProtectionExceptionSet<EntityType<?>> requiresEmptyHandEntities, ChunkProtectionExceptionSet<EntityType<?>> forcedAllowAnyItemEntities, ChunkProtectionExceptionSet<EntityType<?>> forcedEntityClaimBarrierList,
 							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGrief,
-							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefEntities, ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefDroppedItems, ChunkProtectionExceptionSet<EntityType<?>> nonBlockGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> entityGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs, Set<String> staticFakePlayerUsernames, Set<UUID> staticFakePlayerIds, ChunkProtectionExceptionSet<Item> additionalBannedItems,
+							ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefEntities, ChunkProtectionExceptionSet<EntityType<?>> entitiesAllowedToGriefDroppedItems, ChunkProtectionExceptionSet<EntityType<?>> nonBlockGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> entityGriefingMobs, ChunkProtectionExceptionSet<EntityType<?>> droppedItemGriefingMobs, Set<String> staticFakePlayerUsernames, Set<UUID> staticFakePlayerIds, Set<Class<?>> staticFakePlayerClassExceptions, ChunkProtectionExceptionSet<Item> additionalBannedItems,
 							ChunkProtectionExceptionSet<Item> completelyBannedItems,
 							ChunkProtectionExceptionSet<Item> itemUseProtectionExceptions, ChunkProtectionExceptionSet<EntityType<?>> completelyDisabledEntities, Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups, Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups, Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups, Map<Entity, Set<ChunkPos>> cantPickItemsCache, Map<Entity, Set<ChunkPos>> cantPickupXPInTickCache, Set<UUID> fullPasses) {
 		this.claimsManager = claimsManager;
@@ -201,6 +203,7 @@ public class ChunkProtection
 		this.droppedItemGriefingMobs = droppedItemGriefingMobs;
 		this.staticFakePlayerUsernames = staticFakePlayerUsernames;
 		this.staticFakePlayerIds = staticFakePlayerIds;
+		this.staticFakePlayerClassExceptions = staticFakePlayerClassExceptions;
 		this.additionalBannedItems = additionalBannedItems;
 		this.completelyDisabledItems = completelyBannedItems;
 		this.itemUseProtectionExceptions = itemUseProtectionExceptions;
@@ -229,8 +232,24 @@ public class ChunkProtection
 		fullPasses.remove(entityId);
 	}
 
-	private boolean hasActiveFullPass(UUID entityId){
-		return !fullPassesPaused && fullPasses.contains(entityId);
+	private boolean hasActiveFullPass(Entity entity){
+		if(fullPassesPaused)
+			return false;
+		if(entity instanceof Player){
+			if(
+				CREATE_DEPLOYER_UUID.equals(entity.getUUID())
+				&& !isStaticFakePlayerExceptionClass(entity)
+			)
+				return true;
+		}
+		return fullPasses.contains(entity.getUUID());
+	}
+
+	private boolean isStaticFakePlayerExceptionClass(Entity entity){
+		for (Class<?> fakePlayerExceptionClass : staticFakePlayerClassExceptions)
+			if (fakePlayerExceptionClass.isAssignableFrom(entity.getClass()))
+				return true;
+		return false;
 	}
 
 	private InteractionTargetResult entityAccessCheck(IPlayerConfigManager playerConfigs, IPlayerConfig claimConfig, Entity e, Entity from, Entity accessor, UUID accessorId, boolean attack, boolean emptyHand) {
@@ -488,6 +507,8 @@ public class ChunkProtection
 	private boolean isAllowedStaticFakePlayerAction(IServerData<CM,P> serverData, Player player, BlockPos targetPos, BlockPos targetPos2){
 		if(player == null || !staticFakePlayerIds.contains(player.getUUID()) && !staticFakePlayerUsernames.contains(player.getGameProfile().getName()))
 			return false;
+		if(isStaticFakePlayerExceptionClass(player))
+			return false;
 		BlockPos playerPos = player.blockPosition();
 		if(BlockPos.ZERO.equals(playerPos))
 			playerPos = new BlockPos(player.getPosition(0));
@@ -619,7 +640,7 @@ public class ChunkProtection
 				entity.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, BLOCK_DISABLED));
 			return true;
 		}
-		if(entity != null && hasActiveFullPass(entity.getUUID()))//uses custom protection
+		if(entity != null && hasActiveFullPass(entity))//uses custom protection
 			return false;
 		Entity accessor;
 		UUID accessorId;
@@ -695,7 +716,7 @@ public class ChunkProtection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		//entity can be null!
-		if(entity != null && hasActiveFullPass(entity.getUUID()))//uses custom protection
+		if(entity != null && hasActiveFullPass(entity))//uses custom protection
 			return false;
 		ChunkPos chunkPos = new ChunkPos(pos);
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
@@ -762,7 +783,7 @@ public class ChunkProtection
 				player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF));
 			return true;
 		}
-		if(hasActiveFullPass(player.getUUID()))
+		if(hasActiveFullPass(player))
 			return false;
 		if(isItemUseRestricted(itemStack) && !(item instanceof BucketItem) && !(item instanceof SolidBucketItem)) {
 			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
@@ -846,7 +867,7 @@ public class ChunkProtection
 				player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, ENTITY_DISABLED));
 			return true;
 		}
-		if (interactingEntity != null && hasActiveFullPass(interactingEntity.getUUID()))//uses custom protection
+		if (interactingEntity != null && hasActiveFullPass(interactingEntity))//uses custom protection
 			return false;
 		if (interactingEntity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) interactingEntity, target.blockPosition()))
 			return false;
@@ -1035,7 +1056,7 @@ public class ChunkProtection
 			return;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		DamageSource damageSource = explosion.getDamageSource();
-		if(damageSource.getEntity() != null && hasActiveFullPass(damageSource.getEntity().getUUID()))
+		if(damageSource.getEntity() != null && hasActiveFullPass(damageSource.getEntity()))
 			return;
 		Iterator<BlockPos> positions = affectedBlocks.iterator();
 		while(positions.hasNext()) {
@@ -1143,7 +1164,7 @@ public class ChunkProtection
 	public boolean onBucketUse(IServerData<CM, P> serverData, Entity entity, Level world, HitResult hitResult, ItemStack itemStack) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		if(entity != null && hasActiveFullPass(entity.getUUID()))//uses custom protection
+		if(entity != null && hasActiveFullPass(entity))//uses custom protection
 			return false;
 		//just onUseItemAt would work for buckets in "vanilla" as well, but it's better to use the proper bucket event too
 		BlockPos pos;
@@ -1164,7 +1185,7 @@ public class ChunkProtection
 				player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) player, hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF));
 			return true;
 		}
-		if(entity != null && hasActiveFullPass(entity.getUUID()))//uses custom protection
+		if(entity != null && hasActiveFullPass(entity))//uses custom protection
 			return false;
 		if(!isItemUseRestricted(itemStack))
 			return false;
@@ -1662,7 +1683,7 @@ public class ChunkProtection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(entity.getUUID().equals(pickedEntityThrowerId) || entity.getUUID().equals(pickedEntityOwnerId) ||
-				entity.getUUID().equals(ServerCore.getLootOwner(pickedEntity)) || hasActiveFullPass(entity.getUUID()))
+				entity.getUUID().equals(ServerCore.getLootOwner(pickedEntity)) || hasActiveFullPass(entity))
 			return false;
 		ChunkPos chunkPos = pickedEntity.chunkPosition();
 		Set<ChunkPos> cantPickupCached = cantPickupCache.get(entity);//avoiding rechecking every tick for a billion pickupable items in the same chunk
@@ -2192,14 +2213,20 @@ public class ChunkProtection
 					staticFakePlayerUsernames.add(e);
 				}
 			});
+			Set<Class<?>> staticFakePlayerClassExceptions = new HashSet<>();
+			ServerConfig.CONFIG.staticFakePlayerClassExceptions.get().forEach(e -> {
+				try {
+					staticFakePlayerClassExceptions.add(Class.forName(e));
+				} catch (ClassNotFoundException ignored) {
+				}
+			});
 			Set<UUID> fullPasses = new HashSet<>();
-			fullPasses.add(CREATE_DEPLOYER_UUID);
 			return new ChunkProtection<>(claimsManager, partyManager, new ChunkProtectionEntityHelper(),
 					friendlyEntityList.build(), hostileEntityList.build(),
 					forcedInteractionExceptionBlocksBuilder.build(), forcedBreakExceptionBlocksBuilder.build(),
 					requiresEmptyHandBlocksBuilder.build(), forcedAllowAnyItemBlocksBuilder.build(), completelyDisabledBlocks.build(), forcedInteractionExceptionEntities.build(),
 					forcedKillExceptionEntities.build(), requiresEmptyHandEntitiesBuilder.build(), forcedAllowAnyItemEntitiesBuilder.build(), forcedEntityClaimBarrierList.build(), entitiesAllowedToGrief.build(),
-					entitiesAllowedToGriefEntities.build(), entitiesAllowedToGriefDroppedItems.build(), nonBlockGriefingMobs.build(), entityGriefingMobs.build(), droppedItemGriefingMobs.build(), staticFakePlayerUsernames, staticFakePlayerIds, additionalBannedItems.build(), completelyDisabledItems.build(),
+					entitiesAllowedToGriefEntities.build(), entitiesAllowedToGriefDroppedItems.build(), nonBlockGriefingMobs.build(), entityGriefingMobs.build(), droppedItemGriefingMobs.build(), staticFakePlayerUsernames, staticFakePlayerIds, staticFakePlayerClassExceptions, additionalBannedItems.build(), completelyDisabledItems.build(),
 					itemUseProtectionExceptions.build(), completelyDisabledEntities.build(), blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, blockAccessEntityGroups, entityAccessEntityGroups, droppedItemAccessEntityGroups, new HashMap<>(), new HashMap<>(), fullPasses);
 		}
 
