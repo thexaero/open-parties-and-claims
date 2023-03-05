@@ -108,9 +108,9 @@ public class ClientClaimsSyncHandler {
 		ArrayList<PlayerChunkClaimHolder> palette = Lists.newArrayList((PlayerChunkClaimHolder)null);
 		for(int i = 0; i < paletteInts.length; i++){
 			PlayerChunkClaim claim = claimsManager.getClaimStateBySyncIndex(paletteInts[i]);
-			if(claim != null)//can be null depending on sync mode
+			if(claim != null)//can be null
 				paletteHelper.put(claim, palette.size()/*not i*/);
-			palette.add(new PlayerChunkClaimHolder(claim, new byte[32]));
+			palette.add(new PlayerChunkClaimHolder(claim));//possible that the storage still points at a null (based on sync mode)
 		}
 		RegionClaimsPaletteStorage newRegionStorage = new RegionClaimsPaletteStorage(paletteHelper, null, palette, storage, false);
 		newRegionStorage.setNeedsHolderRecalculation(true);//will calculate holder data when there is an attempt to modify the region
