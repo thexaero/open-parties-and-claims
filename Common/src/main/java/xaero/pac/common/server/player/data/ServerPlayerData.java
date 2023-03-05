@@ -55,6 +55,8 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private long lastSubConfigCreationTick;
 	private ResourceLocation lastClaimUpdateDimension;
 	private IPlayerChunkClaim lastClaimUpdateState;
+	private int lastClaimUpdateX;
+	private int lastClaimUpdateZ;
 	private UUID lastOtherConfigRequest;
 	private boolean hasMod;
 	private boolean handledLogin;
@@ -190,9 +192,19 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return lastClaimUpdateState;
 	}
 
-	public void setLastClaimUpdate(ResourceLocation dimension, IPlayerChunkClaim state) {
+	public int getLastClaimUpdateX() {
+		return lastClaimUpdateX;
+	}
+
+	public int getLastClaimUpdateZ() {
+		return lastClaimUpdateZ;
+	}
+
+	public void setLastClaimUpdate(ResourceLocation dimension, IPlayerChunkClaim state, int x, int z) {
 		this.lastClaimUpdateDimension = dimension;
 		this.lastClaimUpdateState = state;
+		this.lastClaimUpdateX = x;
+		this.lastClaimUpdateZ = z;
 	}
 
 	public UUID getLastOtherConfigRequest() {

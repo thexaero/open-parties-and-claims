@@ -39,6 +39,8 @@ public class ClientClaimsSyncHandler {
 
 	private ResourceLocation lastClaimUpdateDimension;
 	private PlayerChunkClaim lastClaimUpdateState;
+	private int lastClaimUpdateX;
+	private int lastClaimUpdateZ;
 	
 	public ClientClaimsSyncHandler(ClientClaimsManager claimsManager) {
 		super();
@@ -92,6 +94,8 @@ public class ClientClaimsSyncHandler {
 			lastClaimUpdateState = null;
 		}
 		lastClaimUpdateDimension = dimension;
+		lastClaimUpdateX = x;
+		lastClaimUpdateZ = z;
 	}
 
 	public void onClaimUpdatePos(int x, int z) {
@@ -101,6 +105,16 @@ public class ClientClaimsSyncHandler {
 			claimsManager.claim(lastClaimUpdateDimension, lastClaimUpdateState.getPlayerId(), lastClaimUpdateState.getSubConfigIndex(), x, z, lastClaimUpdateState.isForceloadable());
 		else
 			claimsManager.unclaim(lastClaimUpdateDimension, x, z);
+		lastClaimUpdateX = x;
+		lastClaimUpdateZ = z;
+	}
+
+	public void onClaimUpdateNextXPos() {
+		onClaimUpdatePos(lastClaimUpdateX + 1, lastClaimUpdateZ);
+	}
+
+	public void onClaimUpdateNextZPos() {
+		onClaimUpdatePos(lastClaimUpdateX, lastClaimUpdateZ + 1);
 	}
 	
 	public void onRegion(int x, int z, int[] paletteInts, BitStorage storage) {
