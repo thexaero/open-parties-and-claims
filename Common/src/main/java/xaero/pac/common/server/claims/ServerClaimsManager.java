@@ -49,7 +49,7 @@ import java.util.*;
 
 public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder> implements IServerClaimsManager<PlayerChunkClaim, ServerPlayerClaimInfo, ServerDimensionClaimsManager> {
 
-	private final int MAX_REQUEST_SIZE = 25;//will go 1 chunk beyond this before cancelling but that's fine
+	private final int MAX_REQUEST_SIZE = 100;//will go 1 chunk beyond this before cancelling but that's fine
 	private final ClaimsManagerSynchronizer claimsManagerSynchronizer;
 	private final ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
 	private final ServerClaimsPermissionHandler permissionHandler;
