@@ -375,7 +375,8 @@ public class PlayerConfig
 		manager.onSubConfigRemoved(subConfig);
 		if(type != PlayerConfigType.SERVER && getEffective(USED_SUBCLAIM).equals(id))
 			tryToReset(USED_SUBCLAIM);
-		manager.getSynchronizer().syncSubExistence(null, subConfig, false);
+		if(manager.isLoaded())
+			manager.getSynchronizer().syncSubExistence(null, subConfig, false);
 		return subConfig;
 	}
 
