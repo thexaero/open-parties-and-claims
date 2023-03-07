@@ -166,13 +166,8 @@ public final class PlayerConfigIO
 		UUID playerId = UUID.fromString(file.getParent().getFileName().toString());
 		String[] fileNameArgs = fileNameNoExtension.split("\\$");
 		String subId = fileNameArgs[0];
-		String subIndexString = fileNameArgs.length > 1 ? fileNameArgs[1] : null;
-		int subIndex;
-		try {
-			subIndex = subIndexString == null ? 0 : Integer.parseInt(subIndexString);
-		} catch(NumberFormatException nfe){
-			subIndex = 0;
-		}
+		String subIndexString = fileNameArgs[1];
+		int subIndex = Integer.parseInt(subIndexString);
 		if(Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID))
 			return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.SERVER, subId, subIndex);
 		return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.PLAYER, subId, subIndex);
