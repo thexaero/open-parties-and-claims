@@ -28,7 +28,6 @@ import xaero.pac.common.claims.RegionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class RegionClaimsPaletteStorage {
 	
@@ -72,27 +71,42 @@ public class RegionClaimsPaletteStorage {
 		} else {
 			newPaletteIndex = paletteHelper.getInt(value);
 			if(newPaletteIndex == 0) {
-				paletteHelper.put(value, newPaletteIndex = palette.size());
-				palette.add(newHolder = new PlayerChunkClaimHolder(value, new byte[32]));
+				newPaletteIndex = palette.size();
+				boolean add = true;
+				for(int i = 1; i < palette.size(); i++){
+					if(palette.get(i) == null) {
+						newPaletteIndex = i;
+						add = false;
+						break;
+					}
+				}
+				paletteHelper.put(value, newPaletteIndex);
+				newHolder = new PlayerChunkClaimHolder(value);
+				if(add)
+					palette.add(newHolder);
+				else
+					palette.set(newPaletteIndex, newHolder);
 				region.onAddedToPalette(this, value);
-				if(paletteInts != null)
-					paletteInts.add(value.getSyncIndex());
+				if(paletteInts != null) {
+					if(add)
+						paletteInts.add(value.getSyncIndex());
+					else
+						paletteInts.set(newPaletteIndex - 1, value.getSyncIndex());
+				}
 			} else
 				newHolder = palette.get(newPaletteIndex);
 		}
 		if(newHolder != currentHolder) {
 			int index = getIndex(x, z);
 			if(currentHolder != null) {
-				currentHolder.decrement(x);
+				currentHolder.decrement();
 				if(currentHolder.getCount() == 0) {
 					int currentPaletteIndex = storage.get(index);
 					removePaletteElement(currentPaletteIndex, region);
-					if(newPaletteIndex > currentPaletteIndex)
-						newPaletteIndex--;
 				}
 			}
 			if(newHolder != null)
-				newHolder.increment(x);
+				newHolder.increment();
 			
 			ensureSyncableStorageBits();
 			storage.set(index, newPaletteIndex);
@@ -103,7 +117,7 @@ public class RegionClaimsPaletteStorage {
 		for(int i = 0; i < storage.getSize(); i++) {
 			int storageValue = storage.get(i);
 			if(storageValue > 0)
-				palette.get(storageValue).increment(i >> 5);
+				palette.get(storageValue).increment();
 		}
 		needsHolderRecalculation = false;
 	}
@@ -133,33 +147,18 @@ public class RegionClaimsPaletteStorage {
 		if(paletteIndex == 0)
 			return;
 
-		Map<PlayerChunkClaim, Integer> paletteHelper = this.paletteHelper;
-		IntList paletteInts = this.paletteInts;
-		ArrayList<PlayerChunkClaimHolder> palette = this.palette;
-		BitStorage storage = this.storage;
-		if(paletteIndex < palette.size() - 1) {
-			boolean[] fixedStorageColumns = new boolean[32];
-			for(int i = paletteIndex + 1; i < palette.size(); i++) {
-				PlayerChunkClaimHolder holder = palette.get(i);
-				paletteHelper.put(holder.getClaim(), i - 1);
-				for(int x = holder.getMinX(); x <= holder.getMaxX(); x++) {
-					if(!fixedStorageColumns[x]) {
-						fixedStorageColumns[x] = true;
-						for(int z = 0; z < 32; z++) {
-							int index = getIndex(x, z);
-							int storedPaletteIndex = storage.get(index);
-							if(storedPaletteIndex > paletteIndex)
-								storage.set(index, storedPaletteIndex - 1);
-						}
-					}
-				}
-			}
-		}
-		PlayerChunkClaim removedState = palette.remove(paletteIndex).getClaim();
-		paletteHelper.remove(removedState);
+		PlayerChunkClaim removedState = palette.set(paletteIndex, null).getClaim();
+		paletteHelper.removeInt(removedState);
 		region.onRemovedFromPalette(this, removedState);
 		if(paletteInts != null)
-			paletteInts.removeInt(paletteIndex - 1);
+			paletteInts.set(paletteIndex - 1, -1);
+		if(paletteIndex == palette.size() - 1){
+			while(palette.size() > 1 && palette.get(palette.size() - 1) == null) {
+				palette.remove(palette.size() - 1);
+				if(paletteInts != null)
+					paletteInts.removeInt(paletteInts.size() - 1);
+			}
+		}
 	}
 	
 	public static int getIndex(int x, int z) {

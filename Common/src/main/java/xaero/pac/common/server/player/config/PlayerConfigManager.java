@@ -192,7 +192,9 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 
 	public void onSubConfigRemoved(PlayerSubConfig<P> subConfig) {
 		configsToSave.remove(subConfig);
-		io.delete(subConfig);
+		if(loaded) {
+			io.delete(subConfig);
+		}
 	}
 
 	public void setIO(PlayerConfigIO<P, CM> io) {

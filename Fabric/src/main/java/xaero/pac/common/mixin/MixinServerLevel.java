@@ -33,6 +33,8 @@ import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.core.ServerCoreFabric;
 import xaero.pac.common.server.world.IServerLevel;
 
+import java.util.function.BooleanSupplier;
+
 @Mixin(value = ServerLevel.class, priority = 1000001)
 public class MixinServerLevel implements IServerLevel {
 
@@ -65,6 +67,11 @@ public class MixinServerLevel implements IServerLevel {
 	@Inject(method = "tickCustomSpawners", at = @At("RETURN"))
 	public void postTickCustomSpawners(boolean b1, boolean b2, CallbackInfo ci){
 		ServerCoreFabric.resetMobSpawnTypeForNewEntities();
+	}
+
+	@Inject(method = "tick", at = @At("HEAD"))
+	public void preTick(BooleanSupplier booleanSupplier, CallbackInfo ci){
+		ServerCore.preServerLevelTick((ServerLevel)(Object)this);
 	}
 
 }

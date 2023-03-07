@@ -77,7 +77,7 @@ public abstract class ObjectManagerIO
 						(fd -> {
 							if(Files.isDirectory(fd))
 								return;
-							T loadedObject = loadFile(fd, filePathConfig);
+							T loadedObject = loadFile(fd, filePathConfig, true);
 							if(loadedObject != null)
 								onObjectLoad(loadedObject);
 						});
@@ -102,7 +102,7 @@ public abstract class ObjectManagerIO
 	
 	protected abstract I getObjectId(String fileNameNoExtension, Path file, FilePathConfig filePathConfig);
 	
-	protected T loadFile(Path file, FilePathConfig filePathConfig) {
+	protected T loadFile(Path file, FilePathConfig filePathConfig, boolean backupOnError) {
 		String fileName = file.getFileName().toString();
 		if(!fileName.endsWith(this.fileExtension))
 			return null;
@@ -115,7 +115,7 @@ public abstract class ObjectManagerIO
 			if(e instanceof CompletionException && e.getCause() instanceof IOException)
 				throw e;//it means that a file is completely inaccessible even after multiple attempts (can't even back it up in that case)
 			OpenPartiesAndClaims.LOGGER.error(String.format("Exception loading data from file %s", fileName), e);
-			if(!(e instanceof CompletionException) || !(e.getCause() instanceof IOThreadWorkerException)) {//otherwise the file at hand is not the reason and the io thread worker is dead anyway
+			if(backupOnError && (!(e instanceof CompletionException) || !(e.getCause() instanceof IOThreadWorkerException))) {//otherwise the file at hand is not the reason and the io thread worker is dead anyway
 				ioThreadWorker.get(() -> {
 					int backupAttempts = 5;
 					while(true) {

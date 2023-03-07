@@ -116,6 +116,10 @@ public class PacketRegister {
 		ClientboundPlayerConfigHelpPacket.Codec playerConfigHelpCodec = new ClientboundPlayerConfigHelpPacket.Codec();
 		packetHandler.register(34, ClientboundPlayerConfigHelpPacket.class, playerConfigHelpCodec, playerConfigHelpCodec, null, new ClientboundPlayerConfigHelpPacket.ClientHandler());
 
+		packetHandler.register(35, ClientboundClaimsClaimUpdateNextXPosPacket.class, ClientboundClaimsClaimUpdateNextXPosPacket.ENCODER, new ClientboundClaimsClaimUpdateNextXPosPacket.Decoder(), null, new ClientboundClaimsClaimUpdateNextXPosPacket.ClientHandler());
+
+		packetHandler.register(36, ClientboundClaimsClaimUpdateNextZPosPacket.class, ClientboundClaimsClaimUpdateNextZPosPacket.ENCODER, new ClientboundClaimsClaimUpdateNextZPosPacket.Decoder(), null, new ClientboundClaimsClaimUpdateNextZPosPacket.ClientHandler());
+
 	}
 
 }
