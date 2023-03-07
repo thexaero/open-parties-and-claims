@@ -45,12 +45,14 @@ public final class ForceLoadTicketManager {
 	private IServerClaimsManager<?, ?, ?> claimsManager;
 	private final MinecraftServer server;
 	private final Map<UUID, PlayerForceloadTicketManager> claimTickets;
+	private Map<ResourceLocation, DimensionInfo> dimensionInfoMap;
 	
 	private ForceLoadTicketManager(MinecraftServer server,
-			Map<UUID, PlayerForceloadTicketManager> claimTickets) {
+			Map<UUID, PlayerForceloadTicketManager> claimTickets, Map<ResourceLocation, DimensionInfo> dimensionInfoMap) {
 		super();
 		this.server = server;
 		this.claimTickets = claimTickets;
+		this.dimensionInfoMap = dimensionInfoMap;
 	}
 	
 	public void setClaimsManager(IServerClaimsManager<?, ?, ?> claimsManager) {
@@ -61,6 +63,13 @@ public final class ForceLoadTicketManager {
 
 	private PlayerForceloadTicketManager getPlayerTickets(UUID id){
 		return claimTickets.computeIfAbsent(id, i -> PlayerForceloadTicketManager.Builder.begin().build());
+	}
+
+	private DimensionInfo getDimensionInfo(ResourceLocation dimension){
+		DimensionInfo dimInfo = dimensionInfoMap.get(dimension);
+		if(dimInfo == null)
+			dimensionInfoMap.put(dimension, dimInfo = new DimensionInfo());
+		return dimInfo;
 	}
 	
 	private boolean enableTicket(ClaimTicket ticket) {
@@ -73,6 +82,7 @@ public final class ForceLoadTicketManager {
 		ServerLevel world = server.getLevel(levelKey);
 		Services.PLATFORM.getServerChunkCacheAccess().addRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(true);
+		countEnabled(ticket.getDimension(), 1);
 //		OpenPartiesAndClaims.LOGGER.info("Enabled force load ticket at " + pos);
 		return true;
 	}
@@ -83,7 +93,13 @@ public final class ForceLoadTicketManager {
 		ServerLevel world = server.getLevel(levelKey);
 		Services.PLATFORM.getServerChunkCacheAccess().removeRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
 		ticket.setEnabled(false);
+		countEnabled(ticket.getDimension(), -1);
 //		OpenPartiesAndClaims.LOGGER.info("Disabled force load ticket at " + pos);
+	}
+
+	private void countEnabled(ResourceLocation dimension, int change){
+		DimensionInfo dimInfo = getDimensionInfo(dimension);
+		dimInfo.enabledTicketCount += change;
 	}
 	
 	private boolean updateTicket(boolean shouldBeEnabled, ClaimTicket ticket) {
@@ -147,6 +163,17 @@ public final class ForceLoadTicketManager {
 				updateTicketsFor(playerConfigManager, id, false);//to enable another one that was disabled by the forceload limit
 		}
 	}
+
+	public boolean hasEnabledTickets(ServerLevel level){
+		DimensionInfo dimensionInfo = dimensionInfoMap.get(level.dimension().location());
+		return dimensionInfo != null && dimensionInfo.enabledTicketCount > 0;
+	}
+
+	public static final class DimensionInfo {
+
+		private int enabledTicketCount;
+
+	}
 	
 	public static final class Builder {
 		private MinecraftServer server;
@@ -167,7 +194,7 @@ public final class ForceLoadTicketManager {
 		public ForceLoadTicketManager build() {
 			if (server == null)
 				throw new IllegalStateException();
-			return new ForceLoadTicketManager(server, new HashMap<>());
+			return new ForceLoadTicketManager(server, new HashMap<>(), new HashMap<>());
 		}
 
 		public static Builder begin() {

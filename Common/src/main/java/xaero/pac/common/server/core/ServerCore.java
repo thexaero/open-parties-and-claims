@@ -693,6 +693,14 @@ public class ServerCore {
 		return serverData.getChunkProtection().onFishingHookedEntity(serverData, hook, entity);
 	}
 
+	public static void preServerLevelTick(ServerLevel level) {
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
+		if(serverData == null)
+			return;
+		if(serverData.getForceLoadManager().hasEnabledTickets(level))
+			level.resetEmptyTime();//continue ticking entities in dimensions with no players
+	}
+
 	public static void reset(){
 		CAPTURED_TARGET_POS = null;
 		CAPTURED_POS_STATE_MAP = null;

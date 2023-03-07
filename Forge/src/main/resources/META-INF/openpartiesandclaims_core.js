@@ -1341,6 +1341,21 @@ function initializeCoreMod() {
 
 				return classNode
 			}
+        },
+        'xaero_pac_serverlevel_tick': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.server.level.ServerLevel',
+                'methodName': 'm_8793_',
+                'methodDesc' : '(Ljava/util/function/BooleanSupplier;)V'
+            },
+            'transformer' : function(methodNode){
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preServerLevelTick', '(Lnet/minecraft/server/level/ServerLevel;)V'))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
         }
 	}
 }
