@@ -61,7 +61,10 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 
 	public static final int SUBCLAIM_PROPERTIES_PER_TICK = 16384;
 	public static final int SUBCLAIM_PROPERTIES_PER_TICK_PER_PLAYER = 1024;
-	
+	private final static ClientboundClaimsClaimUpdateNextXPosPacket NEXT_X_PACKET = new ClientboundClaimsClaimUpdateNextXPosPacket();
+	private final static ClientboundClaimsClaimUpdateNextZPosPacket NEXT_Z_PACKET = new ClientboundClaimsClaimUpdateNextZPosPacket();
+
+
 	private final MinecraftServer server;
 	private ServerClaimsManager claimsManager;
 	private IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, ?> serverData;
@@ -237,14 +240,20 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		sendToClient(player, new ClientboundClaimsRegionPacket(x, z, paletteInts, storageBits, storageData), false);
 	}
 
-	private void sendClaimUpdatePacketToPlayer(ServerPlayer player, PlayerChunkClaim claim, ResourceLocation dimension, ClientboundClaimsClaimUpdatePacket packet, ClientboundClaimsClaimUpdatePosPacket posPacket){
+	private void sendClaimUpdatePacketToPlayer(ServerPlayer player, PlayerChunkClaim claim, ResourceLocation dimension, int x, int z, ClientboundClaimsClaimUpdatePacket packet, ClientboundClaimsClaimUpdatePosPacket posPacket){
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
 		if(playerData.getLastClaimUpdateState() == claim && playerData.getLastClaimUpdateDimension() == dimension) {
-			sendToClient(player, posPacket, false);
+			if(playerData.getLastClaimUpdateX() == x && z - playerData.getLastClaimUpdateZ() == 1)
+				sendToClient(player, NEXT_Z_PACKET, false);
+			else if(playerData.getLastClaimUpdateZ() == z && x - playerData.getLastClaimUpdateX() == 1)
+				sendToClient(player, NEXT_X_PACKET, false);
+			else
+				sendToClient(player, posPacket, false);
+			playerData.setLastClaimUpdate(dimension, claim, x, z);
 			return;
 		}
 		sendToClient(player, packet, false);
-		playerData.setLastClaimUpdate(dimension, claim);
+		playerData.setLastClaimUpdate(dimension, claim, x, z);
 	}
 	
 	public void syncToPlayersClaimUpdate(ResourceLocation dimension, int x, int z, PlayerChunkClaim claim, PlayerChunkClaim oldClaim) {
@@ -258,24 +267,24 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		ClientboundClaimsClaimUpdatePosPacket posPacket = new ClientboundClaimsClaimUpdatePosPacket(x, z);
 		if(claimInfoShouldReachEveryone(syncType, newPlayerId)) {//new claim is visible to all
 			for(ServerPlayer player : players.getPlayers())
-				sendClaimUpdatePacketToPlayer(player, claim, dimension, packet, posPacket);
+				sendClaimUpdatePacketToPlayer(player, claim, dimension, x, z, packet, posPacket);
 		} else {
 			UUID oldPlayerId = oldClaim == null ? null : oldClaim.getPlayerId();
 			if(oldPlayerId != null && !Objects.equals(newPlayerId, oldPlayerId)) {
 				ClientboundClaimsClaimUpdatePacket removalPacket = new ClientboundClaimsClaimUpdatePacket(dimension, x, z, null, -1, false, -1);
 				if(Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, oldPlayerId)) {//old claim is visible to all
 					for(ServerPlayer player : players.getPlayers())
-						sendClaimUpdatePacketToPlayer(player, null, dimension, removalPacket, posPacket);
+						sendClaimUpdatePacketToPlayer(player, null, dimension, x, z, removalPacket, posPacket);
 				} else {
 					ServerPlayer oldPlayer = players.getPlayer(oldPlayerId);
 					if(oldPlayer != null)
-						sendClaimUpdatePacketToPlayer(oldPlayer, null, dimension, removalPacket, posPacket);
+						sendClaimUpdatePacketToPlayer(oldPlayer, null, dimension, x, z, removalPacket, posPacket);
 				}
 			}
 			if(newPlayerId != null) {
 				ServerPlayer newPlayer = players.getPlayer(newPlayerId);
 				if(newPlayer != null)
-					sendClaimUpdatePacketToPlayer(newPlayer, claim, dimension, packet, posPacket);
+					sendClaimUpdatePacketToPlayer(newPlayer, claim, dimension, x, z, packet, posPacket);
 			}
 		}
 	}

@@ -105,6 +105,8 @@ public abstract class ClaimsManager
 		PlayerChunkClaim potentialState = new PlayerChunkClaim(id, subConfigIndex, forceload, nextClaimStateSyncIndex);
 		CSH originalStateHolder = claimStateHolders.get(potentialState);
 		if(originalStateHolder == null) {
+			if(nextClaimStateSyncIndex == -1)
+				throw new RuntimeException("Somehow managed to run out of claim states");
 			nextClaimStateSyncIndex++;
 			addClaimState(potentialState);
 			return potentialState;

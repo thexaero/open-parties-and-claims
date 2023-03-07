@@ -100,9 +100,12 @@ public final class PlayerConfigIO
 	}
 	
 	private void loadGlobalConfig(PlayerConfigType type, Path path, Consumer<PlayerConfig<P>> resultConsumer) {
-		if(Files.exists(path))
-			resultConsumer.accept(loadFile(path, globalFilePathConfig));
-		else {
+		if(Files.exists(path)) {
+			PlayerConfig<P> config = loadFile(path, globalFilePathConfig, false);
+			if(config == null)
+				throw new RuntimeException("Server, expired, default and wilderness claim configs must load properly! Check the game logs for errors.");
+			resultConsumer.accept(config);
+		} else {
 			PlayerConfig<P> config = PlayerConfig.FinalBuilder.<P>begin()
 					.setType(type)
 					.setPlayerId(
@@ -119,7 +122,7 @@ public final class PlayerConfigIO
 			config.setStorage(storage);
 			if(path == wildernessConfigPath)
 				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
-			
+
 			resultConsumer.accept(config);
 		}
 	}
@@ -166,13 +169,8 @@ public final class PlayerConfigIO
 		UUID playerId = UUID.fromString(file.getParent().getFileName().toString());
 		String[] fileNameArgs = fileNameNoExtension.split("\\$");
 		String subId = fileNameArgs[0];
-		String subIndexString = fileNameArgs.length > 1 ? fileNameArgs[1] : null;
-		int subIndex;
-		try {
-			subIndex = subIndexString == null ? 0 : Integer.parseInt(subIndexString);
-		} catch(NumberFormatException nfe){
-			subIndex = 0;
-		}
+		String subIndexString = fileNameArgs[1];
+		int subIndex = Integer.parseInt(subIndexString);
 		if(Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID))
 			return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.SERVER, subId, subIndex);
 		return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.PLAYER, subId, subIndex);

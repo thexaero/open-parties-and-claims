@@ -21,7 +21,6 @@ package xaero.pac.client;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.client.event.ClientEventsForge;
 import xaero.pac.common.LoadCommonForge;
