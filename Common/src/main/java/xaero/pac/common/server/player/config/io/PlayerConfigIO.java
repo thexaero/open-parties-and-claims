@@ -100,9 +100,12 @@ public final class PlayerConfigIO
 	}
 	
 	private void loadGlobalConfig(PlayerConfigType type, Path path, Consumer<PlayerConfig<P>> resultConsumer) {
-		if(Files.exists(path))
-			resultConsumer.accept(loadFile(path, globalFilePathConfig));
-		else {
+		if(Files.exists(path)) {
+			PlayerConfig<P> config = loadFile(path, globalFilePathConfig, false);
+			if(config == null)
+				throw new RuntimeException("Server, expired, default and wilderness claim configs must load properly! Check the game logs for errors.");
+			resultConsumer.accept(config);
+		} else {
 			PlayerConfig<P> config = PlayerConfig.FinalBuilder.<P>begin()
 					.setType(type)
 					.setPlayerId(
@@ -119,7 +122,7 @@ public final class PlayerConfigIO
 			config.setStorage(storage);
 			if(path == wildernessConfigPath)
 				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
-			
+
 			resultConsumer.accept(config);
 		}
 	}
