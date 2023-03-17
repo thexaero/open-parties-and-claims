@@ -131,16 +131,8 @@ public class ConfigMenu extends XPACScreen {
 		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
 		drawCenteredString(poseStack, font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 132, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
-		if(!serverHasMod)
+		if (!serverHasMod)
 			drawCenteredString(poseStack, font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
-	}
-	
-	@Override
-	public void setFocused(GuiEventListener l) {//setFocused
-		GuiEventListener currentFocused = getFocused();
-		if(currentFocused != null && currentFocused != l && currentFocused instanceof EditBox)
-			((EditBox) currentFocused).setFocus(false);
-		super.setFocused(l);
 	}
 
 }

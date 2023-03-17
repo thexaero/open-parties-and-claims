@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -73,6 +74,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.core.accessor.ICreateArmInteractionPoint;
+import xaero.pac.common.server.core.accessor.IServerGamePacketListenerImpl;
 import xaero.pac.common.server.parties.party.IServerParty;
 
 import javax.annotation.Nonnull;
@@ -699,6 +701,18 @@ public class ServerCore {
 			return;
 		if(serverData.getForceLoadManager().hasEnabledTickets(level))
 			level.resetEmptyTime();//continue ticking entities in dimensions with no players
+	}
+
+	public static UUID getItemEntityThrower(ItemEntity itemEntity){
+		return ((IItemEntity)itemEntity).getXaero_OPAC_thrower();
+	}
+
+	public static UUID getItemEntityOwner(ItemEntity itemEntity){
+		return ((IItemEntity)itemEntity).getXaero_OPAC_target();
+	}
+
+	public static Connection getServerGamePacketListenerConnection(ServerGamePacketListenerImpl serverGamePacketListener){
+		return ((IServerGamePacketListenerImpl)serverGamePacketListener).getXaero_OPAC_connection();
 	}
 
 	public static void reset(){

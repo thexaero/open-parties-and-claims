@@ -305,7 +305,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						data.setSelectedSubConfig(v);
 						PlayerConfigScreen recreatedScreen = build();
 						Minecraft.getInstance().setScreen(recreatedScreen);
-						recreatedScreen.changeFocus(true);//works while the sub-config menu is the first element
+						recreatedScreen.setFocused(recreatedScreen.children().get(0));//works while the sub-config menu is the first element
 					})
 					.build();
 		}

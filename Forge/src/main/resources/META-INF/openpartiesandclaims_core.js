@@ -1339,6 +1339,16 @@ function initializeCoreMod() {
 				addGetter(classNode, "xaero_OPAC_throwerAccessor", "Ljava/util/UUID;")
 				addSetter(classNode, "xaero_OPAC_throwerAccessor", "Ljava/util/UUID;")
 
+				var isObfuscated = true
+	            for(var i = 0; i < fields.size(); i++) {
+	                if(fields.get(i).name.equals("thrower")){
+	                    isObfuscated = false
+	                    break
+	                }
+	            }
+                addCustomGetter(classNode, isObfuscated ? "f_31988_" : "thrower", "Ljava/util/UUID;", "getXaero_OPAC_thrower")
+                addCustomGetter(classNode, isObfuscated ? "f_265881_" : "target", "Ljava/util/UUID;", "getXaero_OPAC_target")
+
 				return classNode
 			}
         },
@@ -1356,6 +1366,27 @@ function initializeCoreMod() {
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
             }
+        },
+        'xaero_pac_servergamepacketlistenerimpl': {
+            'target' : {
+				'type' : 'CLASS',
+				'name' : 'net.minecraft.server.network.ServerGamePacketListenerImpl'
+			},
+			'transformer' : function(classNode){
+				var fields = classNode.fields
+				classNode.interfaces.add("xaero/pac/common/server/core/accessor/IServerGamePacketListenerImpl")
+				var isObfuscated = true
+	            for(var i = 0; i < fields.size(); i++) {
+	                if(fields.get(i).name.equals("connection")){
+	                    isObfuscated = false
+	                    break
+	                }
+	            }
+
+				addCustomGetter(classNode, isObfuscated ? "f_9742_" : "connection", "Lnet/minecraft/network/Connection;", "getXaero_OPAC_connection")
+
+				return classNode
+			}
         }
 	}
 }

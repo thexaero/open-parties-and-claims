@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,15 +16,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.server.core.accessor;
 
-import java.util.UUID;
+import net.minecraft.network.Connection;
 
-public interface IItemEntity {
+public interface IServerGamePacketListenerImpl {
 
-	UUID getXaero_OPAC_throwerAccessor();
-	void setXaero_OPAC_throwerAccessor(UUID throwerAccessor);
-	UUID getXaero_OPAC_thrower();
-	UUID getXaero_OPAC_target();
+	Connection getXaero_OPAC_connection();
 
 }

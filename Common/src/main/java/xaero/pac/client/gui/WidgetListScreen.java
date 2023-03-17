@@ -150,12 +150,5 @@ public abstract class WidgetListScreen extends XPACScreen {
 	protected void onBackButton(Button b) {
 		goBack();
 	}
-	@Override
-	public void setFocused(GuiEventListener l) {//setFocused
-		GuiEventListener currentFocused = getFocused();
-		if(currentFocused != null && currentFocused != l && currentFocused instanceof EditBox)
-			((EditBox) currentFocused).setFocus(false);
-		super.setFocused(l);
-	}
 
 }

@@ -55,7 +55,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.function.TriFunction;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -511,7 +510,7 @@ public class ChunkProtection
 			return false;
 		BlockPos playerPos = player.blockPosition();
 		if(BlockPos.ZERO.equals(playerPos))
-			playerPos = new BlockPos(player.getPosition(0));
+			playerPos = BlockPos.containing(player.getPosition(0));
 		//gotta check all sides, player rotation doesn't give us anything in the case of Integrated Tunnels
 		//works with either fake player or the target being positioned next to or at the origin block
 		BlockPos checkedPos = targetPos;
@@ -988,7 +987,7 @@ public class ChunkProtection
 			if (!isBlockedEntity)
 				isBlockedEntity = accessor instanceof Raider raider && raider.canJoinRaid() && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
 			if (!isBlockedEntity && entity instanceof ItemEntity itemEntity) {
-				UUID throwerId = itemEntity.getThrower();
+				UUID throwerId = ServerCore.getItemEntityThrower(itemEntity);
 				if (throwerId != null) {
 					if (fromConfig == null)
 						fromConfig = getClaimConfig(playerConfigs, fromClaim);
@@ -1046,7 +1045,7 @@ public class ChunkProtection
 			entity.removeVehicle();
 			entity.moveTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players
 			if(entity instanceof ServerPlayer player)
-				player.connection.send(new ClientboundPlayerPositionPacket(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot(), Collections.emptySet(), -1, true));
+				player.connection.send(new ClientboundPlayerPositionPacket(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot(), Collections.emptySet(), -1));
 			ignoreChunkEnter = false;
 		}
 	}
@@ -1090,7 +1089,7 @@ public class ChunkProtection
 	public boolean onChorusFruitTeleport(IServerData<CM,P> serverData, Vec3 pos, Entity entity) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		ChunkPos chunkPos = new ChunkPos(new BlockPos(pos));
+		ChunkPos chunkPos = new ChunkPos(BlockPos.containing(pos));
 		IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
@@ -1173,7 +1172,7 @@ public class ChunkProtection
 			pos = blockHitResult.getBlockPos();
 			direction = blockHitResult.getDirection();
 		} else
-			pos = new BlockPos(hitResult.getLocation());
+			pos = BlockPos.containing(hitResult.getLocation());
 		return onUseItemAt(serverData, entity, world, pos, direction, itemStack, null, false, false, true);
 	}
 
@@ -1402,9 +1401,9 @@ public class ChunkProtection
 		if(entity instanceof Projectile){
 			result = ((Projectile) entity).getOwner();
 		} else if(entity instanceof ItemEntity){
-			UUID ownerId = ((ItemEntity) entity).getOwner();
+			UUID ownerId = ServerCore.getItemEntityOwner((ItemEntity) entity);
 			if(ownerId == null)
-				ownerId = ((ItemEntity) entity).getThrower();
+				ownerId = ServerCore.getItemEntityThrower((ItemEntity) entity);
 			result = ownerId;
 		} else if(entity instanceof Vex){
 			result = ((Vex) entity).getOwner();
@@ -1539,7 +1538,7 @@ public class ChunkProtection
 	public boolean onMobSpawn(IServerData<CM, P> serverData, Entity entity, double x, double y, double z, MobSpawnType spawnReason) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		IPlayerChunkClaim claim = claimsManager.get(entity.level.dimension().location(), new ChunkPos(new BlockPos(x, y, z)));
+		IPlayerChunkClaim claim = claimsManager.get(entity.level.dimension().location(), new ChunkPos(BlockPos.containing(x, y, z)));
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
@@ -1563,7 +1562,7 @@ public class ChunkProtection
 	public boolean onItemAddedToWorld(IServerData<CM, P> serverData, ItemEntity itemEntity) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		UUID throwerId = itemEntity.getThrower();
+		UUID throwerId = ServerCore.getItemEntityThrower(itemEntity);
 		if(throwerId == null)
 			return false;
 		IPlayerChunkClaim claim = claimsManager.get(itemEntity.getLevel().dimension().location(), itemEntity.chunkPosition());
@@ -1750,7 +1749,7 @@ public class ChunkProtection
 			return false;
 		if(entity.getUUID().equals(ServerCore.getThrowerAccessor(itemEntity)))
 			return false;
-		return onEntityPickup(serverData, entity, itemEntity, itemEntity.getThrower(), itemEntity.getOwner(), cantPickupItemsInTickCache, usedDroppedItemProtectionOptionGetter);
+		return onEntityPickup(serverData, entity, itemEntity, ServerCore.getItemEntityThrower(itemEntity), ServerCore.getItemEntityOwner(itemEntity), cantPickupItemsInTickCache, usedDroppedItemProtectionOptionGetter);
 	}
 
 	@Override
@@ -1829,7 +1828,7 @@ public class ChunkProtection
 	}
 
 	public boolean onItemStackMerge(IServerData<CM, P> serverData, ItemEntity first, ItemEntity second) {
-		return onEntityMerge(serverData, first, first.getThrower(), first.getOwner(), second, second.getThrower(), second.getOwner(), PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
+		return onEntityMerge(serverData, first, ServerCore.getItemEntityThrower(first), ServerCore.getItemEntityOwner(first), second, ServerCore.getItemEntityThrower(second), ServerCore.getItemEntityOwner(second), PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
 	}
 
 	public boolean onExperiencePickup(IServerData<CM, P> serverData, ExperienceOrb orb, Player player) {
@@ -1842,7 +1841,7 @@ public class ChunkProtection
 
 	public void setThrowerAccessor(ItemEntity itemEntity) {
 		//prevents protection circumvention (mostly entity barrier) when changing the owner of the thrower
-		UUID throwerId = itemEntity.getThrower();
+		UUID throwerId = ServerCore.getItemEntityThrower(itemEntity);
 		Entity thrower = getEntityById((ServerLevel) itemEntity.level, throwerId);
 		UUID accessorId;
 		if(thrower != null){

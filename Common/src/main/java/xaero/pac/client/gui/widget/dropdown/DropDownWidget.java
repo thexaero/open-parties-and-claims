@@ -235,6 +235,10 @@ public final class DropDownWidget extends AbstractWidget
 		render(matrixStack, mouseX, mouseY, Minecraft.getInstance().screen.height, true);
 	}
 
+	@Override
+	public void renderWidget(PoseStack var1, int var2, int var3, float var4) {
+	}
+
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, int scaledHeight, boolean closedOnly){
 		if(!closed && closedOnly)
 			return;

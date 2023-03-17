@@ -27,9 +27,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -235,14 +236,17 @@ public class CommonEvents {
 
 	public boolean onLivingHurt(DamageSource source, Entity target) {
 		if(target.getLevel() instanceof ServerLevel) {
-			if(!(source instanceof EntityDamageSource) &&
-					!source.isDamageHelmet()/*almost certainly something falling from the top*/ && source != DamageSource.DRAGON_BREATH &&
-					!source.isFire() &&
-					!source.isProjectile() && !source.isExplosion() && !source.getMsgId().startsWith("create.")/*create mod*/
-					|| source == DamageSource.LAVA || source == DamageSource.HOT_FLOOR)
+			boolean isFire = source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.ON_FIRE);
+			if(source.getEntity() == null && source.getDirectEntity() == null &&
+					(
+						!source.is(DamageTypeTags.DAMAGES_HELMET)/*almost certainly something falling from the top*/ && !source.is(DamageTypes.DRAGON_BREATH) &&
+						!isFire &&
+						!source.is(DamageTypeTags.IS_PROJECTILE) && !source.is(DamageTypeTags.IS_EXPLOSION) && !source.getMsgId().startsWith("create.")/*create mod*/
+						|| source.is(DamageTypes.LAVA) || source.is(DamageTypes.HOT_FLOOR)
+					))
 				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
-			if(source.isFire())
+			if(isFire)
 				return serverData.getChunkProtection().onEntityFire(serverData, target);
 			return serverData.getChunkProtection().onEntityInteraction(serverData, source.getEntity(), source.getDirectEntity(), target, null, InteractionHand.MAIN_HAND, true, true);
 		}
@@ -328,10 +332,10 @@ public class CommonEvents {
 				if(((IEntity)entity).getXaero_OPAC_lastChunkEntryDimension() == null)
 					((IEntity)entity).setXaero_OPAC_lastChunkEntryDimension(entity.getLevel().dimension());
 				if (entity instanceof ItemEntity itemEntity) {
-					if (itemEntity.getThrower() == null && ServerCore.getResourcesDropOwner() != null)//after the protection checks so that this isn't immediately affected by toss protection
+					if (ServerCore.getItemEntityThrower(itemEntity) == null && ServerCore.getResourcesDropOwner() != null)//after the protection checks so that this isn't immediately affected by toss protection
 						itemEntity.setThrower(ServerCore.getResourcesDropOwner().getUUID());
 
-					if(itemEntity.getThrower() != null && ServerCore.getThrowerAccessor(itemEntity) == null){
+					if(ServerCore.getItemEntityThrower(itemEntity) != null && ServerCore.getThrowerAccessor(itemEntity) == null){
 						IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 								serverData = ServerData.from(world.getServer());
 						if (serverData != null)

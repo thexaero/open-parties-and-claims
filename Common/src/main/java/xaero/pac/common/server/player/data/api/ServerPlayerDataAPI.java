@@ -31,6 +31,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
@@ -75,7 +76,7 @@ public abstract class ServerPlayerDataAPI {
 		if(result == null)
 			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData());
 		ServerPlayerData data = (ServerPlayerData)result;
-		if(!data.hasHandledLogin() && player.connection != null && player.connection.getConnection() != null && !player.connection.getConnection().isConnecting()){//isConnecting() = the channel is null
+		if(!data.hasHandledLogin() && player.connection != null && ServerCore.getServerGamePacketListenerConnection(player.connection) != null && !ServerCore.getServerGamePacketListenerConnection(player.connection).isConnecting()){//isConnecting() = the channel is null
 			ServerPlayer placedPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
 			if(placedPlayer == player) {//this method might be called before placing the player, when syncing commands, which is a problem, so we're making sure that the player has been placed
 				data.setHandledLogin(true);

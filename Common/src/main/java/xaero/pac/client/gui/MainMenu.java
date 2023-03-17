@@ -21,9 +21,7 @@ package xaero.pac.client.gui;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
@@ -327,14 +325,6 @@ public class MainMenu extends XPACScreen {
 			return true;
 		}
 		return super.mouseClicked(p_94695_, p_94696_, p_94697_);
-	}
-	
-	@Override
-	public void setFocused(GuiEventListener l) {//setFocused
-		GuiEventListener currentFocused = getFocused();
-		if(currentFocused != null && currentFocused != l && currentFocused instanceof EditBox)
-			((EditBox) currentFocused).setFocus(false);
-		super.setFocused(l);
 	}
 	
 }
