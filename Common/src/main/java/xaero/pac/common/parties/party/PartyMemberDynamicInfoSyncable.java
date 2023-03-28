@@ -21,7 +21,6 @@ package xaero.pac.common.parties.party;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
@@ -149,7 +148,9 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 		@Override
 		public PartyMemberDynamicInfoSyncable apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag tag = input.readNbt(new NbtAccounter(16384));
+				if(input.readableBytes() > 16384)
+					return null;
+				CompoundTag tag = input.readAnySizeNbt();
 				UUID playerId = tag.getUUID("i");
 				boolean active = tag.getBoolean("a");
 				if(!active)

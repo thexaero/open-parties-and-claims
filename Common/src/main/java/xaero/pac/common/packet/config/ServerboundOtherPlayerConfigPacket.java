@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.config;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -57,7 +56,9 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 		@Override
 		public ServerboundOtherPlayerConfigPacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(1024));
+				if(input.readableBytes() > 1024)
+					return null;
+				CompoundTag nbt = input.readAnySizeNbt();
 				if(nbt == null)
 					return null;
 				String ownerName = nbt.getString("ownerName");

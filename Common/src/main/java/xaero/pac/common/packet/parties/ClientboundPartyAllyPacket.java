@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.parties;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.parties.party.ClientPartyAllyInfo;
@@ -63,7 +62,9 @@ public class ClientboundPartyAllyPacket extends LazyPacket<LazyPacket.Encoder<Cl
 		@Override
 		public ClientboundPartyAllyPacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag tag = input.readNbt(new NbtAccounter(102400));
+				if(input.readableBytes() > 102400)
+					return null;
+				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
 					return null;
 				UUID allyId = tag.getUUID("i");
