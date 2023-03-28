@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.config;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
@@ -61,12 +60,14 @@ public abstract class ClientboundPlayerConfigAbstractStatePacket extends PlayerC
 
 		protected abstract P decode(CompoundTag nbt, PlayerConfigType type, boolean otherPlayer, String subId);
 		protected abstract void encode(P packet, CompoundTag nbt);
-		protected abstract int getExtraNbtAccounterSize();
+		protected abstract int getExtraSizeLimit();
 
 		@Override
 		public P apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(2048 + getExtraNbtAccounterSize()));
+				if(input.readableBytes() > 2048 + getExtraSizeLimit())
+					return null;
+				CompoundTag nbt = input.readAnySizeNbt();
 				if(nbt == null)
 					return null;
 				String typeString = nbt.getString("t");

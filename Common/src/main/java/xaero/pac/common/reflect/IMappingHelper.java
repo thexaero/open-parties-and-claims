@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,19 +18,17 @@
 
 package xaero.pac.common.reflect;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class ItemReflection {
-	
-	public static final Method POV_HIT_RESULT_METHOD;
-	
-	static {
-		POV_HIT_RESULT_METHOD = Reflection.getMethodReflection(Item.class, "m_41435_", "getPlayerPOVHitResult", Level.class, Player.class, ClipContext.Fluid.class);
-	}
+public interface IMappingHelper {
+
+	String fixFabricFieldMapping(Class<?> clazz, String name, String descriptor) throws NoSuchFieldException;
+
+	String fixFabricMethodMapping(Class<?> clazz, String name, String descriptor) throws NoSuchMethodException;
+
+	Field findForgeField(Class<?> clazz, String fieldName);
+
+	Method findForgeMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes);
 
 }

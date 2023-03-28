@@ -19,7 +19,6 @@
 package xaero.pac.common.packet;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 
@@ -43,7 +42,9 @@ public class ClientboundModesPacket {
 		@Override
 		public ClientboundModesPacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag tag = input.readNbt(new NbtAccounter(1024));
+				if(input.readableBytes() > 1024)
+					return null;
+				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
 					return null;
 				boolean adminMode = tag.getBoolean("am");

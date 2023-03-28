@@ -20,7 +20,6 @@ package xaero.pac.common.packet.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
@@ -47,7 +46,9 @@ public class ClientboundPlayerConfigHelpPacket {
 		@Override
 		public ClientboundPlayerConfigHelpPacket apply(FriendlyByteBuf friendlyByteBuf) {
 			try {
-				CompoundTag tag = friendlyByteBuf.readNbt(new NbtAccounter(10240));
+				if(friendlyByteBuf.readableBytes() > 10240)
+					return null;
+				CompoundTag tag = friendlyByteBuf.readAnySizeNbt();
 				if(tag == null)
 					return null;
 				String optionId = tag.getString("i");
