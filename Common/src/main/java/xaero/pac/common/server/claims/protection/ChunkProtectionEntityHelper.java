@@ -28,6 +28,8 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.player.Player;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.reflect.Reflection;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
@@ -43,30 +45,14 @@ public class ChunkProtectionEntityHelper {
 		Field foxTrustSecondaryField = null;
 		Field foxTrustMainField = null;
 		try {
-			foxTrustSecondaryField = Fox.class.getDeclaredField("f_28439_");
-		} catch (Exception e) {
-			try {
-				foxTrustSecondaryField = Fox.class.getDeclaredField("field_17951");
-			} catch (Exception e1) {
-				try {
-					foxTrustSecondaryField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_0");
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-			}
+			foxTrustSecondaryField = Reflection.getFieldReflection(Fox.class, "f_28439_", "field_17951", "Lnet/minecraft/class_2940;");//DATA_TRUSTED_ID_0
+		} catch(Exception e){
+			OpenPartiesAndClaims.LOGGER.error("suppressed exception", e);
 		}
 		try {
-			foxTrustMainField = Fox.class.getDeclaredField("f_28440_");
-		} catch (Exception e) {
-			try {
-				foxTrustMainField = Fox.class.getDeclaredField("field_17952");
-			} catch (Exception e1) {
-				try {
-					foxTrustMainField = Fox.class.getDeclaredField("DATA_TRUSTED_ID_1");
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-			}
+			foxTrustMainField = Reflection.getFieldReflection(Fox.class, "f_28440_", "field_17952", "Lnet/minecraft/class_2940;");//DATA_TRUSTED_ID_1
+		} catch(Exception e){
+			OpenPartiesAndClaims.LOGGER.error("suppressed exception", e);
 		}
 		if(foxTrustSecondaryField != null)
 			try {

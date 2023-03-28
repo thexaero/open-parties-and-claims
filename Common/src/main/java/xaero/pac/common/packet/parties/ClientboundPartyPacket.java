@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.parties;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.parties.party.ClientParty;
@@ -92,7 +91,9 @@ public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket.Co
 		@Override
 		public ClientboundPartyPacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag partyTag = input.readNbt(new NbtAccounter(102400));
+				if(input.readableBytes() > 102400)
+					return null;
+				CompoundTag partyTag = input.readAnySizeNbt();
 				if(partyTag == null)
 					return null;
 				if(partyTag.isEmpty())

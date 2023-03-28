@@ -18,28 +18,19 @@
 
 package xaero.pac.common.reflect;
 
+import xaero.pac.common.platform.Services;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class Reflection {
-
-	public static Field getFieldReflection(Class<?> c, String obfuscatedName, String shortObfuscatedName, String name) {
-		Field field = null;
-		try {
-			field = c.getDeclaredField(obfuscatedName);
-		} catch (NoSuchFieldException e) {
-			field = getFieldReflection(c, shortObfuscatedName, name);
-		}
-		return field;
-	}
 	
-	public static Field getFieldReflection(Class<?> c, String obfuscatedName, String name) {
-		Field field = null;
-		try {
-			field = c.getDeclaredField(obfuscatedName);
-		} catch (NoSuchFieldException e) {
+	public static Field getFieldReflection(Class<?> c, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor) {
+		Field field = Services.PLATFORM.getMappingHelper().findForgeField(c, forgeObfuscatedName);
+		if(field == null) {
 			try {
-				field = c.getDeclaredField(name);
+				fabricObfuscatedName = Services.PLATFORM.getMappingHelper().fixFabricFieldMapping(c, fabricObfuscatedName, fabricObfuscatedDescriptor);
+				field = c.getDeclaredField(fabricObfuscatedName);
 			} catch (NoSuchFieldException e1) {
 				throw new RuntimeException(e1);
 			}
@@ -72,23 +63,12 @@ public class Reflection {
 		field.setAccessible(accessibleBU);
 	}
 	
-	public static Method getMethodReflection(Class<?> c, String obfuscatedName, String shortObfuscatedName, String name, Class<?>... parameters) {
-		Method method = null;
-		try {
-			method = c.getDeclaredMethod(obfuscatedName, parameters);
-		} catch (NoSuchMethodException e) {
-			method = getMethodReflection(c, shortObfuscatedName, name, parameters);
-		}
-		return method;
-	}
-	
-	public static Method getMethodReflection(Class<?> c, String obfuscatedName, String name, Class<?>... parameters) {
-		Method method = null;
-		try {
-			method = c.getDeclaredMethod(obfuscatedName, parameters);
-		} catch (NoSuchMethodException e) {
+	public static Method getMethodReflection(Class<?> c, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor, Class<?>... parameters) {
+		Method method = Services.PLATFORM.getMappingHelper().findForgeMethod(c, forgeObfuscatedName);
+		if(method == null){
 			try {
-				method = c.getDeclaredMethod(name, parameters);
+				fabricObfuscatedName = Services.PLATFORM.getMappingHelper().fixFabricMethodMapping(c, fabricObfuscatedName, fabricObfuscatedDescriptor);
+				method = c.getDeclaredMethod(fabricObfuscatedName, parameters);
 			} catch (NoSuchMethodException e1) {
 				throw new RuntimeException(e1);
 			}

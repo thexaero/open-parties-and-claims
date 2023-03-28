@@ -63,7 +63,9 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 		@Override
 		public ClientboundPlayerConfigDynamicOptionsPacket apply(FriendlyByteBuf friendlyByteBuf) {
 			try {
-				CompoundTag tag = friendlyByteBuf.readNbt(new NbtAccounter(536870912));
+				if(friendlyByteBuf.readableBytes() > 536870912)
+					return null;
+				CompoundTag tag = friendlyByteBuf.readAnySizeNbt();
 				if(tag == null)
 					return null;
 				ListTag entryListTag = tag.getList("l", Tag.TAG_COMPOUND);

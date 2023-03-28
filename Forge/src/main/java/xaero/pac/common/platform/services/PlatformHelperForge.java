@@ -24,6 +24,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.controls.keybinding.KeyBindingHelperForge;
 import xaero.pac.common.entity.EntityAccessForge;
+import xaero.pac.common.reflect.IMappingHelper;
+import xaero.pac.common.reflect.MappingHelperForge;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessForge;
 
@@ -31,6 +33,7 @@ public class PlatformHelperForge implements IPlatformHelper {
 	private final KeyBindingHelperForge keyBindingRegistryForge = new KeyBindingHelperForge();
 	private final ServerChunkCacheAccessForge serverChunkCacheAccessForge = new ServerChunkCacheAccessForge();
 	private final EntityAccessForge entityAccessForge = new EntityAccessForge();
+	private final MappingHelperForge mappingHelperForge = new MappingHelperForge();
 
 	@Override
 	public String getPlatformName() {
@@ -60,6 +63,11 @@ public class PlatformHelperForge implements IPlatformHelper {
 	@Override
 	public EntityAccessForge getEntityAccess() {
 		return entityAccessForge;
+	}
+
+	@Override
+	public IMappingHelper getMappingHelper() {
+		return mappingHelperForge;
 	}
 
 }

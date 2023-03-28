@@ -20,7 +20,6 @@ package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
@@ -68,7 +67,9 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<LazyPacket
 		@Override
 		public ClientboundClaimOwnerPropertiesPacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(32768));
+				if(input.readableBytes() > 32768)
+					return null;
+				CompoundTag nbt = input.readAnySizeNbt();
 				if(nbt == null)
 					return null;
 				ListTag propertiesListTag = nbt.getList("l", 10);

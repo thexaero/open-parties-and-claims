@@ -67,13 +67,15 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 
 	public static abstract class Codec<P extends PlayerConfigOptionValuePacket> implements BiConsumer<P, FriendlyByteBuf>, Function<FriendlyByteBuf, P> {
 
-		protected abstract int getNbtAccounterLimit();
+		protected abstract int getSizeLimit();
 		protected abstract P create(PlayerConfigType type, String subId, UUID owner, List<Entry> entries);
 
 		@Override
 		public P apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(getNbtAccounterLimit()));
+				if(input.readableBytes() > getSizeLimit())
+					return null;
+				CompoundTag nbt = input.readAnySizeNbt();
 				if(nbt == null)
 					return null;
 				String typeString = nbt.getString("t");
