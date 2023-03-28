@@ -21,7 +21,6 @@ package xaero.pac.common.packet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.ConfigMenu;
@@ -49,7 +48,9 @@ public class ClientboundPacDimensionHandshakePacket {
 		@Override
 		public ClientboundPacDimensionHandshakePacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag tag = input.readNbt(new NbtAccounter(512));
+				if(input.readableBytes() > 512)
+					return null;
+				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
 					return null;
 				boolean claimsEnabled = tag.getBoolean("c");

@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
@@ -55,7 +54,9 @@ public class ClientboundRemoveClaimStatePacket extends LazyPacket<LazyPacket.Enc
 		@Override
 		public ClientboundRemoveClaimStatePacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag tag = input.readNbt(new NbtAccounter(1024));
+				if(input.readableBytes() > 1024)
+					return null;
+				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
 					return null;
 				int syncIndex = tag.getInt("i");

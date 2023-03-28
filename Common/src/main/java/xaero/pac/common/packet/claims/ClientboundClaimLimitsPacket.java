@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
@@ -71,7 +70,9 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 		@Override
 		public ClientboundClaimLimitsPacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag tag = input.readNbt(new NbtAccounter(2048));
+				if(input.readableBytes() > 2048)
+					return null;
+				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
 					return null;
 				int loadingClaimCount = tag.getInt("cc");

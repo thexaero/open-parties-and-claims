@@ -20,6 +20,7 @@ package xaero.pac.common.platform.services;
 
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.common.entity.IEntityAccess;
+import xaero.pac.common.reflect.IMappingHelper;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 
 public interface IPlatformHelper {
@@ -51,5 +52,7 @@ public interface IPlatformHelper {
 	IServerChunkCacheAccess getServerChunkCacheAccess();
 
 	IEntityAccess getEntityAccess();
+
+	IMappingHelper getMappingHelper();
 
 }

@@ -53,7 +53,7 @@ public class ClientboundPlayerConfigRemoveSubPacket extends ClientboundPlayerCon
 		}
 
 		@Override
-		protected int getExtraNbtAccounterSize() {
+		protected int getExtraSizeLimit() {
 			return 0;
 		}
 

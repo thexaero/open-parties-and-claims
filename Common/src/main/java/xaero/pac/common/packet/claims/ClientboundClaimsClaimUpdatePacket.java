@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
@@ -82,7 +81,9 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 		@Override
 		public ClientboundClaimsClaimUpdatePacket apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(10000));
+				if(input.readableBytes() > 10000)
+					return null;
+				CompoundTag nbt = input.readAnySizeNbt();
 				if(nbt == null)
 					return null;
 				String dimensionString = nbt.getString("d");

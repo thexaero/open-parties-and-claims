@@ -56,7 +56,7 @@ public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerCon
 		}
 
 		@Override
-		protected int getExtraNbtAccounterSize() {
+		protected int getExtraSizeLimit() {
 			return 0;
 		}
 

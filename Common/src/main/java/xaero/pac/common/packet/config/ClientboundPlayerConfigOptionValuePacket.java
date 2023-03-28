@@ -41,7 +41,7 @@ public class ClientboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 	public static class Codec extends PlayerConfigOptionValuePacket.Codec<ClientboundPlayerConfigOptionValuePacket> {
 
 		@Override
-		protected int getNbtAccounterLimit() {
+		protected int getSizeLimit() {
 			return 536870912;
 		}
 
