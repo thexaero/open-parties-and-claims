@@ -123,8 +123,8 @@ public class ChunkProtection
 
 	private final Component CANT_CHORUS = Component.translatable("gui.xaero_claims_protection_chorus").withStyle(s -> s.withColor(ChatFormatting.RED));
 
-	private final Component CANT_USE_SUPER_GLUE = new TranslatableComponent("gui.xaero_claims_protection_create_cant_use_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_REMOVE_SUPER_GLUE = new TranslatableComponent("gui.xaero_claims_protection_create_cant_remove_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_USE_SUPER_GLUE = Component.translatable("gui.xaero_claims_protection_create_cant_use_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_REMOVE_SUPER_GLUE = Component.translatable("gui.xaero_claims_protection_create_cant_remove_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final ChunkProtectionEntityHelper entityHelper;
 	private IServerData<CM,P> serverData;
@@ -1985,7 +1985,7 @@ public class ChunkProtection
 
 	public boolean onCreateGlueSelection(IServerData<CM, P> serverData, BlockPos from, BlockPos to, ServerPlayer player) {
 		if(onBlockBounds(serverData, from, to, player)){
-			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_USE_SUPER_GLUE), player.getUUID());
+			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_USE_SUPER_GLUE));
 			return true;
 		}
 		return false;
@@ -1998,7 +1998,7 @@ public class ChunkProtection
 		BlockPos minPos = new BlockPos(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
 		BlockPos maxPos = new BlockPos(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
 		if(onBlockBounds(serverData, minPos, maxPos, player)){
-			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_REMOVE_SUPER_GLUE), player.getUUID());
+			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_REMOVE_SUPER_GLUE));
 			return true;
 		}
 		return false;
