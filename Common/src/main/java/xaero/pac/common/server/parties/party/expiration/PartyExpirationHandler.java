@@ -75,6 +75,7 @@ public final class PartyExpirationHandler extends ObjectExpirationHandler<Server
 	@Override
 	public boolean expire(ServerParty party, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		manager.removeParty(party);
+		onElementExpirationDone();
 		return false;
 	}
 	
