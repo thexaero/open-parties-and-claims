@@ -1995,8 +1995,8 @@ public class ChunkProtection
 		ServerLevel level = player.getLevel();
 		Entity superGlueEntity = level.getEntity(entityId);
 		AABB boundingBox = superGlueEntity.getBoundingBox();
-		BlockPos minPos = new BlockPos(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
-		BlockPos maxPos = new BlockPos(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
+		BlockPos minPos = BlockPos.containing(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+		BlockPos maxPos = BlockPos.containing(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
 		if(onBlockBounds(serverData, minPos, maxPos, player)){
 			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_REMOVE_SUPER_GLUE));
 			return true;
