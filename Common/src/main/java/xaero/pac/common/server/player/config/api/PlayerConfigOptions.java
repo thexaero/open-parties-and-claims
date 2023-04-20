@@ -505,7 +505,7 @@ public class PlayerConfigOptions {
 		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.cropTrample")
 				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for players that don't have access to the chunks.")
+				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for entities that don't have access to the chunks.")
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)

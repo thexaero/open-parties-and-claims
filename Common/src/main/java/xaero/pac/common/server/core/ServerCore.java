@@ -272,6 +272,22 @@ public class ServerCore {
 		return isCreateDeployerBlockInteractionAllowed(tileEntity.getLevel(), tileEntity.getBlockPos(), pos);
 	}
 
+	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, ServerPlayer player) {
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
+		if(serverData == null)
+			return true;
+		boolean shouldProtect = serverData.getChunkProtection().onCreateGlueSelection(serverData,from, to, player);
+		return !shouldProtect;
+	}
+
+	public static boolean isCreateGlueRemovalAllowed(int entityId, ServerPlayer player) {
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
+		if(serverData == null)
+			return true;
+		boolean shouldProtect = serverData.getChunkProtection().onCreateGlueRemoval(serverData, entityId, player);
+		return !shouldProtect;
+	}
+
 	private static InteractionHand ENTITY_INTERACTION_HAND;
 
 	public static boolean canInteract(ServerGamePacketListenerImpl packetListener, ServerboundInteractPacket packet){
@@ -730,5 +746,4 @@ public class ServerCore {
 		BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		RESOURCES_DROP_OWNER = null;
 	}
-
 }

@@ -37,7 +37,7 @@ public class MixinFarmBlock {
 
 	@Inject(method = "fallOn", at = @At("HEAD"), cancellable = true)
 	public void onMobGriefGameRuleMethod(Level level, BlockState state, BlockPos pos, Entity entity, float f, CallbackInfo callbackInfo){
-		if(entity instanceof ServerPlayer && ((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onCropTrample(entity, pos))
+		if(entity.getServer() != null && ((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onCropTrample(entity, pos))
 			callbackInfo.cancel();
 		ServerCoreFabric.tryToSetMobGriefingEntity(entity);
 	}

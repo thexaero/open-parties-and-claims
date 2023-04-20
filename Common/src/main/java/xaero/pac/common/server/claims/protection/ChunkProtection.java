@@ -50,6 +50,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -121,6 +122,9 @@ public class ChunkProtection
 	private final Component ENTITY_TRY_EMPTY_OFF = Component.translatable("gui.xaero_claims_protection_interact_entity_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final Component CANT_CHORUS = Component.translatable("gui.xaero_claims_protection_chorus").withStyle(s -> s.withColor(ChatFormatting.RED));
+
+	private final Component CANT_USE_SUPER_GLUE = new TranslatableComponent("gui.xaero_claims_protection_create_cant_use_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_REMOVE_SUPER_GLUE = new TranslatableComponent("gui.xaero_claims_protection_create_cant_remove_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final ChunkProtectionEntityHelper entityHelper;
 	private IServerData<CM,P> serverData;
@@ -1897,6 +1901,28 @@ public class ChunkProtection
 		}
 	}
 
+	private boolean onBlockBounds(IServerData<CM, P> serverData, BlockPos from, BlockPos to, ServerPlayer player) {
+		ServerLevel level = player.getLevel();
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		int fromChunkX = from.getX() >> 4;
+		int fromChunkZ = from.getZ() >> 4;
+		int toChunkX = to.getX() >> 4;
+		int toChunkZ = to.getZ() >> 4;
+		int minChunkX = Math.min(fromChunkX, toChunkX);
+		int minChunkZ = Math.min(fromChunkZ, toChunkZ);
+		int maxChunkX = Math.max(fromChunkX, toChunkX);
+		int maxChunkZ = Math.max(fromChunkZ, toChunkZ);
+		for(int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+				IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), chunkX, chunkZ);
+				IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+				if(!hasChunkAccess(config, player, player.getUUID()))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel world, int posChunkX, int posChunkZ, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, boolean affectsBlocks, boolean affectsEntities) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
@@ -1955,6 +1981,27 @@ public class ChunkProtection
 			chunkCache.put(objectChunkPos, shouldProtect);
 		}
 		return result;
+	}
+
+	public boolean onCreateGlueSelection(IServerData<CM, P> serverData, BlockPos from, BlockPos to, ServerPlayer player) {
+		if(onBlockBounds(serverData, from, to, player)){
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_USE_SUPER_GLUE), player.getUUID());
+			return true;
+		}
+		return false;
+	}
+
+	public boolean onCreateGlueRemoval(IServerData<CM, P> serverData, int entityId, ServerPlayer player) {
+		ServerLevel level = player.getLevel();
+		Entity superGlueEntity = level.getEntity(entityId);
+		AABB boundingBox = superGlueEntity.getBoundingBox();
+		BlockPos minPos = new BlockPos(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+		BlockPos maxPos = new BlockPos(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
+		if(onBlockBounds(serverData, minPos, maxPos, player)){
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_REMOVE_SUPER_GLUE), player.getUUID());
+			return true;
+		}
+		return false;
 	}
 
 	public void updateTagExceptions(MinecraftServer server){
