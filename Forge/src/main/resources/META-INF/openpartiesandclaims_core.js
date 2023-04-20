@@ -830,6 +830,50 @@ function initializeCoreMod() {
                 return methodNode
             }
         },
+        'xaero_pac_create_superglueselectionpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueSelectionPacket',
+                'methodName': 'lambda$handle$0',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueSelectionPacket", "from", "Lnet/minecraft/core/BlockPos;"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueSelectionPacket", "to", "Lnet/minecraft/core/BlockPos;"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateGlueSelectionAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_superglueremovalpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueRemovalPacket',
+                'methodName': 'lambda$handle$0',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueRemovalPacket", "entityId", "I"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateGlueRemovalAllowed', '(ILnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
         'xaero_pac_servergamepacketlistenerimpl_handleinteract': {
             'target' : {
                 'type': 'METHOD',
