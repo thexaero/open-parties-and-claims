@@ -595,6 +595,23 @@ function initializeCoreMod() {
                 'methodDesc' : '(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/contraptions/components/structureMovement/StructureTransform;)V'
             },
             'transformer' : function(methodNode){
+                var insnToInsertBeforeGetter = function() {
+                    var insnToInsertBefore = new InsnList()
+                    insnToInsertBefore.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                    insnToInsertBefore.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsertBefore.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                    insnToInsertBefore.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preCreateDisassembleSuperGlue', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'))
+                    return insnToInsertBefore
+                }
+                insertOnInvoke2(methodNode, insnToInsertBeforeGetter, true/*before*/, levelClass, addFreshEntityName, addFreshEntityNameObf, addFreshEntityDesc, false)
+                var insnToInsertAfterGetter = function() {
+                    var insnToInsertAfter = new InsnList()
+                    insnToInsertAfter.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'postCreateDisassembleSuperGlue', '()V'))
+                    return insnToInsertAfter
+                }
+                insertOnInvoke2(methodNode, insnToInsertAfterGetter, false/*after*/, levelClass, addFreshEntityName, addFreshEntityNameObf, addFreshEntityDesc, false)
+
+
                 insertCreateModBlockPosArgumentCapture(methodNode, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc)
 
                 var insnToInsertGetter = function() {
