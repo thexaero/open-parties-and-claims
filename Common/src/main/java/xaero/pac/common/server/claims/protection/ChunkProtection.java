@@ -1923,6 +1923,26 @@ public class ChunkProtection
 		return false;
 	}
 
+	private boolean onBlockBoundsFromAnchor(IServerData<CM, P> serverData, ServerLevel level, BlockPos from, BlockPos to, BlockPos anchor) {
+		IPlayerChunkClaim anchorClaim = claimsManager.get(level.dimension().location(), new ChunkPos(anchor));
+		int fromChunkX = from.getX() >> 4;
+		int fromChunkZ = from.getZ() >> 4;
+		int toChunkX = to.getX() >> 4;
+		int toChunkZ = to.getZ() >> 4;
+		int minChunkX = Math.min(fromChunkX, toChunkX);
+		int minChunkZ = Math.min(fromChunkZ, toChunkZ);
+		int maxChunkX = Math.max(fromChunkX, toChunkX);
+		int maxChunkZ = Math.max(fromChunkZ, toChunkZ);
+		for(int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+				IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), chunkX, chunkZ);
+				if(onPosAffectedByAnotherPos(serverData, claim, anchorClaim, true, true))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean onCreateMod(IServerData<CM, P> serverData, ServerLevel world, int posChunkX, int posChunkZ, @Nullable BlockPos sourceOrAnchor, boolean checkNeighborBlocks, boolean affectsBlocks, boolean affectsEntities) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
@@ -1994,6 +2014,10 @@ public class ChunkProtection
 	public boolean onCreateGlueRemoval(IServerData<CM, P> serverData, int entityId, ServerPlayer player) {
 		ServerLevel level = player.getLevel();
 		Entity superGlueEntity = level.getEntity(entityId);
+		return superGlueEntity != null && onCreateGlueEntity(serverData, superGlueEntity, player);
+	}
+
+	public boolean onCreateGlueEntity(IServerData<CM, P> serverData, Entity superGlueEntity, ServerPlayer player) {
 		AABB boundingBox = superGlueEntity.getBoundingBox();
 		BlockPos minPos = BlockPos.containing(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
 		BlockPos maxPos = BlockPos.containing(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
@@ -2001,6 +2025,26 @@ public class ChunkProtection
 			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_REMOVE_SUPER_GLUE));
 			return true;
 		}
+		return false;
+	}
+
+	public boolean onCreateGlueEntityFromAnchor(IServerData<CM, P> serverData, Entity superGlueEntity, BlockPos anchor) {
+		ServerLevel level = (ServerLevel) superGlueEntity.getLevel();
+		AABB boundingBox = superGlueEntity.getBoundingBox();
+		BlockPos minPos = new BlockPos(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+		BlockPos maxPos = new BlockPos(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
+		int fromChunkX = minPos.getX() >> 4;
+		int fromChunkZ = minPos.getZ() >> 4;
+		int toChunkX = maxPos.getX() >> 4;
+		int toChunkZ = maxPos.getZ() >> 4;
+		int minChunkX = Math.min(fromChunkX, toChunkX);
+		int minChunkZ = Math.min(fromChunkZ, toChunkZ);
+		int maxChunkX = Math.max(fromChunkX, toChunkX);
+		int maxChunkZ = Math.max(fromChunkZ, toChunkZ);
+		for(int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++)
+			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
+				if(onCreateMod(serverData, level, chunkX, chunkZ, anchor, true, true, false))
+					return true;
 		return false;
 	}
 
