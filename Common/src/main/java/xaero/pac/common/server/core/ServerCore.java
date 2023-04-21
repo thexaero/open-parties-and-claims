@@ -286,6 +286,25 @@ public class ServerCore {
 		return !shouldProtect;
 	}
 
+	private static Level CREATE_DISASSEMBLE_SUPER_GLUE_LEVEL;
+	private static BlockPos CREATE_DISASSEMBLE_SUPER_GLUE_ANCHOR;
+
+	public static void preCreateDisassembleSuperGlue(Level level, BlockPos anchor){
+		CREATE_DISASSEMBLE_SUPER_GLUE_LEVEL = level;
+		CREATE_DISASSEMBLE_SUPER_GLUE_ANCHOR = anchor;
+	}
+
+	public static void postCreateDisassembleSuperGlue(){
+		CREATE_DISASSEMBLE_SUPER_GLUE_LEVEL = null;
+		CREATE_DISASSEMBLE_SUPER_GLUE_ANCHOR = null;
+	}
+
+	public static BlockPos getFreshAddedSuperGlueAnchor(Level level){
+		if(level != null && level == CREATE_DISASSEMBLE_SUPER_GLUE_LEVEL)
+			return CREATE_DISASSEMBLE_SUPER_GLUE_ANCHOR;
+		return null;
+	}
+
 	private static InteractionHand ENTITY_INTERACTION_HAND;
 
 	public static boolean canInteract(ServerGamePacketListenerImpl packetListener, ServerboundInteractPacket packet){
