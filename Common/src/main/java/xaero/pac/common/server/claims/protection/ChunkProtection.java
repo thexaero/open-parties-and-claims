@@ -2031,8 +2031,8 @@ public class ChunkProtection
 	public boolean onCreateGlueEntityFromAnchor(IServerData<CM, P> serverData, Entity superGlueEntity, BlockPos anchor) {
 		ServerLevel level = (ServerLevel) superGlueEntity.getLevel();
 		AABB boundingBox = superGlueEntity.getBoundingBox();
-		BlockPos minPos = new BlockPos(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
-		BlockPos maxPos = new BlockPos(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
+		BlockPos minPos = BlockPos.containing(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+		BlockPos maxPos = BlockPos.containing(boundingBox.maxX - 1, boundingBox.maxY - 1, boundingBox.maxZ - 1);
 		int fromChunkX = minPos.getX() >> 4;
 		int fromChunkZ = minPos.getZ() >> 4;
 		int toChunkX = maxPos.getX() >> 4;
