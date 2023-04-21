@@ -595,6 +595,23 @@ function initializeCoreMod() {
                 'methodDesc' : '(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/contraptions/components/structureMovement/StructureTransform;)V'
             },
             'transformer' : function(methodNode){
+                var insnToInsertBeforeGetter = function() {
+                    var insnToInsertBefore = new InsnList()
+                    insnToInsertBefore.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                    insnToInsertBefore.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsertBefore.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                    insnToInsertBefore.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preCreateDisassembleSuperGlue', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'))
+                    return insnToInsertBefore
+                }
+                insertOnInvoke2(methodNode, insnToInsertBeforeGetter, true/*before*/, levelClass, addFreshEntityName, addFreshEntityNameObf, addFreshEntityDesc, false)
+                var insnToInsertAfterGetter = function() {
+                    var insnToInsertAfter = new InsnList()
+                    insnToInsertAfter.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'postCreateDisassembleSuperGlue', '()V'))
+                    return insnToInsertAfter
+                }
+                insertOnInvoke2(methodNode, insnToInsertAfterGetter, false/*after*/, levelClass, addFreshEntityName, addFreshEntityNameObf, addFreshEntityDesc, false)
+
+
                 insertCreateModBlockPosArgumentCapture(methodNode, levelClass, getBlockStateName, getBlockStateNameObf, getBlockStateDesc)
 
                 var insnToInsertGetter = function() {
@@ -823,6 +840,50 @@ function initializeCoreMod() {
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))//movement context
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateTileDeployerBlockInteractionAllowed', '(Lnet/minecraft/world/level/block/entity/BlockEntity;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_superglueselectionpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueSelectionPacket',
+                'methodName': 'lambda$handle$0',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueSelectionPacket", "from", "Lnet/minecraft/core/BlockPos;"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueSelectionPacket", "to", "Lnet/minecraft/core/BlockPos;"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateGlueSelectionAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_superglueremovalpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueRemovalPacket',
+                'methodName': 'lambda$handle$0',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueRemovalPacket", "entityId", "I"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateGlueRemovalAllowed', '(ILnet/minecraftforge/network/NetworkEvent$Context;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)

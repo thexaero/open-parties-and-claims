@@ -79,9 +79,14 @@ public class CommonEvents {
 
 	protected final OpenPartiesAndClaims modMain;
 	protected MinecraftServer lastServerStarted;
+	private Class<?> createSuperGlueEntityClass;
 
 	public CommonEvents(OpenPartiesAndClaims modMain) {
 		this.modMain = modMain;
+		try {
+			this.createSuperGlueEntityClass = Class.forName("com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueEntity");
+		} catch (ClassNotFoundException ignored) {
+		}
 	}
 
 	public void onServerAboutToStart(MinecraftServer server) throws Throwable {
@@ -323,6 +328,14 @@ public class CommonEvents {
 					if (serverData == null)
 						return false;
 					return serverData.getChunkProtection().onItemAddedToWorld(serverData, itemEntity);
+				} else if(!fromDisk && entity.getClass() == createSuperGlueEntityClass){
+					BlockPos contraptionAnchor = ServerCore.getFreshAddedSuperGlueAnchor(world);
+					if(contraptionAnchor != null){
+						IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+								serverData = ServerData.from(entity.getServer());
+						ServerCore.postCreateDisassembleSuperGlue();
+						return serverData.getChunkProtection().onCreateGlueEntityFromAnchor(serverData, entity, contraptionAnchor);
+					}
 				}
 			} finally {
 				if(((IEntity)entity).getXaero_OPAC_lastChunkEntryDimension() == null)
