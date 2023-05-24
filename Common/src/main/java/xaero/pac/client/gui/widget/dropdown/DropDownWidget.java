@@ -20,6 +20,7 @@ package xaero.pac.client.gui.widget.dropdown;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -89,7 +90,7 @@ public final class DropDownWidget extends AbstractWidget
 		return getY() + yOffset;
 	}
 
-	private void drawSlot(PoseStack matrixStack, String text, int slotIndex, int pos, int mouseX, int mouseY, boolean scrolling, int optionLimit, int xWithOffset, int yWithOffset){
+	private void drawSlot(GuiGraphics guiGraphics, String text, int slotIndex, int pos, int mouseX, int mouseY, boolean scrolling, int optionLimit, int xWithOffset, int yWithOffset){
 		int slotBackground;
 		int emptyOptionCount = hasEmptyOption ? 1 : 0;
 		if(closed && isHoveredOrFocused() || !closed && onDropDownSlot(mouseX, mouseY, slotIndex, scrolling, optionLimit))
@@ -98,9 +99,9 @@ public final class DropDownWidget extends AbstractWidget
 			slotBackground = slotIndex - emptyOptionCount == selected ? selectedBackground : DEFAULT_BACKGROUND;
 		if(openingUp)
 			pos = -pos - 1;
-		fill(matrixStack, xWithOffset, yWithOffset + LINE_HEIGHT * pos, xWithOffset + width, yWithOffset + LINE_HEIGHT + LINE_HEIGHT *pos, slotBackground);
-		
-		hLine(matrixStack, xWithOffset + 1, xWithOffset + width - 1, yWithOffset + LINE_HEIGHT *pos, TRIM_INSIDE);
+		guiGraphics.fill(xWithOffset, yWithOffset + LINE_HEIGHT * pos, xWithOffset + width, yWithOffset + LINE_HEIGHT + LINE_HEIGHT *pos, slotBackground);
+
+		guiGraphics.hLine(xWithOffset + 1, xWithOffset + width - 1, yWithOffset + LINE_HEIGHT *pos, TRIM_INSIDE);
 		int textWidth = Minecraft.getInstance().font.width(text);
 		boolean shortened = false;
 		while(textWidth > width - 2) {
@@ -114,10 +115,10 @@ public final class DropDownWidget extends AbstractWidget
 			else
 				text = "..." + text;
 		int textColor = /*slotIndex - 1 == selected ? 0x555555 : */0xFFFFFF;
-		drawCenteredString(matrixStack, Minecraft.getInstance().font, text, xWithOffset + width/2, yWithOffset + 2 + LINE_HEIGHT * pos, textColor);
+		guiGraphics.drawCenteredString(Minecraft.getInstance().font, text, xWithOffset + width/2, yWithOffset + 2 + LINE_HEIGHT * pos, textColor);
 	}
 
-	private void drawMenu(PoseStack matrixStack, int amount, int mouseX, int mouseY, int scaledHeight, int optionLimit){
+	private void drawMenu(GuiGraphics guiGraphics, int amount, int mouseX, int mouseY, int scaledHeight, int optionLimit){
 		boolean scrolling = scrolling(optionLimit);
 		int totalH = LINE_HEIGHT * (amount + (scrolling ? 2 : 0));
 		int height = scaledHeight;
@@ -131,8 +132,8 @@ public final class DropDownWidget extends AbstractWidget
 		int yWithOffset = getYWithOffset();
 		int first = closed ? 0 : scroll;
 		if(scrolling) {
-			drawSlot(matrixStack, (scroll == 0 ? "§8" : "§7") + I18n.get(openingUp ? "gui.xaero_dropdown_scroll_down" : "gui.xaero_dropdown_scroll_up"), -1, 0, mouseX, mouseY, scrolling, optionLimit, xWithOffset, yWithOffset);
-			drawSlot(matrixStack, (scroll + optionLimit >= options.length ? "§8" : "§7") + I18n.get(openingUp ? "gui.xaero_dropdown_scroll_up" : "gui.xaero_dropdown_scroll_down"), -2, amount + 1, mouseX, mouseY, scrolling, optionLimit, xWithOffset, yWithOffset);
+			drawSlot(guiGraphics, (scroll == 0 ? "§8" : "§7") + I18n.get(openingUp ? "gui.xaero_dropdown_scroll_down" : "gui.xaero_dropdown_scroll_up"), -1, 0, mouseX, mouseY, scrolling, optionLimit, xWithOffset, yWithOffset);
+			drawSlot(guiGraphics, (scroll + optionLimit >= options.length ? "§8" : "§7") + I18n.get(openingUp ? "gui.xaero_dropdown_scroll_up" : "gui.xaero_dropdown_scroll_down"), -2, amount + 1, mouseX, mouseY, scrolling, optionLimit, xWithOffset, yWithOffset);
 		}
 		for(int i = first; i < first + amount; i++) {
 			String slotText;
@@ -140,14 +141,14 @@ public final class DropDownWidget extends AbstractWidget
 				slotText = !closed ? "-" : I18n.get(realOptions[selected]).replace("§§", ":");
 			else
 				slotText = I18n.get(options[i]).replace("§§", ":");
-			drawSlot(matrixStack, slotText, i, i - first + (scrolling ? 1 : 0), mouseX, mouseY, scrolling, optionLimit, xWithOffset, yWithOffset);
+			drawSlot(guiGraphics, slotText, i, i - first + (scrolling ? 1 : 0), mouseX, mouseY, scrolling, optionLimit, xWithOffset, yWithOffset);
 		}
 		int trimPosY = yWithOffset - (openingUp ? totalH : 0);
 		int trim = closed ? DropDownWidget.TRIM : TRIM_OPEN;
-		vLine(matrixStack, xWithOffset, trimPosY, trimPosY + totalH, trim);
-		vLine(matrixStack, xWithOffset + width, trimPosY, trimPosY + totalH, trim);
-		hLine(matrixStack, xWithOffset, xWithOffset + width, trimPosY, trim);
-		hLine(matrixStack, xWithOffset, xWithOffset + width, trimPosY + totalH, trim);
+		guiGraphics.vLine(xWithOffset, trimPosY, trimPosY + totalH, trim);
+		guiGraphics.vLine(xWithOffset + width, trimPosY, trimPosY + totalH, trim);
+		guiGraphics.hLine(xWithOffset, xWithOffset + width, trimPosY, trim);
+		guiGraphics.hLine(xWithOffset, xWithOffset + width, trimPosY + totalH, trim);
 	}
 	
 	private boolean scrolling(int optionLimit) {
@@ -227,19 +228,19 @@ public final class DropDownWidget extends AbstractWidget
 	}
 
 	@Override
-	public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partial) {
+	public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		int scaledHeight = Minecraft.getInstance().screen.height;
 		isHovered = visible && onDropDown(mouseX, mouseY, scaledHeight);
 		if(!visible)
 			return;
-		render(matrixStack, mouseX, mouseY, Minecraft.getInstance().screen.height, true);
+		render(guiGraphics, mouseX, mouseY, Minecraft.getInstance().screen.height, true);
 	}
 
 	@Override
-	public void renderWidget(PoseStack var1, int var2, int var3, float var4) {
+	public void renderWidget(GuiGraphics guiGraphics, int var2, int var3, float var4) {
 	}
 
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, int scaledHeight, boolean closedOnly){
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, int scaledHeight, boolean closedOnly){
 		if(!closed && closedOnly)
 			return;
 		int optionLimit = optionLimit(scaledHeight);
@@ -247,7 +248,7 @@ public final class DropDownWidget extends AbstractWidget
 			scrollTime = System.currentTimeMillis();
 			mouseScrolledInternal(autoScrolling, mouseX, mouseY, optionLimit);
 		}
-		drawMenu(matrixStack, closed ? 1 : Math.min(optionLimit, options.length), mouseX, mouseY, scaledHeight, optionLimit);
+		drawMenu(guiGraphics, closed ? 1 : Math.min(optionLimit, options.length), mouseX, mouseY, scaledHeight, optionLimit);
 	}
 	
 	public boolean isClosed() {

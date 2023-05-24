@@ -19,6 +19,7 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
@@ -84,19 +85,20 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		drawCenteredString(poseStack, font, XPAC_TITLE, width / 2, 5, -1);
-		super.render(poseStack, mouseX, mouseY, partial);
-		renderPreDropdown(poseStack, mouseX, mouseY, partial);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		guiGraphics.drawCenteredString(font, XPAC_TITLE, width / 2, 5, -1);
+		super.render(guiGraphics, mouseX, mouseY, partial);
+		renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		if(openDropdown != null) {
+			PoseStack poseStack = guiGraphics.pose();
 			poseStack.pushPose();
 			poseStack.translate(0, 0, 2);
-			openDropdown.render(poseStack, mouseX, mouseY, height, false);
+			openDropdown.render(guiGraphics, mouseX, mouseY, height, false);
 			poseStack.popPose();
 		}
 	}
 
-	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial){
+	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 	}
 
 	@Override

@@ -19,7 +19,7 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -229,23 +229,23 @@ public class MainMenu extends XPACScreen {
 		goBack();
 	}
 
-	private void drawPartyInfo(PoseStack poseStack, int mouseX, int mouseY, float partial){
+	private void drawPartyInfo(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 		IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>
 				partyStorage = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage();
 		String actualPartyName = partyStorage.getPartyName();
 		if(actualPartyName == null || actualPartyName.isEmpty())
 			actualPartyName = "N/A";
-		drawString(poseStack, font, partyNameSupplier.get(actualPartyName), width / 2 - 24, height / 7 + 42, -1);
+		guiGraphics.drawString(font, partyNameSupplier.get(actualPartyName), width / 2 - 24, height / 7 + 42, -1);
 		if(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null) {
 			String actualOwnerName = partyStorage.getParty().getOwner().getUsername();
-			drawString(poseStack, font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 7 + 54, -1);
-			drawString(poseStack, font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 7 + 66, -1);
-			drawString(poseStack, font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 7 + 78, -1);
-			drawString(poseStack, font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 7 + 90, -1);
+			guiGraphics.drawString(font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 7 + 54, -1);
+			guiGraphics.drawString(font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 7 + 66, -1);
+			guiGraphics.drawString(font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 7 + 78, -1);
+			guiGraphics.drawString(font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 7 + 90, -1);
 		}
 	}
 
-	private void drawClaimsInfo(PoseStack poseStack, int mouseX, int mouseY, float partial){
+	private void drawClaimsInfo(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 		IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 				claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		if(claimsManager.hasPlayerInfo(minecraft.player.getUUID())) {
@@ -268,36 +268,36 @@ public class MainMenu extends XPACScreen {
 			if(claimsColor == null && currentSubConfigIndex != -1)
 				claimsColor = playerInfo.getClaimsColor();
 
-			drawString(poseStack, font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 7 + 114, -1);
-			drawString(poseStack, font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 7 + 126, -1);
-			drawString(poseStack, font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 7 + 138, -1);
-			drawString(poseStack, font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 7 + 150, -1);
+			guiGraphics.drawString(font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 7 + 114, -1);
+			guiGraphics.drawString(font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 7 + 126, -1);
+			guiGraphics.drawString(font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 7 + 138, -1);
+			guiGraphics.drawString(font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 7 + 150, -1);
 		}
 
 	}
 	
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		updateButtons();
-		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
-		super.render(poseStack, mouseX, mouseY, partial);
+		renderBackground(guiGraphics);
+		guiGraphics.drawCenteredString(font, title, width / 2, 16, -1);
+		super.render(guiGraphics, mouseX, mouseY, partial);
 		if(!serverHasMod)
-			drawCenteredString(poseStack, font, NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
+			guiGraphics.drawCenteredString(font, NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
 		else {
 			if(serverHasPartiesEnabled) {
 				if (OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().isLoading())
-					drawString(poseStack, font, PARTY_SYNCING, width / 2 - 104 - font.width(PARTY_SYNCING), height / 7 + 42, -1);
-				drawPartyInfo(poseStack, mouseX, mouseY, partial);
+					guiGraphics.drawString(font, PARTY_SYNCING, width / 2 - 104 - font.width(PARTY_SYNCING), height / 7 + 42, -1);
+				drawPartyInfo(guiGraphics, mouseX, mouseY, partial);
 			} else
-				drawCenteredString(poseStack, font, NO_PARTIES, width / 2, height / 7 + 42, 0xFFAAAAAA);
+				guiGraphics.drawCenteredString(font, NO_PARTIES, width / 2, height / 7 + 42, 0xFFAAAAAA);
 
 			if(serverHasClaimsEnabled) {
 				if (OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isLoading())
-					drawString(poseStack, font, CLAIMS_SYNCING, width / 2 - 104 - font.width(CLAIMS_SYNCING), height / 7 + 114, -1);
-				drawClaimsInfo(poseStack, mouseX, mouseY, partial);
+					guiGraphics.drawString(font, CLAIMS_SYNCING, width / 2 - 104 - font.width(CLAIMS_SYNCING), height / 7 + 114, -1);
+				drawClaimsInfo(guiGraphics, mouseX, mouseY, partial);
 			} else
-				drawCenteredString(poseStack, font, NO_CLAIMS, width / 2, height / 7 + 114, 0xFFAAAAAA);
+				guiGraphics.drawCenteredString(font, NO_CLAIMS, width / 2, height / 7 + 114, 0xFFAAAAAA);
 		}
 	}
 	

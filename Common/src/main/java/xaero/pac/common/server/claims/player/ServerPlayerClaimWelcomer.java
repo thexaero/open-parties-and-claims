@@ -49,7 +49,7 @@ public class ServerPlayerClaimWelcomer {
 	public void onPlayerTick(ServerPlayerData mainCap, ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
 		IPlayerChunkClaim lastClaimCheck = mainCap.getLastClaimCheck();
 		IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
-		IPlayerChunkClaim currentClaim = claimsManager.get(player.getLevel().dimension().location(), player.chunkPosition());
+		IPlayerChunkClaim currentClaim = claimsManager.get(player.level().dimension().location(), player.chunkPosition());
 		if (!Objects.equals(lastClaimCheck, currentClaim)) {
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();

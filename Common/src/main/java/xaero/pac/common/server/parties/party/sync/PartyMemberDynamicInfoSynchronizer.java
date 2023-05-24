@@ -149,7 +149,7 @@ public class PartyMemberDynamicInfoSynchronizer extends AbstractPartySynchronize
 		ServerParty playerParty = partyManager.getPartyByMember(player.getUUID());
 		if(playerParty != null) {
 			mainCap.getPartyMemberDynamicInfo().setPartyId(playerParty.getId());
-			mainCap.getPartyMemberDynamicInfo().update(player.getLevel().dimension().location(), player.getX(), player.getY(), player.getZ());
+			mainCap.getPartyMemberDynamicInfo().update(player.level().dimension().location(), player.getX(), player.getY(), player.getZ());
 			if(mainCap.getPartyMemberDynamicInfo().isDirty())
 				syncToPartiesDynamicInfo(playerParty, mainCap.getPartyMemberDynamicInfo());
 		} else

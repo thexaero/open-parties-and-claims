@@ -18,8 +18,8 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -105,9 +105,9 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	}
 	
 	@Override
-	public final void render(PoseStack poseStack) {
-		super.render(poseStack);
-		Minecraft.getInstance().font.drawShadow(poseStack, title, x + 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+	public final void render(GuiGraphics guiGraphics) {
+		super.render(guiGraphics);
+		guiGraphics.drawString(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
 	}
 	
 	public static final class Builder extends SimpleValueWidgetListElement.Builder<String, TextWidgetListElement, Builder> {

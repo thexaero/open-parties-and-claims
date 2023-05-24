@@ -123,7 +123,7 @@ public class CommonEvents {
 		if(player instanceof ServerPlayer) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 			if(serverData != null) {
-				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, (ServerLevel) player.getLevel(), (ServerPlayer) player);
+				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, (ServerLevel) player.level(), (ServerPlayer) player);
 			}
 		}
 	}
@@ -132,13 +132,13 @@ public class CommonEvents {
 		if(player instanceof ServerPlayer) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 			if(serverData != null) {
-				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, (ServerLevel) player.getLevel(), (ServerPlayer) player);
+				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, (ServerLevel) player.level(), (ServerPlayer) player);
 			}
 		}
 	}
 
 	public void onPlayerLogIn(Player player) {
-		if(player.getLevel() instanceof ServerLevel) {
+		if(player.level() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 			if(serverData != null)
 				ServerPlayerDataAPI.from((ServerPlayer) player);//handles login
@@ -146,14 +146,14 @@ public class CommonEvents {
 	}
 
 	public void onPlayerClone(Player original, Player player) {
-		if(original.getLevel() instanceof ServerLevel) {
+		if(original.level() instanceof ServerLevel) {
 			//copy player data on respawn/clone
 			((IOpenPACServerPlayer)player).setXaero_OPAC_PlayerData(ServerPlayerDataAPI.from((ServerPlayer)original));
 		}
 	}
 
 	public void onPlayerLogOut(Player player) {
-		if(player.getLevel() instanceof ServerLevel) {
+		if(player.level() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 			if(serverData != null) {
 				serverData.getPlayerLogoutHandler().handle((ServerPlayer) player, serverData);
@@ -232,7 +232,7 @@ public class CommonEvents {
 	}
 
 	public boolean onMobGrief(Entity entity) {
-		if(entity != null /*anonymous fireballs on Forge*/ && entity.getLevel() instanceof ServerLevel) {
+		if(entity != null /*anonymous fireballs on Forge*/ && entity.level() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
 			return serverData.getChunkProtection().onMobGrief(serverData, entity);
 		}
@@ -240,7 +240,7 @@ public class CommonEvents {
 	}
 
 	public boolean onLivingHurt(DamageSource source, Entity target) {
-		if(target.getLevel() instanceof ServerLevel) {
+		if(target.level() instanceof ServerLevel) {
 			boolean isFire = source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.ON_FIRE);
 			if(source.getEntity() == null && source.getDirectEntity() == null &&
 					(
@@ -260,7 +260,7 @@ public class CommonEvents {
 
 	protected boolean onEntityAttack(Player player, Entity target) {
 		boolean result = false;
-		if(target.getLevel() instanceof ServerLevel) {
+		if(target.level() instanceof ServerLevel) {
 			if(!player.isSpectator()){
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
 				result = serverData.getChunkProtection().onEntityInteraction(serverData, player, player, target, null, InteractionHand.MAIN_HAND, true, true);
@@ -272,7 +272,7 @@ public class CommonEvents {
 	}
 
 	public boolean onEntityInteract(Entity source, Entity target, InteractionHand hand) {
-		if(target.getLevel() instanceof ServerLevel) {
+		if(target.level() instanceof ServerLevel) {
 			if(source.isSpectator())
 				return false;
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
@@ -282,7 +282,7 @@ public class CommonEvents {
 	}
 
 	public boolean onInteractEntitySpecific(Entity source, Entity target, InteractionHand hand) {
-		if(target.getLevel() instanceof ServerLevel) {
+		if(target.level() instanceof ServerLevel) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
 			return serverData.getChunkProtection().onEntityInteraction(serverData, source, source, target, null, hand, false, true);
 		}
@@ -297,7 +297,7 @@ public class CommonEvents {
 	}
 
 	public boolean onChorusFruit(Entity entity, Vec3 target){
-		if(entity.getLevel() instanceof ServerLevel){
+		if(entity.level() instanceof ServerLevel){
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
 			return serverData.getChunkProtection().onChorusFruitTeleport(serverData, target, entity);
 		}
@@ -317,7 +317,7 @@ public class CommonEvents {
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
 					serverData.getChunkProtection().onLightningBolt(serverData, bolt);
 					return false;
-				} else if (entity instanceof Projectile projectile && projectile.getOwner() != null && projectile.getOwner().getLevel() == entity.getLevel()) {
+				} else if (entity instanceof Projectile projectile && projectile.getOwner() != null && projectile.getOwner().level() == entity.level()) {
 					SectionPos oldSection = SectionPos.of(projectile.getOwner().blockPosition());
 					SectionPos newSection = SectionPos.of(entity.blockPosition());
 					if (oldSection.x() != newSection.x() || oldSection.z() != newSection.z()) {
@@ -343,7 +343,7 @@ public class CommonEvents {
 				}
 			} finally {
 				if(((IEntity)entity).getXaero_OPAC_lastChunkEntryDimension() == null)
-					((IEntity)entity).setXaero_OPAC_lastChunkEntryDimension(entity.getLevel().dimension());
+					((IEntity)entity).setXaero_OPAC_lastChunkEntryDimension(entity.level().dimension());
 				if (entity instanceof ItemEntity itemEntity) {
 					if (ServerCore.getItemEntityThrower(itemEntity) == null && ServerCore.getResourcesDropOwner() != null)//after the protection checks so that this isn't immediately affected by toss protection
 						itemEntity.setThrower(ServerCore.getResourcesDropOwner().getUUID());
@@ -364,9 +364,9 @@ public class CommonEvents {
 		if(entity.getServer() != null && chunkChanged && (entity.xOld != 0 || entity.yOld != 0 || entity.zOld != 0)) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(entity.getServer());
-			if(entity.getLevel().dimension().equals(((IEntity)entity).getXaero_OPAC_lastChunkEntryDimension()))
+			if(entity.level().dimension().equals(((IEntity)entity).getXaero_OPAC_lastChunkEntryDimension()))
 				serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, entity.xOld, entity.zOld, newSection, oldSection);
-			((IEntity)entity).setXaero_OPAC_lastChunkEntryDimension(entity.getLevel().dimension());
+			((IEntity)entity).setXaero_OPAC_lastChunkEntryDimension(entity.level().dimension());
 		}
 	}
 

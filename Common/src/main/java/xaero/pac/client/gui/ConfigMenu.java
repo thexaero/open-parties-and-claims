@@ -19,6 +19,7 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -126,13 +127,13 @@ public class ConfigMenu extends XPACScreen {
 	}
 	
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
-		drawCenteredString(poseStack, font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 132, -1);
-		super.render(poseStack, mouseX, mouseY, partial);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		renderBackground(guiGraphics);
+		guiGraphics.drawCenteredString(font, title, width / 2, 16, -1);
+		guiGraphics.drawCenteredString(font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 132, -1);
+		super.render(guiGraphics, mouseX, mouseY, partial);
 		if (!serverHasMod)
-			drawCenteredString(poseStack, font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
+			guiGraphics.drawCenteredString(font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
 	}
 
 }

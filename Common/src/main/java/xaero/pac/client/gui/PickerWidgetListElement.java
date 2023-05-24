@@ -18,8 +18,8 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -89,11 +89,11 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 	}
 
 	@Override
-	public void render(PoseStack poseStack) {
-		super.render(poseStack);
+	public void render(GuiGraphics guiGraphics) {
+		super.render(guiGraphics);
 		String subName = Objects.toString(draftValue);
 		int subNameW = Minecraft.getInstance().font.width(subName);
-		Minecraft.getInstance().font.drawShadow(poseStack, subName, x + 90 - subNameW / 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+		guiGraphics.drawString(Minecraft.getInstance().font, subName, x + 90 - subNameW / 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
 	}
 	
 	public static final class Builder<T> extends SimpleValueWidgetListElement.Builder<T, PickerWidgetListElement<T>, Builder<T>> {

@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -66,10 +66,10 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	}
 	
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, message, width / 2, height / 6 + 64, -1);
-		super.render(poseStack, mouseX, mouseY, partial);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		renderBackground(guiGraphics);
+		guiGraphics.drawCenteredString(font, message, width / 2, height / 6 + 64, -1);
+		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 	
 	public final class Listener {

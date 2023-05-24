@@ -85,7 +85,7 @@ public abstract class ServerPlayerDataAPI {
 				//Minecraft leaves players in the list on login exceptions, which causes this mod to crash afterwards.
 				//Putting this stuff here, instead of just the login event, to ensure that the login is handled for all real players.
 				serverData.getPlayerLoginHandler().handlePreWorldJoin(player, serverData);
-				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, player.getLevel(), player);
+				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, player.serverLevel(), player);
 				serverData.getPlayerLoginHandler().handlePostWorldJoin(player, serverData);
 			}
 		}

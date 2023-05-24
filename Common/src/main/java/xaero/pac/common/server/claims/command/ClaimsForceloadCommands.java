@@ -55,7 +55,7 @@ public class ClaimsForceloadCommands {
 		return builder
 			.executes(context -> {
 				ServerPlayer player = context.getSource().getPlayerOrException();
-				ServerLevel world = player.getLevel();
+				ServerLevel world = player.serverLevel();
 				int chunkX = player.chunkPosition().x;
 				int chunkZ = player.chunkPosition().z;
 				try {

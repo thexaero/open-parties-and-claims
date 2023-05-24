@@ -34,7 +34,7 @@ public class MixinPersistentEntitySectionManager {
 	@Inject(at = @At("HEAD"), method = "addEntity", cancellable = true)
 	public void onAddEntity(EntityAccess entityAccess, boolean fromDisk, CallbackInfoReturnable<Boolean> cir){
 		if(entityAccess instanceof Entity entity
-				&& ((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onEntityJoinWorld(entity, entity.getLevel(), fromDisk))
+				&& ((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onEntityJoinWorld(entity, entity.level(), fromDisk))
 			cir.setReturnValue(false);
 	}
 

@@ -77,7 +77,7 @@ public class ChunkProtectionEntityHelper {
 	}
 	
 	boolean isHostile(Entity e) {
-		return (e.getLevel().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
+		return (e.level().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
 	}
 	
 	boolean isTamed(Entity e, Player p) {

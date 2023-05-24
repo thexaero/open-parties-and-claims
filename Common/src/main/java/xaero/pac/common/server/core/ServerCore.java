@@ -47,11 +47,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FrostedIceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
@@ -105,9 +105,9 @@ public class ServerCore {
 	}
 
 	public static boolean canAddLivingEntityEffect(LivingEntity target, MobEffectInstance effect, @Nullable Entity source){
-		if(source == null || !(source.level instanceof ServerLevel))
+		if(source == null || !(source.level() instanceof ServerLevel))
 			return true;
-		Level world = source.level;
+		Level world = source.level();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(world.getServer());
 		if(serverData == null)
 			return true;
@@ -131,7 +131,7 @@ public class ServerCore {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 		if(serverData == null)
 			return true;
-		boolean shouldProtect = serverData.getChunkProtection().onUseItemAt(serverData, player, player.getLevel(), pos, direction, itemStack, null, false, false, true);
+		boolean shouldProtect = serverData.getChunkProtection().onUseItemAt(serverData, player, player.level(), pos, direction, itemStack, null, false, false, true);
 		return !shouldProtect;
 	}
 
@@ -227,7 +227,7 @@ public class ServerCore {
 	}
 
 	public static void onCreateCollideEntities(List<Entity> entities, Entity contraption, BlockPos contraptionAnchor){
-		Level level = contraption.getLevel();
+		Level level = contraption.level();
 		if(level == null || level.getServer() == null)
 			return;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
@@ -324,7 +324,7 @@ public class ServerCore {
 		if(ENTITY_INTERACTION_HAND == null)//not specific interaction
 			return true;
 		ServerPlayer player = packetListener.player;
-		ServerLevel level = player.getLevel();
+		ServerLevel level = player.serverLevel();
 		final Entity entity = packet.getTarget(level);
 		if(entity == null)
 			return true;
@@ -342,7 +342,7 @@ public class ServerCore {
 	}
 
 	public static void onEntitiesPushBlock(List<? extends Entity> entities, Block block, BlockPos pos){
-		if(entities.isEmpty() || !(entities.get(0).getLevel() instanceof ServerLevel level))
+		if(entities.isEmpty() || !(entities.get(0).level() instanceof ServerLevel level))
 			return;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
@@ -351,7 +351,7 @@ public class ServerCore {
 	}
 
 	public static boolean onEntityPushBlock(Block block, Entity entity, BlockHitResult blockHitResult){
-		if(entity == null || !(entity.getLevel() instanceof ServerLevel level))
+		if(entity == null || !(entity.level() instanceof ServerLevel level))
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(level.getServer());
 		if(serverData == null)
@@ -392,7 +392,7 @@ public class ServerCore {
 		if(FROSTWALK_ENTITY == null || !(FROSTWALK_LEVEL instanceof ServerLevel) || !FROSTWALK_LEVEL.getServer().isSameThread())
 			return pos;
 		BlockState actualState = FROSTWALK_LEVEL.getBlockState(pos);
-		if(actualState.getMaterial() != Material.WATER)
+		if(actualState != FrostedIceBlock.meltsInto())
 			return pos;
 		FROSTWALK_BLOCKPOS.set(pos);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(FROSTWALK_LEVEL.getServer());
@@ -417,8 +417,8 @@ public class ServerCore {
 				serverData = ServerData.from(entity.getServer());
 		if(serverData == null)
 			return false;
-		if(serverData.getChunkProtection().onNetherPortal(serverData, entity, (ServerLevel) entity.getLevel(), entity.blockPosition())){
-			entity.level.getProfiler().pop();
+		if(serverData.getChunkProtection().onNetherPortal(serverData, entity, (ServerLevel) entity.level(), entity.blockPosition())){
+			entity.level().getProfiler().pop();
 			Reflection.setReflectFieldValue(entity, ENTITY_INSIDE_PORTAL_FIELD, false);
 			return true;
 		}
@@ -594,7 +594,7 @@ public class ServerCore {
 
 	public static boolean onMobItemPickup(ItemEntity itemEntity, Mob mob) {
 		if (OpenPartiesAndClaims.INSTANCE.getCommonEvents().onItemPickup(mob, itemEntity)) {
-			mob.level.getProfiler().pop();
+			mob.level().getProfiler().pop();
 			return true;
 		}
 		return false;

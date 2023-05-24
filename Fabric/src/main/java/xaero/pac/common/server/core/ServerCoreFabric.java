@@ -39,7 +39,7 @@ public class ServerCoreFabric {
 	private static final Set<MobSpawnType> DISABLED_MOB_SPAWN_TYPES = new HashSet<>();
 
 	public static void tryToSetMobGriefingEntity(Entity entity){
-		if(entity != null && entity.level instanceof ServerLevel)
+		if(entity != null && entity.level() instanceof ServerLevel)
 			MOB_GRIEFING_GAME_RULE_ENTITY = entity;
 	}
 

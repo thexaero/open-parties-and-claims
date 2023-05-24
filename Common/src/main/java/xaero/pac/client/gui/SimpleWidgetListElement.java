@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.FormattedCharSequence;
@@ -33,8 +33,8 @@ public class SimpleWidgetListElement extends WidgetListElement<SimpleWidgetListE
 	}
 	
 	@Override
-	public final void render(PoseStack poseStack) {
-		super.render(poseStack);
+	public final void render(GuiGraphics guiGraphics) {
+		super.render(guiGraphics);
 	}
 	
 	public static final class Builder extends WidgetListElement.Builder<SimpleWidgetListElement, Builder> {

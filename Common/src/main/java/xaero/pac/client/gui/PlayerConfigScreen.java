@@ -19,8 +19,8 @@
 package xaero.pac.client.gui;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -87,23 +87,23 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	}
 
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		super.render(poseStack, mouseX, mouseY, partial);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 
 	@Override
-	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		super.renderPreDropdown(poseStack, mouseX, mouseY, partial);
+	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		if(shouldWaitForData){
 			if(!data.isSyncInProgress())
 				refreshButton.onPress();
 			else
-				drawCenteredString(poseStack, font, SYNCING_IN_PROGRESS, width / 2, height / 6 + 64, -1);
+				guiGraphics.drawCenteredString(font, SYNCING_IN_PROGRESS, width / 2, height / 6 + 64, -1);
 		}
 		if(beingDeletedStateOnOpen != optionValueSourceData.isBeingDeleted())
 			refreshButton.onPress();
 		else if(optionValueSourceData.isBeingDeleted())
-			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 6 + 64, -1);
+			guiGraphics.drawCenteredString(font, BEING_DELETED, width / 2, height / 6 + 64, -1);
 	}
 
 	public static MutableComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){

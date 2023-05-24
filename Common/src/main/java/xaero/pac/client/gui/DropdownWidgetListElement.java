@@ -18,10 +18,9 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -50,9 +49,9 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 	}
 
 	@Override
-	public void render(PoseStack poseStack) {
-		super.render(poseStack);
-		Minecraft.getInstance().font.drawShadow(poseStack, title, x, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+	public void render(GuiGraphics guiGraphics) {
+		super.render(guiGraphics);
+		guiGraphics.drawString(Minecraft.getInstance().font, title, x, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
 
 	}
 

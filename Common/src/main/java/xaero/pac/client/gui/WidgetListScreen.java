@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
@@ -104,28 +104,28 @@ public abstract class WidgetListScreen extends XPACScreen {
 	}
 	
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, displayedTitle, width / 2, 16, -1);
-		super.render(poseStack, mouseX, mouseY, partial);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		renderBackground(guiGraphics);
+		guiGraphics.drawCenteredString(font, displayedTitle, width / 2, 16, -1);
+		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 
 	@Override
-	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		super.renderPreDropdown(poseStack, mouseX, mouseY, partial);
+	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		int startIndex = getStartIndex();
 		int endIndex = getEndIndex();
 		WidgetListElement<?> tooltipElement = null;
 		for (int index = startIndex; index < endIndex; index++) {
 			WidgetListElement<?> e = elements.get(index);
-			e.render(poseStack);
+			e.render(guiGraphics);
 			if (e.isOver(mouseX, mouseY))
 				tooltipElement = e;
 		}
 		if (openDropdown == null && tooltipElement != null) {
 			List<FormattedCharSequence> tooltip = tooltipElement.getTooltip();
 			if (tooltip != null)
-				renderTooltip(poseStack, tooltip, mouseX, mouseY + ROW_HEIGHT + 10);
+				guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY + ROW_HEIGHT + 10);
 		}
 	}
 
