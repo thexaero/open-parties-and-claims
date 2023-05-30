@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(BasePressurePlateBlock.class)
+@Mixin(value = BasePressurePlateBlock.class, priority = 1000001)
 public class MixinBasePressurePlateBlock {
 
 	@Inject(method = "checkPressed", at = @At(value = "HEAD"))
