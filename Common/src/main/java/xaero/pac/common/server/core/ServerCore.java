@@ -88,7 +88,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class ServerCore {
-	
+
+	public static Block DETECTING_ENTITY_BLOCK_COLLISION = null;
+	public static BlockPos DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
+
 	public static void onServerTickStart(MinecraftServer server) {
 		OpenPartiesAndClaims.INSTANCE.startupCrashHandler.check();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
@@ -750,6 +753,18 @@ public class ServerCore {
 		return ((IServerGamePacketListenerImpl)serverGamePacketListener).getXaero_OPAC_connection();
 	}
 
+	public static void beforePressurePlateCheckPressed(Level level, Block block, BlockPos blockPos){
+		if(level instanceof ServerLevel) {
+			DETECTING_ENTITY_BLOCK_COLLISION = block;
+			DETECTING_ENTITY_BLOCK_COLLISION_POS = blockPos;
+		}
+	}
+
+	public static void afterPressurePlateCheckPressed(Level level){
+		if(level instanceof ServerLevel)
+			DETECTING_ENTITY_BLOCK_COLLISION = null;
+	}
+
 	public static void reset(){
 		CAPTURED_TARGET_POS = null;
 		CAPTURED_POS_STATE_MAP = null;
@@ -764,5 +779,7 @@ public class ServerCore {
 		MOB_GRIEFING_IS_FOR_ITEMS = false;
 		BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		RESOURCES_DROP_OWNER = null;
+		DETECTING_ENTITY_BLOCK_COLLISION = null;
+		DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 	}
 }

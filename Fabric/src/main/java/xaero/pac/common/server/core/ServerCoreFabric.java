@@ -18,12 +18,10 @@
 
 package xaero.pac.common.server.core;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.level.block.Block;
 import xaero.pac.OpenPartiesAndClaims;
 
 import java.util.HashSet;
@@ -32,8 +30,6 @@ import java.util.Set;
 public class ServerCoreFabric {
 
 	public static Entity MOB_GRIEFING_GAME_RULE_ENTITY = null;
-	public static Block DETECTING_ENTITY_BLOCK_COLLISION = null;
-	public static BlockPos DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 	private static MobSpawnType MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = null;
 	private static int MOB_SPAWN_TYPE_FOR_NEW_ENTITIES_TICK;
 	private static final Set<MobSpawnType> DISABLED_MOB_SPAWN_TYPES = new HashSet<>();
@@ -78,8 +74,6 @@ public class ServerCoreFabric {
 
 	public static void reset() {
 		MOB_GRIEFING_GAME_RULE_ENTITY = null;
-		DETECTING_ENTITY_BLOCK_COLLISION = null;
-		DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 		MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = null;
 		DISABLED_MOB_SPAWN_TYPES.clear();
 	}
