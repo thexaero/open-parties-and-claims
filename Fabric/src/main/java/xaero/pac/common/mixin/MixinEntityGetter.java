@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCore;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -38,10 +39,9 @@ public interface MixinEntityGetter {
 	@Inject(at = @At("RETURN"), method = "getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;")
 	default <T extends Entity> void onGetEntitiesOfClass(Class<T> c, AABB aabb, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir){
 		if(ServerCore.DETECTING_ENTITY_BLOCK_COLLISION != null){
-			List<? extends Entity> entities = cir.getReturnValue();
-			if(entities.isEmpty() || !(entities.get(0).level() instanceof ServerLevel))
+			if(!(this instanceof ServerLevel))
 				return;
-			ServerCore.onEntitiesPushBlock(entities, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION_POS);
+			ServerCore.onEntitiesPushBlock(cir.getReturnValue(), ServerCore.DETECTING_ENTITY_BLOCK_COLLISION, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION_POS);
 			if(ServerCore.DETECTING_ENTITY_BLOCK_COLLISION instanceof ButtonBlock)
 				ServerCore.DETECTING_ENTITY_BLOCK_COLLISION = null;
 		}
