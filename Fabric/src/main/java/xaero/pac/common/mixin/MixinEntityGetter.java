@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.EntityGetter;
 import net.minecraft.world.phys.AABB;
@@ -36,6 +37,8 @@ public interface MixinEntityGetter {
 	@Inject(at = @At("RETURN"), method = "getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;")
 	default void onGetEntitiesOfClass(Class<? extends Entity> c, AABB aabb, CallbackInfoReturnable<List<? extends Entity>> cir){
 		if(ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT != null){
+			if(!(this instanceof ServerLevel))
+				return;
 			ServerCore.onEntitiesPushBlock(cir.getReturnValue(), ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT, ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT_POS);
 			ServerCoreFabric.CALCULATING_PRESSURE_PLATE_WEIGHT = null;
 		}
