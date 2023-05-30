@@ -21,14 +21,13 @@ package xaero.pac.common.mixin;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.EntityGetter;
-import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.BasePressurePlateBlock;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCore;
-import xaero.pac.common.server.core.ServerCoreFabric;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -42,7 +41,7 @@ public interface MixinEntityGetter {
 			if(!(this instanceof ServerLevel))
 				return;
 			ServerCore.onEntitiesPushBlock(cir.getReturnValue(), ServerCore.DETECTING_ENTITY_BLOCK_COLLISION, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION_POS);
-			if(ServerCore.DETECTING_ENTITY_BLOCK_COLLISION instanceof ButtonBlock)
+			if(!(ServerCore.DETECTING_ENTITY_BLOCK_COLLISION instanceof BasePressurePlateBlock))
 				ServerCore.DETECTING_ENTITY_BLOCK_COLLISION = null;
 		}
 	}
