@@ -13,4 +13,4 @@ pluginManagement {
 }
 
 rootProject.name = "Open Parties and Claims"
-include("Common", "Fabric", "Forge")
+include("Common", "Fabric")//, "Forge")
