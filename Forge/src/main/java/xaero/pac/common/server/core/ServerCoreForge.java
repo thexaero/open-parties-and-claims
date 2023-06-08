@@ -19,7 +19,10 @@
 package xaero.pac.common.server.core;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
+
+import java.util.List;
 
 public class ServerCoreForge {
 
