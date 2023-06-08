@@ -976,7 +976,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.block.BasePressurePlateBlock',
-                'methodName': 'checkPressed',
+                'methodName': 'm_152143_',
                 'methodDesc' : '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)V'
             },
             'transformer' : function(methodNode){
