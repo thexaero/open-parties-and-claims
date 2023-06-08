@@ -972,26 +972,51 @@ function initializeCoreMod() {
                 return transformForEntitiesPushBlock(methodNode, true, false, 3)
             }
         },
-        'xaero_pac_pressureplateblock_getsignalstrength': {
+        'xaero_pac_basepressureplateblock_checkpressed': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'net.minecraft.world.level.block.PressurePlateBlock',
-                'methodName': 'm_6693_',
-                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I'
+                'class': 'net.minecraft.world.level.block.BasePressurePlateBlock',
+                'methodName': 'checkPressed',
+                'methodDesc' : '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)V'
             },
             'transformer' : function(methodNode){
-                return transformForEntitiesPushBlock(methodNode, true, true, 2)
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'beforePressurePlateCheckPressed', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/Block;Lnet/minecraft/core/BlockPos;)V'))
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+
+                insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'afterPressurePlateCheckPressed', '(Lnet/minecraft/world/level/Level;)V'))
+                    return insnToInsert
+                }
+                insertBeforeReturn2(methodNode, insnToInsertGetter)
+                return methodNode
             }
         },
-        'xaero_pac_weightedpressureplateblock_getsignalstrength': {
+        'xaero_pac_basepressureplateblock_getentitycount': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'net.minecraft.world.level.block.WeightedPressurePlateBlock',
-                'methodName': 'm_6693_',
-                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I'
+                'class': 'net.minecraft.world.level.block.BasePressurePlateBlock',
+                'methodName': 'getEntityCount',
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/AABB;Ljava/lang/Class;)I'
             },
             'transformer' : function(methodNode){
-                return transformForEntitiesPushBlock(methodNode, true, false, 2)
+                var invokeTargetClass = 'java/util/List'
+                var invokeTargetName = 'size'
+                var invokeTargetNameObf = invokeTargetName
+                var invokeTargetDesc = '()I'
+
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'onPressurePlateEntityCount', '(Ljava/util/List;)Ljava/util/List;'))
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                return methodNode
             }
         },
         'xaero_pac_tripwireblock_checkpressed': {

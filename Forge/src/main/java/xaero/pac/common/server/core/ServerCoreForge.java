@@ -30,4 +30,11 @@ public class ServerCoreForge {
 	public static boolean isCreateGlueRemovalAllowed(int entityId, NetworkEvent.Context ctx){
 		return ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender());
 	}
+
+	public static List<? extends Entity> onPressurePlateEntityCount(List<? extends Entity> entities){
+		if(ServerCore.DETECTING_ENTITY_BLOCK_COLLISION != null)
+			ServerCore.onEntitiesPushBlock(entities, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION_POS);
+		return entities;
+	}
+
 }
