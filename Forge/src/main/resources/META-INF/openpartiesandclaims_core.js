@@ -1001,7 +1001,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.block.BasePressurePlateBlock',
-                'methodName': 'getEntityCount',
+                'methodName': 'm_289607_',
                 'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/AABB;Ljava/lang/Class;)I'
             },
             'transformer' : function(methodNode){
