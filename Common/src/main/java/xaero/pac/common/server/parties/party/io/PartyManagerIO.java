@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerParty, PartyManager, PartyManagerIO<S>> {
+public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerParty, PartyManager> {
 
 	private Path partiesPath;
 
@@ -115,7 +115,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 		manager.addParty(loadedObject);
 	}
 	
-	public static final class Builder<S> extends ObjectManagerIO.Builder<S, String, ServerParty, PartyManager, PartyManagerIO<S>>{
+	public static final class Builder<S> extends ObjectManagerIO.Builder<S, String, ServerParty, PartyManager, Builder<S>>{
 
 		private Builder() {
 		}
@@ -129,6 +129,11 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 		@Override
 		protected PartyManagerIO<S> buildInternally() {
 			return new PartyManagerIO<>(fileExtension, serializationHandler, serializedDataFileIO, ioThreadWorker, server, manager, fileIOHelper);
+		}
+
+		@Override
+		public PartyManagerIO<S> build() {
+			return (PartyManagerIO<S>) super.build();
 		}
 
 		public static <S> Builder<S> begin() {

@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,42 +16,39 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.info;
+package xaero.pac.common.server.io.single;
 
+import com.google.common.collect.Lists;
+import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.io.ObjectManagerIOObject;
 
-public final class ServerInfo implements ObjectManagerIOObject {
-	
-	private long useTime;
-	private boolean dirty;
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
-	public ServerInfo(long useTime) {
-		super();
-		this.useTime = useTime;
+public abstract class ObjectHolderIOHolder
+<
+	T extends ObjectManagerIOObject,
+	M extends ObjectHolderIOHolder<T, M>
+> implements ObjectManagerIOManager<T, M> {
+
+	public abstract T getObject();
+
+	public abstract void setObject(T object);
+
+	@Override
+	public void addToSave(T object) {
 	}
 
 	@Override
-	public boolean isDirty() {
-		return dirty;
+	public Iterable<T> getToSave() {
+		T object = getObject();
+		if(object != null && object.isDirty())
+			return Lists.newArrayList(object);
+		return new ArrayList<>();
 	}
 
 	@Override
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
+	public Stream<T> getAllStream() {
+		return Stream.of(getObject());
 	}
-
-	@Override
-	public String getFileName() {
-		return null;
-	}
-	
-	public void setUseTime(long useTime) {
-		this.useTime = useTime;
-		setDirty(true);
-	}
-	
-	public long getUseTime() {
-		return useTime;
-	}
-
 }

@@ -45,7 +45,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 public final class PlayerClaimInfoManagerIO<S>
- extends ObjectManagerIO<S, UUID, ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, PlayerClaimInfoManagerIO<S>> {
+ extends ObjectManagerIO<S, UUID, ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> {
 
 	private final ServerClaimsManager serverClaimsManager;
 	private final Path claimsFolderPath;
@@ -131,7 +131,7 @@ public final class PlayerClaimInfoManagerIO<S>
 			);
 	}
 	
-	public static final class Builder<S> extends ObjectManagerIO.Builder<S, UUID, ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, PlayerClaimInfoManagerIO<S>>{
+	public static final class Builder<S> extends ObjectManagerIO.Builder<S, UUID, ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, Builder<S>>{
 
 		private ServerClaimsManager serverClaimsManager;
 		
@@ -155,7 +155,7 @@ public final class PlayerClaimInfoManagerIO<S>
 			if(serverClaimsManager == null)
 				throw new IllegalStateException();
 			setManager(serverClaimsManager.getPlayerClaimInfoManager());
-			return super.build();
+			return (PlayerClaimInfoManagerIO<S>) super.build();
 		}
 
 		public PlayerClaimInfoManagerIO<S> buildInternally() {

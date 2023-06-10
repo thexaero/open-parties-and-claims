@@ -18,38 +18,24 @@
 
 package xaero.pac.common.server.info;
 
-import com.google.common.collect.Lists;
-import xaero.pac.common.server.io.ObjectManagerIOManager;
+import xaero.pac.common.server.io.single.ObjectHolderIOHolder;
 
-import java.util.ArrayList;
-import java.util.stream.Stream;
-
-public final class ServerInfoHolder implements ObjectManagerIOManager<ServerInfo, ServerInfoHolder> {
+public final class ServerInfoHolder extends ObjectHolderIOHolder<ServerInfo, ServerInfoHolder> {
 	
 	private ServerInfo serverInfo;
 
 	@Override
-	public void addToSave(ServerInfo object) {
+	public ServerInfo getObject() {
+		return serverInfo;
 	}
 
 	@Override
-	public Iterable<ServerInfo> getToSave() {
-		if(serverInfo.isDirty())
-			return Lists.newArrayList(serverInfo);
-		return new ArrayList<ServerInfo>();
-	}
-
-	@Override
-	public Stream<ServerInfo> getAllStream() {
-		return Stream.of(serverInfo);
-	}
-	
-	public void setServerInfo(ServerInfo serverInfo) {
+	public void setObject(ServerInfo serverInfo) {
 		if(this.serverInfo != null)
 			throw new IllegalStateException();
 		this.serverInfo = serverInfo;
 	}
-	
+
 	public ServerInfo getServerInfo() {
 		return serverInfo;
 	}
