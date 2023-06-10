@@ -43,17 +43,24 @@ public class PartyCommands {
 
 	private static SuggestionProvider<CommandSourceStack> getPartyPlayerSuggestor(boolean members, boolean invites){
 		return (context, builder) -> {
-			//limited at 16 to reduce synced data for super large parties
 			ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
 			IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
 			String lowercaseInput = builder.getRemainingLowerCase();
-			Stream<IPartyPlayerInfo> stream = Stream.concat(members ? playerParty.getMemberInfoStream() : Stream.empty(), invites ? playerParty.getInvitedPlayersStream() : Stream.empty());
+			Stream<IPartyPlayerInfo> stream;
+			int maxIterationSize = (members ? playerParty.getMemberCount() : 0) + (invites ? playerParty.getInviteCount() : 0);
+			if(maxIterationSize > 1024) {
+				IPartyMember exactMember = members ? playerParty.getMemberInfo(lowercaseInput) : null;
+				IPartyPlayerInfo exactInvite = invites ? playerParty.getInvite(lowercaseInput) : null;
+				return SharedSuggestionProvider.suggest(Stream.concat(Stream.ofNullable(exactMember), Stream.ofNullable(exactInvite)).map(IPartyPlayerInfo::getUsername), builder);
+			}
+			//probably not a good idea to let players spam something like this somewhat easily, so it's limited at 1024
+			stream = Stream.concat(members ? playerParty.getMemberInfoStream() : Stream.empty(), invites ? playerParty.getInvitedPlayersStream() : Stream.empty());
 			return SharedSuggestionProvider.suggest(stream
 					.map(IPartyPlayerInfo::getUsername)
 					.filter(name -> name.toLowerCase().startsWith(lowercaseInput))
-					.limit(16), builder);
+					.limit(16), builder);//limited at 16 to reduce synced data for super large parties
 		};
 	}
 

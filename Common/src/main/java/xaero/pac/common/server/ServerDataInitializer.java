@@ -87,7 +87,7 @@ public class ServerDataInitializer {
 			serverInfoIO.load();
 			ServerInfo serverInfo;
 			if(serverInfoHolder.getServerInfo() == null) {
-				serverInfoHolder.setServerInfo(serverInfo = new ServerInfo(0));
+				serverInfoHolder.setObject(serverInfo = new ServerInfo(0));
 				serverInfo.setDirty(true);
 				serverInfoIO.save();
 			} else

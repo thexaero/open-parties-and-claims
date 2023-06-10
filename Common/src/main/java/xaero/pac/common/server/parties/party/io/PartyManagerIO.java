@@ -39,14 +39,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerParty, PartyManager, PartyManagerIO<S>> {
+public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerParty, PartyManager> {
 
-	private Path partiesPath;
+	private final Path partiesPath;
+	private final boolean partiesEnabled;
 
 	private PartyManagerIO(String extension, SerializationHandler<S, String, ServerParty, PartyManager> serializationHandler, SerializedDataFileIO<S, String> serializedDataFileIO, IOThreadWorker ioThreadWorker,
 			MinecraftServer server, PartyManager manager, FileIOHelper fileIOHelper) {
 		super(serializationHandler, serializedDataFileIO, ioThreadWorker, server, extension, manager, fileIOHelper);
 		partiesPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("parties");
+		partiesEnabled = ServerConfig.CONFIG.partiesEnabled.get();
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 	
 	@Override
 	public void load() {
-		if(!ServerConfig.CONFIG.partiesEnabled.get())
+		if(!partiesEnabled)
 			return;
 		OpenPartiesAndClaims.LOGGER.info("Loading parties...");
 		super.load();
@@ -82,7 +84,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 
 	@Override
 	public boolean save() {
-		if(!ServerConfig.CONFIG.partiesEnabled.get())
+		if(!partiesEnabled)
 			return true;
 		OpenPartiesAndClaims.LOGGER.debug("Saving parties...");
 		return super.save();
@@ -95,7 +97,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 
 	@Override
 	public void delete(ServerParty object) {
-		if(!ServerConfig.CONFIG.partiesEnabled.get())
+		if(!partiesEnabled)
 			return;
 		super.delete(object);
 	}
@@ -115,7 +117,7 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 		manager.addParty(loadedObject);
 	}
 	
-	public static final class Builder<S> extends ObjectManagerIO.Builder<S, String, ServerParty, PartyManager, PartyManagerIO<S>>{
+	public static final class Builder<S> extends ObjectManagerIO.Builder<S, String, ServerParty, PartyManager, Builder<S>>{
 
 		private Builder() {
 		}
@@ -129,6 +131,11 @@ public final class PartyManagerIO<S> extends ObjectManagerIO<S, String, ServerPa
 		@Override
 		protected PartyManagerIO<S> buildInternally() {
 			return new PartyManagerIO<>(fileExtension, serializationHandler, serializedDataFileIO, ioThreadWorker, server, manager, fileIOHelper);
+		}
+
+		@Override
+		public PartyManagerIO<S> build() {
+			return (PartyManagerIO<S>) super.build();
 		}
 
 		public static <S> Builder<S> begin() {

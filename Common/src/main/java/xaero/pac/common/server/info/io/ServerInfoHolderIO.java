@@ -26,26 +26,21 @@ import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.info.ServerInfoHolder;
 import xaero.pac.common.server.info.io.serialization.nbt.ServerInfoSerializationHandler;
 import xaero.pac.common.server.io.FileIOHelper;
-import xaero.pac.common.server.io.FilePathConfig;
 import xaero.pac.common.server.io.IOThreadWorker;
-import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.serialization.SerializationHandler;
 import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 import xaero.pac.common.server.io.serialization.nbt.SimpleNBTSerializedDataFileIO;
+import xaero.pac.common.server.io.single.ObjectHolderIO;
 
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
-public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, String, ServerInfo, ServerInfoHolder, ServerInfoHolderIO>{
-	
-	private final Path folderPath;
+public final class ServerInfoHolderIO extends ObjectHolderIO<CompoundTag, ServerInfo, ServerInfoHolder> {
 
 	private ServerInfoHolderIO(
-			SerializationHandler<CompoundTag, String, ServerInfo, ServerInfoHolder> serializationHandler,
-			SerializedDataFileIO<CompoundTag, String> serializedDataFileIO, IOThreadWorker ioThreadWorker,
+			Path filePath, SerializationHandler<CompoundTag, Object, ServerInfo, ServerInfoHolder> serializationHandler,
+			SerializedDataFileIO<CompoundTag, Object> serializedDataFileIO, IOThreadWorker ioThreadWorker,
 			MinecraftServer server, String fileExtension, ServerInfoHolder manager, FileIOHelper fileIOHelper) {
-		super(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
-		folderPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID);
+		super(filePath, serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
 	}
 
 	@Override
@@ -59,33 +54,12 @@ public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, Strin
 		OpenPartiesAndClaims.LOGGER.debug("Saving server info!");
 		return super.save();
 	}
-
-	@Override
-	protected Path getFilePath(ServerInfo object, String fileName) {
-		return folderPath.resolve(fileName + this.fileExtension);
-	}
-
-	@Override
-	protected Stream<FilePathConfig> getObjectFolderPaths() {
-		return Stream.of(new FilePathConfig(folderPath, false));
-	}
-
-	@Override
-	protected void onObjectLoad(ServerInfo loadedObject) {
-		manager.setServerInfo(loadedObject);
-	}
-
-	@Override
-	protected String getObjectId(String fileNameNoExtension, Path file, FilePathConfig filePathConfig) {
-		return fileNameNoExtension;
-	}
 	
-	public static final class Builder extends ObjectManagerIO.Builder<CompoundTag, String, ServerInfo, ServerInfoHolder, ServerInfoHolderIO>{
+	public static final class Builder extends ObjectHolderIO.Builder<CompoundTag, ServerInfo, ServerInfoHolder, Builder>{
 
 		@Override
 		public Builder setDefault() {
 			super.setDefault();
-			setFileExtension(".nbt");
 			return this;
 		}
 		
@@ -94,12 +68,13 @@ public final class ServerInfoHolderIO extends ObjectManagerIO<CompoundTag, Strin
 				setSerializationHandler(new ServerInfoSerializationHandler());
 			if(serializedDataFileIO == null)
 				setSerializedDataFileIO(new SimpleNBTSerializedDataFileIO<>());
-			return super.build();
+			setFilePath(server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("server-info.nbt"));
+			return (ServerInfoHolderIO) super.build();
 		}
 
 		@Override
 		protected ServerInfoHolderIO buildInternally() {
-			return new ServerInfoHolderIO(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
+			return new ServerInfoHolderIO(filePath, serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
 		}
 
 		public static Builder begin() {
