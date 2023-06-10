@@ -49,11 +49,13 @@ public final class PlayerClaimInfoManagerIO<S>
 
 	private final ServerClaimsManager serverClaimsManager;
 	private final Path claimsFolderPath;
+	private final boolean claimsEnabled;
 	
 	private PlayerClaimInfoManagerIO(String extension, SerializationHandler<S, UUID, ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> serializationHandler, SerializedDataFileIO<S, UUID> serializedDataFileIO, IOThreadWorker ioThreadWorker, MinecraftServer server, ServerClaimsManager serverClaimsManager, ServerPlayerClaimInfoManager claimsManager, FileIOHelper fileIOHelper, Path claimsFolderPath) {
 		super(serializationHandler, serializedDataFileIO, ioThreadWorker, server, extension, claimsManager, fileIOHelper);
 		this.serverClaimsManager = serverClaimsManager;
 		this.claimsFolderPath = claimsFolderPath;
+		this.claimsEnabled = ServerConfig.CONFIG.claimsEnabled.get();
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public final class PlayerClaimInfoManagerIO<S>
 	
 	@Override
 	public void load() {
-		if(!ServerConfig.CONFIG.claimsEnabled.get())
+		if(!claimsEnabled)
 			return;
 		long before = System.currentTimeMillis(); 
 		OpenPartiesAndClaims.LOGGER.info("Loading claims...");
@@ -77,7 +79,7 @@ public final class PlayerClaimInfoManagerIO<S>
 	public boolean save() {
 //		if(true)
 //			return true;
-		if(!ServerConfig.CONFIG.claimsEnabled.get())
+		if(!claimsEnabled)
 			return true;
 		OpenPartiesAndClaims.LOGGER.debug("Saving claims!");
 		return super.save();
@@ -90,7 +92,7 @@ public final class PlayerClaimInfoManagerIO<S>
 
 	@Override
 	public void delete(ServerPlayerClaimInfo object) {
-		if(!ServerConfig.CONFIG.claimsEnabled.get())
+		if(!claimsEnabled)
 			return;
 		super.delete(object);
 	}
