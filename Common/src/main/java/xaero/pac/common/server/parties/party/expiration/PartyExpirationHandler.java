@@ -63,13 +63,7 @@ public final class PartyExpirationHandler extends ObjectExpirationHandler<Server
 
 	@Override
 	public boolean checkIfActive(ServerParty party) {
-		Iterator<PartyMember> partyMemberIterator = party.getMemberInfoStream().iterator();
-		while(partyMemberIterator.hasNext()) {
-			PartyMember member = partyMemberIterator.next();
-			if(server.getPlayerList().getPlayer(member.getUUID()) != null)//member is logged in
-				return true;
-		}
-		return false;
+		return party.getOnlineMemberStream().findFirst().isPresent();
 	}
 
 	@Override

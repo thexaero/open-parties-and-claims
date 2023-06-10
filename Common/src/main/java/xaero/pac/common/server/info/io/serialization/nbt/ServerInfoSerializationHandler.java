@@ -23,7 +23,7 @@ import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.info.ServerInfoHolder;
 import xaero.pac.common.server.io.serialization.SerializationHandler;
 
-public class ServerInfoSerializationHandler extends SerializationHandler<CompoundTag, String, ServerInfo, ServerInfoHolder> {
+public class ServerInfoSerializationHandler extends SerializationHandler<CompoundTag, Object, ServerInfo, ServerInfoHolder> {
 
 	@Override
 	public CompoundTag serialize(ServerInfo object) {
@@ -33,7 +33,7 @@ public class ServerInfoSerializationHandler extends SerializationHandler<Compoun
 	}
 
 	@Override
-	public ServerInfo deserialize(String id, ServerInfoHolder manager, CompoundTag serializedData) {
+	public ServerInfo deserialize(Object id, ServerInfoHolder manager, CompoundTag serializedData) {
 		long useTime = serializedData.getLong("useTime");
 		return new ServerInfo(useTime);
 	}

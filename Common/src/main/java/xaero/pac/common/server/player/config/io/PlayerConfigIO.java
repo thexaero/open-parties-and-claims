@@ -51,7 +51,7 @@ public final class PlayerConfigIO
 <
 	P extends IServerParty<?, ?, ?>, 
 	CM extends IServerClaimsManager<?, ?, ?>//needed in this class because of some weird compilation error when gradle building (not displayed by the IDE)
-> extends ObjectManagerIO<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>, PlayerConfigIO<P, CM>> {
+> extends ObjectManagerIO<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>> {
 	
 	private final Path configsPath;
 	private final Path configSubConfigPath;
@@ -193,7 +193,7 @@ public final class PlayerConfigIO
 	<
 		P extends IServerParty<?, ?, ?>, 
 		CM extends IServerClaimsManager<?, ?, ?>
-	> extends ObjectManagerIO.Builder<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>, PlayerConfigIO<P, CM>>{
+	> extends ObjectManagerIO.Builder<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>, Builder<P, CM>>{
 
 		private Builder() {
 		}
@@ -207,7 +207,7 @@ public final class PlayerConfigIO
 		public PlayerConfigIO<P, CM> build() {
 			if(serializationHandler == null)
 				setSerializationHandler(PlayerConfigSerializationHandler.Builder.<P, CM>begin().build());
-			return super.build();
+			return (PlayerConfigIO<P, CM>) super.build();
 		}
 
 		@Override
