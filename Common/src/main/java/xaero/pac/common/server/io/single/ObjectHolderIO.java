@@ -23,6 +23,7 @@ import xaero.pac.common.server.io.*;
 import xaero.pac.common.server.io.serialization.SerializationHandler;
 import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -42,6 +43,8 @@ public class ObjectHolderIO
 
 	@Override
 	public void load() {
+		if(!Files.exists(filePath))
+			return;
 		T object = loadFile(filePath, null, true);
 		if(object != null)
 			manager.setObject(object);
