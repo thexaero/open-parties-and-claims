@@ -42,7 +42,7 @@ dependencies {
 
      implementation 'com.electronwill.night-config:core:3.6.3'
      implementation 'com.electronwill.night-config:toml:3.6.3'
-     compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:5.0.11"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+     compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:5.0.11"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 }
 
 processResources {
