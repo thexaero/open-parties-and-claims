@@ -127,6 +127,7 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 		return m;
 	}
 
+	@Nullable
 	@Override
 	public PartyMember getMemberInfo(@Nonnull String username){
 		return memberInfoByUsername.get(username.toLowerCase());

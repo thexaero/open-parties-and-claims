@@ -36,12 +36,10 @@ public abstract class ObjectManagerIO
 	S, 
 	I,
 	T extends ObjectManagerIOObject,
-	M extends ObjectManagerIOManager<T, M>,
-	MIO extends ObjectManagerIO<S, I, T, M, MIO>
+	M extends ObjectManagerIOManager<T, M>
 > {
 	
 	private final int MAX_PER_TICK = 5;
-	protected final MIO self;
 	protected final M manager;
 	protected final String fileExtension;
 	protected final SerializationHandler<S, I, T, M> serializationHandler;
@@ -52,7 +50,6 @@ public abstract class ObjectManagerIO
 
 	@SuppressWarnings("unchecked")
 	protected ObjectManagerIO(SerializationHandler<S, I, T, M> serializationHandler, SerializedDataFileIO<S,I> serializedDataFileIO, IOThreadWorker ioThreadWorker, MinecraftServer server, String fileExtension, M manager, FileIOHelper fileIOHelper) {
-		this.self = (MIO) this;
 		this.serializationHandler = serializationHandler;
 		this.serializedDataFileIO = serializedDataFileIO;
 		this.ioThreadWorker = ioThreadWorker;
@@ -267,8 +264,10 @@ public abstract class ObjectManagerIO
 		I,
 		T extends ObjectManagerIOObject,
 		M extends ObjectManagerIOManager<T, M>,
-		MIO extends ObjectManagerIO<S, I, T, M, MIO>
+		B extends Builder<S,I,T,M,B>
 	> {
+
+		protected B self;
 		protected String fileExtension;
 		protected SerializationHandler<S, I, T, M> serializationHandler;
 		protected SerializedDataFileIO<S,I> serializedDataFileIO;
@@ -278,44 +277,45 @@ public abstract class ObjectManagerIO
 		protected M manager;
 
 		protected Builder() {
+			this.self = (B) this;
 		}
 
-		public Builder<S,I,T,M,MIO> setFileExtension(String fileExtension) {
+		public B setFileExtension(String fileExtension) {
 			this.fileExtension = fileExtension;
-			return this;
+			return self;
 		}
 
-		public Builder<S,I,T,M,MIO> setSerializationHandler(SerializationHandler<S, I, T, M> serializationHandler) {
+		public B setSerializationHandler(SerializationHandler<S, I, T, M> serializationHandler) {
 			this.serializationHandler = serializationHandler;
-			return this;
+			return self;
 		}
 
-		public Builder<S,I,T,M,MIO> setSerializedDataFileIO(SerializedDataFileIO<S, I> serializedDataFileIO) {
+		public B setSerializedDataFileIO(SerializedDataFileIO<S, I> serializedDataFileIO) {
 			this.serializedDataFileIO = serializedDataFileIO;
-			return this;
+			return self;
 		}
 
-		public Builder<S,I,T,M,MIO> setIoThreadWorker(IOThreadWorker ioThreadWorker) {
+		public B setIoThreadWorker(IOThreadWorker ioThreadWorker) {
 			this.ioThreadWorker = ioThreadWorker;
-			return this;
+			return self;
 		}
 
-		public Builder<S,I,T,M,MIO> setServer(MinecraftServer server) {
+		public B setServer(MinecraftServer server) {
 			this.server = server;
-			return this;
+			return self;
 		}
 
-		public Builder<S,I,T,M,MIO> setFileIOHelper(FileIOHelper fileIOHelper) {
+		public B setFileIOHelper(FileIOHelper fileIOHelper) {
 			this.fileIOHelper = fileIOHelper;
-			return this;
+			return self;
 		}
 
-		public Builder<S,I,T,M,MIO> setManager(M manager) {
+		public B setManager(M manager) {
 			this.manager = manager;
-			return this;
+			return self;
 		}
 
-		public Builder<S,I,T,M,MIO> setDefault() {
+		public B setDefault() {
 			setFileExtension(null);
 			setSerializationHandler(null);
 			setSerializedDataFileIO(null);
@@ -323,10 +323,10 @@ public abstract class ObjectManagerIO
 			setServer(null);
 			setFileIOHelper(null);
 			setManager(null);
-			return this;
+			return self;
 		}
 
-		public MIO build() {
+		public ObjectManagerIO<S,I,T,M> build() {
 			if (fileExtension == null || serializationHandler == null ||
 					serializedDataFileIO == null || ioThreadWorker == null ||
 					server == null || fileIOHelper == null || manager == null)
@@ -334,7 +334,7 @@ public abstract class ObjectManagerIO
 			return buildInternally();
 		}
 		
-		protected abstract MIO buildInternally();
+		protected abstract ObjectManagerIO<S,I,T,M> buildInternally();
 
 	}
 
