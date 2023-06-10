@@ -30,16 +30,19 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
 }
 
 dependencies {
      compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
      implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
-
      implementation 'com.electronwill.night-config:core:3.6.3'
      implementation 'com.electronwill.night-config:toml:3.6.3'
-     compileOnly "curse.maven:forgeconfigfabric-547434:3671141"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+     implementation "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 }
 
 processResources {

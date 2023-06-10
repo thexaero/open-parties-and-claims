@@ -15,6 +15,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
 }
 
 dependencies {
@@ -27,7 +31,7 @@ dependencies {
 
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
-    modImplementation "curse.maven:forgeconfigfabric-547434:3671141"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    modImplementation "net.minecraftforge:forgeconfigapiport-fabric:3.2.4"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     modCompileOnly "curse.maven:ftbranks-472659:3599719"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
     modCompileOnly "curse.maven:architectury-419699:3843621"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
