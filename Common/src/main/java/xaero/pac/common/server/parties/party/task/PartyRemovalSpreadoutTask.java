@@ -79,16 +79,16 @@ public class PartyRemovalSpreadoutTask implements IServerSpreadoutQueuedTask<Par
 			if(memberIterator.hasNext()){
 				PartyMember mi = memberIterator.next();
 				partyManager.onMemberRemoved(party, mi);
-				stepsLeft--;
 			} else if(allyIterator.hasNext()) {
 				PartyAlly ally = allyIterator.next();
 				partyManager.onAllyRemoved(party, ally.getPartyId(), true);
-				stepsLeft--;
 			} else {
 				ServerParty alliedBy = partyManager.getPartiesThatAlly(party.getId()).findFirst().orElse(null);
+				if(alliedBy == null)//all parties that ally this one are also in the process of being removed (and will eventually make isAlliedByAnyone for this one false, which is great)
+					break;
 				alliedBy.removeAllyParty(party.getId());
-				stepsLeft--;
 			}
+			stepsLeft--;
 		}
 		if(done){
 			memberIterator = null;
