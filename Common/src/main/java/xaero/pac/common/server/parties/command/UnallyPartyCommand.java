@@ -50,6 +50,7 @@ import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class UnallyPartyCommand {
 	
@@ -65,7 +66,14 @@ public class UnallyPartyCommand {
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
 							String lowercaseInput = builder.getRemainingLowerCase();
-							return SharedSuggestionProvider.suggest(playerParty.getAllyPartiesStream()
+							Stream<IPartyAlly> partyAllyStream;
+							if(playerParty.getAllyCount() > 1024) {
+								IPartyAlly exactAlly = playerParty.getAlly(lowercaseInput);
+								partyAllyStream = Stream.ofNullable(exactAlly);
+							} else
+								partyAllyStream = playerParty.getAllyPartiesStream();
+							//probably not a good idea to let players spam something like this somewhat easily, so it's limited at 1024
+							return SharedSuggestionProvider.suggest(partyAllyStream
 									.map(IPartyAlly::getPartyId)
 									.map(partyManager::getPartyById)
 									.filter(Objects::nonNull)
