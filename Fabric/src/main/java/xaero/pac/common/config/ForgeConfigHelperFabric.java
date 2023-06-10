@@ -18,7 +18,7 @@
 
 package xaero.pac.common.config;
 
-import net.minecraftforge.api.ModLoadingContext;
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import xaero.pac.OpenPartiesAndClaims;
@@ -27,17 +27,17 @@ public class ForgeConfigHelperFabric implements IForgeConfigHelper {
 
 	@Override
 	public void registerServerConfig(ForgeConfigSpec spec) {
-		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
+		ForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
 	}
 
 	@Override
 	public void registerClientConfig(ForgeConfigSpec spec) {
-		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
+		ForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
 	}
 
 	@Override
 	public void registerCommonConfig(ForgeConfigSpec spec) {
-		ModLoadingContext.registerConfig(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
+		ForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
 	}
 
 }
