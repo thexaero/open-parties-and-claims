@@ -7,6 +7,10 @@ The mod's API allows other mods or plugins to easily interact with the parties a
 
 The mod is currently in beta. 
 
+# Dependencies
+
+When using Fabric or Quilt, this mod depends on the [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) (or the [Quilted Fabric API](https://www.curseforge.com/minecraft/mc-mods/qsl)) and the [Forge Config API Port](https://www.curseforge.com/minecraft/mc-mods/forge-config-api-port-fabric).
+
 # User Guide
 
 ## Playing
