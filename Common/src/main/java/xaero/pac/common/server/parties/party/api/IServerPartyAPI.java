@@ -116,6 +116,7 @@ public interface IServerPartyAPI<M extends IPartyMemberAPI, I extends IPartyPlay
 	 * @param username  the username of a party member, not null
 	 * @return the member info, null if doesn't exist
 	 */
+	@Nullable
 	public M getMemberInfo(@Nonnull String username);
 
 	/**
