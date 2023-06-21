@@ -258,7 +258,7 @@ public class CommonEvents {
 	}
 
 	protected boolean onEntityAttack(Player player, Entity target) {
-		if(target.getServer() == null)
+		if(target == null || target.getServer() == null)
 			return false;
 		boolean result = false;
 		if(!player.isSpectator()){
