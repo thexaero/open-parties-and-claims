@@ -78,7 +78,7 @@ public class ClientboundPacDimensionHandshakePacket {
 		public void accept(ClientboundPacDimensionHandshakePacket t) {
 			//OpenPartiesAndClaims.LOGGER.info("Received handshake for Open Parties and Claims!");
 			ClientLevel world = Minecraft.getInstance().level;
-			ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability((ClientLevel)world, ClientWorldCapabilityTypes.MAIN_CAP);
+			ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(world, ClientWorldCapabilityTypes.MAIN_CAP);
 			mainCap.getClientWorldDataInternal().setServerHasClaimsEnabled(t.claimsEnabled);
 			mainCap.getClientWorldDataInternal().setServerHasPartiesEnabled(t.partiesEnabled);
 			mainCap.getClientWorldDataInternal().setServerHasMod(true);

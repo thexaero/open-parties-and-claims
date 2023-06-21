@@ -411,7 +411,7 @@ function initializeCoreMod() {
                 var patchList = new InsnList()
                 patchList.add(new VarInsnNode(Opcodes.ALOAD, 1))
                 patchList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore',
-                        "onServerWorldInfo", "(Lnet/minecraft/world/entity/player/Player;)V"))
+                        "onServerWorldInfo", "(Lnet/minecraft/server/level/ServerPlayer;)V"))
                 instructions.insert(instructions.get(0), patchList)
                 return methodNode
             }

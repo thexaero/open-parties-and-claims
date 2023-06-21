@@ -168,7 +168,7 @@ public class CommonEvents {
 	}
 
 	public void onPlayerTick(boolean isTickStart, boolean isServerSide, Player player) throws Throwable {
-		if(isServerSide && isTickStart) {
+		if(isServerSide && isTickStart && player instanceof ServerPlayer) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(player.getServer());
 			if(serverData != null)
 				serverData.getPlayerTickHandler().onTick((ServerPlayer) player, serverData);
