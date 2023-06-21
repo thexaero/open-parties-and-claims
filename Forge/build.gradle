@@ -89,8 +89,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:architectury-419699:3824307")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
     compileOnly fg.deobf("curse.maven:ftblibrary-404465:3822758")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
-//    implementation fg.deobf("curse.maven:create-328085:3872145")//source: https://github.com/Creators-of-Create/Create
-//    implementation fg.deobf("curse.maven:flywheel-486392:3871082")//source: https://github.com/Jozufozu/Flywheel
+//    implementation fg.deobf("curse.maven:create-328085:4550986")//source: https://github.com/Creators-of-Create/Create
+//    implementation fg.deobf("curse.maven:flywheel-486392:4341461")//source: https://github.com/Jozufozu/Flywheel
 //    implementation fg.deobf("curse.maven:cctweaked-282001:4061947")//source: https://github.com/cc-tweaked/CC-Tweaked
 }
 

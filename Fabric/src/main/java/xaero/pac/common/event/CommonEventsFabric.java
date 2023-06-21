@@ -148,7 +148,7 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	private InteractionResult onLeftClickBlock(Player player, Level level, InteractionHand interactionHand, BlockPos blockPos, Direction direction) {
-		if(super.onLeftClickBlock(level instanceof ServerLevel, level, blockPos, player))
+		if(super.onLeftClickBlock(level, blockPos, player))
 			return InteractionResult.FAIL;
 		return InteractionResult.PASS;
 	}
@@ -160,14 +160,14 @@ public class CommonEventsFabric extends CommonEvents {
 	private InteractionResult onRightClickBlock(Player player, Level level, InteractionHand interactionHand, BlockHitResult blockHitResult) {
 		if(player.isSpectator())
 			return InteractionResult.PASS;
-		if(super.onRightClickBlock(level instanceof ServerLevel, level, blockHitResult.getBlockPos(), player, interactionHand, blockHitResult))
+		if(super.onRightClickBlock(level, blockHitResult.getBlockPos(), player, interactionHand, blockHitResult))
 			return InteractionResult.FAIL;
 		return InteractionResult.PASS;
 	}
 
 	private InteractionResultHolder<ItemStack> onItemRightClick(Player player, Level level, InteractionHand interactionHand) {
 		ItemStack stack = player.getItemInHand(interactionHand);
-		if(super.onItemRightClick(level instanceof ServerLevel, level, player.blockPosition(), player, interactionHand, stack))
+		if(super.onItemRightClick(level, player.blockPosition(), player, interactionHand, stack))
 			return InteractionResultHolder.fail(stack);
 		return InteractionResultHolder.pass(stack);
 	}
@@ -198,13 +198,13 @@ public class CommonEventsFabric extends CommonEvents {
 		return super.onChorusFruit(entity, target);
 	}
 
-	public boolean onEntityJoinWorld(Entity entity, Level world, boolean fromDisk){
+	public boolean onEntityJoinWorld(Entity entity, Level level, boolean fromDisk){
 		if(!fromDisk && entity.tickCount == 0) {//is being spawned
-			MobSpawnType mobSpawnType = ServerCoreFabric.getMobSpawnTypeForNewEntities(world.getServer());
+			MobSpawnType mobSpawnType = ServerCoreFabric.getMobSpawnTypeForNewEntities(entity.getServer());
 			if(mobSpawnType != null)
 				return super.onMobSpawn(entity, entity.getX(), entity.getY(), entity.getZ(), mobSpawnType);
 		}
-		return super.onEntityJoinWorld(entity, world, fromDisk);
+		return super.onEntityJoinWorld(entity, level, fromDisk);
 	}
 
 	public void onEntityEnteringSection(Entity entity, long oldSectionKey, long newSectionKey){
@@ -222,8 +222,8 @@ public class CommonEventsFabric extends CommonEvents {
 		return super.onCropTrample(entity, pos);
 	}
 
-	public boolean onBucketUse(Entity entity, Level world, HitResult hitResult, ItemStack itemStack){
-		return super.onBucketUse(entity, world, hitResult, itemStack);
+	public boolean onBucketUse(Entity entity, Level level, HitResult hitResult, ItemStack itemStack){
+		return super.onBucketUse(entity, level, hitResult, itemStack);
 	}
 
 	public void onTagsUpdate() {

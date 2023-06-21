@@ -147,10 +147,10 @@ function transformCreateBreakerMovementBehaviour(methodNode){
     var insnToInsertGetter = function() {
         var insnToInsert = new InsnList()
         insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))//movement context
-        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'world', 'Lnet/minecraft/world/level/Level;'))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/behaviour/MovementContext', 'world', 'Lnet/minecraft/world/level/Level;'))
         insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'contraption', 'Lcom/simibubi/create/content/contraptions/components/structureMovement/Contraption;'))
-        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/behaviour/MovementContext', 'contraption', 'Lcom/simibubi/create/content/contraptions/Contraption;'))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
         insnToInsert.add(getCreateModBlockBreakHandlerInsn())
         return insnToInsert
     }
@@ -159,7 +159,7 @@ function transformCreateBreakerMovementBehaviour(methodNode){
 }
 
 function transformCreateSymmetryWandApply(methodNode){
-    var invokeTargetClass = 'com/simibubi/create/content/curiosities/symmetry/mirror/SymmetryMirror'
+    var invokeTargetClass = 'com/simibubi/create/content/equipment/symmetryWand/mirror/SymmetryMirror'
     var invokeTargetName = 'process'
     var invokeTargetNameObf = invokeTargetName
     var invokeTargetDesc = '(Ljava/util/Map;)V'
@@ -192,8 +192,8 @@ function transformCreateCollideEntities(methodNode){
         insnToInsert.add(new InsnNode(Opcodes.DUP))
         insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
         insnToInsert.add(new InsnNode(Opcodes.DUP))
-        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/AbstractContraptionEntity', 'contraption', 'Lcom/simibubi/create/content/contraptions/components/structureMovement/Contraption;'))
-        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/AbstractContraptionEntity', 'contraption', 'Lcom/simibubi/create/content/contraptions/Contraption;'))
+        insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
         insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onCreateCollideEntities', '(Ljava/util/List;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/core/BlockPos;)V'))
         return insnToInsert
     }
@@ -206,7 +206,7 @@ function transformCreateMechArmSearch(methodNode, listFieldName) {
     var insnToInsert = new InsnList()
     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
     insnToInsert.add(new InsnNode(Opcodes.DUP))
-    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/logistics/block/mechanicalArm/ArmTileEntity', listFieldName, 'Ljava/util/List;'))
+    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/kinetics/mechanicalArm/ArmBlockEntity', listFieldName, 'Ljava/util/List;'))
     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateMechanicalArmValid', '(Lnet/minecraft/world/level/block/entity/BlockEntity;Ljava/util/List;)Z'))
     insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
     insnToInsert.add(new InsnNode(Opcodes.RETURN))
@@ -566,7 +566,7 @@ function initializeCoreMod() {
         'xaero_pac_create_contraption_movementallowed': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.Contraption',
+                'class': 'com.simibubi.create.content.contraptions.Contraption',
                 'methodName': 'movementAllowed',
                 'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z'
             },
@@ -576,7 +576,7 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateModAllowed', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Z'))
                 insnToInsert.add(new InsnNode(Opcodes.DUP))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
@@ -590,16 +590,16 @@ function initializeCoreMod() {
         'xaero_pac_create_contraption_addblockstoworld': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.Contraption',
+                'class': 'com.simibubi.create.content.contraptions.Contraption',
                 'methodName': 'addBlocksToWorld',
-                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/contraptions/components/structureMovement/StructureTransform;)V'
+                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/contraptions/StructureTransform;)V'
             },
             'transformer' : function(methodNode){
                 var insnToInsertBeforeGetter = function() {
                     var insnToInsertBefore = new InsnList()
                     insnToInsertBefore.add(new VarInsnNode(Opcodes.ALOAD, 1))
                     insnToInsertBefore.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                    insnToInsertBefore.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                    insnToInsertBefore.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
                     insnToInsertBefore.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preCreateDisassembleSuperGlue', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'))
                     return insnToInsertBefore
                 }
@@ -618,7 +618,7 @@ function initializeCoreMod() {
                     var insnToInsert = new InsnList()
                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
                     insnToInsert.add(getCreateModBlockBreakHandlerInsn())
                     return insnToInsert
                 }
@@ -629,7 +629,7 @@ function initializeCoreMod() {
         'xaero_pac_create_blockbreakingkinetictileentity_tick': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.actors.BlockBreakingKineticTileEntity',
+                'class': 'com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity',
                 'methodName': 'tick',
                 'methodDesc' : '()V'
             },
@@ -641,7 +641,7 @@ function initializeCoreMod() {
                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                     insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'net/minecraft/world/level/block/entity/BlockEntity', isObfuscated? 'f_58857_' : 'level', 'Lnet/minecraft/world/level/Level;'))
                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/base/KineticTileEntity', 'source', 'Lnet/minecraft/core/BlockPos;'))
+                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/kinetics/base/KineticBlockEntity', 'source', 'Lnet/minecraft/core/BlockPos;'))
                     insnToInsert.add(getCreateModBlockBreakHandlerInsn())
                     return insnToInsert
                 }
@@ -652,9 +652,9 @@ function initializeCoreMod() {
         'xaero_pac_create_blockbreakingmovementbehaviour_tickbreaker': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.actors.BlockBreakingMovementBehaviour',
+                'class': 'com.simibubi.create.content.kinetics.base.BlockBreakingMovementBehaviour',
                 'methodName': 'tickBreaker',
-                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/MovementContext;)V'
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/behaviour/MovementContext;)V'
             },
             'transformer' : function(methodNode){
                 transformCreateBreakerMovementBehaviour(methodNode)
@@ -664,9 +664,9 @@ function initializeCoreMod() {
         'xaero_pac_create_harvestermovementbehaviour_tickbreaker': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.actors.HarvesterMovementBehaviour',
+                'class': 'com.simibubi.create.content.contraptions.actors.harvester.HarvesterMovementBehaviour',
                 'methodName': 'visitNewPosition',
-                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/MovementContext;Lnet/minecraft/core/BlockPos;)V'
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/behaviour/MovementContext;Lnet/minecraft/core/BlockPos;)V'
             },
             'transformer' : function(methodNode){
                 transformCreateBreakerMovementBehaviour(methodNode)//same exact transformation works here too
@@ -676,7 +676,7 @@ function initializeCoreMod() {
         'xaero_pac_create_symmetrywanditem_apply': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.curiosities.symmetry.SymmetryWandItem',
+                'class': 'com.simibubi.create.content.equipment.symmetryWand.SymmetryWandItem',
                 'methodName': 'apply',
                 'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V'
             },
@@ -688,7 +688,7 @@ function initializeCoreMod() {
         'xaero_pac_create_symmetrywanditem_remove': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.curiosities.symmetry.SymmetryWandItem',
+                'class': 'com.simibubi.create.content.equipment.symmetryWand.SymmetryWandItem',
                 'methodName': 'remove',
                 'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;)V'
             },
@@ -700,7 +700,7 @@ function initializeCoreMod() {
         'xaero_pac_create_schematicannontileentity_tickprinter': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.schematics.block.SchematicannonTileEntity',
+                'class': 'com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity',
                 'methodName': 'tickPrinter',
                 'methodDesc' : '()V'
             },
@@ -714,7 +714,7 @@ function initializeCoreMod() {
                     var insnToInsert = new InsnList()
                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/schematics/block/SchematicannonTileEntity', 'printer', 'Lcom/simibubi/create/content/schematics/SchematicPrinter;'))
+                    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/schematics/cannon/SchematicannonBlockEntity', 'printer', 'Lcom/simibubi/create/content/schematics/SchematicPrinter;'))
                     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, 'com/simibubi/create/content/schematics/SchematicPrinter', 'getCurrentTarget', '()Lnet/minecraft/core/BlockPos;'))
                     insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'canCreateCannonPlaceBlock', '(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/core/BlockPos;)Z'))
                     insnToInsert.add(new InsnNode(Opcodes.IAND))
@@ -727,9 +727,9 @@ function initializeCoreMod() {
         'xaero_pac_create_contraptioncollider_collideentities': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.ContraptionCollider',
+                'class': 'com.simibubi.create.content.contraptions.ContraptionCollider',
                 'methodName': 'collideEntities',
-                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/AbstractContraptionEntity;)V'
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/AbstractContraptionEntity;)V'
             },
             'transformer' : function(methodNode){
                 transformCreateCollideEntities(methodNode)
@@ -739,9 +739,9 @@ function initializeCoreMod() {
         'xaero_pac_create_contraptioncollider_collideblocks': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.ContraptionCollider',
+                'class': 'com.simibubi.create.content.contraptions.ContraptionCollider',
                 'methodName': 'collideBlocks',
-                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/AbstractContraptionEntity;)Z'
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/AbstractContraptionEntity;)Z'
             },
             'transformer' : function(methodNode){
                 transformCreateCollideEntities(methodNode)//same exact transformer works here too
@@ -751,7 +751,7 @@ function initializeCoreMod() {
         'xaero_pac_create_armtileentity_searchforitem': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.logistics.block.mechanicalArm.ArmTileEntity',
+                'class': 'com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity',
                 'methodName': 'searchForItem',
                 'methodDesc' : '()V'
             },
@@ -763,7 +763,7 @@ function initializeCoreMod() {
         'xaero_pac_create_armtileentity_searchfordestination': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.logistics.block.mechanicalArm.ArmTileEntity',
+                'class': 'com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity',
                 'methodName': 'searchForDestination',
                 'methodDesc' : '()V'
             },
@@ -775,7 +775,7 @@ function initializeCoreMod() {
 		'xaero_pac_create_arminteractionpoint': {
 			'target' : {
 				'type' : 'CLASS',
-				'name' : 'com.simibubi.create.content.logistics.block.mechanicalArm.ArmInteractionPoint'
+				'name' : 'com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPoint'
 			},
 			'transformer' : function(classNode){
 				var fields = classNode.fields
@@ -784,19 +784,87 @@ function initializeCoreMod() {
 				return classNode
 			}
 		},
-        'xaero_pac_create_tilentityconfigurationpacket_applySettings': {
+        'xaero_pac_create_tilentityconfigurationpacket_handle_lambda': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.foundation.networking.TileEntityConfigurationPacket',
-                'methodName': 'applySettings',
-                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;Lcom/simibubi/create/foundation/tileEntity/SyncedTileEntity;)V'
+                'class': 'com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket',
+                'methodName': 'lambda$handle$0',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
                 var insnToInsert = new InsnList()
-                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/foundation/networking/BlockEntityConfigurationPacket", "pos", "Lnet/minecraft/core/BlockPos;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/server/level/ServerPlayer;)Z'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_contraptioninteractionpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.sync.ContraptionInteractionPacket',
+                'methodName': 'lambda$handle$0',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "target", "I"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "interactionHand", "Lnet/minecraft/world/InteractionHand;"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateContraptionInteractionPacketAllowed', '(ILnet/minecraft/world/InteractionHand;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_trainrelocationpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.trains.entity.TrainRelocationPacket',
+                'methodName': 'lambda$handle$3',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/trains/entity/TrainRelocationPacket", "entityId", "I"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/trains/entity/TrainRelocationPacket", "pos", "Lnet/minecraft/core/BlockPos;"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateTrainRelocationPacketAllowed', '(ILnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_controlsinputpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.contraptions.actors.trainControls.ControlsInputPacket',
+                'methodName': 'lambda$handle$0',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/actors/trainControls/ControlsInputPacket", "contraptionEntityId", "I"))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateTrainControlsPacketAllowed', '(ILnet/minecraftforge/network/NetworkEvent$Context;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
@@ -807,18 +875,18 @@ function initializeCoreMod() {
         'xaero_pac_create_deployermovementbehaviour_activate': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.deployer.DeployerMovementBehaviour',
+                'class': 'com.simibubi.create.content.kinetics.deployer.DeployerMovementBehaviour',
                 'methodName': 'activate',
-                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/components/structureMovement/MovementContext;Lnet/minecraft/core/BlockPos;Lcom/simibubi/create/content/contraptions/components/deployer/DeployerFakePlayer;Lcom/simibubi/create/content/contraptions/components/deployer/DeployerTileEntity$Mode;)V'
+                'methodDesc' : '(Lcom/simibubi/create/content/contraptions/behaviour/MovementContext;Lnet/minecraft/core/BlockPos;Lcom/simibubi/create/content/kinetics/deployer/DeployerFakePlayer;Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity$Mode;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))//movement context
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'world', 'Lnet/minecraft/world/level/Level;'))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/behaviour/MovementContext', 'world', 'Lnet/minecraft/world/level/Level;'))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/MovementContext', 'contraption', 'Lcom/simibubi/create/content/contraptions/components/structureMovement/Contraption;'))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/components/structureMovement/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/behaviour/MovementContext', 'contraption', 'Lcom/simibubi/create/content/contraptions/Contraption;'))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, 'com/simibubi/create/content/contraptions/Contraption', 'anchor', 'Lnet/minecraft/core/BlockPos;'))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isCreateDeployerBlockInteractionAllowed', '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
@@ -831,7 +899,7 @@ function initializeCoreMod() {
         'xaero_pac_create_deployertilentity_activate': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.deployer.DeployerTileEntity',
+                'class': 'com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity',
                 'methodName': 'activate',
                 'methodDesc' : '()V'
             },
@@ -850,7 +918,7 @@ function initializeCoreMod() {
         'xaero_pac_create_superglueselectionpacket_handle_lambda': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueSelectionPacket',
+                'class': 'com.simibubi.create.content.contraptions.glue.SuperGlueSelectionPacket',
                 'methodName': 'lambda$handle$0',
                 'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
             },
@@ -858,9 +926,9 @@ function initializeCoreMod() {
                 var MY_LABEL = new LabelNode(new Label())
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueSelectionPacket", "from", "Lnet/minecraft/core/BlockPos;"))
+	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/glue/SuperGlueSelectionPacket", "from", "Lnet/minecraft/core/BlockPos;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueSelectionPacket", "to", "Lnet/minecraft/core/BlockPos;"))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/glue/SuperGlueSelectionPacket", "to", "Lnet/minecraft/core/BlockPos;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateGlueSelectionAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
@@ -873,7 +941,7 @@ function initializeCoreMod() {
         'xaero_pac_create_superglueremovalpacket_handle_lambda': {
             'target' : {
                 'type': 'METHOD',
-                'class': 'com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueRemovalPacket',
+                'class': 'com.simibubi.create.content.contraptions.glue.SuperGlueRemovalPacket',
                 'methodName': 'lambda$handle$0',
                 'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
             },
@@ -881,7 +949,7 @@ function initializeCoreMod() {
                 var MY_LABEL = new LabelNode(new Label())
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/components/structureMovement/glue/SuperGlueRemovalPacket", "entityId", "I"))
+	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/glue/SuperGlueRemovalPacket", "entityId", "I"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateGlueRemovalAllowed', '(ILnet/minecraftforge/network/NetworkEvent$Context;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))

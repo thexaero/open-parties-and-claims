@@ -19,6 +19,8 @@
 package xaero.pac.common.server.core;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.network.NetworkEvent;
 
 public class ServerCoreForge {
@@ -30,4 +32,24 @@ public class ServerCoreForge {
 	public static boolean isCreateGlueRemovalAllowed(int entityId, NetworkEvent.Context ctx){
 		return ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender());
 	}
+
+	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, NetworkEvent.Context ctx){
+		ServerPlayer player = ctx.getSender();
+		if (player == null)
+			return true;
+		return ServerCore.isCreateTileEntityPacketAllowed(pos, player);
+	}
+
+	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, NetworkEvent.Context ctx){
+		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, ctx.getSender());
+	}
+
+	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, NetworkEvent.Context ctx){
+		return ServerCore.isCreateTrainRelocationPacketAllowed(contraptionId, pos, ctx.getSender());
+	}
+
+	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, NetworkEvent.Context ctx){
+		return ServerCore.isCreateTrainControlsPacketAllowed(contraptionId, ctx.getSender());
+	}
+
 }
