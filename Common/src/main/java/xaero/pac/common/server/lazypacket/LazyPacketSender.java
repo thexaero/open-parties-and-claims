@@ -23,6 +23,8 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.LazyPacketsConfirmationPacket;
 
+import java.util.UUID;
+
 public class LazyPacketSender {//sends packets over time with no unnecessary rushing
 	
 	private final static LazyPacketsConfirmationPacket CONFIRMATION_PACKET = new LazyPacketsConfirmationPacket();
@@ -43,9 +45,13 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 		this.capacity = capacity;
 		this.bytesPerConfirmation = bytesPerConfirmation;
 	}
-	
+
 	public void clearForPlayer(ServerPlayer player) {
-		manager.clearForPlayer(player);
+		clearForPlayer(player, player.getUUID());
+	}
+
+	public void clearForPlayer(ServerPlayer player, UUID playerId) {
+		manager.clearForPlayer(player, playerId);
 	}
 	
 	public void enqueue(ServerPlayer player, LazyPacket<?, ?> packet) {
@@ -70,6 +76,12 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 			LazyPacket<?, ?> packet = playerPackets.getNext();
 			bytesSent += packet.getPreparedSize();
 			ServerPlayer player = server.getPlayerList().getPlayer(playerPackets.getPlayerId());
+			if(player == null){
+				//player disappeared without clearing packets
+				//happens after crashes unrelated to this mod prevent certain events from firing
+				clearForPlayer(null, playerPackets.getPlayerId());
+				continue;
+			}
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 			
 			manager.countSentBytes(packet);
