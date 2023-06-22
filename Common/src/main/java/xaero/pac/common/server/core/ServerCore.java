@@ -25,7 +25,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -91,7 +90,7 @@ import java.util.function.Function;
 
 public class ServerCore {
 
-	private static final Component TRAIN_CONTROLS_MESSAGE = new TranslatableComponent("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private static final Component TRAIN_CONTROLS_MESSAGE = Component.translatable("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	public static void onServerTickStart(MinecraftServer server) {
 		OpenPartiesAndClaims.INSTANCE.startupCrashHandler.check();
@@ -314,7 +313,7 @@ public class ServerCore {
 		Entity contraption = player.getLevel().getEntity(contraptionId);
 		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, null, player, contraption, null, null, false, false);
 		if(shouldProtect)
-			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, TRAIN_CONTROLS_MESSAGE), player.getUUID());
+			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, TRAIN_CONTROLS_MESSAGE));
 		return !shouldProtect;
 	}
 
