@@ -627,8 +627,7 @@ public class ChunkProtection
 		InteractionTargetResult result = blockAccessCheck(block, config, entity, accessor, accessorId, emptyHand, leftClick);
 		if(result == InteractionTargetResult.PROTECT) {
 			if(messages && entity instanceof ServerPlayer player) {
-				if(hand != null)
-					player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == null ? CANT_INTERACT_BLOCK : hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF));
+				player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == null ? CANT_INTERACT_BLOCK : hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF));
 				if (message != null)
 					player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, message));
 			}
