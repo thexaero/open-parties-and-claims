@@ -86,8 +86,12 @@ public class CommonEvents {
 	public CommonEvents(OpenPartiesAndClaims modMain) {
 		this.modMain = modMain;
 		try {
-			this.createSuperGlueEntityClass = Class.forName("com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueEntity");
+			this.createSuperGlueEntityClass = Class.forName("com.simibubi.create.content.contraptions.glue.SuperGlueEntity");
 		} catch (ClassNotFoundException ignored) {
+			try {
+				this.createSuperGlueEntityClass = Class.forName("com.simibubi.create.content.contraptions.components.structureMovement.glue.SuperGlueEntity");
+			} catch (ClassNotFoundException ignored1) {
+			}
 		}
 	}
 
