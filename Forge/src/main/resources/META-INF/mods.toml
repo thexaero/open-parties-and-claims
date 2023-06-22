@@ -30,3 +30,9 @@ Xaero's Minimap mod and World Map mods are recommended in order to fully experie
     versionRange="(1.19.4,1.21)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.openpartiesandclaims]]
+    modId="create"
+    mandatory=false
+    versionRange="[0.5.1.b,)"
+    ordering="NONE"
+    side="BOTH"

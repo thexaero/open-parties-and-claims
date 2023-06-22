@@ -129,7 +129,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-		if(super.onLeftClickBlock(event.getSide() == LogicalSide.SERVER, event.getLevel(), event.getPos(), event.getEntity()))
+		if(super.onLeftClickBlock(event.getLevel(), event.getPos(), event.getEntity()))
 			event.setCanceled(true);
 	}
 
@@ -141,13 +141,13 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		if(super.onRightClickBlock(event.getSide() == LogicalSide.SERVER, event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getHitVec()))
+		if(super.onRightClickBlock(event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getHitVec()))
 			event.setCanceled(true);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-		if(super.onItemRightClick(event.getSide() == LogicalSide.SERVER, event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getItemStack()))
+		if(super.onItemRightClick(event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getItemStack()))
 			event.setCanceled(true);
 	}
 

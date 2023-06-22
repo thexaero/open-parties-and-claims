@@ -89,7 +89,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:architectury-419699:3893635")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
     compileOnly fg.deobf("curse.maven:ftblibrary-404465:3890137")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
-    //implementation fg.deobf("curse.maven:create-328085:4007550")//source: https://github.com/Creators-of-Create/Create
+    //implementation fg.deobf("curse.maven:create-328085:4550987")//source: https://github.com/Creators-of-Create/Create
 }
 
 tasks.withType(JavaCompile) {
