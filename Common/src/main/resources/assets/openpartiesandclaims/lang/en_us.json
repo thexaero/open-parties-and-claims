@@ -147,9 +147,11 @@
 	"gui.xaero_pac_config_sub_list_separator" : ", ",
 	"gui.xaero_pac_config_sub_list_there_is_more" : "...",
 
+	"gui.xaero_claims_protection_interact_block_any" : "You are not allowed to interact with this block!",
 	"gui.xaero_claims_protection_interact_block" : "(%1$s) You are not allowed to interact with this block!",
 	"gui.xaero_claims_protection_interact_block_try_empty" : "(%1$s) It might work if you try again empty-handed.",
 	"gui.xaero_claims_protection_block_disabled" : "Interaction with this block is disabled on the server.",
+	"gui.xaero_claims_protection_interact_entity_any" : "You are not allowed to interact with this entity in this chunk!",
 	"gui.xaero_claims_protection_interact_entity" : "(%1$s) You are not allowed to interact with this entity in this chunk!",
 	"gui.xaero_claims_protection_interact_entity_try_empty" : "(%1$s) It might work if you try again empty-handed.",
 	"gui.xaero_claims_protection_entity_disabled" : "Interaction with this entity is disabled on the server.",
@@ -162,7 +164,8 @@
 	"gui.xaero_claims_protection_off_hand" : "Off Hand",
 	"gui.xaero_claims_protection_create_cant_use_glue" : "You are not allowed to glue some (or all) of the selected.",
 	"gui.xaero_claims_protection_create_cant_remove_glue" : "You are not allowed to remove glue from some (or all) of the claims that contain this glue selection.",
-	
+	"gui.xaero_claims_protection_create_train_controls_protected" : "You are not allowed to control this train! Press ESCAPE to free yourself.",
+
 	"gui.xaero_pac_title_entered_wilderness" : "Wilderness",
 	"gui.xaero_pac_title_entered_claim" : "%1$s's Claim%2$s",
 	"gui.xaero_pac_title_entered_server_claim" : "Server Claim%1$s",
