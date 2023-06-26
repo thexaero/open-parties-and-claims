@@ -58,7 +58,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.event.api.OPACAddonRegister;
+import xaero.pac.common.event.api.OPACServerAddonRegister;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -102,7 +102,7 @@ public class CommonEventsFabric extends CommonEvents {
 		UseBlockCallback.EVENT.register(PROTECTION_PHASE, this::onRightClickBlock);
 		UseItemCallback.EVENT.register(PROTECTION_PHASE, this::onItemRightClick);
 		AttackEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityAttack);
-		OPACAddonRegister.EVENT.register(this::onAddonRegister);
+		OPACServerAddonRegister.EVENT.register(this::onAddonRegister);
 	}
 
 	@Override
@@ -246,7 +246,7 @@ public class CommonEventsFabric extends CommonEvents {
 
 	@Override
 	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		OPACAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager());
+		OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getServerClaimsManager().getTracker());
 	}
 
 }

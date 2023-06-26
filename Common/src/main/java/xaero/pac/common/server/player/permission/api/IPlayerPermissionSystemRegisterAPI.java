@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
  * The API for registering player permission system implementations.
  * <p>
  * Player permission system implementations must be registered during the
- * xaero.pac.common.event.OPACAddonRegister.EVENT on Fabric or OPACAddonRegisterEvent on Forge.
+ * xaero.pac.common.event.api.OPACServerAddonRegister.EVENT on Fabric or OPACServerAddonRegisterEvent on Forge.
  */
 public interface IPlayerPermissionSystemRegisterAPI {
 

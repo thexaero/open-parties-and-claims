@@ -49,6 +49,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.entity.IEntity;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -480,7 +481,7 @@ public abstract class CommonEvents {
 		}
 	}
 
-	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI){
+	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
 		//built-in "addons"
 		if(modMain.getModSupport().FTB_RANKS)
 			permissionSystemManagerAPI.register("ftb_ranks", modMain.getModSupport().getFTBRanksSupport().getPermissionSystem());

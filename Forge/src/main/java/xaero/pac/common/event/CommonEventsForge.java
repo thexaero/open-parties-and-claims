@@ -52,7 +52,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.event.api.OPACAddonRegisterEvent;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -259,13 +259,13 @@ public class CommonEventsForge extends CommonEvents {
 	}
 
 	@SubscribeEvent
-	public void onAddonRegister(OPACAddonRegisterEvent event){
-		super.onAddonRegister(event.getServer(), event.getPermissionSystemManager());
+	public void onAddonRegister(OPACServerAddonRegisterEvent event){
+		super.onAddonRegister(event.getServer(), event.getPermissionSystemManager(), event.getClaimsManagerTrackerAPI());
 	}
 
 	@Override
 	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		MinecraftForge.EVENT_BUS.post(new OPACAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager()));
+		MinecraftForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getServerClaimsManager().getTracker()));
 	}
 
 }

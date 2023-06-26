@@ -34,7 +34,9 @@ public class LoadClientForge extends LoadCommonForge<LoadClient> {
 	@SubscribeEvent
 	public void loadClient(final FMLClientSetupEvent event) {
 		loader.loadClient();
-		MinecraftForge.EVENT_BUS.register(ClientEventsForge.Builder.begin().setClientData(modMain.getClientDataInternal()).build());
+		ClientEventsForge clientEventsForge = ClientEventsForge.Builder.begin().setClientData(modMain.getClientDataInternal()).build();
+		MinecraftForge.EVENT_BUS.register(clientEventsForge);
+		modMain.setClientEventsForge(clientEventsForge);
 	}
 
 }

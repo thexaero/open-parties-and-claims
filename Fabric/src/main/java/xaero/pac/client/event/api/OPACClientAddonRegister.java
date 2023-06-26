@@ -16,20 +16,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.event.api;
+package xaero.pac.client.event.api;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.MinecraftServer;
-import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
+import xaero.pac.client.claims.tracker.result.api.IClaimsManagerClaimResultTrackerRegisterAPI;
+import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 
-public interface OPACAddonRegister {
+public interface OPACClientAddonRegister {
 
-	public static final Event<OPACAddonRegister> EVENT = EventFactory.createArrayBacked(OPACAddonRegister.class, (callbacks) -> (server, permissionSystemManagerAPI) -> {
-		for (OPACAddonRegister callback : callbacks)
-			callback.registerAddons(server, permissionSystemManagerAPI);
+	public static final Event<OPACClientAddonRegister> EVENT = EventFactory.createArrayBacked(OPACClientAddonRegister.class, (callbacks) -> (claimsManagerTrackerAPI, claimsManagerClaimResultTrackerAPI) -> {
+		for (OPACClientAddonRegister callback : callbacks)
+			callback.registerAddons(claimsManagerTrackerAPI, claimsManagerClaimResultTrackerAPI);
 	});
 
-	void registerAddons(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI);
+	void registerAddons(IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI, IClaimsManagerClaimResultTrackerRegisterAPI claimsManagerClaimResultTrackerAPI);
 
 }

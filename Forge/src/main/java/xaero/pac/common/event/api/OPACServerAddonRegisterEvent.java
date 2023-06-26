@@ -20,16 +20,19 @@ package xaero.pac.common.event.api;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.eventbus.api.Event;
+import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
-public class OPACAddonRegisterEvent extends Event {
+public class OPACServerAddonRegisterEvent extends Event {
 
 	private final MinecraftServer server;
 	private final IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI;
+	private final IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI;
 
-	public OPACAddonRegisterEvent(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI) {
+	public OPACServerAddonRegisterEvent(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI) {
 		this.server = server;
 		this.permissionSystemManagerAPI = permissionSystemManagerAPI;
+		this.claimsManagerTrackerAPI = claimsManagerTrackerAPI;
 	}
 
 	public MinecraftServer getServer() {
@@ -38,6 +41,10 @@ public class OPACAddonRegisterEvent extends Event {
 
 	public IPlayerPermissionSystemRegisterAPI getPermissionSystemManager() {
 		return permissionSystemManagerAPI;
+	}
+
+	public IClaimsManagerTrackerRegisterAPI getClaimsManagerTrackerAPI() {
+		return claimsManagerTrackerAPI;
 	}
 
 }
