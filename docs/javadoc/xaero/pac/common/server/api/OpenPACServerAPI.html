@@ -79,6 +79,9 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">This is the main server-side API access point. You can get the instance with <a href="#get(net.minecraft.server.MinecraftServer)"><code>get(MinecraftServer)</code></a>.
  <p>
+ For functionality that requires registering handlers/listeners, it is often required or recommended to
+ do so during the OPACServerAddonRegister.EVENT on Fabric or the OPACServerAddonRegisterEvent on Forge.
+ <p>
  Additionally, to access some data attached to online server players,
  use <a href="../player/data/api/ServerPlayerDataAPI.html#from(net.minecraft.server.level.ServerPlayer)"><code>ServerPlayerDataAPI.from(ServerPlayer)</code></a>. You probably won't need that though.</div>
 </section>
