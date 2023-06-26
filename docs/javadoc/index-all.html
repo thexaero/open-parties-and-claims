@@ -613,6 +613,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the ID of this option.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getIntPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">getIntPermission(ServerPlayer, String)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
+<dd>
+<div class="block">Gets the value of an integer permission for a specified player.</div>
+</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#getInviteCount()" class="member-name-link">getInviteCount()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/parties/party/api/IPartyAPI.html#getInviteCount()" class="member-name-link">getInviteCount()</a> - Method in interface xaero.pac.common.parties.party.api.<a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyAPI</a></dt>
@@ -774,6 +778,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getPath()" class="member-name-link">getPath()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
 <div class="block">Gets the path of this option, which is just the ID from <a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getId()"><code>IPlayerConfigOptionSpecAPI.getId()</code></a> but separated into elements.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">getPermission(ServerPlayer, String)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
+<dd>
+<div class="block">Gets the value of a boolean permission for a specified player.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerBaseClaimLimit(java.util.UUID)" class="member-name-link">getPlayerBaseClaimLimit(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
@@ -1318,6 +1326,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for dimension claims of a player</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a> - Interface in <a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a></dt>
+<dd>
+<div class="block">The interface to be overridden by addons that wish to implement additional permission systems to be used
+ by Open Parties and Claims.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemRegisterAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemRegisterAPI</a> - Interface in <a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a></dt>
+<dd>
+<div class="block">The API for registering player permission system implementations.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/api/IRegionClaimsAPI.html" class="type-name-link" title="interface in xaero.pac.common.claims.api">IRegionClaimsAPI</a> - Interface in <a href="xaero/pac/common/claims/api/package-summary.html">xaero.pac.common.claims.api</a></dt>
 <dd>
 <div class="block">API for region claims</div>
@@ -1808,6 +1825,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the player receives the in-game locations shared by their party's mutual allies.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemRegisterAPI.html#register(java.lang.String,xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI)" class="member-name-link">register(String, IPlayerPermissionSystemAPI)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemRegisterAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemRegisterAPI</a></dt>
+<dd>
+<div class="block">Registers a player permission system implementation to be available to OPAC
+ under a specified name.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html#register(xaero.pac.client.claims.tracker.result.api.IClaimsManagerClaimResultListenerAPI)" class="member-name-link">register(IClaimsManagerClaimResultListenerAPI)</a> - Method in interface xaero.pac.client.claims.tracker.result.api.<a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api">IClaimsManagerClaimResultTrackerAPI</a></dt>
 <dd>
 <div class="block">Registers a claim result listener.</div>
@@ -2102,6 +2124,8 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/server/player/data/api/package-summary.html">xaero.pac.common.server.player.data.api</a> - package xaero.pac.common.server.player.data.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/localization/api/package-summary.html">xaero.pac.common.server.player.localization.api</a> - package xaero.pac.common.server.player.localization.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a> - package xaero.pac.common.server.player.permission.api</dt>
 <dd>&nbsp;</dd>
 </dl>
 <a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:X">X</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
