@@ -18,18 +18,18 @@
 
 package xaero.pac.common.mods;
 
-import xaero.pac.common.server.player.permission.IPlayerFTBPermissionHelper;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
 public class FTBRanks {
 
-	private final IPlayerFTBPermissionHelper permissionHelper;
+	private final IPlayerPermissionSystemAPI permissionSystem;
 
-	public FTBRanks(IPlayerFTBPermissionHelper permissionHelper) {
-		this.permissionHelper = permissionHelper;
+	public FTBRanks(IPlayerPermissionSystemAPI permissionSystem) {
+		this.permissionSystem = permissionSystem;
 	}
 
-	public IPlayerFTBPermissionHelper getPermissionHelper() {
-		return permissionHelper;
+	public IPlayerPermissionSystemAPI getPermissionSystem() {
+		return permissionSystem;
 	}
 
 }

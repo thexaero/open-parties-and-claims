@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,14 +18,18 @@
 
 package xaero.pac.common.server.player.permission;
 
-import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
-import java.util.OptionalInt;
+public interface IPlayerPermissionSystemManager extends IPlayerPermissionSystemRegisterAPI {
 
-public interface IPlayerFTBPermissionHelper {
+	//internal api
+	void preRegister();
+	void postRegister();
+	void updateUsedSystem(String configuredName);
 
-	public OptionalInt getIntPermission(ServerPlayer player, String node);
+	Iterable<String> getRegisteredNames();
 
-	public boolean getPermission(ServerPlayer player, String node);
+	IPlayerPermissionSystemAPI getUsedSystem();
 
 }
