@@ -21,7 +21,7 @@ package xaero.pac.common.server.player.permission;
 import net.minecraft.network.chat.Component;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class PermissionNode implements IPermissionNodeAPI {
@@ -32,13 +32,13 @@ public class PermissionNode implements IPermissionNodeAPI {
 	private final Component comment;
 	private final Supplier<String> nodeStringSupplier;
 
-	public PermissionNode(String defaultNode, boolean isInt, Supplier<String> nodeStringSupplier, Component name, Component comment, Set<IPermissionNodeAPI> all) {
+	public PermissionNode(String defaultNode, boolean isInt, Supplier<String> nodeStringSupplier, Component name, Component comment, Map<String, IPermissionNodeAPI> all) {
 		this.defaultNode = defaultNode;
 		this.isInt = isInt;
 		this.nodeStringSupplier = nodeStringSupplier;
 		this.name = name;
 		this.comment = comment;
-		all.add(this);
+		all.put(defaultNode, this);
 	}
 
 	@Override
