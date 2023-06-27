@@ -33,6 +33,7 @@ import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -133,19 +134,18 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		toSave.remove(playerInfo);
 	}
 
-	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, ForgeConfigSpec.ConfigValue<String> permissionNodeConfig){
+	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, IPermissionNodeAPI permissionNode){
 		IPlayerPermissionSystemAPI permissionSystem = claimsManager.getPermissionHandler().getSystem();
 		int defaultLimit = limitConfig.get();
 		if(permissionSystem == null)
 			return defaultLimit;
-		String ftbRanksPermission = permissionNodeConfig.get();
-		if(ftbRanksPermission == null || ftbRanksPermission.isEmpty())
+		if(permissionNode == null || permissionNode.getNodeString().isEmpty())
 			return defaultLimit;
 		if(player == null)
 			player = server.getPlayerList().getPlayer(playerId);
 		if(player == null)
 			return defaultLimit;
-		return permissionSystem.getIntPermission(player, ftbRanksPermission).orElse(defaultLimit);
+		return permissionSystem.getIntPermission(player, permissionNode).orElse(defaultLimit);
 	}
 
 	@Override

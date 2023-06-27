@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.permission;
 
 import dev.ftb.mods.ftbranks.api.FTBRanksAPI;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
 import javax.annotation.Nonnull;
@@ -29,13 +30,16 @@ public class PlayerFTBPermissionHelperForge implements IPlayerPermissionSystemAP
 
 	@Nonnull
 	@Override
-	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull String node) {
-		return FTBRanksAPI.getPermissionValue(player, node).asInteger();
+	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
+		String nodeString = node.getNodeString();
+		if(nodeString.isEmpty())
+			return OptionalInt.empty();
+		return FTBRanksAPI.getPermissionValue(player, nodeString).asInteger();
 	}
 
 	@Override
-	public boolean getPermission(@Nonnull ServerPlayer player, @Nonnull String node) {
-		return FTBRanksAPI.getPermissionValue(player, node).asBooleanOrFalse();
+	public boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
+		return FTBRanksAPI.getPermissionValue(player, node.getNodeString()).asBooleanOrFalse();
 	}
 
 }
