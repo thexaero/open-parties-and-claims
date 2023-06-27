@@ -19,42 +19,45 @@
 package xaero.pac.common.server.player.permission.api;
 
 import net.minecraft.network.chat.Component;
+import com.google.common.collect.ImmutableMap;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.permission.PermissionNode;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class UsedPermissionNodes {
 
-	public static final Set<IPermissionNodeAPI> ALL = new LinkedHashSet<>();
+	private static final Map<String, IPermissionNodeAPI> ALL_BUILDER = new LinkedHashMap<>();
 	/*IntelliJ is wrong about the lambdas... Method references cause a crash here.*/
 	public static final IPermissionNodeAPI MAX_PLAYER_CLAIMS = new PermissionNode(
 			"xaero.pac_max_claims", true,
 			() -> ServerConfig.CONFIG.maxPlayerClaimsPermission.get(),
 			Component.translatable("gui.xaero_pac_permission_max_claims"),
 			Component.translatable("gui.xaero_pac_permission_comment_max_claims"),
-			ALL);
+			ALL_BUILDER);
 	public static final IPermissionNodeAPI MAX_PLAYER_FORCELOADS = new PermissionNode(
 			"xaero.pac_max_forceloads",
 			true,
 			() -> ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission.get(),
 			Component.translatable("gui.xaero_pac_permission_max_forceloads"),
 			Component.translatable("gui.xaero_pac_permission_comment_max_forceloads"),
-			ALL);
+			ALL_BUILDER);
 	public static final IPermissionNodeAPI SERVER_CLAIMS = new PermissionNode(
 			"xaero.pac_server_claims",
 			false,
 			() -> ServerConfig.CONFIG.serverClaimPermission.get(),
 			Component.translatable("gui.xaero_pac_permission_server_claims"),
 			Component.translatable("gui.xaero_pac_permission_comment_server_claims"),
-			ALL);
+			ALL_BUILDER);
 	public static final IPermissionNodeAPI ADMIN_MODE = new PermissionNode(
 			"xaero.pac_admin_mode",
 			false,
 			() -> ServerConfig.CONFIG.adminModePermission.get(),
 			Component.translatable("gui.xaero_pac_permission_admin_mode"),
 			Component.translatable("gui.xaero_pac_permission_comment_admin_mode"),
-			ALL);
+			ALL_BUILDER);
+
+	public static final ImmutableMap<String, IPermissionNodeAPI> ALL = ImmutableMap.copyOf(ALL_BUILDER);
 
 }
