@@ -35,19 +35,19 @@ public interface IPlayerPermissionSystemAPI {
 	 * Gets the value of an integer permission for a specified player.
 	 *
 	 * @param player  the player, not null
-	 * @param node  the String representation of the node of the permission, not null
+	 * @param node  the node of the permission from {@link UsedPermissionNodes}, not null
 	 * @return the OptionalInt for the int value of the permission, not null
 	 */
 	@Nonnull
-	OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull String node);
+	OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node);
 
 	/**
 	 * Gets the value of a boolean permission for a specified player.
 	 *
 	 * @param player  the player, not null
-	 * @param node  the String representation of the node of the permission, not null
+	 * @param node  the node of the permission from {@link UsedPermissionNodes}, not null
 	 * @return the boolean value of the permission, false if it doesn't exist
 	 */
-	boolean getPermission(@Nonnull ServerPlayer player, @Nonnull String node);
+	boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node);
 
 }

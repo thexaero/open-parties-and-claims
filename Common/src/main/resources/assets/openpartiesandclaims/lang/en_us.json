@@ -147,6 +147,15 @@
 	"gui.xaero_pac_config_sub_list_separator" : ", ",
 	"gui.xaero_pac_config_sub_list_there_is_more" : "...",
 
+	"gui.xaero_pac_permission_max_claims" : "Claim Limit",
+	"gui.xaero_pac_permission_max_forceloads" : "Forceload Limit",
+	"gui.xaero_pac_permission_server_claims" : "Server Claims",
+	"gui.xaero_pac_permission_admin_mode" : "Admin Mode",
+	"gui.xaero_pac_permission_comment_max_claims" : "The maximum number of claims that the player can own.",
+	"gui.xaero_pac_permission_comment_max_forceloads" : "The maximum number of chunks that the player can forceload.",
+	"gui.xaero_pac_permission_comment_server_claims" : "Player can add/remove server claims and enter server claim mode.",
+	"gui.xaero_pac_permission_comment_admin_mode" : "Player can enter admin mode.",
+
 	"gui.xaero_claims_protection_interact_block_any" : "You are not allowed to interact with this block!",
 	"gui.xaero_claims_protection_interact_block" : "(%1$s) You are not allowed to interact with this block!",
 	"gui.xaero_claims_protection_interact_block_try_empty" : "(%1$s) It might work if you try again empty-handed.",
