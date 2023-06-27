@@ -21,6 +21,7 @@ package xaero.pac.common.server.config;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
+import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +201,7 @@ public class ServerConfig {
 			.comment("The permission that should override the default \"maxPlayerClaims\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
-			.define("maxPlayerClaimsPermission", "xaero.pac_max_claims");
+			.define("maxPlayerClaimsPermission", UsedPermissionNodes.MAX_PLAYER_CLAIMS.getDefault());
 
 		maxPlayerClaimForceloadsPermission = builder
 			.comment("""
@@ -209,19 +210,19 @@ public class ServerConfig {
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
-			.define("maxPlayerClaimForceloadsPermission", "xaero.pac_max_forceloads");
+			.define("maxPlayerClaimForceloadsPermission", UsedPermissionNodes.MAX_PLAYER_FORCELOADS.getDefault());
 
 		serverClaimPermission = builder
 			.comment("The permission that gives non-OP players the ability to make server claims and enable server claim mode. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_server_claim_permission")
 			.worldRestart()
-			.define("serverClaimPermission", "xaero.pac_server_claims");
+			.define("serverClaimPermission", UsedPermissionNodes.SERVER_CLAIMS.getDefault());
 
 		adminModePermission = builder
 			.comment("The permission that gives non-OP players the ability to enable claim admin mode. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_admin_mode_permission")
 			.worldRestart()
-			.define("adminModePermission", "xaero.pac_admin_mode");
+			.define("adminModePermission", UsedPermissionNodes.ADMIN_MODE.getDefault());
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")
