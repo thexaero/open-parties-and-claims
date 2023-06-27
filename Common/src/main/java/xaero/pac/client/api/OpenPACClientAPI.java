@@ -49,6 +49,9 @@ import javax.annotation.Nullable;
 /**
  * This is the main client API access point. You can get the instance with {@link #get()}.
  * <p>
+ * For functionality that requires registering handlers/listeners, it is often required or recommended to
+ * do so during the OPACClientAddonRegister.EVENT on Fabric or the OPACClientAddonRegisterEvent on Forge.
+ * <p>
  * Make sure to check whether the server side has the mod installed with
  * <p>
  * {@code

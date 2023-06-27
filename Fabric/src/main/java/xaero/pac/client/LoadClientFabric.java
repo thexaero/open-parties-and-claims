@@ -34,7 +34,7 @@ public class LoadClientFabric extends LoadCommonFabric<LoadClient> {
 		((PacketHandlerFabric)modMain.getPacketHandler()).registerOnClient();
 		ClientEventsFabric clientEvents = ClientEventsFabric.Builder.begin().setClientData(modMain.getClientDataInternal()).build();
 		clientEvents.registerFabricAPIEvents();
-		((OpenPartiesAndClaimsFabric)modMain).setClientEvents(clientEvents);
+		modMain.setClientEvents(clientEvents);
 	}
 
 }

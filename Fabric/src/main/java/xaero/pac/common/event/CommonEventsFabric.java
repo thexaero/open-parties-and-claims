@@ -56,7 +56,20 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.event.api.OPACServerAddonRegister;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCoreFabric;
+import xaero.pac.common.server.parties.party.IServerParty;
 
 import java.util.List;
 
@@ -90,6 +103,7 @@ public class CommonEventsFabric extends CommonEvents {
 		UseBlockCallback.EVENT.register(PROTECTION_PHASE, this::onRightClickBlock);
 		UseItemCallback.EVENT.register(PROTECTION_PHASE, this::onItemRightClick);
 		AttackEntityCallback.EVENT.register(PROTECTION_PHASE, this::onEntityAttack);
+		OPACServerAddonRegister.EVENT.register(this::onAddonRegister);
 	}
 
 	@Override
@@ -230,6 +244,11 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public void onTagsUpdate() {
 		super.onTagsUpdate();
+	}
+
+	@Override
+	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+		OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getServerClaimsManager().getTracker());
 	}
 
 }

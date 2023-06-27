@@ -16,16 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.permission;
+package xaero.pac.client.claims.tracker.result.api;
 
-import net.minecraft.server.level.ServerPlayer;
+import javax.annotation.Nonnull;
 
-import java.util.OptionalInt;
+/**
+ * API for a claim result tracker that lets you register listeners
+ */
+public interface IClaimsManagerClaimResultTrackerRegisterAPI {
 
-public interface IPlayerFTBPermissionHelper {
-
-	public OptionalInt getIntPermission(ServerPlayer player, String node);
-
-	public boolean getPermission(ServerPlayer player, String node);
-
+	/**
+	 * Registers a claim result listener.
+	 * <p>
+	 * You can create one by implementing {@link IClaimsManagerClaimResultListenerAPI}.
+	 * <p>
+	 * You are not required to but it is recommended to register listeners during
+	 * the OPACClientAddonRegister.EVENT on Fabric or OPACClientAddonRegisterEvent on Forge.
+	 *
+	 * @param listener  the listener to register, not null
+	 */
+	public void register(@Nonnull IClaimsManagerClaimResultListenerAPI listener);
+	
 }
