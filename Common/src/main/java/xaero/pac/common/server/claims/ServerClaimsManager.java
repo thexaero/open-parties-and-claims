@@ -40,6 +40,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -345,22 +346,22 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	public int getPlayerBaseClaimLimit(@Nonnull UUID playerId){
-		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.maxPlayerClaimsPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaims, UsedPermissionNodes.MAX_PLAYER_CLAIMS);
 	}
 
 	@Override
 	public int getPlayerBaseForceloadLimit(@Nonnull UUID playerId){
-		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaimForceloads, UsedPermissionNodes.MAX_PLAYER_FORCELOADS);
 	}
 
 	@Override
 	public int getPlayerBaseClaimLimit(@Nonnull ServerPlayer player){
-		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.maxPlayerClaimsPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaims, UsedPermissionNodes.MAX_PLAYER_CLAIMS);
 	}
 
 	@Override
 	public int getPlayerBaseForceloadLimit(@Nonnull ServerPlayer player){
-		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaimForceloads, UsedPermissionNodes.MAX_PLAYER_FORCELOADS);
 	}
 
 	public Iterator<ServerClaimStateHolder> getClaimStateHolderIterator(){

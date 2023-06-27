@@ -27,10 +27,10 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.packet.ClientboundModesPacket;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
+import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
 
 public class ServerClaimsPermissionHandler {
 
@@ -40,9 +40,9 @@ public class ServerClaimsPermissionHandler {
 		if(player.hasPermissions(2))
 			return true;
 		IPlayerPermissionSystemAPI permissionSystem = getSystem();
-		if(permissionSystem != null && permissionSystem.getPermission(player, ServerConfig.CONFIG.serverClaimPermission.get()))
-			return true;
-		return false;
+		if(permissionSystem == null)
+			return false;
+		return permissionSystem.getPermission(player, UsedPermissionNodes.SERVER_CLAIMS);
 	}
 
 	public boolean shouldPreventServerClaim(ServerPlayer player, ServerPlayerDataAPI playerData, MinecraftServer server){
@@ -61,9 +61,9 @@ public class ServerClaimsPermissionHandler {
 		if(player.hasPermissions(2))
 			return true;
 		IPlayerPermissionSystemAPI permissionSystem = getSystem();
-		if(permissionSystem != null && permissionSystem.getPermission(player, ServerConfig.CONFIG.adminModePermission.get()))
-			return true;
-		return false;
+		if(permissionSystem == null)
+			return false;
+		return permissionSystem.getPermission(player, UsedPermissionNodes.ADMIN_MODE);
 	}
 
 	public void ensureAdminModeStatusPermission(ServerPlayer player, ServerPlayerDataAPI playerData){
