@@ -21,17 +21,11 @@ package xaero.pac.client.claims.tracker.result.api;
 import javax.annotation.Nonnull;
 
 /**
- * API for a claim result tracker that lets you register listeners
+ * API for a claim result tracker.
  */
-public interface IClaimsManagerClaimResultTrackerAPI {
+public interface IClaimsManagerClaimResultTrackerAPI extends IClaimsManagerClaimResultTrackerRegisterAPI {
 
-	/**
-	 * Registers a claim result listener.
-	 * <p>
-	 * You can create one by implementing {@link IClaimsManagerClaimResultListenerAPI}.
-	 *
-	 * @param listener  the listener to register, not null
-	 */
-	public void register(@Nonnull IClaimsManagerClaimResultListenerAPI listener);
-	
+	@Override
+	void register(@Nonnull IClaimsManagerClaimResultListenerAPI listener);
+
 }

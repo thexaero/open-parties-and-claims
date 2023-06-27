@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.Block;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
+import xaero.pac.common.server.claims.ServerClaimsPermissionHandler;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
@@ -63,6 +64,8 @@ import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.permission.PlayerPermissionChangeHandler;
+import xaero.pac.common.server.player.permission.PlayerPermissionSystemManager;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTaskHandler;
 
@@ -207,12 +210,14 @@ public class ServerDataInitializer {
 
 			ForceLoadTicketManager forceLoadManager = playerConfigs.getForceLoadTicketManager();
 			ClaimsManagerSynchronizer claimsSynchronizer = ClaimsManagerSynchronizer.Builder.begin().setServer(server).build();
+			ServerClaimsPermissionHandler serverClaimsPermissionHandler = new ServerClaimsPermissionHandler();
 			ServerClaimsManager serverClaimsManager = ServerClaimsManager.Builder.begin()
 					.setServer(server)
 					.setTicketManager(forceLoadManager)
 					.setConfigManager(playerConfigs)
 					.setClaimsManagerSynchronizer(claimsSynchronizer)
 					.setClaimReplaceTaskHandler(claimReplaceTaskHandler)
+					.setPermissionHandler(serverClaimsPermissionHandler)
 					.build();
 			forceLoadManager.setClaimsManager(serverClaimsManager);
 			playerConfigs.setClaimsManager(serverClaimsManager);
@@ -252,16 +257,18 @@ public class ServerDataInitializer {
 					.build();
 			chunkProtection.updateTagExceptions(server);
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
+			PlayerPermissionSystemManager playerPermissionSystemManager = PlayerPermissionSystemManager.Builder.begin(LinkedHashMap::new).build();
 
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
 					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
 					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
 					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, playerWorldJoinHandler, serverInfo, serverInfoIO, 
-					claimsExpirationHandler, objectExpirationCheckTaskHandler);
+					claimsExpirationHandler, objectExpirationCheckTaskHandler, playerPermissionSystemManager);
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);
 			serverData.onServerResourcesReload(server.getResourceManager());
 			chunkProtection.setServerData(serverData);
+			serverClaimsPermissionHandler.setServerData(serverData);
 			ExceptionElementType.clearAllIterables();
 			return serverData;
 		} catch(Throwable t) {

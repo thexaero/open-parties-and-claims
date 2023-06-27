@@ -41,9 +41,9 @@ import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 
-public class ClientEvents {
+public abstract class ClientEvents {
 	
-	private final IClientData
+	protected final IClientData
 	<
 		IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>,
 		IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>,
@@ -77,6 +77,8 @@ public class ClientEvents {
 	public void onPlayerLogin(LocalPlayer player) {
 		clientData.getClientWorldLoadHandler().handle(player.clientLevel, player);
 	}
+
+	public abstract void fireAddonRegisterEvent();
 
 	public static abstract class Builder<B extends Builder> {
 

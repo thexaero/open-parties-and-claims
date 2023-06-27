@@ -21,19 +21,26 @@ package xaero.pac.common.server.claims;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.packet.ClientboundModesPacket;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
 public class ServerClaimsPermissionHandler {
+
+	private IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, ?> serverData;
 
 	public boolean playerHasServerClaimPermission(ServerPlayer player){
 		if(player.hasPermissions(2))
 			return true;
-		boolean hasFtbRanks = OpenPartiesAndClaims.INSTANCE.getModSupport().FTB_RANKS;
-		if(hasFtbRanks &&
-				OpenPartiesAndClaims.INSTANCE.getModSupport().getFTBRanksSupport().getPermissionHelper().getPermission(player, ServerConfig.CONFIG.serverClaimFTBPermission.get()))
+		IPlayerPermissionSystemAPI permissionSystem = getSystem();
+		if(permissionSystem != null && permissionSystem.getPermission(player, ServerConfig.CONFIG.serverClaimPermission.get()))
 			return true;
 		return false;
 	}
@@ -53,9 +60,8 @@ public class ServerClaimsPermissionHandler {
 	public boolean playerHasAdminModePermission(ServerPlayer player){
 		if(player.hasPermissions(2))
 			return true;
-		boolean hasFtbRanks = OpenPartiesAndClaims.INSTANCE.getModSupport().FTB_RANKS;
-		if(hasFtbRanks &&
-				OpenPartiesAndClaims.INSTANCE.getModSupport().getFTBRanksSupport().getPermissionHelper().getPermission(player, ServerConfig.CONFIG.adminModeFTBPermission.get()))
+		IPlayerPermissionSystemAPI permissionSystem = getSystem();
+		if(permissionSystem != null && permissionSystem.getPermission(player, ServerConfig.CONFIG.adminModePermission.get()))
 			return true;
 		return false;
 	}
@@ -67,4 +73,14 @@ public class ServerClaimsPermissionHandler {
 		}
 	}
 
+	public IPlayerPermissionSystemAPI getSystem() {
+		return serverData.getPlayerPermissionSystemManager().getUsedSystem();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setServerData(IServerData<?,?> serverData) {
+		if(this.serverData != null)
+			throw new IllegalAccessError();
+		this.serverData = (IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, ?>) serverData;
+	}
 }
