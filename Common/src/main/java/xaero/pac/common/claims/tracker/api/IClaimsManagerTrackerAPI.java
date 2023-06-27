@@ -18,18 +18,14 @@
 
 package xaero.pac.common.claims.tracker.api;
 
-/**
- * API for a claims manager tracker that lets you register listeners
- */
-public interface IClaimsManagerTrackerAPI {
+import javax.annotation.Nonnull;
 
-	/**
-	 * Registers a claim change listener.
-	 * <p>
-	 * You can create one by implementing {@link IClaimsManagerListenerAPI}.
-	 *
-	 * @param listener  the listener to register, not null
-	 */
-	public void register(IClaimsManagerListenerAPI listener);
-	
+/**
+ * API for a claims manager tracker.
+ */
+public interface IClaimsManagerTrackerAPI extends IClaimsManagerTrackerRegisterAPI {
+
+	@Override
+	void register(@Nonnull IClaimsManagerListenerAPI listener);
+
 }

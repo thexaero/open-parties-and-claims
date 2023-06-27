@@ -71,9 +71,14 @@ loadScripts(document, 'script');</script>
 <h1 title="Interface IClaimsManagerTrackerAPI" class="title">Interface IClaimsManagerTrackerAPI</h1>
 </div>
 <section class="class-description" id="class-description">
+<dl class="notes">
+<dt>All Superinterfaces:</dt>
+<dd><code><a href="IClaimsManagerTrackerRegisterAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerRegisterAPI</a></code></dd>
+</dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IClaimsManagerTrackerAPI</span></div>
-<div class="block">API for a claims manager tracker that lets you register listeners</div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IClaimsManagerTrackerAPI</span><span class="extends-implements">
+extends <a href="IClaimsManagerTrackerRegisterAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerRegisterAPI</a></span></div>
+<div class="block">API for a claims manager tracker.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,11 +115,19 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="register(xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI)">
 <h3>register</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(<a href="IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerListenerAPI</a>&nbsp;listener)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(@Nonnull
+ <a href="IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerListenerAPI</a>&nbsp;listener)</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IClaimsManagerTrackerRegisterAPI.html#register(xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI)">IClaimsManagerTrackerRegisterAPI</a></code></span></div>
 <div class="block">Registers a claim change listener.
  <p>
- You can create one by implementing <a href="IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api"><code>IClaimsManagerListenerAPI</code></a>.</div>
+ You can create one by implementing <a href="IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api"><code>IClaimsManagerListenerAPI</code></a>.
+ <p>
+ You are not required to but it is recommended to register listeners, on the
+ client side, during the OPACClientAddonRegister.EVENT on Fabric or OPACClientAddonRegisterEvent on Forge,
+ and, on the server side, during the OPACServerAddonRegister.EVENT on Fabric or OPACServerAddonRegisterEvent on Forge.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="IClaimsManagerTrackerRegisterAPI.html#register(xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI)">register</a></code>&nbsp;in interface&nbsp;<code><a href="IClaimsManagerTrackerRegisterAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerRegisterAPI</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>listener</code> - the listener to register, not null</dd>
 </dl>

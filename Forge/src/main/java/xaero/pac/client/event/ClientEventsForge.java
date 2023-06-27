@@ -22,6 +22,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -34,6 +35,7 @@ import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
+import xaero.pac.client.event.api.OPACClientAddonRegisterEvent;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.client.parties.party.IClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientPartyMemberDynamicInfoSyncableStorage;
@@ -85,7 +87,12 @@ public final class ClientEventsForge extends ClientEvents {
 			event.addListener(capProvider::invalidateCaps);
 		}
 	}
-	
+
+	@Override
+	public void fireAddonRegisterEvent() {
+		MinecraftForge.EVENT_BUS.post(new OPACClientAddonRegisterEvent(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker()));
+	}
+
 	public static final class Builder extends ClientEvents.Builder<Builder> {
 
 		@Override
@@ -97,6 +104,11 @@ public final class ClientEventsForge extends ClientEvents {
 		@Override
 		protected ClientEvents buildInternally() {
 			return new ClientEventsForge(clientData);
+		}
+
+		@Override
+		public ClientEventsForge build() {
+			return (ClientEventsForge) super.build();
 		}
 
 		public static Builder begin() {

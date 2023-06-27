@@ -20,6 +20,7 @@ package xaero.pac.common.event;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -48,8 +49,21 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.data.ServerDataReloadListenerForge;
+import xaero.pac.common.server.parties.party.IServerParty;
 
 public class CommonEventsForge extends CommonEvents {
 
@@ -242,6 +256,16 @@ public class CommonEventsForge extends CommonEvents {
 	@SubscribeEvent
 	public void onAddReloadListenerEvent(AddReloadListenerEvent event){
 		event.addListener(new ServerDataReloadListenerForge());
+	}
+
+	@SubscribeEvent
+	public void onAddonRegister(OPACServerAddonRegisterEvent event){
+		super.onAddonRegister(event.getServer(), event.getPermissionSystemManager(), event.getClaimsManagerTrackerAPI());
+	}
+
+	@Override
+	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+		MinecraftForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getServerClaimsManager().getTracker()));
 	}
 
 }

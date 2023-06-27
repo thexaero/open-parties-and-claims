@@ -28,6 +28,7 @@ import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
+import xaero.pac.client.event.ClientEvents;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.client.parties.party.IClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientPartyMemberDynamicInfoSyncableStorage;
@@ -119,6 +120,8 @@ public abstract class OpenPartiesAndClaims {
 	public ModSupport getModSupport() {
 		return modSupport;
 	}
+
+	public abstract ClientEvents getClientEvents();
 
 	public abstract CommonEvents getCommonEvents();
 

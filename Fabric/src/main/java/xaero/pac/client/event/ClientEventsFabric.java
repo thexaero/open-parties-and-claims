@@ -27,6 +27,7 @@ import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
+import xaero.pac.client.event.api.OPACClientAddonRegister;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.client.parties.party.IClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientPartyMemberDynamicInfoSyncableStorage;
@@ -51,7 +52,6 @@ public final class ClientEventsFabric extends ClientEvents {
 	public void registerFabricAPIEvents(){
 		ClientTickEvents.START_CLIENT_TICK.register(this::onClientTickStart);
 		ClientTickEvents.END_CLIENT_TICK.register(this::onClientTickEnd);
-
 	}
 
 	public void onClientTickStart(Minecraft minecraft) {
@@ -73,7 +73,12 @@ public final class ClientEventsFabric extends ClientEvents {
 	public void onPlayerLogin(LocalPlayer player) {
 		super.onPlayerLogin(player);
 	}
-	
+
+	@Override
+	public void fireAddonRegisterEvent() {
+		OPACClientAddonRegister.EVENT.invoker().registerAddons(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker());
+	}
+
 	public static final class Builder extends ClientEvents.Builder<Builder> {
 
 		@Override

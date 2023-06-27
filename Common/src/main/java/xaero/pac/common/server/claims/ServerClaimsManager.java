@@ -345,22 +345,22 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	public int getPlayerBaseClaimLimit(@Nonnull UUID playerId){
-		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.maxPlayerClaimsFTBPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.maxPlayerClaimsPermission);
 	}
 
 	@Override
 	public int getPlayerBaseForceloadLimit(@Nonnull UUID playerId){
-		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.maxPlayerClaimForceloadsFTBPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission);
 	}
 
 	@Override
 	public int getPlayerBaseClaimLimit(@Nonnull ServerPlayer player){
-		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.maxPlayerClaimsFTBPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.maxPlayerClaimsPermission);
 	}
 
 	@Override
 	public int getPlayerBaseForceloadLimit(@Nonnull ServerPlayer player){
-		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.maxPlayerClaimForceloadsFTBPermission);
+		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission);
 	}
 
 	public Iterator<ServerClaimStateHolder> getClaimStateHolderIterator(){
@@ -397,6 +397,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		private ForceLoadTicketManager ticketManager;
 		private ClaimsManagerSynchronizer claimsManagerSynchronizer;
 		private ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
+		private ServerClaimsPermissionHandler permissionHandler;
 		
 		public static Builder begin() {
 			return new Builder().setDefault();
@@ -436,10 +437,15 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			this.configManager = configManager;
 			return self;
 		}
-		
+
+		public Builder setPermissionHandler(ServerClaimsPermissionHandler permissionHandler) {
+			this.permissionHandler = permissionHandler;
+			return self;
+		}
+
 		@Override
 		public ServerClaimsManager build() {
-			if(server == null || ticketManager == null || claimsManagerSynchronizer == null || configManager == null || claimReplaceTaskHandler == null)
+			if(server == null || ticketManager == null || claimsManagerSynchronizer == null || configManager == null || claimReplaceTaskHandler == null || permissionHandler == null)
 				throw new IllegalStateException();
 			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>(), new HashSet<>());
 			setPlayerClaimInfoManager(playerInfoManager);
@@ -454,7 +460,6 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 		@Override
 		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, ServerClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
-			ServerClaimsPermissionHandler permissionHandler = new ServerClaimsPermissionHandler();
 			LinkedChain<ServerClaimStateHolder> linkedClaimStates = new LinkedChain<>();
 			claimStates.values().forEach(linkedClaimStates::add);
 			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler, permissionHandler, linkedClaimStates);

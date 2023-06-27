@@ -49,6 +49,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.entity.IEntity;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -68,6 +69,7 @@ import xaero.pac.common.server.parties.command.PartyCommandRegister;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.HashSet;
@@ -76,13 +78,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class CommonEvents {
+public abstract class CommonEvents {
 
 	protected final OpenPartiesAndClaims modMain;
 	public static MinecraftServer lastServerStarted;
 	private Class<?> createSuperGlueEntityClass;
 
-	public CommonEvents(OpenPartiesAndClaims modMain) {
+	protected CommonEvents(OpenPartiesAndClaims modMain) {
 		this.modMain = modMain;
 		try {
 			this.createSuperGlueEntityClass = Class.forName("com.simibubi.create.content.contraptions.glue.SuperGlueEntity");
@@ -99,11 +101,21 @@ public class CommonEvents {
 		OpenPartiesAndClaims.LOGGER.info("Initializing Open Parties and Claims for the server...");
 		((IOpenPACMinecraftServer) lastServerStarted).setXaero_OPAC_ServerData(new ServerDataInitializer().init(modMain, lastServerStarted));
 		modMain.getPacketHandler().onServerAboutToStart();
+
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+		try {
+			serverData.getPlayerPermissionSystemManager().preRegister();
+			fireAddonRegisterEvent(serverData);
+		} finally {
+			serverData.getPlayerPermissionSystemManager().postRegister();
+		}
 	}
+
+	protected abstract void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData);
 
 	public void onServerStarting(MinecraftServer server) {
 		modMain.startupCrashHandler.check();
-		ServerData.from(server).getServerLoadCallback().onLoad();
+		ServerData.from(server).getServerLoadCallback().onLoad(server);
 //		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 //			serverData = ServerData.from(lastServerStarted);
 //		IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
@@ -467,6 +479,12 @@ public class CommonEvents {
 					serverData = ServerData.from(lastServerStarted);
 			serverData.onServerResourcesReload(resourceManager);
 		}
+	}
+
+	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
+		//built-in "addons"
+		if(modMain.getModSupport().FTB_RANKS)
+			permissionSystemManagerAPI.register("ftb_ranks", modMain.getModSupport().getFTBRanksSupport().getPermissionSystem());
 	}
 
 }

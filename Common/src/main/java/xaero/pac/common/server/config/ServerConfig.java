@@ -81,19 +81,20 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue playerClaimsExpirationCheckInterval;
 	public final ForgeConfigSpec.BooleanValue playerClaimsConvertExpiredClaims;
 	public final ForgeConfigSpec.EnumValue<ClaimsSyncType> claimsSynchronization;
-	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsFTBPermission;
-	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsFTBPermission;
-	public final ForgeConfigSpec.ConfigValue<String> serverClaimFTBPermission;
-	public final ForgeConfigSpec.ConfigValue<String> adminModeFTBPermission;
+	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
+	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
+	public final ForgeConfigSpec.ConfigValue<String> serverClaimPermission;
+	public final ForgeConfigSpec.ConfigValue<String> adminModePermission;
+	public final ForgeConfigSpec.ConfigValue<String> permissionSystem;
 
 	private ServerConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("serverConfig");
 
 		defaultLanguage = builder
-				.comment("The default language used for server-side localization for players that don't have the mod installed.")
-				.translation("gui.xaero_pac_config_default_language")
-				.worldRestart()
-				.define("defaultLanguage", "en_us");
+			.comment("The default language used for server-side localization for players that don't have the mod installed.")
+			.translation("gui.xaero_pac_config_default_language")
+			.worldRestart()
+			.define("defaultLanguage", "en_us");
 
 		autosaveInterval = builder
 			.comment("How often to auto-save modified data, e.g. parties, claims, player configs (in minutes).")
@@ -102,10 +103,10 @@ public class ServerConfig {
 			.defineInRange("autosaveInterval", 10, 1, Integer.MAX_VALUE);
 
 		playerSubConfigLimit = builder
-				.comment("How many sub-configs (sub-claims) can each player create.")
-				.translation("gui.xaero_pac_config_player_subconfig_limit")
-				.worldRestart()
-				.defineInRange("playerSubConfigLimit", 64, 0, 1024);
+			.comment("How many sub-configs (sub-claims) can each player create.")
+			.translation("gui.xaero_pac_config_player_subconfig_limit")
+			.worldRestart()
+			.defineInRange("playerSubConfigLimit", 64, 0, 1024);
 		
 		builder.push("parties");
 
@@ -176,7 +177,7 @@ public class ServerConfig {
 		maxPlayerClaims = builder
 			.comment("""
 					The maximum number of chunks that a player can claim. Additional claims can be configured in the player config.
-					This value can be overridden with a FTB Ranks permission.""")
+					This value can be overridden with a player permission.""")
 			.translation("gui.xaero_pac_config_max_player_claims")
 			.worldRestart()
 			.defineInRange("maxPlayerClaims", 500, 0, Integer.MAX_VALUE);
@@ -184,36 +185,43 @@ public class ServerConfig {
 		maxPlayerClaimForceloads = builder
 			.comment("""
 					The maximum number of claimed chunks that a player can forceload. Additional forceloads can be configured in the player config.
-					This value can be overridden with a FTB Ranks permission.""")
+					This value can be overridden with a player permission.""")
 			.translation("gui.xaero_pac_config_max_player_forceloads")
 			.worldRestart()
 			.defineInRange("maxPlayerClaimForceloads", 10, 0, Integer.MAX_VALUE);
 
-		maxPlayerClaimsFTBPermission = builder
-			.comment("The FTB Ranks permission that should override the default \"maxPlayerClaims\" value. Set it to an empty string to never check permissions.")
-			.translation("gui.xaero_pac_config_max_claims_ftb_permission")
+		permissionSystem = builder
+			.comment("The permission system to use for everything that requires permission checks (e.g. ftb_ranks, luck_perms, prometheus). Non-built-in permission systems can be registered through the API with an addon.")
+			.translation("gui.xaero_pac_config_permission_system")
 			.worldRestart()
-			.define("maxPlayerClaimsFTBPermission", "xaero.pac_max_claims");
+			.define("permissionSystem", "ftb_ranks");
 
-		maxPlayerClaimForceloadsFTBPermission = builder
+		maxPlayerClaimsPermission = builder
+			.comment("The permission that should override the default \"maxPlayerClaims\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_max_claims_permission")
+			.worldRestart()
+			.define("maxPlayerClaimsPermission", "xaero.pac_max_claims");
+
+		maxPlayerClaimForceloadsPermission = builder
 			.comment("""
-					The FTB Ranks permission that should override the default "maxPlayerClaimForceloads" value. Set it to an empty string to never check permissions.
-					The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than "maxPlayerClaimForceloads".""")
-			.translation("gui.xaero_pac_config_max_claims_ftb_permission")
+					The permission that should override the default "maxPlayerClaimForceloads" value. Set it to an empty string to never check permissions.
+					The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than "maxPlayerClaimForceloads".
+					The used permission system can be configured with "permissionSystem".""")
+			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
-			.define("maxPlayerClaimForceloadsFTBPermission", "xaero.pac_max_forceloads");
+			.define("maxPlayerClaimForceloadsPermission", "xaero.pac_max_forceloads");
 
-		serverClaimFTBPermission = builder
-				.comment("The FTB Ranks permission that gives non-OP players the ability to make server claims and enable server claim mode.")
-				.translation("gui.xaero_pac_config_server_claim_ftb_permission")
-				.worldRestart()
-				.define("serverClaimFTBPermission", "xaero.pac_server_claims");
+		serverClaimPermission = builder
+			.comment("The permission that gives non-OP players the ability to make server claims and enable server claim mode. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_server_claim_permission")
+			.worldRestart()
+			.define("serverClaimPermission", "xaero.pac_server_claims");
 
-		adminModeFTBPermission = builder
-				.comment("The FTB Ranks permission that gives non-OP players the ability to enable claim admin mode.")
-				.translation("gui.xaero_pac_config_admin_mode_ftb_permission")
-				.worldRestart()
-				.define("adminModeFTBPermission", "xaero.pac_admin_mode");
+		adminModePermission = builder
+			.comment("The permission that gives non-OP players the ability to enable claim admin mode. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_admin_mode_permission")
+			.worldRestart()
+			.define("adminModePermission", "xaero.pac_admin_mode");
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")
@@ -290,29 +298,29 @@ public class ServerConfig {
 			.defineListAllowEmpty(Lists.newArrayList("hostileChunkProtectedEntityList"), ArrayList::new, s -> s instanceof String);
 
 		blockProtectionExceptionList = builder
-				.comment("""
-					No longer a working option. Please transfer anything you still have here to "forcedBlockProtectionExceptionList" or "blockProtectionOptionalExceptionGroups",
-					but keep in mind that those options work differently and please read their comments.
-					This option will be completely removed on the full release of the mod.""")
-				.translation("gui.xaero_pac_config_block_protection_exception")
-				.worldRestart()
-				.defineListAllowEmpty(Lists.newArrayList("blockProtectionExceptionList"), Lists::newArrayList, s -> s instanceof String);
+			.comment("""
+				No longer a working option. Please transfer anything you still have here to "forcedBlockProtectionExceptionList" or "blockProtectionOptionalExceptionGroups",
+				but keep in mind that those options work differently and please read their comments.
+				This option will be completely removed on the full release of the mod.""")
+			.translation("gui.xaero_pac_config_block_protection_exception")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("blockProtectionExceptionList"), Lists::newArrayList, s -> s instanceof String);
 		entityProtectionExceptionList = builder
-				.comment("""
-					No longer a working option. Please transfer anything you still have here to "forcedEntityProtectionExceptionList" or "entityProtectionOptionalExceptionGroups",
-					but keep in mind that those options work differently and please read their comments.
-					This option will be completely removed on the full release of the mod.""")
-				.translation("gui.xaero_pac_config_entity_protection_exception")
-				.worldRestart()
-				.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), Lists::newArrayList, s -> s instanceof String);
+			.comment("""
+				No longer a working option. Please transfer anything you still have here to "forcedEntityProtectionExceptionList" or "entityProtectionOptionalExceptionGroups",
+				but keep in mind that those options work differently and please read their comments.
+				This option will be completely removed on the full release of the mod.""")
+			.translation("gui.xaero_pac_config_entity_protection_exception")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entityProtectionExceptionList"), Lists::newArrayList, s -> s instanceof String);
 		entityClaimBarrierList = builder
-				.comment("""
-					No longer a working option. Please transfer anything you still have here to "forcedEntityClaimBarrierList" or "entityClaimBarrierOptionalGroups",
-					but keep in mind that those options work differently and please read their comments.
-					This option will be completely removed on the full release of the mod.""")
-				.translation("gui.xaero_pac_config_entity_claim_barrier_list")
-				.worldRestart()
-				.defineListAllowEmpty(Lists.newArrayList("entityClaimBarrierList"), Lists::newArrayList, s -> s instanceof String);
+			.comment("""
+				No longer a working option. Please transfer anything you still have here to "forcedEntityClaimBarrierList" or "entityClaimBarrierOptionalGroups",
+				but keep in mind that those options work differently and please read their comments.
+				This option will be completely removed on the full release of the mod.""")
+			.translation("gui.xaero_pac_config_entity_claim_barrier_list")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entityClaimBarrierList"), Lists::newArrayList, s -> s instanceof String);
 
 		forcedBlockProtectionExceptionList = builder
 			.comment("""

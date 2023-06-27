@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class ClaimsManagerTracker implements IClaimsManagerTracker {
@@ -34,7 +35,7 @@ public class ClaimsManagerTracker implements IClaimsManagerTracker {
 	}
 
 	@Override
-	public void register(IClaimsManagerListenerAPI listener) {
+	public void register(@Nonnull IClaimsManagerListenerAPI listener) {
 		listeners.add(listener);
 	}
 
