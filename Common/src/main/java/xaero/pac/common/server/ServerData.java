@@ -52,6 +52,8 @@ import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import xaero.pac.common.server.player.localization.ServerTranslationLoader;
+import xaero.pac.common.server.player.permission.PlayerPermissionChangeHandler;
+import xaero.pac.common.server.player.permission.PlayerPermissionSystemManager;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 import java.util.Map;
@@ -85,6 +87,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final ServerInfo serverInfo;
 	private final ServerInfoHolderIO serverInfoIO;
 	private final ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler;
+	private final PlayerPermissionSystemManager playerPermissionSystemManager;
 	private AdaptiveLocalizer adaptiveLocalizer;
 	private final OpenPACServerAPI api;
 
@@ -97,7 +100,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 					  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
 					  ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
 					  ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
-					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler) {
+					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler, PlayerPermissionSystemManager playerPermissionSystemManager) {
 		super();
 		this.server = server;
 		this.partyManager = partyManager;
@@ -126,6 +129,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.serverInfoIO = serverInfoIO;
 		this.serverPlayerClaimsExpirationHandler = serverPlayerClaimsExpirationHandler;
 		this.objectExpirationCheckTaskHandler = objectExpirationCheckTaskHandler;
+		this.playerPermissionSystemManager = playerPermissionSystemManager;
 		api = new OpenPACServerAPI(this);
 	}
 
@@ -270,6 +274,11 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	@Override
 	public ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> getObjectExpirationCheckTaskHandler() {
 		return objectExpirationCheckTaskHandler;
+	}
+
+	@Override
+	public PlayerPermissionSystemManager getPlayerPermissionSystemManager() {
+		return playerPermissionSystemManager;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -44,6 +44,9 @@ import javax.annotation.Nonnull;
 /**
  * This is the main server-side API access point. You can get the instance with {@link #get(MinecraftServer)}.
  * <p>
+ * For functionality that requires registering handlers/listeners, it is often required or recommended to
+ * do so during the OPACServerAddonRegister.EVENT on Fabric or the OPACServerAddonRegisterEvent on Forge.
+ * <p>
  * Additionally, to access some data attached to online server players,
  * use {@link ServerPlayerDataAPI#from(ServerPlayer)}. You probably won't need that though.
  */

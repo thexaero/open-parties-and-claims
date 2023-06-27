@@ -22,7 +22,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
@@ -34,6 +33,7 @@ import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.*;
@@ -134,9 +134,9 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	}
 
 	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, ForgeConfigSpec.ConfigValue<String> permissionNodeConfig){
-		boolean hasFtbRanks = OpenPartiesAndClaims.INSTANCE.getModSupport().FTB_RANKS;
+		IPlayerPermissionSystemAPI permissionSystem = claimsManager.getPermissionHandler().getSystem();
 		int defaultLimit = limitConfig.get();
-		if(!hasFtbRanks)
+		if(permissionSystem == null)
 			return defaultLimit;
 		String ftbRanksPermission = permissionNodeConfig.get();
 		if(ftbRanksPermission == null || ftbRanksPermission.isEmpty())
@@ -145,7 +145,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 			player = server.getPlayerList().getPlayer(playerId);
 		if(player == null)
 			return defaultLimit;
-		return OpenPartiesAndClaims.INSTANCE.getModSupport().getFTBRanksSupport().getPermissionHelper().getIntPermission(player, ftbRanksPermission).orElse(defaultLimit);
+		return permissionSystem.getIntPermission(player, ftbRanksPermission).orElse(defaultLimit);
 	}
 
 	@Override

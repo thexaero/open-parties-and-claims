@@ -57,6 +57,7 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 		loader.loadServer();
 	}
 
+	@Override
 	public ClientEventsFabric getClientEvents() {
 		return clientEvents;
 	}
