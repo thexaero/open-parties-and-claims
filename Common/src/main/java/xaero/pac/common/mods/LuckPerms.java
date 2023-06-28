@@ -18,42 +18,19 @@
 
 package xaero.pac.common.mods;
 
-public abstract class ModSupport {
+import xaero.pac.common.server.player.permission.PlayerLuckPermsSystem;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
-	public boolean LUCK_PERMS;
-	private LuckPerms luckPerms;
-	public boolean FTB_RANKS;
-	private FTBRanks ftbRanks;
+public class LuckPerms {
 
-	public void check(boolean client){
-		try {
-			Class.forName("net.luckperms.api.LuckPerms");
-			LUCK_PERMS = true;
-			luckPerms = new LuckPerms();
-		} catch (ClassNotFoundException e) {
-		}
-		try {
-			Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
-			FTB_RANKS = true;
-			ftbRanks = new FTBRanks();
-		} catch (ClassNotFoundException e) {
-		}
+	private final IPlayerPermissionSystemAPI permissionSystem;
+
+	public LuckPerms() {
+		this.permissionSystem = new PlayerLuckPermsSystem();
 	}
 
-	public LuckPerms getLuckPerms() {
-		return luckPerms;
-	}
-
-	public FTBRanks getFTBRanksSupport(){
-		return ftbRanks;
-	}
-
-	public void init(){
-
-	}
-
-	public void initClient(){
-
+	public IPlayerPermissionSystemAPI getPermissionSystem() {
+		return permissionSystem;
 	}
 
 }

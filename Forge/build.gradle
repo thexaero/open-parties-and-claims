@@ -96,6 +96,9 @@ dependencies {
 //    implementation fg.deobf("curse.maven:create-328085:4550986")//source: https://github.com/Creators-of-Create/Create
 //    implementation fg.deobf("curse.maven:flywheel-486392:4341461")//source: https://github.com/Jozufozu/Flywheel
 //    implementation fg.deobf("curse.maven:cctweaked-282001:4061947")//source: https://github.com/cc-tweaked/CC-Tweaked
+
+
+    compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 }
 
 tasks.withType(JavaCompile) {
@@ -107,6 +110,10 @@ processResources {
 }
 
 jar.finalizedBy('reobfJar', 'packageSources')
+
+//disabling this because it seems bugged, because of mod dependencies in the Common project, with no apparent workaround
+//works fine in the Fabric one for some reason
+tasks.getByName('compileTestJava').setEnabled(false)
 
 publishing {
     publications {

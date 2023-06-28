@@ -49,6 +49,7 @@ dependencies {
      compileOnly "curse.maven:architectury-419699:3824307"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
      compileOnly "curse.maven:ftblibrary-404465:3822758"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
+     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 }
 
 processResources {
