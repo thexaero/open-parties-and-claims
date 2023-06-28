@@ -147,6 +147,8 @@
 	"gui.xaero_pac_config_sub_list_separator" : ", ",
 	"gui.xaero_pac_config_sub_list_there_is_more" : "...",
 
+	"option.openpartiesandclaims.permissions/v1" : "Open Parties and Claims",
+	"gui.xaero_pac_permissions_title" : "Open Parties and Claims",
 	"gui.xaero_pac_permission_max_claims" : "Claim Limit",
 	"gui.xaero_pac_permission_max_forceloads" : "Forceload Limit",
 	"gui.xaero_pac_permission_server_claims" : "Server Claims",
