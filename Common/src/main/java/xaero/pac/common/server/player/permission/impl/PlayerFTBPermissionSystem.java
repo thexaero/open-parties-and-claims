@@ -16,7 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.permission;
+package xaero.pac.common.server.player.permission.impl;
 
 import dev.ftb.mods.ftbranks.api.FTBRanksAPI;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +26,7 @@ import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 import javax.annotation.Nonnull;
 import java.util.OptionalInt;
 
-public class PlayerFTBPermissionHelperFabric implements IPlayerPermissionSystemAPI {
+public class PlayerFTBPermissionSystem implements IPlayerPermissionSystemAPI {
 
 	@Nonnull
 	@Override

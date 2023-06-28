@@ -27,7 +27,7 @@ public abstract class ModSupport {
 		try {
 			Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
 			FTB_RANKS = true;
-			ftbRanks = createFTBRanksSupport();
+			ftbRanks = new FTBRanks();
 		} catch (ClassNotFoundException e) {
 		}
 	}
@@ -35,8 +35,6 @@ public abstract class ModSupport {
 	public FTBRanks getFTBRanksSupport(){
 		return ftbRanks;
 	}
-
-	protected abstract FTBRanks createFTBRanksSupport();
 
 	public void init(){
 
