@@ -63,7 +63,7 @@ public final class PlayerPermissionSystemManager implements IPlayerPermissionSys
 		}
 		usedSystem = systems.get(configuredName);
 		if(usedSystem == null) {
-			OpenPartiesAndClaims.LOGGER.error("The configured permission system {} isn't registered!", configuredName);
+			OpenPartiesAndClaims.LOGGER.warn("The configured permission system {} isn't registered!", configuredName);
 			return;
 		}
 		OpenPartiesAndClaims.LOGGER.info("Configured OPAC to use the following permission system: {}", configuredName);

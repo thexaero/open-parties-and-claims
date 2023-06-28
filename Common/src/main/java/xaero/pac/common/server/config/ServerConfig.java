@@ -201,7 +201,7 @@ public class ServerConfig {
 			.comment("The permission that should override the default \"maxPlayerClaims\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
-			.define("maxPlayerClaimsPermission", UsedPermissionNodes.MAX_PLAYER_CLAIMS.getDefault());
+			.define("maxPlayerClaimsPermission", UsedPermissionNodes.MAX_PLAYER_CLAIMS.getDefaultNodeString());
 
 		maxPlayerClaimForceloadsPermission = builder
 			.comment("""
@@ -210,19 +210,19 @@ public class ServerConfig {
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
-			.define("maxPlayerClaimForceloadsPermission", UsedPermissionNodes.MAX_PLAYER_FORCELOADS.getDefault());
+			.define("maxPlayerClaimForceloadsPermission", UsedPermissionNodes.MAX_PLAYER_FORCELOADS.getDefaultNodeString());
 
 		serverClaimPermission = builder
 			.comment("The permission that gives non-OP players the ability to make server claims and enable server claim mode. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_server_claim_permission")
 			.worldRestart()
-			.define("serverClaimPermission", UsedPermissionNodes.SERVER_CLAIMS.getDefault());
+			.define("serverClaimPermission", UsedPermissionNodes.SERVER_CLAIMS.getDefaultNodeString());
 
 		adminModePermission = builder
 			.comment("The permission that gives non-OP players the ability to enable claim admin mode. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_admin_mode_permission")
 			.worldRestart()
-			.define("adminModePermission", UsedPermissionNodes.ADMIN_MODE.getDefault());
+			.define("adminModePermission", UsedPermissionNodes.ADMIN_MODE.getDefaultNodeString());
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")

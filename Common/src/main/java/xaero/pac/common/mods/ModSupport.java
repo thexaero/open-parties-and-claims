@@ -23,7 +23,7 @@ public abstract class ModSupport {
 	public boolean FTB_RANKS;
 	private FTBRanks ftbRanks;
 
-	public void check(){
+	public void check(boolean client){
 		try {
 			Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
 			FTB_RANKS = true;
@@ -37,5 +37,13 @@ public abstract class ModSupport {
 	}
 
 	protected abstract FTBRanks createFTBRanksSupport();
+
+	public void init(){
+
+	}
+
+	public void initClient(){
+
+	}
 
 }
