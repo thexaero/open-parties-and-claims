@@ -18,7 +18,7 @@
 
 package xaero.pac.common.mods;
 
-import xaero.pac.common.server.player.permission.PlayerLuckPermsSystem;
+import xaero.pac.common.server.player.permission.impl.PlayerLuckPermsSystem;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
 public class LuckPerms {
