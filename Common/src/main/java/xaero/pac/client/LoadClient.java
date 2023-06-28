@@ -32,6 +32,7 @@ public class LoadClient extends LoadCommon {
 	
 	public LoadClient(OpenPartiesAndClaims modMain) {
 		super(modMain);
+		modMain.getModSupport().initClient();
 	}
 
 	public void loadClient() {
