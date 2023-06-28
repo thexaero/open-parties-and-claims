@@ -31,15 +31,15 @@ import java.util.Map;
  */
 public class UsedPermissionNodes {
 
-	private static final Map<String, IPermissionNodeAPI> ALL_BUILDER = new LinkedHashMap<>();
+	private static final Map<String, IPermissionNodeAPI<?>> ALL_BUILDER = new LinkedHashMap<>();
 	/*IntelliJ is wrong about the lambdas... Method references cause a crash here.*/
 
 	/**
 	 * The maximum claim number int "permission".
 	 */
-	public static final IPermissionNodeAPI MAX_PLAYER_CLAIMS = new PermissionNode(
+	public static final IPermissionNodeAPI<Integer> MAX_PLAYER_CLAIMS = new PermissionNode<>(
 			"xaero.pac_max_claims",
-			true,
+			Integer.class,
 			() -> ServerConfig.CONFIG.maxPlayerClaimsPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_max_claims"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_max_claims"),
@@ -48,9 +48,9 @@ public class UsedPermissionNodes {
 	/**
 	 * The maximum forceload number int "permission".
 	 */
-	public static final IPermissionNodeAPI MAX_PLAYER_FORCELOADS = new PermissionNode(
+	public static final IPermissionNodeAPI<Integer> MAX_PLAYER_FORCELOADS = new PermissionNode<>(
 			"xaero.pac_max_forceloads",
-			true,
+			Integer.class,
 			() -> ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_max_forceloads"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_max_forceloads"),
@@ -59,9 +59,9 @@ public class UsedPermissionNodes {
 	/**
 	 * The permission to make/remove server claims and use server claim mode.
 	 */
-	public static final IPermissionNodeAPI SERVER_CLAIMS = new PermissionNode(
+	public static final IPermissionNodeAPI<Boolean> SERVER_CLAIMS = new PermissionNode<>(
 			"xaero.pac_server_claims",
-			false,
+			Boolean.class,
 			() -> ServerConfig.CONFIG.serverClaimPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_server_claims"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_server_claims"),
@@ -70,9 +70,9 @@ public class UsedPermissionNodes {
 	/**
 	 * The permission to enter admin mode.
 	 */
-	public static final IPermissionNodeAPI ADMIN_MODE = new PermissionNode(
+	public static final IPermissionNodeAPI<Boolean> ADMIN_MODE = new PermissionNode<>(
 			"xaero.pac_admin_mode",
-			false,
+			Boolean.class,
 			() -> ServerConfig.CONFIG.adminModePermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_admin_mode"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_admin_mode"),
@@ -81,6 +81,6 @@ public class UsedPermissionNodes {
 	/**
 	 * A (default node string)->(node instance) map of all player permission nodes.
 	 */
-	public static final ImmutableMap<String, IPermissionNodeAPI> ALL = ImmutableMap.copyOf(ALL_BUILDER);
+	public static final ImmutableMap<String, IPermissionNodeAPI<?>> ALL = ImmutableMap.copyOf(ALL_BUILDER);
 
 }

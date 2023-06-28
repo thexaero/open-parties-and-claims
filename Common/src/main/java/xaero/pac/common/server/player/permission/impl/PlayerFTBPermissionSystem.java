@@ -30,7 +30,7 @@ public class PlayerFTBPermissionSystem implements IPlayerPermissionSystemAPI {
 
 	@Nonnull
 	@Override
-	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
+	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<Integer> node) {
 		String nodeString = node.getNodeString();
 		if(nodeString.isEmpty())
 			return OptionalInt.empty();
@@ -38,7 +38,7 @@ public class PlayerFTBPermissionSystem implements IPlayerPermissionSystemAPI {
 	}
 
 	@Override
-	public boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
+	public boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<Boolean> node) {
 		return FTBRanksAPI.getPermissionValue(player, node.getNodeString()).asBooleanOrFalse();
 	}
 

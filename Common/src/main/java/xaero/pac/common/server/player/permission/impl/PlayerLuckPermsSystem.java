@@ -40,7 +40,7 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 
 	@Nonnull
 	@Override
-	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
+	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<Integer> node) {
 		User user = getUser(player);
 		if(user == null)
 			return OptionalInt.empty();
@@ -54,7 +54,7 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 	}
 
 	@Override
-	public boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
+	public boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<Boolean> node) {
 		User user = getUser(player);
 		if(user == null)
 			return false;
