@@ -26,5 +26,6 @@ public interface IPermissionNodeAPI {
 	String getNodeString();
 	Component getName();
 	Component getComment();
+	boolean isInt();
 
 }

@@ -61,4 +61,9 @@ public class PermissionNode implements IPermissionNodeAPI {
 		return comment;
 	}
 
+	@Override
+	public boolean isInt() {
+		return isInt;
+	}
+
 }
