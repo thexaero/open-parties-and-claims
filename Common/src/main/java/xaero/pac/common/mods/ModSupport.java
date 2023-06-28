@@ -26,11 +26,13 @@ public abstract class ModSupport {
 	private FTBRanks ftbRanks;
 
 	public void check(boolean client){
-		try {
-			Class.forName("net.luckperms.api.LuckPerms");
-			LUCK_PERMS = true;
-			luckPerms = new LuckPerms();
-		} catch (ClassNotFoundException e) {
+		if(!client) {
+			try {
+				Class.forName("net.luckperms.api.LuckPerms");
+				LUCK_PERMS = true;
+				luckPerms = new LuckPerms();
+			} catch (ClassNotFoundException e) {
+			}
 		}
 		try {
 			Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
