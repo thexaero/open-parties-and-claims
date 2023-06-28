@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,21 +16,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mods;
+package xaero.pac.client.mods.prometheus;
 
-import xaero.pac.common.mods.prometheus.Prometheus;
-import xaero.pac.common.mods.prometheus.PrometheusForge;
+import earth.terrarium.prometheus.api.roles.client.OptionDisplayApi;
+import xaero.pac.common.mods.prometheus.OPACOptionsFabric;
 
-public class ModSupportForge extends ModSupport {
+public class PrometheusFabricClient {
 
-	@Override
-	public FTBRanks createFTBRanksSupport() {
-		return new FTBRanksForge();
-	}
-
-	@Override
-	protected Prometheus createPrometheusSupport(boolean client) {
-		return new PrometheusForge(client);
+	public void init() {
+		OptionDisplayApi.API.register(OPACOptionsFabric.SERIALIZER.id(), OPACOptionsDisplayFabric::create);
 	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023-2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,21 +16,30 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mods;
+package xaero.pac.common.mods.prometheus;
 
-import xaero.pac.common.mods.prometheus.Prometheus;
-import xaero.pac.common.mods.prometheus.PrometheusForge;
+import earth.terrarium.prometheus.api.roles.options.RoleOptionsApi;
+import xaero.pac.client.mods.prometheus.PrometheusFabricClient;
+import xaero.pac.common.server.player.permission.PlayerPrometheusPermissionsFabric;
 
-public class ModSupportForge extends ModSupport {
+public class PrometheusFabric extends Prometheus {
 
-	@Override
-	public FTBRanks createFTBRanksSupport() {
-		return new FTBRanksForge();
+	private final boolean client;
+
+	public PrometheusFabric(boolean client) {
+		super(new PlayerPrometheusPermissionsFabric());
+		this.client = client;
 	}
 
 	@Override
-	protected Prometheus createPrometheusSupport(boolean client) {
-		return new PrometheusForge(client);
+	public void init() {
+		RoleOptionsApi.API.register(OPACOptionsFabric.SERIALIZER);
+	}
+
+	@Override
+	public void initClient(){
+		if(client)
+			new PrometheusFabricClient().init();
 	}
 
 }

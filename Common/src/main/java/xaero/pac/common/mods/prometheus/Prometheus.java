@@ -16,21 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mods;
+package xaero.pac.common.mods.prometheus;
 
-import xaero.pac.common.mods.prometheus.Prometheus;
-import xaero.pac.common.mods.prometheus.PrometheusForge;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
-public class ModSupportForge extends ModSupport {
+public abstract class Prometheus {
 
-	@Override
-	public FTBRanks createFTBRanksSupport() {
-		return new FTBRanksForge();
+	private final IPlayerPermissionSystemAPI permissionSystem;
+
+	public Prometheus(IPlayerPermissionSystemAPI permissionSystem) {
+		this.permissionSystem = permissionSystem;
 	}
 
-	@Override
-	protected Prometheus createPrometheusSupport(boolean client) {
-		return new PrometheusForge(client);
+	public IPlayerPermissionSystemAPI getPermissionSystem() {
+		return permissionSystem;
 	}
+
+	public abstract void init();
+
+	public abstract void initClient();
 
 }

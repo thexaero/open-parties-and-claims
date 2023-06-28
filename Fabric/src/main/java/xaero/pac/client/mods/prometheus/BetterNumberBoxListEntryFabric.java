@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,21 +16,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mods;
+package xaero.pac.client.mods.prometheus;
 
-import xaero.pac.common.mods.prometheus.Prometheus;
-import xaero.pac.common.mods.prometheus.PrometheusForge;
+import earth.terrarium.prometheus.client.screens.roles.options.entries.NumberBoxListEntry;
+import net.minecraft.network.chat.Component;
 
-public class ModSupportForge extends ModSupport {
+public class BetterNumberBoxListEntryFabric extends NumberBoxListEntry implements IBetterNumberBoxListEntry {
 
-	@Override
-	public FTBRanks createFTBRanksSupport() {
-		return new FTBRanksForge();
+	public BetterNumberBoxListEntryFabric(int amount, boolean decimals, Component component, Component tooltip) {
+		super(amount, decimals, component, tooltip);
 	}
 
 	@Override
-	protected Prometheus createPrometheusSupport(boolean client) {
-		return new PrometheusForge(client);
+	public void setText(String text){
+		this.text = text;
 	}
 
 }

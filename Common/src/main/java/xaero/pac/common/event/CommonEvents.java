@@ -489,6 +489,8 @@ public abstract class CommonEvents {
 		//built-in "addons"
 		if(modMain.getModSupport().FTB_RANKS)
 			permissionSystemManagerAPI.register("ftb_ranks", modMain.getModSupport().getFTBRanksSupport().getPermissionSystem());
+		if(modMain.getModSupport().PROMETHEUS)
+			permissionSystemManagerAPI.register("prometheus", modMain.getModSupport().getPrometheusSupport().getPermissionSystem());
 	}
 
 }

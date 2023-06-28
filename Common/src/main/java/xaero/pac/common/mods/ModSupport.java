@@ -18,10 +18,14 @@
 
 package xaero.pac.common.mods;
 
+import xaero.pac.common.mods.prometheus.Prometheus;
+
 public abstract class ModSupport {
 
 	public boolean FTB_RANKS;
+	public boolean PROMETHEUS;
 	private FTBRanks ftbRanks;
+	private Prometheus prometheus;
 
 	public void check(boolean client){
 		try {
@@ -30,20 +34,34 @@ public abstract class ModSupport {
 			ftbRanks = createFTBRanksSupport();
 		} catch (ClassNotFoundException e) {
 		}
+		try {
+			Class.forName("earth.terrarium.prometheus.api.permissions.PermissionApi");
+			PROMETHEUS = true;
+			prometheus = createPrometheusSupport(client);
+		} catch (ClassNotFoundException e) {
+		}
 	}
 
 	public FTBRanks getFTBRanksSupport(){
 		return ftbRanks;
 	}
 
-	protected abstract FTBRanks createFTBRanksSupport();
-
-	public void init(){
-
+	public Prometheus getPrometheusSupport() {
+		return prometheus;
 	}
 
-	public void initClient(){
+	protected abstract FTBRanks createFTBRanksSupport();
 
+	protected abstract Prometheus createPrometheusSupport(boolean client);
+
+	public void init() {
+		if(PROMETHEUS)
+			prometheus.init();
+	}
+
+	public void initClient() {
+		if(PROMETHEUS)
+			prometheus.initClient();
 	}
 
 }

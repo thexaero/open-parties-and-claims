@@ -18,11 +18,19 @@
 
 package xaero.pac.common.mods;
 
+import xaero.pac.common.mods.prometheus.Prometheus;
+import xaero.pac.common.mods.prometheus.PrometheusFabric;
+
 public class ModSupportFabric extends ModSupport {
 
 	@Override
 	protected FTBRanks createFTBRanksSupport() {
 		return new FTBRanksFabric();
+	}
+
+	@Override
+	protected Prometheus createPrometheusSupport(boolean client) {
+		return new PrometheusFabric(client);
 	}
 
 }
