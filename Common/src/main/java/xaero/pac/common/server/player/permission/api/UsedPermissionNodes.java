@@ -31,7 +31,8 @@ public class UsedPermissionNodes {
 	private static final Map<String, IPermissionNodeAPI> ALL_BUILDER = new LinkedHashMap<>();
 	/*IntelliJ is wrong about the lambdas... Method references cause a crash here.*/
 	public static final IPermissionNodeAPI MAX_PLAYER_CLAIMS = new PermissionNode(
-			"xaero.pac_max_claims", true,
+			"xaero.pac_max_claims",
+			true,
 			() -> ServerConfig.CONFIG.maxPlayerClaimsPermission.get(),
 			Component.translatable("gui.xaero_pac_permission_max_claims"),
 			Component.translatable("gui.xaero_pac_permission_comment_max_claims"),

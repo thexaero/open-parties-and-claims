@@ -21,9 +21,11 @@ package xaero.pac;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.PackType;
 import xaero.pac.client.LoadClientFabric;
 import xaero.pac.client.event.ClientEventsFabric;
+import xaero.pac.common.LoadCommonFabric;
 import xaero.pac.common.capability.CapabilityHelperFabric;
 import xaero.pac.common.config.ForgeConfigHelperFabric;
 import xaero.pac.common.event.CommonEventsFabric;
@@ -36,25 +38,33 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 
 	private ClientEventsFabric clientEvents;
 	private CommonEventsFabric commonEvents;
+	private final LoadCommonFabric<?> loader;
 
 	public OpenPartiesAndClaimsFabric() {
 		super(new CapabilityHelperFabric(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
 		CapabilityHelperFabric.createCapabilities();
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ServerDataReloadListenerFabric());
+		boolean isClient = false;
+		try {
+			isClient = assertClientSide();
+		} catch(Throwable ignored){}
+		loader = isClient ? new LoadClientFabric(this) : new LoadDedicatedServerFabric(this);
+	}
+
+	private boolean assertClientSide(){
+		return Minecraft.getInstance() != null;//usually would throw an exception on a dedicated server, but, in case it doesn't, checking the instance
 	}
 
 	@Override
 	public void onInitializeClient() {
-		LoadClientFabric loader = new LoadClientFabric(this);
 		loader.loadCommon();
-		loader.loadClient();
+		((LoadClientFabric)loader).loadClient();
 	}
 
 	@Override
 	public void onInitializeServer() {
-		LoadDedicatedServerFabric loader = new LoadDedicatedServerFabric(this);
 		loader.loadCommon();
-		loader.loadServer();
+		((LoadDedicatedServerFabric)loader).loadServer();
 	}
 
 	@Override

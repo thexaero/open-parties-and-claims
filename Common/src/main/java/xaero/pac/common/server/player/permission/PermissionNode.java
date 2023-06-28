@@ -21,6 +21,7 @@ package xaero.pac.common.server.player.permission;
 import net.minecraft.network.chat.Component;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -41,24 +42,33 @@ public class PermissionNode implements IPermissionNodeAPI {
 		all.put(defaultNode, this);
 	}
 
+	@Nonnull
 	@Override
-	public String getDefault() {
+	public String getDefaultNodeString() {
 		return defaultNode;
 	}
 
+	@Nonnull
 	@Override
 	public String getNodeString() {
 		return nodeStringSupplier.get();
 	}
 
+	@Nonnull
 	@Override
 	public Component getName() {
 		return name;
 	}
 
+	@Nonnull
 	@Override
 	public Component getComment() {
 		return comment;
+	}
+
+	@Override
+	public boolean isInt() {
+		return isInt;
 	}
 
 }
