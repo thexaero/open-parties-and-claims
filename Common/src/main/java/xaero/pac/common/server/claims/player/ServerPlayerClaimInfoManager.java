@@ -134,7 +134,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		toSave.remove(playerInfo);
 	}
 
-	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, IPermissionNodeAPI permissionNode){
+	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, IPermissionNodeAPI<Integer> permissionNode){
 		IPlayerPermissionSystemAPI permissionSystem = claimsManager.getPermissionHandler().getSystem();
 		int defaultLimit = limitConfig.get();
 		if(permissionSystem == null)

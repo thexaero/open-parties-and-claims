@@ -59,7 +59,9 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.event.api.OPACServerAddonRegister;
+import xaero.pac.common.mods.ModSupportFabric;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -70,6 +72,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCoreFabric;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
 import java.util.List;
 
@@ -244,6 +247,15 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public void onTagsUpdate() {
 		super.onTagsUpdate();
+	}
+
+	@Override
+	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI) {
+		super.onAddonRegister(server, permissionSystemManagerAPI, claimsManagerTrackerAPI);
+		ModSupportFabric modSupportFabric = (ModSupportFabric)modMain.getModSupport();
+		if(modSupportFabric.FABRIC_PERMISSIONS)
+			permissionSystemManagerAPI.register("permission_api", modSupportFabric.getFabricPermissionsSupport().getPermissionSystem());
+
 	}
 
 	@Override

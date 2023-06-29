@@ -28,11 +28,13 @@ import java.util.Map;
 public final class PlayerPermissionSystemManager implements IPlayerPermissionSystemManager {
 
 	private final Map<String, IPlayerPermissionSystemAPI> systems;
+	private final Map<IPlayerPermissionSystemAPI, String> systemNames;
 	private IPlayerPermissionSystemAPI usedSystem;
 	private boolean registeringAddons;
 
-	private PlayerPermissionSystemManager(Map<String, IPlayerPermissionSystemAPI> systems){
+	private PlayerPermissionSystemManager(Map<String, IPlayerPermissionSystemAPI> systems, Map<IPlayerPermissionSystemAPI, String> systemNames){
 		this.systems = systems;
+		this.systemNames = systemNames;
 	}
 
 	@Override
@@ -47,6 +49,7 @@ public final class PlayerPermissionSystemManager implements IPlayerPermissionSys
 		if(systems.containsKey(name))
 			throw new IllegalArgumentException("This permission system name is already registered!");
 		systems.put(name, system);
+		systemNames.put(system, name);
 		OpenPartiesAndClaims.LOGGER.info("Registered permission system for OPAC: {}", name);
 	}
 
@@ -64,9 +67,11 @@ public final class PlayerPermissionSystemManager implements IPlayerPermissionSys
 		usedSystem = systems.get(configuredName);
 		if(usedSystem == null) {
 			OpenPartiesAndClaims.LOGGER.warn("The configured permission system {} isn't registered!", configuredName);
-			return;
+			if(systems.isEmpty())
+				return;
+			usedSystem = systems.values().stream().findFirst().get();
 		}
-		OpenPartiesAndClaims.LOGGER.info("Configured OPAC to use the following permission system: {}", configuredName);
+		OpenPartiesAndClaims.LOGGER.info("Configured OPAC to use the following permission system: {}", systemNames.get(usedSystem));
 	}
 
 	@Override
@@ -94,7 +99,7 @@ public final class PlayerPermissionSystemManager implements IPlayerPermissionSys
 		public PlayerPermissionSystemManager build(){
 			if(mapFactory == null)
 				throw new IllegalStateException();
-			return new PlayerPermissionSystemManager(mapFactory.get());
+			return new PlayerPermissionSystemManager(mapFactory.get(), mapFactory.get());
 		}
 
 		public static Builder begin(MapFactory mapFactory){

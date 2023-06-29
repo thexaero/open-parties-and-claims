@@ -60,6 +60,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds a new party member with specified player UUID, rank and username.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#ADMIN_MODE" class="member-name-link">ADMIN_MODE</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The permission to enter admin mode.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#ALL" class="member-name-link">ALL</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">A (default node string)->(node instance) map of all player permission nodes.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ALREADY_CLAIMED" class="member-name-link">ALREADY_CLAIMED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The chunk is already claimed</div>
@@ -435,6 +443,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the default en_us comment for this option.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getComment()" class="member-name-link">getComment()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
+<dd>
+<div class="block">Gets the text component of the comment/tooltip for this node, to be used in UIs.</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#getCommentTranslation()" class="member-name-link">getCommentTranslation()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
 <dd>
 <div class="block">Gets the translation key for the comment of this option.</div>
@@ -495,6 +507,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#getDefaultName()" class="member-name-link">getDefaultName()</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getDefaultNodeString()" class="member-name-link">getDefaultNodeString()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
+<dd>
+<div class="block">Gets the default string representation of this node.</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#getDefaultPlayerConfig()" class="member-name-link">getDefaultPlayerConfig()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the read-only storage for the default player config.</div>
@@ -613,7 +629,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the ID of this option.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getIntPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">getIntPermission(ServerPlayer, String)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getIntPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getIntPermission(ServerPlayer, IPermissionNodeAPI)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
 <dd>
 <div class="block">Gets the value of an integer permission for a specified player.</div>
 </dd>
@@ -692,6 +708,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#getName()" class="member-name-link">getName()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
 <dd>
 <div class="block">Gets the display name of the config type.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getName()" class="member-name-link">getName()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
+<dd>
+<div class="block">Gets the text component of the name of this node, to be used in UIs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getNodeString()" class="member-name-link">getNodeString()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
+<dd>
+<div class="block">Gets the user-configured string representation of this node.</div>
 </dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#getNonStaffInfoStream()" class="member-name-link">getNonStaffInfoStream()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -779,7 +803,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the path of this option, which is just the ID from <a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getId()"><code>IPlayerConfigOptionSpecAPI.getId()</code></a> but separated into elements.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">getPermission(ServerPlayer, String)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getPermission(ServerPlayer, IPermissionNodeAPI)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
 <dd>
 <div class="block">Gets the value of a boolean permission for a specified player.</div>
 </dd>
@@ -1286,6 +1310,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for info about a player used for party purposes</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a> - Interface in <a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a></dt>
+<dd>
+<div class="block">A representation of a player permission node.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" class="type-name-link" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a> - Interface in <a href="xaero/pac/common/claims/player/api/package-summary.html">xaero.pac.common.claims.player.api</a></dt>
 <dd>
 <div class="block">API for a chunk claim state</div>
@@ -1413,6 +1441,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks whether this claim is marked for forceloading.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#isInt()" class="member-name-link">isInt()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
+<dd>
+<div class="block">Checks whether this node is for an int permission.</div>
+</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#isInvited(java.util.UUID)" class="member-name-link">isInvited(UUID)</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/parties/party/api/IPartyAPI.html#isInvited(java.util.UUID)" class="member-name-link">isInvited(UUID)</a> - Method in interface xaero.pac.common.parties.party.api.<a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyAPI</a></dt>
@@ -1458,6 +1490,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/world/capability/api/ClientWorldCapabilityTypes.html#MAIN_CAP" class="member-name-link">MAIN_CAP</a> - Static variable in class xaero.pac.client.world.capability.api.<a href="xaero/pac/client/world/capability/api/ClientWorldCapabilityTypes.html" title="class in xaero.pac.client.world.capability.api">ClientWorldCapabilityTypes</a></dt>
 <dd>
 <div class="block">The main capability type for client worlds</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#MAX_PLAYER_CLAIMS" class="member-name-link">MAX_PLAYER_CLAIMS</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The maximum claim number int "permission".</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#MAX_PLAYER_FORCELOADS" class="member-name-link">MAX_PLAYER_FORCELOADS</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The maximum forceload number int "permission".</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#message" class="member-name-link">message</a> - Variable in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
@@ -1909,6 +1949,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Server claims config</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#SERVER_CLAIMS" class="member-name-link">SERVER_CLAIMS</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The permission to make/remove server claims and use server claim mode.</div>
+</dd>
 <dt><a href="xaero/pac/client/world/api/IClientWorldDataAPI.html#serverHasClaimsEnabled()" class="member-name-link">serverHasClaimsEnabled()</a> - Method in interface xaero.pac.client.world.api.<a href="xaero/pac/client/world/api/IClientWorldDataAPI.html" title="interface in xaero.pac.client.world.api">IClientWorldDataAPI</a></dt>
 <dd>
 <div class="block">If <a href="xaero/pac/client/world/api/IClientWorldDataAPI.html#serverHasMod()"><code>IClientWorldDataAPI.serverHasMod()</code></a> is true, then this checks if the server has the claims feature enabled.</div>
@@ -2047,6 +2091,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The current sub-config ID that the player uses for their own new claims.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" class="type-name-link" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a> - Class in <a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a></dt>
+<dd>
+<div class="block">Access point to all player permission nodes used by the mod.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#%3Cinit%3E()" class="member-name-link">UsedPermissionNodes()</a> - Constructor for class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:V">V</h2>
 <dl class="index">
