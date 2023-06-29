@@ -27,7 +27,6 @@ import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.query.QueryOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
@@ -50,7 +49,7 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 			Short.class, Short::valueOf,
 			Byte.class, Byte::valueOf,
 			String.class, Function.identity(),
-			Component.class, TextComponent::new
+			Component.class, Component::literal
 	);
 
 	@Nonnull
