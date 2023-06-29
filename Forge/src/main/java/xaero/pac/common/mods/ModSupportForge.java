@@ -18,19 +18,6 @@
 
 package xaero.pac.common.mods;
 
-import xaero.pac.common.mods.prometheus.Prometheus;
-import xaero.pac.common.mods.prometheus.PrometheusForge;
-
 public class ModSupportForge extends ModSupport {
-
-	@Override
-	public FTBRanks createFTBRanksSupport() {
-		return new FTBRanksForge();
-	}
-
-	@Override
-	protected Prometheus createPrometheusSupport(boolean client) {
-		return new PrometheusForge(client);
-	}
 
 }

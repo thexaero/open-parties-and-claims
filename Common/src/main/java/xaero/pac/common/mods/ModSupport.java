@@ -22,16 +22,26 @@ import xaero.pac.common.mods.prometheus.Prometheus;
 
 public abstract class ModSupport {
 
+	public boolean LUCK_PERMS;
+	private LuckPerms luckPerms;
 	public boolean FTB_RANKS;
 	public boolean PROMETHEUS;
 	private FTBRanks ftbRanks;
 	private Prometheus prometheus;
 
 	public void check(boolean client){
+		if(!client) {
+			try {
+				Class.forName("net.luckperms.api.LuckPerms");
+				LUCK_PERMS = true;
+				luckPerms = new LuckPerms();
+			} catch (ClassNotFoundException e) {
+			}
+		}
 		try {
 			Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
 			FTB_RANKS = true;
-			ftbRanks = createFTBRanksSupport();
+			ftbRanks = new FTBRanks();
 		} catch (ClassNotFoundException e) {
 		}
 		try {
@@ -42,6 +52,10 @@ public abstract class ModSupport {
 		}
 	}
 
+	public LuckPerms getLuckPerms() {
+		return luckPerms;
+	}
+
 	public FTBRanks getFTBRanksSupport(){
 		return ftbRanks;
 	}
@@ -49,10 +63,6 @@ public abstract class ModSupport {
 	public Prometheus getPrometheusSupport() {
 		return prometheus;
 	}
-
-	protected abstract FTBRanks createFTBRanksSupport();
-
-	protected abstract Prometheus createPrometheusSupport(boolean client);
 
 	public void init() {
 		if(PROMETHEUS)

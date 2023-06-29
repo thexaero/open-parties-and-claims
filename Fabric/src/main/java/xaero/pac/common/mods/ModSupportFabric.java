@@ -23,9 +23,23 @@ import xaero.pac.common.mods.prometheus.PrometheusFabric;
 
 public class ModSupportFabric extends ModSupport {
 
+	public boolean FABRIC_PERMISSIONS;
+	private FabricPermissions fabricPermissions;
+
 	@Override
-	protected FTBRanks createFTBRanksSupport() {
-		return new FTBRanksFabric();
+	public void check(boolean client) {
+		super.check(client);
+		try {
+			Class.forName("me.lucko.fabric.api.permissions.v0.Permissions");
+			fabricPermissions = new FabricPermissions();
+			FABRIC_PERMISSIONS = true;
+		} catch (ClassNotFoundException e) {
+		}
+
+	}
+
+	public FabricPermissions getFabricPermissionsSupport() {
+		return fabricPermissions;
 	}
 
 	@Override

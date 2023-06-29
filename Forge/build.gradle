@@ -97,6 +97,9 @@ dependencies {
     compileOnly fg.deobf("maven.modrinth:prometheus:0.0.0")//source: https://github.com/terrarium-earth/Prometheus
 
     //implementation fg.deobf("curse.maven:create-328085:4550987")//source: https://github.com/Creators-of-Create/Create
+
+
+    compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 }
 
 tasks.withType(JavaCompile) {
@@ -108,6 +111,10 @@ processResources {
 }
 
 jar.finalizedBy('reobfJar', 'packageSources')
+
+//disabling this because it seems bugged, because of mod dependencies in the Common project, with no apparent workaround
+//works fine in the Fabric one for some reason
+tasks.getByName('compileTestJava').setEnabled(false)
 
 publishing {
     publications {

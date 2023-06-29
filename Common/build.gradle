@@ -43,6 +43,13 @@ dependencies {
      implementation 'com.electronwill.night-config:core:3.6.3'
      implementation 'com.electronwill.night-config:toml:3.6.3'
      compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+
+     //same as forge for the deobfuscated class names in the api
+     compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
+     compileOnly "curse.maven:architectury-419699:3893635"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+     compileOnly "curse.maven:ftblibrary-404465:3890137"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+
+     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 }
 
 processResources {

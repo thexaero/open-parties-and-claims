@@ -487,6 +487,8 @@ public abstract class CommonEvents {
 
 	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
 		//built-in "addons"
+		if(modMain.getModSupport().LUCK_PERMS)
+			permissionSystemManagerAPI.register("luck_perms", modMain.getModSupport().getLuckPerms().getPermissionSystem());
 		if(modMain.getModSupport().FTB_RANKS)
 			permissionSystemManagerAPI.register("ftb_ranks", modMain.getModSupport().getFTBRanksSupport().getPermissionSystem());
 		if(modMain.getModSupport().PROMETHEUS)
