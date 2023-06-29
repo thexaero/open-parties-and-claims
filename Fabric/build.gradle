@@ -10,6 +10,9 @@ base {
 
 repositories {
     maven {
+        url = "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+    maven {
         url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
@@ -40,6 +43,9 @@ dependencies {
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
     modCompileOnly "curse.maven:architectury-419699:3843623"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
     modCompileOnly "curse.maven:ftblibrary-438495:3831893"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-fabric
+
+    modCompileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
+    modCompileOnly 'me.lucko:fabric-permissions-api:0.2-SNAPSHOT'//source: https://github.com/lucko/fabric-permissions-api
 }
 
 loom {

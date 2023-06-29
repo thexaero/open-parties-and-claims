@@ -25,17 +25,17 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PermissionNode implements IPermissionNodeAPI {
+public class PermissionNode<T> implements IPermissionNodeAPI<T> {
 
 	private final String defaultNode;
-	private final boolean isInt;
+	private final Class<T> type;
 	private final Component name;
 	private final Component comment;
 	private final Supplier<String> nodeStringSupplier;
 
-	public PermissionNode(String defaultNode, boolean isInt, Supplier<String> nodeStringSupplier, Component name, Component comment, Map<String, IPermissionNodeAPI> all) {
+	public PermissionNode(String defaultNode, Class<T> type, Supplier<String> nodeStringSupplier, Component name, Component comment, Map<String, IPermissionNodeAPI<?>> all) {
 		this.defaultNode = defaultNode;
-		this.isInt = isInt;
+		this.type = type;
 		this.nodeStringSupplier = nodeStringSupplier;
 		this.name = name;
 		this.comment = comment;
@@ -66,9 +66,10 @@ public class PermissionNode implements IPermissionNodeAPI {
 		return comment;
 	}
 
+	@Nonnull
 	@Override
-	public boolean isInt() {
-		return isInt;
+	public Class<T> getType() {
+		return type;
 	}
 
 }

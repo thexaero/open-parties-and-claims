@@ -92,14 +92,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/OptionalInt.html" title="class or interface in java.util" class="external-link">OptionalInt</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getIntPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">getIntPermission</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;node)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getIntPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getIntPermission</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+ <a href="IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a>&nbsp;node)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the value of an integer permission for a specified player.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">getPermission</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;node)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getPermission</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+ <a href="IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a>&nbsp;node)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the value of a boolean permission for a specified player.</div>
 </div>
@@ -118,35 +118,35 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="getIntPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)">
+<section class="detail" id="getIntPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)">
 <h3>getIntPermission</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/OptionalInt.html" title="class or interface in java.util" class="external-link">OptionalInt</a></span>&nbsp;<span class="element-name">getIntPermission</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.server.level.ServerPlayer&nbsp;player,
  @Nonnull
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;node)</span></div>
+ <a href="IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a>&nbsp;node)</span></div>
 <div class="block">Gets the value of an integer permission for a specified player.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>player</code> - the player, not null</dd>
-<dd><code>node</code> - the String representation of the node of the permission, not null</dd>
+<dd><code>node</code> - the node of the permission from <a href="UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api"><code>UsedPermissionNodes</code></a>, not null</dd>
 <dt>Returns:</dt>
 <dd>the OptionalInt for the int value of the permission, not null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getPermission(net.minecraft.server.level.ServerPlayer,java.lang.String)">
+<section class="detail" id="getPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)">
 <h3>getPermission</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">getPermission</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.server.level.ServerPlayer&nbsp;player,
  @Nonnull
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;node)</span></div>
+ <a href="IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a>&nbsp;node)</span></div>
 <div class="block">Gets the value of a boolean permission for a specified player.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>player</code> - the player, not null</dd>
-<dd><code>node</code> - the String representation of the node of the permission, not null</dd>
+<dd><code>node</code> - the node of the permission from <a href="UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api"><code>UsedPermissionNodes</code></a>, not null</dd>
 <dt>Returns:</dt>
 <dd>the boolean value of the permission, false if it doesn't exist</dd>
 </dl>

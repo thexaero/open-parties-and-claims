@@ -21,6 +21,7 @@ package xaero.pac.common.server.player.permission.api;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.OptionalInt;
 
 /**
@@ -39,7 +40,7 @@ public interface IPlayerPermissionSystemAPI {
 	 * @return the OptionalInt for the int value of the permission, not null
 	 */
 	@Nonnull
-	OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node);
+	OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<Integer> node);
 
 	/**
 	 * Gets the value of a boolean permission for a specified player.
@@ -48,6 +49,19 @@ public interface IPlayerPermissionSystemAPI {
 	 * @param node  the node of the permission from {@link UsedPermissionNodes}, not null
 	 * @return the boolean value of the permission, false if it doesn't exist
 	 */
-	boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node);
+	boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<Boolean> node);
+
+	/**
+	 * Gets the value of a permission with a specific value type.
+	 * <p>
+	 * This isn't used by the mod as of typing this, but could be in the future.
+	 *
+	 * @param player  the player, not null
+	 * @param node  the node of the permission from {@link UsedPermissionNodes}, not null
+	 * @return the Optional for the value of the permission, not null
+	 * @param <T> the permission value type
+	 */
+	@Nonnull
+	<T> Optional<T> getPermissionTyped(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<T> node);
 
 }
