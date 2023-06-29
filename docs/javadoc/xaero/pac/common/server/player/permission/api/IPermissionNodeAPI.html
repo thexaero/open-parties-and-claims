@@ -68,11 +68,11 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">xaero.pac.common.server.player.permission.api</a></div>
-<h1 title="Interface IPermissionNodeAPI" class="title">Interface IPermissionNodeAPI</h1>
+<h1 title="Interface IPermissionNodeAPI" class="title">Interface IPermissionNodeAPI&lt;T&gt;</h1>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPermissionNodeAPI</span></div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPermissionNodeAPI&lt;T&gt;</span></div>
 <div class="block">A representation of a player permission node.
  <p>
  All nodes used by the mod can be accessed in <a href="UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api"><code>UsedPermissionNodes</code></a></div>
@@ -110,10 +110,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the user-configured string representation of this node.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isInt()" class="member-name-link">isInt</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="IPermissionNodeAPI.html" title="type parameter in IPermissionNodeAPI">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks whether this node is for an int permission.</div>
+<div class="block">Gets the type of value stored with this permission node.</div>
 </div>
 </div>
 </div>
@@ -178,13 +178,14 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="isInt()">
-<h3>isInt</h3>
-<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isInt</span>()</div>
-<div class="block">Checks whether this node is for an int permission.</div>
+<section class="detail" id="getType()">
+<h3>getType</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="IPermissionNodeAPI.html" title="type parameter in IPermissionNodeAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getType</span>()</div>
+<div class="block">Gets the type of value stored with this permission node.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>true if this is an int permission node, otherwise false</dd>
+<dd>the type of value stored with this permission node, not null</dd>
 </dl>
 </section>
 </li>
