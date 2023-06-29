@@ -31,6 +31,10 @@ repositories {
         }
     }
     maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
         name = "Fuzs Mod Resources"
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
     }
@@ -50,6 +54,9 @@ dependencies {
      compileOnly "curse.maven:ftblibrary-404465:3890137"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
      compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
+
+     compileOnly "maven.modrinth:resourceful-lib:2.1.1"//source: https://github.com/Team-Resourceful/ResourcefulLib
+     compileOnly "maven.modrinth:prometheus:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
 }
 
 processResources {

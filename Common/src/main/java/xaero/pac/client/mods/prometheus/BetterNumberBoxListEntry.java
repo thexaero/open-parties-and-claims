@@ -18,13 +18,17 @@
 
 package xaero.pac.client.mods.prometheus;
 
-import earth.terrarium.prometheus.api.roles.client.OptionDisplayApi;
-import xaero.pac.common.mods.prometheus.OPACOptionsFabric;
+import earth.terrarium.prometheus.client.screens.roles.options.entries.NumberBoxListEntry;
+import net.minecraft.network.chat.Component;
 
-public class PrometheusFabricClient {
+public class BetterNumberBoxListEntry extends NumberBoxListEntry {
 
-	public void init() {
-		OptionDisplayApi.API.register(OPACOptionsFabric.SERIALIZER.id(), OPACOptionsDisplayFabric::create);
+	public BetterNumberBoxListEntry(int amount, boolean decimals, Component component, Component tooltip) {
+		super(amount, decimals, component, tooltip);
+	}
+
+	public void setText(String text){
+		this.text = text;
 	}
 
 }

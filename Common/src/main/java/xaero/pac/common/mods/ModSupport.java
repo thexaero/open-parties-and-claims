@@ -47,7 +47,7 @@ public abstract class ModSupport {
 		try {
 			Class.forName("earth.terrarium.prometheus.api.permissions.PermissionApi");
 			PROMETHEUS = true;
-			prometheus = createPrometheusSupport(client);
+			prometheus = new Prometheus(client);
 		} catch (ClassNotFoundException e) {
 		}
 	}

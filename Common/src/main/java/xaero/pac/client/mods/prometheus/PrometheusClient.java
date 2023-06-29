@@ -18,8 +18,13 @@
 
 package xaero.pac.client.mods.prometheus;
 
-public interface IBetterNumberBoxListEntry {
+import earth.terrarium.prometheus.api.roles.client.OptionDisplayApi;
+import xaero.pac.common.mods.prometheus.OPACOptions;
 
-	void setText(String text);
+public class PrometheusClient {
+
+	public void init() {
+		OptionDisplayApi.API.register(OPACOptions.SERIALIZER.id(), OPACOptionsDisplay::create);
+	}
 
 }

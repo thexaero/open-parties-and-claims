@@ -18,9 +18,6 @@
 
 package xaero.pac.common.mods;
 
-import xaero.pac.common.mods.prometheus.Prometheus;
-import xaero.pac.common.mods.prometheus.PrometheusFabric;
-
 public class ModSupportFabric extends ModSupport {
 
 	public boolean FABRIC_PERMISSIONS;
@@ -40,11 +37,6 @@ public class ModSupportFabric extends ModSupport {
 
 	public FabricPermissions getFabricPermissionsSupport() {
 		return fabricPermissions;
-	}
-
-	@Override
-	protected Prometheus createPrometheusSupport(boolean client) {
-		return new PrometheusFabric(client);
 	}
 
 }
