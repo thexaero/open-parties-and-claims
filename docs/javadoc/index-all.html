@@ -629,7 +629,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the ID of this option.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getIntPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getIntPermission(ServerPlayer, IPermissionNodeAPI)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getIntPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getIntPermission(ServerPlayer, IPermissionNodeAPI&lt;Integer&gt;)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
 <dd>
 <div class="block">Gets the value of an integer permission for a specified player.</div>
 </dd>
@@ -803,9 +803,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the path of this option, which is just the ID from <a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getId()"><code>IPlayerConfigOptionSpecAPI.getId()</code></a> but separated into elements.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getPermission(ServerPlayer, IPermissionNodeAPI)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getPermission(ServerPlayer, IPermissionNodeAPI&lt;Boolean&gt;)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
 <dd>
 <div class="block">Gets the value of a boolean permission for a specified player.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermissionTyped(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getPermissionTyped(ServerPlayer, IPermissionNodeAPI&lt;T&gt;)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
+<dd>
+<div class="block">Gets the value of a permission with a specific value type.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerBaseClaimLimit(java.util.UUID)" class="member-name-link">getPlayerBaseClaimLimit(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
@@ -1083,6 +1087,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the type of values that this option can have.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getType()" class="member-name-link">getType()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
+<dd>
+<div class="block">Gets the type of value stored with this permission node.</div>
+</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html#getUIAllyCount()" class="member-name-link">getUIAllyCount()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyStorageAPI</a></dt>
 <dd>
 <div class="block">Gets the number of ally parties for the local client player's party, meant for the UI.</div>
@@ -1310,7 +1318,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for info about a player used for party purposes</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a> - Interface in <a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a></dt>
+<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a>&lt;<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="type parameter in IPermissionNodeAPI">T</a>&gt; - Interface in <a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a></dt>
 <dd>
 <div class="block">A representation of a player permission node.</div>
 </dd>
@@ -1440,10 +1448,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html#isForceloadable()" class="member-name-link">isForceloadable()</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></dt>
 <dd>
 <div class="block">Checks whether this claim is marked for forceloading.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#isInt()" class="member-name-link">isInt()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
-<dd>
-<div class="block">Checks whether this node is for an int permission.</div>
 </dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#isInvited(java.util.UUID)" class="member-name-link">isInvited(UUID)</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
