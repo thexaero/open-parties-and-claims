@@ -78,6 +78,11 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 	@Nonnull
 	@Override
 	public <T> Optional<T> getPermissionTyped(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<T> node) {
+		if(node.getType() == Boolean.class) {
+			@SuppressWarnings("unchecked")
+			Optional<T> booleanValue = (Optional<T>) Optional.of(getPermission(player, (IPermissionNodeAPI<Boolean>) node));
+			return booleanValue;
+		}
 		CachedMetaData cachedMetaData = getCachedMetaData(player);
 		if(cachedMetaData == null)
 			return Optional.empty();
