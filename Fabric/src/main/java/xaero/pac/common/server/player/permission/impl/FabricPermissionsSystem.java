@@ -21,7 +21,6 @@ package xaero.pac.common.server.player.permission.impl;
 import me.lucko.fabric.api.permissions.v0.Options;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
@@ -42,7 +41,7 @@ public class FabricPermissionsSystem implements IPlayerPermissionSystemAPI {
 			Short.class, Short::valueOf,
 			Byte.class, Byte::valueOf,
 			String.class, Function.identity(),
-			Component.class, TextComponent::new
+			Component.class, Component::literal
 	);
 
 	@Nonnull
