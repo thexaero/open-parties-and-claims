@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2023, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,25 +18,18 @@
 
 package xaero.pac.common.mods;
 
-public class ModSupportFabric extends ModSupport {
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
+import xaero.pac.common.server.player.permission.impl.FabricPermissionsSystem;
 
-	public boolean FABRIC_PERMISSIONS;
-	private FabricPermissions fabricPermissions;
+public class FabricPermissions {
+	private final IPlayerPermissionSystemAPI permissionSystem;
 
-	@Override
-	public void check(boolean client) {
-		super.check(client);
-		try {
-			Class.forName("me.lucko.fabric.api.permissions.v0.Permissions");
-			fabricPermissions = new FabricPermissions();
-			FABRIC_PERMISSIONS = true;
-		} catch (ClassNotFoundException e) {
-		}
-
+	public FabricPermissions() {
+		this.permissionSystem = new FabricPermissionsSystem();
 	}
 
-	public FabricPermissions getFabricPermissionsSupport() {
-		return fabricPermissions;
+	public IPlayerPermissionSystemAPI getPermissionSystem() {
+		return permissionSystem;
 	}
 
 }
