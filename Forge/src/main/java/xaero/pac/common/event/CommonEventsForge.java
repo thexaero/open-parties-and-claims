@@ -48,6 +48,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -64,6 +65,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.data.ServerDataReloadListenerForge;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.permission.impl.ForgePermissionsSystem;
 
 public class CommonEventsForge extends CommonEvents {
 
@@ -261,6 +263,13 @@ public class CommonEventsForge extends CommonEvents {
 	@SubscribeEvent
 	public void onAddonRegister(OPACServerAddonRegisterEvent event){
 		super.onAddonRegister(event.getServer(), event.getPermissionSystemManager(), event.getClaimsManagerTrackerAPI());
+
+		event.getPermissionSystemManager().register("permission_api", new ForgePermissionsSystem());
+	}
+
+	@SubscribeEvent
+	protected void onForgePermissionGather(PermissionGatherEvent.Nodes event) {
+		ForgePermissionsSystem.registerNodes(event);
 	}
 
 	@Override
