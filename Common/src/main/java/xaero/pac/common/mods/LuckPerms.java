@@ -16,30 +16,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.permission;
+package xaero.pac.common.mods;
 
-import dev.ftb.mods.ftbranks.api.FTBRanksAPI;
-import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
+import xaero.pac.common.server.player.permission.impl.PlayerLuckPermsSystem;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
-import javax.annotation.Nonnull;
-import java.util.OptionalInt;
+public class LuckPerms {
 
-public class PlayerFTBPermissionHelperFabric implements IPlayerPermissionSystemAPI {
+	private final IPlayerPermissionSystemAPI permissionSystem;
 
-	@Nonnull
-	@Override
-	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
-		String nodeString = node.getNodeString();
-		if(nodeString.isEmpty())
-			return OptionalInt.empty();
-		return FTBRanksAPI.getPermissionValue(player, nodeString).asInteger();
+	public LuckPerms() {
+		this.permissionSystem = new PlayerLuckPermsSystem();
 	}
 
-	@Override
-	public boolean getPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI node) {
-		return FTBRanksAPI.getPermissionValue(player, node.getNodeString()).asBooleanOrFalse();
+	public IPlayerPermissionSystemAPI getPermissionSystem() {
+		return permissionSystem;
 	}
 
 }

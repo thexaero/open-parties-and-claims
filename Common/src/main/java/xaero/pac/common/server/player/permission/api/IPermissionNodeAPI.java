@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  * <p>
  * All nodes used by the mod can be accessed in {@link UsedPermissionNodes}
  */
-public interface IPermissionNodeAPI {
+public interface IPermissionNodeAPI<T> {
 
 	/**
 	 * Gets the default string representation of this node.
@@ -62,10 +62,11 @@ public interface IPermissionNodeAPI {
 	Component getComment();
 
 	/**
-	 * Checks whether this node is for an int permission.
+	 * Gets the type of value stored with this permission node.
 	 *
-	 * @return true if this is an int permission node, otherwise false
+	 * @return the type of value stored with this permission node, not null
 	 */
-	boolean isInt();
+	@Nonnull
+	Class<T> getType();
 
 }

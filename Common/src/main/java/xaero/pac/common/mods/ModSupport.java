@@ -20,23 +20,35 @@ package xaero.pac.common.mods;
 
 public abstract class ModSupport {
 
+	public boolean LUCK_PERMS;
+	private LuckPerms luckPerms;
 	public boolean FTB_RANKS;
 	private FTBRanks ftbRanks;
 
 	public void check(boolean client){
+		if(!client) {
+			try {
+				Class.forName("net.luckperms.api.LuckPerms");
+				LUCK_PERMS = true;
+				luckPerms = new LuckPerms();
+			} catch (ClassNotFoundException e) {
+			}
+		}
 		try {
 			Class.forName("dev.ftb.mods.ftbranks.api.FTBRanksAPI");
 			FTB_RANKS = true;
-			ftbRanks = createFTBRanksSupport();
+			ftbRanks = new FTBRanks();
 		} catch (ClassNotFoundException e) {
 		}
+	}
+
+	public LuckPerms getLuckPerms() {
+		return luckPerms;
 	}
 
 	public FTBRanks getFTBRanksSupport(){
 		return ftbRanks;
 	}
-
-	protected abstract FTBRanks createFTBRanksSupport();
 
 	public void init(){
 
