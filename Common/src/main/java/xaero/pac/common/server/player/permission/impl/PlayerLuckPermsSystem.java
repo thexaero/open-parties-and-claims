@@ -26,27 +26,39 @@ import net.luckperms.api.cacheddata.CachedPermissionData;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.query.QueryOptions;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.function.Function;
 
 public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 
 	private QueryOptions queryOptions;
+	private static final Map<Class<?>, Function<String, ?>> PARSERS = Map.of(
+			Integer.class, Integer::valueOf,
+			Double.class, Double::valueOf,
+			Float.class, Float::valueOf,
+			Long.class, Long::valueOf,
+			Short.class, Short::valueOf,
+			Byte.class, Byte::valueOf,
+			String.class, Function.identity(),
+			Component.class, TextComponent::new
+	);
 
 	@Nonnull
 	@Override
 	public OptionalInt getIntPermission(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<Integer> node) {
-		User user = getUser(player);
-		if(user == null)
+		CachedMetaData cachedMetaData = getCachedMetaData(player);
+		if(cachedMetaData == null)
 			return OptionalInt.empty();
-		ensureQueryOptions();
-		CachedDataManager cachedDataManager = user.getCachedData();
-		CachedMetaData cachedMetaData = cachedDataManager.getMetaData(queryOptions);
 		Integer parsedInteger = cachedMetaData.getMetaValue(node.getNodeString(), Integer::parseInt).orElse(null);
 		if(parsedInteger == null)
 			return OptionalInt.empty();
@@ -62,6 +74,20 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 		CachedDataManager cachedDataManager = user.getCachedData();
 		CachedPermissionData cachedPermissionData = cachedDataManager.getPermissionData(queryOptions);
 		return cachedPermissionData.checkPermission(node.getNodeString()).asBoolean();
+	}
+
+	@Nonnull
+	@Override
+	public <T> Optional<T> getPermissionTyped(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<T> node) {
+		CachedMetaData cachedMetaData = getCachedMetaData(player);
+		if(cachedMetaData == null)
+			return Optional.empty();
+		@SuppressWarnings("unchecked")
+		Function<String, T> parser = (Function<String, T>)PARSERS.get(node.getType());
+		if(parser == null)
+			return Optional.empty();
+		T parsedValue = cachedMetaData.getMetaValue(node.getNodeString(), parser).orElse(null);
+		return Optional.ofNullable(parsedValue);
 	}
 
 	private void ensureQueryOptions(){
@@ -82,6 +108,15 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 		} else
 			user = userManager.getUser(player.getUUID());
 		return user;
+	}
+
+	private CachedMetaData getCachedMetaData(ServerPlayer player){
+		User user = getUser(player);
+		if(user == null)
+			return null;
+		ensureQueryOptions();
+		CachedDataManager cachedDataManager = user.getCachedData();
+		return cachedDataManager.getMetaData(queryOptions);
 	}
 
 }
