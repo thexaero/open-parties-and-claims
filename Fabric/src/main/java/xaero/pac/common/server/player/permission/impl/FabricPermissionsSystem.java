@@ -62,6 +62,11 @@ public class FabricPermissionsSystem implements IPlayerPermissionSystemAPI {
 	@Nonnull
 	@Override
 	public <T> Optional<T> getPermissionTyped(@Nonnull ServerPlayer player, @Nonnull IPermissionNodeAPI<T> node) {
+		if(node.getType() == Boolean.class) {
+			@SuppressWarnings("unchecked")
+			Optional<T> booleanValue = (Optional<T>) Optional.of(getPermission(player, (IPermissionNodeAPI<Boolean>) node));
+			return booleanValue;
+		}
 		@SuppressWarnings("unchecked")
 		Function<String, T> parser = (Function<String, T>) PARSERS.get(node.getType());
 		if(parser == null)
