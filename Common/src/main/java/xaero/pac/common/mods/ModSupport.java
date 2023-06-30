@@ -28,6 +28,8 @@ public abstract class ModSupport {
 	public boolean PROMETHEUS;
 	private FTBRanks ftbRanks;
 	private Prometheus prometheus;
+	public boolean FTB_TEAMS;
+	private FTBTeams ftbTeams;
 
 	public void check(boolean client){
 		if(!client) {
@@ -50,6 +52,12 @@ public abstract class ModSupport {
 			prometheus = new Prometheus(client);
 		} catch (ClassNotFoundException e) {
 		}
+		try {
+			Class.forName("dev.ftb.mods.ftbteams.api.FTBTeamsAPI");
+			FTB_TEAMS = true;
+			ftbTeams = new FTBTeams();
+		} catch (ClassNotFoundException e) {
+		}
 	}
 
 	public LuckPerms getLuckPerms() {
@@ -62,6 +70,10 @@ public abstract class ModSupport {
 
 	public Prometheus getPrometheusSupport() {
 		return prometheus;
+	}
+
+	public FTBTeams getFTBTeamsSupport() {
+		return ftbTeams;
 	}
 
 	public void init() {

@@ -57,6 +57,9 @@ dependencies {
 
      compileOnly "maven.modrinth:resourceful-lib:2.1.1"//source: https://github.com/Team-Resourceful/ResourcefulLib
      compileOnly "maven.modrinth:prometheus:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
+
+    compileOnly"curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
+
 }
 
 processResources {

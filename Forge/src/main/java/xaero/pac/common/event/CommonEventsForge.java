@@ -264,7 +264,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onAddonRegister(OPACServerAddonRegisterEvent event){
-		super.onAddonRegister(event.getServer(), event.getPermissionSystemManager(), event.getClaimsManagerTrackerAPI());
+		super.onAddonRegister(event.getServer(), event.getPermissionSystemManager(), event.getPartySystemManagerAPI(), event.getClaimsManagerTrackerAPI());
 
 		event.getPermissionSystemManager().register("permission_api", new ForgePermissionsSystem());
 	}
@@ -276,7 +276,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@Override
 	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		MinecraftForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getServerClaimsManager().getTracker()));
+		MinecraftForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker()));
 	}
 
 }

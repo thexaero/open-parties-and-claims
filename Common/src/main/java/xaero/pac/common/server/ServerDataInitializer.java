@@ -24,10 +24,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.parties.party.member.PartyInvite;
-import xaero.pac.common.parties.party.member.PartyMember;
-import xaero.pac.common.server.claims.ServerClaimsPermissionHandler;
 import xaero.pac.common.server.claims.ServerClaimsManager;
+import xaero.pac.common.server.claims.ServerClaimsPermissionHandler;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
@@ -58,7 +56,11 @@ import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.io.serialization.nbt.PartyNbtSerializer;
 import xaero.pac.common.server.parties.party.task.PartyRemovalSpreadoutTask;
-import xaero.pac.common.server.player.*;
+import xaero.pac.common.server.parties.system.PlayerPartySystemManager;
+import xaero.pac.common.server.player.PlayerLoginHandler;
+import xaero.pac.common.server.player.PlayerLogoutHandler;
+import xaero.pac.common.server.player.PlayerTickHandler;
+import xaero.pac.common.server.player.PlayerWorldJoinHandler;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
@@ -240,13 +242,15 @@ public class ServerDataInitializer {
 					.setServerInfo(serverInfo)
 					.build();
 			serverClaimsManager.setExpirationHandler(claimsExpirationHandler);
-			
+
+			PlayerPermissionSystemManager playerPermissionSystemManager = PlayerPermissionSystemManager.Builder.begin(LinkedHashMap::new).build();
+			PlayerPartySystemManager playerPartySystemManager = PlayerPartySystemManager.Builder.begin(LinkedHashMap::new).build();
 			ObjectManagerLiveSaver playerClaimInfoLiveSaver = new ObjectManagerLiveSaver(playerClaimInfoManagerIO, autosaveInterval, autosaveInterval / 3 * 2);
-			ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection = ChunkProtection.Builder
-					.<ServerClaimsManager, PartyMember, PartyInvite, ServerParty>begin()
+			ChunkProtection<ServerClaimsManager> chunkProtection = ChunkProtection.Builder
+					.<ServerClaimsManager>begin()
 					.setServer(server)
 					.setClaimsManager(serverClaimsManager)
-					.setPartyManager(partyManager)
+					.setPlayerPartySystemManager(playerPartySystemManager)
 					.setBlockExceptionGroups(blockExceptionGroups)
 					.setEntityExceptionGroups(entityExceptionGroups)
 					.setItemExceptionGroups(itemExceptionGroups)
@@ -257,13 +261,12 @@ public class ServerDataInitializer {
 					.build();
 			chunkProtection.updateTagExceptions(server);
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
-			PlayerPermissionSystemManager playerPermissionSystemManager = PlayerPermissionSystemManager.Builder.begin(LinkedHashMap::new).build();
 
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
 					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
 					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
 					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, playerWorldJoinHandler, serverInfo, serverInfoIO, 
-					claimsExpirationHandler, objectExpirationCheckTaskHandler, playerPermissionSystemManager);
+					claimsExpirationHandler, objectExpirationCheckTaskHandler, playerPermissionSystemManager, playerPartySystemManager);
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);
 			serverData.onServerResourcesReload(server.getResourceManager());
