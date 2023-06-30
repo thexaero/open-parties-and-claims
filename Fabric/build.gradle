@@ -47,7 +47,7 @@ dependencies {
     modCompileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
     modCompileOnly 'me.lucko:fabric-permissions-api:0.2-SNAPSHOT'//source: https://github.com/lucko/fabric-permissions-api
 
-    modCompileOnly "curse.maven:ftbteams-438497:4579980"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-fabric
+    modCompileOnly "curse.maven:ftbteams-438497:4611937"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-fabric
 }
 
 loom {
