@@ -22,15 +22,16 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
+import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
 public interface OPACServerAddonRegister {
 
-	public static final Event<OPACServerAddonRegister> EVENT = EventFactory.createArrayBacked(OPACServerAddonRegister.class, (callbacks) -> (server, permissionSystemManagerAPI, claimsManagerTrackerAPI) -> {
+	public static final Event<OPACServerAddonRegister> EVENT = EventFactory.createArrayBacked(OPACServerAddonRegister.class, (callbacks) -> (server, permissionSystemManagerAPI, partySystemManagerAPI, claimsManagerTrackerAPI) -> {
 		for (OPACServerAddonRegister callback : callbacks)
-			callback.registerAddons(server, permissionSystemManagerAPI, claimsManagerTrackerAPI);
+			callback.registerAddons(server, permissionSystemManagerAPI, partySystemManagerAPI, claimsManagerTrackerAPI);
 	});
 
-	void registerAddons(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI);
+	void registerAddons(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI);
 
 }
