@@ -503,6 +503,10 @@ public abstract class CommonEvents {
 
 		if(modMain.getModSupport().FTB_TEAMS)
 			partySystemManagerAPI.register("ftb_teams", modMain.getModSupport().getFTBTeamsSupport().getPartySystem());
+		if(modMain.getModSupport().ARGONAUTS) {
+			partySystemManagerAPI.register("argonauts", modMain.getModSupport().getArgonautsSupport().getPartySystem());
+			partySystemManagerAPI.register("argonauts_guilds", modMain.getModSupport().getArgonautsSupport().createGuildSystem(server));
+		}
 	}
 
 }

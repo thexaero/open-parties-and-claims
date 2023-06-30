@@ -25,11 +25,13 @@ public abstract class ModSupport {
 	public boolean LUCK_PERMS;
 	private LuckPerms luckPerms;
 	public boolean FTB_RANKS;
-	public boolean PROMETHEUS;
 	private FTBRanks ftbRanks;
+	public boolean PROMETHEUS;
 	private Prometheus prometheus;
 	public boolean FTB_TEAMS;
 	private FTBTeams ftbTeams;
+	public boolean ARGONAUTS;
+	private Argonauts argonauts;
 
 	public void check(boolean client){
 		if(!client) {
@@ -58,6 +60,12 @@ public abstract class ModSupport {
 			ftbTeams = new FTBTeams();
 		} catch (ClassNotFoundException e) {
 		}
+		try {
+			Class.forName("earth.terrarium.argonauts.common.handlers.party.PartyHandler");
+			ARGONAUTS = true;
+			argonauts = new Argonauts();
+		} catch (ClassNotFoundException e) {
+		}
 	}
 
 	public LuckPerms getLuckPerms() {
@@ -74,6 +82,10 @@ public abstract class ModSupport {
 
 	public FTBTeams getFTBTeamsSupport() {
 		return ftbTeams;
+	}
+
+	public Argonauts getArgonautsSupport() {
+		return argonauts;
 	}
 
 	public void init() {

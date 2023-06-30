@@ -117,10 +117,10 @@ public class ServerConfig {
 			.define("permissionSystem", "prometheus");
 
 		primaryPartySystem = builder
-			.comment("The player party system to prefer and use for anything that can't support multiple systems (e.g. default, ftb_teams, argonauts). Non-built-in party systems can be registered through the API with an addon.")
+			.comment("The player party system to prefer and use for anything that can't support multiple systems (e.g. default, ftb_teams, argonauts, argonauts_guilds). Non-built-in party systems can be registered through the API with an addon.")
 			.translation("gui.xaero_pac_config_primary_party_system")
 			.worldRestart()
-			.define("primaryPartySystem", "argonauts");
+			.define("primaryPartySystem", "argonauts_guilds");
 
 		builder.push("parties");
 
