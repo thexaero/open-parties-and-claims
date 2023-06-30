@@ -43,7 +43,7 @@ public abstract class ModSupport {
 		} catch (ClassNotFoundException e) {
 		}
 		try {
-			Class.forName("dev.ftb.mods.ftbteams.FTBTeamsAPI");
+			Class.forName("dev.ftb.mods.ftbteams.api.FTBTeamsAPI");
 			FTB_TEAMS = true;
 			ftbTeams = new FTBTeams();
 		} catch (ClassNotFoundException e) {

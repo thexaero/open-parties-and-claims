@@ -18,9 +18,9 @@
 
 package xaero.pac.common.server.parties.system.impl;
 
-import dev.ftb.mods.ftbteams.FTBTeamsAPI;
-import dev.ftb.mods.ftbteams.data.Team;
-import dev.ftb.mods.ftbteams.data.TeamRank;
+import dev.ftb.mods.ftbteams.api.FTBTeamsAPI;
+import dev.ftb.mods.ftbteams.api.Team;
+import dev.ftb.mods.ftbteams.api.TeamRank;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
 
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 	@Nullable
 	@Override
 	public Team getPartyByOwner(@Nonnull UUID playerId) {
-		Team team = FTBTeamsAPI.getPlayerTeam(playerId);
+		Team team = FTBTeamsAPI.api().getManager().getTeamForPlayerID(playerId).orElse(null);
 		if(team == null)
 			return null;
 		if(team.getOwner().equals(playerId))
@@ -43,7 +43,7 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 	@Nullable
 	@Override
 	public Team getPartyByMember(@Nonnull UUID playerId) {
-		return FTBTeamsAPI.getPlayerTeam(playerId);
+		return FTBTeamsAPI.api().getManager().getTeamForPlayerID(playerId).orElse(null);
 	}
 
 	@Override
@@ -52,13 +52,13 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 		if(playerTeam == null)
 			return false;
 		Team potentialAllyPlayerTeam = getPartyByMember(potentialAllyPlayerId);
-		return playerTeam != potentialAllyPlayerTeam && playerTeam.isAlly(potentialAllyPlayerId);
+		return playerTeam != potentialAllyPlayerTeam && playerTeam.getRankForPlayer(potentialAllyPlayerId) == TeamRank.ALLY;
 	}
 
 	@Override
 	public boolean isPermittedToPartyClaim(@Nonnull UUID playerId) {
 		Team playerTeam = getPartyByMember(playerId);
-		return playerTeam != null && playerTeam.getHighestRank(playerId).ordinal() >= TeamRank.OFFICER.ordinal();
+		return playerTeam != null && playerTeam.getRankForPlayer(playerId).isOfficerOrBetter();
 	}
 
 }
