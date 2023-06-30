@@ -100,14 +100,16 @@ public abstract class CommonEvents {
 		lastServerStarted = server;
 		OpenPartiesAndClaims.LOGGER.info("Initializing Open Parties and Claims for the server...");
 		((IOpenPACMinecraftServer) lastServerStarted).setXaero_OPAC_ServerData(new ServerDataInitializer().init(modMain, lastServerStarted));
-		modMain.getPacketHandler().onServerAboutToStart();
 
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
-		try {
-			serverData.getPlayerPermissionSystemManager().preRegister();
-			fireAddonRegisterEvent(serverData);
-		} finally {
-			serverData.getPlayerPermissionSystemManager().postRegister();
+		if(serverData != null) {
+			modMain.getPacketHandler().onServerAboutToStart();
+			try {
+				serverData.getPlayerPermissionSystemManager().preRegister();
+				fireAddonRegisterEvent(serverData);
+			} finally {
+				serverData.getPlayerPermissionSystemManager().postRegister();
+			}
 		}
 	}
 
