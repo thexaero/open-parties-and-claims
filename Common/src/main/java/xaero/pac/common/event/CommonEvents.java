@@ -67,6 +67,8 @@ import xaero.pac.common.server.command.CommonCommandRegister;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.parties.command.PartyCommandRegister;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
+import xaero.pac.common.server.parties.system.impl.DefaultPlayerPartySystem;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
@@ -106,9 +108,12 @@ public abstract class CommonEvents {
 			modMain.getPacketHandler().onServerAboutToStart();
 			try {
 				serverData.getPlayerPermissionSystemManager().preRegister();
+				serverData.getPlayerPartySystemManager().preRegister();
+				serverData.getPlayerPartySystemManager().register("default", new DefaultPlayerPartySystem(serverData.getPartyManager()));
 				fireAddonRegisterEvent(serverData);
 			} finally {
 				serverData.getPlayerPermissionSystemManager().postRegister();
+				serverData.getPlayerPartySystemManager().postRegister();
 			}
 		}
 	}
@@ -483,7 +488,7 @@ public abstract class CommonEvents {
 		}
 	}
 
-	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
+	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
 		//built-in "addons"
 		if(modMain.getModSupport().LUCK_PERMS)
 			permissionSystemManagerAPI.register("luck_perms", modMain.getModSupport().getLuckPerms().getPermissionSystem());

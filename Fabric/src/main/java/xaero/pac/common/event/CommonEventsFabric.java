@@ -71,6 +71,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCoreFabric;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
 import java.util.List;
@@ -248,8 +249,8 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	@Override
-	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI) {
-		super.onAddonRegister(server, permissionSystemManagerAPI, claimsManagerTrackerAPI);
+	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI) {
+		super.onAddonRegister(server, permissionSystemManagerAPI, partySystemManagerAPI, claimsManagerTrackerAPI);
 		ModSupportFabric modSupportFabric = (ModSupportFabric)modMain.getModSupport();
 		if(modSupportFabric.FABRIC_PERMISSIONS)
 			permissionSystemManagerAPI.register("permission_api", modSupportFabric.getFabricPermissionsSupport().getPermissionSystem());
@@ -258,7 +259,7 @@ public class CommonEventsFabric extends CommonEvents {
 
 	@Override
 	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getServerClaimsManager().getTracker());
+		OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker());
 	}
 
 }

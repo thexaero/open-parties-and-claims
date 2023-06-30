@@ -87,6 +87,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<String> serverClaimPermission;
 	public final ForgeConfigSpec.ConfigValue<String> adminModePermission;
 	public final ForgeConfigSpec.ConfigValue<String> permissionSystem;
+	public final ForgeConfigSpec.ConfigValue<String> primaryPartySystem;
 
 	private ServerConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -110,11 +111,17 @@ public class ServerConfig {
 			.defineInRange("playerSubConfigLimit", 64, 0, 1024);
 
 		permissionSystem = builder
-				.comment("The permission system to use for everything that requires permission checks (e.g. permission_api, ftb_ranks, luck_perms, prometheus). Non-built-in permission systems can be registered through the API with an addon.")
-				.translation("gui.xaero_pac_config_permission_system")
-				.worldRestart()
-				.define("permissionSystem", "ftb_ranks");
-		
+			.comment("The permission system to use for everything that requires permission checks (e.g. permission_api, ftb_ranks, luck_perms, prometheus). Non-built-in permission systems can be registered through the API with an addon.")
+			.translation("gui.xaero_pac_config_permission_system")
+			.worldRestart()
+			.define("permissionSystem", "ftb_ranks");
+
+		primaryPartySystem = builder
+			.comment("The player party system to prefer and use for anything that can't support multiple systems (e.g. default, ftb_teams, argonauts). Non-built-in party systems can be registered through the API with an addon.")
+			.translation("gui.xaero_pac_config_primary_party_system")
+			.worldRestart()
+			.define("primaryPartySystem", "ftb_teams");
+
 		builder.push("parties");
 
 		partiesEnabled = builder

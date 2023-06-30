@@ -45,7 +45,7 @@ public final class PlayerPermissionSystemManager implements IPlayerPermissionSys
 	@Override
 	public void register(@Nonnull String name, @Nonnull IPlayerPermissionSystemAPI system) {
 		if(!registeringAddons)
-			throw new IllegalStateException("You must register OPAC addons during the OPACAddonRegister event! (OPACAddonRegisterEvent on Forge)");
+			throw new IllegalStateException("You must register OPAC addons during the OPACServerAddonRegister event! (OPACServerAddonRegisterEvent on Forge)");
 		if(systems.containsKey(name))
 			throw new IllegalArgumentException("This permission system name is already registered!");
 		systems.put(name, system);
@@ -66,7 +66,7 @@ public final class PlayerPermissionSystemManager implements IPlayerPermissionSys
 		}
 		usedSystem = systems.get(configuredName);
 		if(usedSystem == null) {
-			OpenPartiesAndClaims.LOGGER.warn("The configured permission system {} isn't registered!", configuredName);
+			OpenPartiesAndClaims.LOGGER.warn("The configured permission system \"{}\" isn't registered!", configuredName);
 			if(systems.isEmpty())
 				return;
 			usedSystem = systems.values().stream().findFirst().get();
