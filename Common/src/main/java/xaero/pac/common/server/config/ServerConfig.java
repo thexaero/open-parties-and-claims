@@ -108,6 +108,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_player_subconfig_limit")
 			.worldRestart()
 			.defineInRange("playerSubConfigLimit", 64, 0, 1024);
+
+		permissionSystem = builder
+				.comment("The permission system to use for everything that requires permission checks (e.g. permission_api, ftb_ranks, luck_perms, prometheus). Non-built-in permission systems can be registered through the API with an addon.")
+				.translation("gui.xaero_pac_config_permission_system")
+				.worldRestart()
+				.define("permissionSystem", "ftb_ranks");
 		
 		builder.push("parties");
 
@@ -190,12 +196,6 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_max_player_forceloads")
 			.worldRestart()
 			.defineInRange("maxPlayerClaimForceloads", 10, 0, Integer.MAX_VALUE);
-
-		permissionSystem = builder
-			.comment("The permission system to use for everything that requires permission checks (e.g. permission_api, ftb_ranks, luck_perms, prometheus). Non-built-in permission systems can be registered through the API with an addon.")
-			.translation("gui.xaero_pac_config_permission_system")
-			.worldRestart()
-			.define("permissionSystem", "ftb_ranks");
 
 		maxPlayerClaimsPermission = builder
 			.comment("The permission that should override the default \"maxPlayerClaims\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
