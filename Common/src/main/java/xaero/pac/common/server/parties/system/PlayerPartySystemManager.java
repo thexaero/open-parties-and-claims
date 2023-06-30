@@ -92,7 +92,8 @@ public final class PlayerPartySystemManager implements IPlayerPartySystemManager
 	public boolean areInSameParty(UUID playerId, UUID otherPlayerId) {
 		Iterable<IPlayerPartySystemAPI<?>> allSystems = getRegisteredSystems();
 		for(IPlayerPartySystemAPI<?> partySystem : allSystems){
-			if(partySystem.getPartyByMember(playerId) == partySystem.getPartyByMember(otherPlayerId))
+			Object playerParty = partySystem.getPartyByMember(playerId);
+			if(playerParty != null && playerParty == partySystem.getPartyByMember(otherPlayerId))
 				return true;
 		}
 		return false;
