@@ -51,8 +51,14 @@ public class DefaultPlayerPartySystem implements IPlayerPartySystemAPI<IServerPa
 	}
 
 	@Override
-	public boolean isPartyAllying(@Nonnull IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party, @Nonnull IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> potentialAllyParty) {
-		return party.isAlly(potentialAllyParty.getId());
+	public boolean isPlayerAllying(@Nonnull UUID playerId, @Nonnull UUID potentialAllyPlayerId) {
+		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = getPartyByMember(playerId);
+		if(playerParty == null)
+			return false;
+		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> potentialAllyPlayerParty = getPartyByMember(potentialAllyPlayerId);
+		if(potentialAllyPlayerParty == null)
+			return false;
+		return playerParty.isAlly(potentialAllyPlayerParty.getId());
 	}
 
 	@Override

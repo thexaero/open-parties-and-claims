@@ -102,20 +102,10 @@ public final class PlayerPartySystemManager implements IPlayerPartySystemManager
 	public boolean isPlayerAllying(UUID playerId, UUID potentialAllyPlayerId) {
 		Iterable<IPlayerPartySystemAPI<?>> allSystems = getRegisteredSystems();
 		for(IPlayerPartySystemAPI<?> partySystem : allSystems){
-			if(isPlayerAllyingForSystem(playerId, potentialAllyPlayerId, partySystem))
+			if(partySystem.isPlayerAllying(playerId, potentialAllyPlayerId))
 				return true;
 		}
 		return false;
-	}
-
-	private <P> boolean isPlayerAllyingForSystem(UUID playerId, UUID potentialAllyPlayerId, IPlayerPartySystemAPI<P> partySystem){
-		P playerParty = partySystem.getPartyByMember(playerId);
-		if(playerParty == null)
-			return false;
-		P potentialAllyParty = partySystem.getPartyByMember(potentialAllyPlayerId);
-		if(potentialAllyParty == null)
-			return false;
-		return partySystem.isPartyAllying(playerParty, potentialAllyParty);
 	}
 
 	public static final class Builder {

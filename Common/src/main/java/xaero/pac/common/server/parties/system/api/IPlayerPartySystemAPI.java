@@ -56,14 +56,14 @@ public interface IPlayerPartySystemAPI<P> {
 	P getPartyByMember(@Nonnull UUID playerId);
 
 	/**
-	 * Checks if a party {@code party} considers another party {@code potentialAllyParty}
+	 * Checks if a player with UUID {@code playerId} considers a player with UUID {@code potentialAllyPlayerId}
 	 * an ally.
 	 *
-	 * @param party  the party to check the allies of, not null
-	 * @param potentialAllyParty  the party to check the ally status of, not null
-	 * @return true, if {@code party} considers {@code potentialAllyParty} an ally, otherwise false
+	 * @param playerId  the UUID of the player to check the allies of, not null
+	 * @param potentialAllyPlayerId  the UUID of the player to check the ally status of, not null
+	 * @return true, if {@code playerId} considers {@code potentialAllyPlayerId} an ally, otherwise false
 	 */
-	boolean isPartyAllying(@Nonnull P party, @Nonnull P potentialAllyParty);
+	boolean isPlayerAllying(@Nonnull UUID playerId, @Nonnull UUID potentialAllyPlayerId);
 
 	/**
 	 * Checks if a player is permitted to claim as the party that they belong to but don't own.
