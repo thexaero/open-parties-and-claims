@@ -494,6 +494,9 @@ public abstract class CommonEvents {
 			permissionSystemManagerAPI.register("luck_perms", modMain.getModSupport().getLuckPerms().getPermissionSystem());
 		if(modMain.getModSupport().FTB_RANKS)
 			permissionSystemManagerAPI.register("ftb_ranks", modMain.getModSupport().getFTBRanksSupport().getPermissionSystem());
+
+		if(modMain.getModSupport().FTB_TEAMS)
+			partySystemManagerAPI.register("ftb_teams", modMain.getModSupport().getFTBTeamsSupport().getPartySystem());
 	}
 
 }
