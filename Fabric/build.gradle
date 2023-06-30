@@ -41,8 +41,8 @@ dependencies {
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
-    modCompileOnly "curse.maven:architectury-419699:3843623"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-    modCompileOnly "curse.maven:ftblibrary-438495:3831893"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-fabric
+    modCompileOnly "curse.maven:architectury-419699:4581904"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+    modCompileOnly "curse.maven:ftblibrary-438495:4596510"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-fabric
 
     modCompileOnly "maven.modrinth:resourceful-lib:5gAcCZfI"//source: https://github.com/Team-Resourceful/ResourcefulLib
     modCompileOnly "maven.modrinth:prometheus:C5LLDjN7"//source: https://github.com/terrarium-earth/Prometheus

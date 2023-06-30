@@ -90,8 +90,8 @@ dependencies {
     compileOnly project(":Common")
 
     compileOnly fg.deobf("curse.maven:ftbranks-314905:3890135")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
-    compileOnly fg.deobf("curse.maven:architectury-419699:3893635")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-    compileOnly fg.deobf("curse.maven:ftblibrary-404465:3890137")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+    compileOnly fg.deobf("curse.maven:architectury-419699:4581905")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+    compileOnly fg.deobf("curse.maven:ftblibrary-404465:4596511")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
     compileOnly fg.deobf("maven.modrinth:resourceful-lib:2.1.1")//source: https://github.com/Team-Resourceful/ResourcefulLib
     compileOnly fg.deobf("maven.modrinth:prometheus:0.0.0")//source: https://github.com/terrarium-earth/Prometheus
