@@ -97,6 +97,8 @@ dependencies {
 
 
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
+    
+    compileOnly fg.deobf("curse.maven:ftbteams-404468:4616152")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
 }
 
 tasks.withType(JavaCompile) {

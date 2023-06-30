@@ -27,8 +27,6 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
-import xaero.pac.common.parties.party.member.PartyInvite;
-import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.api.OpenPACServerAPI;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
@@ -47,7 +45,12 @@ import xaero.pac.common.server.io.ObjectManagerLiveSaver;
 import xaero.pac.common.server.parties.party.*;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
-import xaero.pac.common.server.player.*;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
+import xaero.pac.common.server.parties.system.PlayerPartySystemManager;
+import xaero.pac.common.server.player.PlayerLoginHandler;
+import xaero.pac.common.server.player.PlayerLogoutHandler;
+import xaero.pac.common.server.player.PlayerTickHandler;
+import xaero.pac.common.server.player.PlayerWorldJoinHandler;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
@@ -80,7 +83,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final ObjectManagerLiveSaver playerClaimInfoLiveSaver;
 	private final ServerClaimsManager serverClaimsManager;
 	private final ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler;
-	private final ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection;
+	private final ChunkProtection<ServerClaimsManager> chunkProtection;
 	private final ServerStartingCallback serverLoadCallback;
 	private final ForceLoadTicketManager forceLoadManager;
 	private final PlayerWorldJoinHandler playerWorldJoinHandler;
@@ -88,6 +91,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final ServerInfoHolderIO serverInfoIO;
 	private final ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler;
 	private final PlayerPermissionSystemManager playerPermissionSystemManager;
+	private final PlayerPartySystemManager playerPartySystemManager;
 	private AdaptiveLocalizer adaptiveLocalizer;
 	private final OpenPACServerAPI api;
 
@@ -98,9 +102,9 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 					  PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs, PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO,
 					  ObjectManagerLiveSaver playerConfigLiveSaver, PlayerClaimInfoManagerIO<?> playerClaimInfoManagerIO,
 					  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
-					  ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> chunkProtection, ServerStartingCallback serverLoadCallback,
+					  ChunkProtection<ServerClaimsManager> chunkProtection, ServerStartingCallback serverLoadCallback,
 					  ForceLoadTicketManager forceLoadManager, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
-					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler, PlayerPermissionSystemManager playerPermissionSystemManager) {
+					  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler, PlayerPermissionSystemManager playerPermissionSystemManager, PlayerPartySystemManager playerPartySystemManager) {
 		super();
 		this.server = server;
 		this.partyManager = partyManager;
@@ -130,6 +134,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.serverPlayerClaimsExpirationHandler = serverPlayerClaimsExpirationHandler;
 		this.objectExpirationCheckTaskHandler = objectExpirationCheckTaskHandler;
 		this.playerPermissionSystemManager = playerPermissionSystemManager;
+		this.playerPartySystemManager = playerPartySystemManager;
 		api = new OpenPACServerAPI(this);
 	}
 
@@ -219,7 +224,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	}
 
 	@Override
-	public ChunkProtection<ServerClaimsManager, PartyMember, PartyInvite, ServerParty> getChunkProtection() {
+	public ChunkProtection<ServerClaimsManager> getChunkProtection() {
 		return chunkProtection;
 	}
 	
@@ -279,6 +284,11 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	@Override
 	public PlayerPermissionSystemManager getPlayerPermissionSystemManager() {
 		return playerPermissionSystemManager;
+	}
+
+	@Override
+	public IPlayerPartySystemManager getPlayerPartySystemManager() {
+		return playerPartySystemManager;
 	}
 
 	@SuppressWarnings("unchecked")

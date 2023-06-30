@@ -24,6 +24,8 @@ public abstract class ModSupport {
 	private LuckPerms luckPerms;
 	public boolean FTB_RANKS;
 	private FTBRanks ftbRanks;
+	public boolean FTB_TEAMS;
+	private FTBTeams ftbTeams;
 
 	public void check(boolean client){
 		if(!client) {
@@ -40,6 +42,12 @@ public abstract class ModSupport {
 			ftbRanks = new FTBRanks();
 		} catch (ClassNotFoundException e) {
 		}
+		try {
+			Class.forName("dev.ftb.mods.ftbteams.api.FTBTeamsAPI");
+			FTB_TEAMS = true;
+			ftbTeams = new FTBTeams();
+		} catch (ClassNotFoundException e) {
+		}
 	}
 
 	public LuckPerms getLuckPerms() {
@@ -48,6 +56,10 @@ public abstract class ModSupport {
 
 	public FTBRanks getFTBRanksSupport(){
 		return ftbRanks;
+	}
+
+	public FTBTeams getFTBTeamsSupport() {
+		return ftbTeams;
 	}
 
 	public void init(){

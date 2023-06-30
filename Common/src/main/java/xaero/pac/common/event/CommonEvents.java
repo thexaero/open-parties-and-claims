@@ -68,6 +68,8 @@ import xaero.pac.common.server.command.CommonCommandRegister;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.parties.command.PartyCommandRegister;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
+import xaero.pac.common.server.parties.system.impl.DefaultPlayerPartySystem;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
@@ -101,14 +103,19 @@ public abstract class CommonEvents {
 		lastServerStarted = server;
 		OpenPartiesAndClaims.LOGGER.info("Initializing Open Parties and Claims for the server...");
 		((IOpenPACMinecraftServer) lastServerStarted).setXaero_OPAC_ServerData(new ServerDataInitializer().init(modMain, lastServerStarted));
-		modMain.getPacketHandler().onServerAboutToStart();
 
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
-		try {
-			serverData.getPlayerPermissionSystemManager().preRegister();
-			fireAddonRegisterEvent(serverData);
-		} finally {
-			serverData.getPlayerPermissionSystemManager().postRegister();
+		if(serverData != null) {
+			modMain.getPacketHandler().onServerAboutToStart();
+			try {
+				serverData.getPlayerPermissionSystemManager().preRegister();
+				serverData.getPlayerPartySystemManager().preRegister();
+				serverData.getPlayerPartySystemManager().register("default", new DefaultPlayerPartySystem(serverData.getPartyManager()));
+				fireAddonRegisterEvent(serverData);
+			} finally {
+				serverData.getPlayerPermissionSystemManager().postRegister();
+				serverData.getPlayerPartySystemManager().postRegister();
+			}
 		}
 	}
 
@@ -485,12 +492,15 @@ public abstract class CommonEvents {
 		}
 	}
 
-	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
+	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
 		//built-in "addons"
 		if(modMain.getModSupport().LUCK_PERMS)
 			permissionSystemManagerAPI.register("luck_perms", modMain.getModSupport().getLuckPerms().getPermissionSystem());
 		if(modMain.getModSupport().FTB_RANKS)
 			permissionSystemManagerAPI.register("ftb_ranks", modMain.getModSupport().getFTBRanksSupport().getPermissionSystem());
+
+		if(modMain.getModSupport().FTB_TEAMS)
+			partySystemManagerAPI.register("ftb_teams", modMain.getModSupport().getFTBTeamsSupport().getPartySystem());
 	}
 
 }

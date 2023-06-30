@@ -50,6 +50,9 @@ dependencies {
      compileOnly "curse.maven:ftblibrary-404465:3890137"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
      compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
+
+     compileOnly"curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
+
 }
 
 processResources {
