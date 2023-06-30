@@ -35,7 +35,11 @@ import xaero.pac.common.server.parties.party.PartyPlayerInfoUpdater;
 import xaero.pac.common.server.parties.party.PlayerLogInPartyAssigner;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
-import xaero.pac.common.server.player.*;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
+import xaero.pac.common.server.player.PlayerLoginHandler;
+import xaero.pac.common.server.player.PlayerLogoutHandler;
+import xaero.pac.common.server.player.PlayerTickHandler;
+import xaero.pac.common.server.player.PlayerWorldJoinHandler;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
@@ -61,7 +65,7 @@ extends IServerDataAPI<CM,P> {
 	@Override
 	public AdaptiveLocalizer getAdaptiveLocalizer();
 	@Override
-	public ChunkProtection<CM,?,?,P> getChunkProtection();
+	public ChunkProtection<CM> getChunkProtection();
 
 	public PlayerWorldJoinHandler getPlayerWorldJoinHandler();
 	public PlayerLoginHandler getPlayerLoginHandler();
@@ -86,6 +90,7 @@ extends IServerDataAPI<CM,P> {
 	public ServerPlayerClaimsExpirationHandler getServerPlayerClaimsExpirationHandler();
 	public ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> getObjectExpirationCheckTaskHandler();
 	public IPlayerPermissionSystemManager getPlayerPermissionSystemManager();
+	public IPlayerPartySystemManager getPlayerPartySystemManager();
 	public void onStop();
 	public void onServerResourcesReload(ResourceManager resourceManager);
 
