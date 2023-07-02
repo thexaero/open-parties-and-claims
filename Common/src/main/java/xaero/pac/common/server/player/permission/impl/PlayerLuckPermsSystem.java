@@ -101,7 +101,13 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 	}
 
 	private User getUser(ServerPlayer player){
-		LuckPerms luckPerms = LuckPermsProvider.get();
+		LuckPerms luckPerms;
+		try {
+			luckPerms = LuckPermsProvider.get();
+		} catch(Exception ignored){
+			//LuckPerms shuts down when the server is stopped before players are logged out...
+			return null;
+		}
 		UserManager userManager = luckPerms.getUserManager();
 		User user = null;
 		if(!userManager.isLoaded(player.getUUID())) {
