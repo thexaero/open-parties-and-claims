@@ -1527,6 +1527,28 @@ function initializeCoreMod() {
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
             }
+        },
+        'xaero_pac_boat_tick': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.vehicle.Boat',
+                'methodName': 'm_8119_',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                var invokeTargetClass = levelClass
+                var invokeTargetName = 'getEntities'
+                var invokeTargetNameObf = 'm_6249_'
+                var invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;'
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntityAffectsEntities', '(Ljava/util/List;Lnet/minecraft/world/entity/Entity;)Ljava/util/List;'))
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                return methodNode
+            }
         }
 	}
 }

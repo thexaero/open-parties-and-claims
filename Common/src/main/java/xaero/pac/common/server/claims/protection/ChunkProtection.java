@@ -1559,6 +1559,23 @@ public class ChunkProtection
 		}
 	}
 
+	public void onEntityAffectsEntities(IServerData<CM, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, Entity entity, List<Entity> targets) {
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return;
+		double randomDrop = entity instanceof Boat && ServerConfig.CONFIG.reducedBoatEntityCollisions.get() ? 0.9 : 0;
+		if (randomDrop > 0 && Math.random() < randomDrop) {
+			//simple optimization to avoid checking claim permissions every tick
+			targets.clear();
+			return;
+		}
+		Iterator<Entity> iterator = targets.iterator();
+		while(iterator.hasNext()){
+			Entity target = iterator.next();
+			if(onEntityInteraction(serverData, null, entity, target, null, null, true, false))
+				iterator.remove();
+		}
+	}
+
 	public boolean onEntityPushed(IServerData<CM, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, Entity target, MoverType moverType) {
 		if(moverType != MoverType.SHULKER)
 			return false;

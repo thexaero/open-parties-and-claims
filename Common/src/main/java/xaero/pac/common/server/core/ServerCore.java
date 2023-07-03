@@ -803,6 +803,21 @@ public class ServerCore {
 		return entities;
 	}
 
+	public static List<Entity> onEntityAffectsEntities(List<Entity> targets, Entity entity){
+		if(entity == null)
+			return targets;
+		if(entity.getServer() == null)
+			return targets;
+		if(targets.isEmpty())
+			return targets;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(entity.getServer());
+		if (serverData == null)
+			return targets;
+		serverData.getChunkProtection().onEntityAffectsEntities(serverData, entity, targets);
+		return targets;
+	}
+
 	public static boolean onEntityPushed(Entity target, MoverType moverType) {
 		if(target == null)
 			return false;
