@@ -34,10 +34,8 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -786,6 +784,35 @@ public class ServerCore {
 		if (serverData == null)
 			return false;
 		return serverData.getChunkProtection().onFishingHookedEntity(serverData, hook, entity);
+	}
+
+	public static List<Entity> onEntitiesPushEntity(List<Entity> entities, Entity target){
+		if(target == null)
+			return entities;
+		if(target.getServer() == null)
+			return entities;
+		if(entities.isEmpty())
+			return entities;
+		if(!(target instanceof HangingEntity))
+			return entities;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(target.getServer());
+		if (serverData == null)
+			return entities;
+		serverData.getChunkProtection().onEntitiesCollideWithEntity(serverData, target, entities);
+		return entities;
+	}
+
+	public static boolean onEntityPushed(Entity target, MoverType moverType) {
+		if(target == null)
+			return false;
+		if(target.getServer() == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(target.getServer());
+		if (serverData == null)
+			return false;
+		return serverData.getChunkProtection().onEntityPushed(serverData, target, moverType);
 	}
 
 	public static void preServerLevelTick(ServerLevel level) {

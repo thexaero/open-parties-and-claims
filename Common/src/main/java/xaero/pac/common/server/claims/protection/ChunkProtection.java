@@ -45,6 +45,7 @@ import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
@@ -59,12 +60,16 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.function.TriFunction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.protection.api.IChunkProtectionAPI;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.core.ServerCore;
+import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -1409,6 +1414,8 @@ public class ChunkProtection
 			result = ((Vex) entity).getOwner();
 		} else if(entity instanceof EvokerFangs){
 			result = ((EvokerFangs) entity).getOwner();
+		} else if(entity instanceof Boat){
+			result = entity.getControllingPassenger();
 		} else
 			result = entityHelper.getTamer(entity);
 		return result == null ? entity : result;
@@ -1493,6 +1500,69 @@ public class ChunkProtection
 			if(protect)
 				iterator.remove();
 		}
+	}
+
+	public void onEntitiesCollideWithEntity(IServerData<CM, ?> serverData, Entity entity, List<? extends Entity> collidingEntities){
+		if(!ServerConfig.CONFIG.claimsEnabled.get())
+			return;
+		Level level = entity.getLevel();
+		ServerLevel serverLevel = ServerLevelHelper.getServerLevel(level);
+		if(serverLevel == null)
+			return;
+		IPlayerChunkClaim claim = claimsManager.get(level.dimension().location(), entity.chunkPosition());
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
+			return;
+		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS) == 0 &&
+				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS) == 0 &&
+				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER) == 0)
+			return;
+		Map<UUID, Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean>> cachedAccessorOptionResults = null;
+		Iterator<? extends Entity> iterator = collidingEntities.iterator();
+		boolean multipleCollisionsMatter = false;
+		while(iterator.hasNext()) {
+			Entity collidingEntity = iterator.next();
+			Entity accessor;
+			UUID accessorId;
+			Object accessorInfo = getAccessorInfo(collidingEntity);
+			if (accessorInfo instanceof UUID) {
+				accessorId = (UUID) accessorInfo;
+				accessor = getEntityById(serverLevel, accessorId);
+			} else {
+				accessor = (Entity) accessorInfo;
+				accessorId = accessor.getUUID();
+			}
+			IPlayerConfigOptionSpecAPI<Integer> option = getUsedEntityProtectionOption(config, collidingEntity, accessor);
+			Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean> accessorCache;
+			if(cachedAccessorOptionResults != null && (accessorCache = cachedAccessorOptionResults.get(accessorId)) != null){
+				Boolean cachedResult = accessorCache.get(option);
+				if(cachedResult != null) {
+					if(cachedResult)
+						iterator.remove();
+					continue;
+				}
+			}
+			boolean protect = checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId);
+			if(!protect && !multipleCollisionsMatter)
+				break;
+			if (iterator.hasNext()){
+				if (cachedAccessorOptionResults == null)
+					cachedAccessorOptionResults = new HashMap<>();
+				accessorCache = cachedAccessorOptionResults.get(accessorId);
+				if (accessorCache == null)
+					cachedAccessorOptionResults.put(accessorId, accessorCache = new HashMap<>());
+				accessorCache.put(option, protect);
+			}
+			if(protect)
+				iterator.remove();
+		}
+	}
+
+	public boolean onEntityPushed(IServerData<CM, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, Entity target, MoverType moverType) {
+		if(moverType != MoverType.SHULKER)
+			return false;
+		return onEntityInteraction(serverData, null, null, target, null, null, true, false);
 	}
 
 	public boolean onNetherPortal(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos) {
