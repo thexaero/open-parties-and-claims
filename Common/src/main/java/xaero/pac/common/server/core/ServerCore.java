@@ -39,6 +39,7 @@ import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -53,6 +54,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -341,6 +343,17 @@ public class ServerCore {
 		if(serverData == null)
 			return true;
 		boolean shouldProtect = serverData.getChunkProtection().onCreateGlueRemoval(serverData, entityId, player);
+		return !shouldProtect;
+	}
+
+	public static boolean isProjectileHitAllowed(Projectile entity, EntityHitResult hitResult){
+		Entity target = hitResult.getEntity();
+		if(target.getServer() == null)
+			return true;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
+		if(serverData == null)
+			return true;
+		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, entity.getOwner(), entity, target, null, null, true, false);
 		return !shouldProtect;
 	}
 

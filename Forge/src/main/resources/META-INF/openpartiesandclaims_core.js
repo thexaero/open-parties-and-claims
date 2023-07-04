@@ -985,6 +985,26 @@ function initializeCoreMod() {
                 return methodNode
             }
         },
+        'xaero_pac_create_potatoprojectileentity_onhitentity': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileEntity',
+                'methodName': 'm_5790_',
+                'methodDesc' : '(Lnet/minecraft/world/phys/EntityHitResult;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isProjectileHitAllowed', '(Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/world/phys/EntityHitResult;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
         'xaero_pac_servergamepacketlistenerimpl_handleinteract': {
             'target' : {
                 'type': 'METHOD',
