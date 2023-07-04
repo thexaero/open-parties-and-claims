@@ -268,6 +268,8 @@ public class ServerCore {
 	}
 
 	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, ServerPlayer player){
+		if(pos == null)//when "stop tracking" is selected
+			return true;
 		ServerLevel level = player.getLevel();
 		BlockEntity tileEntity = level.getBlockEntity(pos);
 		if(tileEntity == null)

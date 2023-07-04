@@ -214,6 +214,20 @@ function transformCreateMechArmSearch(methodNode, listFieldName) {
     methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 }
 
+function transformCreateTileEntityPacket(methodNode, packetClass, posField){
+    var MY_LABEL = new LabelNode(new Label())
+    var insnToInsert = new InsnList()
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, packetClass, posField, "Lnet/minecraft/core/BlockPos;"))
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+    insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+    insnToInsert.add(new InsnNode(Opcodes.RETURN))
+    insnToInsert.add(MY_LABEL)
+    methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+    return methodNode
+}
+
 function transformForEntitiesPushBlock(methodNode, includeClassFiltered, includeNonClassFiltered, blockPosArgIndex){
     var invokeTargetClass = 'net/minecraft/world/level/Level'
     var insnToInsertGetter = function() {
@@ -792,17 +806,7 @@ function initializeCoreMod() {
                 'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
             },
             'transformer' : function(methodNode){
-                var MY_LABEL = new LabelNode(new Label())
-                var insnToInsert = new InsnList()
-                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/foundation/networking/BlockEntityConfigurationPacket", "pos", "Lnet/minecraft/core/BlockPos;"))
-                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
-                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
-                insnToInsert.add(new InsnNode(Opcodes.RETURN))
-                insnToInsert.add(MY_LABEL)
-                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
-                return methodNode
+                return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/foundation/networking/BlockEntityConfigurationPacket", "pos")
             }
         },
         'xaero_pac_create_contraptioninteractionpacket_handle_lambda': {
@@ -870,6 +874,28 @@ function initializeCoreMod() {
                 insnToInsert.add(MY_LABEL)
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
+            }
+        },
+        'xaero_pac_create_toolboxequippacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket',
+                'methodName': 'lambda$handle$1',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/content/equipment/toolbox/ToolboxEquipPacket", "toolboxPos")
+            }
+        },
+        'xaero_pac_create_toolboxdisposeallpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxDisposeAllPacket',
+                'methodName': 'lambda$handle$1',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/content/equipment/toolbox/ToolboxDisposeAllPacket", "toolboxPos")
             }
         },
         'xaero_pac_create_deployermovementbehaviour_activate': {
