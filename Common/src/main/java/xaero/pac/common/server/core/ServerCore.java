@@ -34,13 +34,12 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -55,6 +54,7 @@ import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -273,6 +273,8 @@ public class ServerCore {
 	}
 
 	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, ServerPlayer player){
+		if(pos == null)//when "stop tracking" is selected
+			return true;
 		ServerLevel level = player.serverLevel();
 		BlockEntity tileEntity = level.getBlockEntity(pos);
 		if(tileEntity == null)
@@ -344,6 +346,17 @@ public class ServerCore {
 		if(serverData == null)
 			return true;
 		boolean shouldProtect = serverData.getChunkProtection().onCreateGlueRemoval(serverData, entityId, player);
+		return !shouldProtect;
+	}
+
+	public static boolean isProjectileHitAllowed(Projectile entity, EntityHitResult hitResult){
+		Entity target = hitResult.getEntity();
+		if(target.getServer() == null)
+			return true;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(target.getServer());
+		if(serverData == null)
+			return true;
+		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, entity.getOwner(), entity, target, null, null, true, false);
 		return !shouldProtect;
 	}
 
@@ -789,6 +802,50 @@ public class ServerCore {
 		if (serverData == null)
 			return false;
 		return serverData.getChunkProtection().onFishingHookedEntity(serverData, hook, entity);
+	}
+
+	public static List<Entity> onEntitiesPushEntity(List<Entity> entities, Entity target){
+		if(target == null)
+			return entities;
+		if(target.getServer() == null)
+			return entities;
+		if(entities.isEmpty())
+			return entities;
+		if(!(target instanceof HangingEntity))
+			return entities;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(target.getServer());
+		if (serverData == null)
+			return entities;
+		serverData.getChunkProtection().onEntitiesCollideWithEntity(serverData, target, entities);
+		return entities;
+	}
+
+	public static List<Entity> onEntityAffectsEntities(List<Entity> targets, Entity entity){
+		if(entity == null)
+			return targets;
+		if(entity.getServer() == null)
+			return targets;
+		if(targets.isEmpty())
+			return targets;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(entity.getServer());
+		if (serverData == null)
+			return targets;
+		serverData.getChunkProtection().onEntityAffectsEntities(serverData, entity, targets);
+		return targets;
+	}
+
+	public static boolean onEntityPushed(Entity target, MoverType moverType) {
+		if(target == null)
+			return false;
+		if(target.getServer() == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(target.getServer());
+		if (serverData == null)
+			return false;
+		return serverData.getChunkProtection().onEntityPushed(serverData, target, moverType);
 	}
 
 	public static void preServerLevelTick(ServerLevel level) {

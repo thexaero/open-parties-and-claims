@@ -26,6 +26,7 @@ import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCore;
 
@@ -44,6 +45,12 @@ public interface MixinEntityGetter {
 			if(!(ServerCore.DETECTING_ENTITY_BLOCK_COLLISION instanceof BasePressurePlateBlock))
 				ServerCore.DETECTING_ENTITY_BLOCK_COLLISION = null;
 		}
+	}
+
+	@ModifyVariable(method = "getEntityCollisions", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/EntityGetter;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;"))
+	default List<Entity> onGetEntityCollisions(List<Entity> collidingEntities, Entity entity, AABB aABB){
+		ServerCore.onEntitiesPushEntity(collidingEntities, entity);
+		return collidingEntities;
 	}
 
 }
