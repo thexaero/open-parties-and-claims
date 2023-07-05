@@ -62,7 +62,7 @@ public final class PlayerPartySystemManager implements IPlayerPartySystemManager
 	public void updatePrimarySystem(String configuredPrimarySystem) {
 		primarySystem = systems.get(configuredPrimarySystem);
 		if(primarySystem == null){
-			OpenPartiesAndClaims.LOGGER.error("The configured primary party system \"{}\" isn't registered!", configuredPrimarySystem);
+			OpenPartiesAndClaims.LOGGER.warn("The configured primary party system \"{}\" isn't registered!", configuredPrimarySystem);
 			primarySystem = systems.get("default");
 		}
 		OpenPartiesAndClaims.LOGGER.info("Configured OPAC to use the following party system as primary: {}", systemNames.get(primarySystem));
