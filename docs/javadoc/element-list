@@ -20,6 +20,7 @@ xaero.pac.common.server.claims.api
 xaero.pac.common.server.claims.player.api
 xaero.pac.common.server.claims.protection.api
 xaero.pac.common.server.parties.party.api
+xaero.pac.common.server.parties.system.api
 xaero.pac.common.server.player.config.api
 xaero.pac.common.server.player.data.api
 xaero.pac.common.server.player.localization.api
