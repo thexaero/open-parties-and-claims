@@ -1517,7 +1517,7 @@ public class ChunkProtection
 	public void onEntitiesCollideWithEntity(IServerData<CM, ?> serverData, Entity entity, List<? extends Entity> collidingEntities){
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return;
-		Level level = entity.getLevel();
+		Level level = entity.level();
 		ServerLevel serverLevel = ServerLevelHelper.getServerLevel(level);
 		if(serverLevel == null)
 			return;
