@@ -68,6 +68,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
 	public final ForgeConfigSpec.BooleanValue completelyDisableFrostWalking;
+	public final ForgeConfigSpec.BooleanValue reducedBoatEntityCollisions;
 	public final ForgeConfigSpec.IntValue maxClaimDistance;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
@@ -635,10 +636,20 @@ public class ServerConfig {
 			.defineListAllowEmpty(Lists.newArrayList("completelyDisabledEntityInteractions"), Lists::newArrayList, s -> s instanceof String);
 
 		completelyDisableFrostWalking = builder
-				.comment("Whether to completely disable frost walking on the server. Use this if the regular frost walking protection doesn't work, since there is no game rule for it.")
-				.translation("gui.xaero_pac_config_completely_disable_frost_walking")
-				.worldRestart()
-				.define("completelyDisableFrostWalking", false);
+			.comment("Whether to completely disable frost walking on the server. Use this if the regular frost walking protection doesn't work, since there is no game rule for it.")
+			.translation("gui.xaero_pac_config_completely_disable_frost_walking")
+			.worldRestart()
+			.define("completelyDisableFrostWalking", false);
+
+		reducedBoatEntityCollisions = builder
+			.comment("""
+					Whether to ignore most detected entity collisions for boats.
+					By default, boats detect entity collisions and handle them every tick for every entity that touches them, which is a lot.
+					This can become very slow on a server if we also add the necessary claim protection checks in the mix.
+					This option makes it so most collisions with boats are randomly ignored, which helps the performance without affecting gameplay all that much.""")
+			.translation("gui.xaero_pac_config_reduced_boat_collisions")
+			.worldRestart()
+			.define("reducedBoatEntityCollisions", true);
 
 		builder.pop();
 

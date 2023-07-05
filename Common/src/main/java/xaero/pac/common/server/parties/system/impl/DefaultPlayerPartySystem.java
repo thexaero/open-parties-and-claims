@@ -64,6 +64,8 @@ public class DefaultPlayerPartySystem implements IPlayerPartySystemAPI<IServerPa
 	@Override
 	public boolean isPermittedToPartyClaim(@Nonnull UUID playerId) {
 		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party = getPartyByMember(playerId);
+		if(party == null)
+			return false;
 		IPartyMember member = party.getMemberInfo(playerId);
 		return member != null && member.getRank().ordinal() >= PartyMemberRank.MODERATOR.ordinal();//needs a new rank when actually used
 	}
