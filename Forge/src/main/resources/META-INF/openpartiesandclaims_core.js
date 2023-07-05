@@ -214,6 +214,20 @@ function transformCreateMechArmSearch(methodNode, listFieldName) {
     methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 }
 
+function transformCreateTileEntityPacket(methodNode, packetClass, posField){
+    var MY_LABEL = new LabelNode(new Label())
+    var insnToInsert = new InsnList()
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+    insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, packetClass, posField, "Lnet/minecraft/core/BlockPos;"))
+    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+    insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+    insnToInsert.add(new InsnNode(Opcodes.RETURN))
+    insnToInsert.add(MY_LABEL)
+    methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+    return methodNode
+}
+
 function transformForEntitiesPushBlock(methodNode, includeClassFiltered, includeNonClassFiltered, blockPosArgIndex){
     var invokeTargetClass = 'net/minecraft/world/level/Level'
     var insnToInsertGetter = function() {
@@ -792,17 +806,7 @@ function initializeCoreMod() {
                 'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
             },
             'transformer' : function(methodNode){
-                var MY_LABEL = new LabelNode(new Label())
-                var insnToInsert = new InsnList()
-                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/foundation/networking/BlockEntityConfigurationPacket", "pos", "Lnet/minecraft/core/BlockPos;"))
-                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraftforge/network/NetworkEvent$Context;)Z'))
-                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
-                insnToInsert.add(new InsnNode(Opcodes.RETURN))
-                insnToInsert.add(MY_LABEL)
-                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
-                return methodNode
+                return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/foundation/networking/BlockEntityConfigurationPacket", "pos")
             }
         },
         'xaero_pac_create_contraptioninteractionpacket_handle_lambda': {
@@ -870,6 +874,28 @@ function initializeCoreMod() {
                 insnToInsert.add(MY_LABEL)
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
                 return methodNode
+            }
+        },
+        'xaero_pac_create_toolboxequippacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket',
+                'methodName': 'lambda$handle$1',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/content/equipment/toolbox/ToolboxEquipPacket", "toolboxPos")
+            }
+        },
+        'xaero_pac_create_toolboxdisposeallpacket_handle_lambda': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxDisposeAllPacket',
+                'methodName': 'lambda$handle$1',
+                'methodDesc' : '(Lnet/minecraftforge/network/NetworkEvent$Context;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/content/equipment/toolbox/ToolboxDisposeAllPacket", "toolboxPos")
             }
         },
         'xaero_pac_create_deployermovementbehaviour_activate': {
@@ -952,6 +978,26 @@ function initializeCoreMod() {
 	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/glue/SuperGlueRemovalPacket", "entityId", "I"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'isCreateGlueRemovalAllowed', '(ILnet/minecraftforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_create_potatoprojectileentity_onhitentity': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileEntity',
+                'methodName': 'm_5790_',
+                'methodDesc' : '(Lnet/minecraft/world/phys/EntityHitResult;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'isProjectileHitAllowed', '(Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/world/phys/EntityHitResult;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
@@ -1483,6 +1529,70 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'preServerLevelTick', '(Lnet/minecraft/server/level/ServerLevel;)V'))
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_entitygetter_getentitycollisions': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.EntityGetter',
+                'methodName': 'm_183134_',
+                'methodDesc' : '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;'
+            },
+            'transformer' : function(methodNode){
+                var invokeTargetClass = 'net/minecraft/world/level/EntityGetter'
+                var invokeTargetName = 'getEntities'
+                var invokeTargetNameObf = 'm_6249_'
+                var invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;'
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushEntity', '(Ljava/util/List;Lnet/minecraft/world/entity/Entity;)Ljava/util/List;'))
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+                return methodNode
+            }
+        },
+        'xaero_pac_hangingentity_move': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.decoration.HangingEntity',
+                'methodName': 'm_6478_',
+                'methodDesc' : '(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V'
+            },
+            'transformer' : function(methodNode){
+                var MY_LABEL = new LabelNode(new Label())
+                var insnToInsert = new InsnList()
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntityPushed', '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/MoverType;)Z'))
+                insnToInsert.add(new JumpInsnNode(Opcodes.IFEQ, MY_LABEL))
+                insnToInsert.add(new InsnNode(Opcodes.RETURN))
+                insnToInsert.add(MY_LABEL)
+                methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
+                return methodNode
+            }
+        },
+        'xaero_pac_boat_tick': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.vehicle.Boat',
+                'methodName': 'm_8119_',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                var invokeTargetClass = levelClass
+                var invokeTargetName = 'getEntities'
+                var invokeTargetNameObf = 'm_6249_'
+                var invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;'
+                var insnToInsertGetter = function() {
+                    var insnToInsert = new InsnList()
+                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntityAffectsEntities', '(Ljava/util/List;Lnet/minecraft/world/entity/Entity;)Ljava/util/List;'))
+                    return insnToInsert
+                }
+                insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
                 return methodNode
             }
         }

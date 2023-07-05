@@ -779,9 +779,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the party from the UUID of a party member.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#getPartyByMember(java.util.UUID)" class="member-name-link">getPartyByMember(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Gets the party that the player with a specified UUID is a part of.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html#getPartyByOwner(java.util.UUID)" class="member-name-link">getPartyByOwner(UUID)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IPartyManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the owned party from the UUID of a party's owner.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#getPartyByOwner(java.util.UUID)" class="member-name-link">getPartyByOwner(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Gets the party that the player with a specified UUID owns.</div>
 </dd>
 <dt><a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html#getPartyId()" class="member-name-link">getPartyId()</a> - Method in interface xaero.pac.common.parties.party.ally.api.<a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html" title="interface in xaero.pac.common.parties.party.ally.api">IPartyAllyAPI</a></dt>
 <dd>
@@ -1370,6 +1378,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for dimension claims of a player</div>
 </dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a>&lt;<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt; - Interface in <a href="xaero/pac/common/server/parties/system/api/package-summary.html">xaero.pac.common.server.parties.system.api</a></dt>
+<dd>
+<div class="block">The interface to be overridden by addons that wish to implement additional party systems to be used
+ by Open Parties and Claims (just the claiming feature as of writing this).</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemRegisterAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemRegisterAPI</a> - Interface in <a href="xaero/pac/common/server/parties/system/api/package-summary.html">xaero.pac.common.server.parties.system.api</a></dt>
+<dd>
+<div class="block">The API for registering party system implementations.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a> - Interface in <a href="xaero/pac/common/server/player/permission/api/package-summary.html">xaero.pac.common.server.player.permission.api</a></dt>
 <dd>
 <div class="block">The interface to be overridden by addons that wish to implement additional permission systems to be used
@@ -1478,6 +1495,15 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html#isOwner()" class="member-name-link">isOwner()</a> - Method in interface xaero.pac.common.parties.party.member.api.<a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a></dt>
 <dd>
 <div class="block">Checks whether this party member is the owner of the party.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#isPermittedToPartyClaim(java.util.UUID)" class="member-name-link">isPermittedToPartyClaim(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Checks if a player is permitted to claim as the party that they belong to but don't own.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#isPlayerAllying(java.util.UUID,java.util.UUID)" class="member-name-link">isPlayerAllying(UUID, UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Checks if a player with UUID <code>playerId</code> considers a player with UUID <code>potentialAllyPlayerId</code>
+ an ally.</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html#isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">isSameClaimType(IPlayerChunkClaimAPI)</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></dt>
 <dd>
@@ -1877,6 +1903,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the player receives the in-game locations shared by their party's mutual allies.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemRegisterAPI.html#register(java.lang.String,xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)" class="member-name-link">register(String, IPlayerPartySystemAPI&lt;?&gt;)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemRegisterAPI</a></dt>
+<dd>
+<div class="block">Registers a party system implementation to be available to OPAC
+ under a specified name.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemRegisterAPI.html#register(java.lang.String,xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI)" class="member-name-link">register(String, IPlayerPermissionSystemAPI)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemRegisterAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemRegisterAPI</a></dt>
 <dd>
 <div class="block">Registers a player permission system implementation to be available to OPAC
@@ -2184,6 +2215,8 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/server/claims/protection/api/package-summary.html">xaero.pac.common.server.claims.protection.api</a> - package xaero.pac.common.server.claims.protection.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/package-summary.html">xaero.pac.common.server.parties.party.api</a> - package xaero.pac.common.server.parties.party.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/package-summary.html">xaero.pac.common.server.parties.system.api</a> - package xaero.pac.common.server.parties.system.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a> - package xaero.pac.common.server.player.config.api</dt>
 <dd>&nbsp;</dd>
