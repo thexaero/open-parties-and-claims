@@ -506,14 +506,27 @@ public class ChunkProtection
 		return 3;//everyone
 	}
 
+	private BlockPos getFakePlayerPos(Player player){
+		BlockPos playerPos = player.blockPosition();
+		if(!BlockPos.ZERO.equals(playerPos))
+			return playerPos;
+		Vec3 position1 = player.getPosition(1);
+		if(!Vec3.ZERO.equals(position1))
+			return new BlockPos(position1);
+		double specificallyX = player.getX();
+		double specificallyY = player.getY();
+		double specificallyZ = player.getZ();
+		if(specificallyX == 0 && specificallyY == 0 && specificallyZ == 0)
+			return new BlockPos(player.getPosition(0));
+		return new BlockPos(specificallyX, specificallyY, specificallyZ);
+	}
+
 	private boolean isAllowedStaticFakePlayerAction(IServerData<CM, ?> serverData, Player player, BlockPos targetPos, BlockPos targetPos2){
 		if(player == null || !staticFakePlayerIds.contains(player.getUUID()) && !staticFakePlayerUsernames.contains(player.getGameProfile().getName()))
 			return false;
 		if(isStaticFakePlayerExceptionClass(player))
 			return false;
-		BlockPos playerPos = player.blockPosition();
-		if(BlockPos.ZERO.equals(playerPos))
-			playerPos = new BlockPos(player.getPosition(0));
+		BlockPos playerPos = getFakePlayerPos(player);
 		//gotta check all sides, player rotation doesn't give us anything in the case of Integrated Tunnels
 		//works with either fake player or the target being positioned next to or at the origin block
 		BlockPos checkedPos = targetPos;
