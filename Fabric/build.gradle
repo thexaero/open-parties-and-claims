@@ -50,7 +50,7 @@ dependencies {
     modCompileOnly 'me.lucko:fabric-permissions-api:0.2-SNAPSHOT'//source: https://github.com/lucko/fabric-permissions-api
 
     modCompileOnly "curse.maven:ftbteams-438497:4616151"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-fabric
-    modCompileOnly "maven.modrinth:argonauts:s6aYAqG9"//source: https://modrinth.com/mod/argonauts
+    modCompileOnly "maven.modrinth:argonauts:0.1.1"//source: https://modrinth.com/mod/argonauts
 }
 
 loom {

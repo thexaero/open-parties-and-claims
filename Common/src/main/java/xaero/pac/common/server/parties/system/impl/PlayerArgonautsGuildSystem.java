@@ -18,8 +18,8 @@
 
 package xaero.pac.common.server.parties.system.impl;
 
-import earth.terrarium.argonauts.common.handlers.guild.Guild;
-import earth.terrarium.argonauts.common.handlers.guild.GuildHandler;
+import earth.terrarium.argonauts.api.guild.Guild;
+import earth.terrarium.argonauts.api.guild.GuildApi;
 import earth.terrarium.argonauts.common.handlers.guild.members.GuildMember;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
@@ -39,7 +39,7 @@ public class PlayerArgonautsGuildSystem implements IPlayerPartySystemAPI<Guild> 
 	@Nullable
 	@Override
 	public Guild getPartyByOwner(@Nonnull UUID playerId) {
-		Guild guild = GuildHandler.getPlayerGuild(server, playerId);
+		Guild guild = GuildApi.API.getPlayerGuild(server, playerId);
 		if(guild == null)
 			return null;
 		if(!guild.members().getLeader().profile().getId().equals(playerId))
@@ -50,7 +50,7 @@ public class PlayerArgonautsGuildSystem implements IPlayerPartySystemAPI<Guild> 
 	@Nullable
 	@Override
 	public Guild getPartyByMember(@Nonnull UUID playerId) {
-		return GuildHandler.getPlayerGuild(server, playerId);
+		return GuildApi.API.getPlayerGuild(server, playerId);
 	}
 
 	@Override

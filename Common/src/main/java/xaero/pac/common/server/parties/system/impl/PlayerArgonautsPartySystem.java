@@ -18,8 +18,8 @@
 
 package xaero.pac.common.server.parties.system.impl;
 
-import earth.terrarium.argonauts.common.handlers.party.Party;
-import earth.terrarium.argonauts.common.handlers.party.PartyHandler;
+import earth.terrarium.argonauts.api.party.Party;
+import earth.terrarium.argonauts.api.party.PartyApi;
 import earth.terrarium.argonauts.common.handlers.party.members.PartyMember;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
 
@@ -32,7 +32,7 @@ public class PlayerArgonautsPartySystem implements IPlayerPartySystemAPI<Party> 
 	@Nullable
 	@Override
 	public Party getPartyByOwner(@Nonnull UUID playerId) {
-		Party party = PartyHandler.getPlayerParty(playerId);
+		Party party = PartyApi.API.getPlayerParty(playerId);
 		if(party == null)
 			return null;
 		if(!party.members().getLeader().profile().getId().equals(playerId))
@@ -43,7 +43,7 @@ public class PlayerArgonautsPartySystem implements IPlayerPartySystemAPI<Party> 
 	@Nullable
 	@Override
 	public Party getPartyByMember(@Nonnull UUID playerId) {
-		return PartyHandler.getPlayerParty(playerId);
+		return PartyApi.API.getPlayerParty(playerId);
 	}
 
 	@Override

@@ -59,7 +59,7 @@ dependencies {
      compileOnly "maven.modrinth:prometheus:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
 
      compileOnly "curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
-     compileOnly "maven.modrinth:argonauts:0.0.0"//source: https://modrinth.com/mod/argonauts
+     compileOnly "maven.modrinth:argonauts:IH2HFcvL"//source: https://modrinth.com/mod/argonauts
 }
 
 processResources {

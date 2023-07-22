@@ -61,7 +61,7 @@ public abstract class ModSupport {
 		} catch (ClassNotFoundException e) {
 		}
 		try {
-			Class.forName("earth.terrarium.argonauts.common.handlers.party.PartyHandler");
+			Class.forName("earth.terrarium.argonauts.api.ApiHelper");
 			ARGONAUTS = true;
 			argonauts = new Argonauts();
 		} catch (ClassNotFoundException e) {
