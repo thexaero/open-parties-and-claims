@@ -37,6 +37,8 @@ import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 public class PlayerPermissionChangeHandler {
 
 	public void handle(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
+		if(player == null)
+			return;
 		((ServerPlayerData)ServerPlayerDataAPI.from((player))).setShouldResyncPlayerConfigs(true);
 	}
 
