@@ -27,7 +27,7 @@ public class ModSupportFabric extends ModSupport {
 	public void check(boolean client) {
 		super.check(client);
 		try {
-			Class.forName("me.lucko.fabric.api.permissions.v0.Permissions");
+			Class.forName("me.lucko.fabric.api.permissions.v0.Options");
 			fabricPermissions = new FabricPermissions();
 			FABRIC_PERMISSIONS = true;
 		} catch (ClassNotFoundException e) {
