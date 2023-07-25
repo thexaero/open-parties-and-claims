@@ -233,7 +233,10 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	public void onPermissionsChanged(PlayerList playerList, GameProfile profile) {
-		super.onPermissionsChanged(playerList.getPlayer(profile.getId()));
+		ServerPlayer player = playerList.getPlayer(profile.getId());
+		if(player == null)
+			return;
+		super.onPermissionsChanged(player);
 	}
 
 	public boolean onCropTrample(Entity entity, BlockPos pos) {
