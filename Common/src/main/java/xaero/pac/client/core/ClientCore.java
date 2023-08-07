@@ -19,32 +19,13 @@
 package xaero.pac.client.core;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.PlayerModelPart;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.client.patreon.Patreon;
 import xaero.pac.client.world.IClientWorldData;
 import xaero.pac.client.world.capability.ClientWorldMainCapability;
 import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 
 public class ClientCore {
-	
-	public static ResourceLocation getPlayerCape(AbstractClientPlayer player) {
-		if(Patreon.optifine)
-			return null;
-		return Patreon.getPlayerCape(player);
-	}
-	
-	public static Boolean isWearing(Player player, PlayerModelPart part) {
-		if(Patreon.optifine)
-			return null;
-		if(part != PlayerModelPart.CAPE || !(player instanceof AbstractClientPlayer))
-			return null;
-		return Patreon.isWearingCape((AbstractClientPlayer) player);
-	}
 
 	public static void onInitializeWorldBorder(ClientboundInitializeBorderPacket packet){
 		ClientWorldMainCapability capability = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(Minecraft.getInstance().level, ClientWorldCapabilityTypes.MAIN_CAP);

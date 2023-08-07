@@ -355,51 +355,6 @@ function initializeCoreMod() {
 				return methodNode
 			}
 		},
-		'xaero_pac_abstractclientplayerentity_getlocationcape': {
-			'target' : {
-                'type': 'METHOD',
-                'class': 'net.minecraft.client.player.AbstractClientPlayer',
-                'methodName': 'm_108561_',
-                'methodDesc' : '()Lnet/minecraft/resources/ResourceLocation;'
-			},
-			'transformer' : function(methodNode){
-				var MY_LABEL = new LabelNode(new Label())
-				methodNode.maxStack += 1
-				var insnToInsert = new InsnList()
-				insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-				insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "xaero/pac/client/core/ClientCore", "getPlayerCape", "(Lnet/minecraft/client/player/AbstractClientPlayer;)Lnet/minecraft/resources/ResourceLocation;"))
-				insnToInsert.add(new InsnNode(Opcodes.DUP))
-				insnToInsert.add(new JumpInsnNode(Opcodes.IFNULL, MY_LABEL))
-				insnToInsert.add(new InsnNode(Opcodes.ARETURN))
-				insnToInsert.add(MY_LABEL)
-				insnToInsert.add(new InsnNode(Opcodes.POP))
-				methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
-				return methodNode
-			}
-		},
-		'xaero_pac_playerentity_iswearing': {
-			'target' : {
-                'type': 'METHOD',
-                'class': 'net.minecraft.world.entity.player.Player',
-                'methodName': 'm_36170_',
-                'methodDesc' : '(Lnet/minecraft/world/entity/player/PlayerModelPart;)Z'
-			},
-			'transformer' : function(methodNode){
-				var MY_LABEL = new LabelNode(new Label())
-				var insnToInsert = new InsnList()
-				insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-				insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-				insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "xaero/pac/client/core/ClientCore", "isWearing", "(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/player/PlayerModelPart;)Ljava/lang/Boolean;"))
-				insnToInsert.add(new InsnNode(Opcodes.DUP))
-				insnToInsert.add(new JumpInsnNode(Opcodes.IFNULL, MY_LABEL))
-				insnToInsert.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z"))
-				insnToInsert.add(new InsnNode(Opcodes.IRETURN))
-				insnToInsert.add(MY_LABEL)
-				insnToInsert.add(new InsnNode(Opcodes.POP))
-				methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
-				return methodNode
-			}
-		},
         'xaero_pac_clientplaynethandler_handleinitializeborder': {
             'target' : {
                  'type': 'METHOD',

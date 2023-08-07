@@ -19,9 +19,6 @@
 package xaero.pac.client.patreon;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.PlayerModelPart;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.patreon.decrypt.DecryptInputStream;
 
@@ -32,29 +29,17 @@ import java.net.URLConnection;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 
 public class Patreon {
-
-	private static final ResourceLocation cape1 = new ResourceLocation("xaeropatreon", "capes/cape1.png");
-	private static final ResourceLocation cape2 = new ResourceLocation("xaeropatreon", "capes/cape2.png");
-	private static final ResourceLocation cape3 = new ResourceLocation("xaeropatreon", "capes/cape3.png");
-	private static final ResourceLocation cape4 = new ResourceLocation("xaeropatreon", "capes/cape4.png");
 	private static final File optionsFile = new File("./config/xaeropatreon.txt");
 
-	private static final HashMap<Integer, ArrayList<String>> patrons = new HashMap<Integer, ArrayList<String>>();//pledge amount -> patron name(s)
-
-	private static boolean pauseCapes = false;
+	private static final Object SYNC = new Object();
 	private static boolean loaded = false;
-	private static boolean showCapes = true;
-	private static int patronPledge = -1;
-
 	private static Cipher cipher = null;
 	private static int KEY_VERSION = 4;
 	private static String publicKeyString = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBeELcruvAEIeLF/UsWF/v5rxyRXIpCs+eORLCbDw5cz9jHsnoypQKx0RTk5rcXIeA0HbEfY0eREB25quHjhZKul7MnzotQT+F2Qb1bPfHa6+SPie+pj79GGGAFP3npki6RqoU/wyYkd1tOomuD8v5ytEkOPC4U42kxxvx23A7vH6w46dew/E/HvfbBvZF2KrqdJtwKAunk847C3FgyhVq8/vzQc6mqAW6Mmn4zlwFvyCnTOWjIRw/I93WIM/uvhE3lt6pmtrWA2yIbKIj1z4pgG/K72EqHfYLGkBFTh7fV1wwCbpNTXZX2JnTfmvMGqzHjq7FijwVfCpFB/dWR3wQIDAQAB";//TODO PUBLIC KEY
-	private static boolean shouldChill = false;
+	private static boolean shouldChill = true;//TODO set back to false when actually using Patreon for something
 	public static boolean optifine = false;
 
 	static {
@@ -90,11 +75,11 @@ public class Patreon {
 	public static void checkPatreon(){
 		if(shouldChill)
 			return;
-		synchronized(patrons) {
+		synchronized(SYNC) {
 			if(loaded)
 				return;
 			loadSettings();
-			String s = "http://data.chocolateminecraft.com/Versions_" + KEY_VERSION + "/Patreon.dat";
+			String s = "http://data.chocolateminecraft.com/Versions_" + KEY_VERSION + "/Patreon2.dat";
 			s = s.replaceAll(" ", "%20");
 			URL url;
 			try {
@@ -107,38 +92,34 @@ public class Patreon {
 					throw new IOException("Input too long to trust!");
 				reader = new BufferedReader(new InputStreamReader(new DecryptInputStream(conn.getInputStream(), cipher)));
 				String line;
-				int pledge = -1;
+				boolean parsingPatrons = false;
+				String localPlayerName = Minecraft.getInstance().getUser().getGameProfile().getName();
 				while((line = reader.readLine()) != null && !line.equals("LAYOUTS")){
 					if(line.startsWith("PATREON")){
-						pledge = Integer.parseInt(line.substring(7));
-						patrons.put(pledge, new ArrayList<String>());
+						parsingPatrons = true;
 						continue;
 					}
-					if(pledge == -1)
+					if(!parsingPatrons)
 						continue;
-					String args[] = line.split("\\t");
-					patrons.get(pledge).add(args[0]);
-					if(args[0].equalsIgnoreCase(Minecraft.getInstance().getUser().getGameProfile().getName()))
-						setPatronPledge(pledge);
+					String rewards[] = line.split(";");
+					if(rewards.length <= 1 || !rewards[0].equalsIgnoreCase(localPlayerName))
+						continue;
+					for(int i = 1; i < rewards.length; i++) {
+						String rewardString = rewards[i].trim();
+						//rewardString checks go here
+						String[] keyAndValue = rewardString.split(":");
+						if(keyAndValue.length < 2)
+							continue;
+						//keyAndValue checks go here
+					}
 				}
 				reader.close();
 			} catch (Throwable e) {
 				OpenPartiesAndClaims.LOGGER.error("suppressed exception", e);
-				patrons.clear();
 			} finally {
 				loaded = true;
 			}
 		}
-	}
-
-	public static int getPatronPledge(String name){
-		if(shouldChill)
-			return -1;
-		Integer[] keys = patrons.keySet().toArray(new Integer[0]);
-		for(int i = 0; i < keys.length; i++)
-			if(patrons.get(keys[i]).contains(name))
-				return keys[i];
-		return -1;
 	}
 
 	public static void saveSettings() {
@@ -147,7 +128,6 @@ public class Patreon {
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(new FileWriter(optionsFile));
-			writer.println("showCapes:" + showCapes);
 			writer.close();
 		} catch (IOException e) {
 			OpenPartiesAndClaims.LOGGER.error("suppressed exception", e);
@@ -167,68 +147,11 @@ public class Patreon {
 			String line;
 			while((line = reader.readLine()) != null){
 				String[] args = line.split(":");
-				if(args[0].equalsIgnoreCase("showCapes"))
-					showCapes = args[1].equals("true");
 			}
 			reader.close();
 		} catch (IOException e) {
 			OpenPartiesAndClaims.LOGGER.error("suppressed exception", e);
 		}
-	}
-
-	public static ResourceLocation getPlayerCape(AbstractClientPlayer playerEntity) {//returning null means use vanilla cape
-		if(shouldChill)
-			return null;
-		if(!pauseCapes && showCapes) {
-			ResourceLocation cape = null;
-			int pledge = getPatronPledge(playerEntity.getName().getString());
-			if(pledge == 2)
-				cape = cape1;
-			else if(pledge == 5)
-				cape = cape2;
-			else if(pledge == 10)
-				cape = cape3;
-			else if(pledge == 50)
-				cape = cape4;
-			if(cape == null)
-				return null;
-			pauseCapes = true;
-			ResourceLocation realCape = playerEntity.getCloakTextureLocation();
-			boolean realIsWearing = playerEntity.isModelPartShown(PlayerModelPart.CAPE);
-			pauseCapes = false;
-			if(realCape != null && realIsWearing)
-				return realCape;
-			return cape;
-		}
-		return null;
-	}
-
-	public static Boolean isWearingCape(AbstractClientPlayer playerEntity) {//returning null means use vanilla value
-		if(shouldChill)
-			return null;
-		if(!pauseCapes && showCapes) {
-			pauseCapes = true;
-			ResourceLocation realCape = playerEntity.getCloakTextureLocation();
-			boolean realIsWearing = playerEntity.isModelPartShown(PlayerModelPart.CAPE);
-			pauseCapes = false;
-			if(realIsWearing || realCape == null)
-				return realIsWearing;
-			int pledge = getPatronPledge(playerEntity.getName().getString());
-			return pledge >= 2;
-		}
-		return null;
-	}
-
-	public static int getPatronPledge() {
-		if(shouldChill)
-			return -1;
-		return patronPledge;
-	}
-
-	public static void setPatronPledge(int patronPledge) {
-		if(shouldChill)
-			return;
-		Patreon.patronPledge = patronPledge;
 	}
 
 	public static String getPublicKeyString() {
