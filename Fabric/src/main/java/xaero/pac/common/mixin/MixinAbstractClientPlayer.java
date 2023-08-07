@@ -19,21 +19,9 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import xaero.pac.client.core.ClientCore;
 
 @Mixin(AbstractClientPlayer.class)
 public class MixinAbstractClientPlayer {
-
-	@Inject(at = @At("HEAD"), method = "getCloakTextureLocation", cancellable = true)
-	public void onGetCloakTextureLocation(CallbackInfoReturnable<ResourceLocation> info) {
-		ResourceLocation moddedLocation = ClientCore.getPlayerCape((AbstractClientPlayer) (Object)this);
-		if(moddedLocation != null)
-			info.setReturnValue(moddedLocation);
-	}
 
 }
