@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.BitStorage;
 import net.minecraft.util.SimpleBitStorage;
@@ -70,7 +71,7 @@ public class ClientboundClaimsRegionPacket extends LazyPacket<LazyPacket.Encoder
 			try {
 				if(input.readableBytes() > 16384)
 					return null;
-				CompoundTag nbt = input.readAnySizeNbt();
+				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
 				int x = nbt.getInt("x");

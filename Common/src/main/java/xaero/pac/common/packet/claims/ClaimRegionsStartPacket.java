@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -56,7 +57,7 @@ public class ClaimRegionsStartPacket extends LazyPacket<LazyPacket.Encoder<Claim
 			try {
 				if(input.readableBytes() > 2048)
 					return null;
-				input.readAnySizeNbt();
+				input.readNbt(NbtAccounter.unlimitedHeap());
 				return new ClaimRegionsStartPacket();
 			} catch(Throwable t) {
 				return null;

@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -33,7 +34,7 @@ public class MixinDispenserBlock {
 	@ModifyVariable(method = "dispenseFrom",
 			at = @At(value = "INVOKE_ASSIGN",
 			target = "Lnet/minecraft/world/level/block/DispenserBlock;getDispenseMethod(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;"))
-	public DispenseItemBehavior onDispenseFrom(DispenseItemBehavior defaultValue, ServerLevel serverLevel, BlockPos blockPos){
+	public DispenseItemBehavior onDispenseFrom(DispenseItemBehavior defaultValue, ServerLevel serverLevel, BlockState blockState, BlockPos blockPos){
 		return ServerCore.replaceDispenseBehavior(defaultValue, serverLevel, blockPos);
 	}
 

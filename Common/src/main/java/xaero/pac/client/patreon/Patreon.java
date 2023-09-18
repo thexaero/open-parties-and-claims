@@ -93,7 +93,7 @@ public class Patreon {
 				reader = new BufferedReader(new InputStreamReader(new DecryptInputStream(conn.getInputStream(), cipher)));
 				String line;
 				boolean parsingPatrons = false;
-				String localPlayerName = Minecraft.getInstance().getUser().getGameProfile().getName();
+				String localPlayerName = Minecraft.getInstance().getUser().getName();
 				while((line = reader.readLine()) != null && !line.equals("LAYOUTS")){
 					if(line.startsWith("PATREON")){
 						parsingPatrons = true;

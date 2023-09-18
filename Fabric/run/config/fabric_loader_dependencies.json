@@ -4,7 +4,8 @@
     "forgeconfigapiport": {
       "-depends": {
         "com_electronwill_night-config_core": "",
-        "com_electronwill_night-config_toml": ""
+        "com_electronwill_night-config_toml": "",
+        "minecraft": ""
       }
     }
   }

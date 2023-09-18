@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.parties;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
@@ -56,7 +57,7 @@ public class ClientboundPartyNamePacket extends LazyPacket<LazyPacket.Encoder<Cl
 			try {
 				if(input.readableBytes() > 16384)
 					return null;
-				CompoundTag tag = input.readAnySizeNbt();
+				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
 				String name = tag.getString("n");

@@ -64,12 +64,10 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	public Listener getListener() {
 		return listener;
 	}
-	
-	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics);
+
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, message, width / 2, height / 6 + 64, -1);
-		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 	
 	public final class Listener {

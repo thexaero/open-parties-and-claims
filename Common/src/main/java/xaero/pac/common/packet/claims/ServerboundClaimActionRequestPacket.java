@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.ClaimsManager;
@@ -45,7 +46,7 @@ public class ServerboundClaimActionRequestPacket {
 			try {
 				if(input.readableBytes() > 1024)
 					return null;
-				CompoundTag tag = input.readAnySizeNbt();
+				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
 				byte actionByte = tag.getByte("a");

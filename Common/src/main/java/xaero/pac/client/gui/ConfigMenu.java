@@ -18,11 +18,9 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -113,7 +111,7 @@ public class ConfigMenu extends XPACScreen {
 	@Override
 	public void tick() {
 		super.tick();
-		otherPlayerNameBox.tick();
+//		otherPlayerNameBox.tick();
 	}
 	
 	@Override
@@ -125,12 +123,16 @@ public class ConfigMenu extends XPACScreen {
 		}
 		return super.keyPressed(p_96552_, p_96553_, p_96554_);
 	}
-	
+
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics);
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, title, width / 2, 16, -1);
 		guiGraphics.drawCenteredString(font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 132, -1);
+	}
+
+	@Override
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		super.render(guiGraphics, mouseX, mouseY, partial);
 		if (!serverHasMod)
 			guiGraphics.drawCenteredString(font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);

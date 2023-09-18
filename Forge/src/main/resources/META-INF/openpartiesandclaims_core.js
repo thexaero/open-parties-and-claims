@@ -501,7 +501,7 @@ function initializeCoreMod() {
             'transformer' : function(methodNode){
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 2))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 3))
                 insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'replaceDispenseBehavior', '(Lnet/minecraft/core/dispenser/DispenseItemBehavior;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;'))
                 insertOnInvoke(methodNode, insnToInsert, false/*after*/, 'net/minecraft/world/level/block/DispenserBlock', 'getDispenseMethod', 'm_7216_', '(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;')
                 return methodNode
@@ -1522,14 +1522,14 @@ function initializeCoreMod() {
                 return methodNode
             }
         },
-        'xaero_pac_servergamepacketlistenerimpl': {
+        'xaero_pac_servercommonpacketlistenerimpl': {
             'target' : {
 				'type' : 'CLASS',
-				'name' : 'net.minecraft.server.network.ServerGamePacketListenerImpl'
+				'name' : 'net.minecraft.server.network.ServerCommonPacketListenerImpl'
 			},
 			'transformer' : function(classNode){
 				var fields = classNode.fields
-				classNode.interfaces.add("xaero/pac/common/server/core/accessor/IServerGamePacketListenerImpl")
+				classNode.interfaces.add("xaero/pac/common/server/core/accessor/IServerCommonPacketListenerImpl")
 				var isObfuscated = true
 	            for(var i = 0; i < fields.size(); i++) {
 	                if(fields.get(i).name.equals("connection")){

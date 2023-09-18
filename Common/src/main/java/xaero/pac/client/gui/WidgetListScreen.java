@@ -102,12 +102,10 @@ public abstract class WidgetListScreen extends XPACScreen {
 	protected <T extends GuiEventListener & NarratableEntry> T addWidget(T p_96625_) {
 		return super.addWidget(p_96625_);
 	}
-	
-	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics);
+
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, displayedTitle, width / 2, 16, -1);
-		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 
 	@Override
@@ -132,9 +130,6 @@ public abstract class WidgetListScreen extends XPACScreen {
 	@Override
 	public void tick() {
 		super.tick();
-		for (EditBox editBox : tickableBoxes) {
-			editBox.tick();
-		}
 	}
 	
 	private void onPrevButton(Button b) {

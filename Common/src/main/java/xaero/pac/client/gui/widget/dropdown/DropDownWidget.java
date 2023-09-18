@@ -18,7 +18,6 @@
 
 package xaero.pac.client.gui.widget.dropdown;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -307,12 +306,12 @@ public final class DropDownWidget extends AbstractWidget
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseXScaled, double mouseYScaled, double wheel) {
+	public boolean mouseScrolled(double mouseXScaled, double mouseYScaled, double hWheel, double wheel) {
 		if (!isClosed()) {
 			mouseScrolled((int) wheel, (int) mouseXScaled, (int) mouseYScaled, Minecraft.getInstance().screen.height);
 			return true;
 		}
-		return super.mouseScrolled(mouseXScaled, mouseYScaled, wheel);
+		return super.mouseScrolled(mouseXScaled, mouseYScaled, hWheel, wheel);
 	}
 
 	@Override

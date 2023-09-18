@@ -275,12 +275,16 @@ public class MainMenu extends XPACScreen {
 		}
 
 	}
-	
+
+	@Override
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.drawCenteredString(font, title, width / 2, 16, -1);
+	}
+
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		updateButtons();
-		renderBackground(guiGraphics);
-		guiGraphics.drawCenteredString(font, title, width / 2, 16, -1);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 		if(!serverHasMod)
 			guiGraphics.drawCenteredString(font, NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);

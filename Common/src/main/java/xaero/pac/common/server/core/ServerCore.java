@@ -76,7 +76,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.core.accessor.ICreateArmInteractionPoint;
-import xaero.pac.common.server.core.accessor.IServerGamePacketListenerImpl;
+import xaero.pac.common.server.core.accessor.IServerCommonPacketListenerImpl;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
@@ -865,7 +865,7 @@ public class ServerCore {
 	}
 
 	public static Connection getServerGamePacketListenerConnection(ServerGamePacketListenerImpl serverGamePacketListener){
-		return ((IServerGamePacketListenerImpl)serverGamePacketListener).getXaero_OPAC_connection();
+		return ((IServerCommonPacketListenerImpl)serverGamePacketListener).getXaero_OPAC_connection();
 	}
 
 	public static void beforePressurePlateCheckPressed(Level level, Block block, BlockPos blockPos){

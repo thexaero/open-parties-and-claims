@@ -57,6 +57,7 @@
         "MixinRavager",
         "MixinReloadableServerResources",
         "MixinRemoveBlockGoal",
+        "MixinServerCommonPacketListenerImpl",
         "MixinServerGamePacketListenerImpl",
         "MixinServerLevel",
         "MixinServerPlayer",

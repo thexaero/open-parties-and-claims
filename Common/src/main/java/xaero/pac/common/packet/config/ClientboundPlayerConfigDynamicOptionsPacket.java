@@ -65,7 +65,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 			try {
 				if(friendlyByteBuf.readableBytes() > 536870912)
 					return null;
-				CompoundTag tag = friendlyByteBuf.readAnySizeNbt();
+				CompoundTag tag = (CompoundTag) friendlyByteBuf.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
 				ListTag entryListTag = tag.getList("l", Tag.TAG_COMPOUND);

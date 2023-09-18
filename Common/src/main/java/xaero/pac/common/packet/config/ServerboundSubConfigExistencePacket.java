@@ -20,6 +20,7 @@ package xaero.pac.common.packet.config;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -70,7 +71,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 			try {
 				if(input.readableBytes() > 4096)
 					return null;
-				CompoundTag nbt = input.readAnySizeNbt();
+				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
 				String subId = nbt.getString("subId");

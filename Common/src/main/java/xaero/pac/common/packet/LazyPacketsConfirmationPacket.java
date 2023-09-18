@@ -19,6 +19,7 @@
 package xaero.pac.common.packet;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -37,7 +38,7 @@ public class LazyPacketsConfirmationPacket {
 			try {
 				if(input.readableBytes() > 2048)
 					return null;
-				input.readAnySizeNbt();
+				input.readNbt(NbtAccounter.unlimitedHeap());
 				return new LazyPacketsConfirmationPacket();
 			} catch(Throwable t) {
 				return null;

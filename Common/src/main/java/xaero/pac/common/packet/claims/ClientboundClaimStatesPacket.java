@@ -20,6 +20,7 @@ package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
@@ -72,7 +73,7 @@ public class ClientboundClaimStatesPacket extends LazyPacket<LazyPacket.Encoder<
 			try {
 				if(input.readableBytes() > 16384)
 					return null;
-				CompoundTag nbt = input.readAnySizeNbt();
+				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
 				ListTag stateListTag = nbt.getList("l", 10);

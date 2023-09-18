@@ -67,13 +67,13 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double wheel) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double hWheel, double wheel) {
 		if(openDropdown != null) {
 			if(openDropdown.onDropDown((int) mouseX, (int) mouseY, height))
-				return openDropdown.mouseScrolled(mouseX, mouseY, wheel);
+				return openDropdown.mouseScrolled(mouseX, mouseY, hWheel, wheel);
 			return true;
 		}
-		return super.mouseScrolled(mouseX, mouseY, wheel);
+		return super.mouseScrolled(mouseX, mouseY, hWheel, wheel);
 	}
 
 	@Override

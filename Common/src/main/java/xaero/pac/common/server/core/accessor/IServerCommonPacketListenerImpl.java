@@ -20,7 +20,7 @@ package xaero.pac.common.server.core.accessor;
 
 import net.minecraft.network.Connection;
 
-public interface IServerGamePacketListenerImpl {
+public interface IServerCommonPacketListenerImpl {
 
 	Connection getXaero_OPAC_connection();
 

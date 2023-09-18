@@ -75,7 +75,7 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 			try {
 				if(input.readableBytes() > getSizeLimit())
 					return null;
-				CompoundTag nbt = input.readAnySizeNbt();
+				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
 				String typeString = nbt.getString("t");

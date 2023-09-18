@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
@@ -47,7 +48,7 @@ public class ClientboundClaimResultPacket {
 			try {
 				if(input.readableBytes() > 2048)
 					return null;
-				CompoundTag tag = input.readAnySizeNbt();
+				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
 				byte[] resultTypesArray = tag.getByteArray("ta");
