@@ -22,36 +22,36 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.List;
 
 public class ServerCoreForge {
 
-	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, NetworkEvent.Context ctx){
+	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, CustomPayloadEvent.Context ctx){
 		return ServerCore.isCreateGlueSelectionAllowed(from, to, ctx.getSender());
 	}
 
-	public static boolean isCreateGlueRemovalAllowed(int entityId, NetworkEvent.Context ctx){
+	public static boolean isCreateGlueRemovalAllowed(int entityId, CustomPayloadEvent.Context ctx){
 		return ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender());
 	}
 
-	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, NetworkEvent.Context ctx){
+	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, CustomPayloadEvent.Context ctx){
 		ServerPlayer player = ctx.getSender();
 		if (player == null)
 			return true;
 		return ServerCore.isCreateTileEntityPacketAllowed(pos, player);
 	}
 
-	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, NetworkEvent.Context ctx){
+	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, CustomPayloadEvent.Context ctx){
 		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, ctx.getSender());
 	}
 
-	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, NetworkEvent.Context ctx){
+	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, CustomPayloadEvent.Context ctx){
 		return ServerCore.isCreateTrainRelocationPacketAllowed(contraptionId, pos, ctx.getSender());
 	}
 
-	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, NetworkEvent.Context ctx){
+	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, CustomPayloadEvent.Context ctx){
 		return ServerCore.isCreateTrainControlsPacketAllowed(contraptionId, ctx.getSender());
 	}
 

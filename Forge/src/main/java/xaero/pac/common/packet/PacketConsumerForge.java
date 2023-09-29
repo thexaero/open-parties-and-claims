@@ -19,14 +19,13 @@
 package xaero.pac.common.packet;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public class PacketConsumerForge<P> implements BiConsumer<P, Supplier<NetworkEvent.Context>> {
+public class PacketConsumerForge<P> implements BiConsumer<P, CustomPayloadEvent.Context> {
 
 	private final BiConsumer<P, ServerPlayer> serverHandler;
 	private final Consumer<P> clientHandler;
@@ -38,23 +37,23 @@ public class PacketConsumerForge<P> implements BiConsumer<P, Supplier<NetworkEve
 	}
 
 	@Override
-	public void accept(P msg, Supplier<NetworkEvent.Context> contextSupplier) {
+	public void accept(P msg, CustomPayloadEvent.Context context) {
 		if(msg == null) {
-			contextSupplier.get().setPacketHandled(true);
+			context.setPacketHandled(true);
 			return;
 		}
-		NetworkDirection networkDirection = contextSupplier.get().getDirection();
+		NetworkDirection networkDirection = context.getDirection();
 		if(clientHandler != null && networkDirection == NetworkDirection.PLAY_TO_CLIENT) {
-			contextSupplier.get().enqueueWork(
+			context.enqueueWork(
 					() -> clientHandler.accept(msg)
 			);
 		} else if(serverHandler != null && networkDirection == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer sender = contextSupplier.get().getSender();
-			contextSupplier.get().enqueueWork(
+			ServerPlayer sender = context.getSender();
+			context.enqueueWork(
 					() -> serverHandler.accept(msg, sender)
 			);
 		}
-		contextSupplier.get().setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 
 }

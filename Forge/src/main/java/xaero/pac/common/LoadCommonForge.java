@@ -23,7 +23,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.network.NetworkConstants;
 import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.event.CommonEventsForge;
 
@@ -45,7 +44,7 @@ public class LoadCommonForge<L extends LoadCommon> {
 		loader.loadCommon();
 
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
-				() -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY,
+				() -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY,
 						(remoteVersion, isFromServer) -> isFromServer));
 	}
 

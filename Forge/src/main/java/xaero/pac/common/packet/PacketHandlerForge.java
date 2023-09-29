@@ -20,21 +20,17 @@ package xaero.pac.common.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.*;
 import xaero.pac.OpenPartiesAndClaims;
 
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PacketHandlerForge implements IPacketHandler {
 
-	private static final String PROTOCOL_VERSION = "1.4.0";
-	public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, () -> PROTOCOL_VERSION, (s) -> NetworkRegistry.ABSENT.equals(s) || s.equals(PROTOCOL_VERSION), (s) -> NetworkRegistry.ABSENT.equals(s) || s.equals(PROTOCOL_VERSION));
+	private static final int PROTOCOL_VERSION = 1004000;
+	public static final SimpleChannel NETWORK = ChannelBuilder.named(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION).networkProtocolVersion(PROTOCOL_VERSION).acceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION).or(Channel.VersionTest.ACCEPT_MISSING)).clientAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION).or(Channel.VersionTest.ACCEPT_MISSING)).simpleChannel();
 
 	@Override
 	public void onServerAboutToStart() {
@@ -48,21 +44,19 @@ public class PacketHandlerForge implements IPacketHandler {
 							 Consumer<P> clientHandler) {
 		PacketConsumerForge<P> consumer = new PacketConsumerForge<P>(serverHandler, clientHandler);
 		if((serverHandler == null) != (clientHandler == null))
-			NETWORK.registerMessage(index, type, encoder, decoder,
-					consumer, Optional.of(clientHandler != null ? NetworkDirection.PLAY_TO_CLIENT : NetworkDirection.PLAY_TO_SERVER));
+			NETWORK.messageBuilder(type, index, clientHandler != null ? NetworkDirection.PLAY_TO_CLIENT : NetworkDirection.PLAY_TO_SERVER).consumerNetworkThread(consumer).decoder(decoder).encoder(encoder).add();
 		else
-			NETWORK.registerMessage(index, type, encoder, decoder,
-					consumer);
+			NETWORK.messageBuilder(type, index).consumerNetworkThread(consumer).decoder(decoder).encoder(encoder).add();
 	}
 
 	@Override
 	public void sendToServer(Object packet) {
-		NETWORK.sendToServer(packet);
+		NETWORK.send(packet, PacketDistributor.SERVER.noArg());
 	}
 
 	@Override
 	public void sendToPlayer(ServerPlayer player, Object packet) {
-		NETWORK.send(PacketDistributor.PLAYER.with(()->player), packet);
+		NETWORK.send(packet, PacketDistributor.PLAYER.with(player));
 	}
 
 }
