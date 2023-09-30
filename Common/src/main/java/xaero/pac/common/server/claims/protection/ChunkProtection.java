@@ -1895,6 +1895,12 @@ public class ChunkProtection
 				if (checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, firstConfig, firstDeadPlayer, firstDeadPlayerId))
 					return true;
 			}
+			UUID secondDeadPlayerId = ServerCore.getDeadPlayer(second);
+			if (secondDeadPlayerId != null) {
+				Entity secondDeadPlayer = getEntityById(ServerLevelHelper.getServerLevel(first.level()), secondDeadPlayerId);
+				if (checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, firstConfig, secondDeadPlayer, secondDeadPlayerId))
+					return true;
+			}
 		}
 
 		ChunkPos secondChunkPos = second.chunkPosition();
