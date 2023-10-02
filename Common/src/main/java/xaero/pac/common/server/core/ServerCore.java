@@ -900,7 +900,7 @@ public class ServerCore {
 	private static void preProjectileHit(Projectile projectile, int projectileTypeFlag) {
 		if((PROJECTILE_HIT_UNUSABLE_TYPES & projectileTypeFlag) != 0)
 			return;
-		MinecraftServer server = projectile.getLevel().getServer();
+		MinecraftServer server = projectile.level().getServer();
 		if(server == null)
 			return;
 		int currentTickCount = server.getTickCount();

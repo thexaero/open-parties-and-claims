@@ -1663,7 +1663,7 @@ public class ChunkProtection
 			return false;
 		if(hasActiveFullPass(projectile))//uses custom protection
 			return false;
-		IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), entity.chunkPosition());
+		IPlayerChunkClaim claim = claimsManager.get(entity.level().dimension().location(), entity.chunkPosition());
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		Entity accessor;
@@ -1671,7 +1671,7 @@ public class ChunkProtection
 		Object accessorInfo = getAccessorInfo(projectile);
 		if(accessorInfo instanceof UUID){
 			accessorId = (UUID)accessorInfo;
-			accessor = getEntityById(ServerLevelHelper.getServerLevel(entity.getLevel()), accessorId);
+			accessor = getEntityById(ServerLevelHelper.getServerLevel(entity.level()), accessorId);
 		} else {
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
