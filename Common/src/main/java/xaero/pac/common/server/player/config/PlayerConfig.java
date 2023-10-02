@@ -73,6 +73,10 @@ public class PlayerConfig
 					1) Every - protected from all entities not owned by a player that has chunk access.
 					2) Not Party - all entities, except owned by a player in the same party as you.
 					3) Not Ally - all entities, except owned by a player in any party allied by yours.""";
+	public static final String PROTECTION_LEVELS_TOOLTIP_PROJECTILE = """
+					1) Every - protected from all projectiles not owned by a player that has chunk access.
+					2) Not Party - all projectiles, except owned by a player in the same party as you.
+					3) Not Ally - all projectiles, except owned by a player in any party allied by yours.""";
 
 	public static final String EXCEPTION_LEVELS_TOOLTIP = """
 					1) Party - players or entities owned by players in the same party as you.

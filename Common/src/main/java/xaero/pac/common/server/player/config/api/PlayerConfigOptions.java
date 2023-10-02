@@ -289,6 +289,16 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS;
 	/**
+	 * Whether the claimed chunk protection includes prevention of hostile mobs being spawned by
+	 * landing projectiles (e.g. endermites).
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN;
+	/**
+	 * Whether the claimed chunk protection includes prevention of non-hostile mobs being spawned by
+	 * landing projectiles (e.g. chicken).
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN;
+	/**
 	 * Whether the player's forceloadable claims are forceloaded, at least while the player is online.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> FORCELOAD;
@@ -876,6 +886,26 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.spawnersFriendly")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables friendly mob spawners.")
+				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.projectileHitHostileSpawn")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection from projectiles spawning hostile mobs when they land (e.g. endermites). Might not work with projectiles from mods that don't implement this mod's API.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PROJECTILE
+				)
+				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
+				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.projectileHitFriendlySpawn")
+				.setDefaultValue(1)
+				.setList(PlayerConfig.PROTECTION_LEVELS)
+				.setComment(
+						"When enabled, claimed chunk protection includes protection from projectiles spawning non-hostile mobs when they land (e.g. chicken). Might not work with projectiles from mods that don't implement this mod's API.\n\n"
+						+ PlayerConfig.PROTECTION_LEVELS_TOOLTIP_PROJECTILE
+				)
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
 
