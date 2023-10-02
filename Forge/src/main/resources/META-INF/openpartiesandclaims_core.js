@@ -286,6 +286,27 @@ function transformPrePostResourcesDrop(methodNode, entityParIndex){
     return methodNode
 }
 
+function transformProjectileHitCapture(methodNode, invokeTargetClass, preMethodName, postMethodName){
+    var invokeTargetName = 'onHit'
+    var invokeTargetNameObf = 'm_6532_'
+    var invokeTargetDesc = '(Lnet/minecraft/world/phys/HitResult;)V'
+    var insnToInsertGetter = function() {
+        var insnToInsert = new InsnList()
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', preMethodName, '(Lnet/minecraft/world/entity/projectile/Projectile;)V'))
+        return insnToInsert
+    }
+    insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+    insnToInsertGetter = function() {
+        var insnToInsert = new InsnList()
+        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
+        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', postMethodName, '(Lnet/minecraft/world/entity/projectile/Projectile;)V'))
+        return insnToInsert
+    }
+    insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
+    return methodNode
+}
+
 function initializeCoreMod() {
 	return {
 		'xaero_pac_minecraftserverclass': {
@@ -1605,6 +1626,39 @@ function initializeCoreMod() {
                 }
                 insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
                 return methodNode
+            }
+        },
+        'xaero_pac_abstractarrow_tick': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.projectile.AbstractArrow',
+                'methodName': 'm_8119_',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                return transformProjectileHitCapture(methodNode, 'net/minecraft/world/entity/projectile/AbstractArrow', 'preArrowProjectileHit', 'postArrowProjectileHit');
+            }
+        },
+        'xaero_pac_abstracthurtingprojectile_tick': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.projectile.AbstractHurtingProjectile',
+                'methodName': 'm_8119_',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                return transformProjectileHitCapture(methodNode, 'net/minecraft/world/entity/projectile/AbstractHurtingProjectile', 'preHurtingProjectileHit', 'postHurtingProjectileHit');
+            }
+        },
+        'xaero_pac_throwableprojectile_tick': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.entity.projectile.ThrowableProjectile',
+                'methodName': 'm_8119_',
+                'methodDesc' : '()V'
+            },
+            'transformer' : function(methodNode){
+                return transformProjectileHitCapture(methodNode, 'net/minecraft/world/entity/projectile/ThrowableProjectile', 'preThrowableProjectileHit', 'postThrowableProjectileHit');
             }
         }
 	}

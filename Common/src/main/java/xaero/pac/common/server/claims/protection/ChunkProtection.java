@@ -1658,6 +1658,42 @@ public class ChunkProtection
 		return config.getEffective(option);
 	}
 
+	public boolean onProjectileHitSpawnedEntity(IServerData<CM, ?> serverData, Entity projectile, Entity entity) {
+		if(!(entity instanceof LivingEntity))//ignoring these for now
+			return false;
+		if(hasActiveFullPass(projectile))//uses custom protection
+			return false;
+		IPlayerChunkClaim claim = claimsManager.get(entity.getLevel().dimension().location(), entity.chunkPosition());
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		Entity accessor;
+		UUID accessorId;
+		Object accessorInfo = getAccessorInfo(projectile);
+		if(accessorInfo instanceof UUID){
+			accessorId = (UUID)accessorInfo;
+			accessor = getEntityById(ServerLevelHelper.getServerLevel(entity.getLevel()), accessorId);
+		} else {
+			accessor = (Entity) accessorInfo;
+			accessorId = accessor.getUUID();
+		}
+		if(hasChunkAccess(config, accessor, accessorId))
+			return false;
+		IPlayerConfigOptionSpecAPI<Integer> option = entityHelper.isHostile(entity) ?
+				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN :
+				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN;
+		return checkProtectionLeveledOption(option, config, accessor, accessorId);
+	}
+
+	@Override
+	public boolean onProjectileHitSpawnedEntity(@Nonnull Entity projectile, @Nonnull Entity entity) {
+		fullPassesPaused = true;
+		try {
+			return onProjectileHitSpawnedEntity(serverData, projectile, entity);
+		} finally {
+			fullPassesPaused = false;
+		}
+	}
+
 	public boolean onItemAddedToWorld(IServerData<CM, ?> serverData, ItemEntity itemEntity) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
@@ -1897,7 +1933,7 @@ public class ChunkProtection
 			}
 			UUID secondDeadPlayerId = ServerCore.getDeadPlayer(second);
 			if (secondDeadPlayerId != null) {
-				Entity secondDeadPlayer = getEntityById(ServerLevelHelper.getServerLevel(first.level()), secondDeadPlayerId);
+				Entity secondDeadPlayer = getEntityById(ServerLevelHelper.getServerLevel(first.getLevel()), secondDeadPlayerId);
 				if (checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, firstConfig, secondDeadPlayer, secondDeadPlayerId))
 					return true;
 			}

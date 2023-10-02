@@ -707,6 +707,8 @@ public class ServerConfig {
 							"claims.protection.naturalSpawnFriendly",
 							"claims.protection.spawnersHostile",
 							"claims.protection.spawnersFriendly",
+							"claims.protection.projectileHitHostileSpawn",
+							"claims.protection.projectileHitFriendlySpawn",
 							"parties.name",
 							"parties.shareLocationWithParty",
 							"parties.shareLocationWithMutualAllyParties",
