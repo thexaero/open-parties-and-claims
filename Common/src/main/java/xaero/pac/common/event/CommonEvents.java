@@ -335,13 +335,22 @@ public abstract class CommonEvents {
 		if(!serverLevel.getServer().isSameThread())
 			return false;
 		try {
+			Projectile spawnerProjectile = ServerCore.getHitProjectile(serverLevel.getServer().getTickCount());
+			if(spawnerProjectile != null) {
+				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+						serverData = ServerData.from(spawnerProjectile.getServer());
+				if(serverData.getChunkProtection().onProjectileHitSpawnedEntity(serverData, spawnerProjectile, entity))
+					return true;
+			}
 			if (!(entity instanceof LivingEntity) && ServerCore.getDyingDamageSourceForCurrentEntitySpawns(serverLevel.getServer().getTickCount()) != null) {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 						serverData = ServerData.from(serverLevel.getServer());
 				if (serverData == null)
 					return false;
-				return serverData.getChunkProtection().onLivingLootEntity(serverData, ServerCore.getDyingLivingForCurrentEntitySpawns(serverLevel.getServer().getTickCount()), entity, ServerCore.getDyingDamageSourceForCurrentEntitySpawns(serverLevel.getServer().getTickCount()));
-			} else if (entity instanceof LightningBolt bolt) {
+				if(serverData.getChunkProtection().onLivingLootEntity(serverData, ServerCore.getDyingLivingForCurrentEntitySpawns(serverLevel.getServer().getTickCount()), entity, ServerCore.getDyingDamageSourceForCurrentEntitySpawns(serverLevel.getServer().getTickCount())))
+					return true;
+			}
+			if (entity instanceof LightningBolt bolt) {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(entity.getServer());
 				serverData.getChunkProtection().onLightningBolt(serverData, bolt);
 				return false;

@@ -1588,6 +1588,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks whether an anonymous action coming from one chunk position to another should be
  protected against, based on protection that affects placing blocks and using items in both positions.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onProjectileHitSpawnedEntity(net.minecraft.world.entity.Entity,net.minecraft.world.entity.Entity)" class="member-name-link">onProjectileHitSpawnedEntity(Entity, Entity)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a landing projectile spawning an entity should be protected against.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html#onWholeRegionChange(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">onWholeRegionChange(ResourceLocation, int, int)</a> - Method in interface xaero.pac.common.claims.tracker.api.<a href="xaero/pac/common/claims/tracker/api/IClaimsManagerListenerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerListenerAPI</a></dt>
 <dd>
 <div class="block">Called after a whole 512x512 region of claim states is updated.</div>
@@ -1867,6 +1871,16 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk player protection redirects the used config option to the owner of the attacking entity.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes prevention of non-hostile mobs being spawned by
+ landing projectiles (e.g.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes prevention of hostile mobs being spawned by
+ landing projectiles (e.g.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_RAIDS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_RAIDS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>

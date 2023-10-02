@@ -197,9 +197,15 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks whether an anonymous action coming from one chunk position to another should be
  protected against, based on protection that affects placing blocks and using items in both positions.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#removeFullPass(java.util.UUID)" class="member-name-link">removeFullPass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;entityId)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onProjectileHitSpawnedEntity(net.minecraft.world.entity.Entity,net.minecraft.world.entity.Entity)" class="member-name-link">onProjectileHitSpawnedEntity</a><wbr>(net.minecraft.world.entity.Entity&nbsp;projectile,
+ net.minecraft.world.entity.Entity&nbsp;entity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether a landing projectile spawning an entity should be protected against.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#removeFullPass(java.util.UUID)" class="member-name-link">removeFullPass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;entityId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Removes a pass given with <a href="#giveFullPass(java.util.UUID)"><code>giveFullPass(UUID)</code></a> from an entity UUID.</div>
 </div>
 </div>
@@ -366,6 +372,30 @@ loadScripts(document, 'script');</script>
 <dd><code>affectsEntities</code> - whether the action is able to affect entities</dd>
 <dt>Returns:</dt>
 <dd>true if the action should be protected against, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onProjectileHitSpawnedEntity(net.minecraft.world.entity.Entity,net.minecraft.world.entity.Entity)">
+<h3>onProjectileHitSpawnedEntity</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">onProjectileHitSpawnedEntity</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.world.entity.Entity&nbsp;projectile,
+ @Nonnull
+ net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
+<div class="block">Checks whether a landing projectile spawning an entity should be protected against.
+ <p>
+ Projectiles implementing <code>AbstractArrow</code>,
+ <code>AbstractHurtingProjectile</code> or
+ <code>ThrowableProjectile</code> are usually already checking
+ the protection by default, so make sure that using this is even necessary before you do.
+ <p>
+ As of writing this, this only ever protects against living entities being spawned.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>projectile</code> - the projectile that spawns the entity, not null</dd>
+<dd><code>entity</code> - the entity spawned by the projectile, not null</dd>
+<dt>Returns:</dt>
+<dd>true if the spawn should be prevented, otherwise false</dd>
 </dl>
 </section>
 </li>
