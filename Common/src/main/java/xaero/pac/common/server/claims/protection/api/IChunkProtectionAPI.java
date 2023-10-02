@@ -24,9 +24,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
@@ -132,6 +138,22 @@ public interface IChunkProtectionAPI {
 	 * @return true if the action should be protected against, otherwise false
 	 */
 	boolean onPosAffectedByAnotherPos(@Nonnull ServerLevel toWorld, @Nonnull ChunkPos toChunk, @Nonnull ServerLevel fromWorld, @Nonnull ChunkPos fromChunk, boolean includeWilderness, boolean affectsBlocks, boolean affectsEntities);
+
+	/**
+	 * Checks whether a landing projectile spawning an entity should be protected against.
+	 * <p>
+	 * Projectiles implementing {@link net.minecraft.world.entity.projectile.AbstractArrow},
+	 * {@link net.minecraft.world.entity.projectile.AbstractHurtingProjectile} or
+	 * {@link net.minecraft.world.entity.projectile.ThrowableProjectile} are usually already checking
+	 * the protection by default, so make sure that using this is even necessary before you do.
+	 * <p>
+	 * As of writing this, this only ever protects against living entities being spawned.
+	 *
+	 * @param projectile  the projectile that spawns the entity, not null
+	 * @param entity  the entity spawned by the projectile, not null
+	 * @return true if the spawn should be prevented, otherwise false
+	 */
+	boolean onProjectileHitSpawnedEntity(@Nonnull Entity projectile, @Nonnull Entity entity);
 
 	/**
 	 * Gives an entity UUID a full pass to circumvent claim protection when affecting entities/blocks/items,

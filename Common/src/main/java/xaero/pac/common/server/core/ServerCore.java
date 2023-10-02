@@ -866,6 +866,79 @@ public class ServerCore {
 		return ((IServerGamePacketListenerImpl)serverGamePacketListener).getXaero_OPAC_connection();
 	}
 
+	private static Projectile PROJECTILE_HIT = null;
+	private static int PROJECTILE_HIT_TYPE = 0;
+	private static int PROJECTILE_HIT_LEVEL = 0;
+	private static int PROJECTILE_HIT_TICK = -1;
+	private static int PROJECTILE_HIT_UNUSABLE_TYPES = 0;
+
+	private static boolean testProjectileHitCapture(int currentTickCount){
+		if(PROJECTILE_HIT_TICK != -1 && PROJECTILE_HIT_TICK != currentTickCount){
+			OpenPartiesAndClaims.LOGGER.error("Projectile hit capture of type {} isn't working properly! Likely a compatibility issue. Turning it off...", PROJECTILE_HIT_TYPE);
+			PROJECTILE_HIT_UNUSABLE_TYPES |= PROJECTILE_HIT_TYPE;
+			PROJECTILE_HIT = null;
+			PROJECTILE_HIT_TICK = -1;
+			PROJECTILE_HIT_LEVEL = 0;
+			return true;
+		}
+		return false;
+	}
+	private static void preProjectileHit(Projectile projectile, int projectileTypeFlag) {
+		if((PROJECTILE_HIT_UNUSABLE_TYPES & projectileTypeFlag) != 0)
+			return;
+		MinecraftServer server = projectile.getLevel().getServer();
+		if(server == null)
+			return;
+		int currentTickCount = server.getTickCount();
+		if(testProjectileHitCapture(currentTickCount) && PROJECTILE_HIT_TYPE == projectileTypeFlag)
+			return;
+		if(PROJECTILE_HIT == null) {
+			PROJECTILE_HIT = projectile;
+			PROJECTILE_HIT_TYPE = projectileTypeFlag;
+			PROJECTILE_HIT_TICK = currentTickCount;
+		}
+		PROJECTILE_HIT_LEVEL++;
+	}
+
+	private static void postProjectileHit(Projectile projectile, int projectileTypeFlag) {
+		if((PROJECTILE_HIT_UNUSABLE_TYPES & projectileTypeFlag) != 0 || PROJECTILE_HIT_LEVEL == 0)
+			return;
+		PROJECTILE_HIT_LEVEL--;
+		if(PROJECTILE_HIT_LEVEL == 0) {
+			PROJECTILE_HIT = null;
+			PROJECTILE_HIT_TICK = -1;
+		}
+	}
+
+	public static Projectile getHitProjectile(int currentTickCount){
+		testProjectileHitCapture(currentTickCount);
+		return PROJECTILE_HIT;
+	}
+
+	public static void preThrowableProjectileHit(Projectile projectile){
+		preProjectileHit(projectile, 1);
+	}
+
+	public static void postThrowableProjectileHit(Projectile projectile){
+		postProjectileHit(projectile, 1);
+	}
+
+	public static void preArrowProjectileHit(Projectile projectile) {
+		preProjectileHit(projectile, 1 << 1);
+	}
+
+	public static void postArrowProjectileHit(Projectile projectile) {
+		postProjectileHit(projectile, 1 << 1);
+	}
+
+	public static void preHurtingProjectileHit(Projectile projectile) {
+		preProjectileHit(projectile, 1 << 2);
+	}
+
+	public static void postHurtingProjectileHit(Projectile projectile) {
+		postProjectileHit(projectile, 1 << 2);
+	}
+
 	public static void reset(){
 		CAPTURED_TARGET_POS = null;
 		CAPTURED_POS_STATE_MAP = null;
@@ -880,5 +953,9 @@ public class ServerCore {
 		MOB_GRIEFING_IS_FOR_ITEMS = false;
 		BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		RESOURCES_DROP_OWNER = null;
+		PROJECTILE_HIT = null;
+		PROJECTILE_HIT_LEVEL = 0;
+		PROJECTILE_HIT_TYPE = 0;
+		PROJECTILE_HIT_TICK = -1;
 	}
 }
