@@ -1933,7 +1933,7 @@ public class ChunkProtection
 			}
 			UUID secondDeadPlayerId = ServerCore.getDeadPlayer(second);
 			if (secondDeadPlayerId != null) {
-				Entity secondDeadPlayer = getEntityById(ServerLevelHelper.getServerLevel(first.getLevel()), secondDeadPlayerId);
+				Entity secondDeadPlayer = getEntityById(ServerLevelHelper.getServerLevel(first.level()), secondDeadPlayerId);
 				if (checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, firstConfig, secondDeadPlayer, secondDeadPlayerId))
 					return true;
 			}
