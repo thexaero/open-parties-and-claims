@@ -30,7 +30,7 @@ import java.util.function.Function;
 public class PacketHandlerForge implements IPacketHandler {
 
 	private static final int PROTOCOL_VERSION = 1004000;
-	public static final SimpleChannel NETWORK = ChannelBuilder.named(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION).networkProtocolVersion(PROTOCOL_VERSION).acceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION).or(Channel.VersionTest.ACCEPT_MISSING)).clientAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION).or(Channel.VersionTest.ACCEPT_MISSING)).simpleChannel();
+	public static final SimpleChannel NETWORK = ChannelBuilder.named(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION).networkProtocolVersion(PROTOCOL_VERSION).optional().simpleChannel();
 
 	@Override
 	public void onServerAboutToStart() {
