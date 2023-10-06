@@ -306,7 +306,7 @@ public class ServerCore {
 		Entity contraption = player.serverLevel().getEntity(contraptionId);
 		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, null, player, contraption, null, null, false, true);
 		if(!shouldProtect)
-			shouldProtect = serverData.getChunkProtection().onBlockInteraction(serverData, player, null, null, player.serverLevel(), pos, Direction.UP, false, true);
+			shouldProtect = serverData.getChunkProtection().onBlockInteraction(serverData, player.serverLevel().getBlockState(pos), player, null, null, player.serverLevel(), pos, Direction.UP, false, true);
 		return !shouldProtect;
 	}
 

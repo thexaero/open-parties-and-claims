@@ -43,9 +43,11 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.tuple.Pair;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -217,7 +219,7 @@ public abstract class CommonEvents {
 		if(serverLevel == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverLevel.getServer());
-		return serverData.getChunkProtection().onEntityDestroyBlock(serverData, player, serverLevel, pos, true);
+		return serverData.getChunkProtection().onEntityDestroyBlock(serverData, serverLevel.getBlockState(pos), player, serverLevel, pos, true);
 	}
 
 	public boolean onDestroyBlock(LevelAccessor levelAccessor, BlockPos pos, Player player) {
@@ -227,7 +229,7 @@ public abstract class CommonEvents {
 		if(serverLevel == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverLevel.getServer());
-		return serverData.getChunkProtection().onEntityDestroyBlock(serverData, player, serverLevel, pos, true);
+		return serverData.getChunkProtection().onEntityDestroyBlock(serverData, serverLevel.getBlockState(pos), player, serverLevel, pos, true);
 	}
 
 	public boolean onEntityDestroyBlock(Level level, BlockPos pos, Entity entity) {
@@ -235,7 +237,7 @@ public abstract class CommonEvents {
 		if(serverLevel == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverLevel.getServer());
-		return serverData.getChunkProtection().onEntityDestroyBlock(serverData, entity, serverLevel, pos, false);
+		return serverData.getChunkProtection().onEntityDestroyBlock(serverData, serverLevel.getBlockState(pos), entity, serverLevel, pos, false);
 	}
 
 	public boolean onRightClickBlock(Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitVec) {
@@ -246,7 +248,7 @@ public abstract class CommonEvents {
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverLevel.getServer());
 		//cancelling both item and block use because players don't expect to use the item when the block would normally be used (and isn't because of protection)
-		return serverData.getChunkProtection().onBlockInteraction(serverData, player, hand, null, serverLevel, pos, hitVec.getDirection(), false, true);
+		return serverData.getChunkProtection().onBlockInteraction(serverData, serverLevel.getBlockState(pos), player, hand, null, serverLevel, pos, hitVec.getDirection(), false, true);
 	}
 
 	public boolean onItemRightClick(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack itemStack) {
@@ -425,7 +427,7 @@ public abstract class CommonEvents {
 		return serverData.getChunkProtection().onBucketUse(serverData, entity, serverLevel, hitResult, itemStack);
 	}
 
-	protected boolean onEntityPlaceBlock(LevelAccessor levelAccessor, BlockPos pos, Entity entity) {
+	protected boolean onEntityPlaceBlock(LevelAccessor levelAccessor, BlockPos pos, Entity entity, BlockState placedBlock, BlockState replacedBlock) {
 		//only supported by Forge atm
 		if(!(levelAccessor instanceof Level level))
 			return false;
@@ -437,10 +439,13 @@ public abstract class CommonEvents {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverLevel.getServer());
 		if(serverData == null)
 			return false;
-		return serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null);
+		//not protecting destroyed blocks here because it causes dupes with mods like create
+//		if(replacedBlock != null && !replacedBlock.isAir() && serverData.getChunkProtection().onEntityDestroyBlock(serverData, replacedBlock, entity, serverLevel, pos, false))
+//			return true;
+	 	return placedBlock != null && !placedBlock.isAir() && serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null);
 	}
 
-	protected boolean onEntityMultiPlaceBlock(LevelAccessor levelAccessor, Stream<BlockPos> positions, Entity entity) {
+	protected boolean onEntityMultiPlaceBlock(LevelAccessor levelAccessor, Stream<Pair<BlockPos, BlockState>> blocks, Entity entity) {
 		//only supported by Forge atm
 		if(!(levelAccessor instanceof Level level))
 			return false;
@@ -453,11 +458,14 @@ public abstract class CommonEvents {
 		if(ServerCore.isHandlingFrostWalk())
 			return false;
 		Set<ChunkPos> chunkPositions = new HashSet<>();
-		Iterator<BlockPos> iterator = positions.iterator();
+		Iterator<Pair<BlockPos, BlockState>> iterator = blocks.iterator();
 		while(iterator.hasNext()){
-			BlockPos pos = iterator.next();
+			Pair<BlockPos, BlockState> blockEntry = iterator.next();
+			BlockPos pos = blockEntry.getLeft();
 			if(chunkPositions.add(new ChunkPos(pos))) {
-				if (serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null))
+				//not protecting destroyed blocks here because it causes dupes with mods like create
+				BlockState placedBlock = blockEntry.getRight();
+				if (placedBlock != null && !placedBlock.isAir() && serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null))
 					return true;
 			}
 		}
