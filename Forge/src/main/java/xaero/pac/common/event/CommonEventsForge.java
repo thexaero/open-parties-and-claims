@@ -21,7 +21,6 @@ package xaero.pac.common.event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
@@ -49,6 +48,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -75,13 +75,13 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event) {
-		if(super.onEntityPlaceBlock(event.getWorld(), event.getPos(), event.getEntity()))
+		if(super.onEntityPlaceBlock(event.getWorld(), event.getPos(), event.getEntity(), event.getPlacedBlock(), event.getBlockSnapshot().getReplacedBlock()))
 			event.setCanceled(true);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
-		if(super.onEntityMultiPlaceBlock(event.getWorld(), event.getReplacedBlockSnapshots().stream().map(BlockSnapshot::getPos), event.getEntity()))
+		if(super.onEntityMultiPlaceBlock(event.getWorld(), event.getReplacedBlockSnapshots().stream().map(s -> Pair.of(s.getPos(), s.getCurrentBlock())), event.getEntity()))
 			event.setCanceled(true);
 	}
 

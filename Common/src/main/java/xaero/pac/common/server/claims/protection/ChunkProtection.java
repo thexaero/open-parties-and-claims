@@ -579,8 +579,8 @@ public class ChunkProtection
 		return isAllowedStaticFakePlayerAction(serverData, player, targetPos, null);
 	}
 
-	public boolean onEntityDestroyBlock(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos, boolean messages) {
-		return onBlockInteraction(serverData, entity, InteractionHand.MAIN_HAND, null, world, pos, Direction.UP, true, messages);
+	public boolean onEntityDestroyBlock(IServerData<CM, ?> serverData, BlockState blockState, Entity entity, ServerLevel world, BlockPos pos, boolean messages) {
+		return onBlockInteraction(serverData, blockState, entity, InteractionHand.MAIN_HAND, null, world, pos, Direction.UP, true, messages);
 	}
 	
 	public IPlayerConfig getClaimConfig(IPlayerConfigManager playerConfigs, IPlayerChunkClaim claim) {
@@ -644,11 +644,10 @@ public class ChunkProtection
 		return result;
 	}
 
-	public boolean onBlockInteraction(IServerData<CM, ?> serverData, Entity entity, InteractionHand hand, ItemStack heldItem, ServerLevel world, BlockPos pos, Direction direction, boolean breaking, boolean messages) {
+	public boolean onBlockInteraction(IServerData<CM, ?> serverData, BlockState blockState, Entity entity, InteractionHand hand, ItemStack heldItem, ServerLevel world, BlockPos pos, Direction direction, boolean breaking, boolean messages) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		//entity can be null!
-		BlockState blockState = world.getBlockState(pos);
 		if(completelyDisabledBlocks.contains(blockState.getBlock())){
 			if(messages && entity instanceof ServerPlayer)
 				entity.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, BLOCK_DISABLED), entity.getUUID());
@@ -716,14 +715,14 @@ public class ChunkProtection
 	public boolean onBlockInteraction(@Nullable Entity entity, @Nullable InteractionHand hand, @Nullable ItemStack heldItem, @Nonnull ServerLevel world, @Nonnull BlockPos pos, @Nonnull Direction direction, boolean breaking, boolean messages) {
 		try {
 			fullPassesPaused = true;
-			return onBlockInteraction(serverData, entity, hand, heldItem, world, pos, direction, breaking, messages);
+			return onBlockInteraction(serverData, world.getBlockState(pos), entity, hand, heldItem, world, pos, direction, breaking, messages);
 		} finally {
 			fullPassesPaused = false;
 		}
 	}
 
 	public boolean onBlockSpecialInteraction(IServerData<CM, ?> serverData, Player player, ServerLevel world, BlockPos pos) {//not left or right click, e.g. scrolling with Create wrench
-		return onBlockInteraction(serverData, player, null, null, world, pos, Direction.UP, false, true);
+		return onBlockInteraction(serverData, world.getBlockState(pos), player, null, null, world, pos, Direction.UP, false, true);
 	}
 
 	public boolean onEntityPlaceBlock(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos, IPlayerConfigOptionSpecAPI<Integer> option) {
