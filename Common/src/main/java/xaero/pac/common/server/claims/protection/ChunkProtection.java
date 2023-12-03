@@ -323,7 +323,7 @@ public class ChunkProtection
 		}
 		if(groupsAllowPass || !optionProtects || !isProtectable)
 			return InteractionTargetResult.PASS;
-		if (accessor instanceof Player && entityHelper.isTamed(e, (Player) accessor))
+		if (entityHelper.isOwned(e, accessor))
 			return InteractionTargetResult.PASS;
 		if(!attack && forcedInteractionExceptionEntities.contains(entityType) && (emptyHand || !requiresEmptyHandEntities.contains(entityType)))
 			return InteractionTargetResult.PASS;
@@ -1417,11 +1417,6 @@ public class ChunkProtection
 		Object result;
 		if(entity instanceof Projectile){
 			result = ((Projectile) entity).getOwner();
-		} else if(entity instanceof ItemEntity){
-			UUID ownerId = ((ItemEntity) entity).getOwner();
-			if(ownerId == null)
-				ownerId = ((ItemEntity) entity).getThrower();
-			result = ownerId;
 		} else if(entity instanceof Vex){
 			result = ((Vex) entity).getOwner();
 		} else if(entity instanceof EvokerFangs){
@@ -1429,7 +1424,7 @@ public class ChunkProtection
 		} else if(entity instanceof Boat){
 			result = entity.getControllingPassenger();
 		} else
-			result = entityHelper.getTamer(entity);
+			result = entityHelper.getOwnerId(entity);
 		return result == null ? entity : result;
 	}
 
