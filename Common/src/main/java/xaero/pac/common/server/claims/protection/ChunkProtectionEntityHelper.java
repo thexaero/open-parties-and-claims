@@ -35,6 +35,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.vehicle.Boat;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.reflect.Reflection;
+import xaero.pac.common.server.core.ServerCore;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
@@ -96,8 +97,8 @@ public class ChunkProtectionEntityHelper {
 
 	UUID getOwnerId(Entity e){
 		if(e instanceof ItemEntity){
-			UUID ownerId = ((ItemEntity) e).getOwner();
-			return ownerId == null ? ((ItemEntity) e).getThrower() : ownerId;
+			UUID ownerId = ServerCore.getItemEntityOwner((ItemEntity) e);
+			return ownerId == null ? ServerCore.getItemEntityThrower((ItemEntity) e) : ownerId;
 		}
 		if(e instanceof TamableAnimal tameable)
 			return tameable.isTame() ? tameable.getOwnerUUID() : null;
