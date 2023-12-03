@@ -22,12 +22,17 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.monster.piglin.Piglin;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.vehicle.Boat;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.reflect.Reflection;
 
@@ -80,8 +85,8 @@ public class ChunkProtectionEntityHelper {
 		return (e.getLevel().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
 	}
 	
-	boolean isTamed(Entity e, Player p) {
-		UUID owner = getTamer(e);
+	boolean isOwned(Entity e, Entity p) {
+		UUID owner = getOwnerId(e);
 		if(p.getUUID().equals(owner))
 			return true;
 		if(e instanceof Fox fox)
@@ -89,14 +94,27 @@ public class ChunkProtectionEntityHelper {
 		return false;
 	}
 
-	UUID getTamer(Entity e){
+	UUID getOwnerId(Entity e){
+		if(e instanceof ItemEntity){
+			UUID ownerId = ((ItemEntity) e).getOwner();
+			return ownerId == null ? ((ItemEntity) e).getThrower() : ownerId;
+		}
 		if(e instanceof TamableAnimal tameable)
 			return tameable.isTame() ? tameable.getOwnerUUID() : null;
-		else if(e instanceof AbstractHorse horse)
+		if(e instanceof OwnableEntity ownable)
+			return ownable.getOwnerUUID();
+		if(e instanceof AbstractHorse horse)
 			return horse.isTamed() ? horse.getOwnerUUID() : null;
-		else if(e instanceof Fox fox)
+		if(e instanceof Fox fox)
 			return FOX_TRUSTED_UUID_SECONDARY != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null) : null;
-		return null;
+		Entity ownerEntity = null;
+		if(e instanceof Projectile)
+			ownerEntity = ((Projectile) e).getOwner();
+		else if(e instanceof Vex)
+			ownerEntity = ((Vex) e).getOwner();
+		else if(e instanceof EvokerFangs)
+			ownerEntity = ((EvokerFangs) e).getOwner();
+		return ownerEntity == null ? null : ownerEntity.getUUID();
 	}
 
 }
