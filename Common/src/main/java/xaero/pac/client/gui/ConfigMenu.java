@@ -25,7 +25,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.client.gui.widget.FixedEditBox;
 import xaero.pac.client.world.capability.ClientWorldMainCapability;
 import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 
@@ -54,7 +53,7 @@ public class ConfigMenu extends XPACScreen {
 		addRenderableWidget(expiredClaimsConfigButton = Button.builder(Component.translatable("gui.xaero_pac_ui_expired_claims_config"), this::onExpiredClaimsConfigButton).bounds(width / 2 - 100, height / 7 + 56, 200, 20).build());
 		addRenderableWidget(wildernessConfigButton = Button.builder(Component.translatable("gui.xaero_pac_ui_wilderness_config"), this::onWildernessConfigButton).bounds(width / 2 - 100, height / 7 + 80, 200, 20).build());
 		addRenderableWidget(defaultConfigButton = Button.builder(Component.translatable("gui.xaero_pac_ui_default_player_config"), this::onDefaultConfigButton).bounds(width / 2 - 100, height / 7 + 104, 200, 20).build());
-		addRenderableWidget(otherPlayerNameBox = new FixedEditBox(font, width / 2 - 99, height / 7 + 148, 98, 20, Component.translatable("gui.xaero_pac_ui_other_player_config_name_field")));
+		addRenderableWidget(otherPlayerNameBox = new EditBox(font, width / 2 - 99, height / 7 + 148, 98, 20, Component.translatable("gui.xaero_pac_ui_other_player_config_name_field")));
 		addRenderableWidget(otherPlayerConfigButton = Button.builder(Component.translatable("gui.xaero_pac_ui_other_player_config_button"), this::onOtherPlayerConfigButton).bounds(width / 2, height / 7 + 148, 100, 20).build());
 		updateOtherPlayerButton();
 		ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(minecraft.level, ClientWorldCapabilityTypes.MAIN_CAP);

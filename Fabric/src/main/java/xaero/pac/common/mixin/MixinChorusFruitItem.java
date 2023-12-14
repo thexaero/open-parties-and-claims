@@ -35,8 +35,8 @@ import xaero.pac.OpenPartiesAndClaimsFabric;
 public class MixinChorusFruitItem {
 
 	@Inject(method = "finishUsingItem", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z"), cancellable = true)
-	public void onFinishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<ItemStack> callbackInfoReturnable, ItemStack itemStack2, double d, double e, double f, int i, double g, double h, double j){
-		Vec3 target = new Vec3(g, h, j);
+	public void onFinishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<ItemStack> callbackInfoReturnable, ItemStack itemStack2, int i, double d, double e, double f, Vec3 vec3){
+		Vec3 target = new Vec3(d, e, f);
 		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onChorusFruit(livingEntity, target))
 			callbackInfoReturnable.setReturnValue(itemStack2);
 	}

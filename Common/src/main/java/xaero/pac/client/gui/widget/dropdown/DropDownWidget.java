@@ -227,16 +227,12 @@ public final class DropDownWidget extends AbstractWidget
 	}
 
 	@Override
-	public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		int scaledHeight = Minecraft.getInstance().screen.height;
 		isHovered = visible && onDropDown(mouseX, mouseY, scaledHeight);
 		if(!visible)
 			return;
 		render(guiGraphics, mouseX, mouseY, Minecraft.getInstance().screen.height, true);
-	}
-
-	@Override
-	public void renderWidget(GuiGraphics guiGraphics, int var2, int var3, float var4) {
 	}
 
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, int scaledHeight, boolean closedOnly){

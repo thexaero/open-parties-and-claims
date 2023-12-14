@@ -385,7 +385,7 @@ public abstract class CommonEvents {
 				((IEntity)entity).setXaero_OPAC_lastChunkEntryDimension(entity.level().dimension());
 			if (entity instanceof ItemEntity itemEntity) {
 				if (ServerCore.getItemEntityThrower(itemEntity) == null && ServerCore.getResourcesDropOwner() != null)//after the protection checks so that this isn't immediately affected by toss protection
-					itemEntity.setThrower(ServerCore.getResourcesDropOwner().getUUID());
+					itemEntity.setThrower(ServerCore.getResourcesDropOwner());
 
 				if(ServerCore.getItemEntityThrower(itemEntity) != null && ServerCore.getThrowerAccessor(itemEntity) == null){
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>

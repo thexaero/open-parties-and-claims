@@ -19,11 +19,12 @@
 package xaero.pac.client.gui.widget;
 
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.client.gui.TextWidgetListElement;
 
-public class TextWidgetEditBox extends FixedEditBox {
+public class TextWidgetEditBox extends EditBox {
 	
 	private TextWidgetListElement element;
 

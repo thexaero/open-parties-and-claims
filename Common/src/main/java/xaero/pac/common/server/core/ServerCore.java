@@ -735,7 +735,7 @@ public class ServerCore {
 
 	public static void onThrowItem(ItemEntity itemEntity) {
 		if(BEHAVIOR_UTILS_THROW_ITEM_LIVING != null && itemEntity.getServer() != null) {
-			itemEntity.setThrower(BEHAVIOR_UTILS_THROW_ITEM_LIVING.getUUID());
+			itemEntity.setThrower(BEHAVIOR_UTILS_THROW_ITEM_LIVING);
 			BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		}
 	}

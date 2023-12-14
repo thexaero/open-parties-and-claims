@@ -1070,8 +1070,8 @@ public class ChunkProtection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
-		DamageSource damageSource = explosion.getDamageSource();
-		if(damageSource.getEntity() != null && hasActiveFullPass(damageSource.getEntity()))
+		Entity damager = explosion.getIndirectSourceEntity();
+		if(damager != null && hasActiveFullPass(damager))
 			return;
 		Iterator<BlockPos> positions = affectedBlocks.iterator();
 		while(positions.hasNext()) {
@@ -1085,8 +1085,7 @@ public class ChunkProtection
 				positions.remove();
 		}
 		Iterator<Entity> entities = affectedEntities.iterator();
-		Entity directDamager = damageSource.getDirectEntity();
-		Entity damager = damageSource.getEntity();
+		Entity directDamager = explosion.getDirectSourceEntity();
 		while(entities.hasNext()) {
 			Entity entity = entities.next();
 			IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), entity.chunkPosition());
@@ -1788,7 +1787,7 @@ public class ChunkProtection
 			accessorId = accessor.getUUID();
 		}
 		if(lootEntity instanceof ItemEntity itemEntity)
-			itemEntity.setThrower(livingEntity.getUUID());
+			itemEntity.setThrower(livingEntity);
 		ServerCore.setLootOwner(lootEntity, accessorId);
 		if(livingEntity instanceof Player) {
 			ServerCore.setDeadPlayer(lootEntity, livingEntity.getUUID());
