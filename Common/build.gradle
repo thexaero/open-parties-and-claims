@@ -44,8 +44,6 @@ dependencies {
      compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
      implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
-     implementation 'com.electronwill.night-config:core:3.6.3'
-     implementation 'com.electronwill.night-config:toml:3.6.3'
      compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:9.0.0"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
      //same as forge for the deobfuscated class names in the api

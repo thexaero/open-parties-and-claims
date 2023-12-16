@@ -36,8 +36,6 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly project(":Common")
 
-    implementation 'com.electronwill.night-config:core:3.6.3'
-    implementation 'com.electronwill.night-config:toml:3.6.3'
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:9.1.2"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
