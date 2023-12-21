@@ -28,6 +28,9 @@ import xaero.pac.common.reflect.MappingHelperFabric;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessFabric;
 
+import java.io.File;
+import java.nio.file.Path;
+
 public class PlatformHelperFabric implements IPlatformHelper {
 	private final KeyBindingHelperFabric keyBindingHelperFabric = new KeyBindingHelperFabric();
 	private final EntityAccessFabric entityAccessFabric = new EntityAccessFabric();
@@ -67,6 +70,11 @@ public class PlatformHelperFabric implements IPlatformHelper {
 	@Override
 	public IMappingHelper getMappingHelper() {
 		return mappingHelperFabric;
+	}
+
+	@Override
+	public Path getDefaultConfigFolder() {
+		return new File("defaultconfigs").toPath();
 	}
 
 }

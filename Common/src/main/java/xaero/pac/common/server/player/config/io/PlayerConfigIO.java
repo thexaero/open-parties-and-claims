@@ -23,6 +23,7 @@ import com.electronwill.nightconfig.toml.TomlFormat;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.io.FileIOHelper;
 import xaero.pac.common.server.io.FilePathConfig;
@@ -55,12 +56,11 @@ public final class PlayerConfigIO
 	
 	private final Path configsPath;
 	private final Path configSubConfigPath;
-	private final Path defaultConfigPath;
-	private final Path wildernessConfigPath;
-	private final Path serverClaimConfigPath;
-	private final Path serverClaimConfigOverridesPath;
-	private final Path expiredClaimConfigPath;
-	private final FilePathConfig globalFilePathConfig;
+	private final FilePathConfig defaultConfigPathConfig;
+	private final FilePathConfig wildernessConfigPathConfig;
+	private final FilePathConfig serverClaimConfigPathConfig;
+	private final FilePathConfig expiredClaimConfigPathConfig;
+	private final Path defaultConfigs;
 	
 	private PlayerConfigIO(SerializationHandler<String, PlayerConfigDeserializationInfo, PlayerConfig<P>, PlayerConfigManager<P, CM>> serializationHandler, SerializedDataFileIO<String, PlayerConfigDeserializationInfo> serializedDataFileIO, IOThreadWorker ioThreadWorker,
 			MinecraftServer server, String fileExtension, PlayerConfigManager<P, CM> manager, FileIOHelper fileIOHelper) {
@@ -68,13 +68,12 @@ public final class PlayerConfigIO
 		configsPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("player-configs");
 		configSubConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("data").resolve(OpenPartiesAndClaims.MOD_ID).resolve("player-configs").resolve("sub-configs");
 
-		globalFilePathConfig = new FilePathConfig(server.getWorldPath(LevelResource.ROOT).resolve("serverconfig"), false);
-		defaultConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-default-player-config.toml");
-		wildernessConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-wilderness-config.toml");
-		String serverClaimConfigName = OpenPartiesAndClaims.MOD_ID + "-server-claim-config";
-		serverClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(serverClaimConfigName + ".toml");
-		serverClaimConfigOverridesPath = configSubConfigPath.resolve(serverClaimConfigName);
-		expiredClaimConfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve(OpenPartiesAndClaims.MOD_ID + "-expired-claim-config.toml");
+		Path serverconfigPath = server.getWorldPath(LevelResource.ROOT).resolve("serverconfig");
+		defaultConfigPathConfig = new FilePathConfig(serverconfigPath.resolve(OpenPartiesAndClaims.MOD_ID + "-default-player-config.toml"), false);
+		wildernessConfigPathConfig = new FilePathConfig(serverconfigPath.resolve(OpenPartiesAndClaims.MOD_ID + "-wilderness-config.toml"), false);
+		serverClaimConfigPathConfig = new FilePathConfig(serverconfigPath.resolve(OpenPartiesAndClaims.MOD_ID + "-server-claim-config.toml"), false);
+		expiredClaimConfigPathConfig = new FilePathConfig(serverconfigPath.resolve(OpenPartiesAndClaims.MOD_ID + "-expired-claim-config.toml"), false);
+		defaultConfigs = Services.PLATFORM.getDefaultConfigFolder();
 	}
 
 	@Override
@@ -85,27 +84,38 @@ public final class PlayerConfigIO
 	@Override
 	public void load() {
 		OpenPartiesAndClaims.LOGGER.info("Loading player configs...");
-		loadGlobalConfig(PlayerConfigType.DEFAULT_PLAYER, defaultConfigPath, manager::setDefaultConfig);
-		loadGlobalConfig(PlayerConfigType.WILDERNESS, wildernessConfigPath, manager::setWildernessConfig);
-		loadGlobalConfig(PlayerConfigType.SERVER, serverClaimConfigPath, manager::setServerClaimConfig);
-		loadGlobalConfig(PlayerConfigType.EXPIRED, expiredClaimConfigPath, manager::setExpiredClaimConfig);
-		saveFile(manager.getDefaultConfig(), defaultConfigPath);//saves corrected config
-		saveFile(manager.getWildernessConfig(), wildernessConfigPath);//saves corrected config
-		saveFile(manager.getServerClaimConfig(), serverClaimConfigPath);//saves corrected config
-		saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPath);//saves corrected config
+		loadGlobalConfig(PlayerConfigType.DEFAULT_PLAYER, defaultConfigPathConfig, manager::setDefaultConfig);
+		loadGlobalConfig(PlayerConfigType.WILDERNESS, wildernessConfigPathConfig, manager::setWildernessConfig);
+		loadGlobalConfig(PlayerConfigType.SERVER, serverClaimConfigPathConfig, manager::setServerClaimConfig);
+		loadGlobalConfig(PlayerConfigType.EXPIRED, expiredClaimConfigPathConfig, manager::setExpiredClaimConfig);
+		saveFile(manager.getDefaultConfig(), defaultConfigPathConfig.getPath());//saves corrected config
+		saveFile(manager.getWildernessConfig(), wildernessConfigPathConfig.getPath());//saves corrected config
+		saveFile(manager.getServerClaimConfig(), serverClaimConfigPathConfig.getPath());//saves corrected config
+		saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPathConfig.getPath());//saves corrected config
 		
 		super.load();
 		manager.onLoad();
 		OpenPartiesAndClaims.LOGGER.info("Loaded player configs!");
 	}
-	
-	private void loadGlobalConfig(PlayerConfigType type, Path path, Consumer<PlayerConfig<P>> resultConsumer) {
+
+	private void loadGlobalConfig(PlayerConfigType type, FilePathConfig filePathConfig, Consumer<PlayerConfig<P>> resultConsumer){
+		loadGlobalConfig(type, filePathConfig.getPath(), filePathConfig, resultConsumer);
+	}
+
+	private void loadGlobalConfig(PlayerConfigType type, Path path, FilePathConfig filePathConfig, Consumer<PlayerConfig<P>> resultConsumer) {
 		if(Files.exists(path)) {
-			PlayerConfig<P> config = loadFile(path, globalFilePathConfig, false);
+			PlayerConfig<P> config = loadFile(path, filePathConfig, false);
 			if(config == null)
 				throw new RuntimeException("Server, expired, default and wilderness claim configs must load properly! Check the game logs for errors.");
 			resultConsumer.accept(config);
 		} else {
+			if(filePathConfig.getPath() == path) {
+				Path fileInDefaultConfigs = defaultConfigs.resolve(path.getFileName());
+				if (Files.exists(fileInDefaultConfigs)) {
+					loadGlobalConfig(type, fileInDefaultConfigs, filePathConfig, resultConsumer);
+					return;
+				}
+			}
 			PlayerConfig<P> config = PlayerConfig.FinalBuilder.<P>begin()
 					.setType(type)
 					.setPlayerId(
@@ -120,7 +130,7 @@ public final class PlayerConfigIO
 			CommentedConfig storage = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
 			manager.getPlayerConfigSpec().correct(storage);
 			config.setStorage(storage);
-			if(path == wildernessConfigPath)
+			if(filePathConfig == wildernessConfigPathConfig)
 				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
 
 			resultConsumer.accept(config);
@@ -133,14 +143,14 @@ public final class PlayerConfigIO
 //			return true;
 		OpenPartiesAndClaims.LOGGER.debug("Saving player configs...");
 		if(manager.getDefaultConfig().isDirty())
-			saveFile(manager.getDefaultConfig(), defaultConfigPath);
+			saveFile(manager.getDefaultConfig(), defaultConfigPathConfig.getPath());
 		if(manager.getWildernessConfig().isDirty())
-			saveFile(manager.getWildernessConfig(), wildernessConfigPath);
+			saveFile(manager.getWildernessConfig(), wildernessConfigPathConfig.getPath());
 		if(manager.getServerClaimConfig().isDirty())
-			saveFile(manager.getServerClaimConfig(), serverClaimConfigPath);
+			saveFile(manager.getServerClaimConfig(), serverClaimConfigPathConfig.getPath());
 		saveGlobalConfigSubConfigs(manager.getServerClaimConfig());
 		if(manager.getExpiredClaimConfig().isDirty())
-			saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPath);
+			saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPathConfig.getPath());
 		return super.save();
 		
 	}
@@ -157,11 +167,11 @@ public final class PlayerConfigIO
 
 	@Override
 	protected PlayerConfigDeserializationInfo getObjectId(String fileNameNoExtension, Path file, FilePathConfig filePathConfig) {
-		if(file == defaultConfigPath || file == wildernessConfigPath)
-			return new PlayerConfigDeserializationInfo(null, file == defaultConfigPath ? PlayerConfigType.DEFAULT_PLAYER : PlayerConfigType.WILDERNESS, null, -1);
-		if(file == serverClaimConfigPath)
+		if(filePathConfig == defaultConfigPathConfig || filePathConfig == wildernessConfigPathConfig)
+			return new PlayerConfigDeserializationInfo(null, filePathConfig == defaultConfigPathConfig ? PlayerConfigType.DEFAULT_PLAYER : PlayerConfigType.WILDERNESS, null, -1);
+		if(filePathConfig == serverClaimConfigPathConfig)
 			return new PlayerConfigDeserializationInfo(PlayerConfig.SERVER_CLAIM_UUID, PlayerConfigType.SERVER, null, -1);
-		if(file == expiredClaimConfigPath)
+		if(filePathConfig == expiredClaimConfigPathConfig)
 			return new PlayerConfigDeserializationInfo(PlayerConfig.EXPIRED_CLAIM_UUID, PlayerConfigType.EXPIRED, null, -1);
 		boolean isSub = filePathConfig.getPath() == configSubConfigPath;
 		if(!isSub)

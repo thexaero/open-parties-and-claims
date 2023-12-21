@@ -148,8 +148,9 @@ public final class ForceLoadTicketManager {
 		IPlayerConfig ownerConfig = playerConfigManager.getLoadedConfig(id);
 		boolean shouldBeEnabled = ticketsShouldBeEnabled(ownerConfig, false);
 		if(shouldBeEnabled) {
-			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
-			if(playerTickets.getCount() <= forceloadLimit)
+			boolean isServer = PlayerConfig.SERVER_CLAIM_UUID.equals(id);
+			int forceloadLimit = isServer ? 0 : claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+			if(isServer || playerTickets.getCount() <= forceloadLimit)
 				updateTicket(true, ticket);
 		}
 	}
