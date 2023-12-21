@@ -78,6 +78,11 @@ public class ObjectExpirationCheckSpreadoutTask<T extends ObjectManagerIOExpirab
 			boolean hasBeenActive = object.hasBeenActive();//since last check
 			if(!hasBeenActive)
 				hasBeenActive = expirationHandler.checkIfActive(object);
+			if(object.getLastConfirmedActivity() > serverInfo.getUseTime()) {//last active in the future!
+				OpenPartiesAndClaims.LOGGER.warn("Mod use time seems to have been reset! This could happen due to the data/server-info.nbt file corruption, with a backup being likely created. Defaulting to the time of a confirmed activity...");
+				serverInfo.setUseTime(object.getLastConfirmedActivity());
+				serverData.getServerInfoIO().save();
+			}
 			if(hasBeenActive) {
 				object.confirmActivity(serverInfo);
 				object.setDirty(true);
