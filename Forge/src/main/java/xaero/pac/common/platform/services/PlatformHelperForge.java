@@ -19,7 +19,9 @@
 package xaero.pac.common.platform.services;
 
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.controls.keybinding.KeyBindingHelperForge;
@@ -28,6 +30,8 @@ import xaero.pac.common.reflect.IMappingHelper;
 import xaero.pac.common.reflect.MappingHelperForge;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessForge;
+
+import java.nio.file.Path;
 
 public class PlatformHelperForge implements IPlatformHelper {
 	private final KeyBindingHelperForge keyBindingRegistryForge = new KeyBindingHelperForge();
@@ -68,6 +72,11 @@ public class PlatformHelperForge implements IPlatformHelper {
 	@Override
 	public IMappingHelper getMappingHelper() {
 		return mappingHelperForge;
+	}
+
+	@Override
+	public Path getDefaultConfigFolder() {
+		return FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath());
 	}
 
 }
