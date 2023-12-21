@@ -23,6 +23,8 @@ import xaero.pac.common.entity.IEntityAccess;
 import xaero.pac.common.reflect.IMappingHelper;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 
+import java.nio.file.Path;
+
 public interface IPlatformHelper {
 
 	/**
@@ -54,5 +56,7 @@ public interface IPlatformHelper {
 	IEntityAccess getEntityAccess();
 
 	IMappingHelper getMappingHelper();
+
+	Path getDefaultConfigFolder();
 
 }
