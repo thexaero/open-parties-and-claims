@@ -322,7 +322,7 @@ public class ChunkProtection
 		}
 		if(groupsAllowPass || !optionProtects || !isProtectable)
 			return InteractionTargetResult.PASS;
-		if (entityHelper.isOwned(e, accessor))
+		if (entityHelper.isOwned(e, accessorId))
 			return InteractionTargetResult.PASS;
 		if(!attack && forcedInteractionExceptionEntities.contains(entityType) && (emptyHand || !requiresEmptyHandEntities.contains(entityType)))
 			return InteractionTargetResult.PASS;
