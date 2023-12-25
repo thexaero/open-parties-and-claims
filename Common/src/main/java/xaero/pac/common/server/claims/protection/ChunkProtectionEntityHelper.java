@@ -85,12 +85,14 @@ public class ChunkProtectionEntityHelper {
 		return (e.getLevel().getDifficulty() != Difficulty.PEACEFUL && !hostileException(e) && (e instanceof Enemy || e.getSoundSource() == SoundSource.HOSTILE));
 	}
 	
-	boolean isOwned(Entity e, Entity p) {
+	boolean isOwned(Entity e, UUID potentialOwnerId) {
+		if(potentialOwnerId == null)
+			return false;
 		UUID owner = getOwnerId(e);
-		if(p.getUUID().equals(owner))
+		if(potentialOwnerId.equals(owner))
 			return true;
 		if(e instanceof Fox fox)
-			return FOX_TRUSTED_UUID_MAIN != null && p.getUUID().equals(fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null));
+			return FOX_TRUSTED_UUID_MAIN != null && potentialOwnerId.equals(fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null));
 		return false;
 	}
 
