@@ -19,17 +19,12 @@
 package xaero.pac.client.event;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.client.IClientData;
 import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
@@ -43,7 +38,6 @@ import xaero.pac.client.parties.party.IClientPartyStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.client.world.capability.ClientWorldCapabilityProviderForge;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -77,15 +71,6 @@ public final class ClientEventsForge extends ClientEvents {
 	@SubscribeEvent
 	public void onPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
 		super.onPlayerLogin(event.getPlayer());
-	}
-
-	@SubscribeEvent
-	public void worldCapabilities(AttachCapabilitiesEvent<Level> event) {
-		if(event.getObject() instanceof ClientLevel) {
-			ClientWorldCapabilityProviderForge capProvider = new ClientWorldCapabilityProviderForge();
-			event.addCapability(new ResourceLocation(OpenPartiesAndClaimsForge.class.getAnnotation(Mod.class).value(), "client_world_main_capability"), capProvider);
-			event.addListener(capProvider::invalidateCaps);
-		}
 	}
 
 	@Override
