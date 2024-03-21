@@ -36,7 +36,7 @@ import xaero.pac.client.parties.party.IClientPartyStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.common.capability.ICapabilityHelper;
+import xaero.pac.common.capability.CapabilityHelper;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -63,13 +63,13 @@ public abstract class OpenPartiesAndClaims {
 	public final CrashHandler startupCrashHandler;
 	private ClientData clientData;
 	private OpenPACClientAPI clientAPI;
-	private final ICapabilityHelper capabilityHelper;
+	private final CapabilityHelper capabilityHelper;
 	private final IPacketHandler packetHandler;
 	private final IForgeConfigHelper forgeConfigHelper;
 	private final ModSupport modSupport;
 	public static final ResourceLocation MAIN_CHANNEL_LOCATION = new ResourceLocation(MOD_ID, "main");
 
-	public OpenPartiesAndClaims(ICapabilityHelper capabilityHelper, IPacketHandler packetHandler, IForgeConfigHelper forgeConfigHelper, ModSupport modSupport) {
+	public OpenPartiesAndClaims(CapabilityHelper capabilityHelper, IPacketHandler packetHandler, IForgeConfigHelper forgeConfigHelper, ModSupport modSupport) {
 		this.capabilityHelper = capabilityHelper;
 		this.packetHandler = packetHandler;
 		this.forgeConfigHelper = forgeConfigHelper;
@@ -105,7 +105,7 @@ public abstract class OpenPartiesAndClaims {
 		return clientAPI;
 	}
 
-	public ICapabilityHelper getCapabilityHelper() {
+	public CapabilityHelper getCapabilityHelper() {
 		return capabilityHelper;
 	}
 

@@ -25,20 +25,22 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.client.world.capability.ClientWorldCapabilityProviderFabric;
-import xaero.pac.common.capability.IFabricCapabilityProvider;
-import xaero.pac.common.capability.IFabricCapableObject;
+import xaero.pac.common.capability.ICapabilityProvider;
+import xaero.pac.common.capability.ICapableObject;
 
 @Mixin(ClientLevel.class)
-public class MixinClientLevel implements IFabricCapableObject {
+public class MixinClientLevel implements ICapableObject {
 
-	private ClientWorldCapabilityProviderFabric xaero_OPAC_CapabilityProvider;
+	private ICapabilityProvider xaero_OPAC_CapabilityProvider;
 
 	@Override
-	public IFabricCapabilityProvider getXaero_OPAC_CapabilityProvider() {
-		if(xaero_OPAC_CapabilityProvider == null)
-			xaero_OPAC_CapabilityProvider = new ClientWorldCapabilityProviderFabric();
+	public ICapabilityProvider getXaero_OPAC_CapabilityProvider() {
 		return xaero_OPAC_CapabilityProvider;
+	}
+
+	@Override
+	public void setXaero_OPAC_CapabilityProvider(ICapabilityProvider provider) {
+		xaero_OPAC_CapabilityProvider = provider;
 	}
 
 	@Inject(at = @At("RETURN"), method = "<init>")
