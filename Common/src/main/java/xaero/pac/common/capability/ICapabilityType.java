@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2023, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2024, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,5 +18,8 @@
 
 package xaero.pac.common.capability;
 
-public class FabricCapabilityType<T> implements ICapability<T> {
+public interface ICapabilityType<T> extends ICapability<T> {
+
+	ICapabilityProvider createProvider();
+
 }
