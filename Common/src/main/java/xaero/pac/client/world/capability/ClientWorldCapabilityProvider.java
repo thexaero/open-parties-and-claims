@@ -18,14 +18,33 @@
 
 package xaero.pac.client.world.capability;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import xaero.pac.client.world.ClientWorldData;
+import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
+import xaero.pac.common.capability.ICapability;
+import xaero.pac.common.capability.ICapabilityProvider;
+import xaero.pac.common.capability.ICapableObject;
 
-public class ClientWorldCapabilityProvider {
+public class ClientWorldCapabilityProvider implements ICapabilityProvider {
 
 	protected final ClientWorldMainCapability mainCapability;
 
 	public ClientWorldCapabilityProvider() {
 		this.mainCapability = new ClientWorldMainCapability(ClientWorldData.Builder.begin().build());
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getCapability(ICapability<T> cap) {
+		if(cap == ClientWorldCapabilityTypes.MAIN_CAP)
+			return (T) mainCapability;
+		return null;
+	}
+
+	public static ClientWorldCapabilityProvider get(ClientLevel level){
+		ICapabilityProvider provider = ((ICapableObject)level).getXaero_OPAC_CapabilityProvider();
+		if(provider == null)
+			((ICapableObject)level).setXaero_OPAC_CapabilityProvider(new ClientWorldCapabilityProvider());
+		return (ClientWorldCapabilityProvider) provider;
 	}
 
 }
