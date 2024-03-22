@@ -22,7 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.player.config.dynamic.PlayerConfigDynamicOptions;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
@@ -67,11 +67,11 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	private PlayerConfigIO<P, CM> io;
 	private final PlayerConfigDynamicOptions dynamicOptions;
 	private final Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions;
-	private final ForgeConfigSpec playerConfigSpec;
+	private final ModConfigSpec playerConfigSpec;
 
 	private PlayerConfigManager(MinecraftServer server, ForceLoadTicketManager forceLoadTicketManager,
 								Map<UUID, PlayerConfig<P>> configs, Set<PlayerConfig<P>> configsToSave, PlayerConfigSynchronizer synchronizer,
-								IPartyManager<P> partyManager, PlayerConfigDynamicOptions dynamicOptions, Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions, ForgeConfigSpec playerConfigSpec) {
+								IPartyManager<P> partyManager, PlayerConfigDynamicOptions dynamicOptions, Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions, ModConfigSpec playerConfigSpec) {
 		super();
 		this.server = server;
 		this.forceLoadTicketManager = forceLoadTicketManager;
@@ -207,7 +207,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		return loaded;
 	}
 
-	public ForgeConfigSpec getPlayerConfigSpec() {
+	public ModConfigSpec getPlayerConfigSpec() {
 		return playerConfigSpec;
 	}
 
@@ -316,7 +316,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			new PlayerConfigDynamicOptionsLoader().load(dynamicOptionsBuilder, blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, blockAccessEntityGroups, entityAccessEntityGroups, droppedItemAccessEntityGroups);
 			PlayerConfigDynamicOptions dynamicOptions = dynamicOptionsBuilder.build();
 
-			ForgeConfigSpec.Builder configSpecBuilder = new ForgeConfigSpec.Builder();
+			ModConfigSpec.Builder configSpecBuilder = new ModConfigSpec.Builder();
 			Consumer<IPlayerConfigOptionSpecAPI<?>> optionConsumer = o -> ((PlayerConfigOptionSpec<?>)o).applyToForgeSpec(configSpecBuilder);
 			OPTIONS.values().forEach(optionConsumer);
 			dynamicOptions.getOptions().values().forEach(optionConsumer);

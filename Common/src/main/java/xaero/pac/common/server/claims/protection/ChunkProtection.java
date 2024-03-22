@@ -55,7 +55,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.function.TriFunction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
@@ -85,6 +85,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
 
 public class ChunkProtection
 <
@@ -2451,7 +2452,7 @@ public class ChunkProtection
 		}
 
 
-		private <T> void onExceptionList(MinecraftServer server, ForgeConfigSpec.ConfigValue<List<? extends String>> list, Consumer<Either<T,TagKey<T>>> interactionException,
+		private <T> void onExceptionList(MinecraftServer server, ModConfigSpec.ConfigValue<List<? extends String>> list, Consumer<Either<T,TagKey<T>>> interactionException,
 										 Consumer<Either<T,TagKey<T>>> breakException,
 										 Consumer<Either<T,TagKey<T>>> handException,
 										 Consumer<Either<T,TagKey<T>>> anythingException,

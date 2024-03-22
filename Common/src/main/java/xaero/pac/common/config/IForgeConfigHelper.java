@@ -18,12 +18,12 @@
 
 package xaero.pac.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public interface IForgeConfigHelper {
 
-	public void registerServerConfig(ForgeConfigSpec spec);
-	public void registerClientConfig(ForgeConfigSpec spec);
-	public void registerCommonConfig(ForgeConfigSpec spec);
+	public void registerServerConfig(ModConfigSpec spec);
+	public void registerClientConfig(ModConfigSpec spec);
+	public void registerCommonConfig(ModConfigSpec spec);
 
 }

@@ -27,8 +27,8 @@ public interface IMappingHelper {
 
 	String fixFabricMethodMapping(Class<?> clazz, String name, String descriptor) throws NoSuchMethodException;
 
-	Field findForgeField(Class<?> clazz, String fieldName);
+	Field findForgeField(Class<?> clazz, String deobfName, String obfName);
 
-	Method findForgeMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes);
+	Method findForgeMethod(Class<?> clazz, String deobfName, String obfName, Class<?>... parameterTypes);
 
 }

@@ -1,0 +1,34 @@
+modLoader="javafml" #mandatory
+loaderVersion="${neoforge_loader_version_range}" #mandatory
+license="${license}"
+issueTrackerURL="https://github.com/thexaero/open-parties-and-claims/issues" #optional
+
+[[mods]] #mandatory
+modId="${mod_id}" #mandatory
+version="${version}" #mandatory
+displayName="${mod_display_name}" #mandatory
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+displayURL="https://www.curseforge.com/minecraft/mc-mods/open-parties-and-claims" #optional
+logoFile="${mod_id}.png" #optional
+# credits="Thanks for this example mod goes to Java" #optional
+authors="${mod_author} and other contributors" #optional
+# mandatory
+description="${description}"
+[[dependencies.${mod_id}]]
+    modId="neoforge" #mandatory
+    mandatory=true #mandatory
+    versionRange="${neoforge_loader_version_range}" #mandatory
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${forge_minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="create"
+    mandatory=false
+    versionRange="[0.5.1.b,)"
+    ordering="NONE"
+    side="BOTH"

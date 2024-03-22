@@ -35,18 +35,18 @@ public class MappingHelperForge implements IMappingHelper {
 	}
 
 	@Override
-	public Field findForgeField(Class<?> clazz, String fieldName) {
+	public Field findForgeField(Class<?> clazz, String deobfName, String obfName) {
 		try {
-			return ObfuscationReflectionHelper.findField(clazz, fieldName);
+			return ObfuscationReflectionHelper.findField(clazz, obfName);
 		} catch(Exception e){
 			return null;
 		}
 	}
 
 	@Override
-	public Method findForgeMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+	public Method findForgeMethod(Class<?> clazz, String deobfName, String obfName, Class<?>... parameterTypes) {
 		try {
-			return ObfuscationReflectionHelper.findMethod(clazz, methodName, parameterTypes);
+			return ObfuscationReflectionHelper.findMethod(clazz, obfName, parameterTypes);
 		} catch(Exception e){
 			return null;
 		}

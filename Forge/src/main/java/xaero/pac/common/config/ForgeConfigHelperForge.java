@@ -18,25 +18,26 @@
 
 package xaero.pac.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
+import fuzs.forgeconfigapiport.forge.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import xaero.pac.OpenPartiesAndClaims;
 
 public class ForgeConfigHelperForge implements IForgeConfigHelper {
 
 	@Override
-	public void registerServerConfig(ForgeConfigSpec spec) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, spec);
+	public void registerServerConfig(ModConfigSpec spec) {
+		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
 	}
 
 	@Override
-	public void registerClientConfig(ForgeConfigSpec spec) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, spec);
+	public void registerClientConfig(ModConfigSpec spec) {
+		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
 	}
 
 	@Override
-	public void registerCommonConfig(ForgeConfigSpec spec) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, spec);
+	public void registerCommonConfig(ModConfigSpec spec) {
+		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
 	}
 
 }
