@@ -23,7 +23,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
@@ -38,7 +38,7 @@ import java.util.function.Predicate;
 
 public class ChunkProtectionExceptionGroupLoader {
 
-	public <T> void load(MinecraftServer server, ForgeConfigSpec.ConfigValue<List<? extends String>> configOption,
+	public <T> void load(MinecraftServer server, ModConfigSpec.ConfigValue<List<? extends String>> configOption,
 						 ExceptionElementType<T> elementType, WildcardResolver wildcardResolver,
 						 Map<String, ChunkProtectionExceptionGroup<T>> destination, ChunkProtectionExceptionType defaultType,
 						 Predicate<ChunkProtectionExceptionType> typeFilter, PlayerConfigOptionCategory optionCategory){

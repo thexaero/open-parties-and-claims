@@ -16,10 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.capability;
+package xaero.pac.server.event;
 
-public interface IFabricCapabilityProvider {
-
-	<T> T getCapability(ICapability<T> cap);
-
+public class DedicatedServerEventsForge extends DedicatedServerEvents {
 }

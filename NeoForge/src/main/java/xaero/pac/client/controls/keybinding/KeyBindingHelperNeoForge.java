@@ -16,20 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.capability;
+package xaero.pac.client.controls.keybinding;
 
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+public class KeyBindingHelperNeoForge implements IKeyBindingHelper {
 
-public class CapabilityHelperForge implements ICapabilityHelper {
-
-	@Nullable
 	@Override
-	public <T, C extends ICapability<T>> T getCapability(@Nonnull Object object, @Nonnull C capability) {
-		@SuppressWarnings("unchecked")
-		ForgeCapabilityWrapper<T> forgeCapabilityWrapper = (ForgeCapabilityWrapper<T>) capability;
-		return ((ICapabilityProvider)object).getCapability(forgeCapabilityWrapper.getForgeCapability()).orElse(null);
+	public void register(KeyMapping keyBinding) {
+		Options options = Minecraft.getInstance().options;
+		options.keyMappings = ArrayUtils.add(options.keyMappings, keyBinding);
 	}
+
+	@Override
+	public InputConstants.Key getBoundKey(KeyMapping keyBinding) {
+		return keyBinding.getKey();
+	}
+
 }

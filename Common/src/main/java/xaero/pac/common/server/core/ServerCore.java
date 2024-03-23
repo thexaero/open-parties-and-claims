@@ -483,7 +483,7 @@ public class ServerCore {
 		FROSTWALK_LEVEL = null;
 	}
 
-	private static final Field ENTITY_INSIDE_PORTAL_FIELD = Reflection.getFieldReflection(Entity.class, "f_19817_", "field_5963", "Z");
+	private static final Field ENTITY_INSIDE_PORTAL_FIELD = Reflection.getFieldReflection(Entity.class, "isInsidePortal", "f_19817_", "field_5963", "Z");
 
 	public static boolean onHandleNetherPortal(Entity entity) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>

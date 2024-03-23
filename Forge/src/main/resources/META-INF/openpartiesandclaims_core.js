@@ -320,7 +320,7 @@ function initializeCoreMod() {
 				fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "xaero_OPAC_ServerData", "Lxaero/pac/common/server/IServerDataAPI;", null, null))
 				addGetter(classNode, "xaero_OPAC_ServerData", "Lxaero/pac/common/server/IServerDataAPI;")
 				addSetter(classNode, "xaero_OPAC_ServerData", "Lxaero/pac/common/server/IServerDataAPI;")
-				
+
 				return classNode
 			}
 		},
@@ -355,7 +355,7 @@ function initializeCoreMod() {
 				fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "xaero_OPAC_PlayerData", "Lxaero/pac/common/server/player/data/api/ServerPlayerDataAPI;", null, null))
 				addGetter(classNode, "xaero_OPAC_PlayerData", "Lxaero/pac/common/server/player/data/api/ServerPlayerDataAPI;")
 				addSetter(classNode, "xaero_OPAC_PlayerData", "Lxaero/pac/common/server/player/data/api/ServerPlayerDataAPI;")
-				
+
 				return classNode
 			}
 		},
@@ -370,7 +370,7 @@ function initializeCoreMod() {
 				var instructions = methodNode.instructions
 				var patchList = new InsnList()
 				patchList.add(new VarInsnNode(Opcodes.ALOAD, 0))
-				patchList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 
+				patchList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore',
 						"onServerTickStart", "(Lnet/minecraft/server/MinecraftServer;)V"))
 				instructions.insert(instructions.get(0), patchList)
 				return methodNode
@@ -1660,6 +1660,21 @@ function initializeCoreMod() {
             'transformer' : function(methodNode){
                 return transformProjectileHitCapture(methodNode, 'net/minecraft/world/entity/projectile/ThrowableProjectile', 'preThrowableProjectileHit', 'postThrowableProjectileHit');
             }
+        },
+        'xaero_pac_clientlevel': {
+            'target' : {
+                'type' : 'CLASS',
+                'name' : 'net.minecraft.client.multiplayer.ClientLevel'
+            },
+            'transformer' : function(classNode){
+                var fields = classNode.fields
+                classNode.interfaces.add("xaero/pac/common/capability/ICapableObject")
+                fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "xaero_OPAC_CapabilityProvider", "Lxaero/pac/common/capability/ICapabilityProvider;", null, null))
+                addGetter(classNode, "xaero_OPAC_CapabilityProvider", "Lxaero/pac/common/capability/ICapabilityProvider;")
+                addSetter(classNode, "xaero_OPAC_CapabilityProvider", "Lxaero/pac/common/capability/ICapabilityProvider;")
+
+                return classNode
+            }
         }
-	}
+    }
 }

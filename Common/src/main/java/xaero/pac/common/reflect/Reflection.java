@@ -25,8 +25,8 @@ import java.lang.reflect.Method;
 
 public class Reflection {
 	
-	public static Field getFieldReflection(Class<?> c, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor) {
-		Field field = Services.PLATFORM.getMappingHelper().findForgeField(c, forgeObfuscatedName);
+	public static Field getFieldReflection(Class<?> c, String deobfName, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor) {
+		Field field = Services.PLATFORM.getMappingHelper().findForgeField(c, deobfName, forgeObfuscatedName);
 		if(field == null) {
 			try {
 				fabricObfuscatedName = Services.PLATFORM.getMappingHelper().fixFabricFieldMapping(c, fabricObfuscatedName, fabricObfuscatedDescriptor);
@@ -63,8 +63,8 @@ public class Reflection {
 		field.setAccessible(accessibleBU);
 	}
 	
-	public static Method getMethodReflection(Class<?> c, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor, Class<?>... parameters) {
-		Method method = Services.PLATFORM.getMappingHelper().findForgeMethod(c, forgeObfuscatedName);
+	public static Method getMethodReflection(Class<?> c, String deobfName, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor, Class<?>... parameters) {
+		Method method = Services.PLATFORM.getMappingHelper().findForgeMethod(c, deobfName, forgeObfuscatedName);
 		if(method == null){
 			try {
 				fabricObfuscatedName = Services.PLATFORM.getMappingHelper().fixFabricMethodMapping(c, fabricObfuscatedName, fabricObfuscatedDescriptor);

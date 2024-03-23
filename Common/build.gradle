@@ -1,7 +1,5 @@
 plugins {
-    id 'java'
-    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
-    id 'maven-publish'
+    id 'org.spongepowered.gradle.vanilla'
 }
 
 java.withJavadocJar()
@@ -44,7 +42,7 @@ dependencies {
      compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
      implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
-     compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:9.0.0"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+     compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:20.2.6"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
      //same as forge for the deobfuscated class names in the api
      compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge

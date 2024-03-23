@@ -18,26 +18,26 @@
 
 package xaero.pac.common.config;
 
-import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;
 
 public class ForgeConfigHelperFabric implements IForgeConfigHelper {
 
 	@Override
-	public void registerServerConfig(ForgeConfigSpec spec) {
-		ForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
+	public void registerServerConfig(ModConfigSpec spec) {
+		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
 	}
 
 	@Override
-	public void registerClientConfig(ForgeConfigSpec spec) {
-		ForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
+	public void registerClientConfig(ModConfigSpec spec) {
+		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
 	}
 
 	@Override
-	public void registerCommonConfig(ForgeConfigSpec spec) {
-		ForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
+	public void registerCommonConfig(ModConfigSpec spec) {
+		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
 	}
 
 }

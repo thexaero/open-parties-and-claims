@@ -1,0 +1,82 @@
+plugins {
+    id 'idea'
+    id 'net.neoforged.gradle.userdev' version '7.0.41'
+}
+
+base {
+    archivesName = "${mod_name}-neoforge-${minecraft_version}"
+}
+
+// Automatically enable neoforge AccessTransformers if the file exists
+// This location is hardcoded in FML and can not be changed.
+// https://github.com/neoforged/FancyModLoader/blob/a952595eaaddd571fbc53f43847680b00894e0c1/loader/src/main/java/net/neoforged/fml/loading/moddiscovery/ModFile.java#L118
+if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+    minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
+}
+runs {
+    configureEach {
+        modSource project.sourceSets.main
+    }
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
+    compileOnly project(":Common")
+
+    compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
+    compileOnly "curse.maven:architectury-419699:4581905"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+    compileOnly "curse.maven:ftblibrary-404465:4596511"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+
+    compileOnly "maven.modrinth:resourceful-lib:ihzjCwEV"//source: https://github.com/Team-Resourceful/ResourcefulLib
+    compileOnly "maven.modrinth:prometheus:1.3.1"//source: https://github.com/terrarium-earth/Prometheus
+
+    //implementation fg.deobf("curse.maven:create-328085:4550987")//source: https://github.com/Creators-of-Create/Create
+
+
+    compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
+
+    compileOnly "curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
+    compileOnly "maven.modrinth:argonauts:1.1.0"//source: https://modrinth.com/mod/argonauts
+}
+
+// NeoGradle compiles the game, but we don't want to add our common code to the game's code
+Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
+
+tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
+    source(project(":Common").sourceSets.main.allSource)
+}
+
+tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
+    from project(":Common").sourceSets.main.resources
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}

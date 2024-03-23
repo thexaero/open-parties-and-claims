@@ -16,11 +16,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.capability;
+package xaero.pac.common.mods;
 
-import xaero.pac.common.capability.api.ICapabilityHelperAPI;
+public class ModSupportNeoForge extends ModSupport {
 
-public interface ICapabilityHelper extends ICapabilityHelperAPI {
-
-	//internal api
 }

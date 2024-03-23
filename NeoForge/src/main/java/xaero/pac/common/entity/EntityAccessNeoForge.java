@@ -16,26 +16,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.capability;
-import org.jetbrains.annotations.Nullable;
-import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
+package xaero.pac.common.entity;
 
-import javax.annotation.Nonnull;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 
-public class CapabilityHelperFabric implements ICapabilityHelper {
+public class EntityAccessNeoForge implements IEntityAccess {
 
-	public static void createCapabilities(){
-		ClientWorldCapabilityTypes.MAIN_CAP = new FabricCapabilityType<>();
-	}
-
-	@Nullable
 	@Override
-	public <T, C extends ICapability<T>> T getCapability(@Nonnull Object object, @Nonnull C capability) {
-		//only supports ClientLevel instances as of writing this
-		//can be extended to other classes with mixins implementing IFabricCapableObject
-		if(!(object instanceof IFabricCapableObject capableObject))
-			return null;
-		return capableObject.getXaero_OPAC_CapabilityProvider().getCapability(capability);
+	public CompoundTag getPersistentData(Entity entity) {
+		return entity.getPersistentData();
 	}
 
 }

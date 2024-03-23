@@ -26,7 +26,7 @@ import net.minecraft.server.packs.PackType;
 import xaero.pac.client.LoadClientFabric;
 import xaero.pac.client.event.ClientEventsFabric;
 import xaero.pac.common.LoadCommonFabric;
-import xaero.pac.common.capability.CapabilityHelperFabric;
+import xaero.pac.common.capability.CapabilityHelper;
 import xaero.pac.common.config.ForgeConfigHelperFabric;
 import xaero.pac.common.event.CommonEventsFabric;
 import xaero.pac.common.mods.ModSupportFabric;
@@ -41,8 +41,7 @@ public class OpenPartiesAndClaimsFabric extends OpenPartiesAndClaims implements 
 	private final LoadCommonFabric<?> loader;
 
 	public OpenPartiesAndClaimsFabric() {
-		super(new CapabilityHelperFabric(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
-		CapabilityHelperFabric.createCapabilities();
+		super(new CapabilityHelper(), PacketHandlerFabric.Builder.begin().build(), new ForgeConfigHelperFabric(), new ModSupportFabric());
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ServerDataReloadListenerFabric());
 		boolean isClient = false;
 		try {

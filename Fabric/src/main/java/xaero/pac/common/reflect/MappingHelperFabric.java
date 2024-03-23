@@ -40,12 +40,12 @@ public class MappingHelperFabric implements IMappingHelper {
 	}
 
 	@Override
-	public Field findForgeField(Class<?> clazz, String fieldName) {
+	public Field findForgeField(Class<?> clazz, String deobfName, String obfName) {
 		return null;
 	}
 
 	@Override
-	public Method findForgeMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+	public Method findForgeMethod(Class<?> clazz, String deobfName, String obfName, Class<?>... parameterTypes) {
 		return null;
 	}
 }

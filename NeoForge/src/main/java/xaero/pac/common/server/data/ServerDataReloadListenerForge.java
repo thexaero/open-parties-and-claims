@@ -16,10 +16,10 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.capability;
+package xaero.pac.common.server.data;
 
-public interface IFabricCapableObject {
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
-	IFabricCapabilityProvider getXaero_OPAC_CapabilityProvider();
+public class ServerDataReloadListenerForge extends ServerDataReloadListener implements ResourceManagerReloadListener {
 
 }

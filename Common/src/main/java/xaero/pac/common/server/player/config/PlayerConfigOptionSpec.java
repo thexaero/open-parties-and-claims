@@ -20,7 +20,7 @@ package xaero.pac.common.server.player.config;
 
 import com.electronwill.nightconfig.core.utils.StringUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
@@ -92,13 +92,13 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		this.syncOptionType = syncOptionType;
 	}
 
-	protected ForgeConfigSpec.Builder buildForgeSpec(ForgeConfigSpec.Builder builder) {
+	protected ModConfigSpec.Builder buildForgeSpec(ModConfigSpec.Builder builder) {
 		return builder
 		.comment(comment)
 		.translation(translation);
 	}
 
-	public PlayerConfigOptionSpec<T> applyToForgeSpec(ForgeConfigSpec.Builder builder) {
+	public PlayerConfigOptionSpec<T> applyToForgeSpec(ModConfigSpec.Builder builder) {
 		buildForgeSpec(builder).define(id, defaultValue);
 		return this;
 	}

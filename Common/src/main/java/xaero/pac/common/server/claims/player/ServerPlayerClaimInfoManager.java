@@ -21,7 +21,7 @@ package xaero.pac.common.server.claims.player;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
@@ -134,7 +134,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		toSave.remove(playerInfo);
 	}
 
-	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, IPermissionNodeAPI<Integer> permissionNode){
+	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ModConfigSpec.IntValue limitConfig, IPermissionNodeAPI<Integer> permissionNode){
 		IPlayerPermissionSystemAPI permissionSystem = claimsManager.getPermissionHandler().getSystem();
 		int defaultLimit = limitConfig.get();
 		if(permissionSystem == null)

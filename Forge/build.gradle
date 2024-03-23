@@ -1,8 +1,5 @@
 plugins {
-    id 'java'
-    id 'eclipse'
     id 'idea'
-    id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
@@ -70,24 +67,11 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
-repositories {
-
-    maven {
-        url = "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-    }
-}
-
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
+
+    implementation fg.deobf("fuzs.forgeconfigapiport:forgeconfigapiport-forge:20.2.6")//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     compileOnly fg.deobf("curse.maven:ftbranks-314905:3890135")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
     compileOnly fg.deobf("curse.maven:architectury-419699:4581905")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api

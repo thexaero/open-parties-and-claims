@@ -32,7 +32,6 @@ import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.vehicle.Boat;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.reflect.Reflection;
 import xaero.pac.common.server.core.ServerCore;
@@ -51,12 +50,12 @@ public class ChunkProtectionEntityHelper {
 		Field foxTrustSecondaryField = null;
 		Field foxTrustMainField = null;
 		try {
-			foxTrustSecondaryField = Reflection.getFieldReflection(Fox.class, "f_28439_", "field_17951", "Lnet/minecraft/class_2940;");//DATA_TRUSTED_ID_0
+			foxTrustSecondaryField = Reflection.getFieldReflection(Fox.class, "DATA_TRUSTED_ID_0", "f_28439_", "field_17951", "Lnet/minecraft/class_2940;");//DATA_TRUSTED_ID_0
 		} catch(Exception e){
 			OpenPartiesAndClaims.LOGGER.error("suppressed exception", e);
 		}
 		try {
-			foxTrustMainField = Reflection.getFieldReflection(Fox.class, "f_28440_", "field_17952", "Lnet/minecraft/class_2940;");//DATA_TRUSTED_ID_1
+			foxTrustMainField = Reflection.getFieldReflection(Fox.class, "DATA_TRUSTED_ID_1", "f_28440_", "field_17952", "Lnet/minecraft/class_2940;");//DATA_TRUSTED_ID_1
 		} catch(Exception e){
 			OpenPartiesAndClaims.LOGGER.error("suppressed exception", e);
 		}

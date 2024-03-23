@@ -1,31 +1,10 @@
 plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
-    id 'maven-publish'
     id 'idea'
+    id 'fabric-loom'
 }
 
 base {
     archivesName = "${mod_name}-fabric-${minecraft_version}"
-}
-
-repositories {
-    maven {
-        url = "https://oss.sonatype.org/content/repositories/snapshots"
-    }
-    maven {
-        url = "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-    maven {
-        name = "Fuzs Mod Resources"
-        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
-    }
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-    }
 }
 
 dependencies {
@@ -36,7 +15,7 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly project(":Common")
 
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:9.1.2"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:20.2.6"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
     modCompileOnly "curse.maven:architectury-419699:4581904"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
@@ -72,10 +51,6 @@ loom {
 processResources {
     from project(":Common").sourceSets.main.resources
     inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
 }
 
 

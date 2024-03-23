@@ -19,7 +19,7 @@
 package xaero.pac.common.server.player.config;
 
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
@@ -45,8 +45,8 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 	}
 	
 	@Override
-	public PlayerConfigOptionSpec<T> applyToForgeSpec(ForgeConfigSpec.Builder builder) {
-		ForgeConfigSpec.Builder b = buildForgeSpec(builder);
+	public PlayerConfigOptionSpec<T> applyToForgeSpec(ModConfigSpec.Builder builder) {
+		ModConfigSpec.Builder b = buildForgeSpec(builder);
 		if(type == Integer.class)
 			b.defineInRange(id, (Integer)defaultValue, (Integer)minValue, (Integer)maxValue);
 		else 

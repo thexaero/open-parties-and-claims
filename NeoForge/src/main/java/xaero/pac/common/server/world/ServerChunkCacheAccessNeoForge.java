@@ -16,20 +16,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.client.world.capability;
+package xaero.pac.common.server.world;
 
-import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
-import xaero.pac.common.capability.ICapability;
-import xaero.pac.common.capability.IFabricCapabilityProvider;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.TicketType;
+import net.minecraft.world.level.ChunkPos;
 
-public class ClientWorldCapabilityProviderFabric extends ClientWorldCapabilityProvider implements IFabricCapabilityProvider {
+public class ServerChunkCacheAccessNeoForge implements IServerChunkCacheAccess {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(ICapability<T> cap) {
-		if(cap == ClientWorldCapabilityTypes.MAIN_CAP)
-			return (T) mainCapability;
-		return null;
+	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
+		serverChunkCache.addRegionTicket(type, pos, distance, value, forceTicks);
+	}
+
+	@Override
+	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
+		serverChunkCache.removeRegionTicket(type, pos, distance, value, forceTicks);
 	}
 
 }

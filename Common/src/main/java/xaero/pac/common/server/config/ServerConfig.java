@@ -19,7 +19,7 @@
 package xaero.pac.common.server.config;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
 
@@ -28,69 +28,69 @@ import java.util.List;
 
 public class ServerConfig {
 
-	public final ForgeConfigSpec.ConfigValue<String> defaultLanguage;
-	public final ForgeConfigSpec.BooleanValue partiesEnabled;
-	public final ForgeConfigSpec.BooleanValue claimsEnabled;
-	public final ForgeConfigSpec.IntValue autosaveInterval;
-	public final ForgeConfigSpec.IntValue playerSubConfigLimit;
-	public final ForgeConfigSpec.IntValue partyExpirationTime;
-	public final ForgeConfigSpec.IntValue partyExpirationCheckInterval;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
-	public final ForgeConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> friendlyChunkProtectedEntityList;
-	public final ForgeConfigSpec.EnumValue<ConfigListType> hostileChunkProtectedEntityListType;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityProtectionExceptionList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forcedBlockProtectionExceptionList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockProtectionOptionalExceptionGroups;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forcedEntityProtectionExceptionList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityProtectionOptionalExceptionGroups;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forcedEntityClaimBarrierList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierOptionalGroups;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefEntities;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefDroppedItems;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> nonBlockGriefingMobs;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityGriefingMobs;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemGriefingMobs;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockAccessEntityGroups;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityAccessEntityGroups;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemAccessEntityGroups;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayers;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayerClassExceptions;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionOptionalExceptionGroups;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemInteractions;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
-	public final ForgeConfigSpec.BooleanValue completelyDisableFrostWalking;
-	public final ForgeConfigSpec.BooleanValue reducedBoatEntityCollisions;
-	public final ForgeConfigSpec.IntValue maxClaimDistance;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
-	public final ForgeConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
-	public final ForgeConfigSpec.BooleanValue allowExistingClaimsInUnclaimableDimensions;
-	public final ForgeConfigSpec.BooleanValue allowExistingForceloadsInUnclaimableDimensions;
-	public final ForgeConfigSpec.IntValue maxPlayerClaims;
-	public final ForgeConfigSpec.IntValue maxPlayerClaimForceloads;
-	public final ForgeConfigSpec.IntValue maxPartyMembers;
-	public final ForgeConfigSpec.IntValue maxPartyAllies;
-	public final ForgeConfigSpec.IntValue maxPartyInvites;
-	public final ForgeConfigSpec.IntValue playerClaimsExpirationTime;
-	public final ForgeConfigSpec.IntValue playerClaimsExpirationCheckInterval;
-	public final ForgeConfigSpec.BooleanValue playerClaimsConvertExpiredClaims;
-	public final ForgeConfigSpec.EnumValue<ClaimsSyncType> claimsSynchronization;
-	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
-	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
-	public final ForgeConfigSpec.ConfigValue<String> serverClaimPermission;
-	public final ForgeConfigSpec.ConfigValue<String> adminModePermission;
-	public final ForgeConfigSpec.ConfigValue<String> permissionSystem;
-	public final ForgeConfigSpec.ConfigValue<String> primaryPartySystem;
+	public final ModConfigSpec.ConfigValue<String> defaultLanguage;
+	public final ModConfigSpec.BooleanValue partiesEnabled;
+	public final ModConfigSpec.BooleanValue claimsEnabled;
+	public final ModConfigSpec.IntValue autosaveInterval;
+	public final ModConfigSpec.IntValue playerSubConfigLimit;
+	public final ModConfigSpec.IntValue partyExpirationTime;
+	public final ModConfigSpec.IntValue partyExpirationCheckInterval;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
+	public final ModConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> friendlyChunkProtectedEntityList;
+	public final ModConfigSpec.EnumValue<ConfigListType> hostileChunkProtectedEntityListType;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> hostileChunkProtectedEntityList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> blockProtectionExceptionList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entityProtectionExceptionList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> forcedBlockProtectionExceptionList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> blockProtectionOptionalExceptionGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> forcedEntityProtectionExceptionList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entityProtectionOptionalExceptionGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> forcedEntityClaimBarrierList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierOptionalGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefEntities;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefDroppedItems;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> nonBlockGriefingMobs;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entityGriefingMobs;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> droppedItemGriefingMobs;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> blockAccessEntityGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entityAccessEntityGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> droppedItemAccessEntityGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> staticFakePlayers;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> staticFakePlayerClassExceptions;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> additionalBannedItemsList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionExceptionList;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> itemUseProtectionOptionalExceptionGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemInteractions;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
+	public final ModConfigSpec.BooleanValue completelyDisableFrostWalking;
+	public final ModConfigSpec.BooleanValue reducedBoatEntityCollisions;
+	public final ModConfigSpec.IntValue maxClaimDistance;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
+	public final ModConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
+	public final ModConfigSpec.BooleanValue allowExistingClaimsInUnclaimableDimensions;
+	public final ModConfigSpec.BooleanValue allowExistingForceloadsInUnclaimableDimensions;
+	public final ModConfigSpec.IntValue maxPlayerClaims;
+	public final ModConfigSpec.IntValue maxPlayerClaimForceloads;
+	public final ModConfigSpec.IntValue maxPartyMembers;
+	public final ModConfigSpec.IntValue maxPartyAllies;
+	public final ModConfigSpec.IntValue maxPartyInvites;
+	public final ModConfigSpec.IntValue playerClaimsExpirationTime;
+	public final ModConfigSpec.IntValue playerClaimsExpirationCheckInterval;
+	public final ModConfigSpec.BooleanValue playerClaimsConvertExpiredClaims;
+	public final ModConfigSpec.EnumValue<ClaimsSyncType> claimsSynchronization;
+	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
+	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
+	public final ModConfigSpec.ConfigValue<String> serverClaimPermission;
+	public final ModConfigSpec.ConfigValue<String> adminModePermission;
+	public final ModConfigSpec.ConfigValue<String> permissionSystem;
+	public final ModConfigSpec.ConfigValue<String> primaryPartySystem;
 
-	private ServerConfig(ForgeConfigSpec.Builder builder) {
+	private ServerConfig(ModConfigSpec.Builder builder) {
 		builder.push("serverConfig");
 
 		defaultLanguage = builder
@@ -755,10 +755,10 @@ public class ServerConfig {
 		builder.pop();
 	}
 
-	public static final ForgeConfigSpec SPEC;
+	public static final ModConfigSpec SPEC;
 	public static final ServerConfig CONFIG;
 	static {
-		final Pair<ServerConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+		final Pair<ServerConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(ServerConfig::new);
 		SPEC = specPair.getRight();
 		CONFIG = specPair.getLeft();
 		
