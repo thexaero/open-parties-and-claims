@@ -17,7 +17,7 @@ dependencies {
 
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:9.0.0"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:20.2.6"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
     modCompileOnly "curse.maven:architectury-419699:4581904"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
