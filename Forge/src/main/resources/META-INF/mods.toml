@@ -32,3 +32,9 @@ description="${description}"
     versionRange="${create_forge_range}"
     ordering="NONE"
     side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="forgeconfigapiport"
+    mandatory=true
+    versionRange="${forgeconfigapiport_forge_range}"
+    ordering="NONE"
+    side="BOTH"
