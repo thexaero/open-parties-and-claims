@@ -1,21 +1,21 @@
 {
     "schemaVersion": 1,
-    "id": "openpartiesandclaims",
+    "id": "${mod_id}",
     "version": "${version}",
   
-    "name": "Open Parties and Claims",
-    "description": "This mod adds the ability to claim and to forceload world chunks, as well as create and manage player parties. It also gives server owners powerful controls over their players' usage of the mod's features.\nThe mod's API allows other mods or plugins to easily interact with the parties and the chunk claims, both on the server and the client side.\nXaero's Minimap mod and World Map mods are recommended in order to fully experience everything that this mod has to offer.",
+    "name": "${mod_display_name}",
+    "description": "${description}",
     "authors": [
-      "xaero96",
+      "${mod_author}",
       "other contributors"
     ],
     "contact": {
-      "homepage": "https://www.curseforge.com/minecraft/mc-mods/open-parties-and-claims",
-      "sources": "https://github.com/thexaero/open-parties-and-claims"
+      "homepage": "${homepage}",
+      "sources": "${sources}"
     },
   
-    "license": "GNU Lesser General Public License v3.0 (LGPL-3.0-only)",
-    "icon": "openpartiesandclaims.png",
+    "license": "${license}",
+    "icon": "${mod_id}.png",
   
     "environment": "*",
     "entrypoints": {
@@ -27,15 +27,15 @@
       ]
     },
     "mixins": [
-      "openpartiesandclaims.mixins.json"
+      "${mod_id}.mixins.json"
     ],
   
     "depends": {
-      "fabricloader": ">=0.13",
-      "fabric": "*",
-      "minecraft": "1.18.x",
-      "java": ">=17",
-      "forgeconfigapiport" : "*"
+      "fabricloader": "${fabric_loader_version_range}",
+      "fabric": "${fabric_api_range}",
+      "minecraft": "${minecraft_version_range}",
+      "java": "${java_fabric_range}",
+      "forgeconfigapiport" : "${forgeconfigapiport_fabric_range}"
     },
     "suggests": {
     }
