@@ -16,19 +16,19 @@ authors="${mod_author} and other contributors" #optional
 description="${description}"
 [[dependencies.${mod_id}]]
     modId="neoforge" #mandatory
-    mandatory=true #mandatory
+    type="required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
     versionRange="${neoforge_loader_version_range}" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.${mod_id}]]
     modId="minecraft"
-    mandatory=true
+    type="required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
     versionRange="${forge_minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.${mod_id}]]
     modId="create"
-    mandatory=false
+    type="optional" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
     versionRange="${create_neoforge_range}"
     ordering="NONE"
     side="BOTH"
