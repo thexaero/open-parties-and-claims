@@ -27,7 +27,7 @@ public class PlayerConfigPacketUtil {
 
 	public static IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> getTargetConfig(boolean isOtherPlayer, PlayerConfigType type, IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> playerConfigStorageManager){
 		IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage;
-		if(isOtherPlayer) {
+		if(type == PlayerConfigType.PLAYER && isOtherPlayer) {
 			storage = playerConfigStorageManager.getOtherPlayerConfig();
 		} else {
 			storage =
