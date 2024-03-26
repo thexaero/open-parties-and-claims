@@ -15,7 +15,7 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly project(":Common")
 
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:20.2.6"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:20.4.3"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
     modCompileOnly "curse.maven:architectury-419699:4581904"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
