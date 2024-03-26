@@ -22,37 +22,47 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.util.List;
 
 public class ServerCoreNeoForge {
 
-	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, NetworkEvent.Context ctx){
-		return ServerCore.isCreateGlueSelectionAllowed(from, to, ctx.getSender());
-	}
-
-	public static boolean isCreateGlueRemovalAllowed(int entityId, NetworkEvent.Context ctx){
-		return ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender());
-	}
-
-	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, NetworkEvent.Context ctx){
-		ServerPlayer player = ctx.getSender();
-		if (player == null)
+	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, PlayPayloadContext ctx){
+		if(ctx.player().isEmpty())
 			return true;
+		return ServerCore.isCreateGlueSelectionAllowed(from, to, (ServerPlayer) ctx.player().get());
+	}
+
+	public static boolean isCreateGlueRemovalAllowed(int entityId, PlayPayloadContext ctx){
+		if(ctx.player().isEmpty())
+			return true;
+		return ServerCore.isCreateGlueRemovalAllowed(entityId, (ServerPlayer) ctx.player().get());
+	}
+
+	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, PlayPayloadContext ctx){
+		if(ctx.player().isEmpty())
+			return true;
+		ServerPlayer player = (ServerPlayer) ctx.player().get();
 		return ServerCore.isCreateTileEntityPacketAllowed(pos, player);
 	}
 
-	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, NetworkEvent.Context ctx){
-		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, ctx.getSender());
+	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, PlayPayloadContext ctx){
+		if(ctx.player().isEmpty())
+			return true;
+		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, (ServerPlayer) ctx.player().get());
 	}
 
-	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, NetworkEvent.Context ctx){
-		return ServerCore.isCreateTrainRelocationPacketAllowed(contraptionId, pos, ctx.getSender());
+	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, PlayPayloadContext ctx){
+		if(ctx.player().isEmpty())
+			return true;
+		return ServerCore.isCreateTrainRelocationPacketAllowed(contraptionId, pos, (ServerPlayer) ctx.player().get());
 	}
 
-	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, NetworkEvent.Context ctx){
-		return ServerCore.isCreateTrainControlsPacketAllowed(contraptionId, ctx.getSender());
+	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, PlayPayloadContext ctx){
+		if(ctx.player().isEmpty())
+			return true;
+		return ServerCore.isCreateTrainControlsPacketAllowed(contraptionId, (ServerPlayer) ctx.player().get());
 	}
 
 	public static List<? extends Entity> onPressurePlateEntityCount(List<? extends Entity> entities) {

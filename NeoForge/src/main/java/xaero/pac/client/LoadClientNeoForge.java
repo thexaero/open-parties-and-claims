@@ -22,6 +22,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import xaero.pac.OpenPartiesAndClaimsNeoForge;
 import xaero.pac.client.event.ClientEventsNeoForge;
 import xaero.pac.common.LoadCommonNeoForge;
@@ -43,6 +44,11 @@ public class LoadClientNeoForge extends LoadCommonNeoForge<LoadClient> {
 	@SubscribeEvent
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		super.loadCommon(event);
+	}
+
+	@SubscribeEvent
+	public void onRegisterPayloadHandler(RegisterPayloadHandlerEvent event){
+		super.onRegisterPayloadHandler(event);
 	}
 
 }

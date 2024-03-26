@@ -18,13 +18,14 @@
 
 package xaero.pac.common;
 
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.IExtensionPoint;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import xaero.pac.OpenPartiesAndClaimsNeoForge;
 import xaero.pac.common.event.CommonEventsNeoForge;
+import xaero.pac.common.packet.PacketHandlerNeoForge;
 
 public class LoadCommonNeoForge<L extends LoadCommon> {
 	
@@ -45,6 +46,10 @@ public class LoadCommonNeoForge<L extends LoadCommon> {
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
 				() -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY,
 						(remoteVersion, isFromServer) -> isFromServer));
+	}
+
+	public void onRegisterPayloadHandler(RegisterPayloadHandlerEvent event){
+		PacketHandlerNeoForge.registerPayloadHandler(event);
 	}
 
 }

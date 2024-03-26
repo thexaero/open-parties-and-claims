@@ -19,6 +19,7 @@ runs {
     }
     client {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--username=Dev'
     }
     server {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -49,6 +50,8 @@ dependencies {
 
     //implementation fg.deobf("curse.maven:create-328085:4550987")//source: https://github.com/Creators-of-Create/Create
 
+    implementation "curse.maven:minimap-263420:5189373"
+    implementation "curse.maven:worldmap-317780:5189419"
 
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 

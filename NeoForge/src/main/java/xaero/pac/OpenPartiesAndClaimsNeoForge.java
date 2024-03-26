@@ -19,8 +19,8 @@
 package xaero.pac;
 
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLLoader;
 import xaero.pac.client.LoadClientNeoForge;
 import xaero.pac.client.event.ClientEventsNeoForge;
@@ -38,10 +38,10 @@ public class OpenPartiesAndClaimsNeoForge extends OpenPartiesAndClaims {
 	private ClientEventsNeoForge clientEventsNeoForge;
 	private CommonEventsNeoForge commonEventsNeoForge;
 
-	public OpenPartiesAndClaimsNeoForge() {
+	public OpenPartiesAndClaimsNeoForge(IEventBus fmlEventBus) {
 		super(new CapabilityHelper(), new PacketHandlerNeoForge(), new ForgeConfigHelperNeoForge(), new ModSupportNeoForge());
 		LoadCommonNeoForge<?> loader = FMLLoader.getDist() == Dist.CLIENT ? new LoadClientNeoForge(this) : new LoadDedicatedServerNeoForge(this);
-		FMLJavaModLoadingContext.get().getModEventBus().register(loader);
+		fmlEventBus.register(loader);
 	}
 
 	public void setClientEventsNeoForge(ClientEventsNeoForge clientEventsNeoForge) {
