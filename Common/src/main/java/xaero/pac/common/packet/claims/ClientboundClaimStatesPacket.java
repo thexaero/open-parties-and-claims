@@ -29,13 +29,13 @@ import xaero.pac.common.server.lazypacket.LazyPacket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundClaimStatesPacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimStatesPacket>, ClientboundClaimStatesPacket> {
+public class ClientboundClaimStatesPacket extends LazyPacket<ClientboundClaimStatesPacket> {
 	
 	public static final int MAX_STATES = 128;
 	public static final Encoder<ClientboundClaimStatesPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 	
 	private final List<PlayerChunkClaim> claimStates;
 
@@ -45,12 +45,12 @@ public class ClientboundClaimStatesPacket extends LazyPacket<LazyPacket.Encoder<
 	}
 
 	@Override
-	protected Encoder<ClientboundClaimStatesPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundClaimStatesPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundClaimStatesPacket> encoder, FriendlyByteBuf dest) {
+	protected void writeOnPrepare(FriendlyByteBuf dest) {
 		CompoundTag nbt = new CompoundTag();
 		ListTag stateListTag = new ListTag();
 		for (int i = 0; i < claimStates.size(); i++) {
@@ -99,10 +99,10 @@ public class ClientboundClaimStatesPacket extends LazyPacket<LazyPacket.Encoder<
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundClaimStatesPacket> {
+	public static class ClientHandler extends Handler<ClientboundClaimStatesPacket> {
 		
 		@Override
-		public void accept(ClientboundClaimStatesPacket t) {
+		public void handle(ClientboundClaimStatesPacket t) {
 			for (PlayerChunkClaim claimState : t.claimStates) {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimState(claimState);
 			}

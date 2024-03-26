@@ -29,10 +29,9 @@ import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket.Codec, ClientboundPartyPacket> {
+public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket> {
 	
 	public static final Codec CODEC = new Codec(new PartyPlayerInfoCodec());
 	private final UUID partyId; 
@@ -57,19 +56,19 @@ public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket.Co
 	}
 
 	@Override
-	protected Codec getEncoder() {
+	protected Function<FriendlyByteBuf, ClientboundPartyPacket> getDecoder() {
 		return CODEC;
 	}
 
 	@Override
-	protected void writeOnPrepare(Codec encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag partyTag = new CompoundTag();
 		if(partyId == null) {
 			u.writeNbt(partyTag);
 			return;
 		}
 		partyTag.putUUID("i", partyId);
-		CompoundTag ownerTag = encoder.playerInfoCodec.toMemberTag((PartyMember) owner);
+		CompoundTag ownerTag = CODEC.playerInfoCodec.toMemberTag((PartyMember) owner);
 		partyTag.put("o", ownerTag);
 		partyTag.putInt("mc", memberCount);
 		partyTag.putInt("ic", inviteCount);
@@ -125,10 +124,10 @@ public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket.Co
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundPartyPacket> {
+	public static class ClientHandler extends Handler<ClientboundPartyPacket> {
 		
 		@Override
-		public void accept(ClientboundPartyPacket t) {
+		public void handle(ClientboundPartyPacket t) {
 			Party party = t.partyId == null ? null : ClientParty.Builder.begin().setId(t.partyId).setOwner((PartyMember) t.owner).build();
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().setPartyCast(party);
 

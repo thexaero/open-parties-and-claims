@@ -24,12 +24,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundPartyNamePacket extends LazyPacket<LazyPacket.Encoder<ClientboundPartyNamePacket>, ClientboundPartyNamePacket> {
+public class ClientboundPartyNamePacket extends LazyPacket<ClientboundPartyNamePacket> {
 	
 	public static final Encoder<ClientboundPartyNamePacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 	
 	private final String name;
 	
@@ -39,15 +39,15 @@ public class ClientboundPartyNamePacket extends LazyPacket<LazyPacket.Encoder<Cl
 	}
 
 	@Override
-	protected void writeOnPrepare(LazyPacket.Encoder<ClientboundPartyNamePacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("n", name == null ? "" : name);
 		u.writeNbt(tag);
 	}
 
 	@Override
-	protected Encoder<ClientboundPartyNamePacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundPartyNamePacket> getDecoder() {
+		return DECODER;
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClientboundPartyNamePacket> {
@@ -72,10 +72,10 @@ public class ClientboundPartyNamePacket extends LazyPacket<LazyPacket.Encoder<Cl
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundPartyNamePacket> {
+	public static class ClientHandler extends Handler<ClientboundPartyNamePacket> {
 		
 		@Override
-		public void accept(ClientboundPartyNamePacket t) {
+		public void handle(ClientboundPartyNamePacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().setPartyName(t.name);
 		}
 		
