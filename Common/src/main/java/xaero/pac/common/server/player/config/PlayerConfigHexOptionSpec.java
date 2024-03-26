@@ -34,8 +34,8 @@ import java.util.function.Predicate;
 public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Integer> {
 
 	private PlayerConfigHexOptionSpec(Class<Integer> type, String id, String shortenedId, List<String> path, Integer defaultValue, BiFunction<PlayerConfig<?>, Integer, Integer> defaultReplacer, String comment,
-									  String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, Integer> commandInputParser, Function<Integer, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, Integer> serverSideValidator, BiPredicate<PlayerConfigClientStorage, Integer> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
-		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType);
+									  String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, Integer> commandInputParser, Function<Integer, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, Integer> serverSideValidator, BiPredicate<PlayerConfigClientStorage, Integer> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType, boolean dynamic) {
+		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType, dynamic);
 	}
 
 	public final static class Builder extends PlayerConfigOptionSpec.Builder<Integer, Builder> {
@@ -71,7 +71,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 					throw new IllegalArgumentException(nfe);
 				}
 			};
-			return new PlayerConfigHexOptionSpec(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.HEX);
+			return new PlayerConfigHexOptionSpec(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.HEX, dynamic);
 		}
 		
 	}

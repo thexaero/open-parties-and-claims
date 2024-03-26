@@ -61,12 +61,12 @@ public class LazyPacketManager {
 		}
 	}
 	
-	public void enqueue(ServerPlayer player, LazyPacket<?,?> packet) {
+	public void enqueue(ServerPlayer player, LazyPacket<?> packet) {
 		if(getForPlayer(player.getUUID()).enqueue(packet))
 			totalBytesEnqueued += packet.prepare();
 	}
 	
-	public void countSentBytes(LazyPacket<?,?> packet) {
+	public void countSentBytes(LazyPacket<?> packet) {
 		totalBytesEnqueued -= packet.getPreparedSize();
 	}
 	

@@ -28,13 +28,13 @@ import xaero.pac.common.server.lazypacket.LazyPacket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundSubClaimPropertiesPacket extends LazyPacket<LazyPacket.Encoder<ClientboundSubClaimPropertiesPacket>, ClientboundSubClaimPropertiesPacket> {
+public class ClientboundSubClaimPropertiesPacket extends LazyPacket<ClientboundSubClaimPropertiesPacket> {
 	
 	public static final int MAX_PROPERTIES = 32;
 	public static final Encoder<ClientboundSubClaimPropertiesPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 	
 	private final List<SubClaimProperties> properties;
 
@@ -44,12 +44,12 @@ public class ClientboundSubClaimPropertiesPacket extends LazyPacket<LazyPacket.E
 	}
 
 	@Override
-	protected Encoder<ClientboundSubClaimPropertiesPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundSubClaimPropertiesPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundSubClaimPropertiesPacket> encoder, FriendlyByteBuf dest) {
+	protected void writeOnPrepare(FriendlyByteBuf dest) {
 		CompoundTag nbt = new CompoundTag();
 		ListTag propertiesListTag = new ListTag();
 		for (int i = 0; i < this.properties.size(); i++) {
@@ -105,10 +105,10 @@ public class ClientboundSubClaimPropertiesPacket extends LazyPacket<LazyPacket.E
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundSubClaimPropertiesPacket> {
+	public static class ClientHandler extends Handler<ClientboundSubClaimPropertiesPacket> {
 		
 		@Override
-		public void accept(ClientboundSubClaimPropertiesPacket t) {
+		public void handle(ClientboundSubClaimPropertiesPacket t) {
 			for (SubClaimProperties propertiesEntry : t.properties) {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().
 					onSubClaimInfo(propertiesEntry.playerId, propertiesEntry.subConfigIndex, propertiesEntry.claimsName, propertiesEntry.claimsColor);

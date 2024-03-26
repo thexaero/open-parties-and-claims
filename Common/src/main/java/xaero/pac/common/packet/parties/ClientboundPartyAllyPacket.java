@@ -26,12 +26,12 @@ import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundPartyAllyPacket extends LazyPacket<LazyPacket.Encoder<ClientboundPartyAllyPacket>, ClientboundPartyAllyPacket> {
+public class ClientboundPartyAllyPacket extends LazyPacket<ClientboundPartyAllyPacket> {
 	
 	public static final Encoder<ClientboundPartyAllyPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 	
 	private final Action action;
 	private final ClientPartyAllyInfo allyInfo;
@@ -43,12 +43,12 @@ public class ClientboundPartyAllyPacket extends LazyPacket<LazyPacket.Encoder<Cl
 	}
 
 	@Override
-	protected Encoder<ClientboundPartyAllyPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundPartyAllyPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundPartyAllyPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		tag.putUUID("i", allyInfo.getAllyId());
 		tag.putString("n", allyInfo.getAllyName());
@@ -87,10 +87,10 @@ public class ClientboundPartyAllyPacket extends LazyPacket<LazyPacket.Encoder<Cl
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundPartyAllyPacket> {
+	public static class ClientHandler extends Handler<ClientboundPartyAllyPacket> {
 		
 		@Override
-		public void accept(ClientboundPartyAllyPacket t) {
+		public void handle(ClientboundPartyAllyPacket t) {
 			IClientParty<?, ?, ?> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
 			if(party == null)
 				return;

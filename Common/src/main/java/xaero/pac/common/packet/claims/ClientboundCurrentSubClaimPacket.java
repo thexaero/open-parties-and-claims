@@ -23,12 +23,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundCurrentSubClaimPacket extends LazyPacket<LazyPacket.Encoder<ClientboundCurrentSubClaimPacket>, ClientboundCurrentSubClaimPacket> {
+public class ClientboundCurrentSubClaimPacket extends LazyPacket<ClientboundCurrentSubClaimPacket> {
 
 	public static final Encoder<ClientboundCurrentSubClaimPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	private final int currentSubConfigIndex;
 	private final int currentServerSubConfigIndex;
@@ -44,7 +44,7 @@ public class ClientboundCurrentSubClaimPacket extends LazyPacket<LazyPacket.Enco
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundCurrentSubClaimPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		tag.putInt("i", currentSubConfigIndex);
 		tag.putInt("si", currentServerSubConfigIndex);
@@ -54,8 +54,8 @@ public class ClientboundCurrentSubClaimPacket extends LazyPacket<LazyPacket.Enco
 	}
 
 	@Override
-	protected Encoder<ClientboundCurrentSubClaimPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundCurrentSubClaimPacket> getDecoder() {
+		return DECODER;
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClientboundCurrentSubClaimPacket> {
@@ -85,10 +85,10 @@ public class ClientboundCurrentSubClaimPacket extends LazyPacket<LazyPacket.Enco
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundCurrentSubClaimPacket> {
+	public static class ClientHandler extends Handler<ClientboundCurrentSubClaimPacket> {
 		
 		@Override
-		public void accept(ClientboundCurrentSubClaimPacket t) {
+		public void handle(ClientboundCurrentSubClaimPacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onSubConfigIndices(t.currentSubConfigIndex, t.currentServerSubConfigIndex, t.currentSubConfigId, t.currentServerSubConfigId);
 		}
 		

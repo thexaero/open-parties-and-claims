@@ -36,8 +36,8 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 
 	private PlayerConfigStringOptionSpec(Class<String> type, String id, String shortenedId, List<String> path, String defaultValue, BiFunction<PlayerConfig<?>, String, String> defaultReplacer, String comment,
 										 String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, String> commandInputParser, Function<String, Component> commandOutputWriter,
-										 BiPredicate<PlayerConfig<?>, String> serverSideValidator, BiPredicate<PlayerConfigClientStorage, String> clientSideValidator, int maxLength, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
-		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType);
+										 BiPredicate<PlayerConfig<?>, String> serverSideValidator, BiPredicate<PlayerConfigClientStorage, String> clientSideValidator, int maxLength, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType, boolean dynamic) {
+		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType, dynamic);
 		this.maxLength = maxLength;
 	}
 	
@@ -87,7 +87,7 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 
 		@Override
 		protected PlayerConfigStringOptionSpec buildInternally(List<String> path, String shortenedId, Function<String, String> commandInputParser) {
-			return new PlayerConfigStringOptionSpec(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, maxLength, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STRING);
+			return new PlayerConfigStringOptionSpec(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, maxLength, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STRING, dynamic);
 		}
 
 	}

@@ -68,8 +68,9 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 	private final String tooltipPrefix;
 	private final Predicate<PlayerConfigType> configTypeFilter;
 	private final ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType;
+	private final boolean dynamic;
 	
-	protected PlayerConfigOptionSpec(Class<T> type, String id, String shortenedId, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment, String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType) {
+	protected PlayerConfigOptionSpec(Class<T> type, String id, String shortenedId, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment, String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType, boolean dynamic) {
 		super();
 		this.type = type;
 		this.id = id;
@@ -92,6 +93,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		this.tooltipPrefix = tooltipPrefix;
 		this.configTypeFilter = configTypeFilter;
 		this.syncOptionType = syncOptionType;
+		this.dynamic = dynamic;
 	}
 
 	protected ForgeConfigSpec.Builder buildForgeSpec(ForgeConfigSpec.Builder builder) {
@@ -244,6 +246,10 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		return category;
 	}
 
+	public boolean isDynamic() {
+		return dynamic;
+	}
+
 	public abstract static class Builder<T extends Comparable<T>, B extends Builder<T, B>> {
 		
 		protected final B self;
@@ -264,6 +270,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		protected Function<T, Component> commandOutputWriter;
 		protected Function<String, T> commandInputReader;
 		protected Predicate<PlayerConfigType> configTypeFilter;
+		protected boolean dynamic;
 		
 		@SuppressWarnings("unchecked")
 		protected Builder(Class<T> valueType){
@@ -286,6 +293,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 			setConfigTypeFilter(t -> true);
 			setCommandOutputWriter(null);
 			setCommandInputReader(null);
+			setDynamic(false);
 			return self;
 		}
 		
@@ -358,6 +366,11 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 
 		public B setConfigTypeFilter(Predicate<PlayerConfigType> configTypeFilter) {
 			this.configTypeFilter = configTypeFilter;
+			return self;
+		}
+
+		public B setDynamic(boolean dynamic) {
+			this.dynamic = dynamic;
 			return self;
 		}
 
@@ -436,7 +449,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 
 		@Override
 		protected PlayerConfigOptionSpec<T> buildInternally(List<String> path, String shortenedId, Function<String, T> commandInputParser){
-			return new PlayerConfigOptionSpec<>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.DEFAULT);
+			return new PlayerConfigOptionSpec<>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.DEFAULT, dynamic);
 		}
 		
 		public static <T extends Comparable<T>> FinalBuilder<T> begin(Class<T> valueType){

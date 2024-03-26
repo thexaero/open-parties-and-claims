@@ -99,6 +99,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 				.setDefaultValue(0)
 				.setComment(comment)
 				.setCategory(group.getOptionCategory())
+				.setDynamic(true)
 				.build(null);
 		group.setPlayerConfigOption(option);
 		builder.addOption(option);
