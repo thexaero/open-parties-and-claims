@@ -24,12 +24,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundRemoveClaimStatePacket extends LazyPacket<LazyPacket.Encoder<ClientboundRemoveClaimStatePacket>, ClientboundRemoveClaimStatePacket> {
+public class ClientboundRemoveClaimStatePacket extends LazyPacket<ClientboundRemoveClaimStatePacket> {
 
 	public static final Encoder<ClientboundRemoveClaimStatePacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	private final int syncIndex;
 
@@ -39,15 +39,15 @@ public class ClientboundRemoveClaimStatePacket extends LazyPacket<LazyPacket.Enc
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundRemoveClaimStatePacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		tag.putInt("i", syncIndex);
 		u.writeNbt(tag);
 	}
 
 	@Override
-	protected Encoder<ClientboundRemoveClaimStatePacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundRemoveClaimStatePacket> getDecoder() {
+		return DECODER;
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClientboundRemoveClaimStatePacket> {
@@ -70,10 +70,10 @@ public class ClientboundRemoveClaimStatePacket extends LazyPacket<LazyPacket.Enc
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundRemoveClaimStatePacket> {
+	public static class ClientHandler extends Handler<ClientboundRemoveClaimStatePacket> {
 		
 		@Override
-		public void accept(ClientboundRemoveClaimStatePacket t) {
+		public void handle(ClientboundRemoveClaimStatePacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimStateRemoved(t.syncIndex);
 		}
 		

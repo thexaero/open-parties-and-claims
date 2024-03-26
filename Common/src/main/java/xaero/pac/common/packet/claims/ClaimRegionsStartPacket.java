@@ -28,26 +28,26 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClaimRegionsStartPacket extends LazyPacket<LazyPacket.Encoder<ClaimRegionsStartPacket>, ClaimRegionsStartPacket> {
+public class ClaimRegionsStartPacket extends LazyPacket<ClaimRegionsStartPacket> {
 	
 	public static final Encoder<ClaimRegionsStartPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	public ClaimRegionsStartPacket() {
 		super();
 	}
 
 	@Override
-	protected void writeOnPrepare(LazyPacket.Encoder<ClaimRegionsStartPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		u.writeNbt(tag);
 	}
 
 	@Override
-	protected Encoder<ClaimRegionsStartPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClaimRegionsStartPacket> getDecoder() {
+		return DECODER;
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClaimRegionsStartPacket> {
@@ -79,10 +79,10 @@ public class ClaimRegionsStartPacket extends LazyPacket<LazyPacket.Encoder<Claim
 		
 	}
 
-	public static class ClientHandler implements Consumer<ClaimRegionsStartPacket> {
+	public static class ClientHandler extends Handler<ClaimRegionsStartPacket> {
 
 		@Override
-		public void accept(ClaimRegionsStartPacket t) {
+		public void handle(ClaimRegionsStartPacket t) {
 			t.prepare();
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(t);
 		}

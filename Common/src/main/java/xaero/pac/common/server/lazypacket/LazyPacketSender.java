@@ -54,7 +54,7 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 		manager.clearForPlayer(player, playerId);
 	}
 	
-	public void enqueue(ServerPlayer player, LazyPacket<?, ?> packet) {
+	public void enqueue(ServerPlayer player, LazyPacket<?> packet) {
 		manager.enqueue(player, packet);
 	}
 	
@@ -73,7 +73,7 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 			PlayerLazyPacketManager playerPackets = manager.getNext(bytesPerConfirmation, overCapacity);
 			if(playerPackets == null)
 				break;
-			LazyPacket<?, ?> packet = playerPackets.getNext();
+			LazyPacket<?> packet = playerPackets.getNext();
 			bytesSent += packet.getPreparedSize();
 			ServerPlayer player = server.getPlayerList().getPlayer(playerPackets.getPlayerId());
 			if(player == null){
