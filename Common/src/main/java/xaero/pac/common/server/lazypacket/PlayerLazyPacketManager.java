@@ -32,13 +32,13 @@ public class PlayerLazyPacketManager {
 
 	private final MinecraftServer server;
 	private final UUID playerId;
-	private final Deque<LazyPacket<?,?>> storage;
+	private final Deque<LazyPacket<?>> storage;
 	private int sentSinceConfirmation;
 	private boolean waitingForConfirmation;
 	private long startedWaitingAt;
 	private boolean dropped;
 
-	private PlayerLazyPacketManager(MinecraftServer server, UUID playerId, Deque<LazyPacket<?,?>> storage) {
+	private PlayerLazyPacketManager(MinecraftServer server, UUID playerId, Deque<LazyPacket<?>> storage) {
 		super();
 		this.server = server;
 		this.playerId = playerId;
@@ -49,7 +49,7 @@ public class PlayerLazyPacketManager {
 		return playerId;
 	}
 	
-	LazyPacket<?,?> getNext(){
+	LazyPacket<?> getNext(){
 		return storage.removeFirst();
 	}
 	
@@ -77,7 +77,7 @@ public class PlayerLazyPacketManager {
 		serverData.getServerClaimsManager().getClaimsManagerSynchronizer().onLazyPacketsDropped(serverPlayer);
 	}
 	
-	boolean enqueue(LazyPacket<?,?> packet) {
+	boolean enqueue(LazyPacket<?> packet) {
 		if(dropped)
 			return false;
 		storage.addLast(packet);
@@ -98,7 +98,7 @@ public class PlayerLazyPacketManager {
 		return waitingForConfirmation;
 	}
 
-	public void onSend(LazyPacket<?,?> packet) {
+	public void onSend(LazyPacket<?> packet) {
 		sentSinceConfirmation += packet.getPreparedSize();
 	}
 	

@@ -144,7 +144,11 @@ public class PlayerConfigOptionClientStorage<T extends Comparable<T>> implements
 	public boolean isMutable() {
 		return mutable;
 	}
-	
+
+	public boolean isDynamic() {
+		return option.isDynamic();
+	}
+
 	public static abstract class Builder<T extends Comparable<T>, B extends Builder<T, B>> {
 
 		protected final B self;

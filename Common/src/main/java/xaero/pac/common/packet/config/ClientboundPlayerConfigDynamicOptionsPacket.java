@@ -57,6 +57,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 					.setDefaultValue(type.valueUntagger.apply(defaultValueTag))
 					.setComment(comment)
 					.setCategory(category)
+					.setDynamic(true)
 					.build(null);
 		}
 

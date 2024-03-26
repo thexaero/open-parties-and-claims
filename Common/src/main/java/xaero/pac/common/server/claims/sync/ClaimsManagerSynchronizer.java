@@ -93,7 +93,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		if(instant)
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 		else
-			serverData.getServerTickHandler().getLazyPacketSender().enqueue(player, (LazyPacket<?, ?>) packet);
+			serverData.getServerTickHandler().getLazyPacketSender().enqueue(player, (LazyPacket<?>) packet);
 	}
 	
 	private void startSyncing(ServerPlayer player) {

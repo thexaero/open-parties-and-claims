@@ -49,32 +49,31 @@ public class PacketRegister {
 		
 		packetHandler.register(5, ClientboundPartyPlayerPacket.class, ClientboundPartyPlayerPacket.CODEC, ClientboundPartyPlayerPacket.CODEC, null, new ClientboundPartyPlayerPacket.ClientHandler());
 		
-		packetHandler.register(6, ClientboundPartyNamePacket.class, ClientboundPartyNamePacket.ENCODER, new ClientboundPartyNamePacket.Decoder(), null, new ClientboundPartyNamePacket.ClientHandler());
-		
-		ClientboundPartyAllyPacket.Decoder partyPartyAllyPacketDecoder = new ClientboundPartyAllyPacket.Decoder();
-		packetHandler.register(7, ClientboundPartyAllyPacket.class, ClientboundPartyAllyPacket.ENCODER, partyPartyAllyPacketDecoder, null, new ClientboundPartyAllyPacket.ClientHandler());
+		packetHandler.register(6, ClientboundPartyNamePacket.class, ClientboundPartyNamePacket.ENCODER, ClientboundPartyNamePacket.DECODER, null, new ClientboundPartyNamePacket.ClientHandler());
+
+		packetHandler.register(7, ClientboundPartyAllyPacket.class, ClientboundPartyAllyPacket.ENCODER, ClientboundPartyAllyPacket.DECODER, null, new ClientboundPartyAllyPacket.ClientHandler());
 		
 		PartyMemberDynamicInfoSyncable.Codec partyPartyMemberOftenSyncedInfoPacketCodec = new PartyMemberDynamicInfoSyncable.Codec();
 		packetHandler.register(8, PartyMemberDynamicInfoSyncable.class, partyPartyMemberOftenSyncedInfoPacketCodec, partyPartyMemberOftenSyncedInfoPacketCodec, null, new PartyMemberDynamicInfoSyncable.ClientHandler());
 	
-		packetHandler.register(9, ClientboundLoadingPacket.class, ClientboundLoadingPacket.ENCODER, new ClientboundLoadingPacket.Decoder(), null, new ClientboundLoadingPacket.ClientHandler());
+		packetHandler.register(9, ClientboundLoadingPacket.class, ClientboundLoadingPacket.ENCODER, ClientboundLoadingPacket.DECODER, null, new ClientboundLoadingPacket.ClientHandler());
 		
-		packetHandler.register(10, ClientboundPlayerClaimsDimensionPacket.class, ClientboundPlayerClaimsDimensionPacket.ENCODER, new ClientboundPlayerClaimsDimensionPacket.Decoder(), null, new ClientboundPlayerClaimsDimensionPacket.ClientHandler());
+		packetHandler.register(10, ClientboundPlayerClaimsDimensionPacket.class, ClientboundPlayerClaimsDimensionPacket.ENCODER, ClientboundPlayerClaimsDimensionPacket.DECODER, null, new ClientboundPlayerClaimsDimensionPacket.ClientHandler());
 		
-		packetHandler.register(12, ClientboundClaimStatesPacket.class, ClientboundClaimStatesPacket.ENCODER, new ClientboundClaimStatesPacket.Decoder(), null, new ClientboundClaimStatesPacket.ClientHandler());
+		packetHandler.register(12, ClientboundClaimStatesPacket.class, ClientboundClaimStatesPacket.ENCODER, ClientboundClaimStatesPacket.DECODER, null, new ClientboundClaimStatesPacket.ClientHandler());
 		
-		packetHandler.register(13, ClientboundClaimsRegionPacket.class, ClientboundClaimsRegionPacket.ENCODER, new ClientboundClaimsRegionPacket.Decoder(), null, new ClientboundClaimsRegionPacket.ClientHandler());
+		packetHandler.register(13, ClientboundClaimsRegionPacket.class, ClientboundClaimsRegionPacket.ENCODER, ClientboundClaimsRegionPacket.DECODER, null, new ClientboundClaimsRegionPacket.ClientHandler());
 		
-		packetHandler.register(14, ClientboundClaimsClaimUpdatePacket.class, ClientboundClaimsClaimUpdatePacket.ENCODER, new ClientboundClaimsClaimUpdatePacket.Decoder(), null, new ClientboundClaimsClaimUpdatePacket.ClientHandler());
+		packetHandler.register(14, ClientboundClaimsClaimUpdatePacket.class, ClientboundClaimsClaimUpdatePacket.ENCODER, ClientboundClaimsClaimUpdatePacket.DECODER, null, new ClientboundClaimsClaimUpdatePacket.ClientHandler());
 		
-		packetHandler.register(15, ClientboundSubClaimPropertiesPacket.class, ClientboundSubClaimPropertiesPacket.ENCODER, new ClientboundSubClaimPropertiesPacket.Decoder(), null, new ClientboundSubClaimPropertiesPacket.ClientHandler());
+		packetHandler.register(15, ClientboundSubClaimPropertiesPacket.class, ClientboundSubClaimPropertiesPacket.ENCODER, ClientboundSubClaimPropertiesPacket.DECODER, null, new ClientboundSubClaimPropertiesPacket.ClientHandler());
 		
-		packetHandler.register(17, ClientboundClaimLimitsPacket.class, ClientboundClaimLimitsPacket.ENCODER, new ClientboundClaimLimitsPacket.Decoder(), null, new ClientboundClaimLimitsPacket.ClientHandler());
+		packetHandler.register(17, ClientboundClaimLimitsPacket.class, ClientboundClaimLimitsPacket.ENCODER, ClientboundClaimLimitsPacket.DECODER, null, new ClientboundClaimLimitsPacket.ClientHandler());
 
 		LazyPacketsConfirmationPacket.Codec lazyPacketsConfirmCodec = new LazyPacketsConfirmationPacket.Codec();
 		packetHandler.register(18, LazyPacketsConfirmationPacket.class, lazyPacketsConfirmCodec, lazyPacketsConfirmCodec, new LazyPacketsConfirmationPacket.ServerHandler(), new LazyPacketsConfirmationPacket.ClientHandler());
 		
-		packetHandler.register(19, ClaimRegionsStartPacket.class, ClaimRegionsStartPacket.ENCODER, new ClaimRegionsStartPacket.Decoder(), new ClaimRegionsStartPacket.ServerHandler(), new ClaimRegionsStartPacket.ClientHandler());
+		packetHandler.register(19, ClaimRegionsStartPacket.class, ClaimRegionsStartPacket.ENCODER, ClaimRegionsStartPacket.DECODER, new ClaimRegionsStartPacket.ServerHandler(), new ClaimRegionsStartPacket.ClientHandler());
 		
 		ClientboundClaimResultPacket.Codec claimResultPacketCodec = new ClientboundClaimResultPacket.Codec();
 		packetHandler.register(20, ClientboundClaimResultPacket.class, claimResultPacketCodec, claimResultPacketCodec, null, new ClientboundClaimResultPacket.ClientHandler());
@@ -94,18 +93,18 @@ public class PacketRegister {
 		ServerboundSubConfigExistencePacket.Codec createSubConfigCodec = new ServerboundSubConfigExistencePacket.Codec();
 		packetHandler.register(25, ServerboundSubConfigExistencePacket.class, createSubConfigCodec, createSubConfigCodec, new ServerboundSubConfigExistencePacket.ServerHandler(), null);
 
-		packetHandler.register(26, ClientboundClaimOwnerPropertiesPacket.class, ClientboundClaimOwnerPropertiesPacket.ENCODER, new ClientboundClaimOwnerPropertiesPacket.Decoder(), null, new ClientboundClaimOwnerPropertiesPacket.ClientHandler());
+		packetHandler.register(26, ClientboundClaimOwnerPropertiesPacket.class, ClientboundClaimOwnerPropertiesPacket.ENCODER, ClientboundClaimOwnerPropertiesPacket.DECODER, null, new ClientboundClaimOwnerPropertiesPacket.ClientHandler());
 
-		packetHandler.register(27, ClientboundRemoveClaimStatePacket.class, ClientboundRemoveClaimStatePacket.ENCODER, new ClientboundRemoveClaimStatePacket.Decoder(), null, new ClientboundRemoveClaimStatePacket.ClientHandler());
+		packetHandler.register(27, ClientboundRemoveClaimStatePacket.class, ClientboundRemoveClaimStatePacket.ENCODER, ClientboundRemoveClaimStatePacket.DECODER, null, new ClientboundRemoveClaimStatePacket.ClientHandler());
 
-		packetHandler.register(28, ClientboundRemoveSubClaimPacket.class, ClientboundRemoveSubClaimPacket.ENCODER, new ClientboundRemoveSubClaimPacket.Decoder(), null, new ClientboundRemoveSubClaimPacket.ClientHandler());
+		packetHandler.register(28, ClientboundRemoveSubClaimPacket.class, ClientboundRemoveSubClaimPacket.ENCODER, ClientboundRemoveSubClaimPacket.DECODER, null, new ClientboundRemoveSubClaimPacket.ClientHandler());
 
-		packetHandler.register(29, ClientboundClaimsClaimUpdatePosPacket.class, ClientboundClaimsClaimUpdatePosPacket.ENCODER, new ClientboundClaimsClaimUpdatePosPacket.Decoder(), null, new ClientboundClaimsClaimUpdatePosPacket.ClientHandler());
+		packetHandler.register(29, ClientboundClaimsClaimUpdatePosPacket.class, ClientboundClaimsClaimUpdatePosPacket.ENCODER, ClientboundClaimsClaimUpdatePosPacket.DECODER, null, new ClientboundClaimsClaimUpdatePosPacket.ClientHandler());
 
 		ClientboundPlayerConfigGeneralStatePacket.Codec playerConfigGeneralStateCodec = new ClientboundPlayerConfigGeneralStatePacket.Codec();
 		packetHandler.register(30, ClientboundPlayerConfigGeneralStatePacket.class, playerConfigGeneralStateCodec, playerConfigGeneralStateCodec, null, new ClientboundPlayerConfigGeneralStatePacket.ClientHandler());
 
-		packetHandler.register(31, ClientboundCurrentSubClaimPacket.class, ClientboundCurrentSubClaimPacket.ENCODER, new ClientboundCurrentSubClaimPacket.Decoder(), null, new ClientboundCurrentSubClaimPacket.ClientHandler());
+		packetHandler.register(31, ClientboundCurrentSubClaimPacket.class, ClientboundCurrentSubClaimPacket.ENCODER, ClientboundCurrentSubClaimPacket.DECODER, null, new ClientboundCurrentSubClaimPacket.ClientHandler());
 
 		ServerboundPlayerConfigOptionValuePacket.Codec serverPlayerConfigOptionValueCodec = new ServerboundPlayerConfigOptionValuePacket.Codec();
 		packetHandler.register(32, ServerboundPlayerConfigOptionValuePacket.class, serverPlayerConfigOptionValueCodec, serverPlayerConfigOptionValueCodec, new ServerboundPlayerConfigOptionValuePacket.ServerHandler(), null);
@@ -116,9 +115,9 @@ public class PacketRegister {
 		ClientboundPlayerConfigHelpPacket.Codec playerConfigHelpCodec = new ClientboundPlayerConfigHelpPacket.Codec();
 		packetHandler.register(34, ClientboundPlayerConfigHelpPacket.class, playerConfigHelpCodec, playerConfigHelpCodec, null, new ClientboundPlayerConfigHelpPacket.ClientHandler());
 
-		packetHandler.register(35, ClientboundClaimsClaimUpdateNextXPosPacket.class, ClientboundClaimsClaimUpdateNextXPosPacket.ENCODER, new ClientboundClaimsClaimUpdateNextXPosPacket.Decoder(), null, new ClientboundClaimsClaimUpdateNextXPosPacket.ClientHandler());
+		packetHandler.register(35, ClientboundClaimsClaimUpdateNextXPosPacket.class, ClientboundClaimsClaimUpdateNextXPosPacket.ENCODER, ClientboundClaimsClaimUpdateNextXPosPacket.DECODER, null, new ClientboundClaimsClaimUpdateNextXPosPacket.ClientHandler());
 
-		packetHandler.register(36, ClientboundClaimsClaimUpdateNextZPosPacket.class, ClientboundClaimsClaimUpdateNextZPosPacket.ENCODER, new ClientboundClaimsClaimUpdateNextZPosPacket.Decoder(), null, new ClientboundClaimsClaimUpdateNextZPosPacket.ClientHandler());
+		packetHandler.register(36, ClientboundClaimsClaimUpdateNextZPosPacket.class, ClientboundClaimsClaimUpdateNextZPosPacket.ENCODER, ClientboundClaimsClaimUpdateNextZPosPacket.DECODER, null, new ClientboundClaimsClaimUpdateNextZPosPacket.ClientHandler());
 
 	}
 
