@@ -22,24 +22,24 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundClaimsClaimUpdateNextZPosPacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimsClaimUpdateNextZPosPacket>, ClientboundClaimsClaimUpdateNextZPosPacket> {
+public class ClientboundClaimsClaimUpdateNextZPosPacket extends LazyPacket<ClientboundClaimsClaimUpdateNextZPosPacket> {
 
 	public static final Encoder<ClientboundClaimsClaimUpdateNextZPosPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	public ClientboundClaimsClaimUpdateNextZPosPacket() {
 		super();
 	}
 
 	@Override
-	protected Encoder<ClientboundClaimsClaimUpdateNextZPosPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundClaimsClaimUpdateNextZPosPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundClaimsClaimUpdateNextZPosPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClientboundClaimsClaimUpdateNextZPosPacket> {
@@ -56,10 +56,10 @@ public class ClientboundClaimsClaimUpdateNextZPosPacket extends LazyPacket<LazyP
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundClaimsClaimUpdateNextZPosPacket> {
+	public static class ClientHandler extends Handler<ClientboundClaimsClaimUpdateNextZPosPacket> {
 		
 		@Override
-		public void accept(ClientboundClaimsClaimUpdateNextZPosPacket t) {
+		public void handle(ClientboundClaimsClaimUpdateNextZPosPacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimUpdateNextZPos();
 		}
 		

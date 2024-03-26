@@ -24,12 +24,12 @@ import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundPlayerClaimsDimensionPacket extends LazyPacket<LazyPacket.Encoder<ClientboundPlayerClaimsDimensionPacket>, ClientboundPlayerClaimsDimensionPacket>{
+public class ClientboundPlayerClaimsDimensionPacket extends LazyPacket<ClientboundPlayerClaimsDimensionPacket>{
 	
 	public static final Encoder<ClientboundPlayerClaimsDimensionPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	private final ResourceLocation dimension;
 
@@ -39,12 +39,12 @@ public class ClientboundPlayerClaimsDimensionPacket extends LazyPacket<LazyPacke
 	}
 
 	@Override
-	protected Encoder<ClientboundPlayerClaimsDimensionPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundPlayerClaimsDimensionPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundPlayerClaimsDimensionPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag nbt = new CompoundTag();
 		if(dimension != null)
 			nbt.putString("d", dimension.toString());//4096
@@ -73,10 +73,10 @@ public class ClientboundPlayerClaimsDimensionPacket extends LazyPacket<LazyPacke
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundPlayerClaimsDimensionPacket> {
+	public static class ClientHandler extends Handler<ClientboundPlayerClaimsDimensionPacket> {
 		
 		@Override
-		public void accept(ClientboundPlayerClaimsDimensionPacket t) {
+		public void handle(ClientboundPlayerClaimsDimensionPacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onDimension(t.dimension);
 		}
 		

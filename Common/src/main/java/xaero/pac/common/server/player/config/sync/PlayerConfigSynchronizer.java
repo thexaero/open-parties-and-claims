@@ -128,7 +128,8 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 	}
 
 	public void sendSyncState(ServerPlayer player, PlayerConfig<?> config, boolean state){
-		ClientboundPlayerConfigSyncStatePacket packet = new ClientboundPlayerConfigSyncStatePacket(config.getType(), !Objects.equals(player.getUUID(), config.getPlayerId()), state);
+		ClientboundPlayerConfigSyncStatePacket packet = new ClientboundPlayerConfigSyncStatePacket(config.getType(),
+				config.getType() == PlayerConfigType.PLAYER && !Objects.equals(player.getUUID(), config.getPlayerId()), state);
 		sendToClient(player, packet);
 	}
 

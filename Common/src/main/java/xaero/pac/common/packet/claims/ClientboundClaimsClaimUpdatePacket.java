@@ -25,12 +25,12 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimsClaimUpdatePacket>, ClientboundClaimsClaimUpdatePacket> {
+public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<ClientboundClaimsClaimUpdatePacket> {
 
 	public static final Encoder<ClientboundClaimsClaimUpdatePacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	private final ResourceLocation dimension;
 	private final int x;
@@ -52,12 +52,12 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 	}
 
 	@Override
-	protected Encoder<ClientboundClaimsClaimUpdatePacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundClaimsClaimUpdatePacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundClaimsClaimUpdatePacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putString("d", dimension.toString());
 		nbt.putInt("x", x);
@@ -110,10 +110,10 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<LazyPacket.En
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundClaimsClaimUpdatePacket> {
+	public static class ClientHandler extends Handler<ClientboundClaimsClaimUpdatePacket> {
 		
 		@Override
-		public void accept(ClientboundClaimsClaimUpdatePacket t) {
+		public void handle(ClientboundClaimsClaimUpdatePacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimUpdate(t.dimension, t.x, t.z, t.playerId, t.subConfigIndex, t.forceLoaded, t.claimSyncIndex);
 		}
 		

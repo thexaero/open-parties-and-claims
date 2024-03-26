@@ -23,12 +23,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundLoadingPacket extends LazyPacket<LazyPacket.Encoder<ClientboundLoadingPacket>, ClientboundLoadingPacket> {
+public class ClientboundLoadingPacket extends LazyPacket<ClientboundLoadingPacket> {
 	
 	public static final Encoder<ClientboundLoadingPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 	
 	public static final ClientboundLoadingPacket START_PARTY = new ClientboundLoadingPacket(true, false);
 	public static final ClientboundLoadingPacket END_PARTY = new ClientboundLoadingPacket(false, false);
@@ -46,7 +46,7 @@ public class ClientboundLoadingPacket extends LazyPacket<LazyPacket.Encoder<Clie
 	}
 
 	@Override
-	protected void writeOnPrepare(LazyPacket.Encoder<ClientboundLoadingPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		tag.putBoolean("s", start);
 		tag.putBoolean("c", claims);
@@ -54,8 +54,8 @@ public class ClientboundLoadingPacket extends LazyPacket<LazyPacket.Encoder<Clie
 	}
 
 	@Override
-	protected Encoder<ClientboundLoadingPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundLoadingPacket> getDecoder() {
+		return DECODER;
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClientboundLoadingPacket> {
@@ -79,10 +79,10 @@ public class ClientboundLoadingPacket extends LazyPacket<LazyPacket.Encoder<Clie
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundLoadingPacket> {
+	public static class ClientHandler extends Handler<ClientboundLoadingPacket> {
 		
 		@Override
-		public void accept(ClientboundLoadingPacket t) {
+		public void handle(ClientboundLoadingPacket t) {
 			if(!t.claims) {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().setLoading(t.start);
 			} else {
