@@ -27,13 +27,13 @@ import xaero.pac.common.server.lazypacket.LazyPacket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimOwnerPropertiesPacket>, ClientboundClaimOwnerPropertiesPacket> {
+public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<ClientboundClaimOwnerPropertiesPacket> {
 
 	public static final int MAX_PROPERTIES = 32;
 	public static final Encoder<ClientboundClaimOwnerPropertiesPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	private final List<PlayerProperties> properties;
 
@@ -43,12 +43,12 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<LazyPacket
 	}
 
 	@Override
-	protected Encoder<ClientboundClaimOwnerPropertiesPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundClaimOwnerPropertiesPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundClaimOwnerPropertiesPacket> encoder, FriendlyByteBuf dest) {
+	protected void writeOnPrepare(FriendlyByteBuf dest) {
 		CompoundTag nbt = new CompoundTag();
 		ListTag propertiesListTag = new ListTag();
 		for (int i = 0; i < this.properties.size(); i++) {
@@ -97,10 +97,10 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<LazyPacket
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundClaimOwnerPropertiesPacket> {
+	public static class ClientHandler extends Handler<ClientboundClaimOwnerPropertiesPacket> {
 		
 		@Override
-		public void accept(ClientboundClaimOwnerPropertiesPacket t) {
+		public void handle(ClientboundClaimOwnerPropertiesPacket t) {
 			for (PlayerProperties propertiesEntry : t.properties) {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().
 					onPlayerInfo(propertiesEntry.playerId, propertiesEntry.username);

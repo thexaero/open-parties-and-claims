@@ -24,12 +24,12 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundRemoveSubClaimPacket extends LazyPacket<LazyPacket.Encoder<ClientboundRemoveSubClaimPacket>, ClientboundRemoveSubClaimPacket> {
+public class ClientboundRemoveSubClaimPacket extends LazyPacket<ClientboundRemoveSubClaimPacket> {
 
 	public static final Encoder<ClientboundRemoveSubClaimPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 
 	private final UUID playerId;
 	private final int subConfigIndex;
@@ -41,12 +41,12 @@ public class ClientboundRemoveSubClaimPacket extends LazyPacket<LazyPacket.Encod
 	}
 
 	@Override
-	protected Encoder<ClientboundRemoveSubClaimPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundRemoveSubClaimPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundRemoveSubClaimPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putUUID("p", playerId);
 		nbt.putInt("s", subConfigIndex);
@@ -79,10 +79,10 @@ public class ClientboundRemoveSubClaimPacket extends LazyPacket<LazyPacket.Encod
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundRemoveSubClaimPacket> {
+	public static class ClientHandler extends Handler<ClientboundRemoveSubClaimPacket> {
 		
 		@Override
-		public void accept(ClientboundRemoveSubClaimPacket t) {
+		public void handle(ClientboundRemoveSubClaimPacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onRemoveSubClaim(t.playerId, t.subConfigIndex);
 		}
 		

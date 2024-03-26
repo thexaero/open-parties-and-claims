@@ -230,17 +230,19 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			List<T> values;
 			if(option.getOption() instanceof PlayerConfigListIterationOptionSpec<T> listIterationOptionSpec) {
 				values = listIterationOptionSpec.getClientSideListGetter().apply(valueSourceConfig);
-				boolean staticProtectionLevelOption = option.getOption() instanceof PlayerConfigStaticListIterationOptionSpec iterationOptionSpec && iterationOptionSpec.getList() == PlayerConfig.PROTECTION_LEVELS;//won't detect dynamic ones because their option list is recreated
 				if(values == null)
 					values = Lists.newArrayList(currentValue);
-				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER &&
-						(option.getId().startsWith(PlayerConfigExceptionDynamicOptionsLoader.OPTION_ROOT) || staticProtectionLevelOption)) {
-					boolean enablesProtection = (option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + ".") || staticProtectionLevelOption)
-							&& option.getOption() != PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT;
-					values = Lists.newArrayList(
-							values.get(0),
-							values.get(enablesProtection ? 1 : values.size() - 1)
-					);
+				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER){
+					boolean staticProtectionLevelOption = !option.isDynamic() && option.getOption() instanceof PlayerConfigStaticListIterationOptionSpec iterationOptionSpec
+							&& iterationOptionSpec.getList() == PlayerConfig.PROTECTION_LEVELS;
+					if(staticProtectionLevelOption || option.isDynamic()){
+						boolean enablesProtection = (staticProtectionLevelOption || option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + "."))
+								&& option.getOption() != PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT;
+						values = Lists.newArrayList(
+								values.get(0),
+								values.get(enablesProtection ? 1 : values.size() - 1)
+						);
+					}
 				}
 				else
 					values = Lists.newArrayList(values);

@@ -23,12 +23,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimLimitsPacket>, ClientboundClaimLimitsPacket> {
+public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLimitsPacket> {
 	
 	public static final Encoder<ClientboundClaimLimitsPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 	
 	private final int loadingClaimCount;
 	private final int loadingForceloadCount;
@@ -49,7 +49,7 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 	}
 
 	@Override
-	protected void writeOnPrepare(LazyPacket.Encoder<ClientboundClaimLimitsPacket> encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		tag.putInt("cc", loadingClaimCount);
 		tag.putInt("fc", loadingForceloadCount);
@@ -61,8 +61,8 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 	}
 
 	@Override
-	protected Encoder<ClientboundClaimLimitsPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundClaimLimitsPacket> getDecoder() {
+		return DECODER;
 	}
 	
 	public static class Decoder implements Function<FriendlyByteBuf, ClientboundClaimLimitsPacket> {
@@ -90,10 +90,10 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<LazyPacket.Encoder<
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundClaimLimitsPacket> {
+	public static class ClientHandler extends Handler<ClientboundClaimLimitsPacket> {
 		
 		@Override
-		public void accept(ClientboundClaimLimitsPacket t) {
+		public void handle(ClientboundClaimLimitsPacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimLimits(t.loadingClaimCount, t.loadingForceloadCount, t.claimLimit, t.forceloadLimit, t.maxClaimDistance, t.alwaysUseLoadingValues);
 		}
 		
