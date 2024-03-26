@@ -30,10 +30,9 @@ import xaero.pac.common.parties.party.member.PartyInvite;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPlayerPacket.Codec, ClientboundPartyPlayerPacket>{
+public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPlayerPacket>{
 
 	public static final Codec CODEC = new Codec(new PartyPlayerInfoCodec());
 	
@@ -49,16 +48,16 @@ public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPla
 	}
 
 	@Override
-	protected Codec getEncoder() {
+	protected Function<FriendlyByteBuf, ClientboundPartyPlayerPacket> getDecoder() {
 		return CODEC;
 	}
 
 	@Override
-	protected void writeOnPrepare(Codec encoder, FriendlyByteBuf u) {
+	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("t", type.toString());
 		tag.putString("a", action.toString());
-		CompoundTag playerTag = type == Type.INVITE ? encoder.playerInfoCodec.toPartyInviteTag((PartyInvite) playerInfo) : encoder.playerInfoCodec.toMemberTag((PartyMember) playerInfo);
+		CompoundTag playerTag = type == Type.INVITE ? CODEC.playerInfoCodec.toPartyInviteTag((PartyInvite) playerInfo) : CODEC.playerInfoCodec.toMemberTag((PartyMember) playerInfo);
 		tag.put("pi", playerTag);
 		u.writeNbt(tag);
 	}
@@ -102,10 +101,10 @@ public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPla
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundPartyPlayerPacket> {
+	public static class ClientHandler extends Handler<ClientboundPartyPlayerPacket> {
 		
 		@Override
-		public void accept(ClientboundPartyPlayerPacket t) {
+		public void handle(ClientboundPartyPlayerPacket t) {
 			IClientParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty();
 			if(party == null)
 				return;

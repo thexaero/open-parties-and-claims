@@ -25,12 +25,12 @@ import net.minecraft.util.SimpleBitStorage;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ClientboundClaimsRegionPacket extends LazyPacket<LazyPacket.Encoder<ClientboundClaimsRegionPacket>, ClientboundClaimsRegionPacket> {
+public class ClientboundClaimsRegionPacket extends LazyPacket<ClientboundClaimsRegionPacket> {
 	
 	public static final Encoder<ClientboundClaimsRegionPacket> ENCODER = new Encoder<>();
+	public static final Decoder DECODER = new Decoder();
 	
 	private final int x;
 	private final int z;
@@ -48,12 +48,12 @@ public class ClientboundClaimsRegionPacket extends LazyPacket<LazyPacket.Encoder
 	}
 
 	@Override
-	protected Encoder<ClientboundClaimsRegionPacket> getEncoder() {
-		return ENCODER;
+	protected Function<FriendlyByteBuf, ClientboundClaimsRegionPacket> getDecoder() {
+		return DECODER;
 	}
 
 	@Override
-	protected void writeOnPrepare(Encoder<ClientboundClaimsRegionPacket> encoder, FriendlyByteBuf dest) {
+	protected void writeOnPrepare(FriendlyByteBuf dest) {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("x", x);
 		nbt.putInt("z", z);
@@ -87,10 +87,10 @@ public class ClientboundClaimsRegionPacket extends LazyPacket<LazyPacket.Encoder
 		
 	}
 	
-	public static class ClientHandler implements Consumer<ClientboundClaimsRegionPacket> {
+	public static class ClientHandler extends Handler<ClientboundClaimsRegionPacket> {
 		
 		@Override
-		public void accept(ClientboundClaimsRegionPacket t) {
+		public void handle(ClientboundClaimsRegionPacket t) {
 			BitStorage regionData = new SimpleBitStorage(t.bits, 1024, t.data);
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onRegion(t.x, t.z, t.paletteInts, regionData);
 		}
