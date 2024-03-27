@@ -18,5 +18,5 @@
 
 package xaero.pac.server.event;
 
-public class DedicatedServerEventsForge extends DedicatedServerEvents {
+public class DedicatedServerEventsNeoForge extends DedicatedServerEvents {
 }
