@@ -25,13 +25,14 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import xaero.pac.OpenPartiesAndClaimsNeoForge;
 import xaero.pac.common.LoadCommonNeoForge;
-import xaero.pac.server.event.DedicatedServerEventsForge;
+import xaero.pac.server.event.DedicatedServerEventsNeoForge;
 
 public class LoadDedicatedServerNeoForge extends LoadCommonNeoForge<LoadDedicatedServer> {
 
 	public LoadDedicatedServerNeoForge(OpenPartiesAndClaimsNeoForge modMain) {
 		super(modMain, new LoadDedicatedServer(modMain));
-		NeoForge.EVENT_BUS.register(new DedicatedServerEventsForge());
+		DedicatedServerEventsNeoForge events = new DedicatedServerEventsNeoForge();
+		//NeoForge.EVENT_BUS.register(events);
 	}
 
 	@SubscribeEvent
