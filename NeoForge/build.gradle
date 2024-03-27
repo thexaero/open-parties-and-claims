@@ -83,3 +83,5 @@ publishing {
         }
     }
 }
+
+jar.finalizedBy('packageSources')
