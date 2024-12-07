@@ -20,7 +20,6 @@ package xaero.pac.common.mixin;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.AbstractBoat;
-import net.minecraft.world.entity.vehicle.Boat;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -33,7 +32,7 @@ public class MixinAbstractBoat {
 
 	@ModifyVariable(method = "tick", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;"))
 	public List<Entity> onTickGetEntities(List<Entity> list){
-		ServerCore.onEntityAffectsEntities(list, (Boat)(Object)this);
+		ServerCore.onEntityAffectsEntities(list, (AbstractBoat)(Object)this);
 		return list;
 	}
 

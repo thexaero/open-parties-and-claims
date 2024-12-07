@@ -45,10 +45,9 @@ import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.AbstractBoat;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.block.*;
@@ -1511,7 +1510,7 @@ public class ChunkProtection
 			result = ((Vex) entity).getOwner();
 		} else if(entity instanceof EvokerFangs){
 			result = ((EvokerFangs) entity).getOwner();
-		} else if(entity instanceof Boat){
+		} else if(entity instanceof AbstractBoat){
 			result = entity.getControllingPassenger();
 		} else
 			result = entityHelper.getOwnerId(entity);
@@ -1659,7 +1658,7 @@ public class ChunkProtection
 	public void onEntityAffectsEntities(IServerData<CM, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, Entity entity, List<Entity> targets) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return;
-		double randomDrop = entity instanceof Boat && ServerConfig.CONFIG.reducedBoatEntityCollisions.get() ? 0.9 : 0;
+		double randomDrop = entity instanceof AbstractBoat && ServerConfig.CONFIG.reducedBoatEntityCollisions.get() ? 0.9 : 0;
 		if (randomDrop > 0 && Math.random() < randomDrop) {
 			//simple optimization to avoid checking claim permissions every tick
 			targets.clear();
