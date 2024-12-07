@@ -33,6 +33,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.common.server.world.IServerLevel;
 import xaero.pac.common.server.world.ServerLevelHelper;
+import xaero.pac.common.util.list.ListUniqueAdder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +47,8 @@ public class ServerCoreFabric {
 	private static final Set<EntitySpawnReason> DISABLED_MOB_SPAWN_TYPES = new HashSet<>();
 
 	public static List<BlockPos> EXPLOSION_BLOCK_POSITIONS;
+
+	private static ListUniqueAdder<LevelChunk> TICKING_CHUNKS_UNIQUE_ADDER = new ListUniqueAdder<>();
 
 	public static void tryToSetMobGriefingEntity(Entity entity){
 		if(entity != null && ServerLevelHelper.getServerLevel(entity.level()) != null)
@@ -113,15 +116,18 @@ public class ServerCoreFabric {
 		EXPLOSION_BLOCK_POSITIONS = null;
 	}
 
-	public static void onCollectTickingChunks(ServerChunkCache serverChunkCache, List<LevelChunk> list){
+	public static List<LevelChunk> onCollectTickingChunks(ServerChunkCache serverChunkCache, List<LevelChunk> list){
+		list = TICKING_CHUNKS_UNIQUE_ADDER.setDestinationList(list);
 		LongSet forceloadTickets = ((IServerLevel)serverChunkCache.getLevel()).getXaero_OPAC_forceloadTickets();
 		for(long chunkPosLong : forceloadTickets){
 			int chunkX = ChunkPos.getX(chunkPosLong);
 			int chunkZ = ChunkPos.getZ(chunkPosLong);
 			LevelChunk chunk = serverChunkCache.getChunk(chunkX, chunkZ, false);
-			if(chunk != null && !list.contains(chunk))
-				list.add(chunk);
+			if(chunk == null)
+				continue;
+			list.add(chunk);
 		}
+		return list;
 	}
 
 	public static void reset() {

@@ -32,8 +32,7 @@ public class MixinServerChunkCache {
 
 	@ModifyVariable(method = "collectTickingChunks", at = @At("HEAD"), index = 1)
 	public List<LevelChunk> onCollectTickingChunks(List<LevelChunk> list){
-		ServerCoreFabric.onCollectTickingChunks((ServerChunkCache)(Object)this, list);
-		return list;
+		return ServerCoreFabric.onCollectTickingChunks((ServerChunkCache)(Object)this, list);
 	}
 
 }
