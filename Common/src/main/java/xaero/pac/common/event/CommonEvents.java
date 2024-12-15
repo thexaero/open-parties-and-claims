@@ -310,7 +310,9 @@ public abstract class CommonEvents {
 	}
 
 	public boolean onLivingHurt(DamageSource source, Entity target) {
-		if(target.getServer() == null)
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(target.getServer());
+		if(serverData == null)
 			return false;
 		boolean isFire = source.is(DamageTypes.IN_FIRE) || source.is(DamageTypes.ON_FIRE);
 		if(source.getEntity() == null && source.getDirectEntity() == null &&
@@ -321,34 +323,33 @@ public abstract class CommonEvents {
 					|| source.is(DamageTypes.LAVA) || source.is(DamageTypes.HOT_FLOOR)
 				))
 			return false;
-		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(target.getServer());
 		if(isFire)
 			return serverData.getChunkProtection().onEntityFire(serverData, target);
 		return serverData.getChunkProtection().onEntityInteraction(serverData, source.getEntity(), source.getDirectEntity(), target, null, InteractionHand.MAIN_HAND, true, source.getDirectEntity() instanceof Player, true);
 	}
 
 	protected boolean onEntityAttack(Player player, Entity target) {
-		if(target == null || target.getServer() == null)
+		if(target == null)
 			return false;
-		boolean result = false;
-		if(!player.isSpectator()){
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(target.getServer());
-			result = serverData.getChunkProtection().onEntityInteraction(serverData, player, player, target, null, InteractionHand.MAIN_HAND, true, true, true);
-		}
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(target.getServer());
+		if(serverData == null)
+			return false;
+		if(player.isSpectator())
+			return false;
+		boolean result = serverData.getChunkProtection().onEntityInteraction(serverData, player, player, target, null, InteractionHand.MAIN_HAND, true, true, true);
 		if(result)
 			ServerCore.postResourcesDrop(player);//protected attack won't reach this call otherwise
 		return result;
 	}
 
 	public boolean onEntityInteract(Entity source, Entity target, InteractionHand hand) {
-		if(target.getServer() == null)
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(target.getServer());
+		if(serverData == null)
 			return false;
 		if(source.isSpectator())
 			return false;
-		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(target.getServer());
 		return serverData.getChunkProtection().onEntityInteraction(serverData, source, source, target, null, hand, false, false, true);
 	}
 
@@ -450,6 +451,8 @@ public abstract class CommonEvents {
 		if(entity.getServer() != null && chunkChanged) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(entity.getServer());
+			if(serverData == null)
+				return;
 			if(entity.level().dimension().equals(EntityData.from(entity).getLastChunkEntryDimension()))
 				serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, entity.xOld, entity.zOld, newSection, oldSection);
 			EntityData.from(entity).setLastChunkEntryDimension(entity.level().dimension());
