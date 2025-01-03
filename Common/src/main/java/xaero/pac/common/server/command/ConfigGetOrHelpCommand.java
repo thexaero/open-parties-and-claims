@@ -208,11 +208,11 @@ public class ConfigGetOrHelpCommand {
 				if(playerData.hasMod())
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(sourcePlayer, new ClientboundPlayerConfigHelpPacket(option.getId()));
 				else {
-					String translatedComment = serverData.getAdaptiveLocalizer().getDefaultTranslation(option.getCommentTranslation(), (Object[])option.getCommentTranslationArgs());
+					String translatedComment = serverData.getAdaptiveLocalizer().getDefaultTranslation(option.getCommentTranslation());
 					if(translatedComment.equals("default"))
 						translatedComment = option.getComment();
 					sourcePlayer.sendSystemMessage(Component.literal(""));
-					sourcePlayer.sendSystemMessage(Component.literal(translatedComment));
+					sourcePlayer.sendSystemMessage(Component.translatable(translatedComment, (Object[])option.getCommentTranslationArgs()));
 				}
 				return 1;
 			}

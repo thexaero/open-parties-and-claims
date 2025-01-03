@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.player.localization;
 
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -69,8 +68,8 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 		return Component.translatable(defaultTranslations.getOrDefault(key, key), args);
 	}
 
-	public String getDefaultTranslation(String key, Object... args){
-		return I18n.get(defaultTranslations.getOrDefault(key, key), args);
+	public String getDefaultTranslation(String key){
+		return defaultTranslations.getOrDefault(key, key);
 	}
 
 }
