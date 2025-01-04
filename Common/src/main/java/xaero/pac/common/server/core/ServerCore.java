@@ -27,7 +27,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -63,7 +62,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -90,7 +88,6 @@ import xaero.pac.common.server.core.accessor.IServerCommonPacketListenerImpl;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -499,30 +496,6 @@ public class ServerCore {
 			return false;
 		Entity cart2 = world.getEntity(cartId2);
 		return cart2 == null || !serverData.getChunkProtection().onEntityInteraction(serverData, null, player, cart2, heldItem, null, false, false, true);
-	}
-
-	private static InteractionHand ENTITY_INTERACTION_HAND;
-
-	public static boolean canInteract(ServerGamePacketListenerImpl packetListener, ServerboundInteractPacket packet){
-		ENTITY_INTERACTION_HAND = null;
-		packet.dispatch(new ServerboundInteractPacket.Handler() {
-			@Override
-			public void onInteraction(@Nonnull InteractionHand interactionHand) {}
-			@Override
-			public void onInteraction(@Nonnull InteractionHand interactionHand, @Nonnull Vec3 vec3) {
-				ENTITY_INTERACTION_HAND = interactionHand;
-			}
-			@Override
-			public void onAttack() {}
-		});
-		if(ENTITY_INTERACTION_HAND == null)//not specific interaction
-			return true;
-		ServerPlayer player = packetListener.player;
-		ServerLevel level = player.serverLevel();
-		final Entity entity = packet.getTarget(level);
-		if(entity == null)
-			return true;
-		return !OpenPartiesAndClaims.INSTANCE.getCommonEvents().onInteractEntitySpecific(player, entity, ENTITY_INTERACTION_HAND);
 	}
 
 	public static boolean replaceEntityIsInvulnerable(boolean actual, DamageSource damageSource, Entity entity){
@@ -1129,7 +1102,6 @@ public class ServerCore {
 	public static void reset(){
 		CAPTURED_TARGET_POS = null;
 		CAPTURED_POS_STATE_MAP = null;
-		ENTITY_INTERACTION_HAND = null;
 		ENCHANTMENT_EFFECT_BLOCKSTATE = null;
 		ENCHANTMENT_EFFECT_ENTITY = null;
 		ENCHANTMENT_EFFECT_LEVEL = null;
