@@ -35,7 +35,6 @@ public class LoadCommonNeoForge<L extends LoadCommon> {
 		this.modMain = modMain;
 		this.loader = loader;
 		CommonEventsNeoForge commonEventsNeoForge = new CommonEventsNeoForge(modMain);
-		NeoForge.EVENT_BUS.register(commonEventsNeoForge);
 		modMain.setCommonEventsForge(commonEventsNeoForge);
 	}
 
@@ -45,6 +44,7 @@ public class LoadCommonNeoForge<L extends LoadCommon> {
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
 				() -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY,
 						(remoteVersion, isFromServer) -> isFromServer));
+		NeoForge.EVENT_BUS.register(modMain.getCommonEvents());
 	}
 
 }

@@ -36,8 +36,8 @@ public class LoadClientNeoForge extends LoadCommonNeoForge<LoadClient> {
 	public void loadClient(final FMLClientSetupEvent event) {
 		loader.loadClient();
 		ClientEventsNeoForge clientEventsNeoForge = ClientEventsNeoForge.Builder.begin().setClientData(modMain.getClientDataInternal()).build();
-		NeoForge.EVENT_BUS.register(clientEventsNeoForge);
 		modMain.setClientEventsNeoForge(clientEventsNeoForge);
+		NeoForge.EVENT_BUS.register(clientEventsNeoForge);
 	}
 
 	@SubscribeEvent
