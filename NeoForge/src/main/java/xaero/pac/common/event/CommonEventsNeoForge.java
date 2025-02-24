@@ -18,15 +18,15 @@
 
 package xaero.pac.common.event;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.entity.XpOrbTargetingEvent;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.*;
@@ -57,7 +57,7 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCore;
-import xaero.pac.common.server.data.ServerDataReloadListenerForge;
+import xaero.pac.common.server.data.ServerDataReloadListenerNeoForge;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.permission.impl.NeoForgePermissionsSystem;
 
@@ -293,8 +293,9 @@ public class CommonEventsNeoForge extends CommonEvents {
 	}
 
 	@SubscribeEvent
-	public void onAddReloadListenerEvent(AddReloadListenerEvent event){
-		event.addListener(new ServerDataReloadListenerForge());
+	public void onAddReloadListenerEvent(AddServerReloadListenersEvent event){
+		event.addListener(ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "main"),
+				new ServerDataReloadListenerNeoForge());
 	}
 
 	@SubscribeEvent

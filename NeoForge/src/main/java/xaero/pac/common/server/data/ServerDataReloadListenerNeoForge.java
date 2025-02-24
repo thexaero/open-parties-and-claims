@@ -20,6 +20,6 @@ package xaero.pac.common.server.data;
 
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
-public class ServerDataReloadListenerForge extends ServerDataReloadListener implements ResourceManagerReloadListener {
+public class ServerDataReloadListenerNeoForge extends ServerDataReloadListener implements ResourceManagerReloadListener {
 
 }
