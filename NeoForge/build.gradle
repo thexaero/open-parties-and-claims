@@ -1,6 +1,6 @@
 plugins {
     id 'idea'
-    id 'net.neoforged.gradle.userdev' version '7.0.142'
+    id 'net.neoforged.gradle.userdev' version '7.0.181'
 }
 
 base {
@@ -19,11 +19,11 @@ runs {
     }
     client {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--username=Dev'
+        argument '--username=Dev'
     }
     server {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
+        argument '--nogui'
     }
 
     gameTestServer {
@@ -31,7 +31,7 @@ runs {
     }
 
     data {
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
