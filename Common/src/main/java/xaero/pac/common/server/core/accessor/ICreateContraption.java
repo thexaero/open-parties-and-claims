@@ -19,11 +19,16 @@
 package xaero.pac.common.server.core.accessor;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
+
+import java.util.Map;
 
 public interface ICreateContraption {
 
 	BlockPos getXaero_OPAC_anchor();
 	BlockPos getXaero_OPAC_placementPos();
 	void setXaero_OPAC_placementPos(BlockPos pos);
+
+	Map<BlockPos, StructureBlockInfo> getBlocks();
 
 }
