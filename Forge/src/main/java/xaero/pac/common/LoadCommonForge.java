@@ -36,7 +36,6 @@ public class LoadCommonForge<L extends LoadCommon> {
 		this.modMain = modMain;
 		this.loader = loader;
 		CommonEventsForge commonEventsForge = new CommonEventsForge(modMain);
-		MinecraftForge.EVENT_BUS.register(commonEventsForge);
 		modMain.setCommonEventsForge(commonEventsForge);
 	}
 
@@ -47,6 +46,7 @@ public class LoadCommonForge<L extends LoadCommon> {
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
 				() -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY,
 						(remoteVersion, isFromServer) -> isFromServer));
+		MinecraftForge.EVENT_BUS.register(modMain.getCommonEvents());
 	}
 
 }

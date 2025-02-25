@@ -227,6 +227,12 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		super.reset();
 		adminMode = false;
 		serverMode = false;
+		loadingClaimCount = 0;
+		loadingForceloadCount = 0;
+		claimLimit = 0;
+		forceloadLimit = 0;
+		maxClaimDistance = 0;
+		alwaysUseLoadingValues = false;
 	}
 
 	@Override
