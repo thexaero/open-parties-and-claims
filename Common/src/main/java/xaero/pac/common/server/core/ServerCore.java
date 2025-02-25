@@ -33,7 +33,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -352,7 +351,7 @@ public class ServerCore {
 		if(!(entity instanceof ICreateContraptionEntity))
 			return true;
 		Block controlsBlock = serverData.getServer().registryAccess()
-				.registryOrThrow(Registry.BLOCK_REGISTRY)
+				.registryOrThrow(Registries.BLOCK)
 				.getOrThrow(CreateContraptionHelper.CONTRAPTION_CONTROLS_BLOCK);
 		boolean shouldProtect = serverData.getChunkProtection().onBlockInteraction(
 				serverData, controlsBlock.defaultBlockState(), player, InteractionHand.MAIN_HAND, null,
