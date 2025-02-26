@@ -127,6 +127,24 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 	}
 
 	@Override
+	public void updateClaimLimitsSyncOnTick(ServerPlayerData playerData, ServerPlayer player){
+		long currentTime = System.currentTimeMillis();
+		if(currentTime - playerData.getLastClaimLimitsCheckTime() < 1000)
+			return;
+		playerData.setLastClaimLimitsCheckTime(currentTime);
+		int currentBaseClaimLimit = claimsManager.getPlayerBaseClaimLimit(player);
+		int currentBaseForceloadLimit = claimsManager.getPlayerBaseForceloadLimit(player);
+		if(!playerData.checkBaseClaimLimitsSync(currentBaseClaimLimit, currentBaseForceloadLimit))
+			return;
+		if(playerData.haveCheckedBaseForceloadLimitOnce()) {
+			syncClaimLimits(serverData.getPlayerConfigs().getLoadedConfig(player.getUUID()), player);
+			serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), false);
+		}
+		playerData.setCheckedBaseForceloadLimitOnce();
+		playerData.setLastClaimLimitsSyncValues(currentBaseClaimLimit, currentBaseForceloadLimit);
+	}
+
+	@Override
 	public void syncCurrentSubClaim(IPlayerConfig config, ServerPlayer player) {
 		int currentSubConfigIndex = config.getUsedSubConfig().getSubIndex();
 		int currentServerSubConfigIndex = config.getUsedServerSubConfig().getSubIndex();
