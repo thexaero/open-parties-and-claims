@@ -353,8 +353,8 @@ public class ServerCore {
 		if(!(entity instanceof ICreateContraptionEntity))
 			return true;
 		Block controlsBlock = serverData.getServer().registryAccess()
-				.registryOrThrow(Registries.BLOCK)
-				.getOrThrow(CreateContraptionHelper.CONTRAPTION_CONTROLS_BLOCK);
+				.lookupOrThrow(Registries.BLOCK)
+				.getValueOrThrow(CreateContraptionHelper.CONTRAPTION_CONTROLS_BLOCK);
 		boolean shouldProtect = serverData.getChunkProtection().onBlockInteraction(
 				serverData, controlsBlock.defaultBlockState(), player, InteractionHand.MAIN_HAND, null,
 				player.serverLevel(), entity.blockPosition(), Direction.UP, false, true
