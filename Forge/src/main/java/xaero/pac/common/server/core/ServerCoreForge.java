@@ -45,8 +45,12 @@ public class ServerCoreForge {
 		return ServerCore.isCreateTileEntityPacketAllowed(pos, player);
 	}
 
-	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, CustomPayloadEvent.Context ctx){
-		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, ctx.getSender());
+	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, BlockPos localPos, CustomPayloadEvent.Context ctx){
+		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, localPos, ctx.getSender());
+	}
+
+	public static boolean isCreateContraptionControlsPacketAllowed(int contraptionId, CustomPayloadEvent.Context ctx){
+		return ServerCore.isCreateContraptionControlsPacketAllowed(contraptionId, ctx.getSender());
 	}
 
 	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, CustomPayloadEvent.Context ctx){

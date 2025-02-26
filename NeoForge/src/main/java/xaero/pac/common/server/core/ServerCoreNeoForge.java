@@ -49,10 +49,12 @@ public class ServerCoreNeoForge {
 		return ServerCore.isCreateTileEntityPacketAllowed(pos, player);
 	}
 
-	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, PlayPayloadContext ctx){
-		if(ctx.player().isEmpty())
-			return true;
-		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, (ServerPlayer) ctx.player().get());
+	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, BlockPos localPos, PlayPayloadContext ctx){
+		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, localPos, (ServerPlayer) ctx.player().get());
+	}
+
+	public static boolean isCreateContraptionControlsPacketAllowed(int contraptionId, PlayPayloadContext ctx){
+		return ServerCore.isCreateContraptionControlsPacketAllowed(contraptionId, (ServerPlayer) ctx.player().get());
 	}
 
 	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, PlayPayloadContext ctx){

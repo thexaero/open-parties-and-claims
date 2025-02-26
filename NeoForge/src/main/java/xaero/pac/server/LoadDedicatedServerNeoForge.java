@@ -31,13 +31,13 @@ public class LoadDedicatedServerNeoForge extends LoadCommonNeoForge<LoadDedicate
 
 	public LoadDedicatedServerNeoForge(OpenPartiesAndClaimsNeoForge modMain) {
 		super(modMain, new LoadDedicatedServer(modMain));
-		DedicatedServerEventsNeoForge events = new DedicatedServerEventsNeoForge();
-		//NeoForge.EVENT_BUS.register(events);
 	}
 
 	@SubscribeEvent
 	public void loadServer(final FMLDedicatedServerSetupEvent event) {
 		loader.loadServer();
+		DedicatedServerEventsNeoForge events = new DedicatedServerEventsNeoForge();
+		//NeoForge.EVENT_BUS.register(events);
 	}
 
 	@SubscribeEvent

@@ -56,16 +56,7 @@ public class PlayerTickHandler {
 		if(ServerConfig.CONFIG.claimsEnabled.get()) {
 			claimWelcomer.onPlayerTick(mainCap, player, serverData);
 			IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
-			int currentBaseClaimLimit = claimsManager.getPlayerBaseClaimLimit(player);
-			int currentBaseForceloadLimit = claimsManager.getPlayerBaseForceloadLimit(player);
-			if(mainCap.checkBaseClaimLimitsSync(currentBaseClaimLimit, currentBaseForceloadLimit)) {
-				if(mainCap.haveCheckedBaseForceloadLimitOnce()) {
-					claimsManager.getClaimsManagerSynchronizer().syncClaimLimits(serverData.getPlayerConfigs().getLoadedConfig(player.getUUID()), player);
-					serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), false);
-				}
-				mainCap.setCheckedBaseForceloadLimitOnce();
-				mainCap.setLastClaimLimitsSync(currentBaseClaimLimit, currentBaseForceloadLimit);
-			}
+			claimsManager.getClaimsManagerSynchronizer().updateClaimLimitsSyncOnTick(mainCap, player);
 		}
 
 		serverData.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().onPlayerTick(mainCap, player);
