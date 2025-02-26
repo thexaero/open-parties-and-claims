@@ -55,6 +55,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.function.TriFunction;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -1123,10 +1124,19 @@ public class ChunkProtection
 			//not using goodX/Z directly because it's not good enough for some things like the Supplementaries slingshot
 			double fixedX = goodXInt + 0.5;
 			double fixedZ = goodZInt + 0.5;
-			entity.removeVehicle();
-			entity.moveTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players
-			if(entity instanceof ServerPlayer player)
-				player.connection.send(new ClientboundPlayerPositionPacket(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot(), Collections.emptySet(), -1));
+			if(entity instanceof ServerPlayer player) {
+				MinecraftServer server = player.getServer();
+				server.execute(() -> {
+					ServerPlayer upToDatePlayer = server.getPlayerList().getPlayer(player.getUUID());
+					if(upToDatePlayer != player)
+						return;
+					player.stopRiding();
+					player.connection.teleport(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());
+				});
+			} else {
+				entity.stopRiding();
+				entity.moveTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players
+			}
 			ignoreChunkEnter = false;
 		}
 	}

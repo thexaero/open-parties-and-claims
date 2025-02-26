@@ -30,12 +30,12 @@ public class LoadDedicatedServerForge extends LoadCommonForge<LoadDedicatedServe
 
 	public LoadDedicatedServerForge(OpenPartiesAndClaimsForge modMain) {
 		super(modMain, new LoadDedicatedServer(modMain));
-		MinecraftForge.EVENT_BUS.register(new DedicatedServerEventsForge());
 	}
 
 	@SubscribeEvent
 	public void loadServer(final FMLDedicatedServerSetupEvent event) {
 		loader.loadServer();
+		MinecraftForge.EVENT_BUS.register(new DedicatedServerEventsForge());
 	}
 
 }
