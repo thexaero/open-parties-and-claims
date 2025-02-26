@@ -36,13 +36,14 @@ public class LoadCommonNeoForge<L extends LoadCommon> {
 		this.modMain = modMain;
 		this.loader = loader;
 		CommonEventsNeoForge commonEventsNeoForge = new CommonEventsNeoForge(modMain);
-		NeoForge.EVENT_BUS.register(commonEventsNeoForge);
 		modMain.setCommonEventsForge(commonEventsNeoForge);
 	}
 
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		modMain.getForgeConfigHelper().setModContainer(ModList.get().getModContainerById(OpenPartiesAndClaims.MOD_ID).get());
 		loader.loadCommon();
+
+		NeoForge.EVENT_BUS.register(modMain.getCommonEvents());
 	}
 
 	public void onRegisterPayloadHandler(RegisterPayloadHandlersEvent event){
