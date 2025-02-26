@@ -103,6 +103,8 @@ public abstract class ObjectManagerIO
 		String fileName = file.getFileName().toString();
 		if(!fileName.endsWith(this.fileExtension))
 			return null;
+		if(fileName.startsWith("._"))//AppleDouble files
+			return null;
 		I id = getObjectId(fileName.substring(0, fileName.lastIndexOf('.')), file, filePathConfig);
 		try {
 			S serializedData = ioThreadWorker.get(() -> readSerializedData(id, file, serializedDataFileIO, 20));

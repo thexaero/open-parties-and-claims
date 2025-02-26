@@ -58,6 +58,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -68,6 +69,7 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.entity.EntityData;
 import xaero.pac.common.entity.IEntity;
 import xaero.pac.common.entity.IItemEntity;
+import xaero.pac.common.mods.create.CreateContraptionHelper;
 import xaero.pac.common.packet.ClientboundPacDimensionHandshakePacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -83,6 +85,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.core.accessor.ICreateArmInteractionPoint;
 import xaero.pac.common.server.core.accessor.ICreateContraption;
+import xaero.pac.common.server.core.accessor.ICreateContraptionEntity;
 import xaero.pac.common.server.core.accessor.IServerCommonPacketListenerImpl;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.world.ServerLevelHelper;
@@ -314,6 +317,7 @@ public class ServerCore {
 		return !shouldProtect;
 	}
 
+	@Deprecated
 	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, ServerPlayer player){
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(player.getServer());
@@ -321,6 +325,41 @@ public class ServerCore {
 			return true;
 		Entity contraption = player.serverLevel().getEntity(contraptionId);
 		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, null, player, contraption, null, interactionHand, false, true, true);
+		return !shouldProtect;
+	}
+
+	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, BlockPos localPos, ServerPlayer player){
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(player.getServer());
+		if(serverData == null)
+			return true;
+		Entity entity = player.serverLevel().getEntity(contraptionId);
+		if(!(entity instanceof ICreateContraptionEntity contraptionEntity))
+			return true;
+		StructureTemplate.StructureBlockInfo structureBlockInfo =
+				contraptionEntity.getXaero_OPAC_contraption().getBlocks().get(localPos);
+		boolean shouldProtect = serverData.getChunkProtection().onBlockInteraction(
+				serverData, structureBlockInfo.state(), player, interactionHand, null,
+				player.serverLevel(), entity.blockPosition(), Direction.UP, false, true
+		);
+		return !shouldProtect;
+	}
+
+	public static boolean isCreateContraptionControlsPacketAllowed(int contraptionId, ServerPlayer player){
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(player.getServer());
+		if(serverData == null)
+			return true;
+		Entity entity = player.serverLevel().getEntity(contraptionId);
+		if(!(entity instanceof ICreateContraptionEntity))
+			return true;
+		Block controlsBlock = serverData.getServer().registryAccess()
+				.registryOrThrow(Registries.BLOCK)
+				.getOrThrow(CreateContraptionHelper.CONTRAPTION_CONTROLS_BLOCK);
+		boolean shouldProtect = serverData.getChunkProtection().onBlockInteraction(
+				serverData, controlsBlock.defaultBlockState(), player, InteractionHand.MAIN_HAND, null,
+				player.serverLevel(), entity.blockPosition(), Direction.UP, false, true
+		);
 		return !shouldProtect;
 	}
 

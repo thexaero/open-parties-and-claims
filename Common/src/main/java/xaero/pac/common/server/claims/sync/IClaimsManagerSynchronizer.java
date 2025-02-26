@@ -21,10 +21,12 @@ package xaero.pac.common.server.claims.sync;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 
 public interface IClaimsManagerSynchronizer {
 
 	public void syncClaimLimits(IPlayerConfig config, ServerPlayer player);
+	public void updateClaimLimitsSyncOnTick(ServerPlayerData playerData, ServerPlayer player);
 	public void syncCurrentSubClaim(IPlayerConfig config, ServerPlayer player);
 	public void syncToPlayersClaimOwnerPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo);
 	public void syncToPlayersSubClaimPropertiesUpdate(IPlayerConfig subConfig);

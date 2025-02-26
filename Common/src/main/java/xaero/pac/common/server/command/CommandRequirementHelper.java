@@ -28,6 +28,8 @@ public class CommandRequirementHelper {
 		return c -> {
 			if(c.getServer().isSameThread())
 				return requirement.test(c);
+			if(!c.getServer().scheduleExecutables())//for example, after the server is stopped
+				return false;
 			return c.getServer().submit(() -> requirement.test(c)).join();
 		};
 	}
