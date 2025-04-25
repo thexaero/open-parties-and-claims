@@ -56,7 +56,6 @@
         "MixinRemoveBlockGoal",
         "MixinReplaceBlock",
         "MixinReplaceDisk",
-        "MixinServerChunkCache",
         "MixinServerCommonPacketListenerImpl",
         "MixinServerExplosion",
         "MixinServerGamePacketListenerImpl",
