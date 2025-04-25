@@ -1670,22 +1670,22 @@ function initializeCoreMod() {
                 return methodNode
             }
         },
-        'xaero_pac_block_dropresources_old': {//needed for before 47.0.28
+        'xaero_pac_block_dropresources_vanilla': {
             'target' : {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.block.Block',
                 'methodName': 'dropResources',
-                'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;Z)V'
+                'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V'
             },
             'transformer' : function(methodNode){
                 return transformPrePostResourcesDrop(methodNode, 4)
             }
         },
-        'xaero_pac_block_dropresources': {
+        'xaero_pac_block_dropresources_forge': {
             'target' : {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.level.block.Block',
-                'methodName': 'dropResources',//not obfuscated
+                'methodName': 'dropResources',
                 'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;Z)V'
             },
             'transformer' : function(methodNode){
