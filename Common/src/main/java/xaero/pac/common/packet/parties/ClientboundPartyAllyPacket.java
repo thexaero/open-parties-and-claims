@@ -25,6 +25,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.parties.party.ClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -51,7 +52,7 @@ public class ClientboundPartyAllyPacket extends LazyPacket<ClientboundPartyAllyP
 	@Override
 	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
-		tag.putUUID("i", allyInfo.getAllyId());
+		XaeroNbtUtil.putUUID(tag, "i", allyInfo.getAllyId());
 		tag.putString("n", allyInfo.getAllyName());
 		tag.putString("dn", allyInfo.getAllyDefaultName());
 		tag.putString("a", action.toString());
@@ -68,15 +69,15 @@ public class ClientboundPartyAllyPacket extends LazyPacket<ClientboundPartyAllyP
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				UUID allyId = tag.getUUID("i");
-				String allyName = tag.getString("n");
+				UUID allyId = XaeroNbtUtil.getUUID(tag, "i").orElse(null);
+				String allyName = tag.getStringOr("n", null);
 				if(allyName.length() > 512)
 					return null;
-				String allyDefaultName = tag.getString("dn");
+				String allyDefaultName = tag.getStringOr("dn", null);
 				if(allyDefaultName.length() > 512)
 					return null;
-				String actionString = tag.getString("a");
-				if(actionString.isEmpty() || actionString.length() > 128)
+				String actionString = tag.getStringOr("a", null);
+				if(actionString == null || actionString.length() > 128)
 					return null;
 				Action action = Action.valueOf(actionString);
 				return new ClientboundPartyAllyPacket(action, new ClientPartyAllyInfo(allyId, allyName, allyDefaultName));

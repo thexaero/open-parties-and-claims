@@ -54,7 +54,7 @@ public class PartyOnCommandUpdater {
 		String partyCustomName = configs.getLoadedConfig(party.getOwner().getUUID()).getEffective(PlayerConfigOptions.PARTY_NAME);
 		if(!partyCustomName.isEmpty())
 			partyName = partyCustomName;
-		Component partyNameComponent = Component.literal("[" + partyName + "] ").withStyle(s -> s.withColor(ChatFormatting.GOLD).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(party.getDefaultName()))));
+		Component partyNameComponent = Component.literal("[" + partyName + "] ").withStyle(s -> s.withColor(ChatFormatting.GOLD).withHoverEvent(new HoverEvent.ShowText(Component.literal(party.getDefaultName()))));
 		Component massMessage = Component.literal("");
 		massMessage.getSiblings().add(partyNameComponent);
 

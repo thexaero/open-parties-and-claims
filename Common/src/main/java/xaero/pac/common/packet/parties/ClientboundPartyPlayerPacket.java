@@ -79,15 +79,15 @@ public class ClientboundPartyPlayerPacket extends LazyPacket<ClientboundPartyPla
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				String typeString = tag.getString("t");
-				if(typeString.isEmpty() || typeString.length() > 128)
+				String typeString = tag.getStringOr("t", null);
+				if(typeString == null || typeString.length() > 128)
 					return null;
 				Type type = Type.valueOf(typeString);
-				String actionString = tag.getString("a");
-				if(actionString.isEmpty() || actionString.length() > 128)
+				String actionString = tag.getStringOr("a", null);
+				if(actionString == null || actionString.length() > 128)
 					return null;
 				Action action = Action.valueOf(actionString);
-				CompoundTag playerTag = tag.getCompound("pi");
+				CompoundTag playerTag = tag.getCompoundOrEmpty("pi");
 				PartyPlayerInfo<?> playerInfo = type == Type.INVITE ? playerInfoCodec.fromPartyInviteTag(playerTag) : playerInfoCodec.fromMemberTag(playerTag, type == Type.OWNER);
 				if(playerInfo == null) {
 					OpenPartiesAndClaims.LOGGER.info("Received party player packet with invalid data.");

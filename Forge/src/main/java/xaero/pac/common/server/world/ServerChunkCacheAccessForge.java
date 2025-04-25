@@ -25,13 +25,13 @@ import net.minecraft.world.level.ChunkPos;
 public class ServerChunkCacheAccessForge implements IServerChunkCacheAccess {
 
 	@Override
-	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		serverChunkCache.addRegionTicket(type, pos, distance, value, forceTicks);
+	public void addRegionTicket(ServerChunkCache serverChunkCache, TicketType type, ChunkPos pos, int distance) {
+		serverChunkCache.addTicketWithRadius(type, pos, distance);
 	}
 
 	@Override
-	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		serverChunkCache.removeRegionTicket(type, pos, distance, value, forceTicks);
+	public void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType type, ChunkPos pos, int distance) {
+		serverChunkCache.removeTicketWithRadius(type, pos, distance);
 	}
 
 }

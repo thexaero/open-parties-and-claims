@@ -52,12 +52,12 @@ public final class PlayerClaimInfoNbtSerializer implements SimpleSerializer<Comp
 
 	@Override
 	public ServerPlayerClaimInfo deserialize(UUID id, ServerPlayerClaimInfoManager manager, CompoundTag nbt) {
-		CompoundTag dimensionsTag = nbt.getCompound("dimensions");
-		String username = nbt.getString("username");
+		CompoundTag dimensionsTag = nbt.getCompoundOrEmpty("dimensions");
+		String username = nbt.getStringOr("username", "");
 		Map<ResourceLocation, PlayerDimensionClaims> claims = new HashMap<>();
-		dimensionsTag.getAllKeys().forEach(key -> claims.put(ResourceLocation.parse(key), playerDimensionClaimsNbtSerializer.deserialize(id, key, dimensionsTag.getCompound(key))));
+		dimensionsTag.keySet().forEach(key -> claims.put(ResourceLocation.parse(key), playerDimensionClaimsNbtSerializer.deserialize(id, key, dimensionsTag.getCompoundOrEmpty(key))));
 		ServerPlayerClaimInfo result = new ServerPlayerClaimInfo(manager.getConfig(id), username, id, claims, manager, new ArrayDeque<>());
-		result.setRegisteredActivity(nbt.getLong("confirmedActivity"));
+		result.setRegisteredActivity(nbt.getLongOr("confirmedActivity", 0));
 		return result;
 	}
 	

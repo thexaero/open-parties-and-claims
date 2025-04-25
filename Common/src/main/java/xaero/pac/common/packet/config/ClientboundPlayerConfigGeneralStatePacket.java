@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.config;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
@@ -41,12 +40,12 @@ public class ClientboundPlayerConfigGeneralStatePacket extends ClientboundPlayer
 
 		@Override
 		protected ClientboundPlayerConfigGeneralStatePacket decode(CompoundTag nbt, PlayerConfigType type, boolean otherPlayer, String subId) {
-			if(!nbt.contains("d", Tag.TAG_BYTE)) {
+			if(!nbt.contains("d")) {
 				OpenPartiesAndClaims.LOGGER.info("Unknown player config being deleted state!");
 				return null;
 			}
-			boolean beingDeleted = nbt.getBoolean("d");
-			int subConfigLimit = nbt.getInt("sl");
+			boolean beingDeleted = nbt.getBooleanOr("d", false);
+			int subConfigLimit = nbt.getIntOr("sl", 0);
 			return new ClientboundPlayerConfigGeneralStatePacket(type, otherPlayer, subId, beingDeleted, subConfigLimit);
 		}
 

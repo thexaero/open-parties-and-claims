@@ -44,6 +44,7 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfigDeletionStarter;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -74,11 +75,11 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				String subId = nbt.getString("subId");
-				if(subId.isEmpty() || subId.length() > 100)
+				String subId = nbt.getStringOr("subId", null);
+				if(subId == null || subId.length() > 100)
 					return null;
-				String typeString = nbt.getString("type");
-				if(typeString.isEmpty() || typeString.length() > 100)
+				String typeString = nbt.getStringOr("type", null);
+				if(typeString == null || typeString.length() > 100)
 					return null;
 				PlayerConfigType type = null;
 				try {
@@ -89,8 +90,8 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 					OpenPartiesAndClaims.LOGGER.info("Received unknown player config type!");
 					return null;
 				}
-				UUID owner = nbt.contains("owner") ? nbt.getUUID("owner") : null;
-				boolean create = nbt.getBoolean("create");
+				UUID owner = XaeroNbtUtil.getUUID(nbt, "owner").orElse(null);
+				boolean create = nbt.getBooleanOr("create", false);
 				return new ServerboundSubConfigExistencePacket(subId, owner, type, create);
 			} catch(Throwable t) {
 				return null;
@@ -102,7 +103,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 			CompoundTag nbt = new CompoundTag();
 			nbt.putString("subId", t.subId);
 			if(t.owner != null)
-				nbt.putUUID("owner", t.owner);
+				XaeroNbtUtil.putUUID(nbt, "owner", t.owner);
 			nbt.putString("type", t.type.name());
 			nbt.putBoolean("create", t.create);
 			u.writeNbt(nbt);

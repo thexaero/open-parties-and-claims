@@ -69,25 +69,25 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 				CompoundTag tag = (CompoundTag) friendlyByteBuf.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				ListTag entryListTag = tag.getList("l", Tag.TAG_COMPOUND);
+				ListTag entryListTag = tag.getListOrEmpty("l");
 				List<PlayerConfigOptionSpec<?>> entries = new ArrayList<>(entryListTag.size());
 				entryListTag.forEach(t -> {
 					CompoundTag entryTag = (CompoundTag) t;
-					int optionTypeIndex = entryTag.getInt("ot");
+					int optionTypeIndex = entryTag.getIntOr("ot", 0);
 					OptionType optionType = OptionType.ALL.get(optionTypeIndex);
-					String id = entryTag.getString("i");
-					String translation = entryTag.getString("t");
-					String commentTranslation = entryTag.getString("ct");
-					String comment = entryTag.getString("c");
-					ListTag translationArgsTag = entryTag.getList("ta", Tag.TAG_STRING);
+					String id = entryTag.getStringOr("i", null);
+					String translation = entryTag.getStringOr("t", null);
+					String commentTranslation = entryTag.getStringOr("ct", null);
+					String comment = entryTag.getStringOr("c", null);
+					ListTag translationArgsTag = entryTag.getListOrEmpty("ta");
 					String[] translationArgs = new String[translationArgsTag.size()];
 					for(int i = 0; i < translationArgs.length; i++)
-						translationArgs[i] = translationArgsTag.getString(i);
-					ListTag commentTranslationArgsTag = entryTag.getList("cta", Tag.TAG_STRING);
+						translationArgs[i] = translationArgsTag.getStringOr(i, null);
+					ListTag commentTranslationArgsTag = entryTag.getListOrEmpty("cta");
 					String[] commentTranslationArgs = new String[commentTranslationArgsTag.size()];
 					for(int i = 0; i < commentTranslationArgs.length; i++)
-						commentTranslationArgs[i] = commentTranslationArgsTag.getString(i);
-					PlayerConfigOptionCategory category = PlayerConfigOptionCategory.values()[entryTag.getInt("cat")];
+						commentTranslationArgs[i] = commentTranslationArgsTag.getStringOr(i, null);
+					PlayerConfigOptionCategory category = PlayerConfigOptionCategory.values()[entryTag.getIntOr("cat", 0)];
 					Tag defaultValueTag = entryTag.get(DEFAULT_VALUE_KEY);
 					PlayerConfigOptionSpec<?> entry = null;
 					for(ValueType<?> valueType : ValueType.ALL.values()){
@@ -163,11 +163,11 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 
 		private static final Map<Class<?>, ValueType<?>> ALL = new HashMap<>();
 
-		private static final ValueType<Boolean> BOOLEAN = new ValueType<>(Boolean.class, t -> t instanceof ByteTag, t -> ((ByteTag)t).getAsByte() != 0, ByteTag::valueOf);
-		private static final ValueType<Integer> INT = new ValueType<>(Integer.class, t -> t instanceof IntTag, t -> ((IntTag)t).getAsInt(), IntTag::valueOf);
-		private static final ValueType<Double> DOUBLE = new ValueType<>(Double.class, t -> t instanceof DoubleTag, t -> ((DoubleTag)t).getAsDouble(), DoubleTag::valueOf);
-		private static final ValueType<Float> FLOAT = new ValueType<>(Float.class, t -> t instanceof FloatTag, t -> ((FloatTag)t).getAsFloat(), FloatTag::valueOf);
-		private static final ValueType<String> STRING = new ValueType<>(String.class, t -> t instanceof StringTag, Tag::getAsString, StringTag::valueOf);
+		private static final ValueType<Boolean> BOOLEAN = new ValueType<>(Boolean.class, t -> t instanceof ByteTag, t -> ((ByteTag)t).byteValue() != 0, ByteTag::valueOf);
+		private static final ValueType<Integer> INT = new ValueType<>(Integer.class, t -> t instanceof IntTag, t -> ((IntTag)t).intValue(), IntTag::valueOf);
+		private static final ValueType<Double> DOUBLE = new ValueType<>(Double.class, t -> t instanceof DoubleTag, t -> ((DoubleTag)t).doubleValue(), DoubleTag::valueOf);
+		private static final ValueType<Float> FLOAT = new ValueType<>(Float.class, t -> t instanceof FloatTag, t -> ((FloatTag)t).floatValue(), FloatTag::valueOf);
+		private static final ValueType<String> STRING = new ValueType<>(String.class, t -> t instanceof StringTag, t -> t.asString().orElse(null), StringTag::valueOf);
 		private final Class<T> jType;
 		private final Predicate<Tag> typeCheck;
 		private final Function<Tag, T> valueUntagger;
@@ -236,7 +236,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 			@Override
 			public <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
 				PlayerConfigStringOptionSpec.Builder builder = PlayerConfigStringOptionSpec.Builder.begin();
-				builder.setMaxLength(entryTag.getInt("ml"));
+				builder.setMaxLength(entryTag.getIntOr("ml", 0));
 				@SuppressWarnings("unchecked")
 				PlayerConfigOptionSpec.Builder<T, ?> result = (PlayerConfigOptionSpec.Builder<T, ?>) builder;
 				return result;

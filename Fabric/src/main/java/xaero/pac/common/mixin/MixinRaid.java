@@ -19,6 +19,7 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.raid.Raid;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,8 +31,8 @@ import xaero.pac.common.server.core.ServerCore;
 public class MixinRaid {
 
 	@Inject(method = "findRandomSpawnPos", at = @At("HEAD"))
-	public void onFindRandomSpawnPosPre(CallbackInfoReturnable<BlockPos> cir){
-		ServerCore.onFindRandomSpawnPosPre((Raid)(Object)this);
+	public void onFindRandomSpawnPosPre(ServerLevel level, int attempts, CallbackInfoReturnable<BlockPos> cir){
+		ServerCore.onFindRandomSpawnPosPre((Raid)(Object)this, level);
 	}
 
 	@Inject(method = "findRandomSpawnPos", at = @At("RETURN"))

@@ -60,7 +60,7 @@ public class ClientboundPartyNamePacket extends LazyPacket<ClientboundPartyNameP
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				String name = tag.getString("n");
+				String name = tag.getStringOr("n", "");
 				if(name.length() > 512)
 					return null;
 				return new ClientboundPartyNamePacket(name);

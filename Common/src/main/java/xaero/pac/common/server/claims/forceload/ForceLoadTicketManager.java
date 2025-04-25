@@ -36,11 +36,14 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public final class ForceLoadTicketManager {
 	
-	public static final TicketType<ChunkPos> OPAC_TICKET = TicketType.create(OpenPartiesAndClaims.MOD_ID + ":forced", Comparator.comparingLong(ChunkPos::toLong));
+	public static final TicketType OPAC_TICKET = new TicketType(0L, false, TicketType.TicketUse.LOADING_AND_SIMULATION);
 	
 	private IServerClaimsManager<?, ?, ?> claimsManager;
 	private final MinecraftServer server;
@@ -82,7 +85,7 @@ public final class ForceLoadTicketManager {
 		ServerLevel world = server.getLevel(levelKey);
 		if(world == null)//can happen when a dimension is removed from a server
 			return false;
-		Services.PLATFORM.getServerChunkCacheAccess().addRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
+		Services.PLATFORM.getServerChunkCacheAccess().addRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2);
 		ticket.setEnabled(true);
 		countEnabled(ticket.getDimension(), 1);
 //		OpenPartiesAndClaims.LOGGER.info("Enabled force load ticket at " + pos);
@@ -94,7 +97,7 @@ public final class ForceLoadTicketManager {
 		ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, ticket.getDimension());
 		ServerLevel world = server.getLevel(levelKey);
 		if(world != null)//null can happen when a dimension is removed from a server
-			Services.PLATFORM.getServerChunkCacheAccess().removeRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2, pos, true);
+			Services.PLATFORM.getServerChunkCacheAccess().removeRegionTicket(world.getChunkSource(), OPAC_TICKET, pos, 2);
 		ticket.setEnabled(false);
 		countEnabled(ticket.getDimension(), -1);
 //		OpenPartiesAndClaims.LOGGER.info("Disabled force load ticket at " + pos);

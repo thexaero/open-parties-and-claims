@@ -22,10 +22,10 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Fox;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Vex;
@@ -101,12 +101,11 @@ public class ChunkProtectionEntityHelper {
 			UUID ownerId = ServerCore.getItemEntityOwner((ItemEntity) e);
 			return ownerId == null ? ServerCore.getItemEntityThrower((ItemEntity) e) : ownerId;
 		}
-		if(e instanceof TamableAnimal tameable)
-			return tameable.isTame() ? tameable.getOwnerUUID() : null;
-		if(e instanceof OwnableEntity ownable)
-			return ownable.getOwnerUUID();
-		if(e instanceof AbstractHorse horse)
-			return horse.isTamed() ? horse.getOwnerUUID() : null;
+		if(e instanceof OwnableEntity ownable) {
+			EntityReference<LivingEntity> ownerReference = ownable.getOwnerReference();
+			if(ownerReference != null)
+				return ownerReference.getUUID();
+		}
 		if(e instanceof Fox fox)
 			return FOX_TRUSTED_UUID_SECONDARY != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null) : null;
 		Entity ownerEntity = null;

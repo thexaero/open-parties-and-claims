@@ -20,19 +20,20 @@ package xaero.pac.common.server.parties.party.io.serialization.nbt.member;
 
 import net.minecraft.nbt.CompoundTag;
 import xaero.pac.common.parties.party.member.PartyInvite;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 public class PartyInviteNbtSerializer {
 	
 	public CompoundTag serialize(PartyInvite info) {
 		CompoundTag nbt = new CompoundTag();
-		nbt.putUUID("uuid", info.getUUID());
+		XaeroNbtUtil.putUUID(nbt, "uuid", info.getUUID());
 		nbt.putString("username", info.getUsername());
 		return nbt;
 	}
 	
 	public PartyInvite deserialize(CompoundTag nbt) {
-		PartyInvite result = new PartyInvite(nbt.getUUID("uuid"));
-		result.setUsername(nbt.getString("username"));
+		PartyInvite result = new PartyInvite(XaeroNbtUtil.getUUID(nbt, "uuid").orElse(null));
+		result.setUsername(nbt.getStringOr("username", ""));
 		return result;
 	}
 

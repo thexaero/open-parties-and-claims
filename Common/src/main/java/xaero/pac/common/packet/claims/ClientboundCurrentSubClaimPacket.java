@@ -69,10 +69,10 @@ public class ClientboundCurrentSubClaimPacket extends LazyPacket<ClientboundCurr
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				int currentSubConfigIndex = tag.getInt("i");
-				int currentServerSubConfigIndex = tag.getInt("si");
-				String currentSubConfigId = tag.getString("s");
-				String currentServerSubConfigId = tag.getString("ss");
+				int currentSubConfigIndex = tag.getIntOr("i", 0);
+				int currentServerSubConfigIndex = tag.getIntOr("si", 0);
+				String currentSubConfigId = tag.getStringOr("s", "");
+				String currentServerSubConfigId = tag.getStringOr("ss", "");
 				if(currentSubConfigId.length() > 100 || currentServerSubConfigId.length() > 100){
 					OpenPartiesAndClaims.LOGGER.info("Player config sub ID string is too long!");
 					return null;

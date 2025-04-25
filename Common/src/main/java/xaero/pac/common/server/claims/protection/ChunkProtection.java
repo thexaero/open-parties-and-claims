@@ -27,7 +27,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -849,19 +848,19 @@ public class ChunkProtection
 		Item item = itemStack.getItem();
 		if(itemUseProtectionExceptions.contains(item))
 			return false;
-		return !itemStack.has(DataComponents.FOOD) &&
+		return item instanceof BlockItem ||//some items with "EQUIPPABLE" data component are blocks
+				!itemStack.has(DataComponents.FOOD) &&
 				!(item instanceof PotionItem) &&
 				!(item instanceof ProjectileWeaponItem) &&
 				!(item instanceof TridentItem) &&
 				!(item instanceof ShieldItem) &&
-				!(item instanceof SwordItem) &&
+				!itemStack.has(DataComponents.WEAPON) &&
 				!(item instanceof AxeItem) &&
 				!(item instanceof HoeItem) &&
-				!(item instanceof PickaxeItem) &&
 				!(item instanceof BoatItem) &&
 				!itemStack.is(ItemTags.BOATS) &&
 				!(itemStack.has(DataComponents.CONSUMABLE)) &&
-				!(item instanceof ArmorItem)
+				!itemStack.has(DataComponents.EQUIPPABLE)
 				||
 				additionalBannedItems.contains(item);
 	}
@@ -1155,7 +1154,7 @@ public class ChunkProtection
 				});
 			} else {
 				entity.stopRiding();
-				entity.moveTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players
+				entity.snapTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players
 			}
 			ignoreChunkEnter = false;
 		}

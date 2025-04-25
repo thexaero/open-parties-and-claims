@@ -39,8 +39,8 @@ public class ClientboundPlayerConfigRemoveSubPacket extends ClientboundPlayerCon
 
 		@Override
 		protected ClientboundPlayerConfigRemoveSubPacket decode(CompoundTag nbt, PlayerConfigType type, boolean otherPlayer, String subId) {
-			String subIdToRemove = nbt.getString("i");
-			if(subIdToRemove.isEmpty() || subIdToRemove.length() > 100) {
+			String subIdToRemove = nbt.getStringOr("i", null);
+			if(subIdToRemove == null || subIdToRemove.length() > 100) {
 				OpenPartiesAndClaims.LOGGER.info("Bad sub id!");
 				return null;
 			}

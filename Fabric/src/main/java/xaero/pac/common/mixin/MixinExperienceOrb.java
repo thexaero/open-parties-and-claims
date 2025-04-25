@@ -21,17 +21,14 @@ package xaero.pac.common.mixin;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.common.server.core.ServerCore;
 
 @Mixin(ExperienceOrb.class)
 public class MixinExperienceOrb {
-
-	@Shadow
-	private Player followingPlayer;
 
 	@Inject(method = "playerTouch", at = @At("HEAD"), cancellable = true)
 	public void onPlayerTouch(Player player, CallbackInfo ci){
@@ -39,9 +36,9 @@ public class MixinExperienceOrb {
 			ci.cancel();
 	}
 
-	@Inject(method = "scanForEntities", at = @At(value = "INVOKE_ASSIGN", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/Level;getNearestPlayer(Lnet/minecraft/world/entity/Entity;D)Lnet/minecraft/world/entity/player/Player;"), cancellable = true)
-	public void onScanForEntities(CallbackInfo ci){
-		followingPlayer = ServerCore.onExperiencePickup(followingPlayer, (ExperienceOrb)(Object)this);
+	@ModifyVariable(method = "followNearbyPlayer", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getNearestPlayer(Lnet/minecraft/world/entity/Entity;D)Lnet/minecraft/world/entity/player/Player;"))
+	public Player onScanForEntities(Player player){
+		return ServerCore.onExperiencePickup(player, (ExperienceOrb)(Object)this);
 	}
 
 	@Inject(method = "merge(Lnet/minecraft/world/entity/ExperienceOrb;)V", at = @At("HEAD"), cancellable = true)

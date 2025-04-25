@@ -20,7 +20,6 @@ package xaero.pac.common.packet.config;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
@@ -71,7 +70,7 @@ public abstract class ClientboundPlayerConfigAbstractStatePacket extends PlayerC
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				String typeString = nbt.getString("t");
+				String typeString = nbt.getStringOr("t", "");
 				if(typeString.length() > 100) {
 					OpenPartiesAndClaims.LOGGER.info("Player config type string is too long!");
 					return null;
@@ -87,13 +86,13 @@ public abstract class ClientboundPlayerConfigAbstractStatePacket extends PlayerC
 				}
 				boolean otherPlayer = false;
 				if(type == PlayerConfigType.PLAYER){
-					if(!nbt.contains("o", Tag.TAG_BYTE)) {
+					if(!nbt.contains("o")) {
 						OpenPartiesAndClaims.LOGGER.info("Unknown player config owner!");
 						return null;
 					}
-					otherPlayer = nbt.getBoolean("o");
+					otherPlayer = nbt.getBooleanOr("o", false);
 				}
-				String subId = nbt.getString("si");
+				String subId = nbt.getStringOr("si", "");
 				if(subId.length() > 100) {
 					OpenPartiesAndClaims.LOGGER.info("Player config sub ID string is too long!");
 					return null;

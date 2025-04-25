@@ -25,6 +25,7 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -152,16 +153,20 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 				if(input.readableBytes() > 16384)
 					return null;
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
-				UUID playerId = tag.getUUID("i");
-				boolean active = tag.getBoolean("a");
+				UUID playerId = XaeroNbtUtil.getUUID(tag, "i").orElse(null);
+				if(playerId == null)
+					return null;
+				boolean active = tag.getBooleanOr("a", false);
 				if(!active)
 					return new PartyMemberDynamicInfoSyncable(playerId, false);
-				String dimensionSpace = tag.getString("ds");
-				String dimensionPath = tag.getString("dp");
+				String dimensionSpace = tag.getStringOr("ds", null);
+				String dimensionPath = tag.getStringOr("dp", null);
+				if(dimensionSpace == null || dimensionPath == null)
+					return new PartyMemberDynamicInfoSyncable(playerId, false);
 				ResourceLocation dimension = ResourceLocation.fromNamespaceAndPath(dimensionSpace, dimensionPath);
-				double x = tag.getDouble("x");
-				double y = tag.getDouble("y");
-				double z = tag.getDouble("z");
+				double x = tag.getDoubleOr("x", 0);
+				double y = tag.getDoubleOr("y", 0);
+				double z = tag.getDoubleOr("z", 0);
 				PartyMemberDynamicInfoSyncable result = new PartyMemberDynamicInfoSyncable(playerId, true);
 				result.update(dimension, x, y, z);
 				result.dirty = false;
@@ -175,7 +180,7 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 		public void accept(PartyMemberDynamicInfoSyncable t, FriendlyByteBuf u) {
 			t.dirty = false;
 			CompoundTag tag = new CompoundTag();
-			tag.putUUID("i", t.playerId);
+			XaeroNbtUtil.putUUID(tag, "i", t.playerId);
 			tag.putBoolean("a", t.active);
 			if(t.active) {
 				tag.putString("ds", t.dimension.getNamespace());

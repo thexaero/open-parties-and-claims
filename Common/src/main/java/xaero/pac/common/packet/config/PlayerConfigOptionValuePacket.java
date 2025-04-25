@@ -22,6 +22,7 @@ import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				String typeString = nbt.getString("t");
+				String typeString = nbt.getStringOr("t", "");
 				if(typeString.length() > 100) {
 					OpenPartiesAndClaims.LOGGER.info("Player config type string is too long!");
 					return null;
@@ -92,13 +93,13 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 					OpenPartiesAndClaims.LOGGER.info("Received unknown player config type!");
 					return null;
 				}
-				String subID = nbt.contains("si") ? nbt.getString("si") : null;
+				String subID = nbt.getStringOr("si", null);
 				if(subID != null && subID.length() > 100) {
 					OpenPartiesAndClaims.LOGGER.info("Player config sub ID string is too long!");
 					return null;
 				}
-				UUID owner = type != PlayerConfigType.PLAYER || nbt.getBoolean("co") ? null : nbt.getUUID("o");
-				ListTag entryListTag = nbt.getList("e", Tag.TAG_COMPOUND);
+				UUID owner = type != PlayerConfigType.PLAYER || nbt.getBooleanOr("co", false) ? null : XaeroNbtUtil.getUUID(nbt, "o").orElse(null);
+				ListTag entryListTag = nbt.getListOrEmpty("e");
 				if(entryListTag.size() < 0 || entryListTag.size() > 512) {//there are other max size checks when reading the nbt tag, but an extra one here won't hurt
 					OpenPartiesAndClaims.LOGGER.info("Received an illegal player config option entry number: " + entryListTag.size());
 					return null;
@@ -107,7 +108,7 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 				String warningToOutput = null;
 				for(Tag e : entryListTag) {
 					CompoundTag entryTag = (CompoundTag) e;
-					String optionId = entryTag.getString("i");
+					String optionId = entryTag.getStringOr("i", "");
 					if(optionId.length() > 1000) {
 						OpenPartiesAndClaims.LOGGER.info("Received player config option id string is not allowed!");
 						return null;
@@ -120,19 +121,19 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 					} else {
 						Tag valueTag = entryTag.get("v");
 						if(valueTag instanceof ByteTag byteTag) {
-							value = byteTag.getAsByte() != 0;
+							value = byteTag.byteValue() != 0;
 							valueType = Boolean.class;
 						} else if(valueTag instanceof IntTag intTag) {
-							value = intTag.getAsInt();
+							value = intTag.intValue();
 							valueType = Integer.class;
 						} else if(valueTag instanceof DoubleTag doubleTag) {
-							value = doubleTag.getAsDouble();
+							value = doubleTag.doubleValue();
 							valueType = Double.class;
 						} else if(valueTag instanceof FloatTag floatTag) {
-							value = floatTag.getAsFloat();
+							value = floatTag.floatValue();
 							valueType = Float.class;
 						} else if(valueTag instanceof StringTag stringTag) {
-							value = stringTag.getAsString();
+							value = stringTag.value();
 							valueType = String.class;
 							if(((String)value).length() > 1000) {
 								OpenPartiesAndClaims.LOGGER.info("Received a string option value that is too long: " + ((String)value).length());
@@ -144,8 +145,8 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 							continue;
 						}
 					}
-					boolean mutable = entryTag.getBoolean("m");
-					boolean defaulted = entryTag.getBoolean("d");
+					boolean mutable = entryTag.getBooleanOr("m", false);
+					boolean defaulted = entryTag.getBooleanOr("d", false);
 					Entry entry = new Entry(optionId, valueType, value, mutable, defaulted);
 					entries.add(entry);
 					
@@ -167,7 +168,7 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 			if(t.getType() == PlayerConfigType.PLAYER) {
 				nbt.putBoolean("co", t.owner == null);
 				if(t.owner != null)
-					nbt.putUUID("o", t.owner);
+					XaeroNbtUtil.putUUID(nbt, "o", t.owner);
 			}
 			
 			ListTag entryListTag = new ListTag();

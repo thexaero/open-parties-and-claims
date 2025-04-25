@@ -46,6 +46,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -61,7 +62,7 @@ public class InviteAcceptPartyCommand {
 						.suggests((context, builder) -> {
 							ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
 							CompoundTag data = Services.PLATFORM.getEntityAccess().getPersistentData(casterPlayer);
-							Stream<String> lastInviteId = data.hasUUID("xaero_OPAC_LastInviteId") ? Stream.of(data.getUUID("xaero_OPAC_LastInviteId").toString()) : Stream.empty();
+							Stream<String> lastInviteId = data.contains("xaero_OPAC_LastInviteId") ? Stream.of(XaeroNbtUtil.getUUID(data, "xaero_OPAC_LastInviteId").get().toString()) : Stream.empty();
 							return SharedSuggestionProvider.suggest(lastInviteId, builder);
 						})
 						.executes(context -> {

@@ -20,7 +20,6 @@ package xaero.pac.common.packet.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
@@ -42,11 +41,11 @@ public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerCon
 
 		@Override
 		protected ClientboundPlayerConfigSyncStatePacket decode(CompoundTag nbt, PlayerConfigType type, boolean otherPlayer, String subId) {
-			if(!nbt.contains("s", Tag.TAG_BYTE)) {
+			if(!nbt.contains("s")) {
 				OpenPartiesAndClaims.LOGGER.info("Unknown player config sync state!");
 				return null;
 			}
-			boolean state = nbt.getBoolean("s");
+			boolean state = nbt.getBooleanOr("s", false);
 			return new ClientboundPlayerConfigSyncStatePacket(type, otherPlayer, state);
 		}
 

@@ -30,9 +30,10 @@ import java.util.List;
 @Mixin(ServerChunkCache.class)
 public class MixinServerChunkCache {
 
-	@ModifyVariable(method = "collectTickingChunks", at = @At("HEAD"), index = 1)
-	public List<LevelChunk> onCollectTickingChunks(List<LevelChunk> list){
-		return ServerCoreFabric.onCollectTickingChunks((ServerChunkCache)(Object)this, list);
-	}
+	//TODO REMOVE THIS?
+//	@ModifyVariable(method = "collectTickingChunks", at = @At("HEAD"), index = 1)
+//	public List<LevelChunk> onCollectTickingChunks(List<LevelChunk> list){
+//		return ServerCoreFabric.onCollectTickingChunks((ServerChunkCache)(Object)this, list);
+//	}
 
 }

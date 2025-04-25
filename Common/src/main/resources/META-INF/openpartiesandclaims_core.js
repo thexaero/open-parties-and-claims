@@ -1442,7 +1442,8 @@ function initializeCoreMod() {
             'transformer' : function(methodNode){
                 var insnToInsert = new InsnList()
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onFindRandomSpawnPosPre', '(Lnet/minecraft/world/entity/raid/Raid;)V'))
+                insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onFindRandomSpawnPosPre', '(Lnet/minecraft/world/entity/raid/Raid;Lnet/minecraft/server/level/ServerLevel;)V'))
                 methodNode.instructions.insert(methodNode.instructions.get(0), insnToInsert)
 
                 var insnToInsertGetter = function() {

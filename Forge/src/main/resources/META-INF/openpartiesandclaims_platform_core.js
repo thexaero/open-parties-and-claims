@@ -37,11 +37,11 @@ function insertOnInvoke2(methodNode, patchListGetter, before, invokeOwner, invok
 
 function initializeCoreMod() {
 	return {
-		'xaero_pac_experienceorb_scanforentities': {
+		'xaero_pac_experienceorb_follownearbyplayer': {
 			'target' : {
 				'type': 'METHOD',
 				'class': 'net.minecraft.world.entity.ExperienceOrb',
-				'methodName': 'scanForEntities',
+				'methodName': 'followNearbyPlayer',
 				'methodDesc' : '()V'
 			},
 			'transformer' : function(methodNode){

@@ -48,8 +48,8 @@ public class ClientboundModesPacket {
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				boolean adminMode = tag.getBoolean("am");
-				boolean serverMode = tag.getBoolean("sm");
+				boolean adminMode = tag.getBooleanOr("am", false);
+				boolean serverMode = tag.getBooleanOr("sm", false);
 				return new ClientboundModesPacket(adminMode, serverMode);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);

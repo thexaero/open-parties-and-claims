@@ -69,8 +69,8 @@ public class ClientboundLoadingPacket extends LazyPacket<ClientboundLoadingPacke
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				boolean start = tag.getBoolean("s");
-				boolean claims = tag.getBoolean("c");
+				boolean start = tag.getBooleanOr("s", false);
+				boolean claims = tag.getBooleanOr("c", false);
 				return new ClientboundLoadingPacket(start, claims);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);

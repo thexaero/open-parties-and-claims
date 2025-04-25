@@ -116,7 +116,7 @@ public class AboutPartyCommand {
 			casterPlayer.sendSystemMessage(Component.literal(""));
 			casterPlayer.sendSystemMessage(Component.literal("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
 			casterPlayer.sendSystemMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_player").withStyle(s -> s.withColor(ChatFormatting.GOLD)));
-			casterPlayer.sendSystemMessage(Component.literal(profile.getName()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(profile.getId().toString())))));
+			casterPlayer.sendSystemMessage(Component.literal(profile.getName()).withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(profile.getId().toString())))));
 			casterPlayer.sendSystemMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_current_party").withStyle(s -> s.withColor(ChatFormatting.GOLD)));
 			String partyName = playerParty.getDefaultName();
 			IPlayerConfig ownerConfig = serverData.getPlayerConfigs().getLoadedConfig(playerParty.getOwner().getUUID());
@@ -124,7 +124,7 @@ public class AboutPartyCommand {
 			String tooltipPrefix = !partyCustomName.isEmpty() ? partyName + "\n" : "";
 			if(!partyCustomName.isEmpty())
 				partyName = partyCustomName;
-			casterPlayer.sendSystemMessage(Component.literal(partyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(tooltipPrefix + playerParty.getId().toString())))));
+			casterPlayer.sendSystemMessage(Component.literal(partyName).withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(tooltipPrefix + playerParty.getId().toString())))));
 			
 			casterPlayer.sendSystemMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_party_members", playerParty.getMemberCount() + "/" + ServerConfig.CONFIG.maxPartyMembers.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)));
 			Component partyMembersComponent = Component.literal("");
@@ -132,7 +132,7 @@ public class AboutPartyCommand {
 			Consumer<IPartyMember> partyMemberConsumer = mi -> {
 				if(!partyMembersComponent.getSiblings().isEmpty())
 					partyMembersComponent.getSiblings().add(Component.literal(", "));
-				partyMembersComponent.getSiblings().add(Component.literal(mi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(mi.getUUID().toString())))));
+				partyMembersComponent.getSiblings().add(Component.literal(mi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(mi.getUUID().toString())))));
 				if(mi.getRank() != PartyMemberRank.MEMBER) {
 					Component rankComponent = Component.literal(playerParty.getOwner() == mi ? "OWNER" : mi.getRank().toString()).withStyle(s -> s.withColor(mi.getRank().getColor()));
 					partyMembersComponent.getSiblings().add(adaptiveLocalizer.getFor(casterPlayer, "[%s]", rankComponent));
@@ -154,7 +154,7 @@ public class AboutPartyCommand {
 					String configuredAllyName = allyOwnerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 					String allyDefaultName = allyParty.getDefaultName();
 					String allyTooltipPrefix = !configuredAllyName.isEmpty() ? allyDefaultName + "\n" : "";
-					partyAlliesComponent.getSiblings().add(Component.literal(configuredAllyName.isEmpty() ? allyDefaultName : configuredAllyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(allyTooltipPrefix + allyParty.getId().toString())))));
+					partyAlliesComponent.getSiblings().add(Component.literal(configuredAllyName.isEmpty() ? allyDefaultName : configuredAllyName).withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(allyTooltipPrefix + allyParty.getId().toString())))));
 				}
 			});
 			if(partyAlliesComponent.getSiblings().isEmpty())
@@ -168,7 +168,7 @@ public class AboutPartyCommand {
 			createLimitedList(invitedComponent, MAX_INVITES_COUNT, playerParty.getTypedInvitedPlayersStream().iterator(), pi -> {
 				if(!invitedComponent.getSiblings().isEmpty())
 					invitedComponent.getSiblings().add(Component.literal(", "));
-				invitedComponent.getSiblings().add(Component.literal(pi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(pi.getUUID().toString())))));
+				invitedComponent.getSiblings().add(Component.literal(pi.getUsername()).withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(pi.getUUID().toString())))));
 			});
 			if(invitedComponent.getSiblings().isEmpty())
 				casterPlayer.sendSystemMessage(Component.literal("N/A").withStyle(s -> s.withColor(ChatFormatting.GRAY)));

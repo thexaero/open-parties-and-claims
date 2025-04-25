@@ -43,9 +43,9 @@ public class CreateContraptionHelper {
 			placementPosData.putInt("z", entity.blockPosition().getZ());
 			persistentData.put(PLACEMENT_POS_TAG, placementPosData);
 		}
-		if(persistentData.contains(PLACEMENT_POS_TAG, 10)) {
-			CompoundTag placementPosData = persistentData.getCompound(PLACEMENT_POS_TAG);
-			BlockPos persistentPlacementPos = new BlockPos(placementPosData.getInt("x"), placementPosData.getInt("y"), placementPosData.getInt("z"));
+		if(persistentData.contains(PLACEMENT_POS_TAG)) {
+			CompoundTag placementPosData = persistentData.getCompoundOrEmpty(PLACEMENT_POS_TAG);
+			BlockPos persistentPlacementPos = new BlockPos(placementPosData.getIntOr("x", 0), placementPosData.getIntOr("y", 0), placementPosData.getIntOr("z", 0));
 			contraptionEntity.getXaero_OPAC_contraption().setXaero_OPAC_placementPos(persistentPlacementPos);
 		}
 	}

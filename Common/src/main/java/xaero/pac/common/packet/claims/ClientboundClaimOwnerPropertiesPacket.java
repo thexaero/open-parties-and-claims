@@ -24,6 +24,7 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 		for (int i = 0; i < this.properties.size(); i++) {
 			PlayerProperties propertiesEntry = this.properties.get(i);
 			CompoundTag propertiesEntryNbt = new CompoundTag();
-			propertiesEntryNbt.putUUID("p", propertiesEntry.playerId);
+			XaeroNbtUtil.putUUID(propertiesEntryNbt, "p", propertiesEntry.playerId);
 			propertiesEntryNbt.putString("u", propertiesEntry.username);
 			propertiesListTag.add(propertiesEntryNbt);
 		}
@@ -73,20 +74,20 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				ListTag propertiesListTag = nbt.getList("l", 10);
+				ListTag propertiesListTag = nbt.getListOrEmpty("l");
 				if(propertiesListTag.size() > MAX_PROPERTIES) {
 					OpenPartiesAndClaims.LOGGER.info("Received claim owner properties list is too large!");
 					return null;
 				}
 				List<PlayerProperties> propertiesList = new ArrayList<>(propertiesListTag.size());
 				for (int i = 0; i < propertiesListTag.size(); i++) {
-					CompoundTag propertiesEntryNbt = propertiesListTag.getCompound(i);
-					String username = propertiesEntryNbt.getString("u");
-					if(username.isEmpty() || username.length() > 128) {
+					CompoundTag propertiesEntryNbt = propertiesListTag.getCompoundOrEmpty(i);
+					String username = propertiesEntryNbt.getStringOr("u", null);
+					if(username == null || username.length() > 128) {
 						OpenPartiesAndClaims.LOGGER.info("Received claim owner properties list with invalid player username!");
 						return null;
 					}
-					UUID playerId = propertiesEntryNbt.getUUID("p");
+					UUID playerId = XaeroNbtUtil.getUUID(propertiesEntryNbt, "p").orElse(null);
 					propertiesList.add(new PlayerProperties(playerId, username));
 				}
 				return new ClientboundClaimOwnerPropertiesPacket(propertiesList);

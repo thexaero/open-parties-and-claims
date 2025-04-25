@@ -21,10 +21,10 @@ package xaero.pac.common.packet.claims;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class ClientboundSubClaimPropertiesPacket extends LazyPacket<ClientboundS
 		for (int i = 0; i < this.properties.size(); i++) {
 			SubClaimProperties propertiesEntry = this.properties.get(i);
 			CompoundTag propertiesEntryNbt = new CompoundTag();
-			propertiesEntryNbt.putUUID("p", propertiesEntry.playerId);
+			XaeroNbtUtil.putUUID(propertiesEntryNbt, "p", propertiesEntry.playerId);
 			propertiesEntryNbt.putInt("i", propertiesEntry.subConfigIndex);
 			if(propertiesEntry.claimsName != null)
 				propertiesEntryNbt.putString("n", propertiesEntry.claimsName);
@@ -78,23 +78,23 @@ public class ClientboundSubClaimPropertiesPacket extends LazyPacket<ClientboundS
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				ListTag propertiesListTag = nbt.getList("l", 10);
+				ListTag propertiesListTag = nbt.getListOrEmpty("l");
 				if(propertiesListTag.size() > MAX_PROPERTIES) {
 					OpenPartiesAndClaims.LOGGER.info("Received sub-claim properties list is too large!");
 					return null;
 				}
 				List<SubClaimProperties> propertiesList = new ArrayList<>(propertiesListTag.size());
 				for (int i = 0; i < propertiesListTag.size(); i++) {
-					CompoundTag propertiesEntryNbt = propertiesListTag.getCompound(i);
-					String claimsName = propertiesEntryNbt.getString("n");
+					CompoundTag propertiesEntryNbt = propertiesListTag.getCompoundOrEmpty(i);
+					String claimsName = propertiesEntryNbt.getStringOr("n", "");
 					if(claimsName.length() > 128) {
 						OpenPartiesAndClaims.LOGGER.info("Received sub-claim properties list with invalid claims name!");
 						return null;
 					}
-					UUID playerId = propertiesEntryNbt.getUUID("p");
-					int subConfigIndex = propertiesEntryNbt.getInt("i");
-					Integer claimsColor = propertiesEntryNbt.contains("c", Tag.TAG_INT) ?
-							propertiesEntryNbt.getInt("c") : null;
+					UUID playerId = XaeroNbtUtil.getUUID(propertiesEntryNbt, "p").orElse(null);
+					int subConfigIndex = propertiesEntryNbt.getIntOr("i", 0);
+					Integer claimsColor = propertiesEntryNbt.contains("c") ?
+							propertiesEntryNbt.getIntOr("c", 0) : null;
 					propertiesList.add(new SubClaimProperties(playerId, subConfigIndex, claimsName, claimsColor));
 				}
 				return new ClientboundSubClaimPropertiesPacket(propertiesList);

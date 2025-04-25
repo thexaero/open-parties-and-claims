@@ -74,11 +74,11 @@ public class ClientboundClaimsRegionPacket extends LazyPacket<ClientboundClaimsR
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				int x = nbt.getInt("x");
-				int z = nbt.getInt("z");
-				int[] paletteInts = nbt.getIntArray("p");
-				int bits = nbt.getByte("b");
-				long[] data = nbt.getLongArray("d");
+				int x = nbt.getIntOr("x", 0);
+				int z = nbt.getIntOr("z", 0);
+				int[] paletteInts = nbt.getIntArray("p").orElse(null);
+				int bits = nbt.getByteOr("b", (byte)0);
+				long[] data = nbt.getLongArray("d").orElse(null);
 				return new ClientboundClaimsRegionPacket(x, z, paletteInts, bits, data);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);

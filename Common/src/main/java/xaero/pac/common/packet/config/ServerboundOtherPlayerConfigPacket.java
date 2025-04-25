@@ -62,8 +62,8 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				String ownerName = nbt.getString("ownerName");
-				if(ownerName.isEmpty() || !ownerName.matches("^[a-zA-Z0-9_]+$"))
+				String ownerName = nbt.getStringOr("ownerName", null);
+				if(ownerName == null || !ownerName.matches("^[a-zA-Z0-9_]+$"))
 					return null;
 				return new ServerboundOtherPlayerConfigPacket(ownerName);
 			} catch(Throwable t) {

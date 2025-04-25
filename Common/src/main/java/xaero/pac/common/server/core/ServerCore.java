@@ -90,6 +90,7 @@ import xaero.pac.common.server.core.accessor.ICreateContraptionEntity;
 import xaero.pac.common.server.core.accessor.IServerCommonPacketListenerImpl;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.world.ServerLevelHelper;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -717,11 +718,11 @@ public class ServerCore {
 	private static boolean FINDING_RAID_SPAWN_POS;
 	private static boolean RAID_SPAWN_POS_CAPTURE_USABLE = true;
 	private static int RAID_SPAWN_POS_CAPTURE_TICK;
-	public static void onFindRandomSpawnPosPre(Raid raid){//returns whether to completely disable (when capture isn't usable)
+	public static void onFindRandomSpawnPosPre(Raid raid, ServerLevel level){//returns whether to completely disable (when capture isn't usable)
 		if(!RAID_SPAWN_POS_CAPTURE_USABLE)
 			return;
 		FINDING_RAID_SPAWN_POS = true;
-		RAID_SPAWN_POS_CAPTURE_TICK = raid.getLevel().getServer().getTickCount();
+		RAID_SPAWN_POS_CAPTURE_TICK = level.getServer().getTickCount();
 	}
 
 	public static void onFindRandomSpawnPosPost(){
@@ -838,7 +839,7 @@ public class ServerCore {
 		if(uuid == null)
 			persistentData.remove(key);
 		else
-			persistentData.putUUID(key, uuid);
+			XaeroNbtUtil.putUUID(persistentData, key, uuid);
 	}
 
 	public static UUID getEntityGenericUUID(Entity entity, String key, Function<IEntity, UUID> getter, BiConsumer<IEntity, UUID> setter){
@@ -846,7 +847,7 @@ public class ServerCore {
 		if(result == null) {
 			CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
 			if(persistentData.contains(key)) {
-				result = persistentData.getUUID(key);
+				result = XaeroNbtUtil.getUUID(persistentData, key).orElse(null);
 				setter.accept((IEntity) entity, result);
 			}
 		}

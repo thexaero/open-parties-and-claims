@@ -76,12 +76,12 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				int loadingClaimCount = tag.getInt("cc");
-				int loadingForceloadCount = tag.getInt("fc");
-				int claimLimit = tag.getInt("cl");
-				int forceloadLimit = tag.getInt("fl");
-				int maxClaimDistance = tag.getInt("d");
-				boolean alwaysUseLoadingValues = tag.getBoolean("a");
+				int loadingClaimCount = tag.getIntOr("cc", 0);
+				int loadingForceloadCount = tag.getIntOr("fc", 0);
+				int claimLimit = tag.getIntOr("cl", 0);
+				int forceloadLimit = tag.getIntOr("fl", 0);
+				int maxClaimDistance = tag.getIntOr("d", 0);
+				boolean alwaysUseLoadingValues = tag.getBooleanOr("a", false);
 				return new ClientboundClaimLimitsPacket(loadingClaimCount, loadingForceloadCount, claimLimit, forceloadLimit, maxClaimDistance, alwaysUseLoadingValues);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.config;
 
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;
@@ -27,17 +27,17 @@ public class ForgeConfigHelperFabric implements IForgeConfigHelper {
 
 	@Override
 	public void registerServerConfig(ModConfigSpec spec) {
-		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
+		ConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.SERVER, spec);
 	}
 
 	@Override
 	public void registerClientConfig(ModConfigSpec spec) {
-		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
+		ConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.CLIENT, spec);
 	}
 
 	@Override
 	public void registerCommonConfig(ModConfigSpec spec) {
-		NeoForgeConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
+		ConfigRegistry.INSTANCE.register(OpenPartiesAndClaims.MOD_ID, ModConfig.Type.COMMON, spec);
 	}
 
 }

@@ -27,6 +27,7 @@ import xaero.pac.common.parties.party.Party;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -67,7 +68,7 @@ public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket> {
 			u.writeNbt(partyTag);
 			return;
 		}
-		partyTag.putUUID("i", partyId);
+		XaeroNbtUtil.putUUID(partyTag, "i", partyId);
 		CompoundTag ownerTag = CODEC.playerInfoCodec.toMemberTag((PartyMember) owner);
 		partyTag.put("o", ownerTag);
 		partyTag.putInt("mc", memberCount);
@@ -98,8 +99,8 @@ public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket> {
 					return null;
 				if(partyTag.isEmpty())
 					return new ClientboundPartyPacket(null, null, 0, 0, 0, 0, 0, 0);
-				UUID partyId = partyTag.getUUID("i");
-				CompoundTag ownerTag = partyTag.getCompound("o");
+				UUID partyId = XaeroNbtUtil.getUUID(partyTag, "i").orElse(null);
+				CompoundTag ownerTag = partyTag.getCompoundOrEmpty("o");
 				if(ownerTag.isEmpty()) {
 					OpenPartiesAndClaims.LOGGER.info("Received party packet with no owner info.");
 					return null;
@@ -109,12 +110,12 @@ public class ClientboundPartyPacket extends LazyPacket<ClientboundPartyPacket> {
 					OpenPartiesAndClaims.LOGGER.info("Received party packet with invalid owner info data.");
 					return null;
 				}
-				int memberCount = partyTag.getInt("mc");
-				int inviteCount = partyTag.getInt("ic");
-				int allyCount = partyTag.getInt("ac");
-				int memberLimit = partyTag.getInt("ml");
-				int inviteLimit = partyTag.getInt("il");
-				int allyLimit = partyTag.getInt("al");
+				int memberCount = partyTag.getIntOr("mc", 0);
+				int inviteCount = partyTag.getIntOr("ic", 0);
+				int allyCount = partyTag.getIntOr("ac", 0);
+				int memberLimit = partyTag.getIntOr("ml", 0);
+				int inviteLimit = partyTag.getIntOr("il", 0);
+				int allyLimit = partyTag.getIntOr("al", 0);
 				return new ClientboundPartyPacket(partyId, owner, memberCount, inviteCount, allyCount, memberLimit, inviteLimit, allyLimit);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);

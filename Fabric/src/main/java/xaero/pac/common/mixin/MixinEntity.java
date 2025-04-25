@@ -51,7 +51,7 @@ public class MixinEntity implements IEntityFabric {
 
 	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
 	public void onReadAdditionalSaveData(CompoundTag tag, CallbackInfo info) {
-		xaero_OPAC_persistentData = tag.getCompound("xaero_OPAC_PersistentData");
+		xaero_OPAC_persistentData = tag.getCompoundOrEmpty("xaero_OPAC_PersistentData");
 	}
 
 	@Inject(at = @At("RETURN"), method = "isInvulnerableToBase", cancellable = true)

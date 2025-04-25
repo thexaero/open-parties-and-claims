@@ -49,20 +49,20 @@ public class ServerboundClaimActionRequestPacket {
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				byte actionByte = tag.getByte("a");
+				byte actionByte = tag.getByteOr("a", (byte)0);
 				ClaimsManager.Action action;
 				try {
 					action = ClaimsManager.Action.values()[actionByte];
 				} catch(ArrayIndexOutOfBoundsException aioobe) {
 					return null;
 				}
-				int left = tag.getInt("l");
-				int top = tag.getInt("t");
-				int right = tag.getInt("r");
-				int bottom = tag.getInt("b");
+				int left = tag.getIntOr("l", 0);
+				int top = tag.getIntOr("t", 0);
+				int right = tag.getIntOr("r", 0);
+				int bottom = tag.getIntOr("b", 0);
 				if(left > right || top > bottom)
 					return null;
-				boolean byServer = tag.getBoolean("s");
+				boolean byServer = tag.getBooleanOr("s", false);
 				return new ServerboundClaimActionRequestPacket(new ClaimActionRequest(action, left, top, right, bottom, byServer));
 			} catch(Throwable t) {
 				return null;

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.config;
 
-import fuzs.forgeconfigapiport.forge.api.neoforge.v4.NeoForgeConfigRegistry;
+import fuzs.forgeconfigapiport.forge.api.v5.NeoForgeConfigRegistry;
 import net.minecraftforge.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.OpenPartiesAndClaims;

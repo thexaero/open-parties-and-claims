@@ -60,7 +60,7 @@ public class ClientboundRemoveClaimStatePacket extends LazyPacket<ClientboundRem
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				int syncIndex = tag.getInt("i");
+				int syncIndex = tag.getIntOr("i", 0);
 				return new ClientboundRemoveClaimStatePacket(syncIndex);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);

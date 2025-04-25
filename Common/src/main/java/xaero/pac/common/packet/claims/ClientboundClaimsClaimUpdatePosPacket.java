@@ -67,8 +67,8 @@ public class ClientboundClaimsClaimUpdatePosPacket extends LazyPacket<Clientboun
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				int x = nbt.getInt("x");
-				int z = nbt.getInt("z");
+				int x = nbt.getIntOr("x", 0);
+				int z = nbt.getIntOr("z", 0);
 				return new ClientboundClaimsClaimUpdatePosPacket(x, z);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);

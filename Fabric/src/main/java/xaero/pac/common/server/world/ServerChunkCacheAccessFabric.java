@@ -18,32 +18,20 @@
 
 package xaero.pac.common.server.world;
 
-import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.Ticket;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
-
-import java.util.Set;
 
 public class ServerChunkCacheAccessFabric implements IServerChunkCacheAccess {
 
 	@Override
-	public <T> void addRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		serverChunkCache.addRegionTicket(type, pos, distance, value);
-		if(forceTicks){
-			LongSet forceloadTickets = ((IServerLevel)serverChunkCache.getLevel()).getXaero_OPAC_forceloadTickets();
-			forceloadTickets.add(pos.toLong());
-		}
+	public void addRegionTicket(ServerChunkCache serverChunkCache, TicketType type, ChunkPos pos, int distance) {
+		serverChunkCache.addTicketWithRadius(type, pos, distance);
 	}
 
 	@Override
-	public <T> void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType<T> type, ChunkPos pos, int distance, T value, boolean forceTicks) {
-		serverChunkCache.removeRegionTicket(type, pos, distance, value);
-		if(forceTicks){
-			LongSet forceloadTickets = ((IServerLevel)serverChunkCache.getLevel()).getXaero_OPAC_forceloadTickets();
-			forceloadTickets.remove(pos.toLong());
-		}
+	public void removeRegionTicket(ServerChunkCache serverChunkCache, TicketType type, ChunkPos pos, int distance) {
+		serverChunkCache.removeTicketWithRadius(type, pos, distance);
 	}
 
 }

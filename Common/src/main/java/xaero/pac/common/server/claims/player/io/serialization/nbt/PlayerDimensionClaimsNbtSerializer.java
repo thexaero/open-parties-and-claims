@@ -38,18 +38,18 @@ public class PlayerDimensionClaimsNbtSerializer {
 	}
 
 	public PlayerDimensionClaims deserialize(UUID playerId, String dimension, CompoundTag nbt) {
-		ListTag claimsTag = nbt.getList("claims", 10);
+		ListTag claimsTag = nbt.getListOrEmpty("claims");
 		HashMap<PlayerChunkClaim, PlayerClaimPosList> claimLists = new HashMap<>(64);
 		claimsTag.forEach(t -> {
 			CompoundTag posListTag = (CompoundTag) t;
-			CompoundTag stateTag = posListTag.getCompound("state");
-			ListTag positionsTag = posListTag.getList("positions", 10);
+			CompoundTag stateTag = posListTag.getCompoundOrEmpty("state");
+			ListTag positionsTag = posListTag.getListOrEmpty("positions");
 			PlayerChunkClaim state = playerChunkClaimDataNbtSerializer.deserialize(playerId, stateTag);
 			PlayerClaimPosList posList = PlayerClaimPosList.Builder.begin().setClaim(state).build();
 			positionsTag.forEach(t2 -> {
 				CompoundTag posTag = (CompoundTag) t2;
-				int x = posTag.getInt("x");
-				int z = posTag.getInt("z");
+				int x = posTag.getIntOr("x", 0);
+				int z = posTag.getIntOr("z", 0);
 				posList.add(x, z);
 			});
 			claimLists.put(state, posList);

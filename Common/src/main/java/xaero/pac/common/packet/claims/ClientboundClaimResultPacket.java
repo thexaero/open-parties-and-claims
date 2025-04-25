@@ -51,7 +51,7 @@ public class ClientboundClaimResultPacket {
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				byte[] resultTypesArray = tag.getByteArray("ta");
+				byte[] resultTypesArray = tag.getByteArray("ta").orElse(null);
 				Set<ClaimResult.Type> resultTypes = new HashSet<>();
 				for(byte ordinal : resultTypesArray) {
 					ClaimResult.Type resultType;
@@ -63,10 +63,10 @@ public class ClientboundClaimResultPacket {
 					}
 					resultTypes.add(resultType);
 				}
-				int left = tag.getInt("l");
-				int top = tag.getInt("t");
-				int right = tag.getInt("r");
-				int bottom = tag.getInt("b");
+				int left = tag.getIntOr("l", 0);
+				int top = tag.getIntOr("t", 0);
+				int right = tag.getIntOr("r", 0);
+				int bottom = tag.getIntOr("b", 0);
 				return new ClientboundClaimResultPacket(new AreaClaimResult(resultTypes, left, top, right, bottom));
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);

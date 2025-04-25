@@ -62,7 +62,7 @@ public class ClientboundPlayerClaimsDimensionPacket extends LazyPacket<Clientbou
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				String dimensionString = nbt.contains("d") ? nbt.getString("d") : "";
+				String dimensionString = nbt.getStringOr("d", "");
 				if(dimensionString.length() > 2048)
 					return null;
 				return new ClientboundPlayerClaimsDimensionPacket(dimensionString.isEmpty() ? null : ResourceLocation.parse(dimensionString));

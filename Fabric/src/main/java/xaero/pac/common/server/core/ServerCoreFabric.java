@@ -18,20 +18,16 @@
 
 package xaero.pac.common.server.core;
 
-import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.chunk.LevelChunk;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
-import xaero.pac.common.server.world.IServerLevel;
 import xaero.pac.common.server.world.ServerLevelHelper;
 import xaero.pac.common.util.list.ListUniqueAdder;
 
@@ -114,20 +110,6 @@ public class ServerCoreFabric {
 	public static void onExplosion(ServerExplosion serverExplosion, List<Entity> entityList, Level level) {
 		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onExplosionDetonate(serverExplosion, entityList, level);
 		EXPLOSION_BLOCK_POSITIONS = null;
-	}
-
-	public static List<LevelChunk> onCollectTickingChunks(ServerChunkCache serverChunkCache, List<LevelChunk> list){
-		list = TICKING_CHUNKS_UNIQUE_ADDER.setDestinationList(list);
-		LongSet forceloadTickets = ((IServerLevel)serverChunkCache.getLevel()).getXaero_OPAC_forceloadTickets();
-		for(long chunkPosLong : forceloadTickets){
-			int chunkX = ChunkPos.getX(chunkPosLong);
-			int chunkZ = ChunkPos.getZ(chunkPosLong);
-			LevelChunk chunk = serverChunkCache.getChunk(chunkX, chunkZ, false);
-			if(chunk == null)
-				continue;
-			list.add(chunk);
-		}
-		return list;
 	}
 
 	public static void reset() {

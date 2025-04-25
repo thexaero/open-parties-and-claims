@@ -23,6 +23,7 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -49,7 +50,7 @@ public class ClientboundRemoveSubClaimPacket extends LazyPacket<ClientboundRemov
 	@Override
 	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag nbt = new CompoundTag();
-		nbt.putUUID("p", playerId);
+		XaeroNbtUtil.putUUID(nbt, "p", playerId);
 		nbt.putInt("s", subConfigIndex);
 		u.writeNbt(nbt);
 	}
@@ -69,8 +70,8 @@ public class ClientboundRemoveSubClaimPacket extends LazyPacket<ClientboundRemov
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				UUID playerId = nbt.getUUID("p");
-				int subConfigIndex = nbt.getInt("s");
+				UUID playerId = XaeroNbtUtil.getUUID(nbt, "p").orElse(null);
+				int subConfigIndex = nbt.getIntOr("s", 0);
 				return new ClientboundRemoveSubClaimPacket(playerId, subConfigIndex);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);

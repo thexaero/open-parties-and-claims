@@ -54,8 +54,8 @@ public class ClientboundPacDimensionHandshakePacket {
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				boolean claimsEnabled = tag.getBoolean("c");
-				boolean partiesEnabled = tag.getBoolean("p");
+				boolean claimsEnabled = tag.getBooleanOr("c", false);
+				boolean partiesEnabled = tag.getBooleanOr("p", false);
 				return new ClientboundPacDimensionHandshakePacket(claimsEnabled, partiesEnabled);
 			} catch(Throwable t){
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);

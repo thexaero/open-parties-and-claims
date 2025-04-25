@@ -25,6 +25,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class ClientboundClaimStatesPacket extends LazyPacket<ClientboundClaimSta
 		for (int i = 0; i < claimStates.size(); i++) {
 			PlayerChunkClaim state = claimStates.get(i);
 			CompoundTag claimStateNbt = new CompoundTag();
-			claimStateNbt.putUUID("p", state.getPlayerId());
+			XaeroNbtUtil.putUUID(claimStateNbt, "p", state.getPlayerId());
 			claimStateNbt.putInt("s", state.getSubConfigIndex());
 			claimStateNbt.putBoolean("f", state.isForceloadable());
 			claimStateNbt.putInt("i", state.getSyncIndex());
@@ -76,18 +77,18 @@ public class ClientboundClaimStatesPacket extends LazyPacket<ClientboundClaimSta
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				ListTag stateListTag = nbt.getList("l", 10);
+				ListTag stateListTag = nbt.getListOrEmpty("l");
 				if(stateListTag.size() > MAX_STATES) {
 					OpenPartiesAndClaims.LOGGER.info("Received claim state list is too large!");
 					return null;
 				}
 				List<PlayerChunkClaim> claimStates = new ArrayList<>(stateListTag.size());
 				for (int i = 0; i < stateListTag.size(); i++) {
-					CompoundTag claimStateNbt = stateListTag.getCompound(i);
-					UUID playerId = claimStateNbt.getUUID("p");
-					int subConfigIndex = claimStateNbt.getInt("s");
-					boolean forceloadable = claimStateNbt.getBoolean("f");
-					int syncIndex = claimStateNbt.getInt("i");
+					CompoundTag claimStateNbt = stateListTag.getCompoundOrEmpty(i);
+					UUID playerId = XaeroNbtUtil.getUUID(claimStateNbt, "p").orElse(null);
+					int subConfigIndex = claimStateNbt.getIntOr("s", 0);
+					boolean forceloadable = claimStateNbt.getBooleanOr("f", false);
+					int syncIndex = claimStateNbt.getIntOr("i", 0);
 					claimStates.add(new PlayerChunkClaim(playerId, subConfigIndex, forceloadable, syncIndex));
 				}
 				return new ClientboundClaimStatesPacket(claimStates);

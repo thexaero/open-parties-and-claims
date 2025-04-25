@@ -52,7 +52,7 @@ public class ClientboundPlayerConfigHelpPacket {
 				CompoundTag tag = (CompoundTag) friendlyByteBuf.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				String optionId = tag.getString("i");
+				String optionId = tag.getStringOr("i", "");
 				if(optionId.length() > 1000) {
 					OpenPartiesAndClaims.LOGGER.info("Received player config option id string is not allowed!");
 					return null;

@@ -35,8 +35,8 @@ public class ServerInfoSerializationHandler extends SerializationHandler<Compoun
 
 	@Override
 	public ServerInfo deserialize(Object id, ServerInfoHolder manager, CompoundTag serializedData) {
-		long useTime = serializedData.getLong("totalUseTime");
-		int loadedVersion = serializedData.getInt("version");
+		long useTime = serializedData.getLongOr("totalUseTime", 0);
+		int loadedVersion = serializedData.getIntOr("version", 0);
 		return new ServerInfo(useTime, loadedVersion);
 	}
 

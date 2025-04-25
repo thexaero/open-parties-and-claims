@@ -24,6 +24,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -65,7 +66,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<ClientboundCl
 		nbt.putInt("z", z);
 		if(playerId != null) {
 			nbt.putInt("i", claimSyncIndex);
-			nbt.putUUID("p", playerId);
+			XaeroNbtUtil.putUUID(nbt, "p", playerId);
 			nbt.putInt("s", subConfigIndex);
 			nbt.putBoolean("f", forceLoaded);
 		}
@@ -87,20 +88,20 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<ClientboundCl
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				String dimensionString = nbt.getString("d");
-				if(dimensionString.isEmpty() || dimensionString.length() > 2048)
+				String dimensionString = nbt.getStringOr("d", null);
+				if(dimensionString == null || dimensionString.length() > 2048)
 					return null;
-				int x = nbt.getInt("x");
-				int z = nbt.getInt("z");
+				int x = nbt.getIntOr("x", 0);
+				int z = nbt.getIntOr("z", 0);
 				int claimStateIndex = -1;
 				UUID playerId = null;
 				int subConfigIndex = -1;
 				boolean forceload = false;
 				if(nbt.contains("p")) {
-					claimStateIndex = nbt.getInt("i");
-					playerId = nbt.getUUID("p");
-					subConfigIndex = nbt.getInt("s");
-					forceload = nbt.getBoolean("f");
+					claimStateIndex = nbt.getIntOr("i", 0);
+					playerId = XaeroNbtUtil.getUUID(nbt, "p").orElse(null);
+					subConfigIndex = nbt.getIntOr("s", 0);
+					forceload = nbt.getBooleanOr("f", false);
 				}
 				return new ClientboundClaimsClaimUpdatePacket(ResourceLocation.parse(dimensionString), x, z, playerId, subConfigIndex, forceload, claimStateIndex);
 			} catch(Throwable t) {
