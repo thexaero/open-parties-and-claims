@@ -48,7 +48,7 @@ dependencies {
     compileOnly "maven.modrinth:resourceful-lib:ihzjCwEV"//source: https://github.com/Team-Resourceful/ResourcefulLib
     compileOnly "maven.modrinth:prometheus:1.3.1"//source: https://github.com/terrarium-earth/Prometheus
 
-    //implementation fg.deobf("curse.maven:create-328085:4550987")//source: https://github.com/Creators-of-Create/Create
+    //implementation "curse.maven:create-328085:6323264"//source: https://github.com/Creators-of-Create/Create
 
     implementation "curse.maven:minimap-263420:5189373"
     implementation "curse.maven:worldmap-317780:5189419"
