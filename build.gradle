@@ -70,11 +70,21 @@ subprojects {
     def platform_server_core_class = 'xaero/pac/common/server/core/ServerCoreForge'
     def platform_payload_context_class = 'net/minecraftforge/event/network/CustomPayloadEvent$Context'
     def platform_fluid_stack_class = 'net/minecraftforge/fluids/FluidStack'
+    def platform_create_packet_handle_0_method = 'lambda$handle$0'
+    def platform_create_packet_handle_1_method = 'lambda$handle$1'
+    def platform_create_packet_handle_2_method = 'lambda$handle$2'
+    def platform_create_packet_handle_3_method = 'lambda$handle$3'
+    def platform_create_interaction_packet_interaction_hand = 'interactionHand'
 
     if(project.name.equalsIgnoreCase("neoforge")){
         platform_server_core_class = 'xaero/pac/common/server/core/ServerCoreNeoForge'
-        platform_payload_context_class = 'net/neoforged/neoforge/network/handling/PlayPayloadContext'
-        //platform_fluid_stack_class = //NEEDED
+        platform_payload_context_class = 'net/minecraft/server/level/ServerPlayer'
+        platform_create_packet_handle_0_method = 'handle'
+        platform_create_packet_handle_1_method = 'handle'
+        platform_create_packet_handle_2_method = 'handle'
+        platform_create_packet_handle_3_method = 'handle'
+        platform_fluid_stack_class = 'net/neoforged/neoforge/fluids/FluidStack'
+        platform_create_interaction_packet_interaction_hand = 'hand'
     }
 
      processResources {
@@ -112,7 +122,12 @@ subprojects {
 
                 "platform_server_core_class": platform_server_core_class,
                 "platform_payload_context_class": platform_payload_context_class,
-                "platform_fluid_stack_class": platform_fluid_stack_class
+                "platform_create_packet_handle_0_method": platform_create_packet_handle_0_method,
+                "platform_create_packet_handle_1_method": platform_create_packet_handle_1_method,
+                "platform_create_packet_handle_2_method": platform_create_packet_handle_2_method,
+                "platform_create_packet_handle_3_method": platform_create_packet_handle_3_method,
+                "platform_fluid_stack_class": platform_fluid_stack_class,
+                "platform_create_interaction_packet_interaction_hand" : platform_create_interaction_packet_interaction_hand
         ]
 
         filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json', 'META-INF/*_core.js']) {

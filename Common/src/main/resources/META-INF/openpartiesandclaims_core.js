@@ -795,7 +795,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket',
-                'methodName': 'lambda\$handle\$0',
+                'methodName': '${platform_create_packet_handle_0_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -806,7 +806,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.sync.ContraptionInteractionPacket',
-                'methodName': 'lambda\$handle\$0',
+                'methodName': '${platform_create_packet_handle_0_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -815,7 +815,7 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "target", "I"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "interactionHand", "Lnet/minecraft/world/InteractionHand;"))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "${platform_create_interaction_packet_interaction_hand}", "Lnet/minecraft/world/InteractionHand;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "localPos", "Lnet/minecraft/core/BlockPos;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
@@ -831,7 +831,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.elevator.ElevatorTargetFloorPacket',
-                'methodName': 'lambda\$handle\$0',
+                'methodName': '${platform_create_packet_handle_0_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -852,7 +852,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.trains.entity.TrainRelocationPacket',
-                'methodName': 'lambda\$handle\$3',
+                'methodName': '${platform_create_packet_handle_3_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -875,7 +875,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.actors.trainControls.ControlsInputPacket',
-                'methodName': 'lambda\$handle\$0',
+                'methodName': '${platform_create_packet_handle_0_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -896,7 +896,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket',
-                'methodName': 'lambda\$handle\$1',
+                'methodName': '${platform_create_packet_handle_1_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -907,7 +907,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxDisposeAllPacket',
-                'methodName': 'lambda\$handle\$1',
+                'methodName': '${platform_create_packet_handle_1_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -960,7 +960,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.glue.SuperGlueSelectionPacket',
-                'methodName': 'lambda\$handle\$0',
+                'methodName': '${platform_create_packet_handle_0_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
@@ -983,7 +983,7 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.glue.SuperGlueRemovalPacket',
-                'methodName': 'lambda\$handle\$0',
+                'methodName': '${platform_create_packet_handle_0_method}',
                 'methodDesc' : '(L${platform_payload_context_class};)V'
             },
             'transformer' : function(methodNode){
