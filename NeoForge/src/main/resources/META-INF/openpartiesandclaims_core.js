@@ -226,7 +226,7 @@ function transformCreateTileEntityPacket(methodNode, packetClass, posField){
     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
     insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, packetClass, posField, "Lnet/minecraft/core/BlockPos;"))
     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/neoforged/neoforge/network/NetworkEvent$Context;)Z'))
+    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateTileEntityPacketAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/server/level/ServerPlayer;)Z'))
     insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
     insnToInsert.add(new InsnNode(Opcodes.RETURN))
     insnToInsert.add(MY_LABEL)
@@ -776,8 +776,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket',
-                'methodName': 'lambda$handle$0',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/foundation/networking/BlockEntityConfigurationPacket", "pos")
@@ -787,8 +787,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.sync.ContraptionInteractionPacket',
-                'methodName': 'lambda$handle$0',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
@@ -796,11 +796,11 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "target", "I"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "interactionHand", "Lnet/minecraft/world/InteractionHand;"))
+                insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "hand", "Lnet/minecraft/world/InteractionHand;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/sync/ContraptionInteractionPacket", "localPos", "Lnet/minecraft/core/BlockPos;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateContraptionInteractionPacketAllowed', '(ILnet/minecraft/world/InteractionHand;Lnet/minecraft/core/BlockPos;Lnet/neoforged/neoforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateContraptionInteractionPacketAllowed', '(ILnet/minecraft/world/InteractionHand;Lnet/minecraft/core/BlockPos;Lnet/minecraft/server/level/ServerPlayer;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
@@ -812,8 +812,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.elevator.ElevatorTargetFloorPacket',
-                'methodName': 'lambda$handle$0',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
@@ -821,7 +821,7 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/elevator/ElevatorTargetFloorPacket", "entityId", "I"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateContraptionControlsPacketAllowed', '(ILnet/neoforged/neoforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateContraptionControlsPacketAllowed', '(ILnet/minecraft/server/level/ServerPlayer;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
@@ -833,8 +833,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.trains.entity.TrainRelocationPacket',
-                'methodName': 'lambda$handle$3',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
@@ -844,7 +844,7 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/trains/entity/TrainRelocationPacket", "pos", "Lnet/minecraft/core/BlockPos;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateTrainRelocationPacketAllowed', '(ILnet/minecraft/core/BlockPos;Lnet/neoforged/neoforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateTrainRelocationPacketAllowed', '(ILnet/minecraft/core/BlockPos;Lnet/minecraft/server/level/ServerPlayer;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
@@ -856,8 +856,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.actors.trainControls.ControlsInputPacket',
-                'methodName': 'lambda$handle$0',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
@@ -865,7 +865,7 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/actors/trainControls/ControlsInputPacket", "contraptionEntityId", "I"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateTrainControlsPacketAllowed', '(ILnet/neoforged/neoforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateTrainControlsPacketAllowed', '(ILnet/minecraft/server/level/ServerPlayer;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
@@ -877,8 +877,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxEquipPacket',
-                'methodName': 'lambda$handle$1',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/content/equipment/toolbox/ToolboxEquipPacket", "toolboxPos")
@@ -888,8 +888,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.equipment.toolbox.ToolboxDisposeAllPacket',
-                'methodName': 'lambda$handle$1',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 return transformCreateTileEntityPacket(methodNode, "com/simibubi/create/content/equipment/toolbox/ToolboxDisposeAllPacket", "toolboxPos")
@@ -941,8 +941,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.glue.SuperGlueSelectionPacket',
-                'methodName': 'lambda$handle$0',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
@@ -952,7 +952,7 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
                 insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/glue/SuperGlueSelectionPacket", "to", "Lnet/minecraft/core/BlockPos;"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateGlueSelectionAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/neoforged/neoforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateGlueSelectionAllowed', '(Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/minecraft/server/level/ServerPlayer;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)
@@ -964,8 +964,8 @@ function initializeCoreMod() {
             'target' : {
                 'type': 'METHOD',
                 'class': 'com.simibubi.create.content.contraptions.glue.SuperGlueRemovalPacket',
-                'methodName': 'lambda$handle$0',
-                'methodDesc' : '(Lnet/neoforged/neoforge/network/NetworkEvent$Context;)V'
+                'methodName': 'handle',
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerPlayer;)V'
             },
             'transformer' : function(methodNode){
                 var MY_LABEL = new LabelNode(new Label())
@@ -973,7 +973,7 @@ function initializeCoreMod() {
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
 	            insnToInsert.add(new FieldInsnNode(Opcodes.GETFIELD, "com/simibubi/create/content/contraptions/glue/SuperGlueRemovalPacket", "entityId", "I"))
                 insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateGlueRemovalAllowed', '(ILnet/neoforged/neoforge/network/NetworkEvent$Context;)Z'))
+                insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreNeoForge', 'isCreateGlueRemovalAllowed', '(ILnet/minecraft/server/level/ServerPlayer;)Z'))
                 insnToInsert.add(new JumpInsnNode(Opcodes.IFNE, MY_LABEL))
                 insnToInsert.add(new InsnNode(Opcodes.RETURN))
                 insnToInsert.add(MY_LABEL)

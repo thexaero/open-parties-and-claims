@@ -24,41 +24,51 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.List;
 
 public class ServerCoreNeoForge {
 
-	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, NetworkEvent.Context ctx){
-		return ServerCore.isCreateGlueSelectionAllowed(from, to, ctx.getSender());
+	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, ServerPlayer player){
+		if(player == null)
+			return true;
+		return ServerCore.isCreateGlueSelectionAllowed(from, to, player);
 	}
 
-	public static boolean isCreateGlueRemovalAllowed(int entityId, NetworkEvent.Context ctx){
-		return ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender());
+	public static boolean isCreateGlueRemovalAllowed(int entityId, ServerPlayer player){
+		if(player == null)
+			return true;
+		return ServerCore.isCreateGlueRemovalAllowed(entityId, player);
 	}
 
-	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, NetworkEvent.Context ctx){
-		ServerPlayer player = ctx.getSender();
-		if (player == null)
+	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, ServerPlayer player){
+		if(player == null)
 			return true;
 		return ServerCore.isCreateTileEntityPacketAllowed(pos, player);
 	}
 
-	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, BlockPos localPos, NetworkEvent.Context ctx){
-		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, localPos, ctx.getSender());
+	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, BlockPos localPos, ServerPlayer player){
+		if(player == null)
+			return true;
+		return ServerCore.isCreateContraptionInteractionPacketAllowed(contraptionId, interactionHand, localPos, player);
 	}
 
-	public static boolean isCreateContraptionControlsPacketAllowed(int contraptionId, NetworkEvent.Context ctx){
-		return ServerCore.isCreateContraptionControlsPacketAllowed(contraptionId, ctx.getSender());
+	public static boolean isCreateContraptionControlsPacketAllowed(int contraptionId, ServerPlayer player){
+		if(player == null)
+			return true;
+		return ServerCore.isCreateContraptionControlsPacketAllowed(contraptionId, player);
 	}
 
-	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, NetworkEvent.Context ctx){
-		return ServerCore.isCreateTrainRelocationPacketAllowed(contraptionId, pos, ctx.getSender());
+	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, ServerPlayer player){
+		if(player == null)
+			return true;
+		return ServerCore.isCreateTrainRelocationPacketAllowed(contraptionId, pos, player);
 	}
 
-	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, NetworkEvent.Context ctx){
-		return ServerCore.isCreateTrainControlsPacketAllowed(contraptionId, ctx.getSender());
+	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, ServerPlayer player){
+		if(player == null)
+			return true;
+		return ServerCore.isCreateTrainControlsPacketAllowed(contraptionId, player);
 	}
 
 	public static FluidStack onCreatePipeCollectBlock(Level level, BlockPos from, BlockPos to, boolean simulate){
