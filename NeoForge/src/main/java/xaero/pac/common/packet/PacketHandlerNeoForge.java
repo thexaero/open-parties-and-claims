@@ -51,6 +51,8 @@ public class PacketHandlerNeoForge extends PacketHandlerFull {
 
 	@Override
 	public <P> void sendToPlayer(ServerPlayer player, P packet) {
+		if(!player.connection.hasChannel(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION))
+			return;
 		PacketDistributor.sendToPlayer(player, createPayload(packet));
 	}
 
