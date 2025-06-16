@@ -52,10 +52,10 @@ dependencies {
      compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 
      compileOnly "maven.modrinth:resourceful-lib:2.1.1"//source: https://github.com/Team-Resourceful/ResourcefulLib
-     compileOnly "maven.modrinth:prometheus:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
+     compileOnly "maven.modrinth:odyssey-roles:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
 
      compileOnly "curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
-     compileOnly "maven.modrinth:argonauts:IH2HFcvL"//source: https://modrinth.com/mod/argonauts
+     compileOnly "maven.modrinth:odyssey-allies:IH2HFcvL"//source: https://modrinth.com/mod/argonauts
 }
 
 processResources {
