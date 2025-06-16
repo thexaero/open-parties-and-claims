@@ -83,7 +83,7 @@ dependencies {
     compileOnly "curse.maven:ftblibrary-404465:4596511"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
     compileOnly "maven.modrinth:resourceful-lib:2.1.1"//source: https://github.com/Team-Resourceful/ResourcefulLib
-    compileOnly "maven.modrinth:prometheus:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
+    compileOnly "maven.modrinth:odyssey-roles:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
 
     //implementation fg.deobf("curse.maven:create-328085:4835191")//source: https://github.com/Creators-of-Create/Create
 
@@ -91,7 +91,7 @@ dependencies {
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
     
     compileOnly "curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
-    compileOnly "maven.modrinth:argonauts:IH2HFcvL"//source: https://modrinth.com/mod/argonauts
+    compileOnly "maven.modrinth:odyssey-allies:IH2HFcvL"//source: https://modrinth.com/mod/argonauts
 
     // Hack fix for now, force jopt-simple to be exactly 5.0.4 because Mojang ships that version, but some transtive dependencies request 6.0+
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
