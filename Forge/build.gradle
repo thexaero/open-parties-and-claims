@@ -78,7 +78,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:ftblibrary-404465:4596511")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
     compileOnly fg.deobf("maven.modrinth:resourceful-lib:2.1.1")//source: https://github.com/Team-Resourceful/ResourcefulLib
-    compileOnly fg.deobf("maven.modrinth:prometheus:0.0.0")//source: https://github.com/terrarium-earth/Prometheus
+    compileOnly fg.deobf("maven.modrinth:odyssey-roles:0.0.0")//source: https://github.com/terrarium-earth/Prometheus
 
     //implementation fg.deobf("curse.maven:create-328085:4835191")//source: https://github.com/Creators-of-Create/Create
 
@@ -86,7 +86,7 @@ dependencies {
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
     
     compileOnly fg.deobf("curse.maven:ftbteams-404468:4616152")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
-    compileOnly fg.deobf("maven.modrinth:argonauts:IH2HFcvL")//source: https://modrinth.com/mod/argonauts
+    compileOnly fg.deobf("maven.modrinth:odyssey-allies:IH2HFcvL")//source: https://modrinth.com/mod/argonauts
 }
 
 tasks.withType(JavaCompile) {
