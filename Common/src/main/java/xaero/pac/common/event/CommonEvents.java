@@ -149,7 +149,7 @@ public abstract class CommonEvents {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(player.getServer());
 			if(serverData != null) {
-				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, serverPlayer.serverLevel(), serverPlayer);
+				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, serverPlayer.level(), serverPlayer);
 			}
 		}
 	}
@@ -159,7 +159,7 @@ public abstract class CommonEvents {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(player.getServer());
 			if(serverData != null) {
-				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, serverPlayer.serverLevel(), serverPlayer);
+				serverData.getPlayerWorldJoinHandler().onWorldJoin(serverData, serverPlayer.level(), serverPlayer);
 			}
 		}
 	}

@@ -305,7 +305,7 @@ public class ServerCore {
 	public static boolean isCreateTileEntityPacketAllowed(BlockPos pos, ServerPlayer player){
 		if(pos == null)//when "stop tracking" is selected
 			return true;
-		ServerLevel level = player.serverLevel();
+		ServerLevel level = player.level();
 		BlockEntity tileEntity = level.getBlockEntity(pos);
 		if(tileEntity == null)
 			return true;
@@ -323,7 +323,7 @@ public class ServerCore {
 				serverData = ServerData.from(player.getServer());
 		if(serverData == null)
 			return true;
-		Entity contraption = player.serverLevel().getEntity(contraptionId);
+		Entity contraption = player.level().getEntity(contraptionId);
 		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, null, player, contraption, null, interactionHand, false, true, true);
 		return !shouldProtect;
 	}
@@ -333,14 +333,14 @@ public class ServerCore {
 				serverData = ServerData.from(player.getServer());
 		if(serverData == null)
 			return true;
-		Entity entity = player.serverLevel().getEntity(contraptionId);
+		Entity entity = player.level().getEntity(contraptionId);
 		if(!(entity instanceof ICreateContraptionEntity contraptionEntity))
 			return true;
 		StructureTemplate.StructureBlockInfo structureBlockInfo =
 				contraptionEntity.getXaero_OPAC_contraption().getBlocks().get(localPos);
 		boolean shouldProtect = serverData.getChunkProtection().onBlockInteraction(
 				serverData, structureBlockInfo.state(), player, interactionHand, null,
-				player.serverLevel(), entity.blockPosition(), Direction.UP, false, true
+				player.level(), entity.blockPosition(), Direction.UP, false, true
 		);
 		return !shouldProtect;
 	}
@@ -350,7 +350,7 @@ public class ServerCore {
 				serverData = ServerData.from(player.getServer());
 		if(serverData == null)
 			return true;
-		Entity entity = player.serverLevel().getEntity(contraptionId);
+		Entity entity = player.level().getEntity(contraptionId);
 		if(!(entity instanceof ICreateContraptionEntity))
 			return true;
 		Block controlsBlock = serverData.getServer().registryAccess()
@@ -358,7 +358,7 @@ public class ServerCore {
 				.getValueOrThrow(CreateContraptionHelper.CONTRAPTION_CONTROLS_BLOCK);
 		boolean shouldProtect = serverData.getChunkProtection().onBlockInteraction(
 				serverData, controlsBlock.defaultBlockState(), player, InteractionHand.MAIN_HAND, null,
-				player.serverLevel(), entity.blockPosition(), Direction.UP, false, true
+				player.level(), entity.blockPosition(), Direction.UP, false, true
 		);
 		return !shouldProtect;
 	}
@@ -368,10 +368,10 @@ public class ServerCore {
 				serverData = ServerData.from(player.getServer());
 		if(serverData == null)
 			return true;
-		Entity contraption = player.serverLevel().getEntity(contraptionId);
+		Entity contraption = player.level().getEntity(contraptionId);
 		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, null, player, contraption, null, null, false, true, true);
 		if(!shouldProtect)
-			shouldProtect = serverData.getChunkProtection().onBlockInteraction(serverData, player.serverLevel().getBlockState(pos), player, null, null, player.serverLevel(), pos, Direction.UP, false, true);
+			shouldProtect = serverData.getChunkProtection().onBlockInteraction(serverData, player.level().getBlockState(pos), player, null, null, player.level(), pos, Direction.UP, false, true);
 		return !shouldProtect;
 	}
 
@@ -380,7 +380,7 @@ public class ServerCore {
 				serverData = ServerData.from(player.getServer());
 		if(serverData == null)
 			return true;
-		Entity contraption = player.serverLevel().getEntity(contraptionId);
+		Entity contraption = player.level().getEntity(contraptionId);
 		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, null, player, contraption, null, null, false, false, true);
 		if(shouldProtect)
 			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, TRAIN_CONTROLS_MESSAGE));
@@ -1062,7 +1062,8 @@ public class ServerCore {
 	}
 
 	public static UUID getItemEntityThrower(ItemEntity itemEntity){
-		return ((IItemEntity)itemEntity).getXaero_OPAC_thrower();
+		EntityReference<Entity> reference = ((IItemEntity)itemEntity).getXaero_OPAC_thrower();
+		return reference == null ? null : reference.getUUID();
 	}
 
 	public static UUID getItemEntityOwner(ItemEntity itemEntity){

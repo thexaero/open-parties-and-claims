@@ -2166,7 +2166,7 @@ public class ChunkProtection
 	}
 
 	private boolean onBlockBounds(IServerData<CM, ?> serverData, BlockPos from, BlockPos to, ServerPlayer player) {
-		ServerLevel level = player.serverLevel();
+		ServerLevel level = player.level();
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		int fromChunkX = from.getX() >> 4;
 		int fromChunkZ = from.getZ() >> 4;
@@ -2276,7 +2276,7 @@ public class ChunkProtection
 	}
 
 	public boolean onCreateGlueRemoval(IServerData<CM, ?> serverData, int entityId, ServerPlayer player) {
-		ServerLevel level = player.serverLevel();
+		ServerLevel level = player.level();
 		Entity superGlueEntity = level.getEntity(entityId);
 		return superGlueEntity != null && onCreateGlueEntity(serverData, superGlueEntity, player);
 	}

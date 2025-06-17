@@ -21,6 +21,8 @@ package xaero.pac.common.mixin;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -43,15 +45,15 @@ public class MixinEntity implements IEntityFabric {
 		return xaero_OPAC_persistentData;
 	}
 
-	@Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
-	public void onAddAdditionalSaveData(CompoundTag tag, CallbackInfoReturnable<CompoundTag> info) {
+	@Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueOutput;)V"))
+	public void onAddAdditionalSaveData(ValueOutput output, CallbackInfo info) {
 		if(xaero_OPAC_persistentData != null && !xaero_OPAC_persistentData.isEmpty())
-			tag.put("xaero_OPAC_PersistentData", xaero_OPAC_persistentData.copy());
+			output.store("xaero_OPAC_PersistentData", CompoundTag.CODEC, xaero_OPAC_persistentData.copy());
 	}
 
-	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
-	public void onReadAdditionalSaveData(CompoundTag tag, CallbackInfo info) {
-		xaero_OPAC_persistentData = tag.getCompoundOrEmpty("xaero_OPAC_PersistentData");
+	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/world/level/storage/ValueInput;)V"))
+	public void onReadAdditionalSaveData(ValueInput input, CallbackInfo info) {
+		xaero_OPAC_persistentData = input.read("xaero_OPAC_PersistentData", CompoundTag.CODEC).orElse(null);
 	}
 
 	@Inject(at = @At("RETURN"), method = "isInvulnerableToBase", cancellable = true)

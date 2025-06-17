@@ -20,15 +20,15 @@ package xaero.pac.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
 public class SimpleWidgetListElement extends WidgetListElement<SimpleWidgetListElement> {
 	
-	protected SimpleWidgetListElement(int w, int h, boolean mutable, BiFunction<SimpleWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip) {
+	protected SimpleWidgetListElement(int w, int h, boolean mutable, BiFunction<SimpleWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip) {
 		super(w, h, mutable, widgetSupplier, tooltip);
 	}
 	
@@ -40,8 +40,8 @@ public class SimpleWidgetListElement extends WidgetListElement<SimpleWidgetListE
 	public static final class Builder extends WidgetListElement.Builder<SimpleWidgetListElement, Builder> {
 		
 		@Override
-		protected SimpleWidgetListElement buildInternal() {
-			return new SimpleWidgetListElement(w, h, mutable, widgetSupplier, tooltip);
+		protected SimpleWidgetListElement buildInternal(List<ClientTooltipComponent> clientTooltip) {
+			return new SimpleWidgetListElement(w, h, mutable, widgetSupplier, clientTooltip);
 		}
 		
 		public static Builder begin() {

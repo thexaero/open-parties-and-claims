@@ -59,7 +59,7 @@ public class ClaimsClaimCommands {
 		return builder
 			.executes(context -> {
 				ServerPlayer player = context.getSource().getPlayerOrException();
-				ServerLevel world = player.serverLevel();
+				ServerLevel world = player.level();
 				int chunkX = player.chunkPosition().x;
 				int chunkZ = player.chunkPosition().z;
 				try {

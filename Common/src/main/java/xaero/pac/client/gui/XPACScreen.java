@@ -90,11 +90,7 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		guiGraphics.drawCenteredString(font, XPAC_TITLE, width / 2, 5, -1);
 		renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		if(openDropdown != null) {
-			PoseStack poseStack = guiGraphics.pose();
-			poseStack.pushPose();
-			poseStack.translate(0, 0, 2);
 			openDropdown.render(guiGraphics, mouseX, mouseY, height, false);
-			poseStack.popPose();
 		}
 	}
 

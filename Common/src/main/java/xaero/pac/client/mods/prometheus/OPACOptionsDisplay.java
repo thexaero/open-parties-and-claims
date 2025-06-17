@@ -31,6 +31,7 @@ import net.minecraft.network.chat.Component;
 import xaero.pac.common.mods.prometheus.OPACOptions;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
+import xaero.pac.common.util.json.XaeroJsonUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class OPACOptionsDisplay implements OptionDisplay {
 				entry = new TextBoxListEntry(currentValue, 200, node.getName(), node.getComment(), s -> true);
 			} else if(node.getType() == Component.class){
 				Component currentValue = options.getValueCast(node);
-				String text = Component.Serializer.toJson(currentValue, OPACOptions.USELESS_HOLDER_LOOKUP_PROVIDER);
+				String text = XaeroJsonUtil.toJson(currentValue);
 				entry = new TextBoxListEntry(text, 5000, node.getName(), node.getComment(), s -> true);
 			} else {
 				TriState state = TriState.UNDEFINED;
@@ -122,7 +123,7 @@ public class OPACOptionsDisplay implements OptionDisplay {
 			if((node.getType() == String.class || node.getType() == Component.class) && entry instanceof TextBoxListEntry textBoxListEntry){
 				Object value = textBoxListEntry.getText();
 				if(node.getType() == Component.class)
-					value = Component.Serializer.fromJson(textBoxListEntry.getText(), OPACOptions.USELESS_HOLDER_LOOKUP_PROVIDER);
+					value = XaeroJsonUtil.fromJson(textBoxListEntry.getText());
 				options.setValueCast(node, value);
 				return;
 			}

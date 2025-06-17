@@ -21,9 +21,11 @@ package xaero.pac.client.gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.FormattedCharSequence;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -31,7 +33,7 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 
 	protected final E self;
 	private final BiFunction<E, Vec3i, AbstractWidget> widgetSupplier;
-	private final List<FormattedCharSequence> tooltip;
+	private final List<ClientTooltipComponent> tooltip;
 	protected int x;
 	protected int y;
 	protected final int w;
@@ -39,7 +41,7 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 	protected final boolean mutable;
 	
 	@SuppressWarnings("unchecked")
-	protected WidgetListElement(int w, int h, boolean mutable, BiFunction<E, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip) {
+	protected WidgetListElement(int w, int h, boolean mutable, BiFunction<E, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip) {
 		super();
 		this.self = (E) this;
 		this.w = w;
@@ -66,7 +68,7 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + h;
 	}
 	
-	public List<FormattedCharSequence> getTooltip() {
+	public List<ClientTooltipComponent> getTooltip() {
 		return tooltip;
 	}
 	
@@ -123,10 +125,16 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 		}
 		
 		public E build() {
-			return buildInternal();
+			List<ClientTooltipComponent> clientTooltip = null;
+			if(tooltip != null) {
+				clientTooltip = new ArrayList<>();
+				for (FormattedCharSequence line : tooltip)
+					clientTooltip.add(ClientTooltipComponent.create(line));
+			}
+			return buildInternal(clientTooltip);
 		}
 		
-		protected abstract E buildInternal();
+		protected abstract E buildInternal(List<ClientTooltipComponent> clientTooltip);
 		
 	}
 

@@ -23,9 +23,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.client.gui.widget.TextWidgetEditBox;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	private final BiConsumer<TextWidgetListElement, String> valueConfirmResponder;
 	private final Predicate<String> validator;
 	
-	private TextWidgetListElement(int w, int h, boolean mutable, Component title, BiFunction<TextWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip, BiConsumer<TextWidgetListElement, String> valueConfirmResponder, Predicate<String> validator, String startValue) {
+	private TextWidgetListElement(int w, int h, boolean mutable, Component title, BiFunction<TextWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip, BiConsumer<TextWidgetListElement, String> valueConfirmResponder, Predicate<String> validator, String startValue) {
 		super(startValue, w, h, mutable, widgetSupplier, tooltip);
 		this.confirmedText = startValue;
 		this.title = title;
@@ -72,7 +72,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	
 	private boolean updateBoxColor() {
 		boolean validInput = validator.test(draftValue);
-		editBox.setTextColor(validInput ? 14737632/*copied from editbox class*/ : 0xFFFF5555);
+		editBox.setTextColor(validInput ? 0xFFE0E0E0/*copied from editbox class*/ : 0xFFFF5555);
 		return validInput;
 	}
 	
@@ -107,7 +107,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	@Override
 	public final void render(GuiGraphics guiGraphics) {
 		super.render(guiGraphics);
-		guiGraphics.drawString(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+		guiGraphics.drawString(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 0xFFE0E0E0/*copied from editbox class*/);
 	}
 	
 	public static final class Builder extends SimpleValueWidgetListElement.Builder<String, TextWidgetListElement, Builder> {
@@ -168,7 +168,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 		}
 		
 		@Override
-		protected TextWidgetListElement buildInternal() {
+		protected TextWidgetListElement buildInternal(List<ClientTooltipComponent> clientTooltip) {
 			BiFunction<TextWidgetListElement, Vec3i, AbstractWidget> widgetSupplier = (el, xy) -> {
 				TextWidgetEditBox box = new TextWidgetEditBox(el, Minecraft.getInstance().font, xy.getX() + w - boxWidth - 42, xy.getY(), boxWidth, h, title);
 				box.setMaxLength(maxLength);
@@ -177,7 +177,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 				box.setFilter(filter);
 				return box;
 			};
-			return new TextWidgetListElement(w, h, mutable, title, widgetSupplier, tooltip, responder, validator, startValue);
+			return new TextWidgetListElement(w, h, mutable, title, widgetSupplier, clientTooltip, responder, validator, startValue);
 		}
 		
 		public static Builder begin() {

@@ -23,9 +23,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +42,7 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 	private Button defaultButton;
 	private final BiConsumer<T, Button> valueChangeConsumer;
 
-	private PickerWidgetListElement(int w, int h, boolean mutable, BiFunction<PickerWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip, T startValue, int startIndex, List<T> options, T defaultValue, BiConsumer<T, Button>  valueChangeConsumer) {
+	private PickerWidgetListElement(int w, int h, boolean mutable, BiFunction<PickerWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip, T startValue, int startIndex, List<T> options, T defaultValue, BiConsumer<T, Button>  valueChangeConsumer) {
 		super(startValue, w, h, mutable, widgetSupplier, tooltip);
 		this.options = options;
 		this.currentIndex = startIndex;
@@ -93,7 +93,7 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		super.render(guiGraphics);
 		String subName = Objects.toString(draftValue);
 		int subNameW = Minecraft.getInstance().font.width(subName);
-		guiGraphics.drawString(Minecraft.getInstance().font, subName, x + 90 - subNameW / 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+		guiGraphics.drawString(Minecraft.getInstance().font, subName, x + 90 - subNameW / 2, y + 6, mutable ? -1 : 0xFFE0E0E0/*copied from editbox class*/);
 	}
 	
 	public static final class Builder<T> extends SimpleValueWidgetListElement.Builder<T, PickerWidgetListElement<T>, Builder<T>> {
@@ -150,10 +150,10 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		}
 
 		@Override
-		protected PickerWidgetListElement<T> buildInternal() {
+		protected PickerWidgetListElement<T> buildInternal(List<ClientTooltipComponent> clientTooltip) {
 			BiFunction<PickerWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) ->
 					Button.builder(Component.literal("<"), el::onPrevButton).bounds(xy.getX(), xy.getY(), 20, 20).build();
-			return new PickerWidgetListElement<>(w, h, mutable, widgetSupplier, tooltip, startValue, startIndex, options, defaultValue, valueChangeConsumer);
+			return new PickerWidgetListElement<>(w, h, mutable, widgetSupplier, clientTooltip, startValue, startIndex, options, defaultValue, valueChangeConsumer);
 		}
 		
 		public static <T> Builder<T> begin() {

@@ -25,6 +25,8 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -121,9 +123,9 @@ public abstract class WidgetListScreen extends XPACScreen {
 				tooltipElement = e;
 		}
 		if (openDropdown == null && tooltipElement != null) {
-			List<FormattedCharSequence> tooltip = tooltipElement.getTooltip();
+			List<ClientTooltipComponent> tooltip = tooltipElement.getTooltip();
 			if (tooltip != null)
-				guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY + ROW_HEIGHT + 10);
+				guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY + ROW_HEIGHT + 10, DefaultTooltipPositioner.INSTANCE, null);
 		}
 	}
 

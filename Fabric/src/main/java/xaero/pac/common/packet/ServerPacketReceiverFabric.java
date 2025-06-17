@@ -29,6 +29,6 @@ public class ServerPacketReceiverFabric extends ServerPacketReceiver implements 
 
 	@Override
 	public void receive(PacketPayload<?> payload, ServerPlayNetworking.Context context) {
-		receive(context.player().server, payload, context.player());
+		receive(context.player().getServer(), payload, context.player());
 	}
 }

@@ -18,6 +18,8 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +38,7 @@ public class MixinItemEntity implements IItemEntity {
 
 	private UUID xaero_OPAC_throwerAccessor;
 	@Shadow
-	private UUID thrower;
+	private EntityReference<Entity> thrower;
 	@Shadow
 	private UUID target;
 
@@ -63,7 +65,7 @@ public class MixinItemEntity implements IItemEntity {
 	}
 
 	@Override
-	public UUID getXaero_OPAC_thrower() {
+	public EntityReference<Entity> getXaero_OPAC_thrower() {
 		return thrower;
 	}
 

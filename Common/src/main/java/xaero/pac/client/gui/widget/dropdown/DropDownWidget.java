@@ -113,7 +113,7 @@ public final class DropDownWidget extends AbstractWidget
 				text = text + "...";
 			else
 				text = "..." + text;
-		int textColor = /*slotIndex - 1 == selected ? 0x555555 : */0xFFFFFF;
+		int textColor = /*slotIndex - 1 == selected ? 0x555555 : */0xFFFFFFFF;
 		guiGraphics.drawCenteredString(Minecraft.getInstance().font, text, xWithOffset + width/2, yWithOffset + 2 + LINE_HEIGHT * pos, textColor);
 	}
 

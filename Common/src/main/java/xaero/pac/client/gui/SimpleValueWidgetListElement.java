@@ -19,8 +19,8 @@
 package xaero.pac.client.gui;
 
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -29,7 +29,7 @@ public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElem
 	
 	protected T draftValue;
 	
-	protected SimpleValueWidgetListElement(T startValue, int w, int h, boolean mutable, BiFunction<E, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip) {
+	protected SimpleValueWidgetListElement(T startValue, int w, int h, boolean mutable, BiFunction<E, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip) {
 		super(w, h, mutable, widgetSupplier, tooltip);
 		this.draftValue = startValue;
 	}
@@ -68,7 +68,7 @@ public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElem
 	public static final class Final<T> extends SimpleValueWidgetListElement<T, Final<T>>{
 
 		private Final(T startValue, int w, int h, boolean mutable,
-				BiFunction<Final<T>, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip) {
+				BiFunction<Final<T>, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip) {
 			super(startValue, w, h, mutable, widgetSupplier, tooltip);
 		}
 		
@@ -77,8 +77,8 @@ public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElem
 	public static final class FinalBuilder<T> extends Builder<T, Final<T>, FinalBuilder<T>> {
 		
 		@Override
-		protected Final<T> buildInternal() {
-			return new Final<>(startValue, w, h, mutable, widgetSupplier, tooltip);
+		protected Final<T> buildInternal(List<ClientTooltipComponent> clientTooltip) {
+			return new Final<>(startValue, w, h, mutable, widgetSupplier, clientTooltip);
 		}
 		
 		public static <T> FinalBuilder<T> begin() {

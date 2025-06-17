@@ -21,9 +21,9 @@ package xaero.pac.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
 import xaero.pac.client.gui.widget.dropdown.IDropDownWidgetCallback;
@@ -40,7 +40,7 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 	private int currentIndex;
 	private final Component title;
 
-	private DropdownWidgetListElement(int w, int h, boolean mutable, BiFunction<DropdownWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip, T startValue, int startIndex, List<T> options, Consumer<T> valueChangeConsumer, Component title) {
+	private DropdownWidgetListElement(int w, int h, boolean mutable, BiFunction<DropdownWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip, T startValue, int startIndex, List<T> options, Consumer<T> valueChangeConsumer, Component title) {
 		super(startValue, w, h, mutable, widgetSupplier, tooltip);
 		this.options = options;
 		this.currentIndex = startIndex;
@@ -115,7 +115,7 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 		}
 
 		@Override
-		protected DropdownWidgetListElement<T> buildInternal() {
+		protected DropdownWidgetListElement<T> buildInternal(List<ClientTooltipComponent> clientTooltip) {
 			String[] stringOptions = new String[options.size()];
 			for(int i = 0; i < options.size(); i++)
 				stringOptions[i] = Objects.toString(options.get(i));
@@ -131,7 +131,7 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 							.setCallback(el)
 							.setContainer((IDropDownContainer) Minecraft.getInstance().screen)
 							.setSelected(el.currentIndex).build();
-			return new DropdownWidgetListElement<>(w, h, mutable, widgetSupplier, tooltip, startValue, startIndex, List.copyOf(options), valueChangeConsumer, title);
+			return new DropdownWidgetListElement<>(w, h, mutable, widgetSupplier, clientTooltip, startValue, startIndex, List.copyOf(options), valueChangeConsumer, title);
 		}
 		
 		public static <T> Builder<T> begin() {

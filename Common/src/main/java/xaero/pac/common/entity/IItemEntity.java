@@ -18,13 +18,16 @@
 
 package xaero.pac.common.entity;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityReference;
+
 import java.util.UUID;
 
 public interface IItemEntity {
 
 	UUID getXaero_OPAC_throwerAccessor();
 	void setXaero_OPAC_throwerAccessor(UUID throwerAccessor);
-	UUID getXaero_OPAC_thrower();
+	EntityReference<Entity> getXaero_OPAC_thrower();
 	UUID getXaero_OPAC_target();
 
 }

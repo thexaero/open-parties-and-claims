@@ -37,7 +37,7 @@ import java.util.Optional;
 @Mixin(BaseSpawner.class)
 public class MixinBaseSpawner {
 
-	@ModifyVariable(method = "serverTick", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/EntityType;by(Lnet/minecraft/nbt/CompoundTag;)Ljava/util/Optional;"))
+	@ModifyVariable(method = "serverTick", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/EntityType;by(Lnet/minecraft/world/level/storage/ValueInput;)Ljava/util/Optional;"))
 	public Optional<EntityType<?>> onServerTickPre(Optional<EntityType<?>> entityType, ServerLevel serverLevel, BlockPos blockPos){
 		ServerCoreFabric.setMobSpawnTypeForNewEntities(EntitySpawnReason.SPAWNER, serverLevel.getServer());
 		return entityType;
