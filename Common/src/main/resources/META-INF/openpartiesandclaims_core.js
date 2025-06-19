@@ -1437,7 +1437,7 @@ function initializeCoreMod() {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.entity.raid.Raid',
                 'methodName': 'findRandomSpawnPos',
-                'methodDesc' : '(I)Lnet/minecraft/core/BlockPos;'
+                'methodDesc' : '(Lnet/minecraft/server/level/ServerLevel;I)Lnet/minecraft/core/BlockPos;'
             },
             'transformer' : function(methodNode){
                 var insnToInsert = new InsnList()
