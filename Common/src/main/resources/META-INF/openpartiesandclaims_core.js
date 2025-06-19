@@ -1723,7 +1723,7 @@ function initializeCoreMod() {
 	                    break
 	                }
 	            }
-                addCustomGetter(classNode, isObfuscated ? "f_31988_" : "thrower", "Ljava/util/UUID;", "getXaero_OPAC_thrower")
+                addCustomGetter(classNode, isObfuscated ? "f_31988_" : "thrower", "Lnet/minecraft/world/entity/EntityReference;", "getXaero_OPAC_thrower")
                 addCustomGetter(classNode, isObfuscated ? "f_265881_" : "target", "Ljava/util/UUID;", "getXaero_OPAC_target")
 
 				return classNode
