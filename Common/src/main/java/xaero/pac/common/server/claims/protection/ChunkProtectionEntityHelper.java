@@ -43,8 +43,8 @@ import java.util.UUID;
 @SuppressWarnings("unchecked")
 public class ChunkProtectionEntityHelper {
 	
-	private static EntityDataAccessor<Optional<UUID>> FOX_TRUSTED_UUID_SECONDARY;
-	private static EntityDataAccessor<Optional<UUID>> FOX_TRUSTED_UUID_MAIN;
+	private static EntityDataAccessor<Optional<EntityReference<LivingEntity>>> FOX_TRUSTED_UUID_SECONDARY;
+	private static EntityDataAccessor<Optional<EntityReference<LivingEntity>>> FOX_TRUSTED_UUID_MAIN;
 	
 	static {
 		Field foxTrustSecondaryField = null;
@@ -62,14 +62,14 @@ public class ChunkProtectionEntityHelper {
 		if(foxTrustSecondaryField != null)
 			try {
 				foxTrustSecondaryField.setAccessible(true);
-				FOX_TRUSTED_UUID_SECONDARY = (EntityDataAccessor<Optional<UUID>>) foxTrustSecondaryField.get(null);
+				FOX_TRUSTED_UUID_SECONDARY = (EntityDataAccessor<Optional<EntityReference<LivingEntity>>>) foxTrustSecondaryField.get(null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		if(foxTrustMainField != null)
 			try {
 				foxTrustMainField.setAccessible(true);
-				FOX_TRUSTED_UUID_MAIN = (EntityDataAccessor<Optional<UUID>>) foxTrustMainField.get(null);
+				FOX_TRUSTED_UUID_MAIN = (EntityDataAccessor<Optional<EntityReference<LivingEntity>>>) foxTrustMainField.get(null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -91,8 +91,11 @@ public class ChunkProtectionEntityHelper {
 		UUID owner = getOwnerId(e);
 		if(potentialOwnerId.equals(owner))
 			return true;
-		if(e instanceof Fox fox)
-			return FOX_TRUSTED_UUID_MAIN != null && potentialOwnerId.equals(fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null));
+		if(e instanceof Fox fox) {
+			EntityReference<LivingEntity> ownerReference =
+					FOX_TRUSTED_UUID_MAIN != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_MAIN).orElse(null) : null;
+			return ownerReference != null && potentialOwnerId.equals(ownerReference.getUUID());
+		}
 		return false;
 	}
 
@@ -106,8 +109,11 @@ public class ChunkProtectionEntityHelper {
 			if(ownerReference != null)
 				return ownerReference.getUUID();
 		}
-		if(e instanceof Fox fox)
-			return FOX_TRUSTED_UUID_SECONDARY != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null) : null;
+		if(e instanceof Fox fox) {
+			EntityReference<LivingEntity> ownerReference =
+					FOX_TRUSTED_UUID_SECONDARY != null ? fox.getEntityData().get(FOX_TRUSTED_UUID_SECONDARY).orElse(null) : null;
+			return ownerReference != null ? ownerReference.getUUID() : null;
+		}
 		Entity ownerEntity = null;
 		if(e instanceof Projectile)
 			ownerEntity = ((Projectile) e).getOwner();
