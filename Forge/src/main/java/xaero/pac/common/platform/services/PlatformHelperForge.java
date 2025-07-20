@@ -22,6 +22,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.controls.keybinding.KeyBindingHelperForge;
@@ -47,6 +48,11 @@ public class PlatformHelperForge implements IPlatformHelper {
 	@Override
 	public boolean isModLoaded(String modId) {
 		return ModList.get().isLoaded(modId);
+	}
+
+	@Override
+	public boolean shouldApplyMixinsTargetingMod(String modId) {
+		return LoadingModList.get().getModFileById(modId) != null;
 	}
 
 	@Override
