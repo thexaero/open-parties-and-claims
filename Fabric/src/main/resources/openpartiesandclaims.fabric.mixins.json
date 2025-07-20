@@ -1,5 +1,6 @@
 {
     "required": true,
+    "plugin" : "xaero.pac.common.mixin.plugin.MixinPlugin",
     "minVersion": "0.8",
     "package": "xaero.pac.common.mixin",
     "compatibilityLevel": "JAVA_17",
