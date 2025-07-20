@@ -42,6 +42,10 @@ public interface IPlatformHelper {
 	 */
 	boolean isModLoaded(String modId);
 
+	default boolean shouldApplyMixinsTargetingMod(String modId){
+		return isModLoaded(modId);
+	}
+
 	/**
 	 * Check if the game is currently in a development environment.
 	 *
@@ -58,5 +62,4 @@ public interface IPlatformHelper {
 	IMappingHelper getMappingHelper();
 
 	Path getDefaultConfigFolder();
-
 }
