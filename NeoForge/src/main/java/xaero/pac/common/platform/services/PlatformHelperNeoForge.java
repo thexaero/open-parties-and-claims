@@ -22,6 +22,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLConfig;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.LoadingModList;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.controls.keybinding.KeyBindingHelperNeoForge;
 import xaero.pac.common.entity.EntityAccessNeoForge;
@@ -46,6 +47,11 @@ public class PlatformHelperNeoForge implements IPlatformHelper {
 	@Override
 	public boolean isModLoaded(String modId) {
 		return ModList.get().isLoaded(modId);
+	}
+
+	@Override
+	public boolean shouldApplyMixinsTargetingMod(String modId) {
+		return LoadingModList.get().getModFileById(modId) != null;
 	}
 
 	@Override
