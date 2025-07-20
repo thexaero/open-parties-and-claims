@@ -51,6 +51,9 @@ dependencies {
 
      compileOnly"curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
 
+     compileOnly "org.ow2.asm:asm:9.7"
+     compileOnly "org.ow2.asm:asm-tree:9.7"
+
 }
 
 processResources {
