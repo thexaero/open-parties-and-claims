@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,7 +45,7 @@ public class MixinForgeMob {
 	}
 
 	@Inject(method = "aiStep", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;pickUpItem(Lnet/minecraft/world/entity/item/ItemEntity;)V"), cancellable = true)
-	public void onAiStepItemPickup(CallbackInfo ci, Iterator var2, ItemEntity itemEntity){//different from fabric parameters
+	public void onAiStepItemPickup(CallbackInfo ci, Vec3i vec3i, Iterator var2, ItemEntity itemEntity){//different from fabric parameters
 		if(ServerCore.onMobItemPickup(itemEntity, (Mob)(Object)this))
 			ci.cancel();
 	}
