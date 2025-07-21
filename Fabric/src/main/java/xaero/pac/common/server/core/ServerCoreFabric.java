@@ -35,8 +35,6 @@ import java.util.Set;
 public class ServerCoreFabric {
 
 	public static Entity MOB_GRIEFING_GAME_RULE_ENTITY = null;
-	public static Block CALCULATING_PRESSURE_PLATE_WEIGHT = null;
-	public static BlockPos CALCULATING_PRESSURE_PLATE_WEIGHT_POS = null;
 	private static MobSpawnType MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = null;
 	private static int MOB_SPAWN_TYPE_FOR_NEW_ENTITIES_TICK;
 	private static final Set<MobSpawnType> DISABLED_MOB_SPAWN_TYPES = new HashSet<>();
@@ -100,8 +98,6 @@ public class ServerCoreFabric {
 
 	public static void reset() {
 		MOB_GRIEFING_GAME_RULE_ENTITY = null;
-		CALCULATING_PRESSURE_PLATE_WEIGHT = null;
-		CALCULATING_PRESSURE_PLATE_WEIGHT_POS = null;
 		MOB_SPAWN_TYPE_FOR_NEW_ENTITIES = null;
 		DISABLED_MOB_SPAWN_TYPES.clear();
 	}

@@ -16,12 +16,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.client.player.AbstractClientPlayer;
+import org.spongepowered.asm.mixin.Mixin;
 
-public interface IEntityFabric {
-
-	public CompoundTag getXaero_OPAC_PersistentData();
+@Mixin(AbstractClientPlayer.class)
+public class MixinFabricAbstractClientPlayer {
 
 }

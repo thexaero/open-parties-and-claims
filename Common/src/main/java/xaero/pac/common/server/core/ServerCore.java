@@ -103,6 +103,8 @@ import java.util.function.Function;
 public class ServerCore {
 
 	private static final Component TRAIN_CONTROLS_MESSAGE = new TranslatableComponent("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
+	public static Block CALCULATING_PRESSURE_PLATE_WEIGHT = null;
+	public static BlockPos CALCULATING_PRESSURE_PLATE_WEIGHT_POS = null;
 
 	public static void onServerTickStart(MinecraftServer server) {
 		OpenPartiesAndClaims.INSTANCE.startupCrashHandler.check();
@@ -153,6 +155,7 @@ public class ServerCore {
 		ServerLevel serverLevel = ServerLevelHelper.getServerLevel(player.getLevel());
 		if(serverLevel == null)
 			return true;
+		OpenPartiesAndClaims.LOGGER.info("may use item at");//TODO REMOVE THIS
 		boolean shouldProtect = serverData.getChunkProtection().onUseItemAt(serverData, player, serverLevel, pos, direction, itemStack, null, false, false, true);
 		return !shouldProtect;
 	}
@@ -1122,5 +1125,7 @@ public class ServerCore {
 		PROJECTILE_HIT_LEVEL = 0;
 		PROJECTILE_HIT_TYPE = 0;
 		PROJECTILE_HIT_TICK = -1;
+		CALCULATING_PRESSURE_PLATE_WEIGHT = null;
+		CALCULATING_PRESSURE_PLATE_WEIGHT_POS = null;
 	}
 }

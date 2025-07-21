@@ -16,12 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.FireBlock;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCore;
 
-public interface IEntityFabric {
+@Mixin(value = FireBlock.class, priority = 1000001)
+public class MixinFireBlock {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Inject(method = "getFireOdds", at = @At("HEAD"), cancellable = true)
+	public void onGetFireOdds(LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Integer> info){
+		if(!ServerCore.canSpreadFire(levelReader, blockPos))
+			info.setReturnValue(0);
+	}
 
 }

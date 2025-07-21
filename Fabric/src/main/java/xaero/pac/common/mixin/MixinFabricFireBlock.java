@@ -16,12 +16,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FireBlock;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.common.server.core.ServerCore;
 
-public interface IEntityFabric {
+import java.util.Random;
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+@Mixin(value = FireBlock.class, priority = 1000001)
+public class MixinFabricFireBlock {
+
+	@Inject(method = "checkBurnOut", at = @At("HEAD"), cancellable = true)
+	public void onCheckBurnOut(Level level, BlockPos blockPos, int i, Random random, int j, CallbackInfo info){
+		if(!ServerCore.canSpreadFire(level, blockPos))
+			info.cancel();
+	}
 
 }
