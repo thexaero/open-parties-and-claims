@@ -151,7 +151,6 @@ public class ServerCore {
 		ServerLevel serverLevel = ServerLevelHelper.getServerLevel(player.getLevel());
 		if(serverLevel == null)
 			return true;
-		OpenPartiesAndClaims.LOGGER.info("may use item at");//TODO REMOVE THIS
 		boolean shouldProtect = serverData.getChunkProtection().onUseItemAt(serverData, player, serverLevel, pos, direction, itemStack, null, false, false, true);
 		return !shouldProtect;
 	}
