@@ -338,6 +338,17 @@ function initializeCoreMod() {
                 return methodNode
             }
         },
+        'xaero_pac_buttonblock_checkpressed': {
+            'target' : {
+                'type': 'METHOD',
+                'class': 'net.minecraft.world.level.block.ButtonBlock',
+                'methodName': 'm_51120_',
+                'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'
+            },
+            'transformer' : function(methodNode){
+                return transformForEntitiesPushBlock(methodNode, true, false, 3)
+            }
+        },
         'xaero_pac_weightedpressureplateblock_getsignalstrength': {
             'target' : {
                 'type': 'METHOD',
