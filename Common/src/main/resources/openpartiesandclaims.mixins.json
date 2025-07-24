@@ -27,6 +27,7 @@
         "MixinPlayer",
         "MixinPlayerList",
         "MixinRaid",
+        "MixinServerCommonPacketListenerImpl",
         "MixinServerGamePacketListenerImpl",
         "MixinServerLevel",
         "MixinServerPlayer",
