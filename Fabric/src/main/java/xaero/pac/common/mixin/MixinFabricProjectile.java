@@ -16,12 +16,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-public interface IEntityFabric {
+@Mixin(Projectile.class)
+public class MixinFabricProjectile {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Inject(method = "mayInteract", at = @At("HEAD"))
+	public void onMobGriefGameRuleMethod(CallbackInfoReturnable<Boolean> callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
+	}
 
 }

@@ -16,12 +16,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.animal.Fox;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-public interface IEntityFabric {
+@Mixin(Fox.FoxEatBerriesGoal.class)
+public class MixinFabricFoxEatBerriesGoal extends MixinFabricMoveToBlockGoal {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Inject(method = "onReachedTarget", at = @At("HEAD"))
+	public void onMobGriefGameRuleMethod(CallbackInfo callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity(mob);
+	}
 
 }
