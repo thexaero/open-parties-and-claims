@@ -8,8 +8,8 @@
     "mixins": [
         "MixinAbstractArrow",
         "MixinAbstractHurtingProjectile",
+        "MixinBasePressurePlateBlock",
         "MixinBehaviorUtils",
-        "MixinBlock",
         "MixinBoat",
         "MixinDispenserBlock",
         "MixinEntity",
@@ -26,7 +26,6 @@
         "MixinPistonBaseBlock",
         "MixinPlayer",
         "MixinPlayerList",
-        "MixinPressurePlateBlock",
         "MixinRaid",
         "MixinServerGamePacketListenerImpl",
         "MixinServerLevel",

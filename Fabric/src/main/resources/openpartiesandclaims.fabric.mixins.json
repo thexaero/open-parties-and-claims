@@ -8,6 +8,7 @@
         "MixinFabricAbstractArrow",
         "MixinFabricAbstractHurtingProjectile",
         "MixinFabricBaseSpawner",
+        "MixinFabricBlock",
         "MixinFabricBreakDoorGoal",
         "MixinFabricBucketItem",
         "MixinFabricChorusFruitItem",

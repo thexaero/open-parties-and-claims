@@ -101,8 +101,6 @@ import java.util.function.Function;
 
 public class ServerCore {
 
-	public static Block DETECTING_ENTITY_BLOCK_COLLISION = null;
-	public static BlockPos DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 	private static final Component TRAIN_CONTROLS_MESSAGE = Component.translatable("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
 	public static Block DETECTING_ENTITY_BLOCK_COLLISION = null;
 	public static BlockPos DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
@@ -1120,8 +1118,6 @@ public class ServerCore {
 		MOB_GRIEFING_IS_FOR_ITEMS = false;
 		BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		RESOURCES_DROP_OWNER = null;
-		DETECTING_ENTITY_BLOCK_COLLISION = null;
-		DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 		PROJECTILE_HIT = null;
 		PROJECTILE_HIT_LEVEL = 0;
 		PROJECTILE_HIT_TYPE = 0;

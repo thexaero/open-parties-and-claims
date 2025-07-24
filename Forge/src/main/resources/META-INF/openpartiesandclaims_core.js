@@ -349,17 +349,6 @@ function initializeCoreMod() {
                 return transformForEntitiesPushBlock(methodNode, true, false, 3)
             }
         },
-        'xaero_pac_weightedpressureplateblock_getsignalstrength': {
-            'target' : {
-                'type': 'METHOD',
-                'class': 'net.minecraft.world.level.block.WeightedPressurePlateBlock',
-                'methodName': 'm_6693_',
-                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I'
-            },
-            'transformer' : function(methodNode){
-                return transformForEntitiesPushBlock(methodNode, true, false, 2)
-            }
-        },
         'xaero_pac_basepressureplateblock_getentitycount': {
             'target' : {
                 'type': 'METHOD',

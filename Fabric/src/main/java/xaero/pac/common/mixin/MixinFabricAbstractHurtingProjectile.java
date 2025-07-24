@@ -29,7 +29,7 @@ import xaero.pac.common.server.core.ServerCore;
 @Mixin(value = AbstractHurtingProjectile.class, priority = 1000001)
 public class MixinFabricAbstractHurtingProjectile {
 
-	@ModifyVariable(method = "tick", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/projectile/ProjectileUtil;getHitResult(Lnet/minecraft/world/entity/Entity;Ljava/util/function/Predicate;)Lnet/minecraft/world/phys/HitResult;"))
+	@ModifyVariable(method = "tick", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/projectile/ProjectileUtil;getHitResultOnMoveVector(Lnet/minecraft/world/entity/Entity;Ljava/util/function/Predicate;)Lnet/minecraft/world/phys/HitResult;"))
 	public HitResult replaceHitResult(HitResult actual){
 		return ServerCore.checkProjectileHit(actual, (Projectile)(Object)this);
 	}
