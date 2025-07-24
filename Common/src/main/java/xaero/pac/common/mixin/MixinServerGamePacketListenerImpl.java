@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import xaero.pac.common.server.core.accessor.IServerGamePacketListenerImpl;
 
 @Mixin(ServerGamePacketListenerImpl.class)
-public class MixinFabricServerGamePacketListenerImpl implements IServerGamePacketListenerImpl {
+public class MixinServerGamePacketListenerImpl implements IServerGamePacketListenerImpl {
 
 	@Shadow
 	private Connection connection;

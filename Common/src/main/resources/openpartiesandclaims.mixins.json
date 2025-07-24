@@ -28,6 +28,7 @@
         "MixinPlayerList",
         "MixinPressurePlateBlock",
         "MixinRaid",
+        "MixinServerGamePacketListenerImpl",
         "MixinServerLevel",
         "MixinServerPlayer",
         "MixinTargetBlock",
