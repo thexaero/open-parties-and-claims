@@ -102,6 +102,8 @@ import java.util.function.Function;
 public class ServerCore {
 
 	private static final Component TRAIN_CONTROLS_MESSAGE = Component.translatable("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
+	public static Block DETECTING_ENTITY_BLOCK_COLLISION = null;
+	public static BlockPos DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 
 	public static void onServerTickStart(MinecraftServer server) {
 		OpenPartiesAndClaims.INSTANCE.startupCrashHandler.check();
@@ -1108,5 +1110,7 @@ public class ServerCore {
 		PROJECTILE_HIT_LEVEL = 0;
 		PROJECTILE_HIT_TYPE = 0;
 		PROJECTILE_HIT_TICK = -1;
+		DETECTING_ENTITY_BLOCK_COLLISION = null;
+		DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 	}
 }

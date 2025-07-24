@@ -16,12 +16,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import xaero.pac.common.server.core.accessor.IServerGamePacketListenerImpl;
 
-public interface IEntityFabric {
+@Mixin(ServerGamePacketListenerImpl.class)
+public class MixinFabricServerGamePacketListenerImpl implements IServerGamePacketListenerImpl {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Shadow
+	private Connection connection;
+
+	@Override
+	public Connection getXaero_OPAC_connection() {
+		return connection;
+	}
 
 }
