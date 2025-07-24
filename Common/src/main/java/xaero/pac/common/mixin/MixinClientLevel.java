@@ -16,12 +16,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.client.multiplayer.ClientLevel;
+import org.spongepowered.asm.mixin.Mixin;
+import xaero.pac.common.capability.ICapabilityProvider;
+import xaero.pac.common.capability.ICapableObject;
 
-public interface IEntityFabric {
+@Mixin(ClientLevel.class)
+public class MixinClientLevel implements ICapableObject {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	private ICapabilityProvider xaero_OPAC_CapabilityProvider;
+
+	@Override
+	public ICapabilityProvider getXaero_OPAC_CapabilityProvider() {
+		return xaero_OPAC_CapabilityProvider;
+	}
+
+	@Override
+	public void setXaero_OPAC_CapabilityProvider(ICapabilityProvider provider) {
+		xaero_OPAC_CapabilityProvider = provider;
+	}
 
 }
