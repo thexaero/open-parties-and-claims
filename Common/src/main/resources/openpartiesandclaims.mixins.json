@@ -6,8 +6,6 @@
     "refmap": "${mod_id}.refmap.json",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "MixinAbstractArrow",
-        "MixinAbstractHurtingProjectile",
         "MixinBasePressurePlateBlock",
         "MixinBehaviorUtils",
         "MixinBoat",
@@ -26,13 +24,13 @@
         "MixinPistonBaseBlock",
         "MixinPlayer",
         "MixinPlayerList",
+        "MixinProjectile",
         "MixinRaid",
         "MixinServerCommonPacketListenerImpl",
         "MixinServerGamePacketListenerImpl",
         "MixinServerLevel",
         "MixinServerPlayer",
         "MixinTargetBlock",
-        "MixinThrowableProjectile",
         "MixinTripWireBlock"
     ],
     "client": [

@@ -44,14 +44,4 @@ public class MixinFabricProjectile {
 			cir.setReturnValue(checkResult);
 	}
 
-	@Inject(method = "hitTargetOrDeflectSelf", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"))
-	public void preHit(CallbackInfoReturnable<ProjectileDeflection> cir){
-		ServerCore.preProjectileHit((Projectile)(Object)this);
-	}
-
-	@Inject(method = "hitTargetOrDeflectSelf", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/projectile/Projectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"))
-	public void postHit(CallbackInfoReturnable<ProjectileDeflection> cir){
-		ServerCore.postProjectileHit((Projectile)(Object)this);
-	}
-
 }
