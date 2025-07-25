@@ -30,10 +30,4 @@ import xaero.pac.common.server.core.ServerCore;
 @Mixin(ServerGamePacketListenerImpl.class)
 public class MixinNeoForgeServerGamePacketListenerImpl {
 
-	@Inject(method = "handleInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ServerboundInteractPacket;dispatch(Lnet/minecraft/network/protocol/game/ServerboundInteractPacket$Handler;)V"), cancellable = true)
-	public void onHandleInteract(ServerboundInteractPacket packet, CallbackInfo ci){
-		if(!ServerCore.canInteract((ServerGamePacketListenerImpl) (Object)this, packet))
-			ci.cancel();
-	}
-
 }
