@@ -21,12 +21,9 @@ package xaero.pac.common.server.core;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.fluids.FluidStack;
-
-import java.util.List;
 
 public class ServerCoreForge {
 
@@ -65,12 +62,6 @@ public class ServerCoreForge {
 		if(ServerCore.canCreatePipeAffectBlock(level, from, to, simulate))
 			return null;
 		return FluidStack.EMPTY;
-	}
-
-	public static List<? extends Entity> onPressurePlateEntityCount(List<? extends Entity> entities) {
-		if (ServerCore.DETECTING_ENTITY_BLOCK_COLLISION != null)
-			ServerCore.onEntitiesPushBlock(entities, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION, ServerCore.DETECTING_ENTITY_BLOCK_COLLISION_POS);
-		return entities;
 	}
 
 }

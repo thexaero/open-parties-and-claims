@@ -5,7 +5,11 @@
   "package": "xaero.pac.common.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-
+    "MixinNeoForgeBlock",
+    "MixinNeoForgeFireBlock",
+    "MixinNeoForgeMob",
+    "MixinNeoForgePiglin",
+    "MixinNeoForgeServerGamePacketListenerImpl"
   ],
   "client": [
 
