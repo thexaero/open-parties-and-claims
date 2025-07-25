@@ -551,19 +551,21 @@ public class ServerCore {
 
 	private static InteractionHand ENTITY_INTERACTION_HAND;
 
+	private static ServerboundInteractPacket.Handler SPECIFIC_INTERACTION_DETECTOR = new ServerboundInteractPacket.Handler() {
+		@Override
+		public void onInteraction(@Nonnull InteractionHand interactionHand) {}
+		@Override
+		public void onInteraction(@Nonnull InteractionHand interactionHand, @Nonnull Vec3 vec3) {
+			ENTITY_INTERACTION_HAND = interactionHand;
+		}
+		@Override
+		public void onAttack() {}
+	};
+
 	//still here on 1.20.2 because NeoForge doesn't fire the server entity interact specific event
 	public static boolean canInteract(ServerGamePacketListenerImpl packetListener, ServerboundInteractPacket packet){
 		ENTITY_INTERACTION_HAND = null;
-		packet.dispatch(new ServerboundInteractPacket.Handler() {
-			@Override
-			public void onInteraction(@Nonnull InteractionHand interactionHand) {}
-			@Override
-			public void onInteraction(@Nonnull InteractionHand interactionHand, @Nonnull Vec3 vec3) {
-				ENTITY_INTERACTION_HAND = interactionHand;
-			}
-			@Override
-			public void onAttack() {}
-		});
+		packet.dispatch(SPECIFIC_INTERACTION_DETECTOR);
 		if(ENTITY_INTERACTION_HAND == null)//not specific interaction
 			return true;
 		ServerPlayer player = packetListener.player;
@@ -1131,6 +1133,12 @@ public class ServerCore {
 
 	public static void postHurtingProjectileHit(Projectile projectile) {
 		postProjectileHit(projectile, 1 << 2);
+	}
+
+	public static List<? extends Entity> onPressurePlateEntityCount(List<? extends Entity> entities) {
+		if (DETECTING_ENTITY_BLOCK_COLLISION != null)
+			onEntitiesPushBlock(entities, DETECTING_ENTITY_BLOCK_COLLISION, DETECTING_ENTITY_BLOCK_COLLISION_POS);
+		return entities;
 	}
 
 	public static void reset(){

@@ -364,7 +364,7 @@ function initializeCoreMod() {
 
                 var insnToInsertGetter = function() {
                     var insnToInsert = new InsnList()
-                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCoreForge', 'onPressurePlateEntityCount', '(Ljava/util/List;)Ljava/util/List;'))
+                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onPressurePlateEntityCount', '(Ljava/util/List;)Ljava/util/List;'))
                     return insnToInsert
                 }
                 insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
