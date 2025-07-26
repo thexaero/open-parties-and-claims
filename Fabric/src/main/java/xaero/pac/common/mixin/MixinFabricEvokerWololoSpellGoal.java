@@ -16,12 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.monster.Evoker;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-public interface IEntityFabric {
+@Mixin(Evoker.EvokerWololoSpellGoal.class)
+public class MixinFabricEvokerWololoSpellGoal {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Shadow(aliases = {"field_7268", "this$0"})
+	private Evoker evoker;
+
+	@Inject(method = "canUse", at = @At("HEAD"))
+	public void onMobGriefGameRuleMethod(CallbackInfoReturnable<Boolean> callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity(evoker);
+	}
 
 }
