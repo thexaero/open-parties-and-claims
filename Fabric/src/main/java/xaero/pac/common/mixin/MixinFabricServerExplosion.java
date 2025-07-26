@@ -21,7 +21,6 @@ package xaero.pac.common.mixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerExplosion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +31,7 @@ import xaero.pac.common.server.core.ServerCoreFabric;
 import java.util.List;
 
 @Mixin(value = ServerExplosion.class, priority = 1000001)
-public class MixinFabricExplosion {
+public class MixinFabricServerExplosion {
 
 	@Shadow
 	private ServerLevel level;

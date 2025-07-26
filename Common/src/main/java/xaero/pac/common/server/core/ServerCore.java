@@ -1140,7 +1140,7 @@ public class ServerCore {
 
 	public static List<? extends Entity> onPressurePlateEntityCount(List<? extends Entity> entities) {
 		if (DETECTING_ENTITY_BLOCK_COLLISION != null)
-			onEntitiesPushBlock(entities, DETECTING_ENTITY_BLOCK_COLLISION, DETECTING_ENTITY_BLOCK_COLLISION_POS);
+			return onEntitiesPushBlock(entities, DETECTING_ENTITY_BLOCK_COLLISION, DETECTING_ENTITY_BLOCK_COLLISION_POS);
 		return entities;
 	}
 

@@ -32,7 +32,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 
 @Mixin(TeleportRandomlyConsumeEffect.class)
-public class MixinFabricChorusFruitItem {
+public class MixinFabricTeleportRandomlyConsumeEffect {
 
 	@Inject(method = "apply", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z"), cancellable = true)
 	public void onFinishUsingItem(Level level, ItemStack stack, LivingEntity livingEntity, CallbackInfoReturnable<Boolean> callbackInfoReturnable, boolean bl, int i, double d, double e, double f, Vec3 vec3){

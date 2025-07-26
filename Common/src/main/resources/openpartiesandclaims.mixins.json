@@ -6,10 +6,10 @@
     "refmap": "${mod_id}.refmap.json",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "MixinAbstractBoat",
         "MixinBasePressurePlateBlock",
         "MixinBehaviorUtils",
         "MixinBlockAttachedEntity",
-        "MixinBoat",
         "MixinDispenserBlock",
         "MixinEntity",
         "MixinExperienceOrb",

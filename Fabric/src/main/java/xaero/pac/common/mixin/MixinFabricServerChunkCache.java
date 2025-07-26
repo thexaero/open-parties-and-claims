@@ -28,7 +28,7 @@ import xaero.pac.common.server.core.ServerCoreFabric;
 import java.util.List;
 
 @Mixin(ServerChunkCache.class)
-public class MixinServerChunkCache {
+public class MixinFabricServerChunkCache {
 
 	@ModifyVariable(method = "collectTickingChunks", at = @At("HEAD"), index = 1)
 	public List<LevelChunk> onCollectTickingChunks(List<LevelChunk> list){

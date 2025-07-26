@@ -30,7 +30,7 @@ import xaero.pac.common.server.core.ServerCore;
 @Mixin(Piglin.class)
 public class MixinForgePiglin {
 
-	@ModifyVariable(method = "wantsToPickUp", at = @At("HEAD"), index = 1)
+	@ModifyVariable(method = "wantsToPickUp", at = @At("HEAD"), index = 2)
 	public ItemStack onWantsToPickupPre(ItemStack itemStack){
 		ServerCore.forgePreItemMobGriefingCheck((Mob)(Object)this);
 		return itemStack;

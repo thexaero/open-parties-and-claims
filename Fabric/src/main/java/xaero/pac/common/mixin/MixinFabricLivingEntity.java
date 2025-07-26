@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,8 +41,8 @@ public class MixinFabricLivingEntity {
 		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
 	}
 
-	@Inject(at = @At("HEAD"), method = "hurt", cancellable = true)
-	public void onHurt(DamageSource source, float f, CallbackInfoReturnable<Boolean> info) {
+	@Inject(at = @At("HEAD"), method = "hurtServer", cancellable = true)
+	public void onHurtServer(ServerLevel serverLevel, DamageSource source, float f, CallbackInfoReturnable<Boolean> info) {
 		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onLivingHurt(source, (Entity)(Object)this))
 			info.setReturnValue(false);
 	}
