@@ -16,12 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.TurtleEggBlock;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-public interface IEntityFabric {
+@Mixin(TurtleEggBlock.class)
+public class MixinFabricTurtleEggBlock {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Inject(method = "canDestroyEgg", at = @At("HEAD"))
+	public void onMobGriefGameRuleMethod(ServerLevel level, Entity entity, CallbackInfoReturnable<Boolean> callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity(entity);
+	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2025, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2024-2025, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,12 +16,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.world.level.chunk.LevelChunk;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-public interface IEntityFabric {
+import java.util.List;
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+@Mixin(ServerChunkCache.class)
+public class MixinFabricServerChunkCache {
+
+	@ModifyVariable(method = "collectTickingChunks", at = @At("HEAD"), index = 1)
+	public List<LevelChunk> onCollectTickingChunks(List<LevelChunk> list){
+		return ServerCoreFabric.onCollectTickingChunks((ServerChunkCache)(Object)this, list);
+	}
 
 }

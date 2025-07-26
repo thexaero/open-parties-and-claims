@@ -16,12 +16,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Creeper;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-public interface IEntityFabric {
+@Mixin(Creeper.class)
+public class MixinFabricCreeper {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Inject(method = "explodeCreeper", at = @At("HEAD"))
+	public void onMobGriefGameRuleMethod(CallbackInfo callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity((Entity)(Object)this);
+	}
 
 }
