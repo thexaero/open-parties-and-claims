@@ -37,27 +37,5 @@ function insertOnInvoke2(methodNode, patchListGetter, before, invokeOwner, invok
 
 function initializeCoreMod() {
 	return {
-		'xaero_pac_experienceorb_scanforentities': {
-			'target' : {
-				'type': 'METHOD',
-				'class': 'net.minecraft.world.entity.ExperienceOrb',
-				'methodName': 'scanForEntities',
-				'methodDesc' : '()V'
-			},
-			'transformer' : function(methodNode){
-				var invokeTargetClass = 'net/minecraft/world/level/Level'
-				var invokeTargetName = 'getNearestPlayer'
-				var invokeTargetNameObf = 'm_45930_'
-				var invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;D)Lnet/minecraft/world/entity/player/Player;'
-				var insnToInsertGetter = function() {
-					var insnToInsert = new InsnList()
-					insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-					insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onExperiencePickup', '(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/ExperienceOrb;)Lnet/minecraft/world/entity/player/Player;'))
-					return insnToInsert
-				}
-				insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
-				return methodNode
-			}
-		}
 	}
 }

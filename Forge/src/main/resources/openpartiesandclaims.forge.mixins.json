@@ -9,7 +9,8 @@
         "MixinForgeBlock",
         "MixinForgeFireBlock",
         "MixinForgeMob",
-        "MixinForgePiglin"
+        "MixinForgePiglin",
+        "MixinOptionalExperienceOrb"
     ],
     "client": [
 

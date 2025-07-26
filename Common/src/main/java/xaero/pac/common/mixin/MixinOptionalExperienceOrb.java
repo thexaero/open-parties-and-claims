@@ -28,26 +28,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.common.server.core.ServerCore;
 
 @Mixin(ExperienceOrb.class)
-public class MixinExperienceOrb {
+public class MixinOptionalExperienceOrb {
 
 	@Shadow
 	private Player followingPlayer;
 
-	@Inject(method = "playerTouch", at = @At("HEAD"), cancellable = true)
-	public void onPlayerTouch(Player player, CallbackInfo ci){
-		if(ServerCore.onExperiencePickup(player, (ExperienceOrb)(Object)this) == null)
-			ci.cancel();
-	}
-
 	@Inject(method = "scanForEntities", at = @At(value = "INVOKE_ASSIGN", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/Level;getNearestPlayer(Lnet/minecraft/world/entity/Entity;D)Lnet/minecraft/world/entity/player/Player;"), cancellable = true)
 	public void onScanForEntities(CallbackInfo ci){
 		followingPlayer = ServerCore.onExperiencePickup(followingPlayer, (ExperienceOrb)(Object)this);
-	}
-
-	@Inject(method = "merge(Lnet/minecraft/world/entity/ExperienceOrb;)V", at = @At("HEAD"), cancellable = true)
-	private void onMerge(ExperienceOrb from, CallbackInfo ci){
-		if(ServerCore.onExperienceMerge(from, (ExperienceOrb)(Object)this))
-			ci.cancel();
 	}
 
 }
