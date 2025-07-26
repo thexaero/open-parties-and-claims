@@ -16,12 +16,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
+import org.spongepowered.asm.mixin.Mixin;
+import xaero.pac.common.server.IOpenPACMinecraftServer;
+import xaero.pac.common.server.IServerDataAPI;
 
-public interface IEntityFabric {
+@Mixin(MinecraftServer.class)
+public class MixinMinecraftServer implements IOpenPACMinecraftServer {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	private IServerDataAPI xaero_OPAC_ServerData;
+
+	@Override
+	public void setXaero_OPAC_ServerData(IServerDataAPI data) {
+		xaero_OPAC_ServerData = data;
+	}
+
+	@Override
+	public IServerDataAPI getXaero_OPAC_ServerData() {
+		return xaero_OPAC_ServerData;
+	}
 
 }

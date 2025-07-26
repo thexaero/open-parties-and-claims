@@ -16,12 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.monster.EnderMan;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.common.server.core.ServerCoreFabric;
 
-public interface IEntityFabric {
+@Mixin(targets = "net/minecraft/world/entity/monster/EnderMan$EndermanTakeBlockGoal")
+public class MixinFabricEndermanTakeBlockGoal {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Shadow
+	protected EnderMan enderman;
+
+	@Inject(method = "canUse", at = @At("HEAD"))
+	public void onMobGriefGameRuleMethod(CallbackInfoReturnable<Boolean> callbackInfo){
+		ServerCoreFabric.tryToSetMobGriefingEntity(enderman);
+	}
 
 }

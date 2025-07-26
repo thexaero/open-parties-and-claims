@@ -16,12 +16,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsFabric;
 
-public interface IEntityFabric {
+@Mixin(MinecraftServer.class)
+public class MixinFabricMinecraftServer {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Inject(at = @At("HEAD"), method = "loadLevel")
+	public void onLoadLevel(CallbackInfo callbackInfo) throws Throwable {
+		((OpenPartiesAndClaimsFabric)OpenPartiesAndClaims.INSTANCE).getCommonEvents().onServerAboutToStart((MinecraftServer)(Object)this);
+	}
 
 }
