@@ -234,30 +234,6 @@ function transformCreateTileEntityPacket(methodNode, packetClass, posField){
     return methodNode
 }
 
-function transformForEntitiesPushBlock(methodNode, includeClassFiltered, includeNonClassFiltered, blockPosArgIndex){
-    var invokeTargetClass = 'net/minecraft/world/level/Level'
-    var insnToInsertGetter = function() {
-        var insnToInsert = new InsnList()
-        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
-        insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, blockPosArgIndex))
-        insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushBlock', '(Ljava/util/List;Lnet/minecraft/world/level/block/Block;Lnet/minecraft/core/BlockPos;)Ljava/util/List;'))
-        return insnToInsert
-    }
-    if(includeClassFiltered){
-        var invokeTargetName = 'getEntitiesOfClass'
-        var invokeTargetNameObf = 'm_45976_'
-        var invokeTargetDesc = '(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;'
-        insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
-    }
-    if(includeNonClassFiltered){
-        var invokeTargetName = 'getEntities'
-        var invokeTargetNameObf = 'm_45933_'
-        var invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;'
-        insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
-    }
-    return methodNode
-}
-
 function transformPrePostLivingDeath(methodNode, preMethodName, postMethodName, damageSourceParameter){
     var insnToInsert = new InsnList()
     insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
@@ -334,62 +310,7 @@ function transformEnchantmentEffectCommon(methodNode, postMethodName){
 }
 
 function initializeCoreMod() {
-	return {
-        'xaero_pac_entitygetter_getentitycollisions': {
-            'target' : {
-                'type': 'METHOD',
-                'class': 'net.minecraft.world.level.EntityGetter',
-                'methodName': 'getEntityCollisions',
-                'methodDesc' : '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;'
-            },
-            'transformer' : function(methodNode){
-                var invokeTargetClass = 'net/minecraft/world/level/EntityGetter'
-                var invokeTargetName = 'getEntities'
-                var invokeTargetNameObf = 'm_6249_'
-                var invokeTargetDesc = '(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;'
-                var insnToInsertGetter = function() {
-                    var insnToInsert = new InsnList()
-                    insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 1))
-                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushEntity', '(Ljava/util/List;Lnet/minecraft/world/entity/Entity;)Ljava/util/List;'))
-                    return insnToInsert
-                }
-                insertOnInvoke2(methodNode, insnToInsertGetter, false/*after*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
-                return methodNode
-            }
-        },
-        'xaero_pac_buttonblock_checkpressed': {
-            'target' : {
-                'type': 'METHOD',
-                'class': 'net.minecraft.world.level.block.ButtonBlock',
-                'methodName': 'checkPressed',
-                'methodDesc' : '(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V'
-            },
-            'transformer' : function(methodNode){
-                return transformForEntitiesPushBlock(methodNode, true, false, 3)
-            }
-        },
-        'xaero_pac_basepressureplateblock_getentitycount': {
-            'target' : {
-                'type': 'METHOD',
-                'class': 'net.minecraft.world.level.block.BasePressurePlateBlock',
-                'methodName': 'getEntityCount',
-                'methodDesc' : '(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/AABB;Ljava/lang/Class;)I'
-            },
-            'transformer' : function(methodNode){
-                var invokeTargetClass = 'java/util/List'
-                var invokeTargetName = 'size'
-                var invokeTargetNameObf = invokeTargetName
-                var invokeTargetDesc = '()I'
-
-                var insnToInsertGetter = function() {
-                    var insnToInsert = new InsnList()
-                    insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onPressurePlateEntityCount', '(Ljava/util/List;)Ljava/util/List;'))
-                    return insnToInsert
-                }
-                insertOnInvoke2(methodNode, insnToInsertGetter, true/*before*/, invokeTargetClass, invokeTargetName, invokeTargetNameObf, invokeTargetDesc, false)
-                return methodNode
-            }
-        },
+	return {,
         'xaero_pac_create_contraption_movementallowed': {
             'target' : {
                 'type': 'METHOD',
