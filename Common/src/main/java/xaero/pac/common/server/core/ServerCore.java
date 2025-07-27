@@ -101,9 +101,9 @@ import java.util.function.Function;
 
 public class ServerCore {
 
+	private static final Component TRAIN_CONTROLS_MESSAGE = Component.translatable("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
 	public static Block DETECTING_ENTITY_BLOCK_COLLISION = null;
 	public static BlockPos DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
-	private static final Component TRAIN_CONTROLS_MESSAGE = Component.translatable("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	public static void onServerTickStart(MinecraftServer server) {
 		OpenPartiesAndClaims.INSTANCE.startupCrashHandler.check();
@@ -1132,12 +1132,18 @@ public class ServerCore {
 		return PROJECTILE_HIT;
 	}
 
-	public static void onLightningCauseSet(LightningBolt bolt){
+	public static void onLightningCauseSet(LightningBolt bolt) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(bolt.getServer());
-		if(serverData == null)
+		if (serverData == null)
 			return;
 		serverData.getChunkProtection().onLightningBolt(serverData, bolt);
+	}
+
+	public static List<? extends Entity> onPressurePlateEntityCount(List<? extends Entity> entities) {
+		if (DETECTING_ENTITY_BLOCK_COLLISION != null)
+			return onEntitiesPushBlock(entities, DETECTING_ENTITY_BLOCK_COLLISION, DETECTING_ENTITY_BLOCK_COLLISION_POS);
+		return entities;
 	}
 
 	public static void reset(){
@@ -1154,9 +1160,9 @@ public class ServerCore {
 		MOB_GRIEFING_IS_FOR_ITEMS = false;
 		BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		RESOURCES_DROP_OWNER = null;
-		DETECTING_ENTITY_BLOCK_COLLISION = null;
-		DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 		PROJECTILE_HIT = null;
 		PROJECTILE_HIT_TICK = -1;
+		DETECTING_ENTITY_BLOCK_COLLISION = null;
+		DETECTING_ENTITY_BLOCK_COLLISION_POS = null;
 	}
 }

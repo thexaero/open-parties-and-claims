@@ -16,12 +16,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.entity;
+package xaero.pac.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public interface IEntityFabric {
+@Mixin(RandomStrollGoal.class)
+public class MixinFabricRandomStrollGoal {
 
-	public CompoundTag getXaero_OPAC_PersistentData();
+	@Shadow
+	protected PathfinderMob mob;
 
 }
