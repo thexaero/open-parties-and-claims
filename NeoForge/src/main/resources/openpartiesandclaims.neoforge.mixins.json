@@ -9,7 +9,9 @@
     "MixinNeoForgeFireBlock",
     "MixinNeoForgeMob",
     "MixinNeoForgePiglin",
-    "MixinNeoForgeServerGamePacketListenerImpl"
+    "MixinNeoForgeServerGamePacketListenerImpl",
+    "MixinOptionalButtonBlock",
+    "MixinOptionalEntityGetter"
   ],
   "client": [
 
