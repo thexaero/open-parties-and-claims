@@ -10,7 +10,9 @@
         "MixinForgeFireBlock",
         "MixinForgeMob",
         "MixinForgePiglin",
-        "MixinOptionalExperienceOrb"
+        "MixinOptionalExperienceOrb",
+        "MixinOptionalButtonBlock",
+        "MixinOptionalEntityGetter"
     ],
     "client": [
 
