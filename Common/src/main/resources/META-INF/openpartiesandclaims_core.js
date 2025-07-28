@@ -310,7 +310,7 @@ function transformEnchantmentEffectCommon(methodNode, postMethodName){
 }
 
 function initializeCoreMod() {
-	return {,
+	return {
         'xaero_pac_create_contraption_movementallowed': {
             'target' : {
                 'type': 'METHOD',
