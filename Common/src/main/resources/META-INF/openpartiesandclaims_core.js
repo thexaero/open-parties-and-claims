@@ -290,7 +290,7 @@ function transformProjectileHitCapture(methodNode, projectileClass, preMethodNam
 }
 
 function initializeCoreMod() {
-	return {,
+	return {
         'xaero_pac_create_contraption_movementallowed': {
             'target' : {
                 'type': 'METHOD',
