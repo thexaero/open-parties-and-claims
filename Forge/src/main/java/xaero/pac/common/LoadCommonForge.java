@@ -19,33 +19,37 @@
 package xaero.pac.common;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.event.CommonEventsForge;
 
-public class LoadCommonForge<L extends LoadCommon> {
+public abstract class LoadCommonForge<L extends LoadCommon> {
 	
 	protected final OpenPartiesAndClaimsForge modMain;
+	protected final FMLJavaModLoadingContext context;
 	protected final L loader;
 
-	public LoadCommonForge(OpenPartiesAndClaimsForge modMain, L loader) {
+	public LoadCommonForge(OpenPartiesAndClaimsForge modMain, FMLJavaModLoadingContext context, L loader) {
 		this.modMain = modMain;
+		this.context = context;
 		this.loader = loader;
 		CommonEventsForge commonEventsForge = new CommonEventsForge(modMain);
 		modMain.setCommonEventsForge(commonEventsForge);
 	}
 
-	@SubscribeEvent
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		loader.loadCommon();
 
-		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+		context.registerExtensionPoint(IExtensionPoint.DisplayTest.class,
 				() -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY,
 						(remoteVersion, isFromServer) -> isFromServer));
 		MinecraftForge.EVENT_BUS.register(modMain.getCommonEvents());
+	}
+
+	public void registerEvents(){
+		FMLCommonSetupEvent.getBus(context.getModBusGroup()).addListener(this::loadCommon);
 	}
 
 }

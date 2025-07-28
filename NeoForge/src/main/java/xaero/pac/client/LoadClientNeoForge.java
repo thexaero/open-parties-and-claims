@@ -21,11 +21,13 @@ package xaero.pac.client;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import xaero.pac.OpenPartiesAndClaimsNeoForge;
 import xaero.pac.client.event.ClientEventsNeoForge;
 import xaero.pac.common.LoadCommonNeoForge;
+import xaero.pac.common.packet.PacketHandlerNeoForge;
 
 public class LoadClientNeoForge extends LoadCommonNeoForge<LoadClient> {
 	
@@ -49,6 +51,11 @@ public class LoadClientNeoForge extends LoadCommonNeoForge<LoadClient> {
 	@SubscribeEvent
 	public void onRegisterPayloadHandler(RegisterPayloadHandlersEvent event){
 		super.onRegisterPayloadHandler(event);
+	}
+
+	@SubscribeEvent
+	public void onRegisterClientPayloadHandler(RegisterClientPayloadHandlersEvent event){
+		PacketHandlerNeoForge.registerClientPayloadHandler(event);
 	}
 
 }

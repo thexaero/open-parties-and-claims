@@ -38,10 +38,10 @@ public class OpenPartiesAndClaimsForge extends OpenPartiesAndClaims {
 	private ClientEventsForge clientEventsForge;
 	private CommonEventsForge commonEventsForge;
 
-	public OpenPartiesAndClaimsForge() {
+	public OpenPartiesAndClaimsForge(FMLJavaModLoadingContext context) {
 		super(new CapabilityHelper(), new PacketHandlerForge(), new ForgeConfigHelperForge(), new ModSupportForge());
-		LoadCommonForge<?> loader = FMLLoader.getDist() == Dist.CLIENT ? new LoadClientForge(this) : new LoadDedicatedServerForge(this);
-		FMLJavaModLoadingContext.get().getModEventBus().register(loader);
+		LoadCommonForge<?> loader = FMLLoader.getDist() == Dist.CLIENT ? new LoadClientForge(this, context) : new LoadDedicatedServerForge(this, context);
+		loader.registerEvents();
 	}
 
 	public void setClientEventsForge(ClientEventsForge clientEventsForge) {

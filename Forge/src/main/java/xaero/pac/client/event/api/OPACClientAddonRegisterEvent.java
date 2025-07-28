@@ -18,11 +18,15 @@
 
 package xaero.pac.client.event.api;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import xaero.pac.client.claims.tracker.result.api.IClaimsManagerClaimResultTrackerRegisterAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 
-public class OPACClientAddonRegisterEvent extends Event {
+public class OPACClientAddonRegisterEvent extends MutableEvent {
+
+	public static final EventBus<OPACClientAddonRegisterEvent> BUS = EventBus.create(OPACClientAddonRegisterEvent.class);
+
 	private final IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI;
 	private final IClaimsManagerClaimResultTrackerRegisterAPI claimsManagerClaimResultTrackerAPI;
 

@@ -19,12 +19,15 @@
 package xaero.pac.common.event.api;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
-public class OPACServerAddonRegisterEvent extends Event {
+public class OPACServerAddonRegisterEvent extends MutableEvent {
+
+	public static final EventBus<OPACServerAddonRegisterEvent> BUS = EventBus.create(OPACServerAddonRegisterEvent.class);
 
 	private final MinecraftServer server;
 	private final IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI;

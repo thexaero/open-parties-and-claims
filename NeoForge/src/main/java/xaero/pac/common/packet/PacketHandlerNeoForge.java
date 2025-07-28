@@ -20,6 +20,8 @@ package xaero.pac.common.packet;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import xaero.pac.OpenPartiesAndClaims;
@@ -44,9 +46,13 @@ public class PacketHandlerNeoForge extends PacketHandlerFull {
 				.playBidirectional(PacketPayload.TYPE, new PacketPayloadCodec(), new PacketPayloadHandler());
 	}
 
+	public static void registerClientPayloadHandler(RegisterClientPayloadHandlersEvent event) {
+		event.register(PacketPayload.TYPE, new PacketPayloadHandler());
+	}
+
 	@Override
 	public <P> void sendToServer(P packet) {
-		PacketDistributor.sendToServer(createPayload(packet));
+		ClientPacketDistributor.sendToServer(createPayload(packet));
 	}
 
 	@Override

@@ -20,11 +20,9 @@ package xaero.pac.client.event;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import xaero.pac.client.IClientData;
 import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
@@ -53,8 +51,13 @@ public final class ClientEventsForge extends ClientEvents {
 	}
 
 	@SubscribeEvent
-	public void onClientTick(ClientTickEvent event) {
-		super.onClientTick(event.phase == Phase.START);
+	public void onClientTick(ClientTickEvent.Pre event) {
+		super.onClientTick(true);
+	}
+
+	@SubscribeEvent
+	public void onClientTick(ClientTickEvent.Post event) {
+		super.onClientTick(false);
 	}
 
 	@SubscribeEvent
@@ -75,7 +78,7 @@ public final class ClientEventsForge extends ClientEvents {
 
 	@Override
 	public void fireAddonRegisterEvent() {
-		MinecraftForge.EVENT_BUS.post(new OPACClientAddonRegisterEvent(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker()));
+		OPACClientAddonRegisterEvent.BUS.post(new OPACClientAddonRegisterEvent(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker()));
 	}
 
 	public static final class Builder extends ClientEvents.Builder<Builder> {

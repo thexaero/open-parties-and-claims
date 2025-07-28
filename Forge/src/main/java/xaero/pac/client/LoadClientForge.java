@@ -19,24 +19,29 @@
 package xaero.pac.client;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.client.event.ClientEventsForge;
 import xaero.pac.common.LoadCommonForge;
 
 public class LoadClientForge extends LoadCommonForge<LoadClient> {
 	
-	public LoadClientForge(OpenPartiesAndClaimsForge modMain) {
-		super(modMain, new LoadClient(modMain));
+	public LoadClientForge(OpenPartiesAndClaimsForge modMain, FMLJavaModLoadingContext context) {
+		super(modMain, context, new LoadClient(modMain));
 	}
 
-	@SubscribeEvent
 	public void loadClient(final FMLClientSetupEvent event) {
 		loader.loadClient();
 		ClientEventsForge clientEventsForge = ClientEventsForge.Builder.begin().setClientData(modMain.getClientDataInternal()).build();
 		modMain.setClientEventsForge(clientEventsForge);
 		MinecraftForge.EVENT_BUS.register(clientEventsForge);
+	}
+
+	@Override
+	public void registerEvents() {
+		super.registerEvents();
+		FMLClientSetupEvent.getBus(context.getModBusGroup()).addListener(this::loadClient);
 	}
 
 }

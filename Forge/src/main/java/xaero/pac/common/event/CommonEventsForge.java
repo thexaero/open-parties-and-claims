@@ -20,11 +20,10 @@ package xaero.pac.common.event;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.*;
@@ -41,9 +40,8 @@ import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.Priority;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -71,16 +69,14 @@ public class CommonEventsForge extends CommonEvents {
 		super(modMain);
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event) {
-		if(super.onEntityPlaceBlock(event.getLevel(), event.getPos(), event.getEntity(), event.getPlacedBlock(), event.getBlockSnapshot().getReplacedBlock()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event) {
+		return super.onEntityPlaceBlock(event.getLevel(), event.getPos(), event.getEntity(), event.getPlacedBlock(), event.getBlockSnapshot().getReplacedBlock());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
-		if(super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Pair.of(s.getPos(), s.getCurrentBlock())), event.getEntity()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
+		return super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Pair.of(s.getPos(), s.getCurrentBlock())), event.getEntity());
 	}
 
 	@SubscribeEvent
@@ -117,18 +113,34 @@ public class CommonEventsForge extends CommonEvents {
 	public void onPlayerLogOut(PlayerLoggedOutEvent event) {
 		super.onPlayerLogOut(event.getEntity());
 	}
-	
-	@SubscribeEvent
-	public void onServerTick(ServerTickEvent event) throws Throwable {
-		//TODO probably need to stop using this event that doesn't provide the server instance
+
+	private void checkLastServerStarted(){
 		if(lastServerStarted == null || !lastServerStarted.isSameThread())
 			throw new RuntimeException("The last recorded server does not have the expected value!");
-		super.onServerTick(lastServerStarted, event.phase == Phase.START);
+	}
+
+	@SubscribeEvent
+	public void onServerTick(ServerTickEvent.Pre event) throws Throwable {
+		//TODO probably need to stop using this event that doesn't provide the server instance
+		checkLastServerStarted();
+		super.onServerTick(lastServerStarted, true);
+	}
+
+	@SubscribeEvent
+	public void onServerTick(ServerTickEvent.Post event) throws Throwable {
+		//TODO probably need to stop using this event that doesn't provide the server instance
+		checkLastServerStarted();
+		super.onServerTick(lastServerStarted, false);
 	}
 	
 	@SubscribeEvent
-	public void onPlayerTick(PlayerTickEvent event) throws Throwable {
-		super.onPlayerTick(event.phase == Phase.START, event.side == LogicalSide.SERVER, event.player);
+	public void onPlayerTick(PlayerTickEvent.Pre event) throws Throwable {
+		super.onPlayerTick(true, event.side == LogicalSide.SERVER, event.player);
+	}
+
+	@SubscribeEvent
+	public void onPlayerTick(PlayerTickEvent.Post event) throws Throwable {
+		super.onPlayerTick(false, event.side == LogicalSide.SERVER, event.player);
 	}
 	
 	@SubscribeEvent
@@ -141,40 +153,34 @@ public class CommonEventsForge extends CommonEvents {
 		super.onRegisterCommands(event.getDispatcher(), event.getCommandSelection());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-		if(super.onLeftClickBlock(event.getLevel(), event.getPos(), event.getEntity()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+		return super.onLeftClickBlock(event.getLevel(), event.getPos(), event.getEntity());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onDestroyBlock(BlockEvent.BreakEvent event) {
-		if(super.onDestroyBlock(event.getLevel(), event.getPos(), event.getPlayer()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onDestroyBlock(BlockEvent.BreakEvent event) {
+		return super.onDestroyBlock(event.getLevel(), event.getPos(), event.getPlayer());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		if(super.onRightClickBlock(event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getHitVec()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+		return super.onRightClickBlock(event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getHitVec());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onItemRightClick(PlayerInteractEvent.RightClickItem event) {
-		if(super.onItemRightClick(event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getItemStack()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onItemRightClick(PlayerInteractEvent.RightClickItem event) {
+		return super.onItemRightClick(event.getLevel(), event.getPos(), event.getEntity(), event.getHand(), event.getItemStack());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onItemUseTick(LivingEntityUseItemEvent.Tick event) {
-		if(super.onItemUseTick(event.getEntity(), event.getItem()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onItemUseTick(LivingEntityUseItemEvent.Tick event) {
+		return super.onItemUseTick(event.getEntity(), event.getItem());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onItemUseTick(LivingEntityUseItemEvent.Stop event) {
-		if(super.onItemUseStop(event.getEntity(), event.getItem()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onItemUseTick(LivingEntityUseItemEvent.Stop event) {
+		return super.onItemUseStop(event.getEntity(), event.getItem());
 	}
 
 	@SubscribeEvent
@@ -192,28 +198,24 @@ public class CommonEventsForge extends CommonEvents {
 			event.setResult(Result.DENY);
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onLivingHurt(LivingAttackEvent event) {
-		if(super.onLivingHurt(event.getSource(), event.getEntity()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onLivingHurt(LivingAttackEvent event) {
+		return super.onLivingHurt(event.getSource(), event.getEntity());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityAttack(AttackEntityEvent event) {
-		if(super.onEntityAttack(event.getEntity(), event.getTarget()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onEntityAttack(AttackEntityEvent event) {
+		return super.onEntityAttack(event.getEntity(), event.getTarget());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-		if(super.onEntityInteract(event.getEntity(), event.getTarget(), event.getHand()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+		return super.onEntityInteract(event.getEntity(), event.getTarget(), event.getHand());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onInteractEntitySpecific(PlayerInteractEvent.EntityInteractSpecific event) {
-		if(super.onInteractEntitySpecific(event.getEntity(), event.getTarget(), event.getHand()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onInteractEntitySpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+		return super.onInteractEntitySpecific(event.getEntity(), event.getTarget(), event.getHand());
 	}
 	
 	@SubscribeEvent
@@ -221,19 +223,17 @@ public class CommonEventsForge extends CommonEvents {
 		super.onExplosionDetonate(event.getLevel(), event.getExplosion(), event.getAffectedEntities(), event.getAffectedBlocks());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onChorusFruit(EntityTeleportEvent.ChorusFruit event){
-		if(super.onChorusFruit(event.getEntity(), event.getTarget()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onChorusFruit(EntityTeleportEvent.ChorusFruit event){
+		return super.onChorusFruit(event.getEntity(), event.getTarget());
 	}
 
 	@SubscribeEvent
-	public void onEntityJoinWorld(EntityJoinLevelEvent event){
-		if(super.onEntityJoinWorld(event.getEntity(), event.getLevel(), event.loadedFromDisk()))
-			event.setCanceled(true);
+	public boolean onEntityJoinWorld(EntityJoinLevelEvent event){
+		return super.onEntityJoinWorld(event.getEntity(), event.getLevel(), event.loadedFromDisk());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onEntityEnteringSection(EntityEvent.EnteringSection event){
 		super.onEntityEnteringSection(event.getEntity(), event.getOldPos(), event.getNewPos(), event.didChunkChange());
 	}
@@ -244,16 +244,14 @@ public class CommonEventsForge extends CommonEvents {
 			super.onPermissionsChanged(serverPlayer);
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onCropTrample(BlockEvent.FarmlandTrampleEvent event) {
-		if(super.onCropTrample(event.getEntity(), event.getPos()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onCropTrample(BlockEvent.FarmlandTrampleEvent event) {
+		return super.onCropTrample(event.getEntity(), event.getPos());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onBucketUse(FillBucketEvent event){
-		if(super.onBucketUse(event.getEntity(), event.getLevel(), event.getTarget(), event.getEmptyBucket()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onBucketUse(FillBucketEvent event){
+		return super.onBucketUse(event.getEntity(), event.getLevel(), event.getTarget(), event.getEmptyBucket());
 	}
 
 	@SubscribeEvent
@@ -261,21 +259,21 @@ public class CommonEventsForge extends CommonEvents {
 		super.onTagsUpdate();
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onItemPickup(EntityItemPickupEvent event){
-		if(super.onItemPickup(event.getEntity(), event.getItem()))
-			event.setCanceled(true);
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onItemPickup(EntityItemPickupEvent event){
+		return super.onItemPickup(event.getEntity(), event.getItem());
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onMobCheckSpawn(MobSpawnEvent.FinalizeSpawn event){
+	@SubscribeEvent(priority = Priority.HIGHEST)
+	public boolean onMobCheckSpawn(MobSpawnEvent.FinalizeSpawn event){
 		if(super.onMobSpawn(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getSpawnReason())) {
 			event.setSpawnCancelled(true);//won't be spawned
-			event.setCanceled(true);//won't call finalizeSpawn
+			return true;//won't call finalizeSpawn
 		}
+		return false;
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SubscribeEvent(priority = Priority.HIGHEST)
 	public void onProjectileImpact(ProjectileImpactEvent event){
 		if(super.onProjectileImpact(event.getRayTraceResult(), event.getProjectile()))
 			event.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
@@ -300,7 +298,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@Override
 	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		MinecraftForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker()));
+		OPACServerAddonRegisterEvent.BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker()));
 	}
 
 }

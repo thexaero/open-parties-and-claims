@@ -19,23 +19,27 @@
 package xaero.pac.server;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import xaero.pac.OpenPartiesAndClaims;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.LoadCommonForge;
 import xaero.pac.server.event.DedicatedServerEventsForge;
 
 public class LoadDedicatedServerForge extends LoadCommonForge<LoadDedicatedServer> {
 
-	public LoadDedicatedServerForge(OpenPartiesAndClaimsForge modMain) {
-		super(modMain, new LoadDedicatedServer(modMain));
+	public LoadDedicatedServerForge(OpenPartiesAndClaimsForge modMain, FMLJavaModLoadingContext context) {
+		super(modMain, context, new LoadDedicatedServer(modMain));
 	}
 
-	@SubscribeEvent
 	public void loadServer(final FMLDedicatedServerSetupEvent event) {
 		loader.loadServer();
 		MinecraftForge.EVENT_BUS.register(new DedicatedServerEventsForge());
+	}
+
+	@Override
+	public void registerEvents() {
+		super.registerEvents();
+		FMLDedicatedServerSetupEvent.getBus(context.getModBusGroup()).addListener(this::loadServer);
 	}
 
 }
