@@ -14,6 +14,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly project(":Common")
+    compileOnly project(":CreateSupportCommon")
 
     implementation 'com.electronwill.night-config:core:3.6.3'
     implementation 'com.electronwill.night-config:toml:3.6.3'
@@ -27,6 +28,11 @@ dependencies {
     modCompileOnly 'me.lucko:fabric-permissions-api:0.2-SNAPSHOT'//source: https://github.com/lucko/fabric-permissions-api
 
     modCompileOnly "curse.maven:ftbteams-438497:4611937"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-fabric
+
+    modCompileOnly("com.simibubi.create:create-fabric-${minecraft_version}:${fabric_create_version}"){
+        exclude(group: "com.jozufozu.flywheel")
+        exclude(group: "net.minecraftforge")
+    }
 }
 
 loom {
@@ -52,12 +58,14 @@ loom {
 
 processResources {
     from project(":Common").sourceSets.main.resources
+    from project(":CreateSupportCommon").sourceSets.main.resources
     inputs.property "version", project.version
 }
 
 
 tasks.withType(JavaCompile) {
     source(project(":Common").sourceSets.main.allSource)
+    source(project(":CreateSupportCommon").sourceSets.main.allSource)
 }
 
 jar {
