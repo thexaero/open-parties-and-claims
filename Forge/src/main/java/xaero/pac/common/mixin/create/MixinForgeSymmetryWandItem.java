@@ -16,38 +16,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mixin;
+package xaero.pac.common.mixin.create;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.entity.EntityAccess;
-import net.minecraft.world.level.entity.TransientEntitySectionManager;
+import com.simibubi.create.content.equipment.symmetryWand.SymmetryWandItem;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
+import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(TransientEntitySectionManager.Callback.class)
-public class MixinFabricTransientEntitySectionManagerCallback {
+@Mixin(value = SymmetryWandItem.class, priority = 1000001)
+public class MixinForgeSymmetryWandItem {
 
-	private long OPAC_oldSectionKey;
-
-	@Shadow
-	private long currentSectionKey;
-	@Shadow
-	private EntityAccess entity;
-
-	@Inject(at = @At("HEAD"), method = "onMove")
-	public void onOnMoveHead(CallbackInfo ci){
-		OPAC_oldSectionKey = currentSectionKey;
-	}
-
-	@Inject(at = @At("RETURN"), method = "onMove")
-	public void onOnMoveReturn(CallbackInfo ci){
-		if (entity instanceof Entity realEntity && currentSectionKey != OPAC_oldSectionKey)
-			((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onEntityEnteringSection(realEntity, OPAC_oldSectionKey, currentSectionKey);
+	@Inject(method = "remove", remap = false, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/equipment/symmetryWand/mirror/SymmetryMirror;process(Ljava/util/Map;)V"))
+	private static void onRemove(Level world, ItemStack wand, Player player, BlockPos pos, CallbackInfo ci){
+		ServerCore.onCreateModSymmetryProcessed(world, player);
 	}
 
 }
