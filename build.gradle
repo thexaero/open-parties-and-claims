@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT' apply(false)
+    id 'fabric-loom' version '1.8-SNAPSHOT' apply(false)
     id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT' apply(false)
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT' apply(false)
 }
@@ -59,6 +59,12 @@ subprojects {
             name = "Fuzs Mod Resources"
             url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
         }
+        maven {
+            url = "https://maven.createmod.net"
+        } // Create, Ponder, Flywheel
+        maven {
+            url = "https://maven.ithundxr.dev/mirror"
+        } // Registrate
     }
 
     tasks.withType(JavaCompile).configureEach {
