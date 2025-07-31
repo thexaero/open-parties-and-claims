@@ -19,7 +19,7 @@
 package xaero.pac.common.mixin.create;
 
 import com.simibubi.create.content.fluids.OpenEndedPipe;
-import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
