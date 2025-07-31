@@ -1,0 +1,37 @@
+{
+    "required": true,
+    "plugin" : "xaero.pac.common.mixin.plugin.MixinPlugin",
+    "minVersion": "0.8",
+    "package": "xaero.pac.common.mixin.create",
+    "refmap": "${mod_id}.refmap.json",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "MixinAbstractContraptionEntity",
+        "MixinAccessorDeployerFakePlayer",
+        "MixinArmBlockEntity",
+        "MixinArmInteractionPoint",
+        "MixinBlockBreakingKineticBlockEntity",
+        "MixinBlockBreakingMovementBehaviour",
+        "MixinContraption",
+        "MixinContraptionCollider",
+        "MixinCouplingHandler",
+        "MixinDeployerBlockEntity",
+        "MixinDeployerMovementBehaviour",
+        "MixinHarvesterMovementBehaviour",
+        "MixinKineticBlockEntity",
+        "MixinMinecartContraptionItem",
+        "MixinPloughMovementBehaviour",
+        "MixinSchematicannonBlockEntity",
+        "MixinSymmetryWandItem"
+    ],
+    "client": [
+
+    ],
+    "server": [
+
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }
+  
