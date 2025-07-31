@@ -36,9 +36,16 @@ runs {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+repositories {
+    maven {
+        url = "https://maven.ithundxr.dev/snapshots"
+    } // Registrate
+}
+
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     compileOnly project(":Common")
+    compileOnly project(":CreateSupportCommon")
 
     compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
     compileOnly "curse.maven:architectury-419699:4581905"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
@@ -47,8 +54,10 @@ dependencies {
     compileOnly "maven.modrinth:resourceful-lib:ihzjCwEV"//source: https://github.com/Team-Resourceful/ResourcefulLib
     compileOnly "maven.modrinth:odyssey-roles:1.3.1"//source: https://github.com/terrarium-earth/Prometheus
 
-    //implementation "curse.maven:create-328085:6323264"//source: https://github.com/Creators-of-Create/Create
-
+    compileOnly("com.simibubi.create:create-1.21.1:${neoforge_create_version}:slim"){ transitive = false }
+    compileOnly "net.createmod.ponder:Ponder-NeoForge-1.21.1:${neoforge_ponder_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-1.21.1:${neoforge_flywheel_version}"
+    compileOnly "com.tterrag.registrate:Registrate:${neoforge_registrate_version}"
 
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 
@@ -61,10 +70,12 @@ Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
 
 tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
     source(project(":Common").sourceSets.main.allSource)
+    source(project(":CreateSupportCommon").sourceSets.main.allSource)
 }
 
 tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
     from project(":Common").sourceSets.main.resources
+    from project(":CreateSupportCommon").sourceSets.main.resources
 }
 
 publishing {
