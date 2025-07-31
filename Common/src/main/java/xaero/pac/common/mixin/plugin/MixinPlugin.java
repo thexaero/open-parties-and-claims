@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.platform.Services;
 
 import java.util.List;
@@ -36,6 +37,14 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 		String modId = MIXIN_MOD_ID_MAP.get(mixinClassName);
+		if(modId == null){
+			int mixinPackageIndex = mixinClassName.indexOf(".mixin.");
+			String relativeMixinPath = mixinClassName.substring(mixinPackageIndex + 7);
+			int relativeDotIndex = relativeMixinPath.indexOf('.');
+			if(relativeDotIndex == -1)
+				return true;
+			modId = relativeMixinPath.substring(0, relativeDotIndex);
+		}
 		if(modId == null)
 			return true;
 		return Services.PLATFORM.shouldApplyMixinsTargetingMod(modId);
