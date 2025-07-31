@@ -79,7 +79,6 @@ dependencies {
     compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${forge_ponder_version}")
     compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${forge_flywheel_version}")
     compileOnly fg.deobf("com.tterrag.registrate:Registrate:${forge_registrate_version}")
-    runtimeOnly "io.github.llamalad7:mixinextras-forge:0.4.1"
 }
 
 tasks.withType(JavaCompile) {
