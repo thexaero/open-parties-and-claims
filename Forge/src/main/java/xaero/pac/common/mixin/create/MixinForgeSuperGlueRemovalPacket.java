@@ -18,10 +18,8 @@
 
 package xaero.pac.common.mixin.create;
 
-import com.google.common.graph.Network;
 import com.simibubi.create.content.contraptions.glue.SuperGlueRemovalPacket;
-import com.simibubi.create.foundation.networking.SimplePacketBase;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,7 +34,7 @@ public class MixinForgeSuperGlueRemovalPacket {
 	private int entityId;
 
 	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
-	public void onActivate(NetworkEvent.Context ctx, CallbackInfo ci){
+	public void onActivate(CustomPayloadEvent.Context ctx, CallbackInfo ci){
 		if(!ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender()))
 			ci.cancel();
 	}

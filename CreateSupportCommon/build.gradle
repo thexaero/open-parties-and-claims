@@ -1,6 +1,6 @@
 plugins {
     id 'idea'
-    id 'net.minecraftforge.gradle'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.spongepowered.mixin'
 }
 
@@ -75,9 +75,9 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
 
-    compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${forge_create_version}:slim") { transitive = false }
-    compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${forge_ponder_version}")
-    compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${forge_flywheel_version}")
+    compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${forge_create_version}:slim") { transitive = false }
+    compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:${forge_ponder_version}")
+    compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-1.20.1:${forge_flywheel_version}")
     compileOnly fg.deobf("com.tterrag.registrate:Registrate:${forge_registrate_version}")
     runtimeOnly "io.github.llamalad7:mixinextras-forge:0.4.1"
 }
