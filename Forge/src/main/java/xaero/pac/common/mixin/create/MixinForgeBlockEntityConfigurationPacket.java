@@ -16,38 +16,32 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mixin;
+package xaero.pac.common.mixin.create;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.entity.EntityAccess;
-import net.minecraft.world.level.entity.TransientEntitySectionManager;
+import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.OpenPartiesAndClaimsFabric;
+import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(TransientEntitySectionManager.Callback.class)
-public class MixinFabricTransientEntitySectionManagerCallback {
-
-	private long OPAC_oldSectionKey;
+@Mixin(BlockEntityConfigurationPacket.class)
+public class MixinForgeBlockEntityConfigurationPacket {
 
 	@Shadow
-	private long currentSectionKey;
-	@Shadow
-	private EntityAccess entity;
+	protected BlockPos pos;
 
-	@Inject(at = @At("HEAD"), method = "onMove")
-	public void onOnMoveHead(CallbackInfo ci){
-		OPAC_oldSectionKey = currentSectionKey;
-	}
-
-	@Inject(at = @At("RETURN"), method = "onMove")
-	public void onOnMoveReturn(CallbackInfo ci){
-		if (entity instanceof Entity realEntity && currentSectionKey != OPAC_oldSectionKey)
-			((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onEntityEnteringSection(realEntity, OPAC_oldSectionKey, currentSectionKey);
+	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
+	public void onHandle(CustomPayloadEvent.Context context, CallbackInfo ci){
+		ServerPlayer player = context.getSender();
+		if (player == null)
+			return;
+		if(!ServerCore.isCreateTileEntityPacketAllowed(pos, player))
+			ci.cancel();
 	}
 
 }
