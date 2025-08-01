@@ -44,7 +44,7 @@ dependencies {
     modCompileOnly "curse.maven:ftbteams-438497:4616151"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-fabric
     modCompileOnly "maven.modrinth:odyssey-allies:0.1.1"//source: https://modrinth.com/mod/argonauts
 
-    modCompileOnly("com.simibubi.create:create-fabric-1.19.2:${fabric_create_version}"){
+    modCompileOnly("com.simibubi.create:create-fabric-1.20.1:${fabric_create_version}"){
         exclude(group: "com.jozufozu.flywheel")
         exclude(group: "net.minecraftforge")
     }
