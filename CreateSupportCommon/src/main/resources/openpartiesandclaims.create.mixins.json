@@ -16,6 +16,7 @@
         "MixinContraptionCollider",
         "MixinCouplingHandler",
         "MixinDeployerBlockEntity",
+        "MixinDeployerMovementBehaviour",
         "MixinHarvesterMovementBehaviour",
         "MixinKineticBlockEntity",
         "MixinMinecartContraptionItem",
