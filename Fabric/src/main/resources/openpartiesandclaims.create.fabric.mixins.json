@@ -5,6 +5,7 @@
     "package": "xaero.pac.common.mixin.create",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "MixinDeployerMovementBehaviour",
         "MixinFabricBlockEntityConfigurationPacket",
         "MixinFabricContraptionInteractionPacket",
         "MixinFabricControlsInputPacket",
