@@ -13,11 +13,13 @@ mixin {
 
     config("${mod_id}.mixins.json")
     config("${mod_id}.forge.mixins.json")
+    config("${mod_id}.create.mixins.json")
+    config("${mod_id}.create.forge.mixins.json")
 }
 
 jar {
     manifest {
-        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
+        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json,${mod_id}.create.mixins.json,${mod_id}.create.forge.mixins.json"
     }
 }
 
@@ -46,6 +48,7 @@ minecraft {
                 modClientRun {
                     source sourceSets.main
 //                    source project(":Common").sourceSets.main
+//                    source project(":CreateSupportCommon").sourceSets.main
                 }
             }
         }
@@ -60,6 +63,7 @@ minecraft {
                 modServerRun {
                     source sourceSets.main
 //                    source project(":Common").sourceSets.main
+//                    source project(":CreateSupportCommon").sourceSets.main
                 }
             }
         }
@@ -86,6 +90,7 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
+    compileOnly project(":CreateSupportCommon")
 
     implementation("io.github.llamalad7:mixinextras-forge:0.3.5")//required for forgeconfigapiport because the transitive dep causes issues
     implementation("fuzs.forgeconfigapiport:forgeconfigapiport-forge:21.8.0"){//source: https://github.com/Fuzss/forgeconfigapiport-fabric
@@ -99,7 +104,13 @@ dependencies {
     compileOnly "maven.modrinth:resourceful-lib:2.1.1"//source: https://github.com/Team-Resourceful/ResourcefulLib
     compileOnly "maven.modrinth:odyssey-roles:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
 
-    //implementation fg.deobf("curse.maven:create-328085:4835191")//source: https://github.com/Creators-of-Create/Create
+    compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${forge_create_version}:slim") { transitive = false }
+    compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:${forge_ponder_version}")
+    compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-1.20.1:${forge_flywheel_version}")
+    //runtimeOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-1.20.1:${forge_flywheel_version}")
+    compileOnly fg.deobf("com.tterrag.registrate:Registrate:${forge_registrate_version}")
+    //runtimeOnly "io.github.llamalad7:mixinextras-forge:0.4.1"
+    //implementation fg.deobf("curse.maven:cctweaked-282001:4061947")//source: https://github.com/cc-tweaked/CC-Tweaked
 
 
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
@@ -113,10 +124,12 @@ dependencies {
 
 tasks.withType(JavaCompile) {
     source(project(":Common").sourceSets.main.allSource)
+    source(project(":CreateSupportCommon").sourceSets.main.allSource)
 }
 
 processResources {
     from project(":Common").sourceSets.main.resources
+    from project(":CreateSupportCommon").sourceSets.main.resources
 }
 
 jar.finalizedBy('packageSources')
