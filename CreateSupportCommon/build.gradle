@@ -1,0 +1,67 @@
+plugins {
+    id 'org.spongepowered.gradle.vanilla'
+}
+
+java.withJavadocJar()
+
+base {
+    archivesName = "${mod_name}-create-support-common-${minecraft_version}"
+}
+
+minecraft {
+    version(minecraft_version)
+    runs {
+        if (project.hasProperty('common_runs_enabled') ? project.findProperty('common_runs_enabled').toBoolean() : true) {
+
+            server(project.hasProperty('common_server_run_name') ? project.findProperty('common_server_run_name') : 'vanilla_server') {
+                workingDirectory(this.file("run"))
+            }
+            client(project.hasProperty('common_client_run_name') ? project.findProperty('common_client_run_name') : 'vanilla_client') {
+                workingDirectory(this.file("run"))
+            }
+        }
+    }
+}
+
+repositories {
+    maven {
+        url = "https://maven.ithundxr.dev/snapshots"
+    } // Registrate
+}
+
+dependencies {
+    compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    compileOnly project(":Common")
+
+    compileOnly("com.simibubi.create:create-1.21.1:${neoforge_create_version}:slim"){ transitive = false }
+    compileOnly "net.createmod.ponder:Ponder-NeoForge-1.21.1:${neoforge_ponder_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-1.21.1:${neoforge_flywheel_version}"
+    compileOnly "com.tterrag.registrate:Registrate:${neoforge_registrate_version}"
+
+    compileOnly "org.ow2.asm:asm:9.7"
+    compileOnly "org.ow2.asm:asm-tree:9.7"
+}
+
+tasks.withType(JavaCompile) {
+}
+
+processResources {
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}

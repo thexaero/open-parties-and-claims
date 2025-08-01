@@ -7,6 +7,18 @@ base {
     archivesName = "${mod_name}-fabric-${minecraft_version}"
 }
 
+repositories{
+    maven {
+        url = "https://mvn.devos.one/snapshots"
+    }// Create and several dependencies
+    maven {
+        url = "https://mvn.devos.one/releases"
+    } // Porting Lib releases
+    maven {
+        url = "https://maven.jamieswhiteshirt.com/libs-release"
+    } // Reach Entity Attributes
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
@@ -14,6 +26,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly project(":Common")
+    compileOnly project(":CreateSupportCommon")
 
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.4.0"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
@@ -28,6 +41,11 @@ dependencies {
 
     modCompileOnly "curse.maven:ftbteams-438497:4616151"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-fabric
     modCompileOnly "maven.modrinth:odyssey-allies:0.1.1"//source: https://modrinth.com/mod/argonauts
+
+    modCompileOnly("com.simibubi.create:create-fabric-1.20.1:${fabric_create_version}"){
+        exclude(group: "com.jozufozu.flywheel")
+        exclude(group: "net.minecraftforge")
+    }
 }
 
 loom {
@@ -53,6 +71,7 @@ loom {
 
 processResources {
     from project(":Common").sourceSets.main.resources
+    from project(":CreateSupportCommon").sourceSets.main.resources
     inputs.property "version", project.version
     exclude "META-INF/*_core.js"
     exclude "META-INF/coremods.json"
@@ -61,6 +80,7 @@ processResources {
 
 tasks.withType(JavaCompile) {
     source(project(":Common").sourceSets.main.allSource)
+    source(project(":CreateSupportCommon").sourceSets.main.allSource)
 }
 
 jar {
