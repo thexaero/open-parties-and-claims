@@ -34,9 +34,6 @@ import xaero.pac.common.server.core.accessor.ICreateContraption;
 @Mixin(DeployerMovementBehaviour.class)
 public class MixinDeployerMovementBehaviour {
 
-	//This mixin is not used on Forge 1.20.2 - 1.20.6 due to compilation errors.
-	//A coremod injection is used instead.
-
 	private MovementContext OPAC_lastMovementContext;
 	private BlockPos OPAC_lastPos;
 
