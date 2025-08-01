@@ -45,7 +45,7 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     compileOnly project(":Common")
-    compileOnly project(":CreateSupportCommon")
+    //compileOnly project(":CreateSupportCommon")
 
     compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
     compileOnly "curse.maven:architectury-419699:4581905"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
@@ -70,12 +70,12 @@ Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
 
 tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
     source(project(":Common").sourceSets.main.allSource)
-    source(project(":CreateSupportCommon").sourceSets.main.allSource)
+    //source(project(":CreateSupportCommon").sourceSets.main.allSource)
 }
 
 tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
     from project(":Common").sourceSets.main.resources
-    from project(":CreateSupportCommon").sourceSets.main.resources
+    //from project(":CreateSupportCommon").sourceSets.main.resources
 }
 
 publishing {
