@@ -1,84 +1,46 @@
 plugins {
-    id 'idea'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin'
+    id 'org.spongepowered.gradle.vanilla'
 }
+
+java.withJavadocJar()
 
 base {
     archivesName = "${mod_name}-create-support-common-${minecraft_version}"
 }
 
-mixin {
-    add(sourceSets.main, "${mod_id}.refmap.json")
-
-    config("${mod_id}.create.mixins.json")
-}
-
 minecraft {
-    mappings channel: 'official', version: minecraft_version
-    
-    if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
-        // This location is hardcoded in Forge and can not be changed.
-        // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
-        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-        project.logger.debug('Forge Access Transformers are enabled for this project.')
-    }
-
+    version(minecraft_version)
     runs {
-        client {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Client'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "--username=Dev"
+        if (project.hasProperty('common_runs_enabled') ? project.findProperty('common_runs_enabled').toBoolean() : true) {
 
-            mods {
-                modClientRun {
-                    source sourceSets.main
-                }
+            server(project.hasProperty('common_server_run_name') ? project.findProperty('common_server_run_name') : 'vanilla_server') {
+                workingDirectory(this.file("run"))
             }
-        }
-
-        server {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Server'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                modServerRun {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            taskName 'Data'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                modDataRun {
-                    source sourceSets.main
-                }
+            client(project.hasProperty('common_client_run_name') ? project.findProperty('common_client_run_name') : 'vanilla_client') {
+                workingDirectory(this.file("run"))
             }
         }
     }
 }
 
-sourceSets.main.resources.srcDir 'src/generated/resources'
+repositories {
+    maven {
+        url = "https://maven.ithundxr.dev/snapshots"
+    } // Registrate
+}
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly project(":Common")
 
-    compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${forge_create_version}:slim") { transitive = false }
-    compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:${forge_ponder_version}")
-    compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-1.20.1:${forge_flywheel_version}")
-    compileOnly fg.deobf("com.tterrag.registrate:Registrate:${forge_registrate_version}")
+    compileOnly("com.simibubi.create:create-1.21.1:${neoforge_create_version}:slim"){ transitive = false }
+    compileOnly "net.createmod.ponder:Ponder-NeoForge-1.21.1:${neoforge_ponder_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-1.21.1:${neoforge_flywheel_version}"
+    compileOnly "com.tterrag.registrate:Registrate:${neoforge_registrate_version}"
+
+    compileOnly "org.ow2.asm:asm:9.7"
+    compileOnly "org.ow2.asm:asm-tree:9.7"
 }
 
 tasks.withType(JavaCompile) {
@@ -87,21 +49,16 @@ tasks.withType(JavaCompile) {
 processResources {
 }
 
-jar.finalizedBy('reobfJar', 'packageSources')
-
-//disabling this because it seems bugged, because of mod dependencies in the Common project, with no apparent workaround
-//works fine in the Fabric one for some reason
-tasks.getByName('compileTestJava').setEnabled(false)
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.archivesBaseName
             version project.version
-            artifact jar
+            from components.java
         }
     }
+
     repositories {
         maven {
             url "file://" + System.getenv("local_maven")
