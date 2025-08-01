@@ -122,7 +122,7 @@ function initializeCoreMod() {
 				'type': 'METHOD',
 				'class': 'com.simibubi.create.content.kinetics.deployer.DeployerMovementBehaviour',
 				'methodName': 'activate',
-				'methodDesc' : '(Lcom/simibubi/create/content/contraptions/behaviour/MovementContext;Lnet/minecraft/core/BlockPos;Lcom/simibubi/create/content/kinetics/deployer/DeployerFakePlayer;Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity$Mode;)V'
+				'methodDesc' : '(Lcom/simibubi/create/content/contraptions/behaviour/MovementContext;Lnet/minecraft/core/BlockPos;Lcom/simibubi/create/content/kinetics/deployer/DeployerFakePlayer;Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity\$Mode;)V'
 			},
 			'transformer' : function(methodNode){
 				var MY_LABEL = new LabelNode(new Label())
