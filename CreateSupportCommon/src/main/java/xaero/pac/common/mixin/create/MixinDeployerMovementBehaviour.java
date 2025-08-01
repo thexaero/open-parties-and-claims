@@ -39,7 +39,8 @@ public class MixinDeployerMovementBehaviour {
 
 	@ModifyVariable(method = "tick", remap = false, at = @At(value = "INVOKE_ASSIGN", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerMovementBehaviour;getPlayer(Lcom/simibubi/create/content/contraptions/behaviour/MovementContext;)Lcom/simibubi/create/content/kinetics/deployer/DeployerFakePlayer;"))
 	public DeployerFakePlayer onTick(DeployerFakePlayer deployerFakePlayer, MovementContext movementContext){
-		Pair<BlockPos, Float> blockBreakingProgress = ((MixinAccessorDeployerFakePlayer)deployerFakePlayer).getBlockBreakingProgress();
+		//casting to Object fixes compilation error caused by a create dependency made for a different MC version
+		Pair<BlockPos, Float> blockBreakingProgress = ((MixinAccessorDeployerFakePlayer)(Object)deployerFakePlayer).getBlockBreakingProgress();
 		if(blockBreakingProgress != null) {
 			OPAC_lastMovementContext = movementContext;
 			OPAC_lastPos = blockBreakingProgress.getKey();

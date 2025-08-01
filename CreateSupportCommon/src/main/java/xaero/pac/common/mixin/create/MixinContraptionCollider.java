@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.core.accessor.ICreateContraption;
+import xaero.pac.common.server.core.accessor.ICreateContraptionEntity;
 
 import java.util.List;
 
@@ -34,7 +35,8 @@ public class MixinContraptionCollider {
 
 	@ModifyVariable(method = "collideEntities", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;"))
 	private static List<Entity> onCollideEntities(List<Entity> actualList, AbstractContraptionEntity contraptionEntity){
-		ServerCore.onCreateCollideEntities(actualList, contraptionEntity, (ICreateContraption) contraptionEntity.getContraption());
+		//casting to Object fixes compilation error on 1.21.1 where CreateSupportCommon is a vanilla project with a NeoForge create dependency
+		ServerCore.onCreateCollideEntities(actualList, contraptionEntity, ((ICreateContraptionEntity)(Object)contraptionEntity).getXaero_OPAC_contraption());
 		return actualList;
 	}
 
