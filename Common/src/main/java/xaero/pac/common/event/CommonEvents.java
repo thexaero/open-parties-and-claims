@@ -563,6 +563,14 @@ public abstract class CommonEvents {
 	public boolean onMobSpawn(Entity entity, double x, double y, double z, MobSpawnType spawnReason) {
 		if(spawnReason == MobSpawnType.CHUNK_GENERATION)
 			return false;
+		if(spawnReason == MobSpawnType.COMMAND)
+			return false;
+		if(spawnReason == MobSpawnType.SPAWN_EGG)
+			return false;
+		if(spawnReason == MobSpawnType.BREEDING)
+			return false;
+		if(spawnReason == MobSpawnType.BUCKET)
+			return false;
 		if(entity == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
