@@ -16,11 +16,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mixin.create;
+package xaero.pac.common.mixin.create.v6_0_0;
 
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
+import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.network.NetworkEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,13 +29,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.common.server.core.ServerCore;
 
 @Mixin(RadialWrenchMenuSubmitPacket.class)
-public class MixinForgeRadialWrenchMenuSubmitPacketPacket {
+public class MixinFabricRadialWrenchMenuSubmitPacketPacket {
 
 	@Shadow
 	private BlockPos blockPos;
 
 	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
-	public void onActivate(NetworkEvent.Context ctx, CallbackInfo ci){
+	public void onActivate(SimplePacketBase.Context ctx, CallbackInfo ci){
 		if(!ServerCore.isCreateBlockPacketAllowed(blockPos, ctx.getSender()))
 			ci.cancel();
 	}

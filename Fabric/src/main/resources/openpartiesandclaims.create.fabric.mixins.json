@@ -11,7 +11,7 @@
         "MixinFabricElevatorTargetFloorPacket",
         "MixinFabricOpenEndedPipe",
         "MixinFabricPotatoProjectileEntity",
-        "MixinFabricRadialWrenchMenuSubmitPacketPacket",
+        "v6_0_0.MixinFabricRadialWrenchMenuSubmitPacketPacket",
         "MixinFabricSuperGlueRemovalPacket",
         "MixinFabricSuperGlueSelectionPacket",
         "MixinFabricSymmetryWandItem",

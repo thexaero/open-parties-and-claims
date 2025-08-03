@@ -11,7 +11,7 @@
         "MixinForgeControlsInputPacket",
         "MixinForgeElevatorTargetFloorPacket",
         "MixinForgeOpenEndedPipe",
-        "MixinForgeRadialWrenchMenuSubmitPacketPacket",
+        "v6_0_0.MixinForgeRadialWrenchMenuSubmitPacketPacket",
         "MixinForgeSuperGlueRemovalPacket",
         "MixinForgeSuperGlueSelectionPacket",
         "MixinForgeSymmetryWandItem",
