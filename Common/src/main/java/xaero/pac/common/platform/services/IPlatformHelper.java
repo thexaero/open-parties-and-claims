@@ -25,7 +25,7 @@ import xaero.pac.common.server.world.IServerChunkCacheAccess;
 
 import java.nio.file.Path;
 
-public interface IPlatformHelper {
+public interface IPlatformHelper<LOADING_MOD_INFO, MOD_VERSION extends Comparable<MOD_VERSION>> {
 
 	/**
 	 * Gets the name of the current platform
@@ -42,9 +42,11 @@ public interface IPlatformHelper {
 	 */
 	boolean isModLoaded(String modId);
 
-	default boolean shouldApplyMixinsTargetingMod(String modId){
-		return isModLoaded(modId);
-	}
+	LOADING_MOD_INFO getLoadingModInfo(String modId);
+
+	MOD_VERSION getModVersion(LOADING_MOD_INFO loadingModInfo);
+
+	MOD_VERSION getVersionFromString(String versionString);
 
 	/**
 	 * Check if the game is currently in a development environment.
