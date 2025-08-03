@@ -32,11 +32,16 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.sync.IPartyMemberDynamicInfoSynchronizer;
+import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 public class PlayerLogoutHandler {
 	
 	public void handle(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 			serverData) {
+		ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+		if(!mainCap.hasHandledLogin())
+			return;
 		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), true);
 		//PlayerMainCapability playerMainCap = (PlayerMainCapability) player.getCapability(PlayerCapabilityProvider.MAIN_CAP).orElse(null);
 		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = serverData.getPartyManager().getPartyByMember(player.getUUID());
