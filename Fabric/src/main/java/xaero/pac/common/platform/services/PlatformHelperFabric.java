@@ -19,6 +19,10 @@
 package xaero.pac.common.platform.services;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.controls.KeyBindingHelperFabric;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.common.entity.EntityAccessFabric;
@@ -31,7 +35,7 @@ import xaero.pac.common.server.world.ServerChunkCacheAccessFabric;
 import java.io.File;
 import java.nio.file.Path;
 
-public class PlatformHelperFabric implements IPlatformHelper {
+public class PlatformHelperFabric implements IPlatformHelper<ModContainer, Version> {
 	private final KeyBindingHelperFabric keyBindingHelperFabric = new KeyBindingHelperFabric();
 	private final EntityAccessFabric entityAccessFabric = new EntityAccessFabric();
 	private final ServerChunkCacheAccessFabric serverChunkCacheAccessFabric = new ServerChunkCacheAccessFabric();
@@ -45,6 +49,25 @@ public class PlatformHelperFabric implements IPlatformHelper {
 	@Override
 	public boolean isModLoaded(String modId) {
 		return FabricLoader.getInstance().isModLoaded(modId);
+	}
+
+	@Override
+	public ModContainer getLoadingModInfo(String modId) {
+		return FabricLoader.getInstance().getModContainer(modId).orElse(null);
+	}
+
+	@Override
+	public Version getModVersion(ModContainer modContainer) {
+		return modContainer.getMetadata().getVersion();
+	}
+
+	@Override
+	public Version getVersionFromString(String versionString){
+		try {
+			return Version.parse(versionString);
+		} catch (VersionParsingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
