@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.platform.Services;
+import xaero.pac.common.platform.services.IPlatformHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -31,23 +32,58 @@ import java.util.Set;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
-	private final Map<String, String> MIXIN_MOD_ID_MAP = ImmutableMap.of(
+	private final Map<String, String> MIXIN_MOD_REQ_MAP = ImmutableMap.of(
 	);
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		String modId = MIXIN_MOD_ID_MAP.get(mixinClassName);
-		if(modId == null){
+		String modReq = MIXIN_MOD_REQ_MAP.get(mixinClassName);
+		if(modReq == null){
 			int mixinPackageIndex = mixinClassName.indexOf(".mixin.");
 			String relativeMixinPath = mixinClassName.substring(mixinPackageIndex + 7);
-			int relativeDotIndex = relativeMixinPath.indexOf('.');
+			int relativeDotIndex = relativeMixinPath.lastIndexOf('.');
 			if(relativeDotIndex == -1)
 				return true;
-			modId = relativeMixinPath.substring(0, relativeDotIndex);
+			modReq = relativeMixinPath.substring(0, relativeDotIndex);
 		}
-		if(modId == null)
+		String[] modReqArgs = modReq.split("\\.");
+		String modId = modReqArgs[0];
+		String minVersion = null;
+		String maxVersion = null;
+		if(modReqArgs.length > 1)
+			minVersion = modReqArgs[1].substring(1)
+					.replaceAll("_", ".")
+					.replaceAll("H", "-")
+					.replaceAll("P", "+");
+		if(modReqArgs.length > 2)
+			maxVersion = modReqArgs[2].substring(1)
+					.replaceAll("_", ".")
+					.replaceAll("H", "-")
+					.replaceAll("P", "+");
+		return shouldApplyMixinsTargetingMod(Services.PLATFORM, modId, minVersion, maxVersion);
+	}
+
+	public <M, V extends Comparable<V>> boolean shouldApplyMixinsTargetingMod(
+			IPlatformHelper<M, V> platform,
+			String modId,
+			String minVersionString,
+			String maxVersionString
+	) {
+		M modInfo = platform.getLoadingModInfo(modId);
+		if(modInfo == null)
+			return false;
+		if(minVersionString == null && maxVersionString == null)
 			return true;
-		return Services.PLATFORM.shouldApplyMixinsTargetingMod(modId);
+		V installedVersion = platform.getModVersion(modInfo);
+		if(minVersionString != null) {
+			V minVersion = platform.getVersionFromString(minVersionString);
+			if(installedVersion.compareTo(minVersion) < 0)
+				return false;
+		}
+		if(maxVersionString == null)
+			return true;
+		V maxVersion = platform.getVersionFromString(maxVersionString);
+		return installedVersion.compareTo(maxVersion) <= 0;
 	}
 
 	@Override
