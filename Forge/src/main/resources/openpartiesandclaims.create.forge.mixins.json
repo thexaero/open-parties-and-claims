@@ -1,0 +1,32 @@
+{
+    "required": true,
+    "plugin" : "xaero.pac.common.mixin.plugin.MixinPlugin",
+    "minVersion": "0.8",
+    "package": "xaero.pac.common.mixin.create",
+    "refmap": "${mod_id}.refmap.json",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "MixinForgeBlockEntityConfigurationPacket",
+        "MixinForgeContraptionInteractionPacket",
+        "MixinForgeControlsInputPacket",
+        "MixinForgeElevatorTargetFloorPacket",
+        "MixinForgeOpenEndedPipe",
+        "v6_0_0.MixinForgeRadialWrenchMenuSubmitPacketPacket",
+        "MixinForgeSuperGlueRemovalPacket",
+        "MixinForgeSuperGlueSelectionPacket",
+        "MixinForgeSymmetryWandItem",
+        "MixinForgeToolboxDisposeAllPacket",
+        "MixinForgeToolboxEquipPacket",
+        "MixinForgeTrainRelocationPacket"
+    ],
+    "client": [
+
+    ],
+    "server": [
+
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }
+  

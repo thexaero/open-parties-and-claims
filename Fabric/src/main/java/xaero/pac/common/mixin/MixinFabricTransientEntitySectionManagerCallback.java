@@ -20,6 +20,7 @@ package xaero.pac.common.mixin;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.entity.EntityAccess;
+import net.minecraft.world.level.entity.TransientEntitySectionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 
-@Mixin(targets = "net/minecraft/world/level/entity/TransientEntitySectionManager$Callback")
+@Mixin(TransientEntitySectionManager.Callback.class)
 public class MixinFabricTransientEntitySectionManagerCallback {
 
 	private long OPAC_oldSectionKey;
