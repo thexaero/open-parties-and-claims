@@ -557,13 +557,13 @@ public abstract class CommonEvents {
 	public boolean onMobSpawn(Entity entity, double x, double y, double z, EntitySpawnReason spawnReason) {
 		if(spawnReason == EntitySpawnReason.CHUNK_GENERATION)
 			return false;
-		if(spawnReason == MobSpawnType.COMMAND)
+		if(spawnReason == EntitySpawnReason.COMMAND)
 			return false;
-		if(spawnReason == MobSpawnType.SPAWN_EGG)
+		if(spawnReason == EntitySpawnReason.SPAWN_ITEM_USE)
 			return false;
-		if(spawnReason == MobSpawnType.BREEDING)
+		if(spawnReason == EntitySpawnReason.BREEDING)
 			return false;
-		if(spawnReason == MobSpawnType.BUCKET)
+		if(spawnReason == EntitySpawnReason.BUCKET)
 			return false;
 		if(entity == null)
 			return false;
