@@ -320,7 +320,7 @@ public class ServerCore {
 	public static boolean isCreateBlockPacketAllowed(BlockPos pos, ServerPlayer player){
 		if(pos == null)
 			return true;
-		ServerLevel level = player.serverLevel();
+		ServerLevel level = player.level();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(level.getServer());
 		if(serverData == null)
