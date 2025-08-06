@@ -34,7 +34,7 @@ import java.util.Random;
 @Mixin(value = FireBlock.class, priority = 1000001)
 public class MixinForgeFireBlock {
 
-	@Inject(method = "tryCatchFire", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "tryCatchFire", remap = false, at = @At("HEAD"), cancellable = true)
 	public void onCheckBurnOut(Level level, BlockPos blockPos, int i, RandomSource random, int j, Direction face, CallbackInfo info){
 		if(!ServerCore.canSpreadFire(level, blockPos))
 			info.cancel();
