@@ -47,7 +47,7 @@ public class MixinForgeBlock {
 
 	@Inject(
 			method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;Z)V",
-			at = @At("RETURN")
+			at = @At("RETURN"), remap = false
 	)
 	private static void onDropResourcesPost(BlockState blockState, Level level, BlockPos blockPos, BlockEntity blockEntity, Entity entity, ItemStack itemStack, boolean dropXp, CallbackInfo ci){
 		ServerCore.postResourcesDrop(entity);
