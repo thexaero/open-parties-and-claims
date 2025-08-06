@@ -30,7 +30,7 @@ import xaero.pac.common.server.core.ServerCore;
 @Mixin(CouplingHandler.class)
 public class MixinCouplingHandler {
 
-	@Inject(method = "tryToCoupleCarts", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "tryToCoupleCarts", remap = false, at = @At("HEAD"), cancellable = true)
 	private static void onTryToCoupleCarts(Player player, Level world, int cartId1, int cartId2, CallbackInfoReturnable<Boolean> cir){
 		if(!ServerCore.canCreateAddCoupling(player, world, cartId1, cartId2))
 			cir.setReturnValue(false);
