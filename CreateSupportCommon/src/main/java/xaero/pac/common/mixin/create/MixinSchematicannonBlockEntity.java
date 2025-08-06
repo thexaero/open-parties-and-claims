@@ -38,7 +38,7 @@ public class MixinSchematicannonBlockEntity {
 	@Shadow(remap = false)
 	private boolean blockSkipped;
 
-	@Inject(method = "tickPrinter", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/schematics/SchematicPrinter;shouldPlaceCurrent(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/schematics/SchematicPrinter$PlacementPredicate;)Z"), cancellable = true)
+	@Inject(method = "tickPrinter", remap = false, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/schematics/SchematicPrinter;shouldPlaceCurrent(Lnet/minecraft/world/level/Level;Lcom/simibubi/create/content/schematics/SchematicPrinter$PlacementPredicate;)Z"), cancellable = true)
 	public void onTickPrinter(CallbackInfo ci){
 		if(!ServerCore.canCreateCannonPlaceBlock((BlockEntity) (Object)this, printer.getCurrentTarget())) {
 			statusMsg = "searching";

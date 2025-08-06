@@ -41,7 +41,7 @@ public abstract class MixinContraption implements ICreateContraption {
 	public BlockPos anchor;
 	private BlockPos xaero_OPAC_placementPos;
 
-	@Inject(method = "movementAllowed", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "movementAllowed", remap = false, at = @At("HEAD"), cancellable = true)
 	public void onMovementAllowed(BlockState state, Level level, BlockPos pos, CallbackInfoReturnable<Boolean> cir){
 		if(!ServerCore.isCreateModAllowed(level, pos, this))
 			cir.setReturnValue(false);
