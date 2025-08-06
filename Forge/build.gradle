@@ -120,11 +120,14 @@ dependencies {
 
     // Hack fix for now, force jopt-simple to be exactly 5.0.4 because Mojang ships that version, but some transtive dependencies request 6.0+
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
+
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 }
 
 tasks.withType(JavaCompile) {
     source(project(":Common").sourceSets.main.allSource)
     source(project(":CreateSupportCommon").sourceSets.main.allSource)
+    exclude("**/mixin/MixinOptionalEntityGetter.java")
 }
 
 processResources {
