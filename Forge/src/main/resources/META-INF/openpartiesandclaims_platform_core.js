@@ -39,10 +39,9 @@ function transformForEntitiesPushBlock(methodNode, includeClassFiltered, include
 	var invokeTargetClass = 'net/minecraft/world/level/Level'
 	var insnToInsertGetter = function() {
 		var insnToInsert = new InsnList()
-		insnToInsert.add(new InsnNode(Opcodes.DUP))
 		insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, 0))
 		insnToInsert.add(new VarInsnNode(Opcodes.ALOAD, blockPosArgIndex))
-		insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushBlock', '(Ljava/util/List;Lnet/minecraft/world/level/block/Block;Lnet/minecraft/core/BlockPos;)V'))
+		insnToInsert.add(new MethodInsnNode(Opcodes.INVOKESTATIC, 'xaero/pac/common/server/core/ServerCore', 'onEntitiesPushBlock', '(Ljava/util/List;Lnet/minecraft/world/level/block/Block;Lnet/minecraft/core/BlockPos;)Ljava/util/List;'))
 		return insnToInsert
 	}
 	if(includeClassFiltered){
