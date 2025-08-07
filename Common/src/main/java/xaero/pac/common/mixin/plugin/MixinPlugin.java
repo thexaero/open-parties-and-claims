@@ -22,9 +22,8 @@ import com.google.common.collect.ImmutableMap;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.platform.Services;
-import xaero.pac.common.platform.services.IPlatformHelper;
+import xaero.pac.common.platform.MixinServices;
+import xaero.pac.common.platform.services.IPlatformMixinHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -60,11 +59,11 @@ public class MixinPlugin implements IMixinConfigPlugin {
 					.replaceAll("_", ".")
 					.replaceAll("H", "-")
 					.replaceAll("P", "+");
-		return shouldApplyMixinsTargetingMod(Services.PLATFORM, modId, minVersion, maxVersion);
+		return shouldApplyMixinsTargetingMod(MixinServices.PLATFORM, modId, minVersion, maxVersion);
 	}
 
 	public <M, V extends Comparable<V>> boolean shouldApplyMixinsTargetingMod(
-			IPlatformHelper<M, V> platform,
+			IPlatformMixinHelper<M, V> platform,
 			String modId,
 			String minVersionString,
 			String maxVersionString
