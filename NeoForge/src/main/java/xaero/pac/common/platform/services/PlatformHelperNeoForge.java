@@ -22,10 +22,6 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLConfig;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.fml.loading.LoadingModList;
-import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.controls.keybinding.KeyBindingHelperNeoForge;
 import xaero.pac.common.entity.EntityAccessNeoForge;
@@ -36,7 +32,7 @@ import xaero.pac.common.server.world.ServerChunkCacheAccessNeoForge;
 
 import java.nio.file.Path;
 
-public class PlatformHelperNeoForge implements IPlatformHelper<ModFileInfo, ArtifactVersion> {
+public class PlatformHelperNeoForge implements IPlatformHelper {
 	private final KeyBindingHelperNeoForge keyBindingRegistryForge = new KeyBindingHelperNeoForge();
 	private final ServerChunkCacheAccessNeoForge serverChunkCacheAccessNeoForge = new ServerChunkCacheAccessNeoForge();
 	private final EntityAccessNeoForge entityAccessNeoForge = new EntityAccessNeoForge();
@@ -50,21 +46,6 @@ public class PlatformHelperNeoForge implements IPlatformHelper<ModFileInfo, Arti
 	@Override
 	public boolean isModLoaded(String modId) {
 		return ModList.get().isLoaded(modId);
-	}
-
-	@Override
-	public ModFileInfo getLoadingModInfo(String modId) {
-		return LoadingModList.get().getModFileById(modId);
-	}
-
-	@Override
-	public ArtifactVersion getModVersion(ModFileInfo modFileInfo) {
-		return modFileInfo.getMods().get(0).getVersion();
-	}
-
-	@Override
-	public ArtifactVersion getVersionFromString(String versionString) {
-		return new DefaultArtifactVersion(versionString);
 	}
 
 	@Override
