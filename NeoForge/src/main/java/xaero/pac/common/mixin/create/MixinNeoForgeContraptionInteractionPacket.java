@@ -33,7 +33,7 @@ import xaero.pac.common.server.core.ServerCore;
 public class MixinNeoForgeContraptionInteractionPacket {
 
 	@Shadow
-	private InteractionHand interactionHand;
+	private InteractionHand hand;
 
 	@Shadow
 	private int target;
@@ -45,7 +45,7 @@ public class MixinNeoForgeContraptionInteractionPacket {
 	public void onHandle(ServerPlayer player, CallbackInfo ci){
 		if (player == null)
 			return;
-		if(!ServerCore.isCreateContraptionInteractionPacketAllowed(target, interactionHand, localPos, player))
+		if(!ServerCore.isCreateContraptionInteractionPacketAllowed(target, hand, localPos, player))
 			ci.cancel();
 	}
 
