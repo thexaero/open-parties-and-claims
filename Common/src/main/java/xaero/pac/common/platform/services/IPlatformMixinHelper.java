@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2025, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2025, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,23 +16,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.platform;
+package xaero.pac.common.platform.services;
 
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.platform.services.IPlatformHelper;
+public interface IPlatformMixinHelper<LOADING_MOD_INFO, MOD_VERSION extends Comparable<MOD_VERSION>> {
 
-import java.util.ServiceLoader;
+	LOADING_MOD_INFO getLoadingModInfo(String modId);
 
-public class Services {
+	MOD_VERSION getModVersion(LOADING_MOD_INFO loadingModInfo);
 
-	public static final IPlatformHelper PLATFORM = load(IPlatformHelper.class);
+	MOD_VERSION getVersionFromString(String versionString);
 
-	public static <T> T load(Class<T> clazz) {
-
-		final T loadedService = ServiceLoader.load(clazz)
-				.findFirst()
-				.orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-		OpenPartiesAndClaims.LOGGER.debug("Loaded {} for service {}", loadedService, clazz);
-		return loadedService;
-	}
 }
