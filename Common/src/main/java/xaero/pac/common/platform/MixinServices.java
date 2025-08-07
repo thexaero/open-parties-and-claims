@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2025, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2025, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,21 +18,23 @@
 
 package xaero.pac.common.platform;
 
-import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.platform.services.IPlatformHelper;
+import xaero.pac.common.platform.services.IPlatformMixinHelper;
 
 import java.util.ServiceLoader;
 
-public class Services {
+/**
+ * Separate from normal services to avoid loading classes too early that mixins may affect
+ */
+public class MixinServices {
 
-	public static final IPlatformHelper PLATFORM = load(IPlatformHelper.class);
+	public static final IPlatformMixinHelper<?, ?> PLATFORM = load(IPlatformMixinHelper.class);
 
 	public static <T> T load(Class<T> clazz) {
 
 		final T loadedService = ServiceLoader.load(clazz)
 				.findFirst()
-				.orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-		OpenPartiesAndClaims.LOGGER.debug("Loaded {} for service {}", loadedService, clazz);
+				.orElseThrow(() -> new NullPointerException("Failed to load mixin service for " + clazz.getName()));
+		//DO NOT USE OpenPartiesAndClaims.LOGGER here! OpenPartiesAndClaims will load classes too early.
 		return loadedService;
 	}
 }
