@@ -18,12 +18,10 @@
 
 package xaero.pac.server;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.LoadCommonForge;
-import xaero.pac.server.event.DedicatedServerEventsForge;
 
 public class LoadDedicatedServerForge extends LoadCommonForge<LoadDedicatedServer> {
 
@@ -33,7 +31,7 @@ public class LoadDedicatedServerForge extends LoadCommonForge<LoadDedicatedServe
 
 	public void loadServer(final FMLDedicatedServerSetupEvent event) {
 		loader.loadServer();
-		MinecraftForge.EVENT_BUS.register(new DedicatedServerEventsForge());
+		//MinecraftForge.EVENT_BUS.register(new DedicatedServerEventsForge());
 	}
 
 	@Override

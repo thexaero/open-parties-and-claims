@@ -19,4 +19,7 @@
 package xaero.pac.server.event;
 
 public class DedicatedServerEventsForge extends DedicatedServerEvents {
+
+	//TODO register this when anything gets added
+
 }
