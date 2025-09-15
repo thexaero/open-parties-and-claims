@@ -63,7 +63,7 @@ subprojects {
             url = "https://maven.createmod.net"
         } // Create, Ponder, Flywheel
         maven {
-            url = "https://maven.ithundxr.dev/mirror"
+            url = "https://maven.ithundxr.dev/snapshots"
         } // Registrate
     }
 

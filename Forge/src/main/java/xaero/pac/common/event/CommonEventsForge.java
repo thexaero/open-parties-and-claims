@@ -266,6 +266,8 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public boolean onMobCheckSpawn(MobSpawnEvent.FinalizeSpawn event){
+		if(event.getEntity().isAddedToWorld())
+			return false;
 		if(super.onMobSpawn(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getSpawnReason())) {
 			event.setSpawnCancelled(true);//won't be spawned
 			return true;//won't call finalizeSpawn
