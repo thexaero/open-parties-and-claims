@@ -261,6 +261,8 @@ public class CommonEventsNeoForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onMobCheckSpawn(MobSpawnEvent.FinalizeSpawn event){
+		if(event.getEntity().isAddedToWorld())
+			return;
 		if(super.onMobSpawn(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getSpawnType())) {
 			event.setSpawnCancelled(true);//won't be spawned
 			event.setCanceled(true);//won't call finalizeSpawn
