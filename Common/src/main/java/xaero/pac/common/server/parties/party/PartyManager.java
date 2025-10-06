@@ -144,7 +144,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		while(partiesById.containsKey(createdUUID = UUID.randomUUID()));//lol
 		PartyMember ownerMember = new PartyMember(owner.getUUID(), true);
 		ownerMember.setRank(PartyMemberRank.ADMIN);
-		ownerMember.setUsername(owner.getGameProfile().getName());
+		ownerMember.setUsername(owner.getGameProfile().name());
 		ServerParty created = ServerParty.Builder.begin().setManagedBy(this).setOwner(ownerMember).setId(createdUUID).build();
 		addParty(created);
 		return created;

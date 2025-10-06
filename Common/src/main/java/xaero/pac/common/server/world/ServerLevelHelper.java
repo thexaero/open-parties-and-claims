@@ -20,6 +20,7 @@ package xaero.pac.common.server.world;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import xaero.pac.common.event.CommonEvents;
 
@@ -43,6 +44,14 @@ public class ServerLevelHelper {
 		if(result != null && !result.isSameThread())
 			return null;
 		return result;
+	}
+
+	public static MinecraftServer getServer(Entity entity){
+		if(entity == null)
+			return null;
+		if(entity.level() == null)
+			return null;
+		return getServer(entity.level());
 	}
 
 }

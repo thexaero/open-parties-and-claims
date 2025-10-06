@@ -573,7 +573,7 @@ public class ChunkProtection
 	}
 
 	private boolean isAllowedStaticFakePlayerAction(IServerData<CM, ?> serverData, Player player, BlockPos targetPos, BlockPos targetPos2){
-		if(player == null || !staticFakePlayerIds.contains(player.getUUID()) && !staticFakePlayerUsernames.contains(player.getGameProfile().getName()))
+		if(player == null || !staticFakePlayerIds.contains(player.getUUID()) && !staticFakePlayerUsernames.contains(player.getGameProfile().name()))
 			return false;
 		if(isStaticFakePlayerExceptionClass(player))
 			return false;
@@ -1144,14 +1144,15 @@ public class ChunkProtection
 			double fixedX = goodXInt + 0.5;
 			double fixedZ = goodZInt + 0.5;
 			if(entity instanceof ServerPlayer player) {
-				MinecraftServer server = player.getServer();
-				server.execute(() -> {
+				MinecraftServer server = ServerLevelHelper.getServer(player);
+				server.schedule(server.wrapRunnable(() -> {
 					ServerPlayer upToDatePlayer = server.getPlayerList().getPlayer(player.getUUID());
 					if(upToDatePlayer != player)
 						return;
 					player.stopRiding();
 					player.connection.teleport(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());
-				});
+					//player.teleportTo(player.level(), fixedX, player.getY(), fixedZ, Collections.emptySet(), entity.getYRot(), entity.getXRot(), true);
+				}));
 			} else {
 				entity.stopRiding();
 				entity.snapTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players

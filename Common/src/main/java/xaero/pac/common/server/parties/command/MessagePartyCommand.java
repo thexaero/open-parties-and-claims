@@ -63,7 +63,7 @@ public class MessagePartyCommand {
 			String inputMessage = StringArgumentType.getString(context, "message");
 
 			Component rankComponent = Component.literal((playerParty.getOwner() == casterInfo ? "OWNER" : casterInfo.getRank().toString()) + " ").withStyle(s -> s.withColor(casterInfo.getRank().getColor()));
-			Component nameComponent = Component.literal("<" + player.getGameProfile().getName() + "> ");
+			Component nameComponent = Component.literal("<" + player.getGameProfile().name() + "> ");
 			Component contentComponent = Component.literal(inputMessage).withStyle(s -> s.withColor(ChatFormatting.GRAY));
 			Component messageComponent = Component.literal("");
 			messageComponent.getSiblings().add(rankComponent);

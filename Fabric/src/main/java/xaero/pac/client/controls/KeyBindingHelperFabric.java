@@ -26,11 +26,6 @@ import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 public class KeyBindingHelperFabric implements IKeyBindingHelper {
 
 	@Override
-	public void register(KeyMapping keyBinding) {
-		KeyBindingHelper.registerKeyBinding(keyBinding);
-	}
-
-	@Override
 	public InputConstants.Key getBoundKey(KeyMapping keyBinding) {
 		return KeyBindingHelper.getBoundKeyOf(keyBinding);
 	}

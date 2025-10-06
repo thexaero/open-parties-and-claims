@@ -18,6 +18,7 @@
 
 package xaero.pac.common.platform.services;
 
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -27,7 +28,7 @@ public class PlatformMixinHelperNeoForge implements IPlatformMixinHelper<ModFile
 
 	@Override
 	public ModFileInfo getLoadingModInfo(String modId) {
-		return LoadingModList.get().getModFileById(modId);
+		return FMLLoader.getCurrent().getLoadingModList().getModFileById(modId);
 	}
 
 	@Override

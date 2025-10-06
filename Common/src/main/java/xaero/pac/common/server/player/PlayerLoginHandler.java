@@ -56,7 +56,7 @@ public class PlayerLoginHandler {
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ServerLoginHandshakePacket());
 
 		IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = serverData.getServerClaimsManager().getPlayerInfo(player.getUUID());
-		((ServerPlayerClaimInfo)(Object)playerClaimInfo).setPlayerUsername(player.getGameProfile().getName());
+		((ServerPlayerClaimInfo)(Object)playerClaimInfo).setPlayerUsername(player.getGameProfile().name());
 
 		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), false);
 		

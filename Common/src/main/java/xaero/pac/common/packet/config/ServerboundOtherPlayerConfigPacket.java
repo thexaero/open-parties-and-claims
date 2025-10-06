@@ -39,6 +39,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -85,13 +86,13 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 		@Override
 		public void accept(ServerboundOtherPlayerConfigPacket t, ServerPlayer serverPlayer) {
 			if(!serverPlayer.hasPermissions(2)) {
-				OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to requesting another player's config! Name: " + serverPlayer.getGameProfile().getName());
+				OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to requesting another player's config! Name: " + serverPlayer.getGameProfile().name());
 				return;
 			}
-			serverPlayer.getServer().getProfileCache().get(t.ownerName).ifPresent(gp -> {
-				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverPlayer.getServer());
+			ServerLevelHelper.getServer(serverPlayer).services().nameToIdCache().get(t.ownerName).ifPresent(ni -> {
+				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
 				IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
-				IPlayerConfig config = playerConfigs.getLoadedConfig(gp.getId());
+				IPlayerConfig config = playerConfigs.getLoadedConfig(ni.id());
 				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(serverPlayer);
 				playerData.getConfigSyncSpreadoutTask().addConfigToSync(config);
 			});

@@ -203,7 +203,7 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 				if(clientInfo != t)
 					clientInfo.update(t.dimension, t.x, t.y, t.z);
 				PlayerInfo playerInfo = Minecraft.getInstance().getConnection().getPlayerInfo(t.getPlayerId());
-				String playerName = playerInfo == null ? "unknown" : playerInfo.getProfile().getName();
+				String playerName = playerInfo == null ? "unknown" : playerInfo.getProfile().name();
 			} else {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getPartyMemberDynamicInfoSyncableStorage().removeForPlayer(t.playerId);
 			}

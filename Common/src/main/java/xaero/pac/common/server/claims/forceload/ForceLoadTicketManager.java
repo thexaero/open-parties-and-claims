@@ -43,7 +43,10 @@ import java.util.UUID;
 
 public final class ForceLoadTicketManager {
 	
-	public static final TicketType OPAC_TICKET = new TicketType(0L, false, TicketType.TicketUse.LOADING_AND_SIMULATION);
+	public static final TicketType OPAC_TICKET = new TicketType(
+			0L,
+			TicketType.FLAG_LOADING | TicketType.FLAG_SIMULATION | TicketType.FLAG_KEEP_DIMENSION_ACTIVE
+	);
 	
 	private IServerClaimsManager<?, ?, ?> claimsManager;
 	private final MinecraftServer server;

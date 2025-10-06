@@ -125,7 +125,7 @@ public class ServerCore {
 		if(source == null)
 			return true;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(source.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(source));
 		if(serverData == null)
 			return true;
 		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, source, source, target, null, null, true, false, true);
@@ -148,7 +148,7 @@ public class ServerCore {
 
 	public static boolean mayUseItemAt(Player player, BlockPos pos, Direction direction, ItemStack itemStack){
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		ServerLevel serverLevel = ServerLevelHelper.getServerLevel(player.level());
@@ -332,7 +332,7 @@ public class ServerCore {
 	@Deprecated
 	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, ServerPlayer player){
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		Entity contraption = player.level().getEntity(contraptionId);
@@ -342,7 +342,7 @@ public class ServerCore {
 
 	public static boolean isCreateContraptionInteractionPacketAllowed(int contraptionId, InteractionHand interactionHand, BlockPos localPos, ServerPlayer player){
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		Entity entity = player.level().getEntity(contraptionId);
@@ -359,7 +359,7 @@ public class ServerCore {
 
 	public static boolean isCreateContraptionControlsPacketAllowed(int contraptionId, ServerPlayer player){
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		Entity entity = player.level().getEntity(contraptionId);
@@ -377,7 +377,7 @@ public class ServerCore {
 
 	public static boolean isCreateTrainRelocationPacketAllowed(int contraptionId, BlockPos pos, ServerPlayer player) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		Entity contraption = player.level().getEntity(contraptionId);
@@ -389,7 +389,7 @@ public class ServerCore {
 
 	public static boolean isCreateTrainControlsPacketAllowed(int contraptionId, ServerPlayer player) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		Entity contraption = player.level().getEntity(contraptionId);
@@ -415,7 +415,7 @@ public class ServerCore {
 
 	public static boolean isCreateGlueSelectionAllowed(BlockPos from, BlockPos to, ServerPlayer player) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		boolean shouldProtect = serverData.getChunkProtection().onCreateGlueSelection(serverData,from, to, player);
@@ -424,7 +424,7 @@ public class ServerCore {
 
 	public static boolean isCreateGlueRemovalAllowed(int entityId, ServerPlayer player) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(player));
 		if(serverData == null)
 			return true;
 		boolean shouldProtect = serverData.getChunkProtection().onCreateGlueRemoval(serverData, entityId, player);
@@ -436,7 +436,7 @@ public class ServerCore {
 	}
 
 	public static ProjectileDeflection checkProjectileHit(HitResult hitResult, Projectile entity){
-		if(entity.getServer() == null)
+		if(ServerLevelHelper.getServer(entity) == null)
 			return null;
 		if(hitResult == null || hitResult.getType() == HitResult.Type.MISS)
 			return null;
@@ -534,7 +534,7 @@ public class ServerCore {
 	public static boolean canCreateAddCoupling(Player player, Level world, int cartId1, int cartId2){
 		if(player == null)
 			return true;
-		MinecraftServer server = player.getServer();
+		MinecraftServer server = ServerLevelHelper.getServer(player);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
 		if(serverData == null)
@@ -571,7 +571,7 @@ public class ServerCore {
 			return entities;
 		Entity firstEntity = entities.get(0);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(firstEntity.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(firstEntity));
 		if(serverData == null)
 			return entities;
 		Level level = firstEntity.level();
@@ -592,7 +592,7 @@ public class ServerCore {
 		if(entity == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(entity.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(entity));
 		if(serverData == null)
 			return false;
 		Level level = entity.level();
@@ -770,34 +770,38 @@ public class ServerCore {
 	private static boolean DROPPING_LOOT_LIVING_USABLE = true;
 	private static int DROPPING_LOOT_LIVING_TICK;
 	public static void onLivingEntityDiePre(LivingEntity living, DamageSource source) {
-		if(living.getServer() != null && living.getServer().isSameThread()) {
+		MinecraftServer server = ServerLevelHelper.getServer(living);
+		if( server != null) {
 			if(DYING_LIVING == null && DYING_LIVING_USABLE) {//checking that the current capture is null in case a mob kills other mobs on death
 				DYING_LIVING_FROM = source;
 				DYING_LIVING = living;
-				DYING_LIVING_TICK = living.getServer().getTickCount();
+				DYING_LIVING_TICK =  server.getTickCount();
 			}
 		}
 	}
 
 	public static void onLivingEntityDiePost(LivingEntity living) {
-		if(living.getServer() != null && living.getServer().isSameThread() && DYING_LIVING == living) {
+		MinecraftServer server = ServerLevelHelper.getServer(living);
+		if(server != null && DYING_LIVING == living) {
 			DYING_LIVING_FROM = null;
 			DYING_LIVING = null;
 		}
 	}
 
 	public static void onLivingEntityDropDeathLootPre(LivingEntity living, DamageSource source) {
-		if(living.getServer() != null && living.getServer().isSameThread()) {
+		MinecraftServer server = ServerLevelHelper.getServer(living);
+		if(server != null) {
 			if(DROPPING_LOOT_LIVING == null && DROPPING_LOOT_LIVING_USABLE) {//checking that the current capture is null in case a mob kills other mobs on death
 				DROPPING_LOOT_LIVING_FROM = source;
 				DROPPING_LOOT_LIVING = living;
-				DROPPING_LOOT_LIVING_TICK = living.getServer().getTickCount();
+				DROPPING_LOOT_LIVING_TICK = server.getTickCount();
 			}
 		}
 	}
 
 	public static void onLivingEntityDropDeathLootPost(LivingEntity living) {
-		if(living.getServer() != null && living.getServer().isSameThread() && DROPPING_LOOT_LIVING == living) {
+		MinecraftServer server = ServerLevelHelper.getServer(living);
+		if(server != null && DROPPING_LOOT_LIVING == living) {
 			DROPPING_LOOT_LIVING_FROM = null;
 			DROPPING_LOOT_LIVING = null;
 		}
@@ -906,7 +910,7 @@ public class ServerCore {
 		if(orb == null || player == null)
 			return player;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(orb.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(orb));
 		if (serverData == null)
 			return player;
 		if(serverData.getChunkProtection().onExperiencePickup(serverData, orb, player))
@@ -920,14 +924,16 @@ public class ServerCore {
 	public static void forgePreItemMobGriefingCheck(Mob mob){
 		if(!MOB_GRIEFING_IS_FOR_ITEMS_USABLE)
 			return;
-		if(mob.getServer() != null && mob.getServer().isSameThread()) {
+		MinecraftServer server = ServerLevelHelper.getServer(mob);
+		if(server != null) {
 			MOB_GRIEFING_IS_FOR_ITEMS = true;
-			MOB_GRIEFING_IS_FOR_ITEMS_TICK = mob.getServer().getTickCount();
+			MOB_GRIEFING_IS_FOR_ITEMS_TICK = server.getTickCount();
 		}
 	}
 
 	public static void forgePostItemMobGriefingCheck(Mob mob){
-		if(mob.getServer() != null && mob.getServer().isSameThread()) {
+		MinecraftServer server = ServerLevelHelper.getServer(mob);
+		if(server != null) {
 			MOB_GRIEFING_IS_FOR_ITEMS = false;
 		}
 	}
@@ -947,11 +953,12 @@ public class ServerCore {
 	public static void preThrowItem(Entity entity) {
 		if(!BEHAVIOR_UTILS_THROW_ITEM_USABLE)
 			return;
-		if(entity != null && entity.getServer() != null && entity.getServer().isSameThread()) {
+		MinecraftServer server = ServerLevelHelper.getServer(entity);
+		if(entity != null && server != null) {
 			if(BEHAVIOR_UTILS_THROW_ITEM_LIVING == null) {
 				BEHAVIOR_UTILS_THROW_ITEM_LIVING = entity;
-				BEHAVIOR_UTILS_THROW_ITEM_TICK = entity.getServer().getTickCount();
-			} else if(BEHAVIOR_UTILS_THROW_ITEM_TICK != entity.getServer().getTickCount()){
+				BEHAVIOR_UTILS_THROW_ITEM_TICK = ServerLevelHelper.getServer(entity).getTickCount();
+			} else if(BEHAVIOR_UTILS_THROW_ITEM_TICK != ServerLevelHelper.getServer(entity).getTickCount()){
 				OpenPartiesAndClaims.LOGGER.error("Part of the non-player entity item toss capture isn't working properly. Turning it off...");
 				BEHAVIOR_UTILS_THROW_ITEM_USABLE = false;
 				BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
@@ -960,7 +967,8 @@ public class ServerCore {
 	}
 
 	public static void onThrowItem(ItemEntity itemEntity) {
-		if(BEHAVIOR_UTILS_THROW_ITEM_LIVING != null && itemEntity.getServer() != null && itemEntity.getServer().isSameThread()) {
+		MinecraftServer server = ServerLevelHelper.getServer(itemEntity);
+		if(BEHAVIOR_UTILS_THROW_ITEM_LIVING != null && server != null) {
 			itemEntity.setThrower(BEHAVIOR_UTILS_THROW_ITEM_LIVING);
 			BEHAVIOR_UTILS_THROW_ITEM_LIVING = null;
 		}
@@ -972,20 +980,20 @@ public class ServerCore {
 
 	public static void preResourcesDrop(Entity entity){
 		if(RESOURCES_DROP_OWNER_CAPTURE_USABLE && RESOURCES_DROP_OWNER == null && entity != null &&
-				entity.getServer() != null && entity.getServer().isSameThread()) {
+				ServerLevelHelper.getServer(entity) != null) {
 			RESOURCES_DROP_OWNER = entity;
-			RESOURCES_DROP_OWNER_TICK = entity.getServer().getTickCount();
+			RESOURCES_DROP_OWNER_TICK = ServerLevelHelper.getServer(entity).getTickCount();
 		}
 	}
 
 	public static void postResourcesDrop(Entity entity){
 		if(entity == RESOURCES_DROP_OWNER && entity != null &&
-				entity.getServer() != null && entity.getServer().isSameThread())
+				ServerLevelHelper.getServer(entity) != null)
 			RESOURCES_DROP_OWNER = null;
 	}
 
 	public static Entity getResourcesDropOwner() {
-		if(RESOURCES_DROP_OWNER != null && RESOURCES_DROP_OWNER_TICK != RESOURCES_DROP_OWNER.getServer().getTickCount()) {
+		if(RESOURCES_DROP_OWNER != null && RESOURCES_DROP_OWNER_TICK != ServerLevelHelper.getServer(RESOURCES_DROP_OWNER).getTickCount()) {
 			OpenPartiesAndClaims.LOGGER.error("Block/entity resource drop owner capture isn't working properly. Likely a compatibility issue. Turning it off...");
 			RESOURCES_DROP_OWNER = null;
 			RESOURCES_DROP_OWNER_CAPTURE_USABLE = false;
@@ -1002,7 +1010,7 @@ public class ServerCore {
 
 	public static boolean onItemMerge(ItemEntity first, ItemEntity second){
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(first.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(first));
 		if (serverData == null)
 			return false;
 		return serverData.getChunkProtection().onItemStackMerge(serverData, first, second);
@@ -1010,7 +1018,7 @@ public class ServerCore {
 
 	public static boolean onExperienceMerge(ExperienceOrb from, ExperienceOrb into){
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(into.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(into));
 		if (serverData == null)
 			return false;
 		return serverData.getChunkProtection().onExperienceMerge(serverData, from, into);
@@ -1020,7 +1028,7 @@ public class ServerCore {
 		if(entity == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(entity.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(entity));
 		if (serverData == null)
 			return false;
 		return serverData.getChunkProtection().onFishingHookedEntity(serverData, hook, entity);
@@ -1034,7 +1042,7 @@ public class ServerCore {
 		if(!(target instanceof HangingEntity))
 			return entities;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(target.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(target));
 		if (serverData == null)
 			return entities;
 		serverData.getChunkProtection().onEntitiesCollideWithEntity(serverData, target, entities);
@@ -1047,7 +1055,7 @@ public class ServerCore {
 		if(targets.isEmpty())
 			return targets;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(entity.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(entity));
 		if (serverData == null)
 			return targets;
 		serverData.getChunkProtection().onEntityAffectsEntities(serverData, entity, targets);
@@ -1058,7 +1066,7 @@ public class ServerCore {
 		if(target == null)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(target.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(target));
 		if (serverData == null)
 			return false;
 		return serverData.getChunkProtection().onEntityPushed(serverData, target, moverType);
@@ -1115,8 +1123,8 @@ public class ServerCore {
 	public static void preProjectileHit(Projectile projectile) {
 		if(PROJECTILE_HIT_UNUSABLE)
 			return;
-		MinecraftServer server = projectile.getServer();
-		if(server == null || !server.isSameThread())
+		MinecraftServer server = ServerLevelHelper.getServer(projectile);
+		if(server == null)
 			return;
 		int currentTickCount = server.getTickCount();
 		if(testProjectileHitCapture(currentTickCount))
@@ -1128,8 +1136,8 @@ public class ServerCore {
 	}
 
 	public static void postProjectileHit(Projectile projectile) {
-		MinecraftServer server = projectile.getServer();
-		if(server == null || !server.isSameThread())
+		MinecraftServer server = ServerLevelHelper.getServer(projectile);
+		if(server == null)
 			return;
 		if(PROJECTILE_HIT_UNUSABLE || PROJECTILE_HIT == null)
 			return;
@@ -1146,7 +1154,7 @@ public class ServerCore {
 
 	public static void onLightningCauseSet(LightningBolt bolt) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(bolt.getServer());
+				serverData = ServerData.from(ServerLevelHelper.getServer(bolt));
 		if (serverData == null)
 			return;
 		serverData.getChunkProtection().onLightningBolt(serverData, bolt);

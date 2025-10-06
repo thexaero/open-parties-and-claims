@@ -20,17 +20,8 @@ package xaero.pac.client.controls.keybinding;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
-import org.apache.commons.lang3.ArrayUtils;
 
 public class KeyBindingHelperNeoForge implements IKeyBindingHelper {
-
-	@Override
-	public void register(KeyMapping keyBinding) {
-		Options options = Minecraft.getInstance().options;
-		options.keyMappings = ArrayUtils.add(options.keyMappings, keyBinding);
-	}
 
 	@Override
 	public InputConstants.Key getBoundKey(KeyMapping keyBinding) {

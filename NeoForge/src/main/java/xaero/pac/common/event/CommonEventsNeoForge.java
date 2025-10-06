@@ -60,6 +60,7 @@ import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.data.ServerDataReloadListenerNeoForge;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.permission.impl.NeoForgePermissionsSystem;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 public class CommonEventsNeoForge extends CommonEvents {
 
@@ -132,7 +133,7 @@ public class CommonEventsNeoForge extends CommonEvents {
 	}
 
 	private void onPlayerTick(PlayerTickEvent event) throws Throwable {
-		super.onPlayerTick(event instanceof PlayerTickEvent.Pre, event.getEntity().getServer() != null, event.getEntity());
+		super.onPlayerTick(event instanceof PlayerTickEvent.Pre, ServerLevelHelper.getServer(event.getEntity()) != null, event.getEntity());
 	}
 
 	@SubscribeEvent
@@ -195,7 +196,7 @@ public class CommonEventsNeoForge extends CommonEvents {
 	public void onMobGrief(EntityMobGriefingEvent event) {
 		if(event.getEntity() == null)
 			return;
-		MinecraftServer server = event.getEntity().getServer();
+		MinecraftServer server = ServerLevelHelper.getServer(event.getEntity());
 		if(server == null)
 			return;
 		if(ServerCore.isMobGriefingForItems(server.getTickCount()))//this means that the mob griefing rule is being checked for item pickup

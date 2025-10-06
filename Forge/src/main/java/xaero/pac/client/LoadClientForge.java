@@ -18,6 +18,7 @@
 
 package xaero.pac.client;
 
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -38,10 +39,15 @@ public class LoadClientForge extends LoadCommonForge<LoadClient> {
 		MinecraftForge.EVENT_BUS.register(clientEventsForge);
 	}
 
+	public void registerKeyBindings(final RegisterKeyMappingsEvent event){
+		loader.getKeyBindings().register(event::register, c -> {});
+	}
+
 	@Override
 	public void registerEvents() {
 		super.registerEvents();
 		FMLClientSetupEvent.getBus(context.getModBusGroup()).addListener(this::loadClient);
+		RegisterKeyMappingsEvent.BUS.addListener(this::registerKeyBindings);
 	}
 
 }

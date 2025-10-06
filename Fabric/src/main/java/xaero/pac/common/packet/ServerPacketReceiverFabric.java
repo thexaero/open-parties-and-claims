@@ -20,6 +20,7 @@ package xaero.pac.common.packet;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import xaero.pac.common.packet.payload.PacketPayload;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 public class ServerPacketReceiverFabric extends ServerPacketReceiver implements ServerPlayNetworking.PlayPayloadHandler<PacketPayload<?>> {
 
@@ -29,6 +30,6 @@ public class ServerPacketReceiverFabric extends ServerPacketReceiver implements 
 
 	@Override
 	public void receive(PacketPayload<?> payload, ServerPlayNetworking.Context context) {
-		receive(context.player().getServer(), payload, context.player());
+		receive(ServerLevelHelper.getServer(context.player()), payload, context.player());
 	}
 }

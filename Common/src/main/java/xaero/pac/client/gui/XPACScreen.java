@@ -18,9 +18,12 @@
 
 package xaero.pac.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
@@ -54,16 +57,16 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		if(openDropdown != null){
-			if(!openDropdown.onDropDown((int) mouseX, (int) mouseY, height)) {
+			if(!openDropdown.onDropDown((int) event.x(), (int) event.y(), height)) {
 				openDropdown.setClosed(true);
 				openDropdown = null;
 			} else
-				openDropdown.mouseClicked(mouseX, mouseY, button);
+				openDropdown.mouseClicked(event, doubleClick);
 			return true;
 		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(event, doubleClick);
 	}
 
 	@Override
@@ -77,11 +80,11 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+	public boolean mouseReleased(MouseButtonEvent event) {
 		if(openDropdown != null)
-			if(openDropdown.mouseReleased(mouseX, mouseY, button))
+			if(openDropdown.mouseReleased(event))
 				return true;
-		return super.mouseReleased(mouseX, mouseY, button);
+		return super.mouseReleased(event);
 	}
 
 	@Override
@@ -109,6 +112,16 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		if(menu != this.openDropdown && this.openDropdown != null)
 			this.openDropdown.setClosed(true);
 		this.openDropdown = null;
+	}
+
+	public static boolean hasShiftDown(){
+		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT) ||
+				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RSHIFT);
+	}
+
+	public static boolean hasControlDown(){
+		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LCONTROL) ||
+				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RCONTROL);
 	}
 
 }

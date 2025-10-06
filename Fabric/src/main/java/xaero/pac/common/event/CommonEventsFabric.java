@@ -37,6 +37,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -73,6 +74,7 @@ import xaero.pac.common.server.core.ServerCoreFabric;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.List;
 
@@ -227,7 +229,7 @@ public class CommonEventsFabric extends CommonEvents {
 
 	public boolean onEntityJoinWorld(Entity entity, Level level, boolean fromDisk){
 		if(!fromDisk && entity.tickCount == 0) {//is being spawned
-			EntitySpawnReason mobSpawnType = ServerCoreFabric.getMobSpawnTypeForNewEntities(entity.getServer());
+			EntitySpawnReason mobSpawnType = ServerCoreFabric.getMobSpawnTypeForNewEntities(ServerLevelHelper.getServer(entity));
 			if(mobSpawnType != null)
 				return super.onMobSpawn(entity, entity.getX(), entity.getY(), entity.getZ(), mobSpawnType);
 		}
@@ -241,8 +243,8 @@ public class CommonEventsFabric extends CommonEvents {
 		super.onEntityEnteringSection(entity, oldSection, newSection, chunkChanged);
 	}
 
-	public void onPermissionsChanged(PlayerList playerList, GameProfile profile) {
-		ServerPlayer player = playerList.getPlayer(profile.getId());
+	public void onPermissionsChanged(PlayerList playerList, NameAndId profile) {
+		ServerPlayer player = playerList.getPlayer(profile.id());
 		if(player == null)
 			return;
 		super.onPermissionsChanged(player);

@@ -22,6 +22,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,12 +44,12 @@ public class MixinFabricPlayerList {
 	}
 
 	@Inject(at = @At("HEAD"), method = "op")
-	public void onOp(GameProfile profile, CallbackInfo info){
+	public void onOp(NameAndId profile, CallbackInfo info){
 		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPermissionsChanged((PlayerList)(Object)this, profile);
 	}
 
 	@Inject(at = @At("HEAD"), method = "deop")
-	public void onDeop(GameProfile profile, CallbackInfo info){
+	public void onDeop(NameAndId profile, CallbackInfo info){
 		((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onPermissionsChanged((PlayerList)(Object)this, profile);
 	}
 

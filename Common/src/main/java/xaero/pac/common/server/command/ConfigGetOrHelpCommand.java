@@ -31,6 +31,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -181,8 +182,8 @@ public class ConfigGetOrHelpCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get_invalid_key"));
 				return 0;
 			}
-			
-			GameProfile inputPlayer = null;
+
+			NameAndId inputPlayer = null;
 			UUID configPlayerUUID = type == PlayerConfigType.SERVER ? PlayerConfig.SERVER_CLAIM_UUID : null;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
@@ -190,7 +191,7 @@ public class ConfigGetOrHelpCommand {
 						"gui.xaero_pac_config_option_get_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
-				configPlayerUUID = inputPlayer.getId();
+				configPlayerUUID = inputPlayer.id();
 			}
 			IPlayerConfig playerConfig =
 					type == PlayerConfigType.DEFAULT_PLAYER ?
@@ -225,7 +226,7 @@ public class ConfigGetOrHelpCommand {
 				optionValue = null;
 			Component optionValueName = option.getValueDisplayName(optionValue);
 			if(type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName));
+				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.name(), targetConfigOptionId, optionValueName));
 			else
 				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName));
 			return 1;

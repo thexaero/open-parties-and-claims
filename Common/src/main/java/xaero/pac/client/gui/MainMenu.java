@@ -23,6 +23,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.claims.IClientClaimsManager;
@@ -306,29 +308,29 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	@Override
-	public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
+	public boolean keyPressed(KeyEvent event) {
 		IKeyBindingHelper keyBindingHelper = Services.PLATFORM.getKeyBindingHelper();
 		if(getFocused() == null && keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.KEYSYM
 				&&
-				p_96552_ == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
+				event.key() == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
 				) {
 			onClose();
 			return true;
 		}
-		return super.keyPressed(p_96552_, p_96553_, p_96554_);
+		return super.keyPressed(event);
 	}
 	
 	@Override
-	public boolean mouseClicked(double p_94695_, double p_94696_, int p_94697_) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		IKeyBindingHelper keyBindingHelper = Services.PLATFORM.getKeyBindingHelper();
 		if(getFocused() == null && keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.MOUSE
 				&&
-				p_94697_ == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
+				event.button() == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
 				) {
 			onClose();
 			return true;
 		}
-		return super.mouseClicked(p_94695_, p_94696_, p_94697_);
+		return super.mouseClicked(event, doubleClick);
 	}
 	
 }

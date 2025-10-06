@@ -24,6 +24,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.ServerData;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -57,7 +58,7 @@ public class LazyPacketsConfirmationPacket {
 		
 		@Override
 		public void accept(LazyPacketsConfirmationPacket t, ServerPlayer player) {
-			ServerData.from(player.getServer()).getServerTickHandler().getLazyPacketSender().onConfirmation(player);
+			ServerData.from(ServerLevelHelper.getServer(player)).getServerTickHandler().getLazyPacketSender().onConfirmation(player);
 		}
 		
 	}

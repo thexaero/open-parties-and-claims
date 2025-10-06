@@ -29,6 +29,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -109,12 +110,12 @@ public class ClaimsSubClaimUseCommand {
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
-			GameProfile inputPlayer = getConfigInputPlayer(context, sourcePlayer,
+			NameAndId inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 					"gui.xaero_claims_sub_use_too_many_targets",
 					"gui.xaero_claims_sub_use_invalid_target", adaptiveLocalizer);
 			if(inputPlayer == null)
 				return 0;
-			UUID configPlayerUUID = inputPlayer.getId();
+			UUID configPlayerUUID = inputPlayer.id();
 
 			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;

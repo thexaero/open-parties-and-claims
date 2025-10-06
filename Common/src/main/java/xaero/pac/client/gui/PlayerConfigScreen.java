@@ -27,6 +27,8 @@ import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
@@ -96,12 +98,12 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		if(shouldWaitForData){
 			if(!data.isSyncInProgress())
-				refreshButton.onPress();
+				refreshButton.onPress(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)));
 			else
 				guiGraphics.drawCenteredString(font, SYNCING_IN_PROGRESS, width / 2, height / 6 + 64, -1);
 		}
 		if(beingDeletedStateOnOpen != optionValueSourceData.isBeingDeleted())
-			refreshButton.onPress();
+			refreshButton.onPress(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)));
 		else if(optionValueSourceData.isBeingDeleted())
 			guiGraphics.drawCenteredString(font, BEING_DELETED, width / 2, height / 6 + 64, -1);
 	}

@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.Block;
 import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.core.accessor.ICreateContraptionEntity;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 public class CreateContraptionHelper {
 
@@ -36,7 +37,7 @@ public class CreateContraptionHelper {
 
 	public static void handleCreateContraptionAdded(Entity entity, ICreateContraptionEntity contraptionEntity){
 		CompoundTag persistentData = Services.PLATFORM.getEntityAccess().getPersistentData(entity);
-		if(ServerCore.isPlacingCreateContraption(entity.getServer())){
+		if(ServerCore.isPlacingCreateContraption(ServerLevelHelper.getServer(entity))){
 			CompoundTag placementPosData = new CompoundTag();
 			placementPosData.putInt("x", entity.blockPosition().getX());
 			placementPosData.putInt("y", entity.blockPosition().getY());

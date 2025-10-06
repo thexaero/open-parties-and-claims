@@ -24,6 +24,8 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.gui.widget.TextWidgetEditBox;
@@ -64,7 +66,7 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	
 	public boolean onEnterPressed() {
 		if(confirmButton.active) {
-			confirmButton.onPress();
+			confirmButton.onPress(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)));
 			return true;
 		}
 		return false;

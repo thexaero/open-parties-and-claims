@@ -30,6 +30,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -50,6 +51,7 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 
@@ -57,10 +59,10 @@ public class ClaimsAboutCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		Command<CommandSourceStack> action = context -> {
-			GameProfile targetProfile;
+			NameAndId targetProfile;
 			ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
 			try {
-				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
+				Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 				if(profiles.size() == 1)
 					targetProfile = profiles.iterator().next();
 				else
@@ -73,29 +75,29 @@ public class ClaimsAboutCommand {
 					else
 						targetProfile = null;
 				} catch(IllegalArgumentException iae2) {*/
-					targetProfile = casterPlayer.getGameProfile();
+					targetProfile = casterPlayer.nameAndId();
 				//}
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(casterPlayer.getServer());
+					serverData = ServerData.from(ServerLevelHelper.getServer(casterPlayer));
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if(targetProfile == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_about_invalid_player"));
 				return 0;
 			}
-			final GameProfile profile = targetProfile;
+			final NameAndId profile = targetProfile;
 			IPlayerConfigManager
 					configManager = serverData.getPlayerConfigs();
 			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 				claimsManager = serverData.getServerClaimsManager();
 			IPlayerConfig 
-				playerConfig = configManager.getLoadedConfig(profile.getId());
+				playerConfig = configManager.getLoadedConfig(profile.id());
 			IPlayerConfig usedSubConfig = playerConfig.getUsedSubConfig();
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>
-				playerInfo = claimsManager.getPlayerInfo(profile.getId());
+				playerInfo = claimsManager.getPlayerInfo(profile.id());
 
-			int claimLimit = claimsManager.getPlayerBaseClaimLimit(profile.getId()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
-			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(profile.getId()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+			int claimLimit = claimsManager.getPlayerBaseClaimLimit(profile.id()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(profile.id()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
 			Component claimCountNumbers = Component.literal(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
 			String claimName = usedSubConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
 			if(claimName.isEmpty())
@@ -122,7 +124,7 @@ public class ClaimsAboutCommand {
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {
 			PlayerList playerlist = context.getSource().getServer().getPlayerList();
 			return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().map(targetPlayer -> {
-				return targetPlayer.getGameProfile().getName();
+				return targetPlayer.getGameProfile().name();
 			}), builder);
 		};
 		LiteralArgumentBuilder<CommandSourceStack> normalCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get())

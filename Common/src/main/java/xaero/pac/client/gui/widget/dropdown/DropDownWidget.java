@@ -24,12 +24,16 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import org.lwjgl.glfw.GLFW;
+import xaero.pac.client.gui.XPACScreen;
 
 import javax.annotation.Nonnull;
 
@@ -311,10 +315,10 @@ public final class DropDownWidget extends AbstractWidget
 	}
 
 	@Override
-	public boolean keyPressed(int $$0, int $$1, int $$2) {
-		if($$0 == GLFW.GLFW_KEY_ENTER || $$0 == GLFW.GLFW_KEY_SPACE) {
+	public boolean keyPressed(KeyEvent event) {
+		if(event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_SPACE) {
 			int nextSelection;
-			if(Screen.hasShiftDown()) {
+			if(XPACScreen.hasShiftDown()) {
 				nextSelection = getSelected() - 1;
 				if(nextSelection < 0)
 					nextSelection = realOptions.length - 1;
@@ -323,33 +327,33 @@ public final class DropDownWidget extends AbstractWidget
 			selectId(nextSelection, true);
 			return true;
 		}
-		return super.keyPressed($$0, $$1, $$2);
+		return super.keyPressed(event);
 	}
 
 	@Override
-	public boolean keyReleased(int $$0, int $$1, int $$2) {
-		return super.keyReleased($$0, $$1, $$2);
+	public boolean keyReleased(KeyEvent event) {
+		return super.keyReleased(event);
 	}
 
 	@Override
-	public boolean charTyped(char $$0, int $$1) {
-		return super.charTyped($$0, $$1);
+	public boolean charTyped(CharacterEvent event) {
+		return super.charTyped(event);
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		if(isHovered) {
 			int scaledHeight = Minecraft.getInstance().screen.height;
-			mouseClicked((int) mouseX, (int) mouseY, button, scaledHeight);
+			mouseClicked((int) event.x(), (int) event.y(), event.button(), scaledHeight);
 			return true;
 		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(event, doubleClick);
 	}
 
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+	public boolean mouseReleased(MouseButtonEvent event) {
 		int scaledHeight = Minecraft.getInstance().screen.height;
-		mouseReleased((int) mouseX, (int) mouseY, button, scaledHeight);
+		mouseReleased((int) event.x(), (int) event.y(), event.button(), scaledHeight);
 		return false;
 	}
 

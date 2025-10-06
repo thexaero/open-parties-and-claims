@@ -35,7 +35,7 @@ public class PlayerArgonautsPartySystem implements IPlayerPartySystemAPI<Party> 
 		Party party = PartyApi.API.getPlayerParty(playerId);
 		if(party == null)
 			return null;
-		if(!party.members().getLeader().profile().getId().equals(playerId))
+		if(!party.members().getLeader().profile().id().equals(playerId))
 			return null;
 		return party;
 	}

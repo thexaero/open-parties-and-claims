@@ -20,6 +20,7 @@ package xaero.pac.client.gui.widget;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.client.gui.TextWidgetListElement;
@@ -35,10 +36,10 @@ public class TextWidgetEditBox extends EditBox {
 	}
 
 	@Override
-	public boolean keyPressed(int p_94132_, int p_94133_, int p_94134_) {
-		if((p_94132_ == GLFW.GLFW_KEY_ENTER || p_94132_ == GLFW.GLFW_KEY_KP_ENTER) && element.onEnterPressed())
+	public boolean keyPressed(KeyEvent event) {
+		if((event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER) && element.onEnterPressed())
 			return true;
-		return super.keyPressed(p_94132_, p_94133_, p_94134_);
+		return super.keyPressed(event);
 	}
 
 }

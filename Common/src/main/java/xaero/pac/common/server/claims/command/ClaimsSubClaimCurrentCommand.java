@@ -28,6 +28,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -103,12 +104,12 @@ public class ClaimsSubClaimCurrentCommand {
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			GameProfile inputPlayer = getConfigInputPlayer(context, sourcePlayer,
+			NameAndId inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 					"gui.xaero_claims_sub_current_too_many_targets",
 					"gui.xaero_claims_sub_current_invalid_target", adaptiveLocalizer);
 			if(inputPlayer == null)
 				return 0;
-			UUID configPlayerUUID = inputPlayer.getId();
+			UUID configPlayerUUID = inputPlayer.id();
 
 			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
 			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;

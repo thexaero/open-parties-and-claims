@@ -49,6 +49,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -135,7 +136,7 @@ public class ClaimsClaimCommands {
 				return true;
 			try {
 				ServerPlayer player = source.getPlayerOrException();
-				MinecraftServer server = player.getServer();
+				MinecraftServer server = ServerLevelHelper.getServer(player);
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 						serverData = ServerData.from(server);
 				if(serverData.getServerClaimsManager().getPermissionHandler().playerHasServerClaimPermission(player))

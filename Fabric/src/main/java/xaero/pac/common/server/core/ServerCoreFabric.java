@@ -87,7 +87,7 @@ public class ServerCoreFabric {
 	}
 
 	public static void onReleaseUsingItem(LivingEntity livingEntity){
-		if(livingEntity.getServer() == null)
+		if(ServerLevelHelper.getServer(livingEntity) == null)
 			return;
 		if(livingEntity.getUseItem().isEmpty())
 			return;
@@ -96,7 +96,7 @@ public class ServerCoreFabric {
 	}
 
 	public static void onUpdatingUsingItem(LivingEntity livingEntity) {
-		if(livingEntity.getServer() == null)
+		if(ServerLevelHelper.getServer(livingEntity) == null)
 			return;
 		if(livingEntity.getUseItem().isEmpty())
 			return;

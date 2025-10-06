@@ -28,6 +28,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -45,6 +46,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 import java.util.List;
@@ -63,10 +65,10 @@ public class ConfigCommandUtil {
 		return effectivePlayerConfig;
 	}
 
-	public static GameProfile getConfigInputPlayer(CommandContext<CommandSourceStack> context, ServerPlayer sourcePlayer, String tooManyTargetMessage, String invalidTargetMessage, AdaptiveLocalizer adaptiveLocalizer) throws CommandSyntaxException {
-		GameProfile inputPlayer;
+	public static NameAndId getConfigInputPlayer(CommandContext<CommandSourceStack> context, ServerPlayer sourcePlayer, String tooManyTargetMessage, String invalidTargetMessage, AdaptiveLocalizer adaptiveLocalizer) throws CommandSyntaxException {
+		NameAndId inputPlayer;
 		try {
-			Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "player");
+			Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "player");
 			if(profiles.size() > 1) {
 				if(tooManyTargetMessage != null)
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, tooManyTargetMessage));
@@ -78,7 +80,7 @@ public class ConfigCommandUtil {
 			}
 			inputPlayer = profiles.iterator().next();
 		} catch(IllegalArgumentException e) {
-			inputPlayer = sourcePlayer.getGameProfile();
+			inputPlayer = sourcePlayer.nameAndId();
 		}
 		return inputPlayer;
 	}
@@ -86,15 +88,15 @@ public class ConfigCommandUtil {
 	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type){
 		return (context, builder) -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-			MinecraftServer server = sourcePlayer.getServer();
+			MinecraftServer server = ServerLevelHelper.getServer(sourcePlayer);
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			UUID configOwnerId;
 			if(type != PlayerConfigType.SERVER) {
-				GameProfile gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
+				NameAndId gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
 				if (gameProfile == null)
 					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
-				configOwnerId = gameProfile.getId();
+				configOwnerId = gameProfile.id();
 			} else
 				configOwnerId = PlayerConfig.SERVER_CLAIM_UUID;
 			String lowerCaseInput = builder.getRemainingLowerCase();

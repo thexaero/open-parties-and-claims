@@ -20,6 +20,7 @@ package xaero.pac.common.platform.services;
 
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLConfig;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
@@ -50,7 +51,7 @@ public class PlatformHelperNeoForge implements IPlatformHelper {
 
 	@Override
 	public boolean isDevelopmentEnvironment() {
-		return !FMLLoader.isProduction();
+		return !FMLEnvironment.isProduction();
 	}
 
 	@Override

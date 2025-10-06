@@ -28,8 +28,9 @@ dependencies {
     compileOnly project(":Common")
     compileOnly project(":CreateSupportCommon")
 
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.8.0"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
-
+    modImplementation("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.9.6") {//source: https://github.com/Fuzss/forgeconfigapiport-fabric
+        exclude(group: "net.fabricmc")
+    }
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
     modCompileOnly "curse.maven:architectury-419699:4581904"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
     modCompileOnly "curse.maven:ftblibrary-438495:4596510"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-fabric
@@ -45,6 +46,7 @@ dependencies {
     modCompileOnly("com.simibubi.create:create-fabric-1.20.1:${fabric_create_version}"){
         exclude(group: "com.jozufozu.flywheel")
         exclude(group: "net.minecraftforge")
+        exclude(group: "net.fabricmc.fabric-api")
     }
 }
 

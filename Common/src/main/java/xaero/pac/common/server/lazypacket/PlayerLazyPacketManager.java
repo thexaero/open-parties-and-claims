@@ -61,7 +61,7 @@ public class PlayerLazyPacketManager {
 			storage.clear();
 			ServerPlayer serverPlayer = server.getPlayerList().getPlayer(playerId);
 			onDropped(serverPlayer);
-			OpenPartiesAndClaims.LOGGER.info("Dropped lazy packets for player " + serverPlayer.getGameProfile().getName() + " because the client isn't responding. Probably no mod on their side.");
+			OpenPartiesAndClaims.LOGGER.info("Dropped lazy packets for player " + serverPlayer.getGameProfile().name() + " because the client isn't responding. Probably no mod on their side.");
 			dropped = true;//won't send lazy packets to this player anymore
 			//doing this instead of a client->server handshake because it is more secure (clients can send a fake handshake)
 			return false;

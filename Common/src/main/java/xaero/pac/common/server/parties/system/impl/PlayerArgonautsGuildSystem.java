@@ -42,7 +42,7 @@ public class PlayerArgonautsGuildSystem implements IPlayerPartySystemAPI<Guild> 
 		Guild guild = GuildApi.API.getPlayerGuild(server, playerId);
 		if(guild == null)
 			return null;
-		if(!guild.members().getLeader().profile().getId().equals(playerId))
+		if(!guild.members().getLeader().profile().id().equals(playerId))
 			return null;
 		return guild;
 	}

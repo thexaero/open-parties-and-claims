@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.10-SNAPSHOT' apply(false)
+    id 'fabric-loom' version '1.11.8' apply(false)
     id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT' apply(false)
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT' apply(false)
 }

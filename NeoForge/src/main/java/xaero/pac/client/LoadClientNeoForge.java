@@ -21,16 +21,18 @@ package xaero.pac.client;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import xaero.pac.OpenPartiesAndClaimsNeoForge;
+import xaero.pac.client.controls.XPACKeyBindings;
 import xaero.pac.client.event.ClientEventsNeoForge;
 import xaero.pac.common.LoadCommonNeoForge;
 import xaero.pac.common.packet.PacketHandlerNeoForge;
 
 public class LoadClientNeoForge extends LoadCommonNeoForge<LoadClient> {
-	
+
 	public LoadClientNeoForge(OpenPartiesAndClaimsNeoForge modMain) {
 		super(modMain, new LoadClient(modMain));
 	}
@@ -46,6 +48,11 @@ public class LoadClientNeoForge extends LoadCommonNeoForge<LoadClient> {
 	@SubscribeEvent
 	public void loadCommon(final FMLCommonSetupEvent event) {
 		super.loadCommon(event);
+	}
+
+	@SubscribeEvent
+	public void registerKeyBindings(final RegisterKeyMappingsEvent event){
+		loader.getKeyBindings().register(event::register, event::registerCategory);
 	}
 
 	@SubscribeEvent

@@ -98,7 +98,7 @@ public class InviteAcceptPartyCommand {
 								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_member_limit"));
 								return 0;
 							}
-							IPartyMember addedPartyMember = targetParty.addMember(playerId, null, player.getGameProfile().getName());
+							IPartyMember addedPartyMember = targetParty.addMember(playerId, null, player.getGameProfile().name());
 							if(addedPartyMember == null)
 								return 0;
 							player.sendSystemMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_success", targetParty.getDefaultName()));

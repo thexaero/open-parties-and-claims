@@ -30,12 +30,12 @@ import xaero.pac.common.server.core.ServerCoreFabric;
 public class MixinFabricServerLevel {
 
 	@Inject(method = "tickCustomSpawners", at = @At("HEAD"))
-	public void preTickCustomSpawners(boolean b1, boolean b2, CallbackInfo ci){
+	public void preTickCustomSpawners(boolean b1, CallbackInfo ci){
 		ServerCoreFabric.setMobSpawnTypeForNewEntities(EntitySpawnReason.NATURAL, ((ServerLevel)(Object)this).getServer());
 	}
 
 	@Inject(method = "tickCustomSpawners", at = @At("RETURN"))
-	public void postTickCustomSpawners(boolean b1, boolean b2, CallbackInfo ci){
+	public void postTickCustomSpawners(boolean b1, CallbackInfo ci){
 		ServerCoreFabric.resetMobSpawnTypeForNewEntities();
 	}
 

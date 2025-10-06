@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.player.data.api;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -35,6 +36,7 @@ import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import javax.annotation.Nonnull;
 
@@ -77,11 +79,12 @@ public abstract class ServerPlayerDataAPI {
 			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData());
 		ServerPlayerData data = (ServerPlayerData)result;
 		if(!data.hasHandledLogin() && player.connection != null && ServerCore.getServerGamePacketListenerConnection(player.connection) != null && !ServerCore.getServerGamePacketListenerConnection(player.connection).isConnecting()){//isConnecting() = the channel is null
-			ServerPlayer placedPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
+			MinecraftServer server = ServerLevelHelper.getServer(player);
+			ServerPlayer placedPlayer = server.getPlayerList().getPlayer(player.getUUID());
 			if(placedPlayer == player) {//this method might be called before placing the player, when syncing commands, which is a problem, so we're making sure that the player has been placed
 				data.setHandledLogin(true);
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-						serverData = ServerData.from(player.getServer());
+						serverData = ServerData.from(server);
 				//Minecraft leaves players in the list on login exceptions, which causes this mod to crash afterwards.
 				//Putting this stuff here, instead of just the login event, to ensure that the login is handled for all real players.
 				serverData.getPlayerLoginHandler().handlePreWorldJoin(player, serverData);

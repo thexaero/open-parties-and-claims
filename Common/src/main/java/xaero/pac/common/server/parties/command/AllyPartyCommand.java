@@ -60,7 +60,7 @@ public class AllyPartyCommand {
 						.suggests((context, builder) -> {
 							PlayerList playerlist = context.getSource().getServer().getPlayerList();
 							return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().map(targetPlayer -> {
-								return targetPlayer.getGameProfile().getName();
+								return targetPlayer.getGameProfile().name();
 							}), builder);
 						})
 						.executes(context -> {
@@ -75,13 +75,13 @@ public class AllyPartyCommand {
 							ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
 							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetPlayerParty = partyManager.getPartyByMember(targetPlayer.getUUID());
 							if(targetPlayerParty == playerParty) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_ally_player_target_in_your_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_ally_player_target_in_your_party", targetPlayer.getGameProfile().name()));
 								return 0;
 							} else if(targetPlayerParty == null) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_ally_player_target_not_in_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_ally_player_target_not_in_party", targetPlayer.getGameProfile().name()));
 								return 0;
 							} else if(playerParty.isAlly(targetPlayerParty.getId())) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_ally_player_target_already_ally", targetPlayer.getGameProfile().getName(), targetPlayerParty.getDefaultName()));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_ally_player_target_already_ally", targetPlayer.getGameProfile().name(), targetPlayerParty.getDefaultName()));
 								return 0;
 							} else if(playerParty.getAllyCount() >= ServerConfig.CONFIG.maxPartyAllies.get()) {
 								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_ally_limit"));

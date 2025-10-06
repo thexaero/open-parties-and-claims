@@ -29,7 +29,7 @@ import xaero.pac.client.core.ClientCore;
 @Mixin(ClientPacketListener.class)
 public class MixinClientPacketListener {
 
-	@Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target="Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/util/thread/BlockableEventLoop;)V"), method = "handleInitializeBorder")
+	@Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target="Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/network/PacketProcessor;)V"), method = "handleInitializeBorder")
 	public void onHandleInitializeBorder(ClientboundInitializeBorderPacket clientboundInitializeBorderPacket, CallbackInfo info){
 		ClientCore.onInitializeWorldBorder(clientboundInitializeBorderPacket);
 	}

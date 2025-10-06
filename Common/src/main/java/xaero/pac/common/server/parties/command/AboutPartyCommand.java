@@ -32,6 +32,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -79,10 +80,10 @@ public class AboutPartyCommand {
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandRequirementProvider commandRequirementProvider) {
 		Command<CommandSourceStack> action = context -> {
-			GameProfile targetProfile;
+			NameAndId targetProfile;
 			ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
 			try {
-				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
+				Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 				if(profiles.size() == 1)
 					targetProfile = profiles.iterator().next();
 				else
@@ -91,11 +92,11 @@ public class AboutPartyCommand {
 				try {
 					ServerPlayer inputPlayer = EntityArgument.getPlayer(context, "player");
 					if(inputPlayer != null)
-						targetProfile = inputPlayer.getGameProfile();
+						targetProfile = inputPlayer.nameAndId();
 					else
 						targetProfile = null;
 				} catch(IllegalArgumentException iae2) {
-					targetProfile = casterPlayer.getGameProfile();
+					targetProfile = casterPlayer.nameAndId();
 				}
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
@@ -104,19 +105,19 @@ public class AboutPartyCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_about_invalid_player"));
 				return 0;
 			}
-			final GameProfile profile = targetProfile;
+			final NameAndId profile = targetProfile;
 			UUID casterPlayerId = casterPlayer.getUUID();
 			IPartyManager<IServerParty<IPartyMember,IPartyPlayerInfo,IPartyAlly>> partyManager = serverData.getPartyManager();
-			IServerParty<IPartyMember,IPartyPlayerInfo,IPartyAlly> playerParty = partyManager.getPartyByMember(profile.getId());
+			IServerParty<IPartyMember,IPartyPlayerInfo,IPartyAlly> playerParty = partyManager.getPartyByMember(profile.id());
 			if(playerParty == null) {
-				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_about_no_party", profile.getName()));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_about_no_party", profile.name()));
 				return 0;
 			}
 			
 			casterPlayer.sendSystemMessage(Component.literal(""));
 			casterPlayer.sendSystemMessage(Component.literal("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
 			casterPlayer.sendSystemMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_player").withStyle(s -> s.withColor(ChatFormatting.GOLD)));
-			casterPlayer.sendSystemMessage(Component.literal(profile.getName()).withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(profile.getId().toString())))));
+			casterPlayer.sendSystemMessage(Component.literal(profile.name()).withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(profile.id().toString())))));
 			casterPlayer.sendSystemMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_current_party").withStyle(s -> s.withColor(ChatFormatting.GOLD)));
 			String partyName = playerParty.getDefaultName();
 			IPlayerConfig ownerConfig = serverData.getPlayerConfigs().getLoadedConfig(playerParty.getOwner().getUUID());
@@ -182,7 +183,7 @@ public class AboutPartyCommand {
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {
 			PlayerList playerlist = context.getSource().getServer().getPlayerList();
 			return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().map(targetPlayer -> {
-				return targetPlayer.getGameProfile().getName();
+				return targetPlayer.getGameProfile().name();
 			}), builder);
 		};
 		LiteralArgumentBuilder<CommandSourceStack> normalCommand = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get())

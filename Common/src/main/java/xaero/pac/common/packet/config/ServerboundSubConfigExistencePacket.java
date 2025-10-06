@@ -44,6 +44,7 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfigDeletionStarter;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.world.ServerLevelHelper;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.Objects;
@@ -116,7 +117,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 		@Override
 		public void accept(ServerboundSubConfigExistencePacket t, ServerPlayer serverPlayer) {
 			if(t.type != PlayerConfigType.PLAYER && t.type != PlayerConfigType.SERVER) {
-				OpenPartiesAndClaims.LOGGER.info("Someone is trying to create/delete a sub-config for an invalid config type! Name: " + serverPlayer.getGameProfile().getName());
+				OpenPartiesAndClaims.LOGGER.info("Someone is trying to create/delete a sub-config for an invalid config type! Name: " + serverPlayer.getGameProfile().name());
 				return;
 			}
 			boolean isOP = serverPlayer.hasPermissions(2);
@@ -124,15 +125,15 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 			UUID ownerId = isServer ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
 			if(!isOP) {
 				if(isServer) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to create/delete a sub-config without required permissions! Name: " + serverPlayer.getGameProfile().getName());
+					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to create/delete a sub-config without required permissions! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
 				if(!Objects.equals(ownerId, serverPlayer.getUUID())) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to create/delete a sub-config for another player! Name: " + serverPlayer.getGameProfile().getName());
+					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to create/delete a sub-config for another player! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
 			}
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverPlayer.getServer());
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
 			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 			IPlayerConfig config = !isServer ?
 										playerConfigs.getLoadedConfig(ownerId) :

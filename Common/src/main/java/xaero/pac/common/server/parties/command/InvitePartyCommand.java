@@ -64,7 +64,7 @@ public class InvitePartyCommand {
 						.suggests((context, builder) -> {
 							PlayerList playerlist = context.getSource().getServer().getPlayerList();
 							return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().map(targetPlayer -> {
-								return targetPlayer.getGameProfile().getName();
+								return targetPlayer.getGameProfile().name();
 							}), builder);
 						})
 						.executes(context -> {
@@ -79,10 +79,10 @@ public class InvitePartyCommand {
 							ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
 							UUID targetPlayerId = targetPlayer.getUUID();
 							if(playerParty.getMemberInfo(targetPlayerId) != null) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_already_your_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_already_your_party", targetPlayer.getGameProfile().name()));
 								return 0;
 							} else if(partyManager.getPartyByMember(targetPlayerId) != null) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_already_a_party", targetPlayer.getGameProfile().getName()));
+								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_already_a_party", targetPlayer.getGameProfile().name()));
 								return 0;
 							} else if(playerParty.getInviteCount() >= ServerConfig.CONFIG.maxPartyInvites.get()) {
 								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_invite_invite_limit"));
@@ -92,7 +92,7 @@ public class InvitePartyCommand {
 								return 0;
 							}
 							
-							playerParty.invitePlayer(targetPlayerId, targetPlayer.getGameProfile().getName());
+							playerParty.invitePlayer(targetPlayerId, targetPlayer.getGameProfile().name());
 
 							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
 							
@@ -102,7 +102,7 @@ public class InvitePartyCommand {
 							targetPlayer.sendSystemMessage(acceptComponent);
 							XaeroNbtUtil.putUUID(Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer), "xaero_OPAC_LastInviteId", playerParty.getId());
 
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayer.getGameProfile().name()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 							return 1;
 						}))));
 		dispatcher.register(command);

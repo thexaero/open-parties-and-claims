@@ -18,6 +18,7 @@
 
 package xaero.pac.client;
 
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.client.event.ClientEventsFabric;
 import xaero.pac.common.LoadCommonFabric;
@@ -30,8 +31,11 @@ public class LoadClientFabric extends LoadCommonFabric<LoadClient> {
 
 	public void loadClient(){
 		loader.loadClient();
+		modMain.getClientDataInternal().getKeyBindings().register(KeyBindingHelper::registerKeyBinding, c -> {});
 		modMain.getPacketHandler().registerOnClient();
-		ClientEventsFabric clientEvents = ClientEventsFabric.Builder.begin().setClientData(modMain.getClientDataInternal()).build();
+		ClientEventsFabric clientEvents = ClientEventsFabric.Builder.begin()
+				.setClientData(modMain.getClientDataInternal())
+				.build();
 		clientEvents.registerFabricAPIEvents();
 		modMain.setClientEvents(clientEvents);
 	}

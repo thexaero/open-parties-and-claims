@@ -45,6 +45,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 public class ClaimsAdminModeCommand {
 
@@ -55,7 +56,7 @@ public class ClaimsAdminModeCommand {
 							return true;
 						try {
 							ServerPlayer player = context.getPlayerOrException();
-							MinecraftServer server = player.getServer();
+							MinecraftServer server = ServerLevelHelper.getServer(player);
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 									serverData = ServerData.from(server);
 							if(serverData.getServerClaimsManager().getPermissionHandler().playerHasAdminModePermission(player))
@@ -67,7 +68,7 @@ public class ClaimsAdminModeCommand {
 					}))
 				.executes(context -> {
 					ServerPlayer player = context.getSource().getPlayerOrException();
-					MinecraftServer server = player.getServer();
+					MinecraftServer server = ServerLevelHelper.getServer(player);
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 							serverData = ServerData.from(server);
 					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);

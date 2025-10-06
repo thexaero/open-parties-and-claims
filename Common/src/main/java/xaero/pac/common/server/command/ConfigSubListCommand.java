@@ -30,6 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -94,7 +95,7 @@ public class ConfigSubListCommand {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
-			GameProfile inputPlayer;
+			NameAndId inputPlayer;
 			UUID configPlayerUUID;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
@@ -102,7 +103,7 @@ public class ConfigSubListCommand {
 						"gui.xaero_pac_config_sub_list_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
-				configPlayerUUID = inputPlayer.getId();
+				configPlayerUUID = inputPlayer.id();
 			} else
 				configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
 

@@ -615,6 +615,7 @@
 	"gui.xaero_pac_player_config_playerConfig.parties.receiveLocationsFromParty" : "Receive Party Member Positions",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.receiveLocationsFromParty" : "default",
 	"gui.xaero_pac_player_config_playerConfig.parties.receiveLocationsFromMutualAllyParties" : "Receive Mutual Ally Positions",
-	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.receiveLocationsFromMutualAllyParties" : "default"
+	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.receiveLocationsFromMutualAllyParties" : "default",
+	"key.category.openpartiesandclaims.controls" : "Open Parties and Claims"
 	
 }

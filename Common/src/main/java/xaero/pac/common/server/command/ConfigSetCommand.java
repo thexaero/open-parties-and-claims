@@ -32,6 +32,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -202,7 +203,7 @@ public class ConfigSetCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_key"));
 				return 0;
 			}
-			GameProfile inputPlayer = null;
+			NameAndId inputPlayer = null;
 			UUID configPlayerUUID = type == PlayerConfigType.SERVER ? PlayerConfig.SERVER_CLAIM_UUID : null;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
@@ -210,7 +211,7 @@ public class ConfigSetCommand {
 						"gui.xaero_pac_config_option_set_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
-				configPlayerUUID = inputPlayer.getId();
+				configPlayerUUID = inputPlayer.id();
 			}
 
 			String valueInput = reset ? null : StringArgumentType.getString(context, "value");
@@ -246,7 +247,7 @@ public class ConfigSetCommand {
 
 			Component wantedValueName = option.getValueDisplayName(wantedValue);
 			if (type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName));
+				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.name(), targetConfigOptionId, wantedValueName));
 			else
 				sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName));
 			if (result == SetResult.DEFAULTED && wantedValue != null && wantedValue != actualValue) {

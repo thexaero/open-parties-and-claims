@@ -39,6 +39,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.List;
 import java.util.Objects;
@@ -75,7 +76,7 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 		@Override
 		public void accept(ServerboundPlayerConfigOptionValuePacket t, ServerPlayer serverPlayer) {
 			if(t.entries.size() > 1) {
-				OpenPartiesAndClaims.LOGGER.info("A player is attempting to modify multiple options in a single packet! Name: " + serverPlayer.getGameProfile().getName());
+				OpenPartiesAndClaims.LOGGER.info("A player is attempting to modify multiple options in a single packet! Name: " + serverPlayer.getGameProfile().name());
 				return;
 			}
 			boolean isOP = serverPlayer.hasPermissions(2);
@@ -83,19 +84,19 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 			UUID ownerId = t.getType() != PlayerConfigType.PLAYER ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
 			if(!isOP) {
 				if(t.getType() != PlayerConfigType.PLAYER) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a config without required permissions! Name: " + serverPlayer.getGameProfile().getName());
+					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a config without required permissions! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
 				if(PlayerConfig.isOptionOPConfigurable(optionEntry.getId())) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a op-only option! Name: " + serverPlayer.getGameProfile().getName());
+					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a op-only option! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
 				if(!Objects.equals(ownerId, serverPlayer.getUUID())) {
-					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify another player's config! Name: " + serverPlayer.getGameProfile().getName());
+					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify another player's config! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
 			}
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverPlayer.getServer());
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
 			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 			IPlayerConfig config =
 					t.getType() == PlayerConfigType.PLAYER ?

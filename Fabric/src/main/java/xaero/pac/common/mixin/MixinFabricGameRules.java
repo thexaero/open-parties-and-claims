@@ -28,6 +28,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.common.event.CommonEventsFabric;
 import xaero.pac.common.server.core.ServerCoreFabric;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 @Mixin(GameRules.class)
 public class MixinFabricGameRules {
@@ -41,8 +42,8 @@ public class MixinFabricGameRules {
 			CommonEventsFabric commonEventsFabric = modMain.getCommonEvents();
 			if(commonEventsFabric == null)
 				return;
-			MinecraftServer server = ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY.getServer();
-			if(server != null && server.isSameThread() && server.getGameRules() == (Object)this) {//making sure this is the server's game rules
+			MinecraftServer server = ServerLevelHelper.getServer(ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY);
+			if(server != null && server.getGameRules() == (Object)this) {//making sure this is the server's game rules
 				if (((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onMobGrief(ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY))
 					callbackInfoReturnable.setReturnValue(false);
 				ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY = null;

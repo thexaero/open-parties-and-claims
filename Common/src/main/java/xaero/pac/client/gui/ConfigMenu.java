@@ -22,6 +22,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
@@ -94,7 +97,7 @@ public class ConfigMenu extends XPACScreen {
 	}
 	
 	private boolean isPlayerNameAllowed() {
-		return !otherPlayerNameString.isEmpty() && !otherPlayerNameString.equalsIgnoreCase(minecraft.player.getGameProfile().getName());
+		return !otherPlayerNameString.isEmpty() && !otherPlayerNameString.equalsIgnoreCase(minecraft.player.getGameProfile().name());
 	}
 	
 	private void onOtherPlayerConfigButton(Button b) {
@@ -114,13 +117,13 @@ public class ConfigMenu extends XPACScreen {
 	}
 	
 	@Override
-	public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
-		if(otherPlayerNameBox.isFocused() && (p_96552_ == GLFW.GLFW_KEY_ENTER || p_96552_ == GLFW.GLFW_KEY_KP_ENTER) && isPlayerNameAllowed()) {
+	public boolean keyPressed(KeyEvent event) {
+		if(otherPlayerNameBox.isFocused() && (event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER) && isPlayerNameAllowed()) {
 			setFocused(null);
-			otherPlayerConfigButton.onPress();
+			otherPlayerConfigButton.onPress(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)));
 			return true;
 		}
-		return super.keyPressed(p_96552_, p_96553_, p_96554_);
+		return super.keyPressed(event);
 	}
 
 	@Override

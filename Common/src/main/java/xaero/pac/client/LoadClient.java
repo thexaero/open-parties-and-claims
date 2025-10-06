@@ -29,15 +29,16 @@ import xaero.pac.client.player.config.PlayerConfigClientSynchronizer;
 import xaero.pac.common.LoadCommon;
 
 public class LoadClient extends LoadCommon {
+
+	private final XPACKeyBindings keyBindings;
 	
 	public LoadClient(OpenPartiesAndClaims modMain) {
 		super(modMain);
+		keyBindings = new XPACKeyBindings();
 		modMain.getModSupport().initClient();
 	}
 
 	public void loadClient() {
-		XPACKeyBindings keyBindings = new XPACKeyBindings();
-		keyBindings.register();
 		ClientClaimsManager claimsManager = ClientClaimsManager.Builder.begin().build();
 		ClientClaimsSyncHandler claimsSyncHandler = new ClientClaimsSyncHandler(claimsManager);
 		modMain.setClientData(
@@ -54,6 +55,10 @@ public class LoadClient extends LoadCommon {
 				);
 		
 		Patreon.checkPatreon();
+	}
+
+	public XPACKeyBindings getKeyBindings() {
+		return keyBindings;
 	}
 
 }

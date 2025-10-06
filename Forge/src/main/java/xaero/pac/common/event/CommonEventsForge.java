@@ -62,6 +62,7 @@ import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.data.ServerDataReloadListenerForge;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.permission.impl.ForgePermissionsSystem;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 public class CommonEventsForge extends CommonEvents {
 
@@ -135,12 +136,12 @@ public class CommonEventsForge extends CommonEvents {
 	
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent.Pre event) throws Throwable {
-		super.onPlayerTick(true, event.side == LogicalSide.SERVER, event.player);
+		super.onPlayerTick(true, event.side() == LogicalSide.SERVER, event.player());
 	}
 
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent.Post event) throws Throwable {
-		super.onPlayerTick(false, event.side == LogicalSide.SERVER, event.player);
+		super.onPlayerTick(false, event.side() == LogicalSide.SERVER, event.player());
 	}
 	
 	@SubscribeEvent
@@ -187,10 +188,8 @@ public class CommonEventsForge extends CommonEvents {
 	public void onMobGrief(EntityMobGriefingEvent event) {
 		if(event.getEntity() == null)
 			return;
-		MinecraftServer server = event.getEntity().getServer();
+		MinecraftServer server = ServerLevelHelper.getServer(event.getEntity());
 		if(server == null)
-			return;
-		if(!server.isSameThread())
 			return;
 		if(ServerCore.isMobGriefingForItems(server.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
 			return;

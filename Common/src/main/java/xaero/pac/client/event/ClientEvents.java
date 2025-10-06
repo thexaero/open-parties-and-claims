@@ -75,7 +75,7 @@ public abstract class ClientEvents {
 	}
 
 	public void onPlayerLogin(LocalPlayer player) {
-		clientData.getClientWorldLoadHandler().handle(player.clientLevel, player);
+		clientData.getClientWorldLoadHandler().handle((ClientLevel) player.level(), player);
 	}
 
 	public abstract void fireAddonRegisterEvent();

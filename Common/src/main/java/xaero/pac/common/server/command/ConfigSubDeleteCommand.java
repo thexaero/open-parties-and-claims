@@ -29,6 +29,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -97,7 +98,7 @@ public class ConfigSubDeleteCommand {
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
-			GameProfile inputPlayer = null;
+			NameAndId inputPlayer = null;
 			UUID configPlayerUUID;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
@@ -105,7 +106,7 @@ public class ConfigSubDeleteCommand {
 						"gui.xaero_pac_config_delete_sub_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
-				configPlayerUUID = inputPlayer.getId();
+				configPlayerUUID = inputPlayer.id();
 			} else
 				configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
 

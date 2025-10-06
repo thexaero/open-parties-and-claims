@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.player.request;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -41,6 +42,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Set;
 import java.util.UUID;
@@ -65,7 +67,8 @@ public class PlayerClaimActionRequestHandler {
 		boolean shouldServerClaim = request.isByServer();
 		if(playerData.isClaimsServerMode())
 			shouldServerClaim = true;
-		if(shouldServerClaim && manager.getPermissionHandler().shouldPreventServerClaim(player, playerData, player.getServer())){
+		MinecraftServer server = ServerLevelHelper.getServer(player);
+		if(shouldServerClaim && manager.getPermissionHandler().shouldPreventServerClaim(player, playerData, server)){
 			manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
 					new AreaClaimResult(Set.of(ClaimResult.Type.NO_SERVER_PERMISSION), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
 					player);
@@ -74,7 +77,7 @@ public class PlayerClaimActionRequestHandler {
 		manager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 		UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-				serverData = ServerData.from(player.getServer());
+				serverData = ServerData.from(server);
 		IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(player.getUUID());
 		IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
 		int subConfigIndex = usedSubConfig.getSubIndex();

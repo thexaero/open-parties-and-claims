@@ -20,28 +20,31 @@ package xaero.pac.client.controls;
 
 
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.controls.api.OPACKeyBindingsAPI;
-import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
-import xaero.pac.common.platform.Services;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class XPACKeyBindings implements OPACKeyBindingsAPI {
-	
+
+	private final KeyMapping.Category category =
+			new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "controls"));
 	private final List<KeyMapping> keyBindings;
 	public final KeyMapping openModMenu;
 
 	public XPACKeyBindings() {
 		keyBindings = new ArrayList<>();
-		keyBindings.add(openModMenu = new KeyMapping("gui.xaero_pac_key_open_menu", GLFW.GLFW_KEY_APOSTROPHE, "Open Parties and Claims"));
+		keyBindings.add(openModMenu = new KeyMapping("gui.xaero_pac_key_open_menu", GLFW.GLFW_KEY_APOSTROPHE, category));
 	}
 	
-	public void register() {
-		IKeyBindingHelper registry = Services.PLATFORM.getKeyBindingHelper();
-		keyBindings.forEach(registry::register);
+	public void register(Consumer<KeyMapping> registry, Consumer<KeyMapping.Category> categoryRegistry) {
+		categoryRegistry.accept(category);
+		keyBindings.forEach(registry::accept);
 	}
 	
 	@Nonnull

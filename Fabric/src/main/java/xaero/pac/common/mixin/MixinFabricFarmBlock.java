@@ -30,13 +30,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.common.server.core.ServerCoreFabric;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 @Mixin(FarmBlock.class)
 public class MixinFabricFarmBlock {
 
 	@Inject(method = "fallOn", at = @At("HEAD"), cancellable = true)
 	public void onMobGriefGameRuleMethod(Level level, BlockState state, BlockPos pos, Entity entity, double d, CallbackInfo callbackInfo){
-		if(entity.getServer() != null && ((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onCropTrample(entity, pos))
+		if(ServerLevelHelper.getServer(entity) != null && ((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onCropTrample(entity, pos))
 			callbackInfo.cancel();
 		ServerCoreFabric.tryToSetMobGriefingEntity(entity);
 	}
