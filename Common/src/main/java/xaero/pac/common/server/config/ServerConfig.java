@@ -83,6 +83,7 @@ public class ServerConfig {
 	public final ModConfigSpec.IntValue playerClaimsExpirationCheckInterval;
 	public final ModConfigSpec.BooleanValue playerClaimsConvertExpiredClaims;
 	public final ModConfigSpec.EnumValue<ClaimsSyncType> claimsSynchronization;
+	public final ModConfigSpec.BooleanValue claimWelcomeMessages;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
 	public final ModConfigSpec.ConfigValue<String> serverClaimPermission;
@@ -272,6 +273,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_claims_synchronization")
 			.worldRestart()
 		   	.defineEnum("claimsSynchronization", ClaimsSyncType.ALL);
+
+		claimWelcomeMessages = builder
+			.comment("Whether to display \"welcome\" messages when a player enters a claim or wilderness. Not recommended to turn off unless you have another mod handling this.")
+			.translation("gui.xaero_pac_config_claim_welcome_messages")
+			.worldRestart()
+			.define("claimWelcomeMessages", true);
 
 		builder.push("protection");
 
@@ -775,7 +782,7 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_op_configurable_player_options")
 			//.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("opConfigurablePlayerConfigOptions"), () -> Lists.newArrayList("claims.bonusChunkClaims", "claims.bonusChunkForceloads"), s -> s instanceof String);
-		
+
 		builder.pop();
 	}
 
