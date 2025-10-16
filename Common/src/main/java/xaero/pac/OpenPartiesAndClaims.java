@@ -48,6 +48,8 @@ import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.platform.Services;
+import xaero.pac.common.platform.services.IPlatformHelper;
 import xaero.pac.common.server.CrashHandler;
 
 /**
@@ -76,6 +78,8 @@ public abstract class OpenPartiesAndClaims {
 		this.modSupport = modSupport;
 		INSTANCE = this;
 		startupCrashHandler = new CrashHandler();
+		@SuppressWarnings("unused")
+		IPlatformHelper ensureService = Services.PLATFORM;//makes sure the platform gets loaded here to avoid parallel loading
 	}
 	
 	@SuppressWarnings("unchecked")
