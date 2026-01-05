@@ -19,7 +19,7 @@
 package xaero.pac.common.server.claims.player.io.serialization.nbt;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
@@ -54,8 +54,8 @@ public final class PlayerClaimInfoNbtSerializer implements SimpleSerializer<Comp
 	public ServerPlayerClaimInfo deserialize(UUID id, ServerPlayerClaimInfoManager manager, CompoundTag nbt) {
 		CompoundTag dimensionsTag = nbt.getCompoundOrEmpty("dimensions");
 		String username = nbt.getStringOr("username", "");
-		Map<ResourceLocation, PlayerDimensionClaims> claims = new HashMap<>();
-		dimensionsTag.keySet().forEach(key -> claims.put(ResourceLocation.parse(key), playerDimensionClaimsNbtSerializer.deserialize(id, key, dimensionsTag.getCompoundOrEmpty(key))));
+		Map<Identifier, PlayerDimensionClaims> claims = new HashMap<>();
+		dimensionsTag.keySet().forEach(key -> claims.put(Identifier.parse(key), playerDimensionClaimsNbtSerializer.deserialize(id, key, dimensionsTag.getCompoundOrEmpty(key))));
 		ServerPlayerClaimInfo result = new ServerPlayerClaimInfo(manager.getConfig(id), username, id, claims, manager, new ArrayDeque<>());
 		result.setRegisteredActivity(nbt.getLongOr("confirmedActivity", 0));
 		return result;

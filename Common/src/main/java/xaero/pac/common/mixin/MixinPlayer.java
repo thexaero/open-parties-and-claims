@@ -20,6 +20,9 @@ package xaero.pac.common.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,6 +37,17 @@ public class MixinPlayer {
 	@Inject(at = @At("HEAD"), method = "mayUseItemAt", cancellable = true)
 	public void onMayUseItemAt(BlockPos blockPos, Direction direction, ItemStack itemStack, CallbackInfoReturnable<Boolean> info){
 		if(!ServerCore.mayUseItemAt((Player)(Object)this, blockPos, direction, itemStack))
+			info.setReturnValue(false);
+	}
+
+	@Inject(at = @At("HEAD"), method = "stabAttack", cancellable = true)
+	public void onStabAttack(
+			EquipmentSlot slot, Entity targetEntity,
+			float baseDamage, boolean hurt,
+			boolean knockback, boolean dismount,
+			CallbackInfoReturnable<Boolean> info
+	) {
+		if(ServerCore.onStabAttack((LivingEntity) (Object)this, targetEntity, slot))
 			info.setReturnValue(false);
 	}
 

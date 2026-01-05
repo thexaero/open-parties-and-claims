@@ -28,7 +28,8 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-public class PlayerPrometheusPermissions implements IPlayerPermissionSystemAPI {
+//TODO IMPORTANT restore this when Prometheus is ported
+public class PlayerPrometheusPermissions {/*implements IPlayerPermissionSystemAPI {
 
 	@Nonnull
 	@Override
@@ -52,5 +53,5 @@ public class PlayerPrometheusPermissions implements IPlayerPermissionSystemAPI {
 		T value = options == null ? null : options.getValue(node);
 		return Optional.ofNullable(value);
 	}
-
+*/
 }

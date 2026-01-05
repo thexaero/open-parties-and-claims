@@ -21,7 +21,7 @@ package xaero.pac.client.claims;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfo;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfoManager;
@@ -60,7 +60,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private String currentServerSubConfigId;
 	
 	private ClientClaimsManager(ClientPlayerClaimInfoManager playerClaimInfoManager,
-								IPlayerConfigManager configManager, Map<ResourceLocation, ClientDimensionClaimsManager> dimensions,
+								IPlayerConfigManager configManager, Map<Identifier, ClientDimensionClaimsManager> dimensions,
 								Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, ClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker,
 								ClaimsManagerClaimResultTracker claimResultTracker) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
@@ -192,32 +192,32 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public PlayerChunkClaim claim(ResourceLocation dimension, UUID id, int subConfigIndex, int x, int z, boolean forceload) {
+	public PlayerChunkClaim claim(Identifier dimension, UUID id, int subConfigIndex, int x, int z, boolean forceload) {
 		PlayerChunkClaim newClaim = super.claim(dimension, id, subConfigIndex, x, z, forceload);
 		claimsManagerTracker.onChunkChange(dimension, x, z, newClaim);
 		return newClaim;
 	}
 
 	@Override
-	public void unclaim(ResourceLocation dimension, int x, int z) {
+	public void unclaim(Identifier dimension, int x, int z) {
 		super.unclaim(dimension, x, z);
 		claimsManagerTracker.onChunkChange(dimension, x, z, null);
 	}
 
-	public void unclaimRegion(ResourceLocation dimension, int x, int z){
+	public void unclaimRegion(Identifier dimension, int x, int z){
 		ClientDimensionClaimsManager dimensionClaims = ensureDimension(dimension);
 		dimensionClaims.unclaimRegion(x, z, playerClaimInfoManager, configManager);
 		claimsManagerTracker.onWholeRegionChange(dimension, x, z);
 	}
 
-	public void claimRegion(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage regionStorage){
+	public void claimRegion(Identifier dimension, int x, int z, RegionClaimsPaletteStorage regionStorage){
 		ClientDimensionClaimsManager dimensionClaims = ensureDimension(dimension);
 		dimensionClaims.claimRegion(x, z, regionStorage, playerClaimInfoManager, configManager);
 		claimsManagerTracker.onWholeRegionChange(dimension, x, z);
 	}
 
 	@Override
-	protected ClientDimensionClaimsManager create(ResourceLocation dimension,
+	protected ClientDimensionClaimsManager create(Identifier dimension,
 			Long2ObjectMap<ClientRegionClaims> claims) {
 		return new ClientDimensionClaimsManager(dimension, claims, new LinkedChain<>());
 	}

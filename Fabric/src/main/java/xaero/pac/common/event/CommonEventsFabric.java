@@ -33,7 +33,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -80,7 +80,7 @@ import java.util.List;
 
 public class CommonEventsFabric extends CommonEvents {
 
-	private final ResourceLocation PROTECTION_PHASE = ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "protection");
+	private final Identifier PROTECTION_PHASE = Identifier.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "protection");
 
 	public CommonEventsFabric(OpenPartiesAndClaims modMain) {
 		super(modMain);

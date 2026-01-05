@@ -18,7 +18,7 @@
 
 package xaero.pac.client.claims.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.api.IDimensionClaimsManagerAPI;
 
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ public interface IClientDimensionClaimsManagerAPI
 	
 	@Nonnull
 	@Override
-	public ResourceLocation getDimension();
+	public Identifier getDimension();
 
 	@Override
 	public int getCount();

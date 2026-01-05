@@ -18,7 +18,7 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.world.entity.animal.Rabbit;
+import net.minecraft.world.entity.animal.rabbit.Rabbit;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCoreFabric;
 
-@Mixin(targets = "net/minecraft/world/entity/animal/Rabbit$RaidGardenGoal")
+@Mixin(targets = "net/minecraft/world/entity/animal/rabbit/Rabbit$RaidGardenGoal")
 public class MixinFabricRabbitRaidGardenGoal {
 
 	@Shadow

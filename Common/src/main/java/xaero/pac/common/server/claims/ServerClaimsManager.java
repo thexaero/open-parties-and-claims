@@ -21,7 +21,7 @@ package xaero.pac.common.server.claims;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.ClaimsManager;
@@ -58,7 +58,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	private boolean loaded;
 	
 	protected ServerClaimsManager(MinecraftServer server, ServerPlayerClaimInfoManager playerClaimInfoManager,
-								  IPlayerConfigManager configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
+								  IPlayerConfigManager configManager, Map<Identifier, ServerDimensionClaimsManager> dimensions,
 								  ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
 								  Map<PlayerChunkClaim, ServerClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler, ServerClaimsPermissionHandler permissionHandler, LinkedChain<ServerClaimStateHolder> linkedClaimStates) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
@@ -81,7 +81,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Override
-	protected ServerDimensionClaimsManager create(ResourceLocation dimension,
+	protected ServerDimensionClaimsManager create(Identifier dimension,
 												  Long2ObjectMap<ServerRegionClaims> claims) {
 		boolean playerClaimsSyncAllowed = ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() || isClaimable(dimension);
 		return new ServerDimensionClaimsManager(dimension, claims, new LinkedChain<>(), this, playerClaimsSyncAllowed);
@@ -106,7 +106,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Override
-	public boolean isClaimable(@Nonnull ResourceLocation dimension) {
+	public boolean isClaimable(@Nonnull Identifier dimension) {
 		return playerClaimInfoManager.isClaimable(dimension);
 	}
 
@@ -125,7 +125,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nullable
 	@Override
-	public PlayerChunkClaim claim(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int subConfigIndex, int x, int z, boolean forceload) {
+	public PlayerChunkClaim claim(@Nonnull Identifier dimension, @Nonnull UUID id, int subConfigIndex, int x, int z, boolean forceload) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return null;
 		PlayerChunkClaim result = super.claim(dimension, id, subConfigIndex, x, z, forceload);
@@ -135,7 +135,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 	
 	@Override
-	public void unclaim(@Nonnull ResourceLocation dimension, int x, int z) {
+	public void unclaim(@Nonnull Identifier dimension, int x, int z) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return;
 		super.unclaim(dimension, x, z);
@@ -143,7 +143,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			claimsManagerTracker.onChunkChange(dimension, x, z, null);
 	}
 
-	private ClaimResult<PlayerChunkClaim> tryToClaimHelper(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean replace, boolean isServer) {
+	private ClaimResult<PlayerChunkClaim> tryToClaimHelper(Identifier dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean replace, boolean isServer) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		boolean claimCountUnaffected = false;
 		if(currentClaim != null) {
@@ -167,7 +167,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace) {
+	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull Identifier dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		if(!replace && getPlayerInfo(playerId).isReplacementInProgress())
@@ -180,7 +180,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer);
 	}
 	
-	private ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
+	private ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(Identifier dimension, UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		if(currentClaim == null || !replace && !Objects.equals(id, currentClaim.getPlayerId()))
 			return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
@@ -190,7 +190,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
+	public ClaimResult<PlayerChunkClaim> tryToUnclaimTyped(@Nonnull Identifier dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		//boolean isServer = Objects.equals(id, PlayerConfig.SERVER_CLAIM_UUID);
@@ -199,7 +199,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return tryToUnclaimHelper(dimension, id, fromX, fromZ, x, z, replace);
 	}
 	
-	private ClaimResult<PlayerChunkClaim> tryToForceloadHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean replace, boolean isServer) {
+	private ClaimResult<PlayerChunkClaim> tryToForceloadHelper(Identifier dimension, UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean replace, boolean isServer) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		if(currentClaim != null && (replace || Objects.equals(currentClaim.getPlayerId(), id))) {
 			if(currentClaim.isForceloadable() == enable)
@@ -223,7 +223,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean replace) {
+	public ClaimResult<PlayerChunkClaim> tryToForceloadTyped(@Nonnull Identifier dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		boolean isServer = Objects.equals(id, PlayerConfig.SERVER_CLAIM_UUID);
@@ -234,7 +234,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return tryToForceloadHelper(dimension, id, fromX, fromZ, x, z, enable, replace, isServer);
 	}
 	
-	public AreaClaimResult tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, Action action, boolean replace) {
+	public AreaClaimResult tryClaimActionOverArea(Identifier dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, Action action, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), left, top, right, bottom);
 		Set<ClaimResult.Type> resultTypes = new HashSet<>();
@@ -317,25 +317,25 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
+	public AreaClaimResult tryToClaimArea(@Nonnull Identifier dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
 		return tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromX, fromZ, left, top, right, bottom, Action.CLAIM, replace);
 	}
 
 	@Nonnull
 	@Override
-	public AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
+	public AreaClaimResult tryToUnclaimArea(@Nonnull Identifier dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
 		return tryClaimActionOverArea(dimension, id, -1, fromX, fromZ, left, top, right, bottom, Action.UNCLAIM, replace);
 	}
 
 	@Nonnull
 	@Override
-	public AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace) {
+	public AreaClaimResult tryToForceloadArea(@Nonnull Identifier dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace) {
 		return tryClaimActionOverArea(dimension, id, -1, fromX, fromZ, left, top, right, bottom, enable ? Action.FORCELOAD : Action.UNFORCELOAD, replace);
 	}
 
 	@Nullable
 	@Override
-	public PlayerChunkClaim get(@Nonnull ResourceLocation dimension, int x, int z) {
+	public PlayerChunkClaim get(@Nonnull Identifier dimension, int x, int z) {
 		PlayerChunkClaim actualClaim = super.get(dimension, x, z);
 		//allowExistingClaimsInUnclaimableDimensions is applied here, not when loading the files, so that new changes to claims still affect the "ignored" claims, e.g. when a server claims a chunk claimed by player
 		if(actualClaim == null || ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() || Objects.equals(actualClaim.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) || Objects.equals(actualClaim.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID) || isClaimable(dimension))

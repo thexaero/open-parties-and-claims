@@ -136,12 +136,12 @@ public abstract class WidgetListScreen extends XPACScreen {
 	
 	private void onPrevButton(Button b) {
 		page--;
-		init(minecraft, width, height);
+		init(width, height);
 	}
 	
 	private void onNextButton(Button b) {
 		page++;
-		init(minecraft, width, height);
+		init(width, height);
 	}
 	
 	protected void onBackButton(Button b) {

@@ -21,7 +21,7 @@ package xaero.pac.common.packet.claims;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
@@ -32,9 +32,9 @@ public class ClientboundPlayerClaimsDimensionPacket extends LazyPacket<Clientbou
 	public static final Encoder<ClientboundPlayerClaimsDimensionPacket> ENCODER = new Encoder<>();
 	public static final Decoder DECODER = new Decoder();
 
-	private final ResourceLocation dimension;
+	private final Identifier dimension;
 
-	public ClientboundPlayerClaimsDimensionPacket(ResourceLocation dimension) {
+	public ClientboundPlayerClaimsDimensionPacket(Identifier dimension) {
 		super();
 		this.dimension = dimension;
 	}
@@ -65,7 +65,7 @@ public class ClientboundPlayerClaimsDimensionPacket extends LazyPacket<Clientbou
 				String dimensionString = nbt.getStringOr("d", "");
 				if(dimensionString.length() > 2048)
 					return null;
-				return new ClientboundPlayerClaimsDimensionPacket(dimensionString.isEmpty() ? null : ResourceLocation.parse(dimensionString));
+				return new ClientboundPlayerClaimsDimensionPacket(dimensionString.isEmpty() ? null : Identifier.parse(dimensionString));
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
 				return null;

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.sync.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.ServerDimensionClaimsManager;
@@ -63,7 +63,7 @@ public class ClaimsManagerPlayerDimensionRegionSync {
 		return 0;
 	}
 	
-	public ResourceLocation getDim() {
+	public Identifier getDim() {
 		return dimensionClaims.getDimension();
 	}
 	

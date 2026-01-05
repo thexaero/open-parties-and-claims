@@ -32,9 +32,9 @@ public class MixinFabricSilverfishWakeUpFriendsGoal {
 	@Shadow
 	private Silverfish silverfish;
 
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/GameRules;getBoolean(Lnet/minecraft/world/level/GameRules$Key;)Z"))
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/gamerules/GameRules;get(Lnet/minecraft/world/level/gamerules/GameRule;)Ljava/lang/Object;"))
 	public void onMobGriefGameRuleMethod(CallbackInfo callbackInfo){
-		//called before getBoolean in this case because the game rule is checked multiple times
+		//called before get in this case because the game rule is checked multiple times
 		ServerCoreFabric.tryToSetMobGriefingEntity(silverfish);
 	}
 

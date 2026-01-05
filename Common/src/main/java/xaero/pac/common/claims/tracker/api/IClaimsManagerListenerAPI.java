@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.tracker.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 
 import javax.annotation.Nonnull;
@@ -43,7 +43,7 @@ public interface IClaimsManagerListenerAPI {
 	 * @param regionX  the X coordinate of the region
 	 * @param regionZ  the Z coordinate of the region
 	 */
-	public void onWholeRegionChange(@Nonnull ResourceLocation dimension, int regionX, int regionZ);
+	public void onWholeRegionChange(@Nonnull Identifier dimension, int regionX, int regionZ);
 
 	/**
 	 * Called after the claim state of a chunk is updated.
@@ -56,7 +56,7 @@ public interface IClaimsManagerListenerAPI {
 	 * @param chunkZ  the Z coordinate of the chunk
 	 * @param claim  the new claim state, null when the chunk is unclaimed
 	 */
-	public void onChunkChange(@Nonnull ResourceLocation dimension, int chunkX, int chunkZ, @Nullable IPlayerChunkClaimAPI claim);
+	public void onChunkChange(@Nonnull Identifier dimension, int chunkX, int chunkZ, @Nullable IPlayerChunkClaimAPI claim);
 
 	/**
 	 * Called after claim changes are made throughout a dimension.
@@ -68,6 +68,6 @@ public interface IClaimsManagerListenerAPI {
 	 *
 	 * @param dimension  the dimension ID, not null
 	 */
-	public void onDimensionChange(ResourceLocation dimension);
+	public void onDimensionChange(Identifier dimension);
 
 }

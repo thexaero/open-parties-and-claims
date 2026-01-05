@@ -129,7 +129,7 @@ public abstract class CommonEvents {
 //			serverData = ServerData.from(lastServerStarted);
 //		IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 //				claimsManager = serverData.getServerClaimsManager();
-//		ResourceLocation overworld = ResourceLocation.parse("overworld");
+//		Identifier overworld = Identifier.parse("overworld");
 //		UUID myUUID = UUID.fromString("380df991-f603-344c-a090-369bad2a924a");
 //		OpenPartiesAndClaims.LOGGER.info("my uuid: " + myUUID);
 //		for (int i = 0; i < 100; i++)

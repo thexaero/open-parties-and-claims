@@ -19,7 +19,7 @@
 package xaero.pac.common.server.claims.player.task;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.ClaimLocation;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -87,13 +87,13 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 			resultType = ResultType.FAILURE_STATE_MATCHES;
 			finished = true;
 		} else {
-			Iterator<Map.Entry<ResourceLocation, IPlayerDimensionClaims<IPlayerClaimPosList>>> dimensionIterator = playerInfo.getFullStream().iterator();
+			Iterator<Map.Entry<Identifier, IPlayerDimensionClaims<IPlayerClaimPosList>>> dimensionIterator = playerInfo.getFullStream().iterator();
 			Iterator<IPlayerClaimPosList> claimPosListIterator = null;
 			Iterator<ChunkPos> claimPosIterator = null;
 			List<ClaimLocation> locations = new ArrayList<>(perTick);
 			while (dimensionIterator.hasNext() && locations.size() < perTick) {
-				Map.Entry<ResourceLocation, IPlayerDimensionClaims<IPlayerClaimPosList>> entry = dimensionIterator.next();
-				ResourceLocation dimId = entry.getKey();
+				Map.Entry<Identifier, IPlayerDimensionClaims<IPlayerClaimPosList>> entry = dimensionIterator.next();
+				Identifier dimId = entry.getKey();
 				IPlayerDimensionClaims<IPlayerClaimPosList> dim = entry.getValue();
 				claimPosListIterator = dim.getTypedStream().iterator();
 				while (claimPosListIterator.hasNext() && locations.size() < perTick) {

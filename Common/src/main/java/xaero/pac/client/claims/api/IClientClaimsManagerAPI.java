@@ -19,7 +19,7 @@
 package xaero.pac.client.claims.api;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.client.claims.player.api.IClientPlayerClaimInfoAPI;
 import xaero.pac.client.claims.tracker.result.api.IClaimsManagerClaimResultTrackerAPI;
@@ -55,19 +55,19 @@ public interface IClientClaimsManagerAPI
 	
 	@Nullable
 	@Override
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, int x, int z);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, int x, int z);
 	
 	@Nullable
 	@Override
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, @Nonnull ChunkPos chunkPos);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, @Nonnull ChunkPos chunkPos);
 	
 	@Nullable
 	@Override
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, @Nonnull BlockPos blockPos);
 
 	@Nullable
 	@Override
-	public IClientDimensionClaimsManagerAPI getDimension(@Nonnull ResourceLocation dimension);
+	public IClientDimensionClaimsManagerAPI getDimension(@Nonnull Identifier dimension);
 
 	/**
 	 * Gets a stream of all read-only dimension claims managers.

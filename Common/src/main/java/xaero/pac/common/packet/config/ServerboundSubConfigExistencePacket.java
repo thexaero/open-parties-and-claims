@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.config;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
@@ -120,7 +121,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				OpenPartiesAndClaims.LOGGER.info("Someone is trying to create/delete a sub-config for an invalid config type! Name: " + serverPlayer.getGameProfile().name());
 				return;
 			}
-			boolean isOP = serverPlayer.hasPermissions(2);
+			boolean isOP = Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions());
 			boolean isServer = t.type == PlayerConfigType.SERVER;
 			UUID ownerId = isServer ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
 			if(!isOP) {

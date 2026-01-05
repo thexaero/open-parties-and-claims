@@ -18,7 +18,7 @@
 
 package xaero.pac.client.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.client.claims.player.api.IClientPlayerClaimInfoAPI;
 import xaero.pac.common.claims.player.IPlayerClaimInfo;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -49,13 +49,13 @@ public interface IClientPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 
 	@Nonnull
 	@Override
-	public Stream<Entry<ResourceLocation, DC>> getTypedStream();
+	public Stream<Entry<Identifier, DC>> getTypedStream();
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default Stream<Entry<ResourceLocation, IPlayerDimensionClaimsAPI>> getStream(){
-		return (Stream<Entry<ResourceLocation, IPlayerDimensionClaimsAPI>>)(Object)getTypedStream();
+	default Stream<Entry<Identifier, IPlayerDimensionClaimsAPI>> getStream(){
+		return (Stream<Entry<Identifier, IPlayerDimensionClaimsAPI>>)(Object)getTypedStream();
 	}
 
 }

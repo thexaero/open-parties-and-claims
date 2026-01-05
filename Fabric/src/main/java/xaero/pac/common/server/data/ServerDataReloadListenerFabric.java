@@ -19,14 +19,14 @@
 package xaero.pac.common.server.data;
 
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 
 public class ServerDataReloadListenerFabric extends ServerDataReloadListener implements SimpleSynchronousResourceReloadListener {
 
 	@Override
-	public ResourceLocation getFabricId() {
-		return ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "server_data_listener");
+	public Identifier getFabricId() {
+		return Identifier.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "server_data_listener");
 	}
 
 }

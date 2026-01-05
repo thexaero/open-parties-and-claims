@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public abstract class PlayerClaimInfoManager
 		this.storage = storage;
 	}
 	
-	protected abstract PCI create(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims);
+	protected abstract PCI create(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims);
 	
 	public boolean hasInfo(UUID playerId) {
 		return storage.containsKey(playerId);

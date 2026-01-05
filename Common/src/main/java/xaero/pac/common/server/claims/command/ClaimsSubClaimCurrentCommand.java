@@ -72,7 +72,7 @@ public class ClaimsSubClaimCurrentCommand {
 
 		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).then(Commands.literal("sub-claim")
 				.then(Commands.literal("for")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(getMainCommandPart(playerSubConfigSuggestionProvider, regularExecutor)))));
 		dispatcher.register(command);
@@ -87,7 +87,7 @@ public class ClaimsSubClaimCurrentCommand {
 				.requires(serverRequirement)
 				.then(Commands.literal("sub-claim")
 				.then(Commands.literal("for")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(getMainCommandPart(playerSubConfigSuggestionProvider, serverExecutor))))));
 		dispatcher.register(command);

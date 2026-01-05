@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.util.linked.ILinkedChainNode;
 
@@ -40,14 +40,14 @@ public abstract class PlayerClaimInfo
 	protected final M manager;
 	private String playerUsername;
 	protected final UUID playerId;
-	protected final Map<ResourceLocation, PlayerDimensionClaims> claims;
+	protected final Map<Identifier, PlayerDimensionClaims> claims;
 
 	private boolean destroyed;
 	private PCI nextInChain;
 	private PCI previousInChain;
 	
 	@SuppressWarnings("unchecked")
-	public PlayerClaimInfo(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims, M manager) {
+	public PlayerClaimInfo(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims, M manager) {
 		this.self = (PCI) this;
 		this.playerUsername = username;
 		this.playerId = playerId;
@@ -55,26 +55,26 @@ public abstract class PlayerClaimInfo
 		this.claims = claims;
 	}
 	
-	private PlayerDimensionClaims ensureDimension(ResourceLocation dimension) {
+	private PlayerDimensionClaims ensureDimension(Identifier dimension) {
 		return claims.computeIfAbsent(dimension, d -> new PlayerDimensionClaims(playerId, d, new HashMap<>()));
 	}
 
-	private void removeDimension(ResourceLocation dimension){
+	private void removeDimension(Identifier dimension){
 		claims.remove(dimension);
 	}
 
 	@Nullable
 	@Override
-	public PlayerDimensionClaims getDimension(@Nonnull ResourceLocation dimension) {
+	public PlayerDimensionClaims getDimension(@Nonnull Identifier dimension) {
 		return claims.get(dimension);
 	}
 	
-	public void onClaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
+	public void onClaim(IPlayerConfigManager configManager, Identifier dimension, PlayerChunkClaim claim, int x, int z) {
 		PlayerDimensionClaims dimensionClaims = ensureDimension(dimension);
 		dimensionClaims.addClaim(x, z, claim);
 	}
 	
-	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
+	public void onUnclaim(IPlayerConfigManager configManager, Identifier dimension, PlayerChunkClaim claim, int x, int z) {
 		PlayerDimensionClaims dimensionClaims = ensureDimension(dimension);
 		if(!dimensionClaims.removeClaim(x, z, claim))
 			throw new IllegalStateException();
@@ -82,9 +82,9 @@ public abstract class PlayerClaimInfo
 			removeDimension(dimension);
 	}
 	
-	protected abstract Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionClaimCountStream();
+	protected abstract Stream<Entry<Identifier, PlayerDimensionClaims>> getDimensionClaimCountStream();
 
-	protected abstract Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionForceloadCountStream();
+	protected abstract Stream<Entry<Identifier, PlayerDimensionClaims>> getDimensionForceloadCountStream();
 
 	@Override
 	public int getClaimCount() {
@@ -104,7 +104,7 @@ public abstract class PlayerClaimInfo
 	
 	@Nonnull
 	@Override
-	public Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getTypedStream(){
+	public Stream<Entry<Identifier, PlayerDimensionClaims>> getTypedStream(){
 		return claims.entrySet().stream();
 	}
 	

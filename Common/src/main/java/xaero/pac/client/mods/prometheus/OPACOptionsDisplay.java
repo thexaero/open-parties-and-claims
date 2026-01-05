@@ -38,7 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OPACOptionsDisplay implements OptionDisplay {
+//TODO IMPORTANT restore this when Prometheus is ported
+public class OPACOptionsDisplay {/*implements OptionDisplay {
 
 	protected final List<ListEntry> entries;
 	protected final Map<IPermissionNodeAPI<?>, ListEntry> mappedEntries;
@@ -134,5 +135,5 @@ public class OPACOptionsDisplay implements OptionDisplay {
 		role.setData(options);
 		return true;
 	}
-
+*/
 }

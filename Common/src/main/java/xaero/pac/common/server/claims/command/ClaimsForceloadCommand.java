@@ -34,10 +34,10 @@ public class ClaimsForceloadCommand {
 		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), true, false, false)));
 		dispatcher.register(command);
 		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.literal("anyway").requires(source -> source.hasPermission(2)), true, false, true)));
+		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())), true, false, true)));
 		dispatcher.register(command);
 		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(Commands.literal("anyway").requires(source -> source.hasPermission(2)).then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), true, false, true))));
+		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())).then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), true, false, true))));
 		dispatcher.register(command);
 	}
 

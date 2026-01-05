@@ -30,6 +30,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -208,6 +209,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		}
 
 		private <HT, T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
+			HT initialValue = valueToHolder.apply(getOptionValue(option));
 			return (el, xy) -> CycleButton.<HT>builder(v -> {
 						Component defaultDisplay = option.getOption().getValueDisplayName(holderToValue.apply(v));
 						if(option.getType() == Integer.class){
@@ -217,9 +219,10 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 								return Component.translatable(translationKey).setStyle(defaultDisplay.getStyle());
 						}
 						return defaultDisplay;
-					})
+					},
+					() -> initialValue
+					)
 					.withValues(values)
-					.withInitialValue(valueToHolder.apply(getOptionValue(option)))
 					.create(xy.getX(), xy.getY(), elementWidth, elementHeight, optionTitle, getRegularValueChangeListener(el, option, holderToValue, data));
 		}
 
@@ -345,7 +348,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 
 			elements.add(createSubConfigWidgetListElement(elementWidth, elementHeight, subConfigs, indexOfSelectedSub));
 			boolean isCurrentlyUsed = Objects.equals(usedSubConfigOptionStorage.getValue(), data.getSelectedSubConfig());
-			boolean canCreateSubs = data.getType() == PlayerConfigType.PLAYER || minecraft.player.hasPermissions(2);
+			boolean canCreateSubs = data.getType() == PlayerConfigType.PLAYER || Commands.LEVEL_GAMEMASTERS.check(minecraft.player.permissions());
 
 			WidgetListElement<?> useSubConfigButtonWidget = SimpleWidgetListElement.Builder.begin()
 					.setW(elementWidth)

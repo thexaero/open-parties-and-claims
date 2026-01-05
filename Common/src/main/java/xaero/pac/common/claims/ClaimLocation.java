@@ -18,21 +18,21 @@
 
 package xaero.pac.common.claims;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ClaimLocation {
 
-	private final ResourceLocation dimId;
+	private final Identifier dimId;
 	private final int chunkX;
 	private final int chunkZ;
 
-	public ClaimLocation(ResourceLocation dimId, int chunkX, int chunkZ) {
+	public ClaimLocation(Identifier dimId, int chunkX, int chunkZ) {
 		this.dimId = dimId;
 		this.chunkX = chunkX;
 		this.chunkZ = chunkZ;
 	}
 
-	public ResourceLocation getDimId() {
+	public Identifier getDimId() {
 		return dimId;
 	}
 

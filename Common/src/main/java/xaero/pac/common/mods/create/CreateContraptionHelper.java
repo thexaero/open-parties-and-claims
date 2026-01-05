@@ -22,7 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import xaero.pac.common.platform.Services;
@@ -32,7 +32,7 @@ import xaero.pac.common.server.world.ServerLevelHelper;
 
 public class CreateContraptionHelper {
 
-	public static ResourceKey<Block> CONTRAPTION_CONTROLS_BLOCK = ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("create", "contraption_controls"));
+	public static ResourceKey<Block> CONTRAPTION_CONTROLS_BLOCK = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("create", "contraption_controls"));
 	public static final String PLACEMENT_POS_TAG = "xaero_OPAC_placementPos";
 
 	public static void handleCreateContraptionAdded(Entity entity, ICreateContraptionEntity contraptionEntity){

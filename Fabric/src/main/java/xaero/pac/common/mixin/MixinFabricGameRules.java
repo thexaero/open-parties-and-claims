@@ -19,7 +19,8 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRule;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,9 +34,9 @@ import xaero.pac.common.server.world.ServerLevelHelper;
 @Mixin(GameRules.class)
 public class MixinFabricGameRules {
 
-	@Inject(at = @At("HEAD"), method = "getBoolean", cancellable = true)
-	public void onGetBoolean(GameRules.Key<GameRules.BooleanValue> key, CallbackInfoReturnable<Boolean> callbackInfoReturnable){
-		if(key == GameRules.RULE_MOBGRIEFING && ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY != null) {
+	@Inject(at = @At("HEAD"), method = "get", cancellable = true)
+	public <T> void onGet(GameRule<T> key, CallbackInfoReturnable<Boolean> callbackInfoReturnable){
+		if(key == GameRules.MOB_GRIEFING && ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY != null) {
 			OpenPartiesAndClaimsFabric modMain = (OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE;
 			if(modMain == null)
 				return;
@@ -43,7 +44,7 @@ public class MixinFabricGameRules {
 			if(commonEventsFabric == null)
 				return;
 			MinecraftServer server = ServerLevelHelper.getServer(ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY);
-			if(server != null && server.getGameRules() == (Object)this) {//making sure this is the server's game rules
+			if(server != null && server.getWorldData().getGameRules() == (Object)this) {//making sure this is the server's game rules
 				if (((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onMobGrief(ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY))
 					callbackInfoReturnable.setReturnValue(false);
 				ServerCoreFabric.MOB_GRIEFING_GAME_RULE_ENTITY = null;

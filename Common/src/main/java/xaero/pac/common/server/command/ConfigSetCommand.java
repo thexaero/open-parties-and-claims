@@ -123,7 +123,7 @@ public class ConfigSetCommand {
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal("for")
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(addValueArgumentIfNeeded(reset, regularExecutor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))))));
@@ -133,7 +133,7 @@ public class ConfigSetCommand {
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal("for")
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal("sub")
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
@@ -143,14 +143,14 @@ public class ConfigSetCommand {
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(addValueArgumentIfNeeded(reset, defaultExecutor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor))))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(addValueArgumentIfNeeded(reset, serverExecutor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
@@ -158,7 +158,7 @@ public class ConfigSetCommand {
 
 		//sub version of this ^
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal("sub")
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
@@ -168,14 +168,14 @@ public class ConfigSetCommand {
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(addValueArgumentIfNeeded(reset, expiredExecutor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(addValueArgumentIfNeeded(reset, wildernessExecutor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
@@ -227,7 +227,7 @@ public class ConfigSetCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_sub"));
 				return 0;
 			}
-			boolean isOP = context.getSource().hasPermission(2);
+			boolean isOP = Commands.LEVEL_GAMEMASTERS.check(context.getSource().permissions());
 			if(!isOP && PlayerConfig.isOptionOPConfigurable(option)) {
 				//such options are not redirected to the default config, so they need a separate check
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_op_option"));

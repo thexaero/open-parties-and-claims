@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.player.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,7 +113,7 @@ public interface IPlayerClaimInfoAPI {
 	 * @return  the claim info of the dimension, null if no claims exist for the specified dimension ID
 	 */
 	@Nullable
-	public IPlayerDimensionClaimsAPI getDimension(@Nonnull ResourceLocation id);
+	public IPlayerDimensionClaimsAPI getDimension(@Nonnull Identifier id);
 	
 	
 }

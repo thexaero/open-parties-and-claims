@@ -48,12 +48,13 @@ public abstract class ModSupport {
 			ftbRanks = new FTBRanks();
 		} catch (ClassNotFoundException e) {
 		}
-		try {
-			Class.forName("earth.terrarium.prometheus.api.permissions.PermissionApi");
-			PROMETHEUS = true;
-			prometheus = new Prometheus(client);
-		} catch (ClassNotFoundException e) {
-		}
+		//TODO IMPORTANT restore this when Prometheus is ported
+//		try {
+//			Class.forName("earth.terrarium.prometheus.api.permissions.PermissionApi");
+//			PROMETHEUS = true;
+//			prometheus = new Prometheus(client);
+//		} catch (ClassNotFoundException e) {
+//		}
 		try {
 			Class.forName("dev.ftb.mods.ftbteams.api.FTBTeamsAPI");
 			FTB_TEAMS = true;

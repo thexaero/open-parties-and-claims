@@ -18,7 +18,7 @@
 
 package xaero.pac;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xaero.pac.client.ClientData;
@@ -69,7 +69,7 @@ public abstract class OpenPartiesAndClaims {
 	private final IPacketHandler packetHandler;
 	private final IForgeConfigHelper forgeConfigHelper;
 	private final ModSupport modSupport;
-	public static final ResourceLocation MAIN_CHANNEL_LOCATION = ResourceLocation.fromNamespaceAndPath(MOD_ID, "main");
+	public static final Identifier MAIN_CHANNEL_LOCATION = Identifier.fromNamespaceAndPath(MOD_ID, "main");
 
 	public OpenPartiesAndClaims(CapabilityHelper capabilityHelper, IPacketHandler packetHandler, IForgeConfigHelper forgeConfigHelper, ModSupport modSupport) {
 		this.capabilityHelper = capabilityHelper;

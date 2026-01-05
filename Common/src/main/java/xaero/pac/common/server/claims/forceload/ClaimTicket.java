@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.forceload;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -26,12 +26,12 @@ import java.util.UUID;
 public class ClaimTicket {
 	
 	private final UUID playerId;
-	private final ResourceLocation dimension;
+	private final Identifier dimension;
 	private final int x;
 	private final int z;
 	private boolean enabled;
 	
-	public ClaimTicket(UUID playerId, ResourceLocation dimension, int x, int z) {
+	public ClaimTicket(UUID playerId, Identifier dimension, int x, int z) {
 		super();
 		this.playerId = playerId;
 		this.dimension = dimension;
@@ -58,7 +58,7 @@ public class ClaimTicket {
 		return playerId;
 	}
 	
-	public ResourceLocation getDimension() {
+	public Identifier getDimension() {
 		return dimension;
 	}
 	

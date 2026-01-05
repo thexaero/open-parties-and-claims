@@ -19,7 +19,7 @@
 package xaero.pac.common.server.claims.api;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.api.IClaimsManagerAPI;
@@ -57,19 +57,19 @@ public interface IServerClaimsManagerAPI
 	
 	@Nullable
 	@Override
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, int x, int z);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, int x, int z);
 	
 	@Nullable
 	@Override
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, @Nonnull ChunkPos chunkPos);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, @Nonnull ChunkPos chunkPos);
 	
 	@Nullable
 	@Override
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, @Nonnull BlockPos blockPos);
 
 	@Nullable
 	@Override
-	public IServerDimensionClaimsManagerAPI getDimension(@Nonnull ResourceLocation dimension);
+	public IServerDimensionClaimsManagerAPI getDimension(@Nonnull Identifier dimension);
 
 	/**
 	 * Gets a stream of all read-only dimension claims managers.
@@ -91,7 +91,7 @@ public interface IServerClaimsManagerAPI
 	 * @param dimension  the dimension ID
 	 * @return whether the dimension is claimable
 	 */
-	public boolean isClaimable(@Nonnull ResourceLocation dimension);
+	public boolean isClaimable(@Nonnull Identifier dimension);
 
 	/**
 	 * Directly replaces the current claim state of a chunk.
@@ -109,7 +109,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the new claim state, null if claims are disabled
 	 */
 	@Nullable
-	public IPlayerChunkClaimAPI claim(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int subConfigIndex, int x, int z, boolean forceload);
+	public IPlayerChunkClaimAPI claim(@Nonnull Identifier dimension, @Nonnull UUID id, int subConfigIndex, int x, int z, boolean forceload);
 
 	/**
 	 * Directly removes the current claim state of a chunk.
@@ -122,7 +122,7 @@ public interface IServerClaimsManagerAPI
 	 * @param x  the X coordinate of the chunk
 	 * @param z  the Z coordinate of the chunk
 	 */
-	public void unclaim(@Nonnull ResourceLocation dimension, int x, int z);
+	public void unclaim(@Nonnull Identifier dimension, int x, int z);
 
 	/**
 	 * Tries to claim a chunk by a specified player.
@@ -144,7 +144,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the result, not null
 	 */
 	@Nonnull
-	public ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull Identifier dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace);
 
 	/**
 	 * Tries to unclaim a chunk by a specified player.
@@ -165,7 +165,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the result, not null
 	 */
 	@Nonnull
-	public ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull Identifier dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace);
 
 	/**
 	 * Tries to (un)mark a chunk for forceloading by a specified player.
@@ -187,7 +187,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the result, not null
 	 */
 	@Nonnull
-	public ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean enable, boolean replace);
+	public ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull Identifier dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean enable, boolean replace);
 
 	/**
 	 * Tries to claim chunks over a specified area by a specified player.
@@ -210,7 +210,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the area result, not null
 	 */
 	@Nonnull
-	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
+	public AreaClaimResult tryToClaimArea(@Nonnull Identifier dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
 
 	/**
 	 * Tries to unclaim chunks over a specified area by a specified player.
@@ -232,7 +232,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the area result, not null
 	 */
 	@Nonnull
-	public AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
+	public AreaClaimResult tryToUnclaimArea(@Nonnull Identifier dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
 
 	/**
 	 * Tries to (un)mark chunks for forceloading over a specified area by a specified player.
@@ -255,7 +255,7 @@ public interface IServerClaimsManagerAPI
 	 * @return the area result, not null
 	 */
 	@Nonnull
-	public AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace);
+	public AreaClaimResult tryToForceloadArea(@Nonnull Identifier dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace);
 
 	/**
 	 * Gets the base maximum claim number (without the bonus) for a player UUID.

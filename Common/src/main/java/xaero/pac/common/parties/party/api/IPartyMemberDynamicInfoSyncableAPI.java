@@ -18,7 +18,7 @@
 
 package xaero.pac.common.parties.party.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,6 +70,6 @@ public interface IPartyMemberDynamicInfoSyncableAPI {
 	 * @return the dimension ID for this player, null on server side before the first update
 	 */
 	@Nullable
-	public ResourceLocation getDimension();
+	public Identifier getDimension();
 	
 }

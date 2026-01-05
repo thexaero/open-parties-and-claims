@@ -19,7 +19,7 @@
 package xaero.pac.client.claims.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.client.claims.player.sub.ClientPlayerSubClaimInfo;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
@@ -34,19 +34,19 @@ public final class ClientPlayerClaimInfo extends PlayerClaimInfo<ClientPlayerCla
 
 	private final Int2ObjectMap<ClientPlayerSubClaimInfo> subClaimInfo;
 	
-	public ClientPlayerClaimInfo(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
+	public ClientPlayerClaimInfo(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims,
 								 ClientPlayerClaimInfoManager manager, Int2ObjectMap<ClientPlayerSubClaimInfo> subClaimInfo) {
 		super(username, playerId, claims, manager);
 		this.subClaimInfo = subClaimInfo;
 	}
 
 	@Override
-	protected Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionClaimCountStream() {
+	protected Stream<Entry<Identifier, PlayerDimensionClaims>> getDimensionClaimCountStream() {
 		return claims.entrySet().stream();
 	}
 
 	@Override
-	protected Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionForceloadCountStream() {
+	protected Stream<Entry<Identifier, PlayerDimensionClaims>> getDimensionForceloadCountStream() {
 		return getDimensionClaimCountStream();
 	}
 

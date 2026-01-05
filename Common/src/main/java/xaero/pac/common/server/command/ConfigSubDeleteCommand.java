@@ -70,13 +70,13 @@ public class ConfigSubDeleteCommand {
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal("for")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(getMainCommandPart(playerSubConfigSuggestionProvider, regularExecutor)))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(getMainCommandPart(serverSubConfigSuggestionProvider, serverExecutor)));
 		dispatcher.register(command);
 	}

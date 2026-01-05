@@ -25,6 +25,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
@@ -62,14 +63,14 @@ public class ConfigMenu extends XPACScreen {
 		ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(minecraft.level, ClientWorldCapabilityTypes.MAIN_CAP);
 		otherPlayerNameBox.setValue(otherPlayerNameString);
 		otherPlayerNameBox.setResponder(s -> {otherPlayerNameString = s; updateOtherPlayerButton();});
-		otherPlayerNameBox.setEditable(mainCap.getClientWorldData().serverHasMod() && minecraft.player.hasPermissions(2));
+		otherPlayerNameBox.setEditable(mainCap.getClientWorldData().serverHasMod() && Commands.LEVEL_GAMEMASTERS.check(minecraft.player.permissions()));
 		addRenderableWidget(Button.builder(Component.translatable("gui.xaero_pac_back"), this::onBackButton).bounds(width / 2 - 100, this.height / 6 + 168, 200, 20).build());
 
 		serverHasMod = myPlayerConfigButton.active = serverClaimsConfigButton.active = mainCap.getClientWorldData().serverHasMod();
 		expiredClaimsConfigButton.active =
 				wildernessConfigButton.active = 
 				defaultConfigButton.active = 
-				mainCap.getClientWorldData().serverHasMod() && minecraft.player.hasPermissions(2);
+				mainCap.getClientWorldData().serverHasMod() && Commands.LEVEL_GAMEMASTERS.check(minecraft.player.permissions());
 	}
 	
 	private void onBackButton(Button b) {
@@ -107,7 +108,7 @@ public class ConfigMenu extends XPACScreen {
 	
 	private void updateOtherPlayerButton() {
 		ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(minecraft.level, ClientWorldCapabilityTypes.MAIN_CAP);
-		otherPlayerConfigButton.active = mainCap.getClientWorldData().serverHasMod() && minecraft.player.hasPermissions(2) && isPlayerNameAllowed();
+		otherPlayerConfigButton.active = mainCap.getClientWorldData().serverHasMod() && Commands.LEVEL_GAMEMASTERS.check(minecraft.player.permissions()) && isPlayerNameAllowed();
 	}
 	
 	@Override

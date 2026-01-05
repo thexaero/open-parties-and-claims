@@ -29,17 +29,22 @@ public class Prometheus {
 
 	public Prometheus(boolean client) {
 		this.client = client;
-		permissionSystem = new PlayerPrometheusPermissions();
+		//TODO IMPORTANT restore this when Prometheus is ported
+//		permissionSystem = new PlayerPrometheusPermissions();
 	}
 
-	private final IPlayerPermissionSystemAPI permissionSystem;
+	//TODO IMPORTANT restore this when Prometheus is ported
+//	private final IPlayerPermissionSystemAPI permissionSystem;
 
 	public IPlayerPermissionSystemAPI getPermissionSystem() {
-		return permissionSystem;
+		return null;
+		//TODO IMPORTANT restore this when Prometheus is ported
+//		return permissionSystem;
 	}
 
 	public void init(){
-		RoleOptionsApi.API.register(OPACOptions.SERIALIZER);
+		//TODO IMPORTANT restore this when it's possible
+//		RoleOptionsApi.API.register(OPACOptions.SERIALIZER);
 	}
 
 	public void initClient(){

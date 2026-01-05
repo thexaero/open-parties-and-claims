@@ -19,6 +19,7 @@
 package xaero.pac.common.server.player.config.sync;
 
 import com.google.common.collect.Lists;
+import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -60,7 +61,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 	}
 	
 	private <T extends Comparable<T>> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, IPlayerConfigOptionSpecAPI<T> option, boolean afterReset) {
-		boolean isOp = player.hasPermissions(2);
+		boolean isOp = Commands.LEVEL_GAMEMASTERS.check(player.permissions());
 		boolean mutable = isOp && syncedConfig.getType() != PlayerConfigType.PLAYER;
 		boolean defaulted = !mutable && syncedConfig.getType() == PlayerConfigType.PLAYER;
 		if(defaulted) {

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.player.data;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.parties.party.PartyMemberDynamicInfoSyncable;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
@@ -54,7 +54,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private PlayerClaimActionRequestHandler claimActionRequestHandler;
 	private PlayerConfigSyncSpreadoutTask configSyncSpreadoutTask;
 	private long lastSubConfigCreationTick;
-	private ResourceLocation lastClaimUpdateDimension;
+	private Identifier lastClaimUpdateDimension;
 	private IPlayerChunkClaim lastClaimUpdateState;
 	private int lastClaimUpdateX;
 	private int lastClaimUpdateZ;
@@ -185,7 +185,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		this.lastSubConfigCreationTick = lastSubConfigCreationTick;
 	}
 
-	public ResourceLocation getLastClaimUpdateDimension() {
+	public Identifier getLastClaimUpdateDimension() {
 		return lastClaimUpdateDimension;
 	}
 
@@ -201,7 +201,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return lastClaimUpdateZ;
 	}
 
-	public void setLastClaimUpdate(ResourceLocation dimension, IPlayerChunkClaim state, int x, int z) {
+	public void setLastClaimUpdate(Identifier dimension, IPlayerChunkClaim state, int x, int z) {
 		this.lastClaimUpdateDimension = dimension;
 		this.lastClaimUpdateState = state;
 		this.lastClaimUpdateX = x;

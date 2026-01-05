@@ -24,7 +24,8 @@ import xaero.pac.common.mods.prometheus.OPACOptions;
 public class PrometheusClient {
 
 	public void init() {
-		OptionDisplayApi.API.register(OPACOptions.SERIALIZER.id(), OPACOptionsDisplay::create);
+		//TODO IMPORTANT restore this when Prometheus is ported
+//		OptionDisplayApi.API.register(OPACOptions.SERIALIZER.id(), OPACOptionsDisplay::create);
 	}
 
 }

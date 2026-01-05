@@ -38,10 +38,10 @@ public class ClaimsServerUnforceloadCommand {
 		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("server").requires(requirement).then(Commands.literal("unforceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), false, true, false))));
 		dispatcher.register(command);
 		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("server").requires(requirement).then(Commands.literal("unforceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.literal("anyway").requires(source -> source.hasPermission(2)), false, true, true))));
+		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("server").requires(requirement).then(Commands.literal("unforceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())), false, true, true))));
 		dispatcher.register(command);
 		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("server").requires(requirement).then(Commands.literal("unforceload").then(Commands.literal("anyway").requires(source -> source.hasPermission(2)).then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), false, true, true)))));
+		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("server").requires(requirement).then(Commands.literal("unforceload").then(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())).then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), false, true, true)))));
 		dispatcher.register(command);
 	}
 

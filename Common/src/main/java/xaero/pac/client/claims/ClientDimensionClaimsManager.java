@@ -19,7 +19,7 @@
 package xaero.pac.client.claims;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfoManager;
 import xaero.pac.common.claims.DimensionClaimsManager;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
@@ -28,12 +28,12 @@ import xaero.pac.common.util.linked.LinkedChain;
 
 public final class ClientDimensionClaimsManager extends DimensionClaimsManager<ClientPlayerClaimInfoManager, ClientRegionClaims> implements IClientDimensionClaimsManager<ClientRegionClaims>{
 
-	public ClientDimensionClaimsManager(ResourceLocation dimension, Long2ObjectMap<ClientRegionClaims> regions, LinkedChain<ClientRegionClaims> linkedRegions) {
+	public ClientDimensionClaimsManager(Identifier dimension, Long2ObjectMap<ClientRegionClaims> regions, LinkedChain<ClientRegionClaims> linkedRegions) {
 		super(dimension, regions, linkedRegions);
 	}
 
 	@Override
-	public ClientRegionClaims create(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage storage) {
+	public ClientRegionClaims create(Identifier dimension, int x, int z, RegionClaimsPaletteStorage storage) {
 		return ClientRegionClaims.Builder.begin().setDimension(dimension).setX(x).setZ(z).setStorage(storage).build();
 	}
 

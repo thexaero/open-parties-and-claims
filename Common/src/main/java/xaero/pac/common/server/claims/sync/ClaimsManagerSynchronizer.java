@@ -19,7 +19,7 @@
 package xaero.pac.common.server.claims.sync;
 
 import com.google.common.collect.Lists;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -250,7 +250,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		sendToClient(player, new ClientboundClaimStatesPacket(packetBuilder), false);
 	}
 	
-	public void syncDimensionIdToClient(ResourceLocation dimension, ServerPlayer player) {
+	public void syncDimensionIdToClient(Identifier dimension, ServerPlayer player) {
 		sendToClient(player, new ClientboundPlayerClaimsDimensionPacket(dimension), false);
 	}
 	
@@ -258,7 +258,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		sendToClient(player, new ClientboundClaimsRegionPacket(x, z, paletteInts, storageBits, storageData), false);
 	}
 
-	private void sendClaimUpdatePacketToPlayer(ServerPlayer player, PlayerChunkClaim claim, ResourceLocation dimension, int x, int z, ClientboundClaimsClaimUpdatePacket packet, ClientboundClaimsClaimUpdatePosPacket posPacket){
+	private void sendClaimUpdatePacketToPlayer(ServerPlayer player, PlayerChunkClaim claim, Identifier dimension, int x, int z, ClientboundClaimsClaimUpdatePacket packet, ClientboundClaimsClaimUpdatePosPacket posPacket){
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
 		if(playerData.getLastClaimUpdateState() == claim && playerData.getLastClaimUpdateDimension() == dimension) {
 			if(playerData.getLastClaimUpdateX() == x && z - playerData.getLastClaimUpdateZ() == 1)
@@ -274,7 +274,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		playerData.setLastClaimUpdate(dimension, claim, x, z);
 	}
 	
-	public void syncToPlayersClaimUpdate(ResourceLocation dimension, int x, int z, PlayerChunkClaim claim, PlayerChunkClaim oldClaim) {
+	public void syncToPlayersClaimUpdate(Identifier dimension, int x, int z, PlayerChunkClaim claim, PlayerChunkClaim oldClaim) {
 		ServerConfig.ClaimsSyncType syncType = ServerConfig.CONFIG.claimsSynchronization.get();
 		if(syncType == ServerConfig.ClaimsSyncType.NOT_SYNCED)
 			return;

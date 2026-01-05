@@ -20,7 +20,7 @@ package xaero.pac.common.server.claims.forceload;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
@@ -51,10 +51,10 @@ public final class ForceLoadTicketManager {
 	private IServerClaimsManager<?, ?, ?> claimsManager;
 	private final MinecraftServer server;
 	private final Map<UUID, PlayerForceloadTicketManager> claimTickets;
-	private Map<ResourceLocation, DimensionInfo> dimensionInfoMap;
+	private Map<Identifier, DimensionInfo> dimensionInfoMap;
 	
 	private ForceLoadTicketManager(MinecraftServer server,
-			Map<UUID, PlayerForceloadTicketManager> claimTickets, Map<ResourceLocation, DimensionInfo> dimensionInfoMap) {
+			Map<UUID, PlayerForceloadTicketManager> claimTickets, Map<Identifier, DimensionInfo> dimensionInfoMap) {
 		super();
 		this.server = server;
 		this.claimTickets = claimTickets;
@@ -71,7 +71,7 @@ public final class ForceLoadTicketManager {
 		return claimTickets.computeIfAbsent(id, i -> PlayerForceloadTicketManager.Builder.begin().build());
 	}
 
-	private DimensionInfo getDimensionInfo(ResourceLocation dimension){
+	private DimensionInfo getDimensionInfo(Identifier dimension){
 		DimensionInfo dimInfo = dimensionInfoMap.get(dimension);
 		if(dimInfo == null)
 			dimensionInfoMap.put(dimension, dimInfo = new DimensionInfo());
@@ -106,7 +106,7 @@ public final class ForceLoadTicketManager {
 //		OpenPartiesAndClaims.LOGGER.info("Disabled force load ticket at " + pos);
 	}
 
-	private void countEnabled(ResourceLocation dimension, int change){
+	private void countEnabled(Identifier dimension, int change){
 		DimensionInfo dimInfo = getDimensionInfo(dimension);
 		dimInfo.enabledTicketCount += change;
 	}
@@ -150,7 +150,7 @@ public final class ForceLoadTicketManager {
 		playerTickets.setFailedToEnableSome(!withinLimit);
 	}
 
-	public void addTicket(IPlayerConfigManager playerConfigManager, ResourceLocation dimension, UUID id, int x, int z) {
+	public void addTicket(IPlayerConfigManager playerConfigManager, Identifier dimension, UUID id, int x, int z) {
 		ClaimTicket ticket = new ClaimTicket(id, dimension, x, z);
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		playerTickets.add(ticket);
@@ -164,7 +164,7 @@ public final class ForceLoadTicketManager {
 		}
 	}
 
-	public void removeTicket(IPlayerConfigManager playerConfigManager, ResourceLocation dimension, UUID id, int x, int z) {
+	public void removeTicket(IPlayerConfigManager playerConfigManager, Identifier dimension, UUID id, int x, int z) {
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		ClaimTicket ticket = playerTickets.remove(new ClaimTicket(id, dimension, x, z));//find and remove the equivalent in the map
 		if (ticket.isEnabled()){
@@ -175,7 +175,7 @@ public final class ForceLoadTicketManager {
 	}
 
 	public boolean hasEnabledTickets(ServerLevel level){
-		DimensionInfo dimensionInfo = dimensionInfoMap.get(level.dimension().location());
+		DimensionInfo dimensionInfo = dimensionInfoMap.get(level.dimension().identifier());
 		return dimensionInfo != null && dimensionInfo.enabledTicketCount > 0;
 	}
 

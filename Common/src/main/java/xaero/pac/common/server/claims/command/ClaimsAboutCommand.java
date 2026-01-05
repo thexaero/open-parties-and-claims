@@ -134,14 +134,14 @@ public class ClaimsAboutCommand {
 		
 		/*LiteralArgumentBuilder<CommandSourceStack> targetCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX)
 				.then(Commands.literal("about").then(Commands.argument("player", EntityArgument.player())
-				.requires(c -> !c.hasPermission(2))
+				.requires(c -> !Commands.LEVEL_GAMEMASTERS.check(c.permissions()))
 				.suggests(suggestions)
 				.executes(action)));
 		dispatcher.register(targetCommand);*/
 		
 		LiteralArgumentBuilder<CommandSourceStack> opTargetCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
 				.then(Commands.literal("about").then(Commands.argument("profile", GameProfileArgument.gameProfile())
-				.requires(c -> c.hasPermission(2))
+				.requires(c -> Commands.LEVEL_GAMEMASTERS.check(c.permissions()))
 				.suggests(suggestions)
 				.executes(action)));
 		dispatcher.register(opTargetCommand);

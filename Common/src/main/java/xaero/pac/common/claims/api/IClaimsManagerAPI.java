@@ -19,7 +19,7 @@
 package xaero.pac.common.claims.api;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.player.api.IPlayerClaimInfoAPI;
@@ -60,7 +60,7 @@ public interface IClaimsManagerAPI {
 	 * @return the current claim state at the specified location, null if wilderness
 	 */
 	@Nullable
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, int x, int z);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, int x, int z);
 
 	/**
 	 * Gets the claim state for a specified chunk.
@@ -70,7 +70,7 @@ public interface IClaimsManagerAPI {
 	 * @return the current claim state at the specified location, null if wilderness
 	 */
 	@Nullable
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, @Nonnull ChunkPos chunkPos);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, @Nonnull ChunkPos chunkPos);
 
 	/**
 	 * Gets the claim state for a specified chunk.
@@ -80,7 +80,7 @@ public interface IClaimsManagerAPI {
 	 * @return the current claim state at the specified location, null if wilderness
 	 */
 	@Nullable
-	public IPlayerChunkClaimAPI get(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos);
+	public IPlayerChunkClaimAPI get(@Nonnull Identifier dimension, @Nonnull BlockPos blockPos);
 
 	/**
 	 * Gets the read-only claims manager for a specified dimension ID.
@@ -89,7 +89,7 @@ public interface IClaimsManagerAPI {
 	 * @return the dimension claims manager, null if no claim data exists for the specified dimension
 	 */
 	@Nullable
-	public IDimensionClaimsManagerAPI getDimension(@Nonnull ResourceLocation dimension);
+	public IDimensionClaimsManagerAPI getDimension(@Nonnull Identifier dimension);
 
 	/**
 	 * Gets the claim change tracker that lets you register claim change listeners.

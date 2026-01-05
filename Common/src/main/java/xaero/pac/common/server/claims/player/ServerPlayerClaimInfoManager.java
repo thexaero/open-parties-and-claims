@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -48,7 +48,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	private final IPlayerConfigManager configManager;
 	private final ForceLoadTicketManager ticketManager;
 	private final Set<ServerPlayerClaimInfo> toSave;
-	private final Set<ResourceLocation> claimableDimensionsSet;
+	private final Set<Identifier> claimableDimensionsSet;
 	private boolean loaded;
 	private PlayerClaimInfoManagerIO<?> io;
 	private ServerPlayerClaimsExpirationHandler expirationHandler;
@@ -62,7 +62,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		this.toSave = toSave;
 		claimableDimensionsSet = new HashSet<>();
 		for(String s : ServerConfig.CONFIG.claimableDimensionsList.get())
-			claimableDimensionsSet.add(ResourceLocation.parse(s));
+			claimableDimensionsSet.add(Identifier.parse(s));
 	}
 	
 	public void setClaimsManager(ServerClaimsManager claimsManager) {
@@ -83,7 +83,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		this.expirationHandler = expirationHandler;
 	}
 
-	public boolean isClaimable(ResourceLocation dimension) {
+	public boolean isClaimable(Identifier dimension) {
 		boolean contains = claimableDimensionsSet.contains(dimension);
 		return ServerConfig.CONFIG.claimableDimensionsListType.get() == ServerConfig.ConfigListType.ONLY && contains || ServerConfig.CONFIG.claimableDimensionsListType.get() == ServerConfig.ConfigListType.ALL_BUT && !contains;
 	}
@@ -115,7 +115,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	}
 
 	@Override
-	protected ServerPlayerClaimInfo create(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims) {
+	protected ServerPlayerClaimInfo create(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims) {
 		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this, new ArrayDeque<>());
 	}
 

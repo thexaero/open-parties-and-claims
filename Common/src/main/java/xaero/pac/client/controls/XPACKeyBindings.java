@@ -20,7 +20,7 @@ package xaero.pac.client.controls;
 
 
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.controls.api.OPACKeyBindingsAPI;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 public class XPACKeyBindings implements OPACKeyBindingsAPI {
 
 	private final KeyMapping.Category category =
-			new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "controls"));
+			new KeyMapping.Category(Identifier.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "controls"));
 	private final List<KeyMapping> keyBindings;
 	public final KeyMapping openModMenu;
 

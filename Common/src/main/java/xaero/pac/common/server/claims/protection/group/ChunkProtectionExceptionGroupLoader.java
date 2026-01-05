@@ -20,7 +20,7 @@ package xaero.pac.common.server.claims.protection.group;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -43,12 +43,12 @@ public class ChunkProtectionExceptionGroupLoader {
 						 Map<String, ChunkProtectionExceptionGroup<T>> destination, ChunkProtectionExceptionType defaultType,
 						 Predicate<ChunkProtectionExceptionType> typeFilter, PlayerConfigOptionCategory optionCategory){
 		Registry<T> elementRegistry = elementType.getRegistry(server);
-		Function<ResourceLocation, T> objectGetter = key -> elementRegistry.getOptional(key).orElse(null);
+		Function<Identifier, T> objectGetter = key -> elementRegistry.getOptional(key).orElse(null);
 		Iterable<T> iterable = elementType.getIterable();
-		Function<T, ResourceLocation> keyGetter = elementRegistry::getKey;
-		Function<ResourceLocation, TagKey<T>> tagGetter = rl -> TagKey.create(elementRegistry.key(), rl);
+		Function<T, Identifier> keyGetter = elementRegistry::getKey;
+		Function<Identifier, TagKey<T>> tagGetter = rl -> TagKey.create(elementRegistry.key(), rl);
 		Iterable<TagKey<T>> tagIterable = elementType.getTagIterable();
-		Function<TagKey<T>, ResourceLocation> tagKeyGetter = TagKey::location;
+		Function<TagKey<T>, Identifier> tagKeyGetter = TagKey::location;
 
 		configOption.get().forEach(stringEntry -> {
 			int listStartIndex = stringEntry.indexOf('{');
@@ -93,13 +93,13 @@ public class ChunkProtectionExceptionGroupLoader {
 				String id = element.substring(tag ? ChunkProtection.TAG_PREFIX.length() : 0);
 				boolean invalidWildcard;
 				if(tag) {
-					List<TagKey<T>> objectTags = wildcardResolver.resolveResourceLocations(tagGetter, tagIterable, tagKeyGetter, id);
+					List<TagKey<T>> objectTags = wildcardResolver.resolveIdentifiers(tagGetter, tagIterable, tagKeyGetter, id);
 					invalidWildcard = objectTags == null;
 					if(!invalidWildcard)
 						for(TagKey<T> objectTag : objectTags)
 							builder.addException(Either.right(objectTag));
 				} else {
-					List<T> objects = wildcardResolver.resolveResourceLocations(objectGetter, iterable, keyGetter, id);
+					List<T> objects = wildcardResolver.resolveIdentifiers(objectGetter, iterable, keyGetter, id);
 					invalidWildcard = objects == null;
 					if(!invalidWildcard)
 						for(T object : objects)

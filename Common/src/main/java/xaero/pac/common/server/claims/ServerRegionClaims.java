@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.SimpleBitStorage;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.RegionClaims;
@@ -41,7 +41,7 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 	private final RegionClaimsPaletteStorage syncableStorage;
 	private final Object2IntMap<UUID> claimOwnerStateCounts;
 
-	private ServerRegionClaims(ResourceLocation dimension, int x, int z,
+	private ServerRegionClaims(Identifier dimension, int x, int z,
 							   RegionClaimsPaletteStorage syncableStorage, RegionClaimsPaletteStorage storage,
 							   ServerClaimsManager manager, Object2IntMap<UUID> claimOwnerStateCounts) {
 		super(dimension, x, z, storage);

@@ -87,7 +87,7 @@ public class ClaimsForceloadCommands {
 				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 				boolean shouldReplace = opReplaceCurrent || playerData.isClaimsAdminMode();
 
-			 	ClaimResult<?> result = claimsManager.tryToForceloadTyped(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);
+			 	ClaimResult<?> result = claimsManager.tryToForceloadTyped(world.dimension().identifier(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);
 			 	
 			 	try {
 				 	if(!result.getResultType().success) {

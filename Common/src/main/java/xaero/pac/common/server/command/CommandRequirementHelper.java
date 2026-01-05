@@ -19,6 +19,8 @@
 package xaero.pac.common.server.command;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.MinecraftServer;
+import xaero.pac.OpenPartiesAndClaims;
 
 import java.util.function.Predicate;
 
@@ -26,11 +28,14 @@ public class CommandRequirementHelper {
 
 	public static Predicate<CommandSourceStack> onServerThread(Predicate<CommandSourceStack> requirement){
 		return c -> {
-			if(c.getServer().isSameThread())
-				return requirement.test(c);
-			if(!c.getServer().scheduleExecutables())//for example, after the server is stopped
+			MinecraftServer server = c.getServer();
+			if(server == null)
 				return false;
-			return c.getServer().submit(() -> requirement.test(c)).join();
+			if(server.isSameThread())
+				return requirement.test(c);
+			if(!server.scheduleExecutables())//for example, after the server is stopped
+				return false;
+			return server.submit(() -> requirement.test(c)).join();
 		};
 	}
 

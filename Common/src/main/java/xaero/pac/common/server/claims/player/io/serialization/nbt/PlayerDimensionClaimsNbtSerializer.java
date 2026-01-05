@@ -20,7 +20,7 @@ package xaero.pac.common.server.claims.player.io.serialization.nbt;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimPosList;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
@@ -54,7 +54,7 @@ public class PlayerDimensionClaimsNbtSerializer {
 			});
 			claimLists.put(state, posList);
 		});
-		return new PlayerDimensionClaims(playerId, ResourceLocation.parse(dimension), claimLists);
+		return new PlayerDimensionClaims(playerId, Identifier.parse(dimension), claimLists);
 	}
 
 	public CompoundTag serialize(PlayerDimensionClaims data) {

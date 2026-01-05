@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.player.io;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.storage.LevelResource;
@@ -117,7 +117,7 @@ public final class PlayerClaimInfoManagerIO<S>
 		playerInfo.setRegisteredActivity(loadedObject.getRegisteredActivity());
 		loadedObject.getFullStream().forEach(
 				e -> {
-					ResourceLocation dim = e.getKey();
+					Identifier dim = e.getKey();
 					PlayerDimensionClaims dimensionClaims = e.getValue();
 					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> {
 						serverClaimsManager.claim(dim, loadedObject.getPlayerId(), claim.getSubConfigIndex(), pos.x,

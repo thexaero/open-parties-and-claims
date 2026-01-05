@@ -175,7 +175,7 @@ public class MainMenu extends XPACScreen {
 		
 		claimButton.active = forceloadButton.active = false;
 		if(serverHasMod && !OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isLoading()) {
-			IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
+			IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 			boolean adminMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isAdminMode();
 			boolean serverMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isServerMode();
 			UUID claimTargetUUID = serverMode ? PlayerConfig.SERVER_CLAIM_UUID : minecraft.player.getUUID();
@@ -208,7 +208,7 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onClaimButton(Button b) {
-		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
+		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 		if(wouldClaim(currentClaim))
 			CommandUtil.sendCommand(minecraft, CLAIM_COMMAND.getString().substring(1));
 		else
@@ -217,7 +217,7 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onForceloadButton(Button b) {
-		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
+		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 		if(currentClaim == null)
 			return;
 		if(!currentClaim.isForceloadable())

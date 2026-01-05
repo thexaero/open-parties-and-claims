@@ -22,12 +22,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.core.ServerCore;
 
 @Mixin(value = LivingEntity.class, priority = 1000001)
@@ -57,6 +59,17 @@ public class MixinLivingEntity {
 	@Inject(at = @At("RETURN"), method = "dropAllDeathLoot")
 	public void onDie(ServerLevel level, DamageSource source, CallbackInfo info) {
 		ServerCore.onLivingEntityDropDeathLootPost((LivingEntity) (Object)this);
+	}
+
+	@Inject(at = @At("HEAD"), method = "stabAttack", cancellable = true)
+	public void onStabAttack(
+			EquipmentSlot slot, Entity targetEntity,
+			float baseDamage, boolean hurt,
+			boolean knockback, boolean dismount,
+			CallbackInfoReturnable<Boolean> info
+	) {
+		if(ServerCore.onStabAttack((LivingEntity) (Object)this, targetEntity, slot))
+			info.setReturnValue(false);
 	}
 
 }

@@ -70,7 +70,7 @@ public class ConfigSubListCommand {
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal("for")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(getMainCommandPart(regularExecutor)))));
 		dispatcher.register(command);

@@ -23,7 +23,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
@@ -47,14 +47,14 @@ public abstract class ClaimsManager
 	
 	protected final M playerClaimInfoManager;
 	protected final IPlayerConfigManager configManager;
-	private Map<ResourceLocation, WCM> dimensions;
+	private Map<Identifier, WCM> dimensions;
 	private Int2ObjectMap<PlayerChunkClaim> indexToClaimState;
 	protected Map<PlayerChunkClaim, CSH> claimStateHolders;
 	private int nextClaimStateSyncIndex;
 	protected final ClaimsManagerTracker claimsManagerTracker;
 	
 	protected ClaimsManager(M playerClaimInfoManager, IPlayerConfigManager configManager,
-							Map<ResourceLocation, WCM> dimensions, Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, CSH> claimStates, ClaimsManagerTracker claimsManagerTracker) {
+							Map<Identifier, WCM> dimensions, Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, CSH> claimStates, ClaimsManagerTracker claimsManagerTracker) {
 		super();
 		this.playerClaimInfoManager = playerClaimInfoManager;
 		this.configManager = configManager;
@@ -85,13 +85,13 @@ public abstract class ClaimsManager
 		playerClaimInfoManager.clear();
 	}
 
-	protected WCM ensureDimension(ResourceLocation dim) {
+	protected WCM ensureDimension(Identifier dim) {
 		return dimensions.computeIfAbsent(dim, d -> create(d, new Long2ObjectOpenHashMap<>()));
 	}
 
 	@Nullable
 	@Override
-	public WCM getDimension(@Nonnull ResourceLocation dimension) {
+	public WCM getDimension(@Nonnull Identifier dimension) {
 		return dimensions.get(dimension);
 	}
 
@@ -127,15 +127,15 @@ public abstract class ClaimsManager
 		return claimStateHolders.keySet().stream();
 	}
 	
-	protected abstract WCM create(ResourceLocation dimension, Long2ObjectMap<WRC> claims);
+	protected abstract WCM create(Identifier dimension, Long2ObjectMap<WRC> claims);
 
-	public PlayerChunkClaim claim(ResourceLocation dimension, UUID id, int subConfigIndex, int x, int z, boolean forceload) {
+	public PlayerChunkClaim claim(Identifier dimension, UUID id, int subConfigIndex, int x, int z, boolean forceload) {
 		WCM dimensionClaims = ensureDimension(dimension);
 		PlayerChunkClaim claim = getClaimState(id, subConfigIndex, forceload);//no duplicates
 		return dimensionClaims.claim(x, z, claim, playerClaimInfoManager, configManager);
 	}
 	
-	public void unclaim(ResourceLocation dimension, int x, int z) {
+	public void unclaim(Identifier dimension, int x, int z) {
 		WCM dimensionClaims = ensureDimension(dimension);
 		dimensionClaims.unclaim(x, z, playerClaimInfoManager, configManager);
 	}
@@ -163,20 +163,20 @@ public abstract class ClaimsManager
 
 	@Nullable
 	@Override
-	public PlayerChunkClaim get(@Nonnull ResourceLocation dimension, int x, int z) {
+	public PlayerChunkClaim get(@Nonnull Identifier dimension, int x, int z) {
 		WCM dimensionClaims = ensureDimension(dimension);
 		return dimensionClaims.get(x, z);
 	}
 
 	@Nullable
 	@Override
-	public PlayerChunkClaim get(@Nonnull ResourceLocation dimension, @Nonnull ChunkPos chunkPos) {
+	public PlayerChunkClaim get(@Nonnull Identifier dimension, @Nonnull ChunkPos chunkPos) {
 		return get(dimension, chunkPos.x, chunkPos.z);
 	}
 
 	@Nullable
 	@Override
-	public PlayerChunkClaim get(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos) {
+	public PlayerChunkClaim get(@Nonnull Identifier dimension, @Nonnull BlockPos blockPos) {
 		return get(dimension, blockPos.getX() >> 4, blockPos.getZ() >> 4);
 	}
 	
@@ -206,7 +206,7 @@ public abstract class ClaimsManager
 
 		protected final B self;
 		protected M playerClaimInfoManager;
-		protected Map<ResourceLocation, WCM> dimensions;
+		protected Map<Identifier, WCM> dimensions;
 		protected Map<PlayerChunkClaim, CSH> claimStates;
 		
 		@SuppressWarnings("unchecked")
@@ -226,7 +226,7 @@ public abstract class ClaimsManager
 			return self;
 		}
 		
-		public B setDimensions(Map<ResourceLocation, WCM> dimensions) {
+		public B setDimensions(Map<Identifier, WCM> dimensions) {
 			this.dimensions = dimensions;
 			return self;
 		}

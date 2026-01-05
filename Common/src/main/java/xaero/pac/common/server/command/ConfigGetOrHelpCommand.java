@@ -96,7 +96,7 @@ public class ConfigGetOrHelpCommand {
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("for")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(Commands.literal(literalPrefix).then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
@@ -105,7 +105,7 @@ public class ConfigGetOrHelpCommand {
 
 		//sub version of this ^
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("for")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(Commands.literal("sub")
 				.then(Commands.literal(literalPrefix)
@@ -117,7 +117,7 @@ public class ConfigGetOrHelpCommand {
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix).then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
 				.executes(getExecutor(PlayerConfigType.DEFAULT_PLAYER, help))))));
@@ -125,7 +125,7 @@ public class ConfigGetOrHelpCommand {
 
 		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER, help);
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
@@ -134,7 +134,7 @@ public class ConfigGetOrHelpCommand {
 
 		//sub version of this ^
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal("sub")
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
@@ -145,7 +145,7 @@ public class ConfigGetOrHelpCommand {
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
@@ -153,7 +153,7 @@ public class ConfigGetOrHelpCommand {
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -28,12 +28,12 @@ import java.util.stream.Stream;
 public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaimPosList> {
 
 	private final UUID playerId;
-	private final ResourceLocation dimension;
+	private final Identifier dimension;
 	private final Map<PlayerChunkClaim, PlayerClaimPosList> claimLists;
 	private int count;
 	private int forceloadableCount;
 	
-	public PlayerDimensionClaims(UUID playerId, ResourceLocation dimension, Map<PlayerChunkClaim, PlayerClaimPosList> claimLists) {
+	public PlayerDimensionClaims(UUID playerId, Identifier dimension, Map<PlayerChunkClaim, PlayerClaimPosList> claimLists) {
 		this.playerId = playerId;
 		this.dimension = dimension;
 		this.claimLists = claimLists;
@@ -107,7 +107,7 @@ public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaim
 			forceloadableCount++;
 	}
 	
-	public ResourceLocation getDimension() {
+	public Identifier getDimension() {
 		return dimension;
 	}
 

@@ -23,7 +23,7 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
@@ -37,7 +37,7 @@ import java.util.function.Function;
 
 public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSyncable {
 
-	private ResourceLocation dimension;
+	private Identifier dimension;
 	private double x;
 	private double y;
 	private double z;
@@ -80,11 +80,11 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 
 	@Nullable
 	@Override
-	public ResourceLocation getDimension() {
+	public Identifier getDimension() {
 		return dimension;
 	}
 	
-	public void setDimension(ResourceLocation dimension) {
+	public void setDimension(Identifier dimension) {
 		if(!Objects.equals(dimension, this.dimension))
 			dirty = true;
 		this.dimension = dimension;
@@ -124,7 +124,7 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 	}
 
 	@Override
-	public void update(ResourceLocation dimension, double x, double y, double z) {
+	public void update(Identifier dimension, double x, double y, double z) {
 		setDimension(dimension);
 		setX(x);
 		setY(y);
@@ -163,7 +163,7 @@ public class PartyMemberDynamicInfoSyncable implements IPartyMemberDynamicInfoSy
 				String dimensionPath = tag.getStringOr("dp", null);
 				if(dimensionSpace == null || dimensionPath == null)
 					return new PartyMemberDynamicInfoSyncable(playerId, false);
-				ResourceLocation dimension = ResourceLocation.fromNamespaceAndPath(dimensionSpace, dimensionPath);
+				Identifier dimension = Identifier.fromNamespaceAndPath(dimensionSpace, dimensionPath);
 				double x = tag.getDoubleOr("x", 0);
 				double y = tag.getDoubleOr("y", 0);
 				double z = tag.getDoubleOr("z", 0);

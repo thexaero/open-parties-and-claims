@@ -21,7 +21,7 @@ package xaero.pac.common.packet.claims;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
@@ -34,7 +34,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<ClientboundCl
 	public static final Encoder<ClientboundClaimsClaimUpdatePacket> ENCODER = new Encoder<>();
 	public static final Decoder DECODER = new Decoder();
 
-	private final ResourceLocation dimension;
+	private final Identifier dimension;
 	private final int x;
 	private final int z;
 	private final UUID playerId;
@@ -42,7 +42,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<ClientboundCl
 	private final boolean forceLoaded;
 	private final int claimSyncIndex;
 
-	public ClientboundClaimsClaimUpdatePacket(ResourceLocation dimension, int x, int z, UUID playerId, int subConfigIndex, boolean forceLoaded, int claimSyncIndex) {
+	public ClientboundClaimsClaimUpdatePacket(Identifier dimension, int x, int z, UUID playerId, int subConfigIndex, boolean forceLoaded, int claimSyncIndex) {
 		super();
 		this.dimension = dimension;
 		this.x = x;
@@ -103,7 +103,7 @@ public class ClientboundClaimsClaimUpdatePacket extends LazyPacket<ClientboundCl
 					subConfigIndex = nbt.getIntOr("s", 0);
 					forceload = nbt.getBooleanOr("f", false);
 				}
-				return new ClientboundClaimsClaimUpdatePacket(ResourceLocation.parse(dimensionString), x, z, playerId, subConfigIndex, forceload, claimStateIndex);
+				return new ClientboundClaimsClaimUpdatePacket(Identifier.parse(dimensionString), x, z, playerId, subConfigIndex, forceload, claimStateIndex);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
 				return null;

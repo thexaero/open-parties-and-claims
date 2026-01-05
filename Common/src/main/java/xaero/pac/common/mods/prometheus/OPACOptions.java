@@ -23,7 +23,7 @@ import com.mojang.serialization.*;
 import earth.terrarium.prometheus.api.roles.options.RoleOption;
 import earth.terrarium.prometheus.api.roles.options.RoleOptionSerializer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
@@ -35,9 +35,10 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-public class OPACOptions implements RoleOption<OPACOptions> {
+//TODO IMPORTANT restore this when Prometheus is ported
+public class OPACOptions {/*implements RoleOption<OPACOptions> {
 
-	protected static final ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "permissions");
+	protected static final Identifier resourceLocation = Identifier.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "permissions");
 
 	protected final Map<IPermissionNodeAPI<?>, Object> values;
 
@@ -159,6 +160,6 @@ public class OPACOptions implements RoleOption<OPACOptions> {
 			1,
 			Codec.of(getEncoder(), getDecoder(OPACOptions::new)),
 			new OPACOptions()
-	);
+	);*/
 
 }

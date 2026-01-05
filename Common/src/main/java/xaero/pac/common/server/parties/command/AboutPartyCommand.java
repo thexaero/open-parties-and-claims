@@ -193,14 +193,14 @@ public class AboutPartyCommand {
 		
 		LiteralArgumentBuilder<CommandSourceStack> targetCommand = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get())
 				.then(Commands.literal("about").then(Commands.argument("player", EntityArgument.player())
-				.requires(c -> !c.hasPermission(2))
+				.requires(c -> !Commands.LEVEL_GAMEMASTERS.check(c.permissions()))
 				.suggests(suggestions)
 				.executes(action)));
 		dispatcher.register(targetCommand);
 		
 		LiteralArgumentBuilder<CommandSourceStack> opTargetCommand = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get())
 				.then(Commands.literal("about").then(Commands.argument("profile", GameProfileArgument.gameProfile())
-				.requires(c -> c.hasPermission(2))
+				.requires(c -> Commands.LEVEL_GAMEMASTERS.check(c.permissions()))
 				.suggests(suggestions)
 				.executes(action)));
 		dispatcher.register(opTargetCommand);

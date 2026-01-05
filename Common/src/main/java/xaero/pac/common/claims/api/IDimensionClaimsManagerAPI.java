@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +34,7 @@ public interface IDimensionClaimsManagerAPI {
 	 * @return the dimension ID, not null
 	 */
 	@Nonnull
-	public ResourceLocation getDimension();
+	public Identifier getDimension();
 
 	/**
 	 * Gets the number of 512x512 regions that contain claims in this dimension.

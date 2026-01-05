@@ -18,6 +18,7 @@
 
 package xaero.pac.common.packet.config;
 
+import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -79,7 +80,7 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 				OpenPartiesAndClaims.LOGGER.info("A player is attempting to modify multiple options in a single packet! Name: " + serverPlayer.getGameProfile().name());
 				return;
 			}
-			boolean isOP = serverPlayer.hasPermissions(2);
+			boolean isOP = Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions());
 			Entry optionEntry = t.entries.get(0);
 			UUID ownerId = t.getType() != PlayerConfigType.PLAYER ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
 			if(!isOP) {

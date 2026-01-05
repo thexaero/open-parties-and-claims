@@ -18,6 +18,7 @@
 
 package xaero.pac.common.packet.config;
 
+import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
@@ -85,7 +86,7 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 		
 		@Override
 		public void accept(ServerboundOtherPlayerConfigPacket t, ServerPlayer serverPlayer) {
-			if(!serverPlayer.hasPermissions(2)) {
+			if(!Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions())) {
 				OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to requesting another player's config! Name: " + serverPlayer.getGameProfile().name());
 				return;
 			}

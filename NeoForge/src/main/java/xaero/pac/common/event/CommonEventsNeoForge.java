@@ -18,7 +18,7 @@
 
 package xaero.pac.common.event;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.TriState;
@@ -297,7 +297,7 @@ public class CommonEventsNeoForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onAddReloadListenerEvent(AddServerReloadListenersEvent event){
-		event.addListener(ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "main"),
+		event.addListener(Identifier.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "main"),
 				new ServerDataReloadListenerNeoForge());
 	}
 

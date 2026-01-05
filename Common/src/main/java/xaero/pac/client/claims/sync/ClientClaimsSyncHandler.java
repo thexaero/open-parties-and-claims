@@ -21,7 +21,7 @@ package xaero.pac.client.claims.sync;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.BitStorage;
 import xaero.pac.client.claims.ClientClaimsManager;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
@@ -35,9 +35,9 @@ import java.util.UUID;
 public class ClientClaimsSyncHandler {
 	
 	private final ClientClaimsManager claimsManager;
-	private ResourceLocation dimensionSyncing;
+	private Identifier dimensionSyncing;
 
-	private ResourceLocation lastClaimUpdateDimension;
+	private Identifier lastClaimUpdateDimension;
 	private PlayerChunkClaim lastClaimUpdateState;
 	private int lastClaimUpdateX;
 	private int lastClaimUpdateZ;
@@ -80,11 +80,11 @@ public class ClientClaimsSyncHandler {
 		claimsManager.setCurrentServerSubConfigId(currentServerSubConfigId);
 	}
 
-	public void onDimension(ResourceLocation dim) {
+	public void onDimension(Identifier dim) {
 		this.dimensionSyncing = dim;
 	}
 	
-	public void onClaimUpdate(ResourceLocation dimension, int x, int z, UUID playerId, int subConfigIndex, boolean forceload, int claimSyncIndex) {
+	public void onClaimUpdate(Identifier dimension, int x, int z, UUID playerId, int subConfigIndex, boolean forceload, int claimSyncIndex) {
 		if(playerId != null) {
 			if(claimsManager.getClaimStateBySyncIndex(claimSyncIndex) == null)
 				claimsManager.addClaimState(new PlayerChunkClaim(playerId, subConfigIndex, forceload, claimSyncIndex));

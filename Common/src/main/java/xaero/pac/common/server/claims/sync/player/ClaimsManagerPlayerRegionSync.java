@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.sync.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -56,7 +56,7 @@ public final class ClaimsManagerPlayerRegionSync extends ClaimsManagerPlayerLazy
 	
 	private void sendDimensionPrefix(ServerPlayer player, ClaimsManagerPlayerDimensionRegionSync dim) {
 		if(dim != currentPrefix) {
-			ResourceLocation dimLocation = dim == null ? null : dim.getDim();
+			Identifier dimLocation = dim == null ? null : dim.getDim();
 			synchronizer.syncDimensionIdToClient(dimLocation, player);
 			currentPrefix = dim;
 		}

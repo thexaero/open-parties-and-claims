@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
@@ -35,7 +35,7 @@ public abstract class RegionClaims
 	WRC extends RegionClaims<M, WRC>
 > implements IRegionClaims, ILinkedChainNode<WRC> {//reflects what's in PlayerClaimInfoManager
 	
-	protected final ResourceLocation dimension;
+	protected final Identifier dimension;
 	private final int x;
 	private final int z;
 	protected final RegionClaimsPaletteStorage storage;
@@ -43,7 +43,7 @@ public abstract class RegionClaims
 	private WRC nextInChain;
 	private WRC previousInChain;
 	
-	public RegionClaims(ResourceLocation dimension, int x, int z, 
+	public RegionClaims(Identifier dimension, int x, int z,
 			RegionClaimsPaletteStorage storage) {
 		if(storage == null)
 			throw new IllegalArgumentException();
@@ -155,7 +155,7 @@ public abstract class RegionClaims
 	> {
 		
 		protected final B self;
-		protected ResourceLocation dimension;
+		protected Identifier dimension;
 		protected int x;
 		protected int z;
 		protected RegionClaimsPaletteStorage storage;
@@ -173,7 +173,7 @@ public abstract class RegionClaims
 			return self;
 		}
 		
-		public B setDimension(ResourceLocation dimension) {
+		public B setDimension(Identifier dimension) {
 			this.dimension = dimension;
 			return self;
 		}

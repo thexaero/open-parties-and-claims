@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.tracker;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerListenerAPI;
 
@@ -39,17 +39,17 @@ public class ClaimsManagerTracker implements IClaimsManagerTracker {
 		listeners.add(listener);
 	}
 
-	public void onWholeRegionChange(ResourceLocation dimension, int regionX, int regionZ) {
+	public void onWholeRegionChange(Identifier dimension, int regionX, int regionZ) {
 		for(IClaimsManagerListenerAPI listener : listeners)
 			listener.onWholeRegionChange(dimension, regionX, regionZ);
 	}
 	
-	public void onChunkChange(ResourceLocation dimension, int chunkX, int chunkZ, IPlayerChunkClaimAPI claim) {
+	public void onChunkChange(Identifier dimension, int chunkX, int chunkZ, IPlayerChunkClaimAPI claim) {
 		for(IClaimsManagerListenerAPI listener : listeners)
 			listener.onChunkChange(dimension, chunkX, chunkZ, claim);
 	}
 
-	public void onDimensionChange(ResourceLocation dimension) {
+	public void onDimensionChange(Identifier dimension) {
 		for(IClaimsManagerListenerAPI listener : listeners)
 			listener.onDimensionChange(dimension);
 	}

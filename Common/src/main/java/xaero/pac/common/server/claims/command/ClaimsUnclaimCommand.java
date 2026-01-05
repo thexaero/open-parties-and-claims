@@ -34,10 +34,10 @@ public class ClaimsUnclaimCommand {
 		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("unclaim").then(ClaimsClaimCommands.createClaimCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), false, false, false)));
 		dispatcher.register(command);
 		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("unclaim").then(ClaimsClaimCommands.createClaimCommand(Commands.literal("anyway").requires(source -> source.hasPermission(2)), false, false, true)));
+		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("unclaim").then(ClaimsClaimCommands.createClaimCommand(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())), false, false, true)));
 		dispatcher.register(command);
 		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("unclaim").then(Commands.literal("anyway").requires(source -> source.hasPermission(2)).then(ClaimsClaimCommands.createClaimCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), false, false, true))));
+		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("unclaim").then(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())).then(ClaimsClaimCommands.createClaimCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), false, false, true))));
 		dispatcher.register(command);
 	}
 

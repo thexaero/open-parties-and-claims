@@ -187,8 +187,8 @@ public interface IChunkProtectionAPI {
 	/**
 	 * Checks whether a landing projectile spawning an entity should be protected against.
 	 * <p>
-	 * Projectiles implementing {@link net.minecraft.world.entity.projectile.AbstractArrow},
-	 * {@link net.minecraft.world.entity.projectile.AbstractHurtingProjectile} or
+	 * Projectiles implementing {@link net.minecraft.world.entity.projectile.arrow.AbstractArrow},
+	 * {@link net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile} or
 	 * {@link net.minecraft.world.entity.projectile.ThrowableProjectile} are usually already checking
 	 * the protection by default, so make sure that using this is even necessary before you do.
 	 * <p>

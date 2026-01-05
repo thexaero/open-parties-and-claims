@@ -20,7 +20,7 @@ package xaero.pac.common.claims;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
@@ -39,11 +39,11 @@ public abstract class DimensionClaimsManager
 	WRC extends RegionClaims<M, WRC>
 > implements IDimensionClaimsManager<WRC> {
 	
-	private final ResourceLocation dimension;
+	private final Identifier dimension;
 	private final Long2ObjectMap<WRC> regions;
 	private final LinkedChain<WRC> linkedRegions;
 	
-	public DimensionClaimsManager(ResourceLocation dimension, Long2ObjectMap<WRC> regions, LinkedChain<WRC> linkedRegions) {
+	public DimensionClaimsManager(Identifier dimension, Long2ObjectMap<WRC> regions, LinkedChain<WRC> linkedRegions) {
 		this.dimension = dimension;
 		this.regions = regions;
 		this.linkedRegions = linkedRegions;
@@ -116,7 +116,7 @@ public abstract class DimensionClaimsManager
 		return getRegion(regionX, regionZ);
 	}
 	
-	protected abstract WRC create(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage storage);
+	protected abstract WRC create(Identifier dimension, int x, int z, RegionClaimsPaletteStorage storage);
 	
 	public PlayerChunkClaim claim(int x, int z, PlayerChunkClaim claim, M playerClaimInfoManager, IPlayerConfigManager configManager) {
 		WRC region = ensureRegionForChunk(x, z);
@@ -143,7 +143,7 @@ public abstract class DimensionClaimsManager
 	
 	@Nonnull
 	@Override
-	public ResourceLocation getDimension() {
+	public Identifier getDimension() {
 		return dimension;
 	}
 

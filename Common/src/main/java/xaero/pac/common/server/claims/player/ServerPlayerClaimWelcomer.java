@@ -50,7 +50,7 @@ public class ServerPlayerClaimWelcomer {
 	public void onPlayerTick(ServerPlayerData mainCap, ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
 		IPlayerChunkClaim lastClaimCheck = mainCap.getLastClaimCheck();
 		IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
-		IPlayerChunkClaim currentClaim = claimsManager.get(player.level().dimension().location(), player.chunkPosition());
+		IPlayerChunkClaim currentClaim = claimsManager.get(player.level().dimension().identifier(), player.chunkPosition());
 		if (Objects.equals(lastClaimCheck, currentClaim))
 			return;
 		if(!ServerConfig.CONFIG.claimWelcomeMessages.get()){

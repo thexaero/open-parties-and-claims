@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.api.IPlayerClaimInfoAPI;
 
 import javax.annotation.Nonnull;
@@ -45,10 +45,10 @@ public interface IPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> extends 
 	public String getPlayerUsername();
 	
 	@Nonnull
-	public Stream<Entry<ResourceLocation, DC>> getTypedStream();
+	public Stream<Entry<Identifier, DC>> getTypedStream();
 
 	@Override
 	@Nullable
-	public DC getDimension(@Nonnull ResourceLocation id);
+	public DC getDimension(@Nonnull Identifier id);
 
 }

@@ -20,7 +20,7 @@ package xaero.pac.client.claims;
 
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.SimpleBitStorage;
 import xaero.pac.client.claims.player.ClientPlayerClaimInfoManager;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
@@ -31,7 +31,7 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 
 public final class ClientRegionClaims extends RegionClaims<ClientPlayerClaimInfoManager, ClientRegionClaims> implements IClientRegionClaims {
 
-	private ClientRegionClaims(ResourceLocation dimension, int x, int z, RegionClaimsPaletteStorage storage) {
+	private ClientRegionClaims(Identifier dimension, int x, int z, RegionClaimsPaletteStorage storage) {
 		super(dimension, x, z, storage);
 	}
 

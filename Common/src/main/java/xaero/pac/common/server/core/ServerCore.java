@@ -28,7 +28,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -529,7 +529,7 @@ public class ServerCore {
 		return contraption.getXaero_OPAC_placementPos();
 	}
 
-	private static final ResourceKey<Item> CREATE_COUPLING = ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("create", "minecart_coupling"));
+	private static final ResourceKey<Item> CREATE_COUPLING = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("create", "minecart_coupling"));
 
 	public static boolean canCreateAddCoupling(Player player, Level world, int cartId1, int cartId2){
 		if(player == null)
@@ -1060,6 +1060,20 @@ public class ServerCore {
 			return targets;
 		serverData.getChunkProtection().onEntityAffectsEntities(serverData, entity, targets);
 		return targets;
+	}
+
+	public static boolean onStabAttack(LivingEntity entity, Entity target, EquipmentSlot slot){
+		if(target == null)
+			return false;
+		if(entity == null)
+			return false;
+		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+				serverData = ServerData.from(ServerLevelHelper.getServer(target));
+		if (serverData == null)
+			return false;
+		ItemStack itemStack = entity.getItemBySlot(slot);
+		InteractionHand hand = slot == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+		return serverData.getChunkProtection().onEntityInteraction(serverData, null, entity, target, itemStack, hand, true, false, true);
 	}
 
 	public static boolean onEntityPushed(Entity target, MoverType moverType) {

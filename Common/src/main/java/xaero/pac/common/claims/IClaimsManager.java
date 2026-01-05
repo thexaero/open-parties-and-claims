@@ -19,7 +19,7 @@
 package xaero.pac.common.claims;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.api.IClaimsManagerAPI;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -43,16 +43,16 @@ public interface IClaimsManager
 	public PCI getPlayerInfo(@Nonnull UUID playerId);
 
 	@Nullable
-	public IPlayerChunkClaim get(@Nonnull ResourceLocation dimension, int x, int z);
+	public IPlayerChunkClaim get(@Nonnull Identifier dimension, int x, int z);
 
 	@Nullable
-	public IPlayerChunkClaim get(@Nonnull ResourceLocation dimension, @Nonnull ChunkPos chunkPos);
+	public IPlayerChunkClaim get(@Nonnull Identifier dimension, @Nonnull ChunkPos chunkPos);
 
 	@Nullable
-	public IPlayerChunkClaim get(@Nonnull ResourceLocation dimension, @Nonnull BlockPos blockPos);
+	public IPlayerChunkClaim get(@Nonnull Identifier dimension, @Nonnull BlockPos blockPos);
 
 	@Nullable
-	public WCM getDimension(@Nonnull ResourceLocation dimension);
+	public WCM getDimension(@Nonnull Identifier dimension);
 
 	@Nonnull
 	public IClaimsManagerTracker getTracker();

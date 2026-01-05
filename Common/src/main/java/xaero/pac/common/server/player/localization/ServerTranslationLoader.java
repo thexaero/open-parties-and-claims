@@ -19,7 +19,7 @@
 package xaero.pac.common.server.player.localization;
 
 import net.minecraft.locale.Language;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import xaero.pac.OpenPartiesAndClaims;
@@ -35,13 +35,13 @@ public class ServerTranslationLoader {
 	public Map<String, String> loadFromResources(ResourceManager resourceManager){
 		Map<String, String> result = new HashMap<>();
 		try {
-			Resource enUSLanguageFileResource = resourceManager.getResourceOrThrow(ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "lang/en_us.json"));
+			Resource enUSLanguageFileResource = resourceManager.getResourceOrThrow(Identifier.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "lang/en_us.json"));
 			try(BufferedInputStream inputStream = new BufferedInputStream(enUSLanguageFileResource.open())){
 				Language.loadFromJson(inputStream, result::put);
 			}
 			String configuredLanguage = ServerConfig.CONFIG.defaultLanguage.get();
 			if(!configuredLanguage.equalsIgnoreCase("en_us")) {
-				Resource languageFileResource = resourceManager.getResourceOrThrow(ResourceLocation.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "lang/" + configuredLanguage + ".json"));
+				Resource languageFileResource = resourceManager.getResourceOrThrow(Identifier.fromNamespaceAndPath(OpenPartiesAndClaims.MOD_ID, "lang/" + configuredLanguage + ".json"));
 				try (BufferedInputStream inputStream = new BufferedInputStream(languageFileResource.open())) {
 					Language.loadFromJson(inputStream, result::put);
 				}

@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims;
 
+import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -37,7 +38,7 @@ public class ServerClaimsPermissionHandler {
 	private IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, ?> serverData;
 
 	public boolean playerHasServerClaimPermission(ServerPlayer player){
-		if(player.hasPermissions(2))
+		if(Commands.LEVEL_GAMEMASTERS.check(player.permissions()))
 			return true;
 		IPlayerPermissionSystemAPI permissionSystem = getSystem();
 		if(permissionSystem == null)
@@ -58,7 +59,7 @@ public class ServerClaimsPermissionHandler {
 	}
 
 	public boolean playerHasAdminModePermission(ServerPlayer player){
-		if(player.hasPermissions(2))
+		if(Commands.LEVEL_GAMEMASTERS.check(player.permissions()))
 			return true;
 		IPlayerPermissionSystemAPI permissionSystem = getSystem();
 		if(permissionSystem == null)

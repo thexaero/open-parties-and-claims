@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.*;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -55,7 +55,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private boolean replacementInProgress;
 	private final Deque<PlayerClaimReplaceSpreadoutTask> replaceTaskQueue;
 
-	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
+	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims,
 								 ServerPlayerClaimInfoManager manager, Deque<PlayerClaimReplaceSpreadoutTask> replaceSpreadoutTasks) {
 		super(username, playerId, claims, manager);
 		this.playerConfig = playerConfig;
@@ -65,7 +65,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 	
 	@Override
-	public void onClaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
+	public void onClaim(IPlayerConfigManager configManager, Identifier dimension, PlayerChunkClaim claim, int x, int z) {
 		super.onClaim(configManager, dimension, claim, x, z);
 		if(claim.isForceloadable())
 			manager.getTicketManager().addTicket(configManager, dimension, playerId, x, z);
@@ -76,7 +76,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 	
 	@Override
-	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
+	public void onUnclaim(IPlayerConfigManager configManager, Identifier dimension, PlayerChunkClaim claim, int x, int z) {
 		super.onUnclaim(configManager, dimension, claim, x, z);
 		if(claim.isForceloadable())
 			manager.getTicketManager().removeTicket(configManager, dimension, playerId, x, z);
@@ -118,25 +118,25 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 
 	@Override
-	protected Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionClaimCountStream() {
+	protected Stream<Entry<Identifier, PlayerDimensionClaims>> getDimensionClaimCountStream() {
 		return this.getTypedStream();
 	}
 
 	@Override
-	protected Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getDimensionForceloadCountStream() {
+	protected Stream<Entry<Identifier, PlayerDimensionClaims>> getDimensionForceloadCountStream() {
 		boolean unclaimableForceloadsAllowed = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID) || ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get() && ServerConfig.CONFIG.allowExistingForceloadsInUnclaimableDimensions.get();
 		return claims.entrySet().stream().filter(e -> unclaimableForceloadsAllowed || manager.isClaimable(e.getKey()));
 	}
 
 	@Nonnull
 	@Override
-	public Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getTypedStream() {
+	public Stream<Entry<Identifier, PlayerDimensionClaims>> getTypedStream() {
 		boolean unclaimableClaimsAllowed = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID) || ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions.get();
 		return claims.entrySet().stream().filter(e -> unclaimableClaimsAllowed || manager.isClaimable(e.getKey()));
 	}
 
 	@Override
-	public Stream<Entry<ResourceLocation, PlayerDimensionClaims>> getFullStream(){
+	public Stream<Entry<Identifier, PlayerDimensionClaims>> getFullStream(){
 		//stream of all dimensions even they're effectively empty due to !ServerConfig.CONFIG.allowExistingClaimsInUnclaimableDimensions and being unclaimable
 		return claims.entrySet().stream();
 	}

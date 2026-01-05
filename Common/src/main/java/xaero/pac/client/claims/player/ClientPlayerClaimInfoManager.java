@@ -19,7 +19,7 @@
 package xaero.pac.client.claims.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.client.claims.ClientClaimsManager;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
@@ -43,7 +43,7 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 
 	@Override
 	protected ClientPlayerClaimInfo create(String username, UUID playerId,
-			Map<ResourceLocation, PlayerDimensionClaims> claims) {
+			Map<Identifier, PlayerDimensionClaims> claims) {
 		return new ClientPlayerClaimInfo(username, playerId, claims, this, new Int2ObjectOpenHashMap<>());
 	}
 	
@@ -65,7 +65,7 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 			boolean isSub = subConfigIndex != -1;
 			ClaimsManagerTracker tracker = claimsManager.getTracker();
 			playerInfo.getTypedStream().map(Entry::getValue).forEach(dim -> {
-				ResourceLocation dimensionId = dim.getDimension();
+				Identifier dimensionId = dim.getDimension();
 				if(notManyClaims) {
 					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> tracker.onChunkChange(dimensionId, pos.x, pos.z, claim);
 					dim.getTypedStream().forEach(posList -> {
