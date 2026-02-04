@@ -28,14 +28,18 @@ import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 public class ClientCore {
 
 	public static void onInitializeWorldBorder(ClientboundInitializeBorderPacket packet){
-		ClientWorldMainCapability capability = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(Minecraft.getInstance().level, ClientWorldCapabilityTypes.MAIN_CAP);
-		IClientWorldData worldData = capability.getClientWorldDataInternal();
-		boolean serverHasMod = worldData.serverHasMod();
-		if(!serverHasMod) {
-			//the border packet is sent after the handshake, so if we didn't get a handshake up until this point, then there is no mod on the server side
-			OpenPartiesAndClaims.LOGGER.info("No Open Parties and Claims on the server! Resetting.");
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().reset();
-		}
+		Minecraft.getInstance().schedule(() -> {
+			//have to schedule because a vanilla and a modded packet are not necessarily handled in the order they are sent on Forge on 1.21.10+
+			//this ensures that the OPAC dimension handshake, if received, is handled before running this code
+			ClientWorldMainCapability capability = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(Minecraft.getInstance().level, ClientWorldCapabilityTypes.MAIN_CAP);
+			IClientWorldData worldData = capability.getClientWorldDataInternal();
+			boolean serverHasMod = worldData.serverHasMod();
+			if (!serverHasMod) {
+				//the border packet is sent after the handshake, so if we didn't get a handshake up until this point, then there is no mod on the server side
+				OpenPartiesAndClaims.LOGGER.info("No Open Parties and Claims on the server! Resetting.");
+				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().reset();
+			}
+		});
 	}
 	
 }
