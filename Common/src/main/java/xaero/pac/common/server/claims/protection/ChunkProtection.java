@@ -840,7 +840,8 @@ public class ChunkProtection
 				!(item instanceof BoatItem) &&
 				!itemStack.is(ItemTags.BOATS) &&
 				!(item instanceof MilkBucketItem) &&
-				!(item instanceof ArmorItem)
+				!(item instanceof ArmorItem) &&
+				!(item instanceof RecordItem)
 				||
 				additionalBannedItems.contains(item);
 	}
