@@ -47,6 +47,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -79,7 +80,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
-		if(super.onEntityMultiPlaceBlock(event.getWorld(), event.getReplacedBlockSnapshots().stream().map(s -> Pair.of(s.getPos(), s.getCurrentBlock())), event.getEntity()))
+		if(super.onEntityMultiPlaceBlock(event.getWorld(), event.getReplacedBlockSnapshots().stream().map(s -> Triple.of(s.getPos(), s.getReplacedBlock(), s.getCurrentBlock())), event.getEntity()))
 			event.setCanceled(true);
 	}
 

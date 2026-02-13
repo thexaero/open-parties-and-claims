@@ -22,6 +22,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -47,6 +48,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -492,13 +494,14 @@ public abstract class CommonEvents {
 				serverData = ServerData.from(serverLevel.getServer());
 		if(serverData == null)
 			return false;
-		//not protecting destroyed blocks here because it causes dupes with mods like create
-//		if(replacedBlock != null && !replacedBlock.isAir() && serverData.getChunkProtection().onEntityDestroyBlock(serverData, replacedBlock, entity, serverLevel, pos, false))
-//			return true;
-	 	return placedBlock != null && !placedBlock.isAir() && serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null);
+		if(placedBlock == null || placedBlock.isAir())//not protecting destroyed blocks here because it causes dupes with mods like create
+			return false;
+		if(replacedBlock != null && !replacedBlock.isAir())//not protecting block replacement (non-air -> non-air) because it prevents certain item-block interactions, e.g. using discs on a jukebox or stripping logs, which can even lead to dupes if there's a block entity
+			return false;
+	 	return serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null);
 	}
 
-	protected boolean onEntityMultiPlaceBlock(LevelAccessor levelAccessor, Stream<Pair<BlockPos, BlockState>> blocks, Entity entity) {
+	protected boolean onEntityMultiPlaceBlock(LevelAccessor levelAccessor, Stream<Triple<BlockPos, BlockState, BlockState>> blocks, Entity entity) {
 		//only supported by Forge atm
 		if(!(levelAccessor instanceof Level level))
 			return false;
@@ -512,15 +515,18 @@ public abstract class CommonEvents {
 		if(ServerCore.isHandlingFrostWalk())
 			return false;
 		Set<ChunkPos> chunkPositions = new HashSet<>();
-		Iterator<Pair<BlockPos, BlockState>> iterator = blocks.iterator();
+		Iterator<Triple<BlockPos, BlockState, BlockState>> iterator = blocks.iterator();
 		boolean result = false;
 		while(iterator.hasNext()){
-			Pair<BlockPos, BlockState> blockEntry = iterator.next();
+			Triple<BlockPos, BlockState, BlockState> blockEntry = iterator.next();
 			BlockPos pos = blockEntry.getLeft();
 			if(chunkPositions.add(new ChunkPos(pos))) {
 				//not protecting destroyed blocks here because it causes dupes with mods like create
 				BlockState placedBlock = blockEntry.getRight();
 				if(placedBlock == null || placedBlock.isAir())//even 1 instance of a block break can create a dupe
+					return false;
+				BlockState replacedBlock = blockEntry.getMiddle();
+				if(replacedBlock != null && !replacedBlock.isAir() && serverLevel.getBlockEntity(pos) != null)//not protecting block replacement (non-air -> non-air) over block entity because it can lead to dupes
 					return false;
 				result = result || serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null);
 			}
