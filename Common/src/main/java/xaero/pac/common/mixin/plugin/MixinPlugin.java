@@ -31,7 +31,12 @@ import java.util.Set;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
-	private final Map<String, String> MIXIN_MOD_REQ_MAP = ImmutableMap.of(
+	private static final Map<String, String> MIXIN_MOD_REQ_MAP = ImmutableMap.of(
+	);
+
+	//almost no mod needs to use the following field for class-check-based mod detection, probably just Optifine
+	public static final Map<String, String> MOD_REQ_CLASS_CHECKS = ImmutableMap.of(
+			"optifine", "optifine.OptiFineJar"
 	);
 
 	@Override
@@ -47,22 +52,37 @@ public class MixinPlugin implements IMixinConfigPlugin {
 		}
 		String[] modReqArgs = modReq.split("\\.");
 		String modId = modReqArgs[0];
+		int minVersionArgIndex = 1;
+		boolean isBreakRequirement = false;
+		if(modReqArgs.length > 1 && modReqArgs[1].equals("breaks")) {
+			minVersionArgIndex++;
+			isBreakRequirement = true;
+		}
+		String classCheck = MOD_REQ_CLASS_CHECKS.get(modId);
+		if(classCheck != null){
+			try {
+				Class.forName(classCheck);
+				return !isBreakRequirement;
+			} catch(ClassNotFoundException cnfe){
+				return isBreakRequirement;
+			}
+		}
 		String minVersion = null;
 		String maxVersion = null;
-		if(modReqArgs.length > 1)
-			minVersion = modReqArgs[1].substring(1)
+		if(modReqArgs.length > minVersionArgIndex)
+			minVersion = modReqArgs[minVersionArgIndex].substring(1)
 					.replaceAll("_", ".")
 					.replaceAll("H", "-")
 					.replaceAll("P", "+");
-		if(modReqArgs.length > 2)
-			maxVersion = modReqArgs[2].substring(1)
+		if(modReqArgs.length > minVersionArgIndex + 1)
+			maxVersion = modReqArgs[minVersionArgIndex + 1].substring(1)
 					.replaceAll("_", ".")
 					.replaceAll("H", "-")
 					.replaceAll("P", "+");
-		return shouldApplyMixinsTargetingMod(MixinServices.PLATFORM, modId, minVersion, maxVersion);
+		return isBreakRequirement != isModRequirementMet(MixinServices.PLATFORM, modId, minVersion, maxVersion);
 	}
 
-	public <M, V extends Comparable<V>> boolean shouldApplyMixinsTargetingMod(
+	public <M, V extends Comparable<V>> boolean isModRequirementMet(
 			IPlatformMixinHelper<M, V> platform,
 			String modId,
 			String minVersionString,
