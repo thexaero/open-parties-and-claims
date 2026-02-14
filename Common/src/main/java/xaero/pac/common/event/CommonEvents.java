@@ -294,14 +294,14 @@ public abstract class CommonEvents {
 		return serverData.getChunkProtection().onItemRightClick(serverData, hand, itemStack, entityLiving.blockPosition(), entityLiving, true);
 	}
 
-	public boolean onMobGrief(Entity entity) {
+	public boolean onMobGrief(Entity entity, boolean items) {
 		if(entity == null /*anonymous fireballs on Forge*/)
 			return false;
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(entity.getServer());
 		if(serverData == null)
 			return false;
-		return serverData.getChunkProtection().onMobGrief(serverData, entity);
+		return serverData.getChunkProtection().onMobGrief(serverData, entity, items);
 	}
 
 	public boolean onLivingHurt(DamageSource source, Entity target) {

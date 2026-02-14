@@ -49,10 +49,12 @@ import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
+import xaero.pac.common.mods.ModSupportForge;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -187,9 +189,16 @@ public class CommonEventsForge extends CommonEvents {
 			return;
 		if(!server.isSameThread())
 			return;
-		if(ServerCore.isMobGriefingForItems(server.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
+		boolean items = ServerCore.isMobGriefingForItems(server.getTickCount());
+		//^ this means that the mob griefing rule is being checked for item pickup
+		if(
+				!OpenPartiesAndClaims.INSTANCE.getModSupport().OPTIFINE &&
+				//^ with optifine, MixinForgeMob injection into aiStep breaks,
+				//which breaks item pickup protection, so we have to use the mob griefing check
+				items
+		)
 			return;
-		if(super.onMobGrief(event.getEntity()))
+		if(super.onMobGrief(event.getEntity(), items))
 			event.setResult(Result.DENY);
 	}
 

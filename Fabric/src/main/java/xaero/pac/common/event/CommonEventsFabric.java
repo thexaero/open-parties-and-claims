@@ -191,7 +191,7 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	public boolean onMobGrief(Entity entity) {
-		return super.onMobGrief(entity);
+		return super.onMobGrief(entity, false);
 	}
 
 	public boolean onLivingHurt(DamageSource source, Entity target) {

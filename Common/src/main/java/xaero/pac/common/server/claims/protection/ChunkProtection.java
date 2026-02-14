@@ -897,12 +897,12 @@ public class ChunkProtection
 		return shouldProtect;
 	}
 
-	public boolean onMobGrief(IServerData<CM, ?> serverData, Entity entity){
+	public boolean onMobGrief(IServerData<CM, ?> serverData, Entity entity, boolean items){
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		boolean blocks = !(entity instanceof Evoker || nonBlockGriefingMobs.contains(entity.getType()));
-		boolean entities = entity instanceof Evoker || entityGriefingMobs.contains(entity.getType());
-		boolean items = droppedItemGriefingMobs.contains(entity.getType());
+		boolean blocks = !items && !(entity instanceof Evoker || nonBlockGriefingMobs.contains(entity.getType()));
+		boolean entities = !items && (entity instanceof Evoker || entityGriefingMobs.contains(entity.getType()));
+		items = items || droppedItemGriefingMobs.contains(entity.getType());
 		return onMobGrief(serverData, entity, blocks, entities, items);
 	}
 

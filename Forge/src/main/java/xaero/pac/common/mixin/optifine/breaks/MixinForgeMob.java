@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,26 +16,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mixin;
+package xaero.pac.common.mixin.optifine.breaks;
 
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xaero.pac.common.server.core.ServerCore;
+
+import java.util.Iterator;
 
 @Mixin(value = Mob.class, priority = 1000001)
 public class MixinForgeMob {
 
-	@Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;aiStep()V", shift = At.Shift.AFTER))
-	public void onAiStepPre(CallbackInfo ci){
-		ServerCore.forgePreItemMobGriefingCheck((Mob)(Object)this);
-	}
-
-	@Inject(method = "aiStep", at = @At("RETURN"))
-	public void onAiStepPost(CallbackInfo ci){
-		ServerCore.forgePostItemMobGriefingCheck((Mob)(Object)this);
+	@Inject(method = "aiStep", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;pickUpItem(Lnet/minecraft/world/entity/item/ItemEntity;)V"), cancellable = true)
+	public void onAiStepItemPickup(CallbackInfo ci, Iterator var2, ItemEntity itemEntity){//different from fabric parameters
+		if(ServerCore.onMobItemPickup(itemEntity, (Mob)(Object)this))
+			ci.cancel();
 	}
 
 }
