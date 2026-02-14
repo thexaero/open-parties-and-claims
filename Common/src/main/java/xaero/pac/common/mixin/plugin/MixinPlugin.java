@@ -52,12 +52,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 		}
 		String[] modReqArgs = modReq.split("\\.");
 		String modId = modReqArgs[0];
-		int minVersionArgIndex = 1;
-		boolean isBreakRequirement = false;
-		if(modReqArgs.length > 1 && modReqArgs[1].equals("breaks")) {
-			minVersionArgIndex++;
-			isBreakRequirement = true;
-		}
+		boolean isBreakRequirement = modReqArgs.length > 1 && modReqArgs[1].equals("breaks");
 		String classCheck = MOD_REQ_CLASS_CHECKS.get(modId);
 		if(classCheck != null){
 			try {
@@ -69,6 +64,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
 		}
 		String minVersion = null;
 		String maxVersion = null;
+		int minVersionArgIndex = 1;
+		if(isBreakRequirement)
+			minVersionArgIndex++;
 		if(modReqArgs.length > minVersionArgIndex)
 			minVersion = modReqArgs[minVersionArgIndex].substring(1)
 					.replaceAll("_", ".")
