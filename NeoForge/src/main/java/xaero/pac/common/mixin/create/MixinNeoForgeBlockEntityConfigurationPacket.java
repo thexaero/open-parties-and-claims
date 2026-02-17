@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin.create;
 
+import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,6 +38,8 @@ public class MixinNeoForgeBlockEntityConfigurationPacket {
 	@Inject(method = "handle", remap = false, at = @At("HEAD"), cancellable = true)
 	public void onHandle(ServerPlayer player, CallbackInfo ci){
 		if (player == null)
+			return;
+		if((Object)this.getClass() == LogisticalStockRequestPacket.class)
 			return;
 		if(!ServerCore.isCreateTileEntityPacketAllowed(pos, player))
 			ci.cancel();
