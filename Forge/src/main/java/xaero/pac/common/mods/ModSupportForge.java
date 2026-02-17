@@ -19,5 +19,4 @@
 package xaero.pac.common.mods;
 
 public class ModSupportForge extends ModSupport {
-
 }
