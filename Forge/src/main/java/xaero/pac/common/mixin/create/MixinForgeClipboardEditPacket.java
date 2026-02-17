@@ -21,7 +21,7 @@ package xaero.pac.common.mixin.create;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEditPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,7 +36,7 @@ public class MixinForgeClipboardEditPacket {
 	private BlockPos targetedBlock;
 
 	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
-	public void onHandle(NetworkEvent.Context context, CallbackInfo ci){
+	public void onHandle(CustomPayloadEvent.Context context, CallbackInfo ci){
 		ServerPlayer player = context.getSender();
 		if (player == null)
 			return;
