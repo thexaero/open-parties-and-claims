@@ -868,7 +868,7 @@ public class ChunkProtection
 				!itemStack.is(ItemTags.BOATS) &&
 				!(itemStack.has(DataComponents.CONSUMABLE)) &&
 				!(item instanceof ArmorItem) &&
-				!(item instanceof RecordItem)
+				!itemStack.has(DataComponents.JUKEBOX_PLAYABLE)
 				||
 				additionalBannedItems.contains(item);
 	}
@@ -1230,10 +1230,8 @@ public class ChunkProtection
 	}
 
 	public void onLightningBolt(IServerData<CM, ?> serverData, LightningBolt bolt) {
-		OpenPartiesAndClaims.LOGGER.info("checking lightning 1 " + bolt.getCause());
 		if(!ServerConfig.CONFIG.claimsEnabled.get() || bolt.getCause() == null)
 			return;
-		OpenPartiesAndClaims.LOGGER.info("checking lightning 2");
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		for(int i = -1; i < 2; i++)
 			for(int j = -1; j < 2; j++) {
@@ -1244,12 +1242,10 @@ public class ChunkProtection
 					if (checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING, config, bolt.getCause(), null) &&
 							!hasChunkAccess(config, bolt.getCause(), null) && !isAllowedStaticFakePlayerAction(serverData, bolt.getCause(), chunkPos.getMiddleBlockPosition(0))) {
 						bolt.setVisualOnly(true);
-						OpenPartiesAndClaims.LOGGER.info("checking lightning 3");
 						break;
 					}
 				}
 			}
-		OpenPartiesAndClaims.LOGGER.info("checking lightning 4");
 	}
 
 	public boolean onFireSpread(IServerData<CM, ?> serverData, ServerLevel world, BlockPos pos){
