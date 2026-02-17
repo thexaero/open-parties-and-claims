@@ -55,7 +55,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.function.TriFunction;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -93,12 +92,14 @@ public class ChunkProtection
 
 	public static final UUID CREATE_DEPLOYER_UUID = UUID.fromString("9e2faded-cafe-4ec2-c314-dad129ae971d");
 	public static final UUID CREATE_PLOUGH_UUID = UUID.fromString("9e2faded-eeee-4ec2-c314-dad129ae971d");
+	public static final String CREATE_DEPLOYER_CLASS_NAME = "com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer";
 	public static final String TAG_PREFIX = "#";
 	public static final String BREAK_PREFIX = "break$";
 	public static final String HAND_PREFIX = "hand$";
 	public static final String ANYTHING_PREFIX = "anything$";
 	public static final String INTERACT_PREFIX = "interact$";
 	public static final String FULL_PREFIX = "full$";
+	private Class<?> createDeployerClass;
 	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> usedDroppedItemProtectionOptionGetter = this::getUsedDroppedItemProtectionOption;
 	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> usedExperienceOrbProtectionOptionGetter = (c, e, a) -> PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_XP_PICKUP;
 
@@ -263,6 +264,11 @@ public class ChunkProtection
 		this.cantPickupItemsInTickCache = cantPickItemsCache;
 		this.cantPickupXPInTickCache = cantPickupXPInTickCache;
 		this.fullPasses = fullPasses;
+		try {
+			createDeployerClass = Class.forName(CREATE_DEPLOYER_CLASS_NAME);
+		} catch (ClassNotFoundException e) {
+			createDeployerClass = null;
+		}
 	}
 
 	public void setServerData(IServerData<CM, ?> serverData) {
@@ -283,7 +289,7 @@ public class ChunkProtection
 		if(entity instanceof Player){
 			if(
 				(
-					CREATE_DEPLOYER_UUID.equals(entity.getUUID()) ||
+					CREATE_DEPLOYER_UUID.equals(entity.getUUID()) || entity.getClass() == createDeployerClass ||
 					CREATE_PLOUGH_UUID.equals(entity.getUUID())
 				) && !isStaticFakePlayerExceptionClass(entity)
 			)
@@ -861,7 +867,8 @@ public class ChunkProtection
 				!(item instanceof BoatItem) &&
 				!itemStack.is(ItemTags.BOATS) &&
 				!(itemStack.has(DataComponents.CONSUMABLE)) &&
-				!(item instanceof ArmorItem)
+				!(item instanceof ArmorItem) &&
+				!(item instanceof RecordItem)
 				||
 				additionalBannedItems.contains(item);
 	}
@@ -917,12 +924,12 @@ public class ChunkProtection
 		return shouldProtect;
 	}
 
-	public boolean onMobGrief(IServerData<CM, ?> serverData, Entity entity){
+	public boolean onMobGrief(IServerData<CM, ?> serverData, Entity entity, boolean items){
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		boolean blocks = !(entity instanceof Evoker || nonBlockGriefingMobs.contains(entity.getType()));
-		boolean entities = entity instanceof Evoker || entityGriefingMobs.contains(entity.getType());
-		boolean items = droppedItemGriefingMobs.contains(entity.getType());
+		boolean blocks = !items && !(entity instanceof Evoker || nonBlockGriefingMobs.contains(entity.getType()));
+		boolean entities = !items && (entity instanceof Evoker || entityGriefingMobs.contains(entity.getType()));
+		items = items || droppedItemGriefingMobs.contains(entity.getType());
 		return onMobGrief(serverData, entity, blocks, entities, items);
 	}
 
