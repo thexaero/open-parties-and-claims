@@ -868,7 +868,7 @@ public class ChunkProtection
 				!itemStack.is(ItemTags.BOATS) &&
 				!(item instanceof MilkBucketItem) &&
 				!(item instanceof ArmorItem) &&
-				!(item instanceof RecordItem)
+				!itemStack.has(DataComponents.JUKEBOX_PLAYABLE)
 				||
 				additionalBannedItems.contains(item);
 	}
