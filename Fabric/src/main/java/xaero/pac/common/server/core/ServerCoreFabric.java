@@ -18,13 +18,10 @@
 
 package xaero.pac.common.server.core;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.level.block.Block;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 import xaero.pac.common.server.world.ServerLevelHelper;
