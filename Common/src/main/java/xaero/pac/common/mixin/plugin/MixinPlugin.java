@@ -36,7 +36,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	//almost no mod needs to use the following field for class-check-based mod detection, probably just Optifine
 	public static final Map<String, String> MOD_REQ_CLASS_CHECKS = ImmutableMap.of(
-			"optifine", "optifine.OptiFineJar"
+			"optifine", "optifine.Patcher"
 	);
 
 	@Override
