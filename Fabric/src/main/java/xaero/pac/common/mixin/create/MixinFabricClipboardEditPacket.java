@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2025, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,29 +16,31 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mixin;
+package xaero.pac.common.mixin.create;
 
-import net.minecraft.core.Vec3i;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.item.ItemEntity;
+import com.simibubi.create.content.equipment.clipboard.ClipboardEditPacket;
+import com.simibubi.create.foundation.networking.SimplePacketBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xaero.pac.common.server.core.ServerCore;
 
-import java.util.Iterator;
-import java.util.List;
+@Mixin(ClipboardEditPacket.class)
+public class MixinFabricClipboardEditPacket {
 
-@Mixin(value = Mob.class, priority = 1000001)
-public class MixinFabricMob {
+	@Shadow(remap = false)
+	private BlockPos targetedBlock;
 
-	@Inject(method = "aiStep", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;pickUpItem(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/item/ItemEntity;)V"), cancellable = true)
-	public void onAiStepItemPickup(CallbackInfo ci, ProfilerFiller profilerFiller, ServerLevel serverLevel, Vec3i vec3i, List list, Iterator var3, ItemEntity itemEntity){
-		if(ServerCore.onMobItemPickup(itemEntity, (Mob)(Object)this))
+	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
+	public void onHandle(SimplePacketBase.Context context, CallbackInfo ci){
+		ServerPlayer player = context.getSender();
+		if (player == null)
+			return;
+		if(!ServerCore.isCreateTileEntityPacketAllowed(targetedBlock, player))
 			ci.cancel();
 	}
 

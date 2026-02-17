@@ -10,7 +10,8 @@
         "MixinForgeFireBlock",
         "MixinForgeMob",
         "MixinForgePiglin",
-        "MixinOptionalExperienceOrb"
+        "MixinOptionalExperienceOrb",
+        "optifine.breaks.MixinForgeMob"
     ],
     "client": [
 
