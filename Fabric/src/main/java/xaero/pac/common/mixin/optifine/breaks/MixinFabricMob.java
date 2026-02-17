@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2025, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,7 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.mixin;
+package xaero.pac.common.mixin.optifine.breaks;
 
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
