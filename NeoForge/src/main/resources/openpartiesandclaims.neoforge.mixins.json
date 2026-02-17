@@ -9,7 +9,8 @@
     "MixinNeoForgeFireBlock",
     "MixinNeoForgeMob",
     "MixinNeoForgePiglin",
-    "MixinNeoForgeServerGamePacketListenerImpl"
+    "MixinNeoForgeServerGamePacketListenerImpl",
+    "optifine.breaks.MixinNeoForgeMob"
   ],
   "client": [
 

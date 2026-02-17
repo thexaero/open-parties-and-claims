@@ -41,6 +41,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -73,7 +74,7 @@ public class CommonEventsNeoForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
-		if(super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Pair.of(s.getPos(), s.getCurrentBlock())), event.getEntity()))
+		if(super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Triple.of(s.getPos(), s.getReplacedBlock(), s.getCurrentBlock())), event.getEntity()))
 			event.setCanceled(true);
 	}
 
@@ -178,9 +179,16 @@ public class CommonEventsNeoForge extends CommonEvents {
 		MinecraftServer server = event.getEntity().getServer();
 		if(server == null)
 			return;
-		if(ServerCore.isMobGriefingForItems(server.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
+		boolean items = ServerCore.isMobGriefingForItems(server.getTickCount());
+		//^ this means that the mob griefing rule is being checked for item pickup
+		if(
+				!OpenPartiesAndClaims.INSTANCE.getModSupport().OPTIFINE &&
+				//^ with optifine, MixinForgeMob injection into aiStep breaks,
+				//which breaks item pickup protection, so we have to use the mob griefing check
+				items
+		)
 			return;
-		if(super.onMobGrief(event.getEntity()))
+		if(super.onMobGrief(event.getEntity(), items))
 			event.setResult(Event.Result.DENY);
 	}
 
@@ -293,7 +301,7 @@ public class CommonEventsNeoForge extends CommonEvents {
 	}
 
 	@Override
-	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+	public void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		NeoForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker()));
 	}
 
