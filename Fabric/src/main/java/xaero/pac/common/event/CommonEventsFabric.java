@@ -195,7 +195,7 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	public boolean onMobGrief(Entity entity) {
-		return super.onMobGrief(entity);
+		return super.onMobGrief(entity, false);
 	}
 
 	public boolean onLivingHurt(DamageSource source, Entity target) {
@@ -272,7 +272,7 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	@Override
-	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+	public void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker());
 	}
 

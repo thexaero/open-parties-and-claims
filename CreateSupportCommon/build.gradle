@@ -2,8 +2,6 @@ plugins {
     id 'org.spongepowered.gradle.vanilla'
 }
 
-java.withJavadocJar()
-
 base {
     archivesName = "${mod_name}-create-support-common-${minecraft_version}"
 }
