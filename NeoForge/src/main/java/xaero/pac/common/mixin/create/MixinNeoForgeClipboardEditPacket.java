@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2025, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,8 +18,7 @@
 
 package xaero.pac.common.mixin.create;
 
-import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
-import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
+import com.simibubi.create.content.equipment.clipboard.ClipboardEditPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,19 +28,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.common.server.core.ServerCore;
 
-@Mixin(BlockEntityConfigurationPacket.class)
-public class MixinNeoForgeBlockEntityConfigurationPacket {
+@Mixin(ClipboardEditPacket.class)
+public class MixinNeoForgeClipboardEditPacket {
 
 	@Shadow
-	protected BlockPos pos;
+	private BlockPos targetedBlock;
 
 	@Inject(method = "handle", remap = false, at = @At("HEAD"), cancellable = true)
 	public void onHandle(ServerPlayer player, CallbackInfo ci){
 		if (player == null)
 			return;
-		if((Object)this.getClass() == LogisticalStockRequestPacket.class)
-			return;
-		if(!ServerCore.isCreateTileEntityPacketAllowed(pos, player))
+		if(!ServerCore.isCreateTileEntityPacketAllowed(targetedBlock, player))
 			ci.cancel();
 	}
 
