@@ -19,6 +19,7 @@
 package xaero.pac.common.server;
 
 import net.minecraft.server.MinecraftServer;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -32,6 +33,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.impl.DefaultPlayerPartySystem;
 
 public class ServerStartingCallback {
 	
@@ -43,8 +45,24 @@ public class ServerStartingCallback {
 	}
 
 	public void onLoad(MinecraftServer server) {
+		IServerData<
+			IServerClaimsManager<
+				IPlayerChunkClaim,
+				IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
+				IServerDimensionClaimsManager<IServerRegionClaims>
+			>,
+			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
+		> serverData = ServerData.from(server);
+		try {
+			serverData.getPlayerPermissionSystemManager().preRegister();
+			serverData.getPlayerPartySystemManager().preRegister();
+			serverData.getPlayerPartySystemManager().register("default", new DefaultPlayerPartySystem(serverData.getPartyManager()));
+			OpenPartiesAndClaims.INSTANCE.getCommonEvents().fireAddonRegisterEvent(serverData);
+		} finally {
+			serverData.getPlayerPermissionSystemManager().postRegister();
+			serverData.getPlayerPartySystemManager().postRegister();
+		}
 		playerClaimInfoManagerIO.load();
-		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 		serverData.getPlayerPermissionSystemManager().updateUsedSystem(ServerConfig.CONFIG.permissionSystem.get());
 		serverData.getPlayerPartySystemManager().updatePrimarySystem(ServerConfig.CONFIG.primaryPartySystem.get());
 	}
