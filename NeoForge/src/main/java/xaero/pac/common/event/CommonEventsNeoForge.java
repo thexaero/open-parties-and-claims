@@ -76,7 +76,7 @@ public class CommonEventsNeoForge extends CommonEvents {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
-		if(super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Triple.of(s.getPos(), s.getReplacedBlock(), s.getCurrentState())), event.getEntity()))
+		if(super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Triple.of(s.getPos(), s.getState(), s.getCurrentState())), event.getEntity()))
 			event.setCanceled(true);
 	}
 
