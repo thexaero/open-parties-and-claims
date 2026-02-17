@@ -30,7 +30,6 @@
         "MixinFabricLargeFireball",
         "MixinFabricLivingEntity",
         "MixinFabricMinecraftServer",
-        "MixinFabricMob",
         "MixinFabricMoveToBlockGoal",
         "MixinFabricNaturalSpawner",
         "MixinFabricPersistentEntitySectionManager",
@@ -56,7 +55,8 @@
         "MixinFabricWitherSkull",
         "MixinOptionalButtonBlock",
         "MixinOptionalEntityGetter",
-        "MixinOptionalExperienceOrb"
+        "MixinOptionalExperienceOrb",
+        "optifine.breaks.MixinFabricMob"
     ],
     "client": [
         "MixinFabricAbstractClientPlayer",
