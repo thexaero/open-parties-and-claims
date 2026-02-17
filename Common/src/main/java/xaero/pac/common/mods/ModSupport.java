@@ -18,6 +18,9 @@
 
 package xaero.pac.common.mods;
 
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.mixin.plugin.MixinPlugin;
+
 public abstract class ModSupport {
 
 	public boolean LUCK_PERMS;
@@ -26,6 +29,7 @@ public abstract class ModSupport {
 	private FTBRanks ftbRanks;
 	public boolean FTB_TEAMS;
 	private FTBTeams ftbTeams;
+	public boolean OPTIFINE;
 
 	public void check(boolean client){
 		if(!client) {
@@ -46,6 +50,15 @@ public abstract class ModSupport {
 			Class.forName("dev.ftb.mods.ftbteams.FTBTeamsAPI");
 			FTB_TEAMS = true;
 			ftbTeams = new FTBTeams();
+		} catch (ClassNotFoundException e) {
+		}
+		try {
+			Class.forName(MixinPlugin.MOD_REQ_CLASS_CHECKS.get("optifine"));
+			OPTIFINE = true;
+			OpenPartiesAndClaims.LOGGER.warn(
+					"Optifine detected! The default dropped item protection from mobs can't be used, " +
+					"so it's switching to being based on the mob griefing game rule check."
+			);
 		} catch (ClassNotFoundException e) {
 		}
 	}
