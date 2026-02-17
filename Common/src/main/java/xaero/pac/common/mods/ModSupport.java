@@ -19,6 +19,8 @@
 package xaero.pac.common.mods;
 
 import xaero.pac.common.mods.prometheus.Prometheus;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.mixin.plugin.MixinPlugin;
 
 public abstract class ModSupport {
 
@@ -32,6 +34,7 @@ public abstract class ModSupport {
 	private FTBTeams ftbTeams;
 	public boolean ARGONAUTS;
 	private Argonauts argonauts;
+	public boolean OPTIFINE;
 
 	public void check(boolean client){
 		if(!client) {
@@ -64,6 +67,15 @@ public abstract class ModSupport {
 			Class.forName("earth.terrarium.argonauts.api.ApiHelper");
 			ARGONAUTS = true;
 			argonauts = new Argonauts();
+		} catch (ClassNotFoundException e) {
+		}
+		try {
+			Class.forName(MixinPlugin.MOD_REQ_CLASS_CHECKS.get("optifine"));
+			OPTIFINE = true;
+			OpenPartiesAndClaims.LOGGER.warn(
+					"Optifine detected! The default dropped item protection from mobs can't be used, " +
+							"so it's switching to being based on the mob griefing game rule check."
+			);
 		} catch (ClassNotFoundException e) {
 		}
 	}

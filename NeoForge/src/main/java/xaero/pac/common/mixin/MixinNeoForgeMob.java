@@ -46,10 +46,4 @@ public class MixinNeoForgeMob {
 		ServerCore.forgePostItemMobGriefingCheck((Mob)(Object)this);
 	}
 
-	@Inject(method = "aiStep", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;pickUpItem(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/item/ItemEntity;)V"), cancellable = true)
-	public void onAiStepItemPickup(CallbackInfo ci, ProfilerFiller profilerFiller, ServerLevel serverLevel, Vec3i vec3i, Iterator var3, ItemEntity itemEntity){
-		if(ServerCore.onMobItemPickup(itemEntity, (Mob)(Object)this))
-			ci.cancel();
-	}
-
 }

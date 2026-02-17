@@ -45,11 +45,14 @@ import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.OpenPartiesAndClaimsForge;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.event.api.OPACServerAddonRegisterEvent;
+import xaero.pac.common.mods.ModSupportForge;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -76,7 +79,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public boolean onEntityMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
-		return super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Pair.of(s.getPos(), s.getCurrentBlock())), event.getEntity());
+		return super.onEntityMultiPlaceBlock(event.getLevel(), event.getReplacedBlockSnapshots().stream().map(s -> Triple.of(s.getPos(), s.getReplacedBlock(), s.getCurrentBlock())), event.getEntity());
 	}
 
 	@SubscribeEvent
@@ -192,9 +195,16 @@ public class CommonEventsForge extends CommonEvents {
 			return;
 		if(!server.isSameThread())
 			return;
-		if(ServerCore.isMobGriefingForItems(server.getTickCount()))//this means that the mob griefing rule is being checked for item pickup
+		boolean items = ServerCore.isMobGriefingForItems(server.getTickCount());
+		//^ this means that the mob griefing rule is being checked for item pickup
+		if(
+				!OpenPartiesAndClaims.INSTANCE.getModSupport().OPTIFINE &&
+				//^ with optifine, MixinForgeMob injection into aiStep breaks,
+				//which breaks item pickup protection, so we have to use the mob griefing check
+				items
+		)
 			return;
-		if(super.onMobGrief(event.getEntity()))
+		if(super.onMobGrief(event.getEntity(), items))
 			event.setResult(Result.DENY);
 	}
 
@@ -299,7 +309,7 @@ public class CommonEventsForge extends CommonEvents {
 	}
 
 	@Override
-	protected void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+	public void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		OPACServerAddonRegisterEvent.BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker()));
 	}
 
