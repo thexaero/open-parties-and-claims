@@ -90,19 +90,3 @@ jar.finalizedBy('reobfJar', 'packageSources')
 //disabling this because it seems bugged, because of mod dependencies in the Common project, with no apparent workaround
 //works fine in the Fabric one for some reason
 tasks.getByName('compileTestJava').setEnabled(false)
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
-        }
-    }
-}
