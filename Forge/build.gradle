@@ -152,7 +152,6 @@ publishing {
             artifactId base.archivesName.get()
             from components.java
             fg.component(it)
-            artifact source: devJarDest, classifier: 'dev', extension: 'jar'
         }
     }
 }
