@@ -3,6 +3,13 @@ plugins {
 }
 
 java.withJavadocJar()
+java.withSourcesJar()
+
+components.java {
+    withVariantsFromConfiguration(configurations.javadocElements) {
+        skip()//skipping publishing of javadoc jar
+    }
+}
 
 archivesBaseName = "${mod_name}-common-${minecraft_version}"
 
@@ -75,16 +82,8 @@ javadoc {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
+            artifactId base.archivesName.get()
             from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
         }
     }
 }
