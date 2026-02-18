@@ -3,6 +3,8 @@ plugins {
     id 'net.neoforged.gradle.userdev' version '7.0.41'
 }
 
+java.withSourcesJar()
+
 base {
     archivesName = "${mod_name}-neoforge-${minecraft_version}"
 }
@@ -78,6 +80,11 @@ tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
     //from project(":CreateSupportCommon").sourceSets.main.resources
 }
 
+tasks.named("sourcesJar", Jar) {
+    from(project(":Common").sourceSets.main.allSource)
+    //from(project(":CreateSupportCommon").sourceSets.main.allSource)
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -85,11 +92,4 @@ publishing {
             from components.java
         }
     }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
-        }
-    }
 }
-
-jar.finalizedBy('packageSources')
