@@ -4,6 +4,8 @@ plugins {
     id 'org.spongepowered.mixin'
 }
 
+java.withSourcesJar()
+
 base {
     archivesName = "${mod_name}-forge-${minecraft_version}"
 }
@@ -135,7 +137,10 @@ processResources {
     from project(":CreateSupportCommon").sourceSets.main.resources
 }
 
-jar.finalizedBy('packageSources')
+tasks.named("sourcesJar", Jar) {
+    from(project(":Common").sourceSets.main.allSource)
+    from(project(":CreateSupportCommon").sourceSets.main.allSource)
+}
 
 //disabling this because it seems bugged, because of mod dependencies in the Common project, with no apparent workaround
 //works fine in the Fabric one for some reason
@@ -144,15 +149,9 @@ tasks.getByName('compileTestJava').setEnabled(false)
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.base.archivesName.get()
-            version project.version
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
+            artifactId base.archivesName.get()
+            from components.java
+            fg.component(it)
         }
     }
 }
