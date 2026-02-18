@@ -4,6 +4,8 @@ plugins {
     id 'org.spongepowered.mixin'
 }
 
+java.withSourcesJar()
+
 base {
     archivesName = "${mod_name}-forge-${minecraft_version}"
 }
@@ -121,7 +123,28 @@ processResources {
     from project(":CreateSupportCommon").sourceSets.main.resources
 }
 
-jar.finalizedBy('reobfJar', 'packageSources')
+tasks.named("sourcesJar", Jar) {
+    from(project(":Common").sourceSets.main.allSource)
+    from(project(":CreateSupportCommon").sourceSets.main.allSource)
+}
+
+jar.archiveClassifier = "dev"
+def devJarDest = jar.archivePath
+jar.archiveClassifier = null
+
+task copyDevJar {
+    dependsOn(jar)
+    doFirst {
+        copy {
+            from jar.archivePath
+            rename {
+                devJarDest
+            }
+        }
+    }
+}
+
+jar.finalizedBy('reobfJar')
 
 //disabling this because it seems bugged, because of mod dependencies in the Common project, with no apparent workaround
 //works fine in the Fabric one for some reason
@@ -130,15 +153,10 @@ tasks.getByName('compileTestJava').setEnabled(false)
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
+            artifactId base.archivesName.get()
+            from components.java
+            fg.component(it)
+            artifact source: devJarDest, classifier: 'dev', extension: 'jar'
         }
     }
 }
@@ -147,4 +165,10 @@ sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
+}
+
+afterEvaluate {
+    tasks.named('reobfJar') {
+        dependsOn(copyDevJar)
+    }
 }

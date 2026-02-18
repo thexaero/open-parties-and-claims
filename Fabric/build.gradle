@@ -81,6 +81,10 @@ tasks.withType(JavaCompile) {
     source(project(":CreateSupportCommon").sourceSets.main.allSource)
 }
 
+packageSources {
+    from(project(":CreateSupportCommon").sourceSets.main.allSource)//normal common project gets included by default but not this
+}
+
 jar {
     from("LICENSE") {
         rename { "${it}_${mod_name}" }
@@ -92,16 +96,9 @@ jar.finalizedBy('packageSources')
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
+            artifactId base.archivesName.get()
             from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
+            artifact packageSources
         }
     }
 }
