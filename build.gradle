@@ -151,4 +151,13 @@ subprojects {
     compileTestJava {
         enabled = false
     }
+
+    publishing {
+        repositories {
+            maven {
+                url "file://" + System.getenv("local_mod_maven")
+            }
+        }
+    }
+
 }
