@@ -86,7 +86,7 @@ tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
 
 tasks.named("sourcesJar", Jar) {
     from(project(":Common").sourceSets.main.allSource)
-    //from(project(":CreateSupportCommon").sourceSets.main.allSource)
+    from(project(":CreateSupportCommon").sourceSets.main.allSource)
 }
 
 publishing {
