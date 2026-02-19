@@ -62,9 +62,6 @@ dependencies {
     compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-1.21.1:${neoforge_flywheel_version}"
     compileOnly "com.tterrag.registrate:Registrate:${neoforge_registrate_version}"
 
-    implementation "curse.maven:minimap-263420:5189373"
-    implementation "curse.maven:worldmap-317780:5189419"
-
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 
     compileOnly "curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
