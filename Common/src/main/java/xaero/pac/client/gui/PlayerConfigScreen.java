@@ -99,12 +99,12 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			if(!data.isSyncInProgress())
 				refreshButton.onPress();
 			else
-				drawCenteredString(poseStack, font, SYNCING_IN_PROGRESS, width / 2, height / 6 + 64, -1);
+				drawCenteredString(poseStack, font, SYNCING_IN_PROGRESS, width / 2, height / 7 + 64, -1);
 		}
 		if(beingDeletedStateOnOpen != optionValueSourceData.isBeingDeleted())
 			refreshButton.onPress();
 		else if(optionValueSourceData.isBeingDeleted())
-			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 6 + 64, -1);
+			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 7 + 124, -1);
 	}
 
 	public static TextComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){
@@ -430,7 +430,8 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				title = new TranslatableComponent("gui.xaero_pac_ui_player_config");
 			boolean subConfigSelected = data.isSubConfigSelected();
 			PlayerConfigClientStorage optionValueSourceData = subConfigSelected ? data.getOrCreateSubConfig(data.getSelectedSubConfig()) : data;
-			Stream<PlayerConfigStringableOptionClientStorage<?>> optionStream = syncInProgress || optionValueSourceData.isBeingDeleted() ?
+			boolean beingDeleted = optionValueSourceData.isBeingDeleted();
+			Stream<PlayerConfigStringableOptionClientStorage<?>> optionStream = syncInProgress || beingDeleted ?
 					Stream.empty() :
 					optionValueSourceData.typedOptionStream();
 			optionStream.forEach(optionStorage -> {
