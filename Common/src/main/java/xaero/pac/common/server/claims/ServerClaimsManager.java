@@ -152,6 +152,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
+		if(!replace && playerClaimInfo.isReplacementInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
 		boolean withinLimit = claimCountUnaffected || isServer ||
 				playerClaimInfo.getClaimCount() < getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
 		if(withinLimit) {
@@ -170,8 +172,6 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
-		if(!replace && getPlayerInfo(playerId).isReplacementInProgress())
-			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && !isClaimable(dimension))
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
