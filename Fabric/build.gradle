@@ -28,8 +28,8 @@ dependencies {
     compileOnly project(":Common")
     compileOnly project(":CreateSupportCommon")
 
-    compileOnly 'com.electronwill.night-config:core:3.6.3'
-    compileOnly 'com.electronwill.night-config:toml:3.6.3'
+    compileOnly 'com.electronwill.night-config:core:3.6.6'
+    compileOnly 'com.electronwill.night-config:toml:3.6.6'
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:20.2.6"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     modCompileOnly "curse.maven:ftbranks-472659:3831005"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
