@@ -186,6 +186,14 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		}
 
 		private <T extends Comparable<T>> T getOptionValue(PlayerConfigStringableOptionClientStorage<T> option){
+			return getOptionValue(data, defaultPlayerConfigData, option);
+		}
+
+		private <T extends Comparable<T>> T getOptionValue(
+				PlayerConfigClientStorage data,
+				PlayerConfigClientStorage defaultPlayerConfigData,
+				PlayerConfigStringableOptionClientStorage<T> option
+		){
 			T value;
 			if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
 				value = defaultPlayerConfigData.getOptionStorage(option.getOption()).getValue();
@@ -209,7 +217,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		}
 
 		private <HT, T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
-			HT initialValue = valueToHolder.apply(getOptionValue(option));
+			final PlayerConfigClientStorage finalDefaultPlayerConfigData = defaultPlayerConfigData;
 			return (el, xy) -> CycleButton.<HT>builder(v -> {
 						Component defaultDisplay = option.getOption().getValueDisplayName(holderToValue.apply(v));
 						if(option.getType() == Integer.class){
@@ -220,7 +228,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						}
 						return defaultDisplay;
 					},
-					() -> initialValue
+					() -> valueToHolder.apply(getOptionValue(data, finalDefaultPlayerConfigData, option))
 					)
 					.withValues(values)
 					.create(xy.getX(), xy.getY(), elementWidth, elementHeight, optionTitle, getRegularValueChangeListener(el, option, holderToValue, data));
