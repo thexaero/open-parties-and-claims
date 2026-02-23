@@ -20,6 +20,8 @@ package xaero.pac.common.server.claims.protection;
 
 import com.google.common.collect.Iterators;
 import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -650,12 +652,16 @@ public class ChunkProtection
 		return getClaimConfig(serverData.getPlayerConfigs(), (IPlayerChunkClaim) claim);
 	}
 	
-	private InteractionTargetResult blockAccessCheck(Block block, IPlayerConfig config, Entity entity, Entity accessor, UUID accessorId, boolean emptyHand, boolean breaking) {
-		boolean chunkAccess = hasChunkAccess(config, accessor, accessorId);
+	private InteractionTargetResult blockAccessCheck(Block block, IPlayerConfig config, Entity entity, Entity accessor, UUID accessorId, boolean emptyHand, boolean breaking, boolean explosion) {
+		boolean chunkAccess = (!explosion || !breaking) && hasChunkAccess(config, accessor, accessorId);//for explosions, only non-breaking interaction checks chunk access
 		if(chunkAccess)
 			return InteractionTargetResult.ALLOW;
 		else {
-			boolean optionProtects = checkProtectionLeveledOption(getUsedBlockProtectionOption(config, entity, accessor), config, accessor, accessorId);
+			boolean optionProtects;
+			if(explosion)
+				optionProtects = config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS);
+			else
+				optionProtects = checkProtectionLeveledOption(getUsedBlockProtectionOption(config, entity, accessor), config, accessor, accessorId);
 			if(optionProtects)
 				optionProtects = entity instanceof Player ||
 						!isAllowedToGrief(entity, accessor, accessorId, config, breaking, entitiesAllowedToBreakBlocks, entitiesAllowedToInteractWithBlocks, blockAccessEntityGroups);
@@ -691,7 +697,7 @@ public class ChunkProtection
 	}
 	
 	private InteractionTargetResult onBlockAccess(IServerData<CM, ?> serverData, Block block, IPlayerConfig config, Entity entity, Entity accessor, UUID accessorId, InteractionHand hand, boolean emptyHand, boolean leftClick, Component message, Entity messageReceiver) {
-		InteractionTargetResult result = blockAccessCheck(block, config, entity, accessor, accessorId, emptyHand, leftClick);
+		InteractionTargetResult result = blockAccessCheck(block, config, entity, accessor, accessorId, emptyHand, leftClick, false);
 		if(result == InteractionTargetResult.PROTECT) {
 			if(messageReceiver instanceof ServerPlayer player) {
 				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == null ? CANT_INTERACT_BLOCK : hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF), player.getUUID());
@@ -813,7 +819,7 @@ public class ChunkProtection
 		if(entity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) entity, pos))
 			return false;
 		return (option == null || checkProtectionLeveledOption(option, config, accessor, accessorId)) && (entity instanceof Player || !canGrief(entity, config, accessor, accessorId, true, false, false))
-				&& blockAccessCheck(null, config, entity, accessor, accessorId, false, false) == InteractionTargetResult.PROTECT;
+				&& blockAccessCheck(null, config, entity, accessor, accessorId, false, false, false) == InteractionTargetResult.PROTECT;
 	}
 
 	@Override
@@ -1146,28 +1152,25 @@ public class ChunkProtection
 			ignoreChunkEnter = false;
 		}
 	}
-	
-	public void onExplosionDetonate(IServerData<CM, ?> serverData, ServerLevel world, Explosion explosion, List<Entity> affectedEntities, List<BlockPos> affectedBlocks) {
+
+	public void onExplosionDetonate(
+			IServerData<CM, ?> serverData,
+			ServerLevel world,
+			Explosion explosion,
+			List<Entity> affectedEntities,
+			List<BlockPos> affectedBlocks
+	) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		DamageSource damageSource = explosion.getDamageSource();
-		if(damageSource.getEntity() != null && hasActiveFullPass(damageSource.getEntity()))
-			return;
-		Iterator<BlockPos> positions = affectedBlocks.iterator();
-		while(positions.hasNext()) {
-			BlockPos blockPos = positions.next();
-			ChunkPos chunkPos = new ChunkPos(blockPos);
-			IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
-			IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-			if(config != null && (!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) || !config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS)))
-				continue;
-			if(config != null)
-				positions.remove();
-		}
-		Iterator<Entity> entities = affectedEntities.iterator();
 		Entity directDamager = damageSource.getDirectEntity();
 		Entity damager = damageSource.getEntity();
+		if(damager != null && hasActiveFullPass(damager))
+			return;
+		if(directDamager != null && hasActiveFullPass(directDamager))
+			return;
+		Iterator<Entity> entities = affectedEntities.iterator();
 		while(entities.hasNext()) {
 			Entity entity = entities.next();
 			IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), entity.chunkPosition());
@@ -1177,9 +1180,47 @@ public class ChunkProtection
 			if(config != null && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS) &&
 					(!(damager instanceof Player) && isProtectable(entity) ||
 							entityAccessCheck(playerConfigs, config, entity, directDamager, damager, null, true, true, true) == InteractionTargetResult.PROTECT)
-					) {
+			)
 				entities.remove();
+		}
+//		if(explosion.getBlockInteraction() == Explosion.BlockInteraction.KEEP)
+//			return;
+		Entity accessor;
+		UUID accessorId;
+		Object accessorInfo = getAccessorInfo(damager == null ? directDamager : damager);
+		if (accessorInfo instanceof UUID) {
+			accessorId = (UUID) accessorInfo;
+			accessor = getEntityById(world, accessorId);
+		} else {
+			accessor = (Entity) accessorInfo;
+			accessorId = accessor.getUUID();
+		}
+		boolean breaking = true;//explosion.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK;
+		Iterator<BlockPos> positions = affectedBlocks.iterator();
+		Object2BooleanMap<IPlayerChunkClaim> blockProtectionCache = new Object2BooleanOpenHashMap<>();
+		while (positions.hasNext()) {
+			BlockPos blockPos = positions.next();
+			ChunkPos chunkPos = new ChunkPos(blockPos);
+			IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
+			IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+			if (config == null)
+				continue;
+			if (!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
+				continue;
+			boolean blockProtected;
+			if(blockProtectionCache.containsKey(claim))
+				blockProtected = blockProtectionCache.getBoolean(claim);
+			else {
+				blockProtected =
+						blockAccessCheck(
+								null, config, directDamager, accessor,
+								accessorId, true, breaking, true
+						) == InteractionTargetResult.PROTECT;
+				blockProtectionCache.put(claim, blockProtected);
 			}
+			if(!blockProtected)
+				continue;
+			positions.remove();
 		}
 	}
 	
