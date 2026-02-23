@@ -1182,8 +1182,8 @@ public class ChunkProtection
 			)
 				entities.remove();
 		}
-//		if(explosion.getBlockInteraction() == Explosion.BlockInteraction.KEEP)
-//			return;
+		if(!explosion.interactsWithBlocks())
+			return;
 		Entity accessor;
 		UUID accessorId;
 		Object accessorInfo = getAccessorInfo(damager == null ? directDamager : damager);
