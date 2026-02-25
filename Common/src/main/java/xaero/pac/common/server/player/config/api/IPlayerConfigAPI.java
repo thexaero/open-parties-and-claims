@@ -52,7 +52,7 @@ public interface IPlayerConfigAPI {
 	 * @param <T>  the type of the option value
 	 */
 	@Nonnull
-	public <T extends Comparable<T>> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> option, @Nullable T value);
+	public <T> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> option, @Nullable T value);
 
 	/**
 	 * Gets the effective value of a config option.
@@ -67,7 +67,7 @@ public interface IPlayerConfigAPI {
 	 * @param <T>  the type of the option value
 	 */
 	@Nonnull
-	public <T extends Comparable<T>> T getEffective(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> T getEffective(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	/**
 	 * Gets the raw config value from the effective config of a config option, e.g. from the default
@@ -82,7 +82,7 @@ public interface IPlayerConfigAPI {
 	 * @param <T>  the type of the option value
 	 */
 	@Nonnull
-	public <T extends Comparable<T>> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	/**
 	 * Gets the raw config value from this config, which can be null in the case of sub-configs.
@@ -92,7 +92,7 @@ public interface IPlayerConfigAPI {
 	 * @param <T>  the type of the option value
 	 */
 	@Nullable
-	public <T extends Comparable<T>> T getRaw(@Nonnull IPlayerConfigOptionSpecAPI<T> o);
+	public <T> T getRaw(@Nonnull IPlayerConfigOptionSpecAPI<T> o);
 
 	/**
 	 * Tries to reset the value of a specified config option to the default raw value, as
@@ -107,7 +107,7 @@ public interface IPlayerConfigAPI {
 	 * @param <T>  the type of the option value
 	 */
 	@Nonnull
-	public <T extends Comparable<T>> SetResult tryToReset(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> SetResult tryToReset(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	/**
 	 * Gets the type {@link PlayerConfigType} of this config.
@@ -251,7 +251,7 @@ public interface IPlayerConfigAPI {
 	 * @param <T>  the type of the option value
 	 */
 	@Nullable
-	public <T extends Comparable<T>> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T>option);
+	public <T> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T>option);
 
 	/**
 	 * Checks whether an option is allowed in this config.

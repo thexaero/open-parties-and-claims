@@ -36,6 +36,6 @@ public interface IPlayerConfigSynchronizer {
 
 	public void syncSubExistence(ServerPlayer player, IPlayerConfig subConfig, boolean create);
 
-	public <T extends Comparable<T>> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option);
+	public <T> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option);
 
 }

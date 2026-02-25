@@ -125,7 +125,7 @@ public class PlayerConfig
 		this.storage = storage;
 	}
 	
-	private <T extends Comparable<T>> void set(PlayerConfigOptionSpec<T> option, T value) {
+	private <T> void set(PlayerConfigOptionSpec<T> option, T value) {
 		if(value == null)
 			getStorage().remove(option.getPath());
 		else
@@ -134,15 +134,15 @@ public class PlayerConfig
 			setDirty(true);
 	}
 
-	private <T extends Comparable<T>> T get(PlayerConfigOptionSpec<T> option) {
+	private <T> T get(PlayerConfigOptionSpec<T> option) {
 		return getStorage().get(option.getPath());
 	}
 
-	protected <T extends Comparable<T>> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value){
+	protected <T> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value){
 		return option.getServerSideValidator().test(this, value);
 	}
 
-	protected <T extends Comparable<T>> T getValueForDefaultConfigMatch(T actualEffective, T value){
+	protected <T> T getValueForDefaultConfigMatch(T actualEffective, T value){
 		return actualEffective;//the value from the default config
 	}
 
@@ -153,7 +153,7 @@ public class PlayerConfig
 	
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> o, @Nullable T value) {
+	public <T> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> o, @Nullable T value) {
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		if(!isOptionAllowed(option))
 			return SetResult.ILLEGAL_OPTION;
@@ -244,7 +244,7 @@ public class PlayerConfig
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+	public <T> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		if(isOptionDefaulted(option))
 			return manager.getDefaultConfig().getFromEffectiveConfig(option);
@@ -252,26 +252,26 @@ public class PlayerConfig
 	}
 
 	@Override
-	public <T extends Comparable<T>> T getRaw(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
+	public <T> T getRaw(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		return get(option);
 	}
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> SetResult tryToReset(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> SetResult tryToReset(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
 		return tryToSet(option, getDefaultRawValue(option));
 	}
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> T getEffective(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+	public <T> T getEffective(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		T value = getFromEffectiveConfig(option);
 		return applyDefaultReplacer(o, value);
 	}
 
-	public <T extends Comparable<T>> T applyDefaultReplacer(IPlayerConfigOptionSpecAPI<T> o, T value){
+	public <T> T applyDefaultReplacer(IPlayerConfigOptionSpecAPI<T> o, T value){
 		if(value == null)
 			return null;
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
@@ -441,7 +441,7 @@ public class PlayerConfig
 
 	@Nullable
 	@Override
-	public <T extends Comparable<T>> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
 		return option.getDefaultValue();
 	}
 

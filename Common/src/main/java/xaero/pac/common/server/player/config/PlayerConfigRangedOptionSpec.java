@@ -31,7 +31,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends PlayerConfigOptionSpec<T> {
+public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpec<T> {
 	
 	private final T minValue;
 	private final T maxValue;
@@ -62,7 +62,7 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 		return maxValue;
 	}
 
-	public final static class Builder<T extends Comparable<T>> extends PlayerConfigOptionSpec.Builder<T, Builder<T>> {
+	public final static class Builder<T> extends PlayerConfigOptionSpec.Builder<T, Builder<T>> {
 
 		private T minValue;
 		private T maxValue;
@@ -108,7 +108,7 @@ public final class PlayerConfigRangedOptionSpec<T extends Comparable<T>> extends
 			return this;
 		}
 		
-		public static <T extends Comparable<T>> Builder<T> begin(Class<T> valueType){
+		public static <T> Builder<T> begin(Class<T> valueType){
 			if(valueType != Integer.class && valueType != Double.class)
 				throw new IllegalArgumentException();
 			return new Builder<T>(valueType).setDefault();

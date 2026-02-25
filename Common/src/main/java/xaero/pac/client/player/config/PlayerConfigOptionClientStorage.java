@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.BiPredicate;
 
-public class PlayerConfigOptionClientStorage<T extends Comparable<T>> implements IPlayerConfigOptionClientStorage<T> {
+public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionClientStorage<T> {
 	
 	protected final PlayerConfigOptionSpec<T> option;
 	private T value;
@@ -149,7 +149,7 @@ public class PlayerConfigOptionClientStorage<T extends Comparable<T>> implements
 		return option.isDynamic();
 	}
 
-	public static abstract class Builder<T extends Comparable<T>, B extends Builder<T, B>> {
+	public static abstract class Builder<T, B extends Builder<T, B>> {
 
 		protected final B self;
 		protected PlayerConfigOptionSpec<T> option;

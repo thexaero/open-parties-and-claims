@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 public interface IPlayerConfig extends IPlayerConfigAPI {
 	//internal API
 
-	public <T extends Comparable<T>> T applyDefaultReplacer(IPlayerConfigOptionSpecAPI<T> o, T value);
+	public <T> T applyDefaultReplacer(IPlayerConfigOptionSpecAPI<T> o, T value);
 
 	@Nullable
 	@Override
@@ -82,7 +82,7 @@ public interface IPlayerConfig extends IPlayerConfigAPI {
 
 	@Nullable
 	@Override
-	public <T extends Comparable<T>> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	@Override
 	public boolean isOptionAllowed(@Nonnull IPlayerConfigOptionSpecAPI<?> option);

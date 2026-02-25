@@ -49,7 +49,19 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 
 	public static class Codec implements BiConsumer<ClientboundPlayerConfigDynamicOptionsPacket, FriendlyByteBuf>, Function<FriendlyByteBuf, ClientboundPlayerConfigDynamicOptionsPacket> {
 
-		private <T extends Comparable<T>> PlayerConfigOptionSpec<T> getEntry(OptionType optionType, CompoundTag entryTag, Tag defaultValueTag, ValueType<T> type, String id, String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, String comment, PlayerConfigOptionCategory category){
+		private <T> PlayerConfigOptionSpec<T> getEntry(
+				OptionType optionType,
+				CompoundTag entryTag,
+				Tag defaultValueTag,
+				ValueType<T> type,
+				String id,
+				String translation,
+				String[] translationArgs,
+				String commentTranslation,
+				String[] commentTranslationArgs,
+				String comment,
+				PlayerConfigOptionCategory category
+		){
 			return optionType.buildSpec(type, entryTag)
 					.setId(id)
 					.setTranslation(translation, translationArgs)
@@ -105,7 +117,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 			}
 		}
 
-		private <T extends Comparable<T>> void handleValueAndOptionTypes(PlayerConfigOptionSpec<T> entry, CompoundTag entryTag){
+		private <T> void handleValueAndOptionTypes(PlayerConfigOptionSpec<T> entry, CompoundTag entryTag){
 			ValueType<T> valueType = getEntryValueType(entry);
 			Tag valueTag = valueType.valueTagger.apply(entry.getDefaultValue());
 			entryTag.put(DEFAULT_VALUE_KEY, valueTag);
@@ -155,11 +167,11 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T extends Comparable<T>> ValueType<T> getEntryValueType(PlayerConfigOptionSpec<T> entry){
+	private static <T> ValueType<T> getEntryValueType(PlayerConfigOptionSpec<T> entry){
 		return (ValueType<T>)ValueType.ALL.get(entry.getType());
 	}
 
-	private static final class ValueType<T extends Comparable<T>> {
+	private static final class ValueType<T> {
 
 		private static final Map<Class<?>, ValueType<?>> ALL = new HashMap<>();
 
@@ -189,26 +201,26 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 
 		public static final OptionType DEFAULT = new OptionType(0){
 			@Override
-			public <T extends Comparable<T>> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag) {
+			public <T> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag) {
 			}
 			@Override
-			public <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
+			public <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
 				return PlayerConfigOptionSpec.FinalBuilder.begin(type.jType);
 			}
 		};
 		public static final OptionType HEX = new OptionType(1){
 			@Override
-			public <T extends Comparable<T>> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag) {
+			public <T> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag) {
 			}
 			@SuppressWarnings("unchecked")
 			@Override
-			public <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
+			public <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
 				return (PlayerConfigOptionSpec.Builder<T, ?>) PlayerConfigHexOptionSpec.Builder.begin();
 			}
 		};
 		public static final OptionType RANGED = new OptionType(2){
 			@Override
-			public <T extends Comparable<T>> void serializeExtra(PlayerConfigOptionSpec<T> o, ValueType<T> type, CompoundTag entryTag) {
+			public <T> void serializeExtra(PlayerConfigOptionSpec<T> o, ValueType<T> type, CompoundTag entryTag) {
 				PlayerConfigRangedOptionSpec<T> option = (PlayerConfigRangedOptionSpec<T>) o;
 				T minValue = option.getMinValue();
 				T maxValue = option.getMaxValue();
@@ -218,7 +230,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 				entryTag.put("max", maxTag);
 			}
 			@Override
-			public <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
+			public <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
 				PlayerConfigRangedOptionSpec.Builder<T> builder = PlayerConfigRangedOptionSpec.Builder.begin(type.jType);
 				Tag minValueTag = entryTag.get("min");
 				Tag maxValueTag = entryTag.get("max");
@@ -229,12 +241,12 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 		};
 		public static final OptionType STRING = new OptionType(3){
 			@Override
-			public <T extends Comparable<T>> void serializeExtra(PlayerConfigOptionSpec<T> o, ValueType<T> type, CompoundTag entryTag) {
+			public <T> void serializeExtra(PlayerConfigOptionSpec<T> o, ValueType<T> type, CompoundTag entryTag) {
 				PlayerConfigStringOptionSpec option = (PlayerConfigStringOptionSpec) o;
 				entryTag.putInt("ml", option.getMaxLength());
 			}
 			@Override
-			public <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
+			public <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
 				PlayerConfigStringOptionSpec.Builder builder = PlayerConfigStringOptionSpec.Builder.begin();
 				builder.setMaxLength(entryTag.getInt("ml"));
 				@SuppressWarnings("unchecked")
@@ -244,7 +256,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 		};
 		public static final OptionType STATIC_LIST = new OptionType(4){
 			@Override
-			public <T extends Comparable<T>> void serializeExtra(PlayerConfigOptionSpec<T> o, ValueType<T> type, CompoundTag entryTag) {
+			public <T> void serializeExtra(PlayerConfigOptionSpec<T> o, ValueType<T> type, CompoundTag entryTag) {
 				PlayerConfigStaticListIterationOptionSpec<T> option = (PlayerConfigStaticListIterationOptionSpec<T>) o;
 				ListTag iterationListTag = new ListTag();
 				for(T el : option.getList())
@@ -252,7 +264,7 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 				entryTag.put("il", iterationListTag);
 			}
 			@Override
-			public <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
+			public <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
 				PlayerConfigStaticListIterationOptionSpec.Builder<T> builder = PlayerConfigStaticListIterationOptionSpec.Builder.begin(type.jType);
 				ListTag iterationListTag = (ListTag) entryTag.get("il");
 				List<T> list = new ArrayList<>(iterationListTag.size());
@@ -264,10 +276,10 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 		};
 		public static final OptionType UNSYNCABLE = new OptionType(5){
 			@Override
-			public <T extends Comparable<T>> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag) {
+			public <T> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag) {
 			}
 			@Override
-			public <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
+			public <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag) {
 				return null;
 			}
 		};
@@ -279,8 +291,8 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 			ALL.put(index, this);
 		}
 
-		public abstract <T extends Comparable<T>> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag);
-		public abstract <T extends Comparable<T>> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag);
+		public abstract <T> void serializeExtra(PlayerConfigOptionSpec<T> option, ValueType<T> type, CompoundTag entryTag);
+		public abstract <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(ValueType<T> type, CompoundTag entryTag);
 
 	}
 

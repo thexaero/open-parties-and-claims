@@ -30,7 +30,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class PlayerConfigListIterationOptionSpec<T extends Comparable<T>> extends PlayerConfigOptionSpec<T> {
+public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSpec<T> {
 
 	private final Function<PlayerConfig<?>, List<T>> serverSideListGetter;
 	private final Function<PlayerConfigClientStorage, List<T>> clientSideListGetter;
@@ -50,7 +50,7 @@ public class PlayerConfigListIterationOptionSpec<T extends Comparable<T>> extend
 		return clientSideListGetter;
 	}
 
-	abstract static class Builder<T extends Comparable<T>, B extends Builder<T,B>> extends PlayerConfigOptionSpec.Builder<T, B> {
+	abstract static class Builder<T, B extends Builder<T,B>> extends PlayerConfigOptionSpec.Builder<T, B> {
 
 		protected Function<PlayerConfig<?>, List<T>> serverSideListGetter;
 		protected Function<PlayerConfigClientStorage, List<T>> clientSideListGetter;
@@ -99,7 +99,7 @@ public class PlayerConfigListIterationOptionSpec<T extends Comparable<T>> extend
 
 	}
 
-	public static final class FinalBuilder<T extends Comparable<T>> extends Builder<T, FinalBuilder<T>> {
+	public static final class FinalBuilder<T> extends Builder<T, FinalBuilder<T>> {
 
 		private FinalBuilder(Class<T> type) {
 			super(type);
@@ -110,7 +110,7 @@ public class PlayerConfigListIterationOptionSpec<T extends Comparable<T>> extend
 			return new PlayerConfigListIterationOptionSpec<>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter, clientSideListGetter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.UNSYNCABLE, dynamic);
 		}
 
-		public static <T extends Comparable<T>> FinalBuilder<T> begin(Class<T> type){
+		public static <T> FinalBuilder<T> begin(Class<T> type){
 			return new FinalBuilder<>(type).setDefault();
 		}
 

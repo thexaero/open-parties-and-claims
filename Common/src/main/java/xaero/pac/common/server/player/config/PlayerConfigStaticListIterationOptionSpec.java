@@ -30,7 +30,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public final class PlayerConfigStaticListIterationOptionSpec<T extends Comparable<T>> extends PlayerConfigListIterationOptionSpec<T> {
+public final class PlayerConfigStaticListIterationOptionSpec<T> extends PlayerConfigListIterationOptionSpec<T> {
 
 	private final List<T> list;
 
@@ -46,7 +46,7 @@ public final class PlayerConfigStaticListIterationOptionSpec<T extends Comparabl
 		return list;
 	}
 
-	public static final class Builder<T extends Comparable<T>> extends PlayerConfigListIterationOptionSpec.Builder<T, Builder<T>> {
+	public static final class Builder<T> extends PlayerConfigListIterationOptionSpec.Builder<T, Builder<T>> {
 
 		private List<T> list;
 
@@ -80,7 +80,7 @@ public final class PlayerConfigStaticListIterationOptionSpec<T extends Comparabl
 			return new PlayerConfigStaticListIterationOptionSpec<>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter, clientSideListGetter, list, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STATIC_LIST, dynamic);
 		}
 
-		public static <T extends Comparable<T>> Builder<T> begin(Class<T> valueType){
+		public static <T> Builder<T> begin(Class<T> valueType){
 			return new Builder<>(valueType).setDefault();
 		}
 

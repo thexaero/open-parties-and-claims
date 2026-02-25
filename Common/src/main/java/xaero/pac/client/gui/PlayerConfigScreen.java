@@ -57,12 +57,7 @@ import java.util.stream.Stream;
 
 public final class PlayerConfigScreen extends WidgetListScreen {
 
-	private static final Object NULL_PLACEHOLDER = new Comparable<Object>() {
-		@Override
-		public int compareTo(@Nonnull Object o) {
-			return 0;
-		}
-	};
+	private static final Object NULL_PLACEHOLDER = new Object();
 	public static final Component SYNCING_IN_PROGRESS = new TranslatableComponent("gui.xaero_pac_ui_player_config_syncing");
 	public static final Component BEING_DELETED = new TranslatableComponent("gui.xaero_pac_ui_player_config_being_deleted");
 	private final BiConsumer<PlayerConfigScreen, Button> refreshHandler;
@@ -183,7 +178,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			return this;
 		}
 
-		private <T extends Comparable<T>> T getOptionValue(PlayerConfigStringableOptionClientStorage<T> option){
+		private <T> T getOptionValue(PlayerConfigStringableOptionClientStorage<T> option){
 			T value;
 			if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
 				value = defaultPlayerConfigData.getOptionStorage(option.getOption()).getValue();
@@ -192,7 +187,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			return value;
 		}
 
-		private <HT, T extends Comparable<T>> CycleButton.OnValueChange<HT> getRegularValueChangeListener(SimpleValueWidgetListElement.Final<T> el, PlayerConfigStringableOptionClientStorage<T> option, Function<HT, T> holderToValue, PlayerConfigClientStorage data) {
+		private <HT, T> CycleButton.OnValueChange<HT> getRegularValueChangeListener(SimpleValueWidgetListElement.Final<T> el, PlayerConfigStringableOptionClientStorage<T> option, Function<HT, T> holderToValue, PlayerConfigClientStorage data) {
 			return (b, vh) -> {
 				if(!option.isMutable())
 					return;
@@ -206,7 +201,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			};
 		}
 
-		private <HT, T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
+		private <HT, T> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
 			return (el, xy) -> CycleButton.<HT>builder(v -> {
 						Component defaultDisplay = option.getOption().getValueDisplayName(holderToValue.apply(v));
 						if(option.getType() == Integer.class){
@@ -222,7 +217,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.create(xy.getX(), xy.getY(), elementWidth, elementHeight, optionTitle, getRegularValueChangeListener(el, option, holderToValue, data));
 		}
 
-		private <T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplier(PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, T currentValue, PlayerConfigClientStorage data){
+		private <T> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplier(PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, T currentValue, PlayerConfigClientStorage data){
 			PlayerConfigClientStorage valueSourceConfig;
 			if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
 				valueSourceConfig = defaultPlayerConfigData;
@@ -264,7 +259,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, BooleanValueHolder::of, BooleanValueHolder::getValue, data);
 		}
 
-		private <T extends Comparable<T>> SimpleValueWidgetListElement<T, ?> createIterationWidgetListElement(
+		private <T> SimpleValueWidgetListElement<T, ?> createIterationWidgetListElement(
 				PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight,
 				Component optionTitle, List<FormattedCharSequence> tooltip, PlayerConfigClientStorage data){
 			T value = getOptionValue(option);

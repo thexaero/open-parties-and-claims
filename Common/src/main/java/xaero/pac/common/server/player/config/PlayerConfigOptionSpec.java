@@ -40,7 +40,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerConfigOptionSpecAPI<T> {
+public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> {
 
 	public static final TranslatableComponent INHERITED_TEXT = new TranslatableComponent("gui.xaero_pac_config_option_sub_inherited");
 	public static final TranslatableComponent ON_TEXT = new TranslatableComponent("gui.xaero_pac_ui_on");
@@ -250,7 +250,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		return dynamic;
 	}
 
-	public abstract static class Builder<T extends Comparable<T>, B extends Builder<T, B>> {
+	public abstract static class Builder<T, B extends Builder<T, B>> {
 		
 		protected final B self;
 		protected final Class<T> type;
@@ -441,7 +441,7 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 		
 	}
 	
-	public static final class FinalBuilder<T extends Comparable<T>> extends Builder<T, FinalBuilder<T>> {
+	public static final class FinalBuilder<T> extends Builder<T, FinalBuilder<T>> {
 		
 		protected FinalBuilder(Class<T> valueType) {
 			super(valueType);
@@ -452,8 +452,8 @@ public class PlayerConfigOptionSpec<T extends Comparable<T>> implements IPlayerC
 			return new PlayerConfigOptionSpec<>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.DEFAULT, dynamic);
 		}
 		
-		public static <T extends Comparable<T>> FinalBuilder<T> begin(Class<T> valueType){
-			return new FinalBuilder<T>(valueType).setDefault();
+		public static <T> FinalBuilder<T> begin(Class<T> valueType){
+			return new FinalBuilder<>(valueType).setDefault();
 		}
 		
 	}

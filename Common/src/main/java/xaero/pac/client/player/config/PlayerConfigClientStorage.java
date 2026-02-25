@@ -59,14 +59,14 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		this.subConfigs = subConfigs;
 	}
 
-	protected <T extends Comparable<T>> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
+	protected <T> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
 		return option.getDefaultValue();
 	}
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends Comparable<T>> PlayerConfigStringableOptionClientStorage<T> getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
+	public <T> PlayerConfigStringableOptionClientStorage<T> getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		PlayerConfigStringableOptionClientStorage<T> result = (PlayerConfigStringableOptionClientStorage<T>) options.get(option);
 		if(result == null){

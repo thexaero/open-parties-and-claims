@@ -43,7 +43,7 @@ public interface IPlayerConfigClientStorageAPI {
 	 * @param <T>  the type of the option value
 	 */
 	@Nonnull
-	public <T extends Comparable<T>> IPlayerConfigStringableOptionClientStorageAPI<?> getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> IPlayerConfigStringableOptionClientStorageAPI<?> getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	/**
 	 * Gets the type {@link PlayerConfigType} of this config.

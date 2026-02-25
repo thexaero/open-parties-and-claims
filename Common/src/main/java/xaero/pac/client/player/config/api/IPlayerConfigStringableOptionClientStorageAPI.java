@@ -29,7 +29,7 @@ import java.util.function.Function;
 /**
  * API for a stringable player config option value storage on the client side
  */
-public interface IPlayerConfigStringableOptionClientStorageAPI<T extends Comparable<T>> extends IPlayerConfigOptionClientStorageAPI<T> {
+public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlayerConfigOptionClientStorageAPI<T> {
 
 	@Override
 	@Nonnull

@@ -43,7 +43,7 @@ public final class PlayerSubConfigClientStorage extends PlayerConfigClientStorag
 	}
 
 	@Override
-	protected <T extends Comparable<T>> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
+	protected <T> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
 		return null;
 	}
 

@@ -33,7 +33,7 @@ import java.util.function.Predicate;
  *
  * @param <T>  the type of values of this option
  */
-public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
+public interface IPlayerConfigOptionSpecAPI<T> {
 
 	/**
 	 * Gets the ID of this option.

@@ -33,7 +33,7 @@ public interface IPlayerConfigClientStorage<OS extends IPlayerConfigStringableOp
 
 	//internal api
 	@Nonnull
-	public <T extends Comparable<T>> OS getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> OS getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	@Nonnull
 	public Stream<OS> typedOptionStream();

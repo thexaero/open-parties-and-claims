@@ -59,7 +59,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 	}
 	
-	private <T extends Comparable<T>> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, IPlayerConfigOptionSpecAPI<T> option, boolean afterReset) {
+	private <T> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, IPlayerConfigOptionSpecAPI<T> option, boolean afterReset) {
 		boolean isOp = player.hasPermissions(2);
 		boolean mutable = isOp && syncedConfig.getType() != PlayerConfigType.PLAYER;
 		boolean defaulted = !mutable && syncedConfig.getType() == PlayerConfigType.PLAYER;
@@ -87,7 +87,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		sendToClient(player, packet);
 	}
 	
-	public <T extends Comparable<T>> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option) {
 		PlayerConfigOptionValuePacket.Entry packetOptionEntry = getPacketOptionEntry(player, (PlayerConfig<?>)config, option, false);
 		if(packetOptionEntry != null)
 			syncOptionsToClient(player, (PlayerConfig<?>)config, Lists.newArrayList(packetOptionEntry));
@@ -146,7 +146,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		}
 	}
 	
-	public <T extends Comparable<T>> void syncOptionToClients(PlayerConfig<?> config, PlayerConfigOptionSpec<T> option) {
+	public <T> void syncOptionToClients(PlayerConfig<?> config, PlayerConfigOptionSpec<T> option) {
 		forAllRelevantClients(config, player -> syncOptionToClient(player, config, option));
 	}
 

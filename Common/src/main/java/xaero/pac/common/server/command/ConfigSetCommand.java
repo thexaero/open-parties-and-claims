@@ -59,7 +59,7 @@ import static xaero.pac.common.server.command.ConfigCommandUtil.*;
 
 public class ConfigSetCommand {
 	
-	private <T extends Comparable<T>> SetResult tryToSet(CommandContext<CommandSourceStack> context, ServerPlayer player, AdaptiveLocalizer adaptiveLocalizer, IPlayerConfig playerConfig, PlayerConfigOptionSpec<T> option, String valueInput, boolean reset) {
+	private <T> SetResult tryToSet(CommandContext<CommandSourceStack> context, ServerPlayer player, AdaptiveLocalizer adaptiveLocalizer, IPlayerConfig playerConfig, PlayerConfigOptionSpec<T> option, String valueInput, boolean reset) {
 		SetResult result;
 		if(reset) {
 			result = playerConfig.tryToReset(option);

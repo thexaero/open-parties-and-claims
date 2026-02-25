@@ -90,7 +90,7 @@ public class PlayerSubConfig
 		return super.isOptionAllowed(option) && manager.getOverridableOptions().contains(option);
 	}
 
-	private <T extends Comparable<T>> T getInner(IPlayerConfigOptionSpecAPI<T> o, boolean inherit){
+	private <T> T getInner(IPlayerConfigOptionSpecAPI<T> o, boolean inherit){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		if(!manager.getOverridableOptions().contains(option))
 			return inherit ? mainConfig.getFromEffectiveConfig(option) : null;
@@ -105,7 +105,7 @@ public class PlayerSubConfig
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+	public <T> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
 		return getInner(o, true);
 	}
 
@@ -114,18 +114,18 @@ public class PlayerSubConfig
 	}
 
 	@Override
-	protected <T extends Comparable<T>> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value) {
+	protected <T> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value) {
 		return value == null || super.isValidSetValue(option, value);
 	}
 
 	@Override
-	protected <T extends Comparable<T>> T getValueForDefaultConfigMatch(T actualEffective, T value) {
+	protected <T> T getValueForDefaultConfigMatch(T actualEffective, T value) {
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public <T extends Comparable<T>> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
 		return null;
 	}
 

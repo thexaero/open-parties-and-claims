@@ -68,7 +68,7 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 	public static class ServerHandler implements BiConsumer<ServerboundPlayerConfigOptionValuePacket, ServerPlayer> {
 
 		@SuppressWarnings("unchecked")
-		private <T extends Comparable<T>> IPlayerConfigAPI.SetResult setConfigUnchecked(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value) {
+		private <T> IPlayerConfigAPI.SetResult setConfigUnchecked(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value) {
 			return config.tryToSet(option, (T) value);
 		}
 
