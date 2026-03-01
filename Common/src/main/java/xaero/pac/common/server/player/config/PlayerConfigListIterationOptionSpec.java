@@ -18,10 +18,10 @@
 
 package xaero.pac.common.server.player.config;
 
-import net.minecraft.network.chat.Component;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -35,9 +35,37 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 	private final Function<PlayerConfig<?>, List<T>> serverSideListGetter;
 	private final Function<PlayerConfigClientStorage, List<T>> clientSideListGetter;
 
-	protected PlayerConfigListIterationOptionSpec(Class<T> type, String id, String shortenedId, List<String> path, T defaultValue, BiFunction<PlayerConfig<?>, T, T> defaultReplacer, String comment, String translation, String[] translationArgs, String commentTranslation, String[] commentTranslationArgs, PlayerConfigOptionCategory category, Function<String, T> commandInputParser, Function<T, Component> commandOutputWriter, BiPredicate<PlayerConfig<?>, T> serverSideValidator, BiPredicate<PlayerConfigClientStorage, T> clientSideValidator, String tooltipPrefix, Predicate<PlayerConfigType> configTypeFilter, Function<PlayerConfig<?>, List<T>> serverSideListGetter,
-												  Function<PlayerConfigClientStorage, List<T>> clientSideListGetter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType, boolean dynamic) {
-		super(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, syncOptionType, dynamic);
+	protected PlayerConfigListIterationOptionSpec(
+			PlayerConfigOptionValueType<T> type,
+			String id,
+			String shortenedId,
+			List<String> path,
+			T defaultValue,
+			BiFunction<PlayerConfig<?>, T, T> defaultReplacer,
+			String comment,
+			String translation,
+			String[] translationArgs,
+			String commentTranslation,
+			String[] commentTranslationArgs,
+			PlayerConfigOptionCategory category,
+			BiPredicate<PlayerConfig<?>, T> serverSideValidator,
+			BiPredicate<PlayerConfigClientStorage, T> clientSideValidator,
+			String tooltipPrefix,
+			Predicate<PlayerConfigType> configTypeFilter,
+			Function<PlayerConfig<?>, List<T>> serverSideListGetter,
+			Function<PlayerConfigClientStorage, List<T>> clientSideListGetter,
+			ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType,
+			boolean dynamic,
+			boolean overridable,
+			boolean forcedPlayerConfigurable,
+			IPlayerConfigChangeHandler<T> serverChangeHandler
+	) {
+		super(
+				type, id, shortenedId, path, defaultValue, defaultReplacer, comment,
+				translation, translationArgs, commentTranslation, commentTranslationArgs,
+				category, serverSideValidator, clientSideValidator, tooltipPrefix,
+				configTypeFilter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+		);
 		this.serverSideListGetter = serverSideListGetter;
 		this.clientSideListGetter = clientSideListGetter;
 	}
@@ -55,7 +83,7 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 		protected Function<PlayerConfig<?>, List<T>> serverSideListGetter;
 		protected Function<PlayerConfigClientStorage, List<T>> clientSideListGetter;
 
-		protected Builder(Class<T> type) {
+		protected Builder(PlayerConfigOptionValueType<T> type) {
 			super(type);
 		}
 
@@ -95,22 +123,30 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 			return (PlayerConfigListIterationOptionSpec<T>) super.build(dest);
 		}
 
-		protected abstract PlayerConfigListIterationOptionSpec<T> buildInternally(List<String> path, String shortenedId, Function<String, T> commandInputParser);
+		protected abstract PlayerConfigListIterationOptionSpec<T> buildInternally(List<String> path, String shortenedId);
 
 	}
 
 	public static final class FinalBuilder<T> extends Builder<T, FinalBuilder<T>> {
 
-		private FinalBuilder(Class<T> type) {
+		private FinalBuilder(PlayerConfigOptionValueType<T> type) {
 			super(type);
 		}
 
 		@Override
-		protected PlayerConfigListIterationOptionSpec<T> buildInternally(List<String> path, String shortenedId, Function<String, T> commandInputParser) {
-			return new PlayerConfigListIterationOptionSpec<>(type, id, shortenedId, path, defaultValue, defaultReplacer, comment, translation, translationArgs, commentTranslation, commentTranslationArgs, category, commandInputParser, commandOutputWriter, serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter, clientSideListGetter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.UNSYNCABLE, dynamic);
+		protected PlayerConfigListIterationOptionSpec<T> buildInternally(List<String> path, String shortenedId) {
+			return new PlayerConfigListIterationOptionSpec<>(
+					valueType, id, shortenedId, path, defaultValue, defaultReplacer,
+					comment, translation, translationArgs, commentTranslation,
+					commentTranslationArgs, category,
+					serverSideValidator, clientSideValidator, tooltipPrefix,
+					configTypeFilter, serverSideListGetter, clientSideListGetter,
+					ClientboundPlayerConfigDynamicOptionsPacket.OptionType.UNSYNCABLE,
+					dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+			);
 		}
 
-		public static <T> FinalBuilder<T> begin(Class<T> type){
+		public static <T> FinalBuilder<T> begin(PlayerConfigOptionValueType<T> type){
 			return new FinalBuilder<>(type).setDefault();
 		}
 

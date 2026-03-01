@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.config.sync;
 
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 public interface IPlayerConfigSynchronizer {
@@ -36,6 +37,6 @@ public interface IPlayerConfigSynchronizer {
 
 	public void syncSubExistence(ServerPlayer player, IPlayerConfig subConfig, boolean create);
 
-	public <T> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option);
+	public <T> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, PlayerConfigOptionSpec<T> option);
 
 }

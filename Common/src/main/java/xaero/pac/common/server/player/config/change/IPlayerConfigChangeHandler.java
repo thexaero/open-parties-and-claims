@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026-2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,20 +16,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.config;
+package xaero.pac.common.server.player.config.change;
 
-public enum PlayerConfigOptionCategory {
-	GENERAL,
-	GENERAL_CLAIMS,
-	BLOCK_PROTECTION,
-	BLOCK_TRIGGERS,
-	ENTITY_PROTECTION,
-	PLAYER_PROTECTION,
-	MOVEMENT,
-	PROTECTION_FROM_ITEMS,
-	PICKUP_PROTECTION,
-	SPAWN_PROTECTION,
-	MIXED_PROTECTION,
-	GENERAL_PARTY;
+import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfigManager;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+
+public interface IPlayerConfigChangeHandler<T> {
+
+	<P extends IServerParty<?, ?, ?>> void handle(
+			PlayerConfigManager<P, ?> manager,
+			PlayerConfig<P> config,
+			PlayerConfigOptionSpec<T> option,
+			T oldValue,
+			T newValue
+	);
 
 }

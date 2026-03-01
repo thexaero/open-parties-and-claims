@@ -29,14 +29,11 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
-import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class PlayerConfigClientStorageManager implements IPlayerConfigClientStorageManager<PlayerConfigClientStorage> {
@@ -48,11 +45,9 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	private PlayerConfigClientStorage myPlayerConfig;
 	private PlayerConfigClientStorage otherPlayerConfig;//temporary storage
 	private PlayerConfigDynamicOptions dynamicOptions;
-	private final Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions;
 
-	private PlayerConfigClientStorageManager(Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions) {
+	private PlayerConfigClientStorageManager() {
 		super();
-		this.overridableOptions = overridableOptions;
 	}
 
 	private void set(PlayerConfigClientStorage serverClaimsConfig, PlayerConfigClientStorage expiredClaimsConfig,
@@ -103,8 +98,6 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		myPlayerConfig.reset();
 		otherPlayerConfig = null;
 		dynamicOptions = null;
-		overridableOptions.clear();
-		overridableOptions.addAll(PlayerSubConfig.STATIC_OVERRIDABLE_OPTIONS);
 	}
 
 	@Override
@@ -119,9 +112,6 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 
 	public void setDynamicOptions(PlayerConfigDynamicOptions dynamicOptions) {
 		this.dynamicOptions = dynamicOptions;
-		overridableOptions.clear();
-		overridableOptions.addAll(PlayerSubConfig.STATIC_OVERRIDABLE_OPTIONS);
-		overridableOptions.addAll(dynamicOptions.getOptions().values());
 	}
 
 	@Nullable
@@ -233,10 +223,6 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 			result = dynamicOptions.getOptions().get(id);
 		return result;
 	}
-	
-	public Set<IPlayerConfigOptionSpecAPI<?>> getOverridableOptions() {
-		return overridableOptions;
-	}
 
 	public static final class Builder {
 
@@ -248,7 +234,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		}
 
 		public PlayerConfigClientStorageManager build() {
-			PlayerConfigClientStorageManager manager = new PlayerConfigClientStorageManager(new HashSet<>(PlayerSubConfig.STATIC_OVERRIDABLE_OPTIONS));
+			PlayerConfigClientStorageManager manager = new PlayerConfigClientStorageManager();
 			PlayerConfigClientStorage serverClaimsConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.SERVER).setOwner(PlayerConfig.SERVER_CLAIM_UUID).setManager(manager).build();
 			PlayerConfigClientStorage expiredClaimsConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.EXPIRED).setOwner(PlayerConfig.EXPIRED_CLAIM_UUID).setManager(manager).build();
 			PlayerConfigClientStorage wildernessConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.WILDERNESS).setOwner(null).setManager(manager).build();

@@ -26,6 +26,7 @@ import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
 import xaero.pac.common.server.claims.protection.ExceptionElementType;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfigOptionValueTypes;
 import xaero.pac.common.server.player.config.PlayerConfigStaticListIterationOptionSpec;
 
 public class PlayerConfigExceptionDynamicOptionsLoader {
@@ -120,7 +121,8 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 		}
 		optionId += "." + group.getName();
 		comment = String.format(comment, group.getContentString());
-		PlayerConfigStaticListIterationOptionSpec<Integer> option = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PlayerConfigStaticListIterationOptionSpec<Integer> option = PlayerConfigStaticListIterationOptionSpec.Builder
+				.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(optionId)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setTranslation(translation, group.getName())

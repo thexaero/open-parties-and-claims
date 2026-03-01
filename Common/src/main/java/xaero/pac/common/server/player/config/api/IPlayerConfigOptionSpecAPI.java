@@ -150,12 +150,19 @@ public interface IPlayerConfigOptionSpecAPI<T> {
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * Gets the value->String converter of this option, mainly used for commands.
-	 *
-	 * @return the value->String converter, not null
+	 * @deprecated Use {@link #getComponentWriter()} instead
 	 */
+	@Deprecated
 	@Nonnull
 	public Function<T, Component> getCommandOutputWriter();
+
+	/**
+	 * Gets the value->Component converter of this option, mainly used for commands.
+	 *
+	 * @return the value->Component converter, not null
+	 */
+	@Nonnull
+	public Function<T, Component> getComponentWriter();
 
 	/**
 	 * Gets the config type filter of this option.
@@ -167,5 +174,12 @@ public interface IPlayerConfigOptionSpecAPI<T> {
 	 */
 	@Nonnull
 	Predicate<PlayerConfigType> getConfigTypeFilter();
+
+	/**
+	 * Gets whether this option can be overridden by a sub-config.
+	 *
+	 * @return true if this option is overridable, otherwise false
+	 */
+	boolean isOverridable();
 
 }

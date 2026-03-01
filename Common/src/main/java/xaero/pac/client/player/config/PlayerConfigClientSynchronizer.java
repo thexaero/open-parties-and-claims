@@ -26,8 +26,8 @@ import xaero.pac.common.packet.config.ServerboundSubConfigExistencePacket;
 
 public class PlayerConfigClientSynchronizer {
 	
-	public <T> void syncToServer(PlayerConfigClientStorage config, IPlayerConfigStringableOptionClientStorage<T> option) {
-		PlayerConfigOptionValuePacket.Entry packetOptionEntry = new PlayerConfigOptionValuePacket.Entry(option.getId(), option.getType(), option.getValue(), option.isMutable(), option.isDefaulted());
+	public <T> void syncToServer(PlayerConfigClientStorage config, PlayerConfigStringableOptionClientStorage<T> option) {
+		PlayerConfigOptionValuePacket.Entry packetOptionEntry = PlayerConfigOptionValuePacket.Entry.of(option.getOption(), option.getValue(), option.isMutable(), option.isDefaulted());
 
 		ServerboundPlayerConfigOptionValuePacket packet = new ServerboundPlayerConfigOptionValuePacket(config.getType(), config.getSubId(), config.getOwner(), Lists.newArrayList(packetOptionEntry));
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(packet);

@@ -59,7 +59,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 	}
 	
-	private <T> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, IPlayerConfigOptionSpecAPI<T> option, boolean afterReset) {
+	private <T> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, PlayerConfigOptionSpec<T> option, boolean afterReset) {
 		boolean isOp = player.hasPermissions(2);
 		boolean mutable = isOp && syncedConfig.getType() != PlayerConfigType.PLAYER;
 		boolean defaulted = !mutable && syncedConfig.getType() == PlayerConfigType.PLAYER;
@@ -72,13 +72,13 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 			}
 		}
 		T value = syncedConfig.getRaw(option);
-		if(mutable && syncedConfig instanceof PlayerSubConfig && !configManager.getOverridableOptions().contains(option)) {
+		if(mutable && syncedConfig instanceof PlayerSubConfig && !option.isOverridable()) {
 			mutable = false;
 			value = null;
 		}
 		if(afterReset && defaulted)
 			return null;
-		return new PlayerConfigOptionValuePacket.Entry(option.getId(), option.getType(), defaulted ? null : value, mutable, defaulted);
+		return PlayerConfigOptionValuePacket.Entry.of(option, defaulted ? null : value, mutable, defaulted);
 	}
 	
 	private void syncOptionsToClient(ServerPlayer player, PlayerConfig<?> config, List<PlayerConfigOptionValuePacket.Entry> entries) {
@@ -87,7 +87,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		sendToClient(player, packet);
 	}
 	
-	public <T> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, PlayerConfigOptionSpec<T> option) {
 		PlayerConfigOptionValuePacket.Entry packetOptionEntry = getPacketOptionEntry(player, (PlayerConfig<?>)config, option, false);
 		if(packetOptionEntry != null)
 			syncOptionsToClient(player, (PlayerConfig<?>)config, Lists.newArrayList(packetOptionEntry));

@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026-2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,20 +16,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.config;
+package xaero.pac.common.player.config;
 
-public enum PlayerConfigOptionCategory {
-	GENERAL,
-	GENERAL_CLAIMS,
-	BLOCK_PROTECTION,
-	BLOCK_TRIGGERS,
-	ENTITY_PROTECTION,
-	PLAYER_PROTECTION,
-	MOVEMENT,
-	PROTECTION_FROM_ITEMS,
-	PICKUP_PROTECTION,
-	SPAWN_PROTECTION,
-	MIXED_PROTECTION,
-	GENERAL_PARTY;
+import net.minecraft.network.chat.TranslatableComponent;
+
+public class PlayerConfigConstants {
+
+	public static final TranslatableComponent ON_COMPONENT = new TranslatableComponent("gui.xaero_pac_ui_on");
+	public static final TranslatableComponent OFF_COMPONENT = new TranslatableComponent("gui.xaero_pac_ui_off");
 
 }

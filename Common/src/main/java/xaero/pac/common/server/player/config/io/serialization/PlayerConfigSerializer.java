@@ -60,7 +60,7 @@ public class PlayerConfigSerializer {
 		//fixing incorrect value types
 		config.getManager().getAllOptionsStream().forEach(o -> {
 			Object rawOptionValue = loadedConfig.get(o.getPath());
-			if(rawOptionValue != null && rawOptionValue.getClass() != o.getType()) {
+			if(rawOptionValue != null && !o.getType().isAssignableFrom(rawOptionValue.getClass())) {
 				Object defaultRawValue = config.getDefaultRawValue(o);
 				if(defaultRawValue == null)
 					loadedConfig.remove(o.getPath());

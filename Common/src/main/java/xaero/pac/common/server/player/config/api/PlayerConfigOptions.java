@@ -18,14 +18,13 @@
 
 package xaero.pac.common.server.player.config.api;
 
+import org.apache.commons.compress.utils.Lists;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.server.player.config.*;
+import xaero.pac.common.server.player.config.change.PlayerConfigCommonChangeHandlers;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * An access point for all static player config option specifications/representations.
@@ -67,6 +66,10 @@ public class PlayerConfigOptions {
 	 * The display color of the player's claimed chunks.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> CLAIMS_COLOR;
+
+	public static final IPlayerConfigOptionSpecAPI<List<String>> CUSTOM_PLAYER_GROUPS;
+
+	public static final IPlayerConfigOptionSpecAPI<List<String>> CUSTOM_PLAYER_GROUP_UUIDS;
 	/**
 	 * Whether the player's claimed chunks are protected at all.
 	 */
@@ -327,7 +330,7 @@ public class PlayerConfigOptions {
 	static {
 		Map<String, PlayerConfigOptionSpec<?>> allOptions = new LinkedHashMap<>();
 
-		USED_SUBCLAIM = PlayerConfigListIterationOptionSpec.FinalBuilder.begin(String.class)
+		USED_SUBCLAIM = PlayerConfigListIterationOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.STRING)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER)
 				.setServerSideListGetter(PlayerConfig::getSubConfigIds)
 				.setClientSideListGetter(PlayerConfigClientStorage::getSubConfigIds)
@@ -336,8 +339,11 @@ public class PlayerConfigOptions {
 				.setValueValidator(PlayerConfig::isValidSubId)
 				.setComment("The current sub-config ID used for new chunk claims.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.setForcedPlayerConfigurable(true)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleUsedSubClaim)
 				.build(allOptions);
-		USED_SERVER_SUBCLAIM = PlayerConfigListIterationOptionSpec.FinalBuilder.begin(String.class)
+		USED_SERVER_SUBCLAIM = PlayerConfigListIterationOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.STRING)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER)
 				.setServerSideListGetter(pc -> pc.getManager().getServerClaimConfig().getSubConfigIds())
 				.setClientSideListGetter(pc ->
@@ -349,6 +355,9 @@ public class PlayerConfigOptions {
 				.setValueValidator(PlayerConfig::isValidSubId)
 				.setComment("The current sub-config ID used for new server chunk claims.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.setForcedPlayerConfigurable(true)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleUsedSubClaim)
 				.build(allOptions);
 
 		CLAIMS_NAME = PlayerConfigStringOptionSpec.Builder.begin()
@@ -358,6 +367,7 @@ public class PlayerConfigOptions {
 				.setMaxLength(100)
 				.setComment("When not empty, used as the name for your claimed chunks.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleClaimsProperty)
 				.build(allOptions);
 		CLAIMS_COLOR = PlayerConfigHexOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.color")
@@ -382,6 +392,7 @@ public class PlayerConfigOptions {
 				})
 				.setComment("Used as the color for your claims. Set to 0 to use the default automatic color.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleClaimsProperty)
 				.build(allOptions);
 		PARTY_NAME = PlayerConfigStringOptionSpec.Builder.begin()
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
@@ -391,70 +402,100 @@ public class PlayerConfigOptions {
 				.setMaxLength(100)
 				.setComment("When not empty, used in some places as the name for the parties that you create.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handlePartyName)
 				.build(allOptions);
-		SHARE_LOCATION_WITH_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		SHARE_LOCATION_WITH_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.shareLocationWithParty")
 				.setDefaultValue(true)
 				.setComment("When enabled, your position in the game is shared with players from the same party as you, which can be used by other mods, e.g. to display party members on a map.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleShareLocationWithParty)
 				.build(allOptions);
-		SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.shareLocationWithMutualAllyParties")
 				.setDefaultValue(false)
 				.setComment("When enabled, your position in the game is shared with the mutual ally parties of the party that you are in, which can be used by other mods, e.g. to display party members on a map.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleShareLocationWithAllies)
 				.build(allOptions);
-		RECEIVE_LOCATIONS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		RECEIVE_LOCATIONS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.receiveLocationsFromParty")
 				.setDefaultValue(true)
 				.setComment("When enabled, the sharable positions of players from the same party as you are shared with your game client, which can be used by other mods, e.g. to display party members on a map.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleReceiveLocationsFromParty)
 				.build(allOptions);
-		RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "parties.receiveLocationsFromMutualAllyParties")
 				.setDefaultValue(false)
 				.setComment("When enabled, the sharable positions of players from the mutual ally parties of the party that you are in are shared with your game client, which can be used by other mods, e.g. to display allies on a map.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_PARTY)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleReceiveLocationsFromAllies)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+//		CUSTOM_PLAYER_GROUPS = PlayerConfigOptionSpec.FinalBuilder
+//				.begin(PlayerConfigOptionValueTypes.getListType(PlayerConfigOptionValueTypes.STRING))
+//				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "customPlayerGroups")
+//				.setDefaultValue(Lists.newArrayList())
+//				.setComment(".")
+//				.setCategory(PlayerConfigOptionCategory.GENERAL)
+//				.setOverridable(false)
+//				.build(allOptions);
+//		CUSTOM_PLAYER_GROUP_UUIDS = PlayerConfigOptionSpec.FinalBuilder
+//				.begin(PlayerConfigOptionValueTypes.getListType(PlayerConfigOptionValueTypes.STRING))
+//				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "customPlayerGroupUuids")
+//				.setDefaultValue(Lists.newArrayList())
+//				.setComment(".")
+//				.setCategory(PlayerConfigOptionCategory.GENERAL)
+//				.setOverridable(false)
+//				.build(allOptions);
+		PROTECT_CLAIMED_CHUNKS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protectClaimedChunks")
 				.setDefaultValue(true)
 				.setComment("When enabled, the mod tries to protect your claimed chunks from other players. Workarounds are possible, especially with mods.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
-		BONUS_CHUNK_CLAIMS = PlayerConfigOptionSpec.FinalBuilder.begin(Integer.class)
+		BONUS_CHUNK_CLAIMS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusChunkClaims")
 				.setDefaultValue(0)
 				.setComment("The number of additional chunk claims that you can make on top of the normal limit.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleAbstractBonusClaims)
 				.build(allOptions);
-		BONUS_CHUNK_FORCELOADS = PlayerConfigOptionSpec.FinalBuilder.begin(Integer.class)
+		BONUS_CHUNK_FORCELOADS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusChunkForceloads")
 				.setDefaultValue(0)
 				.setComment("The number of additional chunk claim forceloads that you can make on top of the normal limit.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleBonusForceloads)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_FROM_PARTY = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromParty")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes protection against players from the same party as you.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromAllyParties")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against players from parties who are allied by the party that you are in.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromPlayers")
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setDefaultValue(1)
@@ -464,7 +505,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromMobs")
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setDefaultValue(1)
@@ -474,7 +515,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromOther")
 				.setList(PlayerConfig.PROTECTION_LEVELS)
 				.setDefaultValue(1)
@@ -484,25 +525,25 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Blocks From Mobs/Other\" option for block interactions coming from non-player entities, if the entity (e.g. an arrow) has an owner (e.g. a player), then the block protection option corresponding to the owner is used (e.g. \"Protect Blocks From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromExplosions")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes block protection against explosions. Keep in mind that creeper explosions are also affected by the block mob protection option.")
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFireSpread")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against fire spread.")
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFrostWalking")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -512,25 +553,25 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.cropTrample")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against crop trample (falling on crops destroys them) for entities that don't have access to the chunks.")
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fluidBarrier")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against fluids (e.g. lava) flowing into the protected chunks from outside. This does not protect wilderness.")
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.pistonBarrier")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against being affected by pistons outside of the protected chunks. This does not protect wilderness.")
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.buttonsFromProjectiles")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -540,7 +581,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.targetsFromProjectiles")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -550,7 +591,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromPlayers")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -560,7 +601,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromMobs")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -570,7 +611,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.platesFromOther")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -580,7 +621,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromPlayers")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -590,7 +631,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromMobs")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -600,7 +641,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.tripwireFromOther")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -610,7 +651,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromPlayers")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -620,7 +661,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromMobs")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -630,7 +671,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromOther")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -640,55 +681,55 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Entities From Mobs/Other\" option for entity attacks/interactions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Entities From Players\").\nChunk access is always tested against the owner, whether this is enabled or not.")
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromExplosions")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against all explosions not directly activated by the chunk owner.")
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.entitiesFromFire")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes friendly (+ server configured) entities in the chunks being protected against fire.")
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_RAIDS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_RAIDS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.raids")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection from village raids. It stops raiders from spawning inside the protected chunks, from entering them and from hurting protectable entities, even if entity protection is turned off.")
 				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersFromPlayers")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes players being protected from player attacks.")
 				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersFromMobs")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes players being protected from mob attacks.")
 				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersFromOther")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection includes players being protected against non-living entities.")
 				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playersRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Players From Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Protect Players From Players\").")
 				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playerLightning")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -698,7 +739,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.chorusFruitTeleport")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -708,7 +749,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsPlayers")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -718,7 +759,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsMobs")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -728,7 +769,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.netherPortalsOther")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -738,7 +779,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MOVEMENT)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_USE = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_USE = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemUse")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -748,19 +789,19 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.neighborChunksItemUse")
 				.setDefaultValue(true)
 				.setComment("When enabled, the item use protection is extended to some right-click held item use in chunks directly next to the claimed ones. Item use affected by this is usually things that still work while looking at the sky (not block or entity) or item use with custom ray-tracing for blocks/fluids/entities (e.g. placing things on water), but also any item use of \"additional banned items\" configured on the server. Item use protection exceptions (e.g. food, potions etc) still apply.")
 				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.dispenserBarrier")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against dispensers that are \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
 				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossPlayers")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -770,7 +811,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossMobs")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -780,7 +821,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossOther")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -790,13 +831,13 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemTossRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Mob/Other Item Toss\" option for item tosses coming from non-player entities, if the tossing entity (e.g. a special arrow) has an owner (e.g. a player), then the item toss protection option corresponding to the owner is used (e.g. \"Protect Player Item Toss\").")
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_MOB_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_MOB_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.mobLoot")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -806,7 +847,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.playerDeathLoot")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -816,7 +857,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupPlayers")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -826,7 +867,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupMobs")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -836,13 +877,13 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.itemPickupRedirect")
 				.setDefaultValue(false)
 				.setComment("When enabled, instead of always simply using the direct \"Protect Items From Mobs\" option for item pickups coming from mobs, if the mob (e.g. an allay) has an owner (e.g. a player), then the item protection option corresponding to the owner is used (e.g. \"Protect Items From Players\").")
 				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_XP_PICKUP = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_XP_PICKUP = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.xpPickup")
 				.setDefaultValue(0)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -852,7 +893,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.PICKUP_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.overrideMobGriefingRule")
 				.setDefaultValue(true)
 				.setComment(
@@ -864,31 +905,31 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.naturalSpawnHostile")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables the natural spawning of hostile mobs.")
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.naturalSpawnFriendly")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables the natural spawning of friendly mobs.")
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.spawnersHostile")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables hostile mob spawners.")
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.spawnersFriendly")
 				.setDefaultValue(false)
 				.setComment("When enabled, claimed chunk protection disables friendly mob spawners.")
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.projectileHitHostileSpawn")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -898,7 +939,7 @@ public class PlayerConfigOptions {
 				)
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN = PlayerConfigStaticListIterationOptionSpec.Builder.begin(Integer.class)
+		PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN = PlayerConfigStaticListIterationOptionSpec.Builder.begin(PlayerConfigOptionValueTypes.INTEGER)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.projectileHitFriendlySpawn")
 				.setDefaultValue(1)
 				.setList(PlayerConfig.PROTECTION_LEVELS)
@@ -909,17 +950,21 @@ public class PlayerConfigOptions {
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);
 
-		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.forceload.enabled")
 				.setDefaultValue(true)
 				.setComment("When enabled, the chunks you have marked for forceloading are forceloaded.\nIf the forceload limit has changed and you have more chunks marked than the new limit, then some of the chunks won't be forceloaded. Unmark any chunks until you are within the limit to ensure that all marked chunks are forceloaded.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleForceloading)
 				.build(allOptions);
-		OFFLINE_FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(Boolean.class)
+		OFFLINE_FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.forceload.offlineForceload")
 				.setDefaultValue(false)
 				.setComment("When enabled, the chunks you have marked for forceloading stay loaded even when you are offline (can significantly affect server performance!).\nIf your forceload limit is affected by your FTB Ranks rank/permissions, then you need to login at least once after a server (re)launch for it to take effect while you are offline.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleForceloading)
 				.build(allOptions);
 
 		OPTIONS = Collections.unmodifiableMap(allOptions);

@@ -26,17 +26,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.ConfigUtil;
-import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
-import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.io.ObjectManagerIOObject;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
-import xaero.pac.common.server.player.data.ServerPlayerData;
-import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -44,8 +42,6 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.*;
 
 public class PlayerConfig
 <
@@ -169,59 +165,21 @@ public class PlayerConfig
 			return SetResult.DEFAULTED;
 		}
 		if(playerId != null && !Objects.equals(nowEffective, beforeEffective)) {
-			if(option == BONUS_CHUNK_FORCELOADS || option == BONUS_CHUNK_CLAIMS) {
-				ServerPlayer onlinePlayer = getOnlinePlayer();
-				if(onlinePlayer != null) {
-					IServerClaimsManager<?, ?, ?> claimsManager = manager.getClaimsManager();
-					claimsManager.getClaimsManagerSynchronizer().syncClaimLimits(this, onlinePlayer);
-				}
-			}
-			if(option == FORCELOAD || option == OFFLINE_FORCELOAD || option == BONUS_CHUNK_FORCELOADS)
-				manager.getForceLoadTicketManager().updateTicketsFor(manager, playerId, false);
-			else if(option == PARTY_NAME) {
-				P party = manager.getPartyManager().getPartyByOwner(playerId);
-				if(party != null)
-					manager.getPartyManager().getPartySynchronizer().syncToPartyAndAlliersUpdateName(party, (String)value);
-			} else if(option == SHARE_LOCATION_WITH_PARTY || option == SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES || option == RECEIVE_LOCATIONS_FROM_PARTY || option == RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES) {
-				boolean castValue = (Boolean)nowEffective;
-				P party = manager.getPartyManager().getPartyByMember(playerId);
-				if(party != null) {
-					ServerPlayer onlinePlayer = getOnlinePlayer();
-					if(onlinePlayer != null) {
-						if(option == SHARE_LOCATION_WITH_PARTY || option == SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES) {
-							ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(onlinePlayer);
-							IPartyMemberDynamicInfoSyncable syncedInfo = castValue ? mainCap.getPartyMemberDynamicInfo() : mainCap.getPartyMemberDynamicInfo().getRemover();
-							if(option == SHARE_LOCATION_WITH_PARTY)
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToPartyDynamicInfo(party, syncedInfo, party);
-							else
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToPartyMutualAlliesDynamicInfo(party, syncedInfo);
-						} else {
-							if(option == RECEIVE_LOCATIONS_FROM_PARTY)
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToClientAllDynamicInfo(onlinePlayer, party, !castValue);
-							else
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToClientMutualAlliesDynamicInfo(onlinePlayer, party, !castValue);
-						}
-					}
-				}
-			} else if(option == CLAIMS_NAME || option == CLAIMS_COLOR)
-				manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(this);
-			else if(option == USED_SUBCLAIM || option == USED_SERVER_SUBCLAIM) {
-				ServerPlayer onlinePlayer = getOnlinePlayer();
-				if(onlinePlayer != null)
-					manager.getClaimsManager().getClaimsManagerSynchronizer().syncCurrentSubClaim(this, onlinePlayer);
-			}
+			IPlayerConfigChangeHandler<T> changeHandler = option.getServerChangeHandler();
+			if(changeHandler != null)
+				changeHandler.handle(manager, this, option, beforeEffective, nowEffective);
 		}
 		manager.getSynchronizer().syncOptionToClients(this, option);
 		return SetResult.SUCCESS;
 	}
 	
-	private ServerPlayer getOnlinePlayer() {
+	public ServerPlayer getOnlinePlayer() {
 		PlayerList serverPlayers = manager.getServer().getPlayerList();
 		return serverPlayers.getPlayer(playerId);
 	}
 
 	public static boolean isPlayerConfigurable(IPlayerConfigOptionSpecAPI<?> o){
-		return o == USED_SUBCLAIM || o == USED_SERVER_SUBCLAIM ||
+		return ((PlayerConfigOptionSpec<?>)o).isForcedPlayerConfigurable() ||
 				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getId()) ||
 				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getShortenedId());
 	}
@@ -377,8 +335,8 @@ public class PlayerConfig
 		removeFromSubConfigIds(id);
 		linkedSubConfigs.remove(subConfig);
 		manager.onSubConfigRemoved(subConfig);
-		if(type != PlayerConfigType.SERVER && getEffective(USED_SUBCLAIM).equals(id))
-			tryToReset(USED_SUBCLAIM);
+		if(type != PlayerConfigType.SERVER && getEffective(PlayerConfigOptions.USED_SUBCLAIM).equals(id))
+			tryToReset(PlayerConfigOptions.USED_SUBCLAIM);
 		if(manager.isLoaded())
 			manager.getSynchronizer().syncSubExistence(null, subConfig, false);
 		return subConfig;
@@ -428,7 +386,7 @@ public class PlayerConfig
 
 	@Nonnull
 	public PlayerConfig<P> getUsedSubConfig(){
-		String usedSubId = getEffective(USED_SUBCLAIM);
+		String usedSubId = getEffective(PlayerConfigOptions.USED_SUBCLAIM);
 		PlayerConfig<P> result = getSubConfig(usedSubId);
 		return result == null ? this : result;
 	}
@@ -436,7 +394,7 @@ public class PlayerConfig
 	@Nonnull
 	@Override
 	public IPlayerConfig getUsedServerSubConfig() {
-		return manager.getServerClaimConfig().getEffectiveSubConfig(getEffective(USED_SERVER_SUBCLAIM));
+		return manager.getServerClaimConfig().getEffectiveSubConfig(getEffective(PlayerConfigOptions.USED_SERVER_SUBCLAIM));
 	}
 
 	@Nullable

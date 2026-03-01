@@ -120,7 +120,7 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 	@Override
 	@SuppressWarnings("unchecked")
 	public void setCastValue(Object value) {
-		if(value != null && getType() != value.getClass())
+		if(value != null && !getType().isAssignableFrom(value.getClass()))
 			throw new IllegalArgumentException();
 		setValue((T)value);
 	}

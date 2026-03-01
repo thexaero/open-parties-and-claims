@@ -434,7 +434,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_SUBCLAIM
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_SERVER_SUBCLAIM)
 					return;
-				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !manager.getOverridableOptions().contains(optionStorage.getOption()))
+				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !optionStorage.getOption().isOverridable())
 					return;
 				Class<?> type = optionStorage.getType();
 				Component optionTitle = new TranslatableComponent(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
@@ -464,7 +464,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							.setTitle(optionTitle)
 							.setTooltip(tooltip)
 							.setMutable(optionStorage.isMutable())
-							.setStartValue(value == null ? "" : optionStorage.getCommandOutputWriterCast().apply(value).getString())
+							.setStartValue(value == null ? "" : optionStorage.getStringWriterCast().apply(value))
 							.setFilter(filter)
 							.setValidator(s -> subConfigSelected && s.isEmpty() || optionStorage.getStringValidator().test(optionValueSourceData, s))
 							.setResponder((el, s) -> {

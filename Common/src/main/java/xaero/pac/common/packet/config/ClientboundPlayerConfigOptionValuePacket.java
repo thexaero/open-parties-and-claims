@@ -24,6 +24,7 @@ import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
@@ -87,11 +88,17 @@ public class ClientboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 					storage = storage.getOrCreateSubConfig(t.subId);
 				final IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> forwardedStorage = storage;
 				t.entryStream().forEach(entry -> {
-					IPlayerConfigOptionSpecAPI<?> option = playerConfigStorageManager.getOptionForId(entry.getId());
+					PlayerConfigOptionSpec<?> option =
+							(PlayerConfigOptionSpec<?>) playerConfigStorageManager.getOptionForId(entry.getId());
 					if(option == null)
 						return;
+					Object value = null;
+					try {
+						value = option.getValueType().getSyncDecoder().apply(entry.getValueTag());
+					} catch(Throwable e){
+					}
 					IPlayerConfigStringableOptionClientStorage<?> optionStorage = forwardedStorage.getOptionStorage(option);
-					optionStorage.setCastValue(entry.getValue());
+					optionStorage.setCastValue(value);
 					optionStorage.setMutable(entry.isMutable());
 					optionStorage.setDefaulted(entry.isDefaulted());
 				});
