@@ -19,6 +19,7 @@
         "MixinFishingHook",
         "MixinFlowingFluid",
         "MixinFrostWalkerEnchantment",
+        "MixinGameProfileCache",
         "MixinHangingEntity",
         "MixinItemEntity",
         "MixinLevel",

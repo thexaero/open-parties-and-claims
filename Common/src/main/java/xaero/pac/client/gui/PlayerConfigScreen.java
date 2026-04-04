@@ -33,25 +33,25 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.client.gui.group.PlayerGroupsScreen;
 import xaero.pac.client.gui.widget.value.BooleanValueHolder;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.client.player.config.PlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.player.config.sub.PlayerSubConfigClientStorage;
 import xaero.pac.common.misc.ListFactory;
-import xaero.pac.common.server.player.config.*;
+import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfigHexOptionSpec;
+import xaero.pac.common.server.player.config.PlayerConfigListIterationOptionSpec;
+import xaero.pac.common.server.player.config.PlayerConfigStringOptionSpec;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
-import xaero.pac.common.server.player.config.dynamic.PlayerConfigExceptionDynamicOptionsLoader;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 public final class PlayerConfigScreen extends WidgetListScreen {
@@ -66,24 +66,69 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	public static final Component BEING_DELETED = Component.translatable("gui.xaero_pac_ui_player_config_being_deleted");
 	private final BiConsumer<PlayerConfigScreen, Button> refreshHandler;
 	private Button refreshButton;
+	private Button playerGroupsButton;
 	private final PlayerConfigClientStorage data;
 	private final PlayerConfigClientStorage optionValueSourceData;
 	private final boolean shouldWaitForData;
 	private final boolean beingDeletedStateOnOpen;
+	private final Component mainTitle;
+	private final String otherPlayerName;
 
-	private PlayerConfigScreen(List<WidgetListElement<?>> elements, List<EditBox> tickableBoxes, BiConsumer<PlayerConfigScreen, Button> refreshHandler, Screen escape, Screen parent, Component title, PlayerConfigClientStorage data, PlayerConfigClientStorage optionValueSourceData, boolean shouldWaitForData, boolean beingDeletedStateOnOpen) {
+	private PlayerConfigScreen(
+			List<WidgetListElement<?>> elements,
+			List<EditBox> tickableBoxes,
+			BiConsumer<PlayerConfigScreen, Button> refreshHandler,
+			Screen escape,
+			Screen parent,
+			Component title,
+			PlayerConfigClientStorage data,
+			PlayerConfigClientStorage optionValueSourceData,
+			boolean shouldWaitForData,
+			boolean beingDeletedStateOnOpen,
+			Component mainTitle,
+			String otherPlayerName
+	) {
 		super(elements, tickableBoxes, escape, parent, title);
 		this.refreshHandler = refreshHandler;
 		this.data = data;
 		this.optionValueSourceData = optionValueSourceData;
 		this.shouldWaitForData = shouldWaitForData;
 		this.beingDeletedStateOnOpen = beingDeletedStateOnOpen;
+		this.mainTitle = mainTitle;
+		this.otherPlayerName = otherPlayerName;
 	}
 	
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(refreshButton = new Button(5, 5, 60, 20, Component.translatable("gui.xaero_pac_ui_player_config_refresh"), b -> refreshHandler.accept(this, b)));
+		int xAnchor = width / 2;
+		int topButtonsWidth = 84;
+		addRenderableWidget(refreshButton = new Button(
+						xAnchor - 205, 5, topButtonsWidth, 20,
+						Component.translatable("gui.xaero_pac_ui_player_config_refresh"),
+						b -> refreshHandler.accept(this, b)
+				)
+		);
+		if(data.isSyncInProgress())
+			return;
+		addRenderableWidget(playerGroupsButton = new Button(
+						xAnchor + 205 - topButtonsWidth, 5, topButtonsWidth, 20,
+						Component.translatable("gui.xaero_pac_ui_player_config_player_groups"),
+						b -> openGroupsScreen()
+				)
+		);
+	}
+
+	public void openGroupsScreen(){
+		minecraft.setScreen(
+				PlayerGroupsScreen.Builder
+						.begin()
+						.setConfigData(data)
+						.setEscape(escape)
+						.setParent(this)
+						.setConfigTitle(mainTitle)
+						.build()
+		);
 	}
 
 	@Override
@@ -96,12 +141,12 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		super.renderPreDropdown(poseStack, mouseX, mouseY, partial);
 		if(shouldWaitForData){
 			if(!data.isSyncInProgress())
-				refreshButton.onPress();
+				refresh();
 			else
 				drawCenteredString(poseStack, font, SYNCING_IN_PROGRESS, width / 2, height / 7 + 64, -1);
 		}
 		if(beingDeletedStateOnOpen != optionValueSourceData.isBeingDeleted())
-			refreshButton.onPress();
+			refresh();
 		else if(optionValueSourceData.isBeingDeleted())
 			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 7 + 124, -1);
 	}
@@ -113,6 +158,14 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		if(option.getTooltipPrefix() != null)
 			commentTranslated = option.getTooltipPrefix() + "\n" + commentTranslated;
 		return Component.literal(commentTranslated);
+	}
+
+	public String getOtherPlayerName() {
+		return otherPlayerName;
+	}
+
+	public void refresh(){
+		refreshButton.onPress();
 	}
 
 	public final static class Builder {
@@ -182,7 +235,14 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			return this;
 		}
 
-		private <T extends Comparable<T>> T getOptionValue(PlayerConfigStringableOptionClientStorage<T> option){
+		private <T> T getOptionValue(PlayerConfigStringableOptionClientStorage<T> option){
+			return getOptionValue(data, defaultPlayerConfigData, option);
+		}
+
+		private static <T> T getOptionValue(
+				PlayerConfigClientStorage data,
+				PlayerConfigClientStorage defaultPlayerConfigData,
+				PlayerConfigStringableOptionClientStorage<T> option){
 			T value;
 			if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
 				value = defaultPlayerConfigData.getOptionStorage(option.getOption()).getValue();
@@ -191,7 +251,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			return value;
 		}
 
-		private <HT, T extends Comparable<T>> CycleButton.OnValueChange<HT> getRegularValueChangeListener(SimpleValueWidgetListElement.Final<T> el, PlayerConfigStringableOptionClientStorage<T> option, Function<HT, T> holderToValue, PlayerConfigClientStorage data) {
+		private <HT, T> CycleButton.OnValueChange<HT> getRegularValueChangeListener(SimpleValueWidgetListElement.Final<T> el, PlayerConfigStringableOptionClientStorage<T> option, Function<HT, T> holderToValue, PlayerConfigClientStorage data) {
 			return (b, vh) -> {
 				if(!option.isMutable())
 					return;
@@ -205,7 +265,8 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			};
 		}
 
-		private <HT, T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(List<HT> values, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
+		private <HT, T> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplierForValues(Supplier<List<HT>> valuesSupplier, PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, Function<T, HT> valueToHolder, Function<HT, T> holderToValue, PlayerConfigClientStorage data){
+			final PlayerConfigClientStorage finalDefaultPlayerConfigData = defaultPlayerConfigData;
 			return (el, xy) -> CycleButton.<HT>builder(v -> {
 						Component defaultDisplay = option.getOption().getValueDisplayName(holderToValue.apply(v));
 						if(option.getType() == Integer.class){
@@ -216,54 +277,45 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						}
 						return defaultDisplay;
 					})
-					.withValues(values)
-					.withInitialValue(valueToHolder.apply(getOptionValue(option)))
+					.withValues(valuesSupplier.get())
+					.withInitialValue(valueToHolder.apply(getOptionValue(data, finalDefaultPlayerConfigData, option)))
 					.create(xy.getX(), xy.getY(), elementWidth, elementHeight, optionTitle, getRegularValueChangeListener(el, option, holderToValue, data));
 		}
 
-		private <T extends Comparable<T>> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplier(PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, T currentValue, PlayerConfigClientStorage data){
+		private <T> BiFunction<SimpleValueWidgetListElement.Final<T>, Vec3i, AbstractWidget> getIterationWidgetSupplier(PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight, Component optionTitle, T currentValue, PlayerConfigClientStorage data){
 			PlayerConfigClientStorage valueSourceConfig;
 			if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
 				valueSourceConfig = defaultPlayerConfigData;
 			else
 				valueSourceConfig = data;
-			List<T> values;
-			if(option.getOption() instanceof PlayerConfigListIterationOptionSpec<T> listIterationOptionSpec) {
-				values = listIterationOptionSpec.getClientSideListGetter().apply(valueSourceConfig);
-				if(values == null)
-					values = Lists.newArrayList(currentValue);
-				else if(data.getType() != PlayerConfigType.PLAYER && data.getType() != PlayerConfigType.DEFAULT_PLAYER){
-					boolean staticProtectionLevelOption = !option.isDynamic() && option.getOption() instanceof PlayerConfigStaticListIterationOptionSpec iterationOptionSpec
-							&& iterationOptionSpec.getList() == PlayerConfig.PROTECTION_LEVELS;
-					if(staticProtectionLevelOption || option.isDynamic()){
-						boolean enablesProtection = (staticProtectionLevelOption || option.getId().contains("." + PlayerConfigExceptionDynamicOptionsLoader.BARRIER + "."))
-								&& option.getOption() != PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT;
-						values = Lists.newArrayList(
-								values.get(0),
-								values.get(enablesProtection ? 1 : values.size() - 1)
-						);
-					}
-				}
-				else
-					values = Lists.newArrayList(values);
-			} else
-				values = Lists.newArrayList(currentValue);
 			@SuppressWarnings("unchecked")
 			T nullPlaceholder = (T) NULL_PLACEHOLDER;
-			if(data instanceof PlayerSubConfigClientStorage) {
-				values.add(0, nullPlaceholder);
-			}
-			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, v -> v == null ? nullPlaceholder : v, h -> h == NULL_PLACEHOLDER ? null : h, data);
+			Supplier<List<T>> valuesSupplier = () -> {
+				List<T> values;
+				if (option.getOption() instanceof PlayerConfigListIterationOptionSpec<T> listIterationOptionSpec) {
+					values = listIterationOptionSpec.getClientSideListGetter().apply(valueSourceConfig);
+					if (values == null)
+						values = Lists.newArrayList(currentValue);
+					else
+						values = Lists.newArrayList(values);
+				} else
+					values = Lists.newArrayList(currentValue);
+				if (data instanceof PlayerSubConfigClientStorage) {
+					values.add(0, nullPlaceholder);
+				}
+				return values;
+			};
+			return getIterationWidgetSupplierForValues(valuesSupplier, option, elementWidth, elementHeight, optionTitle, v -> v == null ? nullPlaceholder : v, h -> h == NULL_PLACEHOLDER ? null : h, data);
 		}
 
 		private BiFunction<SimpleValueWidgetListElement.Final<Boolean>, Vec3i, AbstractWidget> getOnOffWidgetSupplier(PlayerConfigStringableOptionClientStorage<Boolean> option, int elementWidth, int elementHeight, Component optionTitle, BooleanValueHolder currentValue, PlayerConfigClientStorage data){
 			List<BooleanValueHolder> values = Lists.newArrayList(BooleanValueHolder.FALSE, BooleanValueHolder.TRUE);
 			if(data instanceof PlayerSubConfigClientStorage)
 				values.add(0, BooleanValueHolder.NULL);
-			return getIterationWidgetSupplierForValues(values, option, elementWidth, elementHeight, optionTitle, BooleanValueHolder::of, BooleanValueHolder::getValue, data);
+			return getIterationWidgetSupplierForValues(() -> values, option, elementWidth, elementHeight, optionTitle, BooleanValueHolder::of, BooleanValueHolder::getValue, data);
 		}
 
-		private <T extends Comparable<T>> SimpleValueWidgetListElement<T, ?> createIterationWidgetListElement(
+		private <T> SimpleValueWidgetListElement<T, ?> createIterationWidgetListElement(
 				PlayerConfigStringableOptionClientStorage<T> option, int elementWidth, int elementHeight,
 				Component optionTitle, List<FormattedCharSequence> tooltip, PlayerConfigClientStorage data){
 			T value = getOptionValue(option);
@@ -414,19 +466,28 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			else
 				refreshHandler = (s,b) -> s.minecraft.setScreen(build());
 
-			Component title = this.title;
+			Component mainTitle = this.title;
+			Component title = null;
+			if(mainTitle == null) {
+				if(data.getType() == PlayerConfigType.PLAYER)
+					mainTitle = Component.translatable("gui.xaero_pac_ui_my_player_config");
+				else if(data.getType() == PlayerConfigType.SERVER)
+					mainTitle = Component.translatable("gui.xaero_pac_ui_server_claims_config");
+				else
+					mainTitle = Component.translatable("gui.xaero_pac_ui_player_config");
+			}
 			boolean syncInProgress = data.isSyncInProgress();
 			if(!syncInProgress && (data.getType() == PlayerConfigType.PLAYER || data.getType() == PlayerConfigType.SERVER)) {
 				addSubConfigControls(elements, elementWidth, elementHeight);
-				if(title == null){
-					if(data.getType() == PlayerConfigType.PLAYER)
-						title = Component.translatable("gui.xaero_pac_ui_my_player_config_sub", data.getSelectedSubConfig());
-					else
-						title = Component.translatable("gui.xaero_pac_ui_server_claims_config_sub", data.getSelectedSubConfig());
-				}
+				title = Component.translatable(
+						"gui.xaero_pac_ui_player_config_sub",
+						mainTitle,
+						data.getSelectedSubConfig()
+				);
 			}
 			if(title == null)
-				title = Component.translatable("gui.xaero_pac_ui_player_config");
+				title = mainTitle;
+
 			boolean subConfigSelected = data.isSubConfigSelected();
 			PlayerConfigClientStorage optionValueSourceData = subConfigSelected ? data.getOrCreateSubConfig(data.getSelectedSubConfig()) : data;
 			boolean beingDeleted = optionValueSourceData.isBeingDeleted();
@@ -434,11 +495,13 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					Stream.empty() :
 					optionValueSourceData.typedOptionStream();
 			optionStream.forEach(optionStorage -> {
-				if(!optionStorage.getOption().getConfigTypeFilter().test(optionValueSourceData.getType())
+				if(!optionStorage.isSyncable()
+						|| !optionStorage.isDirectlyConfigurable()
+						|| !optionStorage.getOption().getConfigTypeFilter().test(optionValueSourceData.getType())
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_SUBCLAIM
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_SERVER_SUBCLAIM)
 					return;
-				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !manager.getOverridableOptions().contains(optionStorage.getOption()))
+				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !optionStorage.getOption().isOverridable())
 					return;
 				Class<?> type = optionStorage.getType();
 				Component optionTitle = Component.translatable(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
@@ -468,7 +531,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							.setTitle(optionTitle)
 							.setTooltip(tooltip)
 							.setMutable(optionStorage.isMutable())
-							.setStartValue(value == null ? "" : optionStorage.getCommandOutputWriterCast().apply(value).getString())
+							.setStartValue(value == null ? "" : optionStorage.getStringWriterCast().apply(value))
 							.setFilter(filter)
 							.setValidator(s -> subConfigSelected && s.isEmpty() || optionStorage.getStringValidator().test(optionValueSourceData, s))
 							.setResponder((el, s) -> {
@@ -491,7 +554,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				}
 			});
 			
-			return new PlayerConfigScreen(elements, listFactory.get(), refreshHandler, escape, parent, title, data, optionValueSourceData, syncInProgress, optionValueSourceData.isBeingDeleted());
+			return new PlayerConfigScreen(elements, listFactory.get(), refreshHandler, escape, parent, title, data, optionValueSourceData, syncInProgress, optionValueSourceData.isBeingDeleted(), mainTitle, otherPlayerName);
 		}
 
 		public static Builder begin(ListFactory listFactory) {

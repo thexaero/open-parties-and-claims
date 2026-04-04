@@ -30,7 +30,6 @@ import java.util.Map;
  * Access point to all player permission nodes used by the mod.
  */
 public class UsedPermissionNodes {
-
 	private static final Map<String, IPermissionNodeAPI<?>> ALL_BUILDER = new LinkedHashMap<>();
 	/*IntelliJ is wrong about the lambdas... Method references cause a crash here.*/
 
@@ -76,6 +75,28 @@ public class UsedPermissionNodes {
 			() -> ServerConfig.CONFIG.adminModePermission.get(),
 			Component.translatable("gui.xaero_pac_permission_admin_mode"),
 			Component.translatable("gui.xaero_pac_permission_comment_admin_mode"),
+			ALL_BUILDER);
+
+	/**
+	 * The maximum player group count int "permission".
+	 */
+	public static final PermissionNode<Integer> MAX_PLAYER_GROUPS = new PermissionNode<>(
+			"xaero.pac_max_player_groups",
+			Integer.class,
+			() -> ServerConfig.CONFIG.maxPlayerGroupsPermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_max_player_groups"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_max_player_groups"),
+			ALL_BUILDER);
+
+	/**
+	 * The player group space int "permission".
+	 */
+	public static final PermissionNode<Integer> PLAYER_GROUP_SPACE = new PermissionNode<>(
+			"xaero.pac_player_group_space",
+			Integer.class,
+			() -> ServerConfig.CONFIG.playerGroupSpacePermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_player_group_space"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_player_group_space"),
 			ALL_BUILDER);
 
 	/**
