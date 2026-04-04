@@ -23,7 +23,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.XPACScreen;
@@ -121,14 +120,14 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 				confirmButton = new Button(
 						width / 2 - 105, height / 7 + 128,
 						100, 20,
-						new TranslatableComponent("gui.xaero_pac_confirm"), this::onConfirm
+						Component.translatable("gui.xaero_pac_confirm"), this::onConfirm
 				)
 		);
 		addRenderableWidget(
 				new Button(
 						width / 2 + 5, this.height / 7 + 128,
 						100, 20,
-						new TranslatableComponent("gui.xaero_pac_cancel"), b -> goBack()
+						Component.translatable("gui.xaero_pac_cancel"), b -> goBack()
 				)
 		);
 		updateButtons();

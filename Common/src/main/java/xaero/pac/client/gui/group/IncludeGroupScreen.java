@@ -21,7 +21,6 @@ package xaero.pac.client.gui.group;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.client.gui.widget.dropdown.IDropDownWidgetCallback;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.packet.config.group.PlayerConfigGroupGroupPacket;
@@ -34,13 +33,13 @@ import java.util.function.Consumer;
 public class IncludeGroupScreen extends IncludeElementScreen implements IDropDownWidgetCallback {
 
 	private static final Component TITLE =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_group_title");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_group_title");
 	private static final Component GROUP_SELECTION_MENU =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_group_menu");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_group_menu");
 	private static final Component HINT =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_group_hint");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_group_hint");
 	private static final Component ALL_INCLUDED =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_group_all_included")
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_group_all_included")
 					.withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private IncludeGroupScreen(

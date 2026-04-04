@@ -20,7 +20,6 @@ package xaero.pac.common.server.player.config;
 
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
@@ -193,7 +192,7 @@ public class PlayerConfigOptionValueType<T> {
 				throw new IllegalStateException();
 			if(componentWriter == null) {
 				final Function<T, String> finalStringWriter = stringWriter;
-				setComponentWriter(v -> new TextComponent(finalStringWriter.apply(v)));
+				setComponentWriter(v -> Component.literal(finalStringWriter.apply(v)));
 			}
 			PlayerConfigOptionValueType<T> result = buildInternally();
 			if(dest != null)

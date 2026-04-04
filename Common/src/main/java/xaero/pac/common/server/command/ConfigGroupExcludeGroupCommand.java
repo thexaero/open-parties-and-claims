@@ -22,7 +22,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -62,7 +61,7 @@ public class ConfigGroupExcludeGroupCommand extends ConfigGroupCommand {
 		Optional<PlayerConfigGroupActionError> error = customPlayerConfigGroup.excludeGroup(groupIdToExclude);
 		return error.<Either<Component, PlayerConfigGroupActionError>>map(Either::right)
 				.orElseGet(() ->
-						Either.left(new TranslatableComponent("gui.xaero_pac_config_exclude_group", groupIdToExclude, inputGroupId))
+						Either.left(Component.translatable("gui.xaero_pac_config_exclude_group", groupIdToExclude, inputGroupId))
 				);
 	}
 

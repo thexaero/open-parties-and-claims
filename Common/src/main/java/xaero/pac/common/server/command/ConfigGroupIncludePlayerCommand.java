@@ -25,7 +25,6 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -73,7 +72,7 @@ public class ConfigGroupIncludePlayerCommand extends ConfigGroupCommand {
 		Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> result =
 				customPlayerConfigGroup.includeMemberLimitedInternal(null, playerName);
 		return result.mapBoth(
-				m -> new TranslatableComponent("gui.xaero_pac_config_include_player", playerName, inputGroupId),
+				m -> Component.translatable("gui.xaero_pac_config_include_player", playerName, inputGroupId),
 				e -> e
 		);
 	}

@@ -84,8 +84,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_max_player_groups",
 			Integer.class,
 			() -> ServerConfig.CONFIG.maxPlayerGroupsPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_max_player_groups"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_max_player_groups"),
+			Component.translatable("gui.xaero_pac_permission_max_player_groups"),
+			Component.translatable("gui.xaero_pac_permission_comment_max_player_groups"),
 			ALL_BUILDER);
 
 	/**
@@ -95,8 +95,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_player_group_space",
 			Integer.class,
 			() -> ServerConfig.CONFIG.playerGroupSpacePermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_player_group_space"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_player_group_space"),
+			Component.translatable("gui.xaero_pac_permission_player_group_space"),
+			Component.translatable("gui.xaero_pac_permission_comment_player_group_space"),
 			ALL_BUILDER);
 
 	/**

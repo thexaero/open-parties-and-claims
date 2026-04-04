@@ -207,7 +207,7 @@ public abstract class ConfigGroupCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, result.right().get().getCommandMessage()));
 				return 0;
 			}
-			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, result.left().get()), sourcePlayer.getUUID());
+			sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, result.left().get()));
 			return 1;
 		};
 	}

@@ -25,7 +25,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.client.gui.widget.dropdown.IDropDownWidgetCallback;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.packet.config.group.PlayerConfigGroupMemberPacket;
@@ -41,18 +40,18 @@ import java.util.stream.Stream;
 public class IncludePlayerScreen extends IncludeElementScreen implements IDropDownWidgetCallback {
 
 	private static final Component TITLE =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_player_title");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_player_title");
 	private static final Component PLAYER_SELECTION_MENU =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_player_menu");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_player_menu");
 	private static final Component HINT =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_player_hint");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_player_hint");
 	private static final Component ALL_INCLUDED =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_player_all_included")
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_player_all_included")
 					.withStyle(s -> s.withColor(ChatFormatting.YELLOW));
 	private static final Component MANUAL_INPUT_BOX =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_player_manual");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_player_manual");
 	private static final Component MANUAL_INPUT_HINT =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_include_player_manual_hint");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_include_player_manual_hint");
 
 	private IncludePlayerScreen(
 			Screen escape,

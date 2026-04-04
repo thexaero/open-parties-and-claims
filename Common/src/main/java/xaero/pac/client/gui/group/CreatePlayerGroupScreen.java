@@ -23,7 +23,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.XPACScreen;
@@ -40,13 +39,13 @@ import java.util.function.Consumer;
 public class CreatePlayerGroupScreen extends XPACScreen {
 
 	private static final Component TITLE =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_create_group_title");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_create_group_title");
 	private static final Component CHOOSE_ID =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_choose_id");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_choose_id");
 	private static final Component ALLOWED_CHARS1 =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_group_id_allowed_chars1");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_group_id_allowed_chars1");
 	private static final Component ALLOWED_CHARS_2 =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_group_id_allowed_chars2");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_group_id_allowed_chars2");
 
 	private final PlayerConfigClientStorage configData;
 	private final List<String> existingEditorGroups;
@@ -74,7 +73,7 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 		idTextBox = new FixedEditBox(
 				font, width / 2 - 100, height / 7 + 60,
 				200, 20,
-				new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_id_edit_box")
+				Component.translatable("gui.xaero_pac_ui_player_config_player_groups_id_edit_box")
 		);
 		if(existingInput != null)
 			idTextBox.setValue(existingInput);
@@ -85,14 +84,14 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 				confirmButton = new Button(
 						width / 2 - 105, height / 7 + 128,
 						100, 20,
-						new TranslatableComponent("gui.xaero_pac_confirm"), this::onConfirm
+						Component.translatable("gui.xaero_pac_confirm"), this::onConfirm
 				)
 		);
 		addRenderableWidget(
 				new Button(
 						width / 2 + 5, this.height / 7 + 128,
 						100, 20,
-						new TranslatableComponent("gui.xaero_pac_cancel"), b -> goBack()
+						Component.translatable("gui.xaero_pac_cancel"), b -> goBack()
 				)
 		);
 		setFocused(idTextBox);
@@ -223,8 +222,8 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 	private enum InputValidity {
 		VALID(null),
 		EMPTY(null),
-		INVALID_CHARS(new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_group_id_not_valid")),
-		DUPLICATE(new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_group_id_duplicate"));
+		INVALID_CHARS(Component.translatable("gui.xaero_pac_ui_player_config_player_groups_group_id_not_valid")),
+		DUPLICATE(Component.translatable("gui.xaero_pac_ui_player_config_player_groups_group_id_duplicate"));
 
 		private final Component message;
 

@@ -21,7 +21,6 @@ package xaero.pac.common.server.player.config;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import xaero.pac.common.player.config.PlayerConfigConstants;
 import xaero.pac.common.player.config.group.BuiltInPlayerConfigGroupNames;
 
@@ -129,7 +128,7 @@ public class PlayerConfigOptionValueTypes {
 				Component builtInGroupName = BuiltInPlayerConfigGroupNames.get(groupId);
 				if(builtInGroupName != null)
 					return builtInGroupName;
-				return new TextComponent(groupId);
+				return Component.literal(groupId);
 			})
 			.build(BASIC_TYPES);
 

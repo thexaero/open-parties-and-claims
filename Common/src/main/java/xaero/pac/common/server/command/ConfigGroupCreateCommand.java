@@ -22,7 +22,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.player.config.group.api.PlayerConfigGroupActionError;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
@@ -43,7 +42,7 @@ public class ConfigGroupCreateCommand extends ConfigGroupCommand {
 		Either<ICustomPlayerConfigGroup, PlayerConfigGroupActionError> result =
 				playerConfig.getPlayerGroups().addCustomLimitedInternal(inputGroupId);
 		return result.mapBoth(
-				l -> new TranslatableComponent("gui.xaero_pac_config_create_group", inputGroupId),
+				l -> Component.translatable("gui.xaero_pac_config_create_group", inputGroupId),
 				e -> e
 		);
 	}

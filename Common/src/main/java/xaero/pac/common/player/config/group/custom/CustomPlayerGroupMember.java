@@ -18,7 +18,9 @@
 
 package xaero.pac.common.player.config.group.custom;
 
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import xaero.pac.common.player.config.PlayerConfigConstants;
 import xaero.pac.common.util.linked.ILinkedChainNode;
 
@@ -91,12 +93,12 @@ public class CustomPlayerGroupMember implements ICustomPlayerGroupMember, ILinke
 	@Nonnull
 	@Override
 	public Component getDisplayLabel() {
-		MutableComponent result = new TextComponent("");
-		result.append(displayName == null ? PlayerConfigConstants.UNKNOWN_PLAYER : new TextComponent(displayName));
+		MutableComponent result = Component.literal("");
+		result.append(displayName == null ? PlayerConfigConstants.UNKNOWN_PLAYER : Component.literal(displayName));
 		if(id != null)
 			result.withStyle(s ->
 					s.withHoverEvent(
-							new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(id.toString()))
+							new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(id.toString()))
 					)
 			);
 		return result;

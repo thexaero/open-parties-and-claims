@@ -31,7 +31,7 @@ public class BuiltInPlayerConfigGroupNames {
 	private static Component assign(String groupId, MutableComponent groupName){
 		groupName.withStyle(s ->
 				s.withHoverEvent(
-						new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(groupId))
+						new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(groupId))
 				)
 		);
 		NAME_MAP.put(groupId, groupName);
@@ -41,22 +41,22 @@ public class BuiltInPlayerConfigGroupNames {
 	public static final Component NO_EXCEPTION_NAME =
 			assign(
 					PlayerConfigConstants.NO_EXCEPTION_ID,
-					new TranslatableComponent("gui.xaero_pac_player_config_playerConfig.playerGroups.nobody")
+					Component.translatable("gui.xaero_pac_player_config_playerConfig.playerGroups.nobody")
 			);
 	public static final Component EVERYONE_EXCEPTION_NAME =
 			assign(
 					PlayerConfigConstants.EVERYONE_EXCEPTION_ID,
-					new TranslatableComponent("gui.xaero_pac_player_config_playerConfig.playerGroups.everyone")
+					Component.translatable("gui.xaero_pac_player_config_playerConfig.playerGroups.everyone")
 			);
 	public static final Component PARTY_EXCEPTION_NAME =
 			assign(
 					PlayerConfigConstants.PARTY_EXCEPTION_ID,
-					new TranslatableComponent("gui.xaero_pac_player_config_playerConfig.playerGroups.party")
+					Component.translatable("gui.xaero_pac_player_config_playerConfig.playerGroups.party")
 			);
 	public static final Component ALLIES_EXCEPTION_NAME =
 			assign(
 					PlayerConfigConstants.ALLIES_EXCEPTION_ID,
-					new TranslatableComponent("gui.xaero_pac_player_config_playerConfig.playerGroups.allies")
+					Component.translatable("gui.xaero_pac_player_config_playerConfig.playerGroups.allies")
 			);
 
 	public static Component get(String groupId){
@@ -67,7 +67,7 @@ public class BuiltInPlayerConfigGroupNames {
 		Component builtInName = get(groupId);
 		if(builtInName != null)
 			return builtInName;
-		return new TextComponent(groupId);
+		return Component.literal(groupId);
 	}
 
 }

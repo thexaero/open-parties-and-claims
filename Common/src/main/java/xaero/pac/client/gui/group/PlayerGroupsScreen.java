@@ -29,8 +29,6 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
@@ -54,21 +52,21 @@ import java.util.function.Supplier;
 public class PlayerGroupsScreen extends XPACScreen {
 
 	private static final Component TITLE =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_screen_title");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_screen_title");
 	private static final Component INCLUDED_GROUPS =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_included_groups_label");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_included_groups_label");
 	private static final Component INCLUDED_PLAYERS =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_included_players_label");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_included_players_label");
 	private static final Component PLEASE_SELECT_GROUP =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_please_select_group");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_please_select_group");
 	private static final Component SYNCHRONIZING =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_synchronizing");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_synchronizing");
 	private static final Component NO_GROUPS =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_no_custom_groups");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_no_custom_groups");
 	private static final Component FIXING_DESYNC =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_fixing_desync");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_fixing_desync");
 	private static final Component DELETE_CONFIRMATION1 =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_button_delete_group_confirmation1");
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_delete_group_confirmation1");
 
 	private static final int HEADER_HEIGHT = 48;
 	private static final int FOOTER_HEIGHT = 64;
@@ -125,14 +123,14 @@ public class PlayerGroupsScreen extends XPACScreen {
 		addRenderableWidget(
 				new Button(
 						width / 2 - 100, height - 30, 200, 20,
-						new TranslatableComponent("gui.xaero_pac_back"),
+						Component.translatable("gui.xaero_pac_back"),
 						b -> goBack()
 				)
 		);
 		addRenderableWidget(
 				createGroupButton = new Button(
 						width / 2 - 205, 10, 80, 20,
-						new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_button_create_group"),
+						Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_create_group"),
 						this::onCreateGroupButton,
 						new ButtonStateOnTooltip(this::getCreateGroupButtonState)
 				)
@@ -140,29 +138,29 @@ public class PlayerGroupsScreen extends XPACScreen {
 		addRenderableWidget(
 				deleteGroupButton = new Button(
 						width / 2 + 125, 10, 80, 20,
-						new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_button_delete_group"),
+						Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_delete_group"),
 						this::onDeleteGroupButton,
 						new ButtonStateOnTooltip(this::getDeleteGroupButtonState)
 				)
 		);
 		List<ContentsButtonInfo> contentsButtonInfoList = new ArrayList<>();
 		contentsButtonInfoList.add(new ContentsButtonInfo(
-				new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_button_include_player"),
+				Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_include_player"),
 				this::onIncludePlayerButton,
 				this::getIncludePlayerButtonState
 		));
 		contentsButtonInfoList.add(new ContentsButtonInfo(
-				new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_button_include_group"),
+				Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_include_group"),
 				this::onIncludeGroupButton,
 				this::getIncludeGroupButtonState
 		));
 		contentsButtonInfoList.add(new ContentsButtonInfo(
-				new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_button_exclude_player"),
+				Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_exclude_player"),
 				this::onExcludePlayerButton,
 				this::getExcludePlayerButtonState
 		));
 		contentsButtonInfoList.add(new ContentsButtonInfo(
-				new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_button_exclude_group"),
+				Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_exclude_group"),
 				this::onExcludeGroupButton,
 				this::getExcludeGroupButtonState
 		));
@@ -340,9 +338,9 @@ public class PlayerGroupsScreen extends XPACScreen {
 					minecraft.setScreen(PlayerGroupsScreen.this);
 				},
 						DELETE_CONFIRMATION1,
-						new TranslatableComponent(
+						Component.translatable(
 								"gui.xaero_pac_ui_player_config_player_groups_button_delete_group_confirmation2",
-								new TextComponent(selectedGroupId).withStyle(s -> s.withColor(ChatFormatting.DARK_RED))
+								Component.literal(selectedGroupId).withStyle(s -> s.withColor(ChatFormatting.DARK_RED))
 						)
 				)
 		);
@@ -609,7 +607,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public Component getNarration() {
-				return new TranslatableComponent("narrator.select", groupName);
+				return Component.translatable("narrator.select", groupName);
 			}
 
 			@Override
@@ -696,11 +694,11 @@ public class PlayerGroupsScreen extends XPACScreen {
 					.toList();
 			for (String directGroup : sortedIncludedGroups)
 				addEntry(new GroupInclusionEntry(directGroup, children().size()));
-			addEntry(new TitleEntry(new TextComponent(""), children().size()));
+			addEntry(new TitleEntry(Component.literal(""), children().size()));
 			addEntry(new TitleEntry(INCLUDED_PLAYERS, children().size()));
 			for (ICustomPlayerGroupMember directMember : sortedIncludedMembers)
 				addEntry(new PlayerEntry(directMember, children().size()));
-			addEntry(new TitleEntry(new TextComponent(""), children().size()));
+			addEntry(new TitleEntry(Component.literal(""), children().size()));
 		}
 
 		@Override
@@ -785,7 +783,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public Component getNarration() {
-				return new TranslatableComponent("narrator.select", title);
+				return Component.translatable("narrator.select", title);
 			}
 
 			@Override
@@ -824,7 +822,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public Component getNarration() {
-				return new TranslatableComponent("narrator.select", label);
+				return Component.translatable("narrator.select", label);
 			}
 
 			@Override

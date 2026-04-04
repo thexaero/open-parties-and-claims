@@ -23,13 +23,12 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.player.config.group.api.PlayerConfigGroupActionError;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 
 public class ConfigGroupDeleteCommand extends ConfigGroupCommand {
 
-	private final Component MESSAGE = new TranslatableComponent("gui.xaero_pac_config_delete_group_confirmation_request")
+	private final Component MESSAGE = Component.translatable("gui.xaero_pac_config_delete_group_confirmation_request")
 			.withStyle(s -> s.withColor(ChatFormatting.YELLOW));
 
 	protected ConfigGroupDeleteCommand() {
