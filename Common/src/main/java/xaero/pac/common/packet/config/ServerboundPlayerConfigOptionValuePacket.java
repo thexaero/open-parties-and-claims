@@ -117,6 +117,10 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 					(PlayerConfigOptionSpec<?>) playerConfigs.getOptionForId(optionEntry.getId());
 			if(option == null)
 				return;
+			if(!option.isSyncable())
+				return;
+			if(!option.isDirectlyConfigurable())
+				return;
 			Object value = null;
 			try {
 				value = option.getValueType().getSyncDecoder().apply(optionEntry.getValueTag());

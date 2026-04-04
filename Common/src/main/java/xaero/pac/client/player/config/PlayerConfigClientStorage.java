@@ -20,6 +20,7 @@ package xaero.pac.client.player.config;
 
 import com.google.common.collect.Lists;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
+import xaero.pac.client.player.config.group.ClientPlayerConfigGroupManager;
 import xaero.pac.client.player.config.sub.PlayerSubConfigClientStorage;
 import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.MapFactory;
@@ -44,11 +45,21 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 	private final SortedValueList<String> subConfigIds;
 	private String selectedSubConfig;
 	private final Map<String, PlayerSubConfigClientStorage> subConfigs;
+	private final ClientPlayerConfigGroupManager playerGroups;
 	private boolean syncInProgress;
 	private boolean beingDeleted;
 	private int subConfigLimit;
 
-	protected PlayerConfigClientStorage(PlayerConfigClientStorageManager manager, PlayerConfigType type, UUID owner, Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options, List<String> subConfigIdsUnmodifiable, SortedValueList<String> subConfigIds, Map<String, PlayerSubConfigClientStorage> subConfigs) {
+	protected PlayerConfigClientStorage(
+			PlayerConfigClientStorageManager manager,
+			PlayerConfigType type,
+			UUID owner,
+			Map<PlayerConfigOptionSpec<?>, PlayerConfigStringableOptionClientStorage<?>> options,
+			List<String> subConfigIdsUnmodifiable,
+			SortedValueList<String> subConfigIds,
+			Map<String, PlayerSubConfigClientStorage> subConfigs,
+			ClientPlayerConfigGroupManager playerGroups
+	) {
 		super();
 		this.manager = manager;
 		this.type = type;
@@ -57,6 +68,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		this.subConfigIdsUnmodifiable = subConfigIdsUnmodifiable;
 		this.subConfigIds = subConfigIds;
 		this.subConfigs = subConfigs;
+		this.playerGroups = playerGroups;
 	}
 
 	protected <T> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
@@ -89,6 +101,13 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		return owner;
 	}
 
+	@Override
+	public UUID getOwnerForSync() {
+		if(manager.getMyPlayerConfig() == this)
+			return null;
+		return getOwner();
+	}
+
 	@Nonnull
 	@Override
 	public Stream<PlayerConfigStringableOptionClientStorage<?>> typedOptionStream(){
@@ -100,6 +119,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		PlayerSubConfigClientStorage result = subConfigs.get(subId);
 		if(result == null){
 			result = PlayerSubConfigClientStorage.Builder.begin(LinkedHashMap::new)
+					.setMainConfig(this)
 					.setSubID(subId)
 					.setOwner(owner)
 					.setManager(manager)
@@ -119,6 +139,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		}
 	}
 
+	@Override
 	@Nonnull
 	public List<String> getSubConfigIds() {
 		return subConfigIdsUnmodifiable;
@@ -177,11 +198,12 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 	public void reset() {
 		options.clear();
 		selectedSubConfig = null;
-		if(subConfigs != null) {
+		if(subConfigs != null) {//not a sub-config
 			subConfigIds.clear();
 			subConfigIds.add(PlayerConfig.MAIN_SUB_ID);
 			subConfigs.clear();
-			syncInProgress = true;
+			playerGroups.reset();
+			setSyncInProgress(true);
 		}
 	}
 
@@ -219,6 +241,19 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		if(type == PlayerConfigType.SERVER)
 			return Integer.MAX_VALUE;
 		return subConfigLimit;
+	}
+
+	@Override
+	public ClientPlayerConfigGroupManager getPlayerGroups() {
+		return playerGroups;
+	}
+
+	public PlayerConfigClientStorageManager getManager() {
+		return manager;
+	}
+
+	public PlayerConfigClientStorage getMain(){
+		return this;
 	}
 
 	public static abstract class Builder<B extends Builder<B>> implements IBuilder<PlayerConfigClientStorage> {
@@ -285,7 +320,15 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 			SortedValueList<String> subConfigIds = SortedValueList.Builder.<String>begin()
 					.setContent(subConfigIdsStorage)
 					.build();
-			return new PlayerConfigClientStorage(manager, type, owner, options, subConfigIdsUnmodifiable, subConfigIds, mapFactory.get());
+			ClientPlayerConfigGroupManager playerGroups = ClientPlayerConfigGroupManager.Builder.begin()
+					.setConfigType(type)
+					.build();
+			PlayerConfigClientStorage result = new PlayerConfigClientStorage(
+					manager, type, owner, options, subConfigIdsUnmodifiable,
+					subConfigIds, mapFactory.get(), playerGroups
+					);
+			playerGroups.setConfig(result);
+			return result;
 		}
 
 		public static FinalBuilder begin(MapFactory mapFactory) {

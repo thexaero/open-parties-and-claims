@@ -20,7 +20,10 @@ package xaero.pac.common.packet.config;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
@@ -59,8 +62,10 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 				String comment,
 				PlayerConfigOptionCategory category
 		){
-			return optionType.buildSpec(valueType, entryTag)
-					.setId(id)
+			PlayerConfigOptionSpec.Builder<T, ?> builder = optionType.buildSpec(valueType, entryTag);
+			if(builder == null)
+				return null;
+			return builder.setId(id)
 					.setTranslation(translation, translationArgs)
 					.setCommentTranslation(commentTranslation, commentTranslationArgs)
 					.setDefaultValue(valueType.getSyncDecoder().apply(defaultValueTag))
@@ -243,7 +248,21 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 				return builder;
 			}
 		};
-		public static final OptionType UNSYNCABLE = new OptionType(5){
+		public static final OptionType GROUP_ITERATION = new OptionType(5){
+			@Override
+			public <T> void serializeExtra(PlayerConfigOptionSpec<T> o, PlayerConfigOptionValueType<T> type, CompoundTag entryTag) {
+			}
+			@Override
+			public <T> PlayerConfigOptionSpec.Builder<T, ?> buildSpec(PlayerConfigOptionValueType<T> type, CompoundTag entryTag) {
+				if(type != PlayerConfigOptionValueTypes.GROUP_ID)
+					return null;
+				PlayerConfigPlayerGroupOptionSpec.Builder builder = PlayerConfigPlayerGroupOptionSpec.Builder.begin();
+				@SuppressWarnings("unchecked")
+				PlayerConfigOptionSpec.Builder<T, ?> castBuilder = (PlayerConfigOptionSpec.Builder<T, ?>) builder;
+				return castBuilder;
+			}
+		};
+		public static final OptionType UNSYNCABLE = new OptionType(6){
 			@Override
 			public <T> void serializeExtra(PlayerConfigOptionSpec<T> option, PlayerConfigOptionValueType<T> type, CompoundTag entryTag) {
 			}

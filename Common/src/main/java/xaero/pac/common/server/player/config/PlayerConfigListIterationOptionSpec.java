@@ -29,6 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSpec<T> {
 
@@ -58,13 +59,18 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 			boolean dynamic,
 			boolean overridable,
 			boolean forcedPlayerConfigurable,
-			IPlayerConfigChangeHandler<T> serverChangeHandler
+			boolean directlyConfigurable,
+			IPlayerConfigChangeHandler<T> serverChangeHandler,
+			boolean syncable,
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
 	) {
 		super(
 				type, id, shortenedId, path, defaultValue, defaultReplacer, comment,
 				translation, translationArgs, commentTranslation, commentTranslationArgs,
 				category, serverSideValidator, clientSideValidator, tooltipPrefix,
-				configTypeFilter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+				configTypeFilter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable,
+				directlyConfigurable, serverChangeHandler,
+				syncable, commandSuggestionGetter
 		);
 		this.serverSideListGetter = serverSideListGetter;
 		this.clientSideListGetter = clientSideListGetter;
@@ -106,20 +112,34 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 
 		@Override
 		public BiPredicate<PlayerConfig<?>, T> buildServerSideValidator() {
+			Function<PlayerConfig<?>, List<T>> finalServerSideListGetter = serverSideListGetter;
 			BiPredicate<PlayerConfig<?>, T> baseValidator = super.buildServerSideValidator();
-			return (c, v) -> baseValidator.test(c, v) && serverSideListGetter.apply(c).contains(v);
+			return (c, v) -> baseValidator.test(c, v) &&
+					finalServerSideListGetter.apply(c).contains(v);
 		}
 
 		@Override
 		public BiPredicate<PlayerConfigClientStorage, T> buildClientSideValidator() {
+			Function<PlayerConfigClientStorage, List<T>> finalClientSideListGetter = clientSideListGetter;
 			BiPredicate<PlayerConfigClientStorage, T> baseValidator = super.buildClientSideValidator();
-			return (c, v) -> baseValidator.test(c, v) && clientSideListGetter.apply(c).contains(v);
+			return (c, v) -> baseValidator.test(c, v) &&
+					finalClientSideListGetter.apply(c).contains(v);
 		}
 
 		@Override
 		public PlayerConfigListIterationOptionSpec<T> build(Map<String, PlayerConfigOptionSpec<?>> dest) {
 			if(serverSideListGetter == null || clientSideListGetter == null)
 				throw new IllegalStateException();
+			if(commandSuggestionGetter == null) {
+				Function<PlayerConfig<?>, List<T>> finalServerSideListGetter = serverSideListGetter;
+				PlayerConfigOptionValueType<T> finalValueType = valueType;
+				setCommandSuggestionGetter(config -> {
+					List<T> values = finalServerSideListGetter.apply(config);
+					if(values == null)
+						return null;
+					return values.stream().map(finalValueType.getStringWriter());
+				});
+			}
 			return (PlayerConfigListIterationOptionSpec<T>) super.build(dest);
 		}
 
@@ -142,7 +162,8 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, serverSideListGetter, clientSideListGetter,
 					ClientboundPlayerConfigDynamicOptionsPacket.OptionType.UNSYNCABLE,
-					dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
+					serverChangeHandler, syncable, commandSuggestionGetter
 			);
 		}
 

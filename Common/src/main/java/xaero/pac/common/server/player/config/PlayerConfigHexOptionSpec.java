@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Integer> {
 
@@ -52,7 +54,10 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 			boolean dynamic,
 			boolean overridable,
 			boolean forcedPlayerConfigurable,
-			IPlayerConfigChangeHandler<Integer> serverChangeHandler
+			boolean directlyConfigurable,
+			IPlayerConfigChangeHandler<Integer> serverChangeHandler,
+			boolean syncable,
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
 	) {
 		super(
 				type, id, shortenedId, path, defaultValue, defaultReplacer,
@@ -60,7 +65,8 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 				commentTranslationArgs, category,
 				serverSideValidator, clientSideValidator, tooltipPrefix,
 				configTypeFilter, syncOptionType, dynamic, overridable,
-				forcedPlayerConfigurable, serverChangeHandler
+				forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
+				syncable, commandSuggestionGetter
 		);
 	}
 
@@ -95,7 +101,8 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 					commentTranslation, commentTranslationArgs, category,
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.HEX,
-					dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
+					serverChangeHandler, syncable, commandSuggestionGetter
 			);
 		}
 		

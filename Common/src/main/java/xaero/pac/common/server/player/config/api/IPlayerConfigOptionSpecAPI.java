@@ -182,4 +182,14 @@ public interface IPlayerConfigOptionSpecAPI<T> {
 	 */
 	boolean isOverridable();
 
+	/**
+	 * Gets whether this option can be directly configured, as opposed
+	 * to being configurable only by the mod's internal code, like the option
+	 * used for storing the custom player group data, which shouldn't be accessed
+	 * directly.
+	 *
+	 * @return true if this option is directly configurable, otherwise false
+	 */
+	boolean isDirectlyConfigurable();
+
 }

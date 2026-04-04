@@ -19,11 +19,16 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
+
+import java.util.List;
 
 public class XPACScreen extends Screen implements IDropDownContainer {
 
@@ -112,6 +117,36 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		if(menu != this.openDropdown && this.openDropdown != null)
 			this.openDropdown.setClosed(true);
 		this.openDropdown = null;
+	}
+
+	private <T extends GuiEventListener & NarratableEntry, T2 extends GuiEventListener & Widget & NarratableEntry>
+	void replaceWidget(T current, T replacement, T2 replaceRenderable) {
+		int childIndex = children().indexOf(current);
+		if(childIndex == -1)
+			return;
+		super.removeWidget(current);
+		if(replaceRenderable != null)
+			super.addRenderableWidget(replaceRenderable);
+		else
+			super.addWidget(replacement);
+		children().remove(replacement);
+		((List<GuiEventListener>)children()).add(childIndex, replacement);
+	}
+
+	protected <T extends GuiEventListener & NarratableEntry> void replaceWidget(T current, T replacement) {
+		replaceWidget(current, replacement, null);
+	}
+
+	protected <T extends GuiEventListener & Widget & NarratableEntry> void replaceRenderableWidget(T current, T replacement) {
+		replaceWidget(current, null, replacement);
+	}
+
+	public Screen getEscape() {
+		return escape;
+	}
+
+	public Screen getParent() {
+		return parent;
 	}
 
 }

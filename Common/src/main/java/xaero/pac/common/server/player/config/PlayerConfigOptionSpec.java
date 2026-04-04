@@ -40,6 +40,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> {
 
@@ -68,8 +69,11 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 	private final boolean dynamic;
 	private final boolean overridable;
 	private final boolean forcedPlayerConfigurable;
+	private final boolean directlyConfigurable;
 	private final IPlayerConfigChangeHandler<T> serverChangeHandler;
-	
+	private final boolean syncable;
+	private final Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter;
+
 	protected PlayerConfigOptionSpec(
 			PlayerConfigOptionValueType<T> valueType,
 			String id,
@@ -91,7 +95,10 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			boolean dynamic,
 			boolean overridable,
 			boolean forcedPlayerConfigurable,
-			IPlayerConfigChangeHandler<T> serverChangeHandler
+			boolean directlyConfigurable,
+			IPlayerConfigChangeHandler<T> serverChangeHandler,
+			boolean syncable,
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
 	) {
 		super();
 		this.valueType = valueType;
@@ -116,7 +123,10 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		this.dynamic = dynamic;
 		this.overridable = overridable;
 		this.forcedPlayerConfigurable = forcedPlayerConfigurable;
+		this.directlyConfigurable = directlyConfigurable;
 		this.serverChangeHandler = serverChangeHandler;
+		this.syncable = syncable;
+		this.commandSuggestionGetter = commandSuggestionGetter;
 	}
 
 	protected ForgeConfigSpec.Builder buildForgeSpec(ForgeConfigSpec.Builder builder) {
@@ -132,7 +142,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 
 	private Component applyValueQuotesIfNeeded(Object value, Component valueString){
 		Component result = valueString;
-		if(value instanceof String) {
+		if(value != null && valueType.shouldDisplayInQuotes()) {
 			result = new TextComponent("\"");
 			result.getSiblings().add(valueString);
 			result.getSiblings().add(new TextComponent("\""));
@@ -297,8 +307,23 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		return forcedPlayerConfigurable;
 	}
 
+	@Override
+	public boolean isDirectlyConfigurable() {
+		return directlyConfigurable;
+	}
+
 	public IPlayerConfigChangeHandler<T> getServerChangeHandler() {
 		return serverChangeHandler;
+	}
+
+	public boolean isSyncable() {
+		return syncable;
+	}
+
+	public Stream<String> getCommandSuggestions(PlayerConfig<?> config){
+		if(commandSuggestionGetter == null)
+			return null;
+		return commandSuggestionGetter.apply(config);
 	}
 
 	public abstract static class Builder<T, B extends Builder<T, B>> {
@@ -322,7 +347,10 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		protected boolean dynamic;
 		protected boolean overridable;
 		protected boolean forcedPlayerConfigurable;
+		protected boolean directlyConfigurable;
 		protected IPlayerConfigChangeHandler<T> serverChangeHandler;
+		protected boolean syncable;
+		protected Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter;
 		
 		@SuppressWarnings("unchecked")
 		protected Builder(PlayerConfigOptionValueType<T> valueType){
@@ -346,7 +374,10 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			setDynamic(false);
 			setOverridable(true);
 			setForcedPlayerConfigurable(false);
+			setDirectlyConfigurable(true);
 			setServerChangeHandler(null);
+			setSyncable(true);
+			setCommandSuggestionGetter(null);
 			return self;
 		}
 		
@@ -427,8 +458,23 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			return self;
 		}
 
+		public B setDirectlyConfigurable(boolean directlyConfigurable) {
+			this.directlyConfigurable = directlyConfigurable;
+			return self;
+		}
+
 		public B setServerChangeHandler(IPlayerConfigChangeHandler<T> serverChangeHandler) {
 			this.serverChangeHandler = serverChangeHandler;
+			return self;
+		}
+
+		public B setSyncable(boolean syncable) {
+			this.syncable = syncable;
+			return self;
+		}
+
+		public B setCommandSuggestionGetter(Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter) {
+			this.commandSuggestionGetter = commandSuggestionGetter;
 			return self;
 		}
 
@@ -465,6 +511,11 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			valueValidator = buildValueValidator();
 			serverSideValidator = buildServerSideValidator();
 			clientSideValidator = buildClientSideValidator();
+			if(commandSuggestionGetter == null) {
+				List<String> defaultCommandSuggestions = valueType.getDefaultCommandSuggestions();
+				if(defaultCommandSuggestions != null)
+					setCommandSuggestionGetter(c -> defaultCommandSuggestions.stream());
+			}
 			PlayerConfigOptionSpec<T> spec = buildInternally(
 					Collections.unmodifiableList(StringUtils.split(id, '.')),
 					id.substring(PlayerConfig.PLAYER_CONFIG_ROOT_DOT.length())
@@ -479,7 +530,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 	}
 	
 	public static final class FinalBuilder<T> extends Builder<T, FinalBuilder<T>> {
-		
+
 		protected FinalBuilder(PlayerConfigOptionValueType<T> valueType) {
 			super(valueType);
 		}
@@ -492,7 +543,8 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 					commentTranslation, commentTranslationArgs, category,
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.DEFAULT,
-					dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
+					syncable, commandSuggestionGetter
 			);
 		}
 		

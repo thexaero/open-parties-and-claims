@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -36,6 +37,8 @@ public class PlayerConfigOptionValueType<T> {
 	private final Function<String, T> stringParser;
 	private final Function<T, String> stringWriter;
 	private final Function<T, Component> componentWriter;
+	private final List<String> defaultCommandSuggestions;
+	private final boolean shouldDisplayInQuotes;
 
 	//The default for the value type, but can be customized per option type like in PlayerConfigRangedOptionSpec
 	private final BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
@@ -48,6 +51,8 @@ public class PlayerConfigOptionValueType<T> {
 			Function<String, T> stringParser,
 			Function<T, String> stringWriter,
 			Function<T, Component> componentWriter,
+			List<String> defaultCommandSuggestions,
+			boolean shouldDisplayInQuotes,
 			BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner
 	) {
 		this.jType = jType;
@@ -57,6 +62,8 @@ public class PlayerConfigOptionValueType<T> {
 		this.stringParser = stringParser;
 		this.stringWriter = stringWriter;
 		this.componentWriter = componentWriter;
+		this.defaultCommandSuggestions = defaultCommandSuggestions;
+		this.shouldDisplayInQuotes = shouldDisplayInQuotes;
 		this.defaultSpecDefiner = defaultSpecDefiner;
 	}
 
@@ -92,6 +99,14 @@ public class PlayerConfigOptionValueType<T> {
 		return defaultSpecDefiner;
 	}
 
+	public List<String> getDefaultCommandSuggestions() {
+		return defaultCommandSuggestions;
+	}
+
+	public boolean shouldDisplayInQuotes() {
+		return shouldDisplayInQuotes;
+	}
+
 	public static abstract class Builder<T, B extends Builder<T, B>> {
 
 		protected final B self;
@@ -102,6 +117,8 @@ public class PlayerConfigOptionValueType<T> {
 		protected Function<String, T> stringParser;
 		protected Function<T, String> stringWriter;
 		protected Function<T, Component> componentWriter;
+		protected List<String> defaultCommandSuggestions;
+		protected boolean shouldDisplayInQuotes;
 		protected BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
 
 		@SuppressWarnings("unchecked")
@@ -120,6 +137,8 @@ public class PlayerConfigOptionValueType<T> {
 			setDefaultSpecDefiner((specBuilder, o) ->
 					specBuilder.define(o.id, o.defaultValue)
 			);
+			setDefaultCommandSuggestions(null);
+			setShouldDisplayInQuotes(false);
 			return self;
 		}
 
@@ -158,6 +177,16 @@ public class PlayerConfigOptionValueType<T> {
 			return self;
 		}
 
+		public B setDefaultCommandSuggestions(List<String> defaultCommandSuggestions) {
+			this.defaultCommandSuggestions = defaultCommandSuggestions;
+			return self;
+		}
+
+		public B setShouldDisplayInQuotes(boolean shouldDisplayInQuotes) {
+			this.shouldDisplayInQuotes = shouldDisplayInQuotes;
+			return self;
+		}
+
 		public PlayerConfigOptionValueType<T> build(Map<String, PlayerConfigOptionValueType<?>> dest){
 			if(id == null || jType == null || syncDecoder == null || syncEncoder == null ||
 					stringParser == null || stringWriter == null || defaultSpecDefiner == null)
@@ -186,8 +215,8 @@ public class PlayerConfigOptionValueType<T> {
 		protected PlayerConfigOptionValueType<T> buildInternally(){
 			return new PlayerConfigOptionValueType<>(
 					jType, id, syncEncoder, syncDecoder, stringParser,
-					stringWriter, componentWriter,
-					defaultSpecDefiner
+					stringWriter, componentWriter, defaultCommandSuggestions,
+					shouldDisplayInQuotes, defaultSpecDefiner
 			);
 		}
 

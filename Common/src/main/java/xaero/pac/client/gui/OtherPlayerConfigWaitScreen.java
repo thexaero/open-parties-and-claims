@@ -21,6 +21,7 @@ package xaero.pac.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.OpenPartiesAndClaims;
@@ -37,29 +38,39 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	private final TranslatableComponent message;
 	private final String otherPlayerName;
 	private Listener listener;
+	private final boolean autoOpenGroups;
 
-	public OtherPlayerConfigWaitScreen(Screen escape, Screen parent, String otherPlayerName) {
+	public OtherPlayerConfigWaitScreen(Screen escape, Screen parent, String otherPlayerName, boolean autoOpenGroups) {
 		super(escape, parent, new TextComponent(""));
 		this.otherPlayerName = otherPlayerName;
 		message = new TranslatableComponent("gui.xaero_pac_ui_other_player_config_waiting", otherPlayerName);
+		this.autoOpenGroups = autoOpenGroups;
+	}
+
+	public OtherPlayerConfigWaitScreen(Screen escape, Screen parent, String otherPlayerName) {
+		this(escape, parent, otherPlayerName, false);
 	}
 	
 	@Override
 	protected void init() {
 		super.init();
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_waiting_cancel"), this::onCancelButton));
-		startListening();
 	}
 	
 	protected void onCancelButton(Button b) {
 		goBack();
 	}
 	
-	private void startListening() {
-		if(listener == null) {
-			listener = new Listener();
-			listener.start();
-		}
+	private void tryToStartListening() {
+		if(listener != null)
+			return;
+		IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
+				manager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
+		if(manager.isWaitingForOtherPlayerConfig())//a previous request is still being synced
+			return;
+		listener = new Listener();
+		manager.setWaitingForOtherPlayerConfig(true);
+		listener.start();
 	}
 	
 	public Listener getListener() {
@@ -71,8 +82,13 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 		renderBackground(poseStack);
 		drawCenteredString(poseStack, font, message, width / 2, height / 6 + 64, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
+		tryToStartListening();
 	}
-	
+
+	public String getOtherPlayerName() {
+		return otherPlayerName;
+	}
+
 	public final class Listener {
 		
 		public void start() {
@@ -81,19 +97,22 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 		}
 		
 		public void onConfigDataSyncDone(IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> configData) {
-			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> manager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
-			minecraft.setScreen(
-					PlayerConfigScreen.Builder
+			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
+					manager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
+			Component mainTitle = new TranslatableComponent("gui.xaero_pac_ui_other_player_config", otherPlayerName);
+			PlayerConfigScreen configScreen = PlayerConfigScreen.Builder
 					.begin(ArrayList::new)
 					.setParent(parent)
 					.setEscape(escape)
-					.setTitle(new TranslatableComponent("gui.xaero_pac_ui_other_player_config", otherPlayerName))
+					.setTitle(mainTitle)
 					.setData((PlayerConfigClientStorage)(Object)configData)
 					.setManager(manager)
 					.setDefaultPlayerConfigData((PlayerConfigClientStorage)(Object) manager.getDefaultPlayerConfig())
 					.setOtherPlayerName(otherPlayerName)
-					.build()
-					);
+					.build();
+			minecraft.setScreen(configScreen);
+			if(autoOpenGroups)
+				configScreen.openGroupsScreen();
 		}
 		
 	}

@@ -27,6 +27,8 @@ import xaero.pac.common.packet.config.ServerboundSubConfigExistencePacket;
 public class PlayerConfigClientSynchronizer {
 	
 	public <T> void syncToServer(PlayerConfigClientStorage config, PlayerConfigStringableOptionClientStorage<T> option) {
+		if(!option.isSyncable())
+			return;
 		PlayerConfigOptionValuePacket.Entry packetOptionEntry = PlayerConfigOptionValuePacket.Entry.of(option.getOption(), option.getValue(), option.isMutable(), option.isDefaulted());
 
 		ServerboundPlayerConfigOptionValuePacket packet = new ServerboundPlayerConfigOptionValuePacket(config.getType(), config.getSubId(), config.getOwner(), Lists.newArrayList(packetOptionEntry));

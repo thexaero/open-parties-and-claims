@@ -18,8 +18,12 @@
 
 package xaero.pac.common.server.player.config;
 
+import com.google.common.collect.Lists;
 import net.minecraft.nbt.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import xaero.pac.common.player.config.PlayerConfigConstants;
+import xaero.pac.common.player.config.group.BuiltInPlayerConfigGroupNames;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +45,7 @@ public class PlayerConfigOptionValueTypes {
 			.setStringWriter(b -> b ? "true" : "false")
 			.setComponentWriter(b -> b ? PlayerConfigConstants.ON_COMPONENT : PlayerConfigConstants.OFF_COMPONENT)
 			.setStringParser(str -> str.equals("true") || str.equals("on") || str.equals("1") || str.equals("+"))
+			.setDefaultCommandSuggestions(Lists.newArrayList("false", "true", "off", "on", "0", "1", "-", "+"))
 			.build(BASIC_TYPES);
 
 	public static final PlayerConfigOptionValueType<Integer> INTEGER = PlayerConfigOptionValueType.FinalBuilder
@@ -106,6 +111,26 @@ public class PlayerConfigOptionValueTypes {
 			})
 			.setStringWriter(s -> s)
 			.setStringParser(s -> s)
+			.setShouldDisplayInQuotes(true)
+			.build(BASIC_TYPES);
+
+	public static final PlayerConfigOptionValueType<String> GROUP_ID = PlayerConfigOptionValueType.FinalBuilder
+			.begin(String.class)
+			.setId("g")
+			.setSyncEncoder(StringTag::valueOf)
+			.setSyncDecoder(tag -> {
+				if(!(tag instanceof StringTag stringTag))
+					return null;
+				return stringTag.getAsString();
+			})
+			.setStringWriter(s -> s)
+			.setStringParser(s -> s)
+			.setComponentWriter(groupId -> {
+				Component builtInGroupName = BuiltInPlayerConfigGroupNames.get(groupId);
+				if(builtInGroupName != null)
+					return builtInGroupName;
+				return new TextComponent(groupId);
+			})
 			.build(BASIC_TYPES);
 
 	public static <T> PlayerConfigOptionValueType<List<T>> getListType(PlayerConfigOptionValueType<T> elementType){

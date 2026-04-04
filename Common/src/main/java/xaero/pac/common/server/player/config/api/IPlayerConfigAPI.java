@@ -18,6 +18,8 @@
 
 package xaero.pac.common.server.player.config.api;
 
+import xaero.pac.common.server.player.config.group.api.IServerPlayerConfigGroupManagerAPI;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
@@ -280,6 +282,13 @@ public interface IPlayerConfigAPI {
 	public int getSubConfigLimit();
 
 	/**
+	 * Gets the API for this config's player groups.
+	 *
+	 * @return the player groups API for this config.
+	 */
+	IServerPlayerConfigGroupManagerAPI getPlayerGroups();
+
+	/**
 	 * All possible result types when trying to set an option value
 	 */
 	public static enum SetResult {
@@ -293,7 +302,10 @@ public interface IPlayerConfigAPI {
 		DEFAULTED,
 
 		/** The value was successully set */
-		SUCCESS;
+		SUCCESS,
+
+		/** The option is not directly configurable */
+		NOT_DIRECTLY_CONFIGURABLE;
 	}
 	
 }

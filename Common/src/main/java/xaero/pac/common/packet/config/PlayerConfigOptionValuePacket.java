@@ -24,6 +24,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.packet.util.PacketUtils;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
@@ -84,7 +85,8 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 					return null;
 				String typeString = nbt.getString("t");
 				if(typeString.length() > 100) {
-					OpenPartiesAndClaims.LOGGER.info("Player config type string is too long!");
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Player config type string is too long!");
 					return null;
 				}
 				PlayerConfigType type = null;
@@ -93,18 +95,21 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 				} catch(IllegalArgumentException iae) {
 				}
 				if(type == null) {
-					OpenPartiesAndClaims.LOGGER.info("Received unknown player config type!");
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Received unknown player config type!");
 					return null;
 				}
 				String subID = nbt.contains("si") ? nbt.getString("si") : null;
 				if(subID != null && subID.length() > 100) {
-					OpenPartiesAndClaims.LOGGER.info("Player config sub ID string is too long!");
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Player config sub ID string is too long!");
 					return null;
 				}
 				UUID owner = type != PlayerConfigType.PLAYER || nbt.getBoolean("co") ? null : nbt.getUUID("o");
 				ListTag entryListTag = nbt.getList("e", Tag.TAG_COMPOUND);
 				if(entryListTag.size() < 0 || entryListTag.size() > 512) {//there are other max size checks when reading the nbt tag, but an extra one here won't hurt
-					OpenPartiesAndClaims.LOGGER.info("Received an illegal player config option entry number: " + entryListTag.size());
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Received an illegal player config option entry number: " + entryListTag.size());
 					return null;
 				}
 				List<Entry> entries = new ArrayList<>(entryListTag.size());
@@ -112,7 +117,8 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 					CompoundTag entryTag = (CompoundTag) e;
 					String optionId = entryTag.getString("i");
 					if(optionId.length() > 1000) {
-						OpenPartiesAndClaims.LOGGER.info("Received player config option id string is not allowed!");
+						if(PacketUtils.shouldLogDeserializationError())
+							OpenPartiesAndClaims.LOGGER.info("Received player config option id string is not allowed!");
 						return null;
 					}
 					Tag valueTag = null;
@@ -120,7 +126,8 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 						valueTag = entryTag.get("v");
 					if(valueTag instanceof StringTag stringTag) {
 						if (stringTag.getAsString().length() > 1000) {
-							OpenPartiesAndClaims.LOGGER.info("Received a string option value that is too long: " + stringTag.getAsString().length());
+							if(PacketUtils.shouldLogDeserializationError())
+								OpenPartiesAndClaims.LOGGER.info("Received a string option value that is too long: " + stringTag.getAsString().length());
 							return null;
 						}
 					}

@@ -43,11 +43,14 @@ public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOption
 			Function<String, List<T>> stringParser,
 			Function<List<T>, String> stringWriter,
 			Function<List<T>, Component> componentWriter,
+			List<String> defaultCommandSuggestions,
+			boolean shouldDisplayInQuotes,
 			BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<List<T>>> defaultSpecDefiner
 	) {
 		super(
 				(Class<List<T>>)(Object)List.class, id, syncEncoder, syncDecoder,
-				stringParser, stringWriter, componentWriter, defaultSpecDefiner
+				stringParser, stringWriter, componentWriter, defaultCommandSuggestions,
+				shouldDisplayInQuotes, defaultSpecDefiner
 		);
 	}
 
@@ -220,7 +223,8 @@ public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOption
 		protected PlayerConfigOptionListValueType<T> buildInternally(){
 			return new PlayerConfigOptionListValueType<>(
 					id, syncEncoder, syncDecoder, stringParser,
-					stringWriter, componentWriter, defaultSpecDefiner
+					stringWriter, componentWriter, defaultCommandSuggestions,
+					shouldDisplayInQuotes, defaultSpecDefiner
 			);
 		}
 

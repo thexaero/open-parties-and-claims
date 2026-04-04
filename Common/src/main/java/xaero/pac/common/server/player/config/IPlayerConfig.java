@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.config;
 
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -98,5 +99,13 @@ public interface IPlayerConfig extends IPlayerConfigAPI {
 
 	public Iterator<IPlayerConfig> getSubConfigIterator();
 
-	
+	@Override
+	IServerPlayerConfigGroupManager getPlayerGroups();
+
+	IPlayerConfigManager getManager();
+
+	boolean isOptionDefaulted(IPlayerConfigOptionSpecAPI<?> option);
+
+	IPlayerConfig getMain();
+
 }

@@ -37,8 +37,6 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.*;
-
 public class PlayerSubConfig
 <
 	P extends IServerParty<?, ?, ?>
@@ -101,7 +99,7 @@ public class PlayerSubConfig
 	}
 
 	@Override
-	protected <T> T getValueForDefaultConfigMatch(T actualEffective, T value) {
+	protected <T> T getValueForDefaultConfigMatch(IPlayerConfigOptionSpecAPI<T> o, T value) {
 		return null;
 	}
 
@@ -111,7 +109,8 @@ public class PlayerSubConfig
 		return null;
 	}
 
-	public PlayerConfig<P> getMainConfig() {
+	@Override
+	public PlayerConfig<P> getMain() {
 		return mainConfig;
 	}
 

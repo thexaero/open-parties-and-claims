@@ -18,17 +18,14 @@
 
 package xaero.pac.common.packet.config;
 
-import net.minecraft.client.Minecraft;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
+import xaero.pac.client.player.config.util.ClientPlayerConfigUtils;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -60,49 +57,31 @@ public class ClientboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
 					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 
-			IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage = null;
-			boolean isForOtherPlayer = false;
-			if(t.getType() == PlayerConfigType.PLAYER) {
-				isForOtherPlayer = t.getOwner() != null;
-				if(isForOtherPlayer) {
-					if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen instanceof OtherPlayerConfigWaitScreen) {
-						if(t.subId == null) {
-							IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> prevOtherStorage = playerConfigStorageManager.getOtherPlayerConfig();
-							storage = playerConfigStorageManager.beginConfigStorageBuild(LinkedHashMap::new).setType(PlayerConfigType.PLAYER).setOwner(t.owner).build();
-							if(prevOtherStorage != null && t.getOwner().equals(prevOtherStorage.getOwner()))
-								storage.setSelectedSubConfig(prevOtherStorage.getSelectedSubConfig());
-							playerConfigStorageManager.setOtherPlayerConfig(storage);
-						} else
-							storage = playerConfigStorageManager.getOtherPlayerConfig();
-					}
-				} else
-					storage = playerConfigStorageManager.getMyPlayerConfig();
-			} else
-				storage =
-						t.getType() == PlayerConfigType.SERVER ? playerConfigStorageManager.getServerClaimsConfig() :
-								t.getType() == PlayerConfigType.EXPIRED ? playerConfigStorageManager.getExpiredClaimsConfig() :
-										t.getType() == PlayerConfigType.WILDERNESS ? playerConfigStorageManager.getWildernessConfig() :
-												playerConfigStorageManager.getDefaultPlayerConfig();
-			if(storage != null) {
-				if(t.subId != null)
-					storage = storage.getOrCreateSubConfig(t.subId);
-				final IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> forwardedStorage = storage;
-				t.entryStream().forEach(entry -> {
-					PlayerConfigOptionSpec<?> option =
-							(PlayerConfigOptionSpec<?>) playerConfigStorageManager.getOptionForId(entry.getId());
-					if(option == null)
-						return;
-					Object value = null;
-					try {
-						value = option.getValueType().getSyncDecoder().apply(entry.getValueTag());
-					} catch(Throwable e){
-					}
-					IPlayerConfigStringableOptionClientStorage<?> optionStorage = forwardedStorage.getOptionStorage(option);
-					optionStorage.setCastValue(value);
-					optionStorage.setMutable(entry.isMutable());
-					optionStorage.setDefaulted(entry.isDefaulted());
-				});
-			}
+			IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>
+					storage = ClientPlayerConfigUtils.getTargetConfig(t.owner, t.type, playerConfigStorageManager);
+
+			if(storage == null)
+				return;
+			if(t.subId != null)
+				storage = storage.getOrCreateSubConfig(t.subId);
+			final IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> forwardedStorage = storage;
+			t.entryStream().forEach(entry -> {
+				PlayerConfigOptionSpec<?> option =
+						(PlayerConfigOptionSpec<?>) playerConfigStorageManager.getOptionForId(entry.getId());
+				if(option == null)
+					return;
+				if(!option.isSyncable())
+					return;
+				Object value = null;
+				try {
+					value = option.getValueType().getSyncDecoder().apply(entry.getValueTag());
+				} catch(Throwable e){
+				}
+				IPlayerConfigStringableOptionClientStorage<?> optionStorage = forwardedStorage.getOptionStorage(option);
+				optionStorage.setCastValue(value);
+				optionStorage.setMutable(entry.isMutable());
+				optionStorage.setDefaulted(entry.isDefaulted());
+			});
 		}
 
 	}

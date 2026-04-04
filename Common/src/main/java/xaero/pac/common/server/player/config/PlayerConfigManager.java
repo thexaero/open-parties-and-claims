@@ -103,9 +103,12 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			return serverClaimConfig;
 		if(Objects.equals(id, PlayerConfig.EXPIRED_CLAIM_UUID))
 			return expiredClaimConfig;
-		return configs.computeIfAbsent(id, 
+		PlayerConfig<P> result = configs.computeIfAbsent(id,
 			i -> PlayerConfig.FinalBuilder.<P>begin().setPlayerId(i).setManager(this).build()
 		);
+		if(loaded && !result.getPlayerGroups().isLoaded())
+			result.getPlayerGroups().getIo().loadFromConfig();
+		return result;
 	}
 	
 	public void onLoad() {
@@ -178,7 +181,8 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	public CM getClaimsManager() {
 		return claimsManager;
 	}
-	
+
+	@Override
 	public MinecraftServer getServer() {
 		return server;
 	}

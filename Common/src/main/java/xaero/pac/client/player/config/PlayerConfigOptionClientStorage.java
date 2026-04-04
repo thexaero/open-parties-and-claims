@@ -149,6 +149,14 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 		return option.isDynamic();
 	}
 
+	public boolean isSyncable() {
+		return option.isSyncable();
+	}
+
+	public boolean isDirectlyConfigurable() {
+		return option.isDirectlyConfigurable();
+	}
+
 	public static abstract class Builder<T, B extends Builder<T, B>> {
 
 		protected final B self;

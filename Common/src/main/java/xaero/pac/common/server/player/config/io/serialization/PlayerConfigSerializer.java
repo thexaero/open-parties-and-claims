@@ -26,6 +26,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import xaero.pac.common.misc.ConfigUtil;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.io.serialization.updater.PlayerConfigUpdater;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
 import java.util.LinkedHashMap;
@@ -35,19 +36,27 @@ public class PlayerConfigSerializer {
 	
 	private TomlParser parser;
 	private TomlWriter writer;
+	private PlayerConfigUpdater updater;
 	
 	public PlayerConfigSerializer() {
 		this.parser = new TomlParser();
 		this.writer = new TomlWriter();
+		this.updater = new PlayerConfigUpdater();
 	}
 	
 	public String serialize(PlayerConfig<?> config) {
-		return writer.writeToString(config.getStorage());
+		Config rawConfig = config.getStorage();
+		rawConfig.set(updater.getVersionPath(), updater.getVersion());
+		String result = writer.writeToString(rawConfig);
+		rawConfig.remove(updater.getVersionPath());
+		return result;
 	}
 	
 	public void deserializeInto(PlayerConfig<?> config, String serializedData) {
 		CommentedConfig parsedData = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
 		parser.parse(serializedData, parsedData, ParsingMode.ADD);
+		updater.update(parsedData);
+		parsedData.remove(updater.getVersionPath());
 		if(!(config instanceof PlayerSubConfig))
 			config.getManager().getPlayerConfigSpec().correct(parsedData);
 		Config loadedConfig;

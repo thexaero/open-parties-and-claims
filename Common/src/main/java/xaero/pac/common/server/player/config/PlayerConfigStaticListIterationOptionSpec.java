@@ -29,6 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public final class PlayerConfigStaticListIterationOptionSpec<T> extends PlayerConfigListIterationOptionSpec<T> {
 
@@ -58,14 +59,18 @@ public final class PlayerConfigStaticListIterationOptionSpec<T> extends PlayerCo
 			boolean dynamic,
 			boolean overridable,
 			boolean forcedPlayerConfigurable,
-			IPlayerConfigChangeHandler<T> serverChangeHandler
+			boolean directlyConfigurable,
+			IPlayerConfigChangeHandler<T> serverChangeHandler,
+			boolean syncable,
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
 	) {
 		super(
 				type, id, shortenedId, path, defaultValue, defaultReplacer,
 				comment, translation, translationArgs, commentTranslation,
 				commentTranslationArgs, category, serverSideValidator,
 				clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter,
-				clientSideListGetter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+				clientSideListGetter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable,
+				directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter
 		);
 		this.list = list;
 	}
@@ -111,7 +116,8 @@ public final class PlayerConfigStaticListIterationOptionSpec<T> extends PlayerCo
 					commentTranslationArgs, category, serverSideValidator,
 					clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter,
 					clientSideListGetter, list, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STATIC_LIST,
-					dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
+					syncable, commandSuggestionGetter
 			);
 		}
 

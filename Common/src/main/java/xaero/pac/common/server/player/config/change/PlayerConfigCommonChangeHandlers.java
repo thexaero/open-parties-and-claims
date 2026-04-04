@@ -175,4 +175,14 @@ public class PlayerConfigCommonChangeHandlers {
 		manager.getClaimsManager().getClaimsManagerSynchronizer().syncCurrentSubClaim(config, onlinePlayer);
 	}
 
+	public static <P extends IServerParty<?, ?, ?>> void handleAbstractBonusGroupLimit(
+			PlayerConfigManager<P,?> configManager,
+			PlayerConfig<P> config,
+			PlayerConfigOptionSpec<Integer> option,
+			Integer oldValue,
+			Integer newValue
+	) {
+		configManager.getSynchronizer().syncGroupLimits(null, config.getPlayerGroups(), config);
+	}
+
 }

@@ -18,6 +18,7 @@
 
 package xaero.pac.client.player.config.api;
 
+import xaero.pac.client.player.config.group.api.IClientPlayerConfigGroupManagerAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
@@ -143,5 +144,12 @@ public interface IPlayerConfigClientStorageAPI {
 	 * @return the sub-config limit
 	 */
 	public int getSubConfigLimit();
+
+	/**
+	 * Gets the API for this config's player groups.
+	 *
+	 * @return the player groups API for this config.
+	 */
+	IClientPlayerConfigGroupManagerAPI getPlayerGroups();
 	
 }

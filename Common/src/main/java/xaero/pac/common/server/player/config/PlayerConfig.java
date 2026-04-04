@@ -34,6 +34,7 @@ import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
+import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -55,39 +56,42 @@ public class PlayerConfig
 	public final static String MAIN_SUB_ID = "main";
 	public final static String PLAYER_CONFIG_ROOT = "playerConfig";
 	public final static String PLAYER_CONFIG_ROOT_DOT = PLAYER_CONFIG_ROOT + ".";
-	public static final List<Integer> PROTECTION_LEVELS = List.of(0, 1, 2, 3);
-	public static final String PROTECTION_LEVELS_TOOLTIP = """
-					1) Every - protected from all players/entities that don't have chunk access.
-					2) Not Party - only players/entities not in the same party as you.
-					3) Not Ally - only players/entities not in any party allied by yours.""";
 
-	public static final String PROTECTION_LEVELS_TOOLTIP_PLAYERS = """
-					1) Every - protected from all players that don't have chunk access.
-					2) Not Party - only players not in the same party as you.
-					3) Not Ally - only players not in any party allied by yours.""";
-	public static final String PROTECTION_LEVELS_TOOLTIP_OWNED = """
-					1) Every - protected from all entities not owned by a player that has chunk access.
-					2) Not Party - all entities, except owned by a player in the same party as you.
-					3) Not Ally - all entities, except owned by a player in any party allied by yours.""";
-	public static final String PROTECTION_LEVELS_TOOLTIP_PROJECTILE = """
-					1) Every - protected from all projectiles not owned by a player that has chunk access.
-					2) Not Party - all projectiles, except owned by a player in the same party as you.
-					3) Not Ally - all projectiles, except owned by a player in any party allied by yours.""";
-
-	public static final String EXCEPTION_LEVELS_TOOLTIP = """
-					1) Party - players or entities owned by players in the same party as you.
-					2) Allies - players or entities owned by players in parties that are allied by yours.
-					3) Every - all players/entities.""";
-	public static final String EXCEPTION_LEVELS_TOOLTIP_PLAYERS = """
-					1) Party - players in the same party as you.
-					2) Allies - players in parties that are allied by yours.
-					3) Every - all players.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - players or entities owned by players in the same party as you.
+					(A) Allies - players or entities owned by players in parties that are allied by yours.
+					(E) Every - all players/entities, even if not owned by anyone.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - players in the same party as you.
+					(A) Allies - players in parties that are allied by yours.
+					(E) Every - all players.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - entities owned by players in the same party as you.
+					(A) Allies - entities owned by players in parties that are allied by yours.
+					(E) Every - all entities, even if not owned by anyone.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PROJECTILE = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - projectiles owned by players in the same party as you.
+					(A) Allies - projectiles owned by players in parties that are allied by yours.
+					(E) Every - all projectiles, even if not owned by anyone.""";
 
 	protected final PlayerConfigManager<P, ?> manager;
 	private final PlayerConfigType type;
 	private final UUID playerId;
 	protected Config storage;
 	private boolean dirty;
+	private ServerPlayerConfigGroupManager playerGroups;
 	private final Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues;
 	private final LinkedChain<PlayerSubConfig<P>> linkedSubConfigs;
 	private final Map<String, PlayerSubConfig<P>> subByID;
@@ -112,6 +116,10 @@ public class PlayerConfig
 	public Config getStorage() {
 		if(storage == null) {
 			setStorage(ConfigUtil.deepCopy(manager.getDefaultConfig().getStorage(), LinkedHashMap::new));
+			storage.set(
+					PlayerConfigOptions.CUSTOM_PLAYER_GROUPS.getPath(),
+					PlayerConfigOptions.CUSTOM_PLAYER_GROUPS.getDefaultValue()
+			);//removing groups copied from the default config
 			setDirty(true);
 		}
 		return storage;
@@ -120,8 +128,19 @@ public class PlayerConfig
 	public void setStorage(Config storage) {
 		this.storage = storage;
 	}
-	
-	private <T> void set(PlayerConfigOptionSpec<T> option, T value) {
+
+	public void setPlayerGroups(ServerPlayerConfigGroupManager customPlayerGroups) {
+		if(this.playerGroups != null)
+			throw new IllegalStateException();
+		this.playerGroups = customPlayerGroups;
+	}
+
+	@Override
+	public ServerPlayerConfigGroupManager getPlayerGroups() {
+		return playerGroups;
+	}
+
+	public <T> void forceSet(PlayerConfigOptionSpec<T> option, T value) {
 		if(value == null)
 			getStorage().remove(option.getPath());
 		else
@@ -138,8 +157,8 @@ public class PlayerConfig
 		return option.getServerSideValidator().test(this, value);
 	}
 
-	protected <T> T getValueForDefaultConfigMatch(T actualEffective, T value){
-		return actualEffective;//the value from the default config
+	protected <T> T getValueForDefaultConfigMatch(IPlayerConfigOptionSpecAPI<T> o, T value){
+		return manager.getDefaultConfig().getFromEffectiveConfig(o);//the value from the default config
 	}
 
 	@Override
@@ -151,23 +170,23 @@ public class PlayerConfig
 	@Override
 	public <T> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> o, @Nullable T value) {
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
+		if(!option.isDirectlyConfigurable())
+			return SetResult.NOT_DIRECTLY_CONFIGURABLE;
 		if(!isOptionAllowed(option))
 			return SetResult.ILLEGAL_OPTION;
 		if(!isValidSetValue(option, value))
 			return SetResult.INVALID;
-		T beforeEffective = getFromEffectiveConfig(option);
-		set(option, value);
-		T nowEffective = value;
 		if(isOptionDefaulted(option)){
-			nowEffective = getValueForDefaultConfigMatch(manager.getDefaultConfig().getFromEffectiveConfig(option), value);
-			if (nowEffective != value)
-				set(option, nowEffective);//to avoid confusion when the option is no longer forced in the future
+			T defaultMatchValue = getValueForDefaultConfigMatch(o, value);
+			forceSet(option, defaultMatchValue);//to avoid confusion when the option is no longer forced in the future
 			return SetResult.DEFAULTED;
 		}
-		if(playerId != null && !Objects.equals(nowEffective, beforeEffective)) {
+		T beforeEffective = getFromEffectiveConfig(option);
+		forceSet(option, value);
+		if(playerId != null && !Objects.equals(value, beforeEffective)) {
 			IPlayerConfigChangeHandler<T> changeHandler = option.getServerChangeHandler();
-			if(changeHandler != null)
-				changeHandler.handle(manager, this, option, beforeEffective, nowEffective);
+			if(changeHandler != null && option.getCategory().requiredFeaturesAreEnabled())
+				changeHandler.handle(manager, this, option, beforeEffective, value);
 		}
 		manager.getSynchronizer().syncOptionToClients(this, option);
 		return SetResult.SUCCESS;
@@ -184,7 +203,8 @@ public class PlayerConfig
 				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getShortenedId());
 	}
 
-	protected boolean isOptionDefaulted(PlayerConfigOptionSpec<?> option){
+	@Override
+	public boolean isOptionDefaulted(IPlayerConfigOptionSpecAPI<?> option){
 		return playerId != null && !Objects.equals(playerId, SERVER_CLAIM_UUID) && !Objects.equals(playerId, EXPIRED_CLAIM_UUID) &&
 				!isOptionOPConfigurable(option) &&
 				!isPlayerConfigurable(option);//kinda annoying that it iterates over the whole lists but the lists should be small
@@ -434,6 +454,7 @@ public class PlayerConfig
 		return null;
 	}
 
+	@Override
 	public PlayerConfigManager<P, ?> getManager() {
 		return manager;
 	}
@@ -459,6 +480,11 @@ public class PlayerConfig
 	public void setBeingDeleted() {
 		this.beingDeleted = true;
 		manager.getSynchronizer().syncGeneralState(null, this);
+	}
+
+	@Override
+	public PlayerConfig<P> getMain(){
+		return this;
 	}
 
 	public static abstract class Builder
@@ -528,7 +554,9 @@ public class PlayerConfig
 			List<String> subConfigIdStorage = Lists.newArrayList(PlayerConfig.MAIN_SUB_ID);
 			SortedValueList<String> subConfigIds = SortedValueList.Builder.<String>begin().setContent(subConfigIdStorage).build();
 			List<String> subConfigIdsUnmodifiable = Collections.unmodifiableList(subConfigIdStorage);
-			return new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
+			PlayerConfig<P> result = new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
+			result.setPlayerGroups(ServerPlayerConfigGroupManager.Builder.begin().setConfig(result).build());
+			return result;
 		}
 
 		public static <P extends IServerParty<?, ?, ?>> FinalBuilder<P> begin(){

@@ -44,6 +44,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	private PlayerConfigClientStorage defaultPlayerConfig;
 	private PlayerConfigClientStorage myPlayerConfig;
 	private PlayerConfigClientStorage otherPlayerConfig;//temporary storage
+	private boolean waitingForOtherPlayerConfig;
 	private PlayerConfigDynamicOptions dynamicOptions;
 
 	private PlayerConfigClientStorageManager() {
@@ -98,6 +99,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		myPlayerConfig.reset();
 		otherPlayerConfig = null;
 		dynamicOptions = null;
+		waitingForOtherPlayerConfig = false;
 	}
 
 	@Override
@@ -222,6 +224,16 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		if(result == null && dynamicOptions != null)
 			result = dynamicOptions.getOptions().get(id);
 		return result;
+	}
+
+	@Override
+	public boolean isWaitingForOtherPlayerConfig() {
+		return waitingForOtherPlayerConfig;
+	}
+
+	@Override
+	public void setWaitingForOtherPlayerConfig(boolean waitingForOtherPlayerConfig) {
+		this.waitingForOtherPlayerConfig = waitingForOtherPlayerConfig;
 	}
 
 	public static final class Builder {

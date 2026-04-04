@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<String> {
 	
@@ -55,14 +57,18 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 			boolean dynamic,
 			boolean overridable,
 			boolean forcedPlayerConfigurable,
-			IPlayerConfigChangeHandler<String> serverChangeHandler
+			boolean directlyConfigurable,
+			IPlayerConfigChangeHandler<String> serverChangeHandler,
+			boolean syncable,
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
 	) {
 		super(
 				type, id, shortenedId, path, defaultValue, defaultReplacer,
 				comment, translation, translationArgs, commentTranslation,
 				commentTranslationArgs, category,
 				serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter,
-				syncOptionType, dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+				syncOptionType, dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
+				serverChangeHandler, syncable, commandSuggestionGetter
 		);
 		this.maxLength = maxLength;
 	}
@@ -118,7 +124,8 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 					comment, translation, translationArgs, commentTranslation, commentTranslationArgs,
 					category, serverSideValidator, clientSideValidator, maxLength,
 					tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STRING,
-					dynamic, overridable, forcedPlayerConfigurable, serverChangeHandler
+					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
+					syncable, commandSuggestionGetter
 			);
 		}
 
