@@ -26,6 +26,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
+import xaero.pac.client.player.config.util.ClientPlayerConfigUtils;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
@@ -127,13 +128,13 @@ public abstract class ClientboundPlayerConfigAbstractStatePacket extends PlayerC
 		public void accept(P t) {
 			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
 					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
-			IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage = PlayerConfigPacketUtil.getTargetConfig(t.isOtherPlayer(), t.getType(), playerConfigStorageManager);
-			if(storage == null)
+			IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage = ClientPlayerConfigUtils.getTargetConfig(t.isOtherPlayer(), t.getType(), playerConfigStorageManager);
+			if(!t.isOtherPlayer() && storage == null)
 				return;
 			String subId = t.getSubId();
 			if(subId.isEmpty() || !subId.equals(PlayerConfig.MAIN_SUB_ID) && !storage.subConfigExists(subId))
 				return;
-			storage = storage.getEffectiveSubConfig(subId);
+			storage = storage == null ? null : storage.getEffectiveSubConfig(subId);
 			accept(t, playerConfigStorageManager, storage);
 		}
 

@@ -32,7 +32,7 @@ import java.util.List;
 
 public abstract class WidgetListScreen extends XPACScreen {
 	
-	private final static int ROW_HEIGHT = 24;
+	public final static int ROW_HEIGHT = 24;
 	private final static int PER_PAGE = 12;
 	
 	private int page;

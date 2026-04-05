@@ -49,6 +49,8 @@ public interface IPlatformHelper {
 	 */
 	boolean isDevelopmentEnvironment();
 
+	boolean isDedicatedServer();
+
 	IKeyBindingHelper getKeyBindingHelper();
 
 	IServerChunkCacheAccess getServerChunkCacheAccess();

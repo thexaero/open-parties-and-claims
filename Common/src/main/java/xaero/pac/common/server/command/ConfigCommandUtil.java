@@ -68,11 +68,11 @@ public class ConfigCommandUtil {
 		try {
 			Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "player");
 			if(profiles.size() > 1) {
-				if(tooManyTargetMessage != null)
+				if(adaptiveLocalizer != null && tooManyTargetMessage != null)
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, tooManyTargetMessage));
 				return null;
 			} else if(profiles.isEmpty()) {
-				if(invalidTargetMessage != null)
+				if(adaptiveLocalizer != null && invalidTargetMessage != null)
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, invalidTargetMessage));
 				return null;
 			}

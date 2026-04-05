@@ -34,7 +34,7 @@ import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
-import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
+import xaero.pac.common.server.player.permission.util.PermissionUtils;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.*;
@@ -134,17 +134,9 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	}
 
 	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ModConfigSpec.IntValue limitConfig, IPermissionNodeAPI<Integer> permissionNode){
-		IPlayerPermissionSystemAPI permissionSystem = claimsManager.getPermissionHandler().getSystem();
-		int defaultLimit = limitConfig.get();
-		if(permissionSystem == null)
-			return defaultLimit;
-		if(permissionNode == null || permissionNode.getNodeString().isEmpty())
-			return defaultLimit;
-		if(player == null)
-			player = server.getPlayerList().getPlayer(playerId);
-		if(player == null)
-			return defaultLimit;
-		return permissionSystem.getIntPermission(player, permissionNode).orElse(defaultLimit);
+		return PermissionUtils.getOverriddenServerConfigInt(
+				playerId, server, player, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
+		);
 	}
 	
 	public ServerPlayerClaimsExpirationHandler getExpirationHandler() {
