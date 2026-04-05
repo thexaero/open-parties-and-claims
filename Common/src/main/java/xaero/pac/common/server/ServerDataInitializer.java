@@ -92,15 +92,18 @@ public class ServerDataInitializer {
 					.setManager(serverInfoHolder)
 					.build();
 			serverInfoIO.load();
+			ServerConfigUpdater serverConfigUpdater = new ServerConfigUpdater();
 			ServerInfo serverInfo;
 			if(serverInfoHolder.getServerInfo() == null) {
-				serverInfoHolder.setObject(serverInfo = new ServerInfo(0, ServerInfo.CURRENT_VERSION));
+				int targetPlayerConfigVersion = serverConfigUpdater.getTargetPlayerConfigVersion();//yes, weird place to get it from
+				serverInfoHolder.setObject(serverInfo =
+						new ServerInfo(0, ServerInfo.CURRENT_VERSION, targetPlayerConfigVersion)
+				);
 				serverInfo.setDirty(true);
 				serverInfoIO.save();
 			} else
 				serverInfo = serverInfoHolder.getServerInfo();
-			if(serverInfo.getLoadedVersion() < ServerInfo.CURRENT_VERSION)
-				new ServerConfigUpdater().update(serverInfo);
+			serverConfigUpdater.update(serverInfo);
 
 			ServerTickHandler serverTickHandler = ServerTickHandler.Builder.begin().setServer(server).build();
 
@@ -121,8 +124,8 @@ public class ServerDataInitializer {
 			ServerPlayerSpreadoutTaskHandler<PlayerConfigSyncSpreadoutTask> playerConfigSyncTaskHandler =
 					ServerPlayerSpreadoutTaskHandler.FinalBuilder
 					.<PlayerConfigSyncSpreadoutTask>begin()
-					.setPerTickLimit(128)
-					.setPerTickPerTaskLimit(1)
+					.setPerTickLimit(8192)
+					.setPerTickPerTaskLimit(64)
 					.setPlayerTaskGetter(ServerPlayerData::getConfigSyncSpreadoutTask)
 					.build();
 			serverTickHandler.registerSpreadoutTaskHandler(playerConfigSyncTaskHandler);

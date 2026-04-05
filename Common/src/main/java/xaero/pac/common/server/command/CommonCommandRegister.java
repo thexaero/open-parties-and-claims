@@ -32,6 +32,13 @@ public class CommonCommandRegister {
 		new ConfigSubCreateCommand().register(dispatcher, environment);
 		new ConfigSubDeleteCommand().register(dispatcher, environment);
 		new ConfigSubListCommand().register(dispatcher, environment);
+		new ConfigGroupCreateCommand().register(dispatcher, environment);
+		new ConfigGroupDeleteCommand().register(dispatcher, environment);
+		new ConfigGroupDeleteConfirmCommand().register(dispatcher, environment);
+		new ConfigGroupIncludeGroupCommand().register(dispatcher, environment);
+		new ConfigGroupIncludePlayerCommand().register(dispatcher, environment);
+		new ConfigGroupExcludeGroupCommand().register(dispatcher, environment);
+		new ConfigGroupExcludePlayerCommand().register(dispatcher, environment);
 	}
 
 }

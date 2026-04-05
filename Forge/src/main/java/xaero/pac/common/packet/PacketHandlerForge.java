@@ -33,7 +33,7 @@ import java.util.function.Function;
 
 public class PacketHandlerForge implements IPacketHandler {
 
-	private static final String PROTOCOL_VERSION = "1.4.0";
+	private static final String PROTOCOL_VERSION = "1.5.0";
 	public static final SimpleChannel NETWORK = NetworkRegistry.newSimpleChannel(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION, () -> PROTOCOL_VERSION, NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION), NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION));
 
 	@Override

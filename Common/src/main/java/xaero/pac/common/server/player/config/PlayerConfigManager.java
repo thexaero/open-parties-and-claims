@@ -66,12 +66,11 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	private final IPartyManager<P> partyManager;
 	private PlayerConfigIO<P, CM> io;
 	private final PlayerConfigDynamicOptions dynamicOptions;
-	private final Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions;
 	private final ForgeConfigSpec playerConfigSpec;
 
 	private PlayerConfigManager(MinecraftServer server, ForceLoadTicketManager forceLoadTicketManager,
 								Map<UUID, PlayerConfig<P>> configs, Set<PlayerConfig<P>> configsToSave, PlayerConfigSynchronizer synchronizer,
-								IPartyManager<P> partyManager, PlayerConfigDynamicOptions dynamicOptions, Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions, ForgeConfigSpec playerConfigSpec) {
+								IPartyManager<P> partyManager, PlayerConfigDynamicOptions dynamicOptions, ForgeConfigSpec playerConfigSpec) {
 		super();
 		this.server = server;
 		this.forceLoadTicketManager = forceLoadTicketManager;
@@ -80,7 +79,6 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		this.synchronizer = synchronizer;
 		this.partyManager = partyManager;
 		this.dynamicOptions = dynamicOptions;
-		this.overridableOptions = overridableOptions;
 		this.playerConfigSpec = playerConfigSpec;
 	}
 	
@@ -105,9 +103,12 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			return serverClaimConfig;
 		if(Objects.equals(id, PlayerConfig.EXPIRED_CLAIM_UUID))
 			return expiredClaimConfig;
-		return configs.computeIfAbsent(id, 
+		PlayerConfig<P> result = configs.computeIfAbsent(id,
 			i -> PlayerConfig.FinalBuilder.<P>begin().setPlayerId(i).setManager(this).build()
 		);
+		if(loaded && !result.getPlayerGroups().isLoaded())
+			result.getPlayerGroups().getIo().loadFromConfig();
+		return result;
 	}
 	
 	public void onLoad() {
@@ -180,7 +181,8 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	public CM getClaimsManager() {
 		return claimsManager;
 	}
-	
+
+	@Override
 	public MinecraftServer getServer() {
 		return server;
 	}
@@ -208,10 +210,6 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 
 	public PlayerConfigDynamicOptions getDynamicOptions() {
 		return dynamicOptions;
-	}
-
-	public Set<IPlayerConfigOptionSpecAPI<?>> getOverridableOptions() {
-		return overridableOptions;
 	}
 
 	@Nonnull
@@ -316,11 +314,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			OPTIONS.values().forEach(optionConsumer);
 			dynamicOptions.getOptions().values().forEach(optionConsumer);
 
-			Set<IPlayerConfigOptionSpecAPI<?>> overridableOptions = new HashSet<>();
-			overridableOptions.addAll(PlayerSubConfig.STATIC_OVERRIDABLE_OPTIONS);
-			overridableOptions.addAll(dynamicOptions.getOptions().values());
-
-			PlayerConfigManager<P, CM> result = new PlayerConfigManager<>(server, forceLoadTicketManager, new HashMap<>(), new HashSet<>(), playerConfigSynchronizer, partyManager, dynamicOptions, overridableOptions, configSpecBuilder.build());
+			PlayerConfigManager<P, CM> result = new PlayerConfigManager<>(server, forceLoadTicketManager, new HashMap<>(), new HashSet<>(), playerConfigSynchronizer, partyManager, dynamicOptions, configSpecBuilder.build());
 			playerConfigSynchronizer.setConfigManager(result);
 			return result;
 		}

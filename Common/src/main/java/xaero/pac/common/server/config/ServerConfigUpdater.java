@@ -18,12 +18,25 @@
 
 package xaero.pac.common.server.config;
 
+import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.common.server.info.ServerInfo;
+import xaero.pac.common.server.player.config.io.serialization.updater.IPlayerConfigConfigurableTransformer;
+import xaero.pac.common.server.player.config.io.serialization.updater.IPlayerConfigOpConfigurableTransformer;
+import xaero.pac.common.server.player.config.io.serialization.updater.IPlayerConfigTransformer;
+import xaero.pac.common.server.player.config.io.serialization.updater.PlayerConfigTransformers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 
 public class ServerConfigUpdater {
+
+	private final List<IPlayerConfigTransformer> playerConfigTransformers;//here for stuff that references player configs
+
+	public ServerConfigUpdater() {
+		playerConfigTransformers = new ArrayList<>();
+		PlayerConfigTransformers.init(playerConfigTransformers);
+	}
 
 	public void update(ServerInfo serverInfo){
 		if(serverInfo.getLoadedVersion() == 0) {
@@ -43,7 +56,52 @@ public class ServerConfigUpdater {
 			updatedEntitiesAllowedToGriefEntities.add("interact$minecraft:egg");
 			ServerConfig.CONFIG.entitiesAllowedToGriefEntities.set(updatedEntitiesAllowedToGriefEntities);
 		}
-		serverInfo.setDirty(true);
+		updatePlayerConfigurablePlayerConfigOptions(serverInfo);
+		if(serverInfo.getLoadedVersion() < ServerInfo.CURRENT_VERSION)
+			serverInfo.setDirty(true);
+	}
+
+	private void updatePlayerConfigurablePlayerConfigOptions(ServerInfo serverInfo){
+		int loadedTargetVersion = serverInfo.getTargetPlayerConfigVersion();
+		if(loadedTargetVersion >= playerConfigTransformers.size())
+			return;
+		updateConfigurablePlayerConfigOptions(
+				loadedTargetVersion,
+				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions,
+				(transformer, options) -> {
+					if(!(transformer instanceof IPlayerConfigConfigurableTransformer relevantTransformer))
+						return false;
+					return relevantTransformer.transformConfigurableList(options);
+				});
+		updateConfigurablePlayerConfigOptions(
+				loadedTargetVersion,
+				ServerConfig.CONFIG.opConfigurablePlayerConfigOptions,
+				(transformer, options) -> {
+					if(!(transformer instanceof IPlayerConfigOpConfigurableTransformer relevantTransformer))
+						return false;
+					return relevantTransformer.transformOpConfigurableList(options);
+				});
+		serverInfo.setTargetPlayerConfigVersion(playerConfigTransformers.size());
+	}
+
+	private void updateConfigurablePlayerConfigOptions(
+			int loadedTargetVersion,
+			ForgeConfigSpec.ConfigValue<List<? extends String>> listOption,
+			BiPredicate<IPlayerConfigTransformer, List<String>> transformerHandler
+	){
+		List<String> configurableOptions = new ArrayList<>(listOption.get());
+		boolean madeChanges = false;
+		for(int v = loadedTargetVersion; v < playerConfigTransformers.size(); v++){
+			IPlayerConfigTransformer transformer = playerConfigTransformers.get(v);
+			if(transformerHandler.test(transformer, configurableOptions))
+				madeChanges = true;
+		}
+		if(madeChanges)
+			listOption.set(configurableOptions);
+	}
+
+	public int getTargetPlayerConfigVersion() {
+		return playerConfigTransformers.size();
 	}
 
 }

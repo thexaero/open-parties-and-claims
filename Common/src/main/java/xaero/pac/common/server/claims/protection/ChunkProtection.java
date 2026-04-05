@@ -28,7 +28,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -75,6 +74,7 @@ import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.group.IPlayerConfigGroup;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
@@ -84,6 +84,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static xaero.pac.common.player.config.PlayerConfigConstants.*;
 
 public class ChunkProtection
 <
@@ -100,8 +102,8 @@ public class ChunkProtection
 	public static final String INTERACT_PREFIX = "interact$";
 	public static final String FULL_PREFIX = "full$";
 	private Class<?> createDeployerClass;
-	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> usedDroppedItemProtectionOptionGetter = this::getUsedDroppedItemProtectionOption;
-	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> usedExperienceOrbProtectionOptionGetter = (c, e, a) -> PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_XP_PICKUP;
+	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<String>> usedDroppedItemExceptionOptionGetter = this::getUsedDroppedItemProtectionOption;
+	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<String>> usedExperienceOrbExceptionOptionGetter = (c, e, a) -> PlayerConfigOptions.CLAIM_EXCEPTION_XP_PICKUP;
 
 	private final Component MAIN_HAND = Component.translatable("gui.xaero_claims_protection_main_hand");
 	private final Component OFF_HAND = Component.translatable("gui.xaero_claims_protection_off_hand");
@@ -312,18 +314,18 @@ public class ChunkProtection
 			boolean chunkProtected = claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
 			InteractionTargetResult result = InteractionTargetResult.ALLOW;
 			if (chunkProtected) {
-				Entity usedOptionBase = claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT) ? accessor : from;
+				Entity usedOptionBase = claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_REDIRECT) ? accessor : from;
 				if (usedOptionBase == null) {
-					if (hasAnEnabledOption(claimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER))
+					if (hasADisabledOption(claimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_MOBS, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_OTHER))
 						return InteractionTargetResult.PROTECT;
 				} else {
 					IPlayerConfigOptionSpecAPI<Boolean> option =
 							usedOptionBase instanceof Player ?
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS :
+								PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS :
 							usedOptionBase instanceof LivingEntity ?
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS :
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER;
-					if (claimConfig.getEffective(option))
+								PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_MOBS :
+								PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_OTHER;
+					if (!claimConfig.getEffective(option))
 						return InteractionTargetResult.PROTECT;
 				}
 				result = InteractionTargetResult.PASS;
@@ -338,13 +340,13 @@ public class ChunkProtection
 			return InteractionTargetResult.ALLOW;
 		boolean isProtectable = !exceptions || isProtectable(e);
 		if(isProtectable){
-			if(accessor instanceof Raider raider && raider.canJoinRaid() && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS))//based on the accessor on purpose;
+			if(accessor instanceof Raider raider && raider.canJoinRaid() && !claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_RAIDS))//based on the accessor on purpose;
 				return InteractionTargetResult.PROTECT;
 		} else if(attack || emptyHand)
 			return InteractionTargetResult.ALLOW;
-		IPlayerConfigOptionSpecAPI<Integer> option = getUsedEntityProtectionOption(claimConfig, from, accessor);
-		boolean optionProtects = checkProtectionLeveledOption(option, claimConfig, accessor, accessorId);
-		if(!optionProtects && (attack || emptyHand || !checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, claimConfig, accessor, accessorId)))
+		IPlayerConfigOptionSpecAPI<String> option = getUsedEntityExceptionOption(claimConfig, from, accessor);
+		boolean optionProtects = !checkPlayerGroupExceptionOption(option, claimConfig, accessor, accessorId);
+		if(!optionProtects && (attack || emptyHand || checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_USE, claimConfig, accessor, accessorId)))
 			return InteractionTargetResult.ALLOW;
 		if(!exceptions)
 			return optionProtects ? InteractionTargetResult.PROTECT : InteractionTargetResult.PASS;
@@ -353,7 +355,6 @@ public class ChunkProtection
 			return InteractionTargetResult.ALLOW;
 		if(!attack && forcedAllowAnyItemEntities.contains(entityType))
 			return InteractionTargetResult.ALLOW;
-		int exceptionAccessLevel = getExceptionAccessLevel(claimConfig, accessor, accessorId);
 		boolean groupsAllowPass = false;
 		for (ChunkProtectionExceptionGroup<EntityType<?>> group : entityExceptionGroups.values()) {
 			if ((group.getType() == ChunkProtectionExceptionType.BREAK) != attack)
@@ -362,7 +363,7 @@ public class ChunkProtection
 				continue;
 			if(!isProtectable && group.getType() != ChunkProtectionExceptionType.ANY_ITEM_INTERACTION)//only ALLOW groups matter if the entity isn't protectable
 				continue;
-			if (exceptionAccessLevel <= claimConfig.getEffective(group.getPlayerConfigOption()) && group.contains(entityType)) {
+			if (group.contains(entityType) && checkPlayerGroupExceptionOption(group.getPlayerConfigOption(), claimConfig, accessor, accessorId)) {
 				if (attack || emptyHand || group.getType() == ChunkProtectionExceptionType.ANY_ITEM_INTERACTION)
 					return InteractionTargetResult.ALLOW;
 				groupsAllowPass = true;
@@ -377,26 +378,26 @@ public class ChunkProtection
 		return InteractionTargetResult.PROTECT;
 	}
 
-	private IPlayerConfigOptionSpecAPI<Integer> getUsedEntityProtectionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
-		Entity usedOptionBase = !(entity instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT) ? accessor : entity;
+	private IPlayerConfigOptionSpecAPI<String> getUsedEntityExceptionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
+		Entity usedOptionBase = !(entity instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_REDIRECT) ? accessor : entity;
 		if(usedOptionBase == null)
-			return getToughestProtectionLevelOption(claimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER);
+			return getToughestPlayerGroupExceptionOption(claimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_MOBS, PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_OTHER);
 		return usedOptionBase instanceof Player ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS :
+				PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_PLAYERS :
 				usedOptionBase instanceof LivingEntity ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS :
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER;
+				PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_MOBS :
+				PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_OTHER;
 	}
 
-	private IPlayerConfigOptionSpecAPI<Integer> getUsedBlockProtectionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
-		Entity usedOptionBase = !(entity instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT) ? accessor : entity;
+	private IPlayerConfigOptionSpecAPI<String> getUsedBlockExceptionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
+		Entity usedOptionBase = !(entity instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_REDIRECT) ? accessor : entity;
 		if(usedOptionBase == null)
-			return getToughestProtectionLevelOption(claimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER);
+			return getToughestPlayerGroupExceptionOption(claimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_MOBS, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_OTHER);
 		return usedOptionBase instanceof Player ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS :
+				PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS :
 				usedOptionBase instanceof LivingEntity ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS :
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER;
+				PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_MOBS :
+				PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_OTHER;
 	}
 
 	private boolean checkProtectionLeveledOption(IPlayerConfigOptionSpecAPI<Integer> option, IPlayerConfig claimConfig, Entity accessor, UUID accessorId){
@@ -419,6 +420,54 @@ public class ChunkProtection
 			return false;
 		int exceptionLevel = getExceptionAccessLevel(claimConfig, accessor, accessorId);
 		return exceptionLevel <= optionValue;
+	}
+
+	private boolean checkPlayerGroupExceptionOption(
+			IPlayerConfigOptionSpecAPI<String> option,
+			IPlayerConfig claimConfig,
+			Entity accessor,
+			UUID accessorId
+	){
+		return checkPlayerGroupExceptionOption(claimConfig.getEffective(option), option, claimConfig, accessor, accessorId);
+	}
+
+	private boolean checkPlayerGroupExceptionOption(
+			String groupId,
+			IPlayerConfigOptionSpecAPI<String> option,
+			IPlayerConfig claimConfig,
+			Entity accessor,
+			UUID accessorId
+	){
+		if(EVERYONE_EXCEPTION_ID.equals(groupId))
+			return true;
+		if(NO_EXCEPTION_ID.equals(groupId))
+			return false;
+		ServerPlayer accessorPlayer = accessor instanceof ServerPlayer player ? player : null;
+		if(accessorPlayer != null && ServerPlayerData.from(accessorPlayer).isClaimsNonallyMode())
+			return false;
+		if(accessorId == null){
+			if(accessorPlayer == null)
+				return false;
+			accessorId = accessorPlayer.getUUID();
+		}
+		if(accessorId.equals(claimConfig.getPlayerId()))
+			return true;//owner
+		//when the claim owner has a group with the same id as one in the default config, then the claim
+		//owner's group is treated as an extension to the default one, unless the exception option
+		//is defaulted
+		IPlayerConfig defaultConfig = serverData.getPlayerConfigs().getDefaultConfig();
+		IPlayerConfigGroup defaultConfigGroup = defaultConfig.getPlayerGroups().get(groupId);
+		if(defaultConfigGroup != null && defaultConfigGroup.isInGroup(claimConfig, accessorPlayer, accessorId))
+			return true;
+		boolean isDefaulted = claimConfig.isOptionDefaulted(option);
+		if(isDefaulted)
+			return false;
+		IPlayerConfigGroup group = claimConfig.getMain().getPlayerGroups().get(groupId);
+		if(group == null)
+			return false;
+		//if the default group includes other default groups that the claim owner extends, then only this
+		//check takes that into account
+		return group.isInGroup(claimConfig, accessorPlayer, accessorId);
 	}
 
 	@Override
@@ -456,20 +505,20 @@ public class ChunkProtection
 	private boolean canGrief(Entity e, IPlayerConfig config, Entity accessor, UUID accessorId, boolean blocks, boolean entities, boolean items){
 		if(e == null)
 			return false;
-		IPlayerConfigOptionSpecAPI<Integer> option;
+		IPlayerConfigOptionSpecAPI<String> option;
 		if(blocks && !isAllowedToGrief(e, accessor, accessorId, config, true, entitiesAllowedToBreakBlocks, null, blockAccessEntityGroups)) {
-			option = getUsedBlockProtectionOption(config, e, accessor);
-			if(checkProtectionLeveledOption(option, config, accessor, accessorId))
+			option = getUsedBlockExceptionOption(config, e, accessor);
+			if(!checkPlayerGroupExceptionOption(option, config, accessor, accessorId))
 				return false;
 		}
 		if(entities && !isAllowedToGrief(e, accessor, accessorId, config, true, entitiesAllowedToKillEntities, null, entityAccessEntityGroups)) {
-			option = getUsedEntityProtectionOption(config, e, accessor);
-			if(checkProtectionLeveledOption(option, config, accessor, accessorId))
+			option = getUsedEntityExceptionOption(config, e, accessor);
+			if(!checkPlayerGroupExceptionOption(option, config, accessor, accessorId))
 				return false;
 		}
 		if(items && !isAllowedToGrief(e, accessor, accessorId, config, true, entitiesAllowedToGriefDroppedItems, null, droppedItemAccessEntityGroups)) {
 			option = getUsedDroppedItemProtectionOption(config, e, accessor);
-			if(checkProtectionLeveledOption(option, config, accessor, accessorId))
+			if(!checkPlayerGroupExceptionOption(option, config, accessor, accessorId))
 				return false;
 		}
 		return true;
@@ -487,7 +536,7 @@ public class ChunkProtection
 			if(group.getType() != ChunkProtectionExceptionType.FULL &&
 					breaking != (group.getType() == ChunkProtectionExceptionType.BREAK))
 				continue;
-			if(group.contains(entityType) && checkExceptionLeveledOption(group.getPlayerConfigOption(), config, accessor, accessorId))
+			if(group.contains(entityType) && checkPlayerGroupExceptionOption(group.getPlayerConfigOption(), config, accessor, accessorId))
 				return true;
 		}
 		return false;
@@ -497,6 +546,9 @@ public class ChunkProtection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return true;
 		if(claimConfig == null || !claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
+			return true;
+		String fullAccessValue = claimConfig.getEffective(PlayerConfigOptions.FULL_ACCESS);
+		if(fullAccessValue.equals(EVERYONE_EXCEPTION_ID))
 			return true;
 		if(accessor != null) {
 			if(accessorId == null)
@@ -526,11 +578,7 @@ public class ChunkProtection
 		}
 		if (claimConfig.getPlayerId() == null)
 			return false;
-		if (claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_PARTY) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES))
-			return false;
-		if(!playerPartySystemManager.isInAParty(claimConfig.getPlayerId()))
-			return false;
-		return !claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_PARTY) && playerPartySystemManager.areInSameParty(claimConfig.getPlayerId(), accessorId) || !claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES) && playerPartySystemManager.isPlayerAllying(claimConfig.getPlayerId(), accessorId);
+		return checkPlayerGroupExceptionOption(fullAccessValue, PlayerConfigOptions.FULL_ACCESS, (IPlayerConfig) claimConfig, accessor, accessorId);
 	}
 
 	@Override
@@ -658,13 +706,13 @@ public class ChunkProtection
 		else {
 			boolean optionProtects;
 			if(explosion)
-				optionProtects = config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS);
+				optionProtects = !config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_EXPLOSIONS);
 			else
-				optionProtects = checkProtectionLeveledOption(getUsedBlockProtectionOption(config, entity, accessor), config, accessor, accessorId);
+				optionProtects = !checkPlayerGroupExceptionOption(getUsedBlockExceptionOption(config, entity, accessor), config, accessor, accessorId);
 			if(optionProtects)
 				optionProtects = entity instanceof Player ||
 						!isAllowedToGrief(entity, accessor, accessorId, config, breaking, entitiesAllowedToBreakBlocks, entitiesAllowedToInteractWithBlocks, blockAccessEntityGroups);
-			if(!optionProtects && (breaking || emptyHand || !checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, config, accessor, accessorId)))
+			if(!optionProtects && (breaking || emptyHand || checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_USE, config, accessor, accessorId)))
 				return InteractionTargetResult.ALLOW;
 			if(block == null)
 				return optionProtects ? InteractionTargetResult.PROTECT : InteractionTargetResult.PASS;
@@ -672,14 +720,13 @@ public class ChunkProtection
 				return InteractionTargetResult.ALLOW;
 			if(!breaking && forcedAllowAnyItemBlocks.contains(block))
 				return InteractionTargetResult.ALLOW;
-			int exceptionAccessLevel = getExceptionAccessLevel(config, accessor, accessorId);
 			boolean groupsAllowPass = false;
 			for (ChunkProtectionExceptionGroup<Block> group : blockExceptionGroups.values()) {
 				if ((group.getType() == ChunkProtectionExceptionType.BREAK) != breaking)
 					continue;
 				if(!emptyHand && group.getType() == ChunkProtectionExceptionType.EMPTY_HAND_INTERACTION)
 					continue;
-				if (exceptionAccessLevel <= config.getEffective(group.getPlayerConfigOption()) && group.contains(block)) {
+				if (group.contains(block) && checkPlayerGroupExceptionOption(group.getPlayerConfigOption(), config, accessor, accessorId)) {
 					if(breaking || emptyHand || group.getType() == ChunkProtectionExceptionType.ANY_ITEM_INTERACTION)
 						return InteractionTargetResult.ALLOW;
 					groupsAllowPass = true;
@@ -795,7 +842,7 @@ public class ChunkProtection
 		return onBlockInteraction(serverData, world.getBlockState(pos), player, null, null, world, pos, Direction.UP, false, true);
 	}
 
-	public boolean onEntityPlaceBlock(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos, IPlayerConfigOptionSpecAPI<Integer> option) {
+	public boolean onEntityPlaceBlock(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos, IPlayerConfigOptionSpecAPI<String> option) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		//entity can be null!
@@ -817,7 +864,7 @@ public class ChunkProtection
 		}
 		if(entity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) entity, pos))
 			return false;
-		return (option == null || checkProtectionLeveledOption(option, config, accessor, accessorId)) && (entity instanceof Player || !canGrief(entity, config, accessor, accessorId, true, false, false))
+		return (option == null || !checkPlayerGroupExceptionOption(option, config, accessor, accessorId)) && (entity instanceof Player || !canGrief(entity, config, accessor, accessorId, true, false, false))
 				&& blockAccessCheck(null, config, entity, accessor, accessorId, false, false, false) == InteractionTargetResult.PROTECT;
 	}
 
@@ -832,7 +879,7 @@ public class ChunkProtection
 	}
 
 	public boolean onFrostWalk(IServerData<CM, ?> serverData, LivingEntity living, ServerLevel world, BlockPos pos) {
-		return onEntityPlaceBlock(serverData, living, world, pos, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING);
+		return onEntityPlaceBlock(serverData, living, world, pos, PlayerConfigOptions.CLAIM_EXCEPTION_FROST_WALKING);
 	}
 
 	private boolean isItemUseRestricted(ItemStack itemStack){
@@ -886,14 +933,13 @@ public class ChunkProtection
 					boolean isCurrentChunk = i == 0 && j == 0;
 					if (isCurrentChunk || claim != null){//wilderness neighbors don't have to be protected this much
 						IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-						if(checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, config, entity, null) &&
-								(isCurrentChunk || config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE))
+						if(!checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_USE, config, entity, null) &&
+								(isCurrentChunk || config.getEffective(PlayerConfigOptions.CLAIM_PROTECTION_NEIGHBOR_CHUNKS_ITEM_USE))
 								&& !hasChunkAccess(config, entity, null) &&
 								(!(entity instanceof Player player) || !isAllowedStaticFakePlayerAction(serverData, player, offsetChunkPos.getMiddleBlockPosition(0)))) {
 							if(shouldCheckGroups) {
-								int exceptionAccessLevel = getExceptionAccessLevel(config, entity, null);
 								for (ChunkProtectionExceptionGroup<Item> group : itemExceptionGroups.values()) {
-									if (exceptionAccessLevel <= config.getEffective(group.getPlayerConfigOption()) && group.contains(itemStack.getItem()))
+									if (group.contains(itemStack.getItem()) && checkPlayerGroupExceptionOption(group.getPlayerConfigOption(), config, entity, null))
 										continue j_loop;
 								}
 							}
@@ -935,7 +981,7 @@ public class ChunkProtection
 				IPlayerChunkClaim claim = claimsManager.get(entity.level().dimension().location(), chunkPos);
 				if(i == 0 && j == 0 || claim != null) {//wilderness neighbors don't have to be protected this much
 					IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-					if (config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE) &&
+					if (config.getEffective(PlayerConfigOptions.CLAIM_MOB_GRIEFING_OVERRIDE) &&
 							!canGrief(entity, config, accessor, accessorId, blocks, entities, items) &&
 							!hasChunkAccess(config, accessor, accessorId))
 						return true;
@@ -1027,15 +1073,18 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(target.level().dimension().location(), target.chunkPosition());
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		return config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) &&
-				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE) &&
+				!config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_FIRE) &&
 				isProtectable(target);
 	}
 
 	private boolean blockedByBarrierGroups(IPlayerConfig config, Entity entity, Entity accessor, UUID accessorId){
-		int exceptionAccessLevel = getExceptionAccessLevel(config, accessor, accessorId);
 		for (ChunkProtectionExceptionGroup<EntityType<?>> group : entityBarrierGroups.values()) {
-			int configValue = config.getEffective(group.getPlayerConfigOption());
-			if (configValue > 0 && exceptionAccessLevel >= configValue && group.contains(entity.getType()))
+			IPlayerConfigOptionSpecAPI<String> option = group.getPlayerConfigOption();
+			String configValue = config.getEffective(option);
+			if (
+					!configValue.equals(EVERYONE_EXCEPTION_ID) && group.contains(entity.getType()) &&
+					!checkPlayerGroupExceptionOption(configValue, option, config, accessor, accessorId)
+			)
 				return true;
 		}
 		return false;
@@ -1078,7 +1127,7 @@ public class ChunkProtection
 				madeAnException = true;
 			}
 			if (!isBlockedEntity)
-				isBlockedEntity = accessor instanceof Raider raider && raider.canJoinRaid() && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
+				isBlockedEntity = accessor instanceof Raider raider && raider.canJoinRaid() && !config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_RAIDS);
 			if (!isBlockedEntity && entity instanceof ItemEntity itemEntity) {
 				UUID throwerId = ServerCore.getItemEntityThrower(itemEntity);
 				if (throwerId != null) {
@@ -1098,7 +1147,7 @@ public class ChunkProtection
 					UUID deadPlayerId = ServerCore.getDeadPlayer(entity);
 					if(deadPlayerId != null) {
 						Entity deadPlayer = getEntityById(entityServerLevel, deadPlayerId);
-						isBlockedEntity = checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, fromConfig, deadPlayer, deadPlayerId);
+						isBlockedEntity = checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_PROTECTION_PLAYER_DEATH_LOOT, fromConfig, deadPlayer, deadPlayerId);
 					} else if(enteringProtectedChunk)
 						isBlockedEntity = shouldStopMobLoot(config, getEntityById(entityServerLevel, lootOwnerId), lootOwnerId);
 				}
@@ -1176,21 +1225,21 @@ public class ChunkProtection
 			IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 			if(config != null && !config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 				config = null;
-			if(config != null && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS) &&
+			if(config != null && !config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_EXPLOSIONS) &&
 					(!(damager instanceof Player) && isProtectable(entity) ||
 							entityAccessCheck(playerConfigs, config, entity, directDamager, damager, null, true, true, true) == InteractionTargetResult.PROTECT)
 			)
 				entities.remove();
 		}
-		if(!explosion.interactsWithBlocks())
-			return;
-		Entity accessor;
-		UUID accessorId;
-		Object accessorInfo = getAccessorInfo(damager == null ? directDamager : damager);
+//		if(!explosion.interactsWithBlocks())
+//			return;
+		Entity accessor = null;
+		UUID accessorId = null;
+		Object accessorInfo = getAccessorInfo(damager == null ? directDamager : damager);//can be null if both damager and directDamager are
 		if (accessorInfo instanceof UUID) {
 			accessorId = (UUID) accessorInfo;
 			accessor = getEntityById(world, accessorId);
-		} else {
+		} else if(accessorInfo != null){
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
@@ -1240,7 +1289,7 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
-		if(checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT, claimConfig, accessor, accessorId) && !hasChunkAccess(claimConfig, accessor, accessorId)) {
+		if(!checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_CHORUS_FRUIT, claimConfig, accessor, accessorId) && !hasChunkAccess(claimConfig, accessor, accessorId)) {
 			if(entity instanceof ServerPlayer)
 				entity.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, CANT_CHORUS));
 			//OpenPartiesAndClaims.LOGGER.info("stopped {} from teleporting to {}", entity, pos);
@@ -1259,7 +1308,7 @@ public class ChunkProtection
 				IPlayerChunkClaim claim = claimsManager.get(bolt.level().dimension().location(), chunkPos);
 				if(i == 0 && j == 0 || claim != null) {//wilderness neighbors don't have to be protected this much
 					IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-					if (checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING, config, bolt.getCause(), null) &&
+					if (!checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_PLAYER_LIGHTNING, config, bolt.getCause(), null) &&
 							!hasChunkAccess(config, bolt.getCause(), null) && !isAllowedStaticFakePlayerAction(serverData, bolt.getCause(), chunkPos.getMiddleBlockPosition(0))) {
 						bolt.setVisualOnly(true);
 						break;
@@ -1274,7 +1323,7 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), new ChunkPos(pos));
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig claimConfig = getClaimConfig(playerConfigs, claim);
-		return claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) && claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD);
+		return claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) && !claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_FIRE_SPREAD);
 	}
 
 	public boolean onCropTrample(IServerData<CM, ?> serverData, Entity entity, BlockPos pos) {
@@ -1293,7 +1342,7 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor == null ? null : accessor.getUUID();
 		}
-		return claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE)
+		return !claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_CROP_TRAMPLE)
 				&& !hasChunkAccess(claimConfig, accessor, accessorId);
 	}
 
@@ -1369,7 +1418,7 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
-		return checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId)
+		return !checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_USE, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId)
 				&& !isOptionalItemException(serverData, accessor, accessorId, itemStack, world, chunkPos);
 	}
 
@@ -1377,9 +1426,8 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		int exceptionAccessLevel = getExceptionAccessLevel(config, accessor, accessorId);
 		for (ChunkProtectionExceptionGroup<Item> group : itemExceptionGroups.values()) {
-			if (exceptionAccessLevel <= config.getEffective(group.getPlayerConfigOption()) && group.contains(itemStack.getItem()))
+			if (group.contains(itemStack.getItem()) && checkPlayerGroupExceptionOption(group.getPlayerConfigOption(), config, accessor, accessorId))
 				return true;
 		}
 		return false;
@@ -1420,8 +1468,25 @@ public class ChunkProtection
 		return int2.compareTo(int1);//purposely reversed because when protection is > 0, lesser value means more protection
 	}
 
+	private int comparePlayerGroupExceptions(IPlayerConfig config1, IPlayerConfig config2, IPlayerConfigOptionSpecAPI<String> option){
+		String value1 = config1.getEffective(option);
+		String value2 = config2.getEffective(option);
+		if(value1.equals(value2))
+			return 0;
+		if(value1.equals(NO_EXCEPTION_ID) || value2.equals(EVERYONE_EXCEPTION_ID))
+			return -1;
+		if(value1.equals(EVERYONE_EXCEPTION_ID) || value2.equals(NO_EXCEPTION_ID))
+			return 1;
+		if(value1.equals(PARTY_EXCEPTION_ID) && value2.equals(ALLIES_EXCEPTION_ID))
+			return -1;
+		//if one of the values is a custom group, then always consider the first one to be of higher exception
+		//they can't actually be compared but that is the safer option for how this method is used when checking if something
+		//goes from a less protected chunk to a more protected one
+		return 1;
+	}
+
 	private boolean hitsAnotherClaim(IServerData<CM, ?> serverData, IPlayerChunkClaim fromClaim, IPlayerChunkClaim toClaim,
-									 IPlayerConfigOptionSpecAPI<? extends Comparable<?>> optionSpec, boolean withBuildCheck){
+									 IPlayerConfigOptionSpecAPI<Boolean> optionSpec, boolean withBuildCheck){
 		if(toClaim == null || fromClaim == toClaim || fromClaim != null && fromClaim.isSameClaimType(toClaim))
 			return false;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
@@ -1434,35 +1499,35 @@ public class ChunkProtection
 					|| optionSpec != null && compareProtectionLevels(fromClaimConfig, toClaimConfig, optionSpec, false) < 0)
 				return true;
 			if(withBuildCheck){
-				int toClaimItemUseProt = toClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE);
-				if(toClaimItemUseProt == 0 && toClaimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS) == 0)
+				String toClaimItemUseExc = toClaimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_USE);
+				if(toClaimItemUseExc.equals(EVERYONE_EXCEPTION_ID) && toClaimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS).equals(EVERYONE_EXCEPTION_ID))
 					return false;//basically no building protection, so no point in checking other options
 
 				//options that are likely to affect a player's ability to build in a chunk
-				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS, false) < 0)
+				if(comparePlayerGroupExceptions(fromClaimConfig, toClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS) > 0)
 					return true;
-				if(toClaimItemUseProt > 0) {
-					if (compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_USE, false) < 0)
+				if(!toClaimItemUseExc.equals(EVERYONE_EXCEPTION_ID)) {
+					if (comparePlayerGroupExceptions(fromClaimConfig, toClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_USE) > 0)
 						return true;
-					if (compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE, false) < 0)
+					if (compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.CLAIM_PROTECTION_NEIGHBOR_CHUNKS_ITEM_USE, false) < 0)
 						return true;
 				}
-				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS, false) < 0)
+				if(comparePlayerGroupExceptions(fromClaimConfig, toClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_MOBS) > 0)
 					return true;
-				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER, false) < 0)
+				if(comparePlayerGroupExceptions(fromClaimConfig, toClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_OTHER) > 0)
 					return true;
-				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER, false) < 0)
+				if(compareProtectionLevels(fromClaimConfig, toClaimConfig, PlayerConfigOptions.CLAIM_PISTON_BARRIER, false) < 0)
 					return true;
 				for(ChunkProtectionExceptionGroup<Item> itemExceptionGroup : itemExceptionGroups.values()){
-					if(compareProtectionLevels(fromClaimConfig, toClaimConfig, itemExceptionGroup.getPlayerConfigOption(), true) < 0)
+					if(comparePlayerGroupExceptions(fromClaimConfig, toClaimConfig, itemExceptionGroup.getPlayerConfigOption()) > 0)
 						return true;
 				}
 				for(ChunkProtectionExceptionGroup<EntityType<?>> entityBarrierGroup : entityBarrierGroups.values()){
-					if(compareProtectionLevels(fromClaimConfig, toClaimConfig, entityBarrierGroup.getPlayerConfigOption(), false) < 0)
+					if(comparePlayerGroupExceptions(fromClaimConfig, toClaimConfig, entityBarrierGroup.getPlayerConfigOption()) > 0)
 						return true;
 				}
 				for(ChunkProtectionExceptionGroup<Block> blockExceptionGroup : blockExceptionGroups.values()){
-					if((blockExceptionGroup.getType() == ChunkProtectionExceptionType.INTERACTION || blockExceptionGroup.getType() == ChunkProtectionExceptionType.ANY_ITEM_INTERACTION) && compareProtectionLevels(fromClaimConfig, toClaimConfig, blockExceptionGroup.getPlayerConfigOption(), true) < 0)
+					if((blockExceptionGroup.getType() == ChunkProtectionExceptionType.INTERACTION || blockExceptionGroup.getType() == ChunkProtectionExceptionType.ANY_ITEM_INTERACTION) && comparePlayerGroupExceptions(fromClaimConfig, toClaimConfig, blockExceptionGroup.getPlayerConfigOption()) > 0)
 						return true;
 				}
 			}
@@ -1471,7 +1536,7 @@ public class ChunkProtection
 		return true;
 	}
 
-	private boolean hitsAnotherClaim(IServerData<CM, ?> serverData, Level world, BlockPos from, BlockPos to, IPlayerConfigOptionSpecAPI<? extends Comparable<?>> optionSpec, boolean withBuildCheck){
+	private boolean hitsAnotherClaim(IServerData<CM, ?> serverData, Level world, BlockPos from, BlockPos to, IPlayerConfigOptionSpecAPI<Boolean> optionSpec, boolean withBuildCheck){
 		int fromChunkX = from.getX() >> 4;
 		int fromChunkZ = from.getZ() >> 4;
 		int toChunkX = to.getX() >> 4;
@@ -1486,7 +1551,7 @@ public class ChunkProtection
 	public boolean onFluidSpread(IServerData<CM, ?> serverData, ServerLevel world, BlockPos from, BlockPos to) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
-		return isOnChunkEdge(from) && hitsAnotherClaim(serverData, world, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER, true);
+		return isOnChunkEdge(from) && hitsAnotherClaim(serverData, world, from, to, PlayerConfigOptions.CLAIM_FLUID_BARRIER, true);
 	}
 
 	public boolean onDispenseFrom(IServerData<CM, ?> serverData, ServerLevel serverLevel, BlockPos from) {
@@ -1497,7 +1562,7 @@ public class ChunkProtection
 		BlockState blockState = serverLevel.getBlockState(from);
 		Direction direction = blockState.getValue(DirectionalBlock.FACING);
 		BlockPos to = from.relative(direction);
-		return isOnChunkEdge(from) && hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER, true);
+		return isOnChunkEdge(from) && hitsAnotherClaim(serverData, serverLevel, from, to, PlayerConfigOptions.CLAIM_DISPENSER_BARRIER, true);
 	}
 
 	private boolean shouldStopPistonPush(IServerData<CM, ?> serverData, ServerLevel world, BlockPos pushPos, int pistonChunkX, int pistonChunkZ, IPlayerChunkClaim pistonClaim){
@@ -1506,7 +1571,7 @@ public class ChunkProtection
 		if(pushChunkX == pistonChunkX && pushChunkZ == pistonChunkZ)
 			return false;
 		IPlayerChunkClaim pushClaim = claimsManager.get(world.dimension().location(), pushChunkX, pushChunkZ);
-		return hitsAnotherClaim(serverData, pistonClaim, pushClaim, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER, true);
+		return hitsAnotherClaim(serverData, pistonClaim, pushClaim, PlayerConfigOptions.CLAIM_PISTON_BARRIER, true);
 	}
 
 	public boolean onPistonPush(IServerData<CM, ?> serverData, ServerLevel world, List<BlockPos> toPush, List<BlockPos> toDestroy, BlockPos pistonPos, Direction direction, boolean extending) {
@@ -1558,16 +1623,21 @@ public class ChunkProtection
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return;
-		IPlayerConfigOptionSpecAPI<Integer> blockSpecificOption =
+		IPlayerConfigOptionSpecAPI<String> blockSpecificOption =
 				block instanceof ButtonBlock ?
-					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES :
+					PlayerConfigOptions.CLAIM_EXCEPTION_BUTTONS_BY_PROJECTILES :
 				block instanceof TargetBlock ?
-					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES :
+					PlayerConfigOptions.CLAIM_EXCEPTION_TARGETS_BY_PROJECTILES :
 				null;
-		if(blockSpecificOption != null && config.getEffective(blockSpecificOption) <= 0)
+		if(
+				blockSpecificOption != null &&
+						EVERYONE_EXCEPTION_ID.equals(config.getEffective(blockSpecificOption))
+		)
 			return;
-		boolean everyoneExceptAccessHavers = blockSpecificOption != null && config.getEffective(blockSpecificOption) == 1;
-		Map<UUID, Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean>> cachedAccessorOptionResults = null;
+		boolean everyoneExceptAccessHavers =
+				blockSpecificOption != null &&
+						NO_EXCEPTION_ID.equals(config.getEffective(blockSpecificOption));
+		Map<UUID, Map<IPlayerConfigOptionSpecAPI<?>, Boolean>> cachedAccessorOptionResults = null;
 		boolean isWeighted = block instanceof WeightedPressurePlateBlock;
 		boolean isTripwire = block instanceof TripWireBlock;
 		while(iterator.hasNext()){
@@ -1584,25 +1654,25 @@ public class ChunkProtection
 				accessor = (Entity) accessorInfo;
 				accessorId = accessor.getUUID();
 			}
-			IPlayerConfigOptionSpecAPI<Integer> entitySpecificOption = blockSpecificOption;
+			IPlayerConfigOptionSpecAPI<String> entitySpecificOption = blockSpecificOption;
 			if(entitySpecificOption == null) {
 				if(isTripwire){
 					entitySpecificOption =
 							e instanceof Player ?
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS :
+								PlayerConfigOptions.CLAIM_EXCEPTION_TRIPWIRE_BY_PLAYERS :
 							e instanceof LivingEntity ?
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS :
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER;
+								PlayerConfigOptions.CLAIM_EXCEPTION_TRIPWIRE_BY_MOBS :
+								PlayerConfigOptions.CLAIM_EXCEPTION_TRIPWIRE_BY_OTHER;
 				} else {
 					entitySpecificOption =
 							e instanceof Player ?
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS :
+								PlayerConfigOptions.CLAIM_EXCEPTION_PLATES_BY_PLAYERS :
 							e instanceof LivingEntity ?
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS :
-								PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER;
+								PlayerConfigOptions.CLAIM_EXCEPTION_PLATES_BY_MOBS :
+								PlayerConfigOptions.CLAIM_EXCEPTION_PLATES_BY_OTHER;
 				}
 			}
-			Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean> resultsCachedForAccessor;
+			Map<IPlayerConfigOptionSpecAPI<?>, Boolean> resultsCachedForAccessor;
 			if(cachedAccessorOptionResults != null && (resultsCachedForAccessor = cachedAccessorOptionResults.get(accessorId)) != null){
 				Boolean cachedResult = resultsCachedForAccessor.get(entitySpecificOption);
 				if(cachedResult != null){
@@ -1611,9 +1681,9 @@ public class ChunkProtection
 					continue;
 				}
 			}
-			boolean protect = (everyoneExceptAccessHavers || checkProtectionLeveledOption(entitySpecificOption, config, accessor, accessorId)) && !hasChunkAccess(config, accessor, accessorId);
+			boolean protect = (everyoneExceptAccessHavers || !checkPlayerGroupExceptionOption(entitySpecificOption, config, accessor, accessorId)) && !hasChunkAccess(config, accessor, accessorId);
 			if(!protect &&
-					(blockSpecificOption == PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES ||
+					(blockSpecificOption == PlayerConfigOptions.CLAIM_EXCEPTION_BUTTONS_BY_PROJECTILES ||
 					blockSpecificOption == null && !isWeighted)
 			)
 				break;//for these blocks 1 allowed entity is enough info
@@ -1642,11 +1712,11 @@ public class ChunkProtection
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return;
-		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS) == 0 &&
-				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS) == 0 &&
-				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER) == 0)
+		if(config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_PLAYERS).equals(EVERYONE_EXCEPTION_ID) &&
+				config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_MOBS).equals(EVERYONE_EXCEPTION_ID) &&
+				config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_OTHER).equals(EVERYONE_EXCEPTION_ID))
 			return;
-		Map<UUID, Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean>> cachedAccessorOptionResults = null;
+		Map<UUID, Map<IPlayerConfigOptionSpecAPI<String>, Boolean>> cachedAccessorOptionResults = null;
 		Iterator<? extends Entity> iterator = collidingEntities.iterator();
 		boolean multipleCollisionsMatter = false;
 		while(iterator.hasNext()) {
@@ -1661,8 +1731,8 @@ public class ChunkProtection
 				accessor = (Entity) accessorInfo;
 				accessorId = accessor.getUUID();
 			}
-			IPlayerConfigOptionSpecAPI<Integer> option = getUsedEntityProtectionOption(config, collidingEntity, accessor);
-			Map<IPlayerConfigOptionSpecAPI<Integer>, Boolean> accessorCache;
+			IPlayerConfigOptionSpecAPI<String> option = getUsedEntityExceptionOption(config, collidingEntity, accessor);
+			Map<IPlayerConfigOptionSpecAPI<String>, Boolean> accessorCache;
 			if(cachedAccessorOptionResults != null && (accessorCache = cachedAccessorOptionResults.get(accessorId)) != null){
 				Boolean cachedResult = accessorCache.get(option);
 				if(cachedResult != null) {
@@ -1671,7 +1741,7 @@ public class ChunkProtection
 					continue;
 				}
 			}
-			boolean protect = checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId);
+			boolean protect = !checkPlayerGroupExceptionOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId);
 			if(!protect && !multipleCollisionsMatter)
 				break;
 			if (iterator.hasNext()){
@@ -1718,9 +1788,9 @@ public class ChunkProtection
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 		if(!config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS))
 			return false;
-		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS) == 0 &&
-				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS) == 0 &&
-				config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER) == 0)
+		if(config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_NETHER_PORTALS_PLAYERS).equals(EVERYONE_EXCEPTION_ID) &&
+				config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_NETHER_PORTALS_MOBS).equals(EVERYONE_EXCEPTION_ID) &&
+				config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_NETHER_PORTALS_OTHER).equals(EVERYONE_EXCEPTION_ID))
 			return false;
 		Entity accessor;
 		UUID accessorId;
@@ -1732,13 +1802,13 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor.getUUID();
 		}
-		IPlayerConfigOptionSpecAPI<Integer> option =
+		IPlayerConfigOptionSpecAPI<String> option =
 				entity instanceof Player ?
-						PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS :
+						PlayerConfigOptions.CLAIM_EXCEPTION_NETHER_PORTALS_PLAYERS :
 				entity instanceof LivingEntity ?
-						PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS :
-						PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER;
-		return checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId);
+						PlayerConfigOptions.CLAIM_EXCEPTION_NETHER_PORTALS_MOBS :
+						PlayerConfigOptions.CLAIM_EXCEPTION_NETHER_PORTALS_OTHER;
+		return !checkPlayerGroupExceptionOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId);
 	}
 
 	public boolean onRaidSpawn(IServerData<CM, ?> serverData, ServerLevel world, BlockPos pos) {
@@ -1747,7 +1817,7 @@ public class ChunkProtection
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), new ChunkPos(pos));
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		return config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_RAIDS);
+		return config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS) && !config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_RAIDS);
 	}
 
 	public boolean onMobSpawn(IServerData<CM, ?> serverData, Entity entity, double x, double y, double z, MobSpawnType spawnReason) {
@@ -1762,16 +1832,16 @@ public class ChunkProtection
 		boolean hostile = entityHelper.isHostile(entity);
 		if(spawnReason == MobSpawnType.SPAWNER){
 			if(hostile)
-				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS;
+				option = PlayerConfigOptions.CLAIM_EXCEPTION_HOSTILE_SPAWNERS;
 			else
-				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS;
+				option = PlayerConfigOptions.CLAIM_EXCEPTION_FRIENDLY_SPAWNERS;
 		} else {
 			if(hostile)
-				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN;
+				option = PlayerConfigOptions.CLAIM_EXCEPTION_HOSTILE_NATURAL_SPAWN;
 			else
-				option = PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN;
+				option = PlayerConfigOptions.CLAIM_EXCEPTION_FRIENDLY_NATURAL_SPAWN;
 		}
-		return config.getEffective(option);
+		return !config.getEffective(option);
 	}
 
 	public boolean onProjectileHitSpawnedEntity(IServerData<CM, ?> serverData, Entity projectile, Entity entity) {
@@ -1794,10 +1864,10 @@ public class ChunkProtection
 		}
 		if(hasChunkAccess(config, accessor, accessorId))
 			return false;
-		IPlayerConfigOptionSpecAPI<Integer> option = entityHelper.isHostile(entity) ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN :
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN;
-		return checkProtectionLeveledOption(option, config, accessor, accessorId);
+		IPlayerConfigOptionSpecAPI<String> option = entityHelper.isHostile(entity) ?
+				PlayerConfigOptions.CLAIM_EXCEPTION_PROJECTILE_HIT_HOSTILE_SPAWN :
+				PlayerConfigOptions.CLAIM_EXCEPTION_PROJECTILE_HIT_FRIENDLY_SPAWN;
+		return !checkPlayerGroupExceptionOption(option, config, accessor, accessorId);
 	}
 
 	@Override
@@ -1855,44 +1925,51 @@ public class ChunkProtection
 			accessorId = throwerAccessorId;
 			accessor = getEntityById(ServerLevelHelper.getServerLevel(itemEntity.level()), accessorId);
 		}
-		Entity usedOptionBase = !config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT) ?
+		Entity usedOptionBase = !config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_TOSS_REDIRECT) ?
 				thrower : accessor;
-		IPlayerConfigOptionSpecAPI<Integer> option;
+		IPlayerConfigOptionSpecAPI<String> option;
 		if(usedOptionBase != null) {
 			option = !(usedOptionBase instanceof LivingEntity) ?
-					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER
+					PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_TOSS_OTHER
 					: usedOptionBase instanceof Player ?
-					PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS
-					: PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS;
+					PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_TOSS_PLAYERS
+					: PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_TOSS_MOBS;
 		} else
-			option = getToughestProtectionLevelOption(config, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER);
-		if(checkProtectionLeveledOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId))
+			option = getToughestPlayerGroupExceptionOption(config, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_TOSS_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_TOSS_MOBS, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_TOSS_OTHER);
+		if(!checkPlayerGroupExceptionOption(option, config, accessor, accessorId) && !hasChunkAccess(config, accessor, accessorId))
 			return accessor;
 		return itemEntity;
 	}
 
-	private boolean hasAnEnabledOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<Boolean> option1, IPlayerConfigOptionSpecAPI<Boolean> option2, IPlayerConfigOptionSpecAPI<Boolean> option3){
+	private boolean hasADisabledOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<Boolean> option1, IPlayerConfigOptionSpecAPI<Boolean> option2, IPlayerConfigOptionSpecAPI<Boolean> option3){
 		//the used option base is offline; or possibly in another dimension, if it's not a player
 		//assume the worst and use the toughest protection
-		return config.getEffective(option1) || config.getEffective(option2) || config.getEffective(option3);
+		return !config.getEffective(option1) || !config.getEffective(option2) || !config.getEffective(option3);
 	}
 
-	private IPlayerConfigOptionSpecAPI<Integer> getToughestProtectionLevelOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<Integer> option1, IPlayerConfigOptionSpecAPI<Integer> option2, IPlayerConfigOptionSpecAPI<Integer> option3){
-		//the used option base is offline; or possibly in another dimension, if it's not a player
-		//assume the worst and use the toughest protection
-		int toughestProtectionLevel = config.getEffective(option1);
-		IPlayerConfigOptionSpecAPI<Integer> toughestOption = option1;
-		int protectionLevel = config.getEffective(option2);
-		if(protectionLevel != 0 && (toughestProtectionLevel == 0 || protectionLevel < toughestProtectionLevel)){
-			toughestProtectionLevel = protectionLevel;
-			toughestOption = option2;
+	private IPlayerConfigOptionSpecAPI<String> getToughestPlayerGroupExceptionOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<String> playerOption, IPlayerConfigOptionSpecAPI<String> mobOption, IPlayerConfigOptionSpecAPI<String> otherOption){
+		//The used option base is null, so offline; or possibly in another dimension, if it's not a player.
+		//Assume the worst and use the toughest protection.
+		//When the used option base is null, then it must also be the used accessor, as there is no way to go further
+		//from null. The accessor is null. This implies the following best course of action:
+
+		//If the player option is not Every, then use that because non-player accessor UUIDs will never be included in that,
+		//and for offline players it will be the correct option to check, in case their UUID is included in the group.
+		//Otherwise, can use any option that isn't Every.
+		//If all options are set to Every, then it doesn't matter which one is used.
+		if(playerOption != null) {
+			String playerValue = config.getEffective(playerOption);
+			if (!EVERYONE_EXCEPTION_ID.equals(playerValue))
+				return playerOption;
 		}
-		if(option3 != null) {
-			protectionLevel = config.getEffective(option3);
-			if (protectionLevel != 0 && (toughestProtectionLevel == 0 || protectionLevel < toughestProtectionLevel))
-				return option3;
-		}
-		return toughestOption;
+		if(mobOption == null)
+			return otherOption;//definitely not null because there's no point to call this method with 2 null options
+		if(otherOption == null)
+			return mobOption;
+		String mobValue = config.getEffective(mobOption);
+		if(!EVERYONE_EXCEPTION_ID.equals(mobValue))
+			return mobOption;
+		return otherOption;
 	}
 
 	public boolean onLivingLootEntity(IServerData<CM, ?> serverData, LivingEntity livingEntity, Entity lootEntity, DamageSource source){
@@ -1926,10 +2003,10 @@ public class ChunkProtection
 	}
 
 	private boolean shouldStopMobLoot(IPlayerConfig config, Entity accessor, UUID accessorId){
-		return !hasChunkAccess(config, accessor, accessorId) && checkProtectionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_MOB_LOOT, config, accessor, accessorId);
+		return !hasChunkAccess(config, accessor, accessorId) && !checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_PROTECTION_MOB_LOOT, config, accessor, accessorId);
 	}
 
-	public boolean onEntityPickup(IServerData<CM, ?> serverData, Entity entity, Entity pickedEntity, UUID pickedEntityThrowerId, UUID pickedEntityOwnerId, Map<Entity, Set<ChunkPos>> cantPickupCache, TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<Integer>> protectionOptionGetter) {
+	public boolean onEntityPickup(IServerData<CM, ?> serverData, Entity entity, Entity pickedEntity, UUID pickedEntityThrowerId, UUID pickedEntityOwnerId, Map<Entity, Set<ChunkPos>> cantPickupCache, TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<String>> exceptionOptionGetter) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		if(entity.getUUID().equals(pickedEntityThrowerId) || entity.getUUID().equals(pickedEntityOwnerId) ||
@@ -1945,7 +2022,7 @@ public class ChunkProtection
 		UUID deadPlayerId = ServerCore.getDeadPlayer(pickedEntity);
 		if(deadPlayerId != null){
 			Entity deadPlayer = getEntityById(ServerLevelHelper.getServerLevel(pickedEntity.level()), deadPlayerId);
-			if(checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, config, deadPlayer, deadPlayerId))
+			if(checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_PROTECTION_PLAYER_DEATH_LOOT, config, deadPlayer, deadPlayerId))
 				return true;
 		}
 		boolean shouldPrevent = false;
@@ -1963,8 +2040,8 @@ public class ChunkProtection
 			return false;
 		if(config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS)) {
 			if (!hasChunkAccess(config, accessor, accessorId)) {
-				IPlayerConfigOptionSpecAPI<Integer> usedOption = protectionOptionGetter.apply(config, entity, accessor);
-				shouldPrevent = checkProtectionLeveledOption(usedOption, config, accessor, accessorId);
+				IPlayerConfigOptionSpecAPI<String> usedOption = exceptionOptionGetter.apply(config, entity, accessor);
+				shouldPrevent = !checkPlayerGroupExceptionOption(usedOption, config, accessor, accessorId);
 			}
 		}
 		if(!shouldPrevent && !(entity instanceof Player)){
@@ -2000,7 +2077,7 @@ public class ChunkProtection
 			return false;
 		if(entity.getUUID().equals(ServerCore.getThrowerAccessor(itemEntity)))
 			return false;
-		return onEntityPickup(serverData, entity, itemEntity, ServerCore.getItemEntityThrower(itemEntity), ServerCore.getItemEntityOwner(itemEntity), cantPickupItemsInTickCache, usedDroppedItemProtectionOptionGetter);
+		return onEntityPickup(serverData, entity, itemEntity, ServerCore.getItemEntityThrower(itemEntity), ServerCore.getItemEntityOwner(itemEntity), cantPickupItemsInTickCache, usedDroppedItemExceptionOptionGetter);
 	}
 
 	@Override
@@ -2013,17 +2090,17 @@ public class ChunkProtection
 		}
 	}
 
-	private IPlayerConfigOptionSpecAPI<Integer> getUsedDroppedItemProtectionOption(IPlayerConfig config, Entity entity, Entity accessor){
-		Entity usedOptionBase = !(entity instanceof Player) && config.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT) ?
+	private IPlayerConfigOptionSpecAPI<String> getUsedDroppedItemProtectionOption(IPlayerConfig config, Entity entity, Entity accessor){
+		Entity usedOptionBase = !(entity instanceof Player) && config.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_REDIRECT) ?
 				accessor : entity;
 		if(usedOptionBase == null)
-			return getToughestProtectionLevelOption(config, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS, null);
+			return getToughestPlayerGroupExceptionOption(config, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_MOBS, null);
 		return usedOptionBase instanceof Player ?
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS :
-				PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS;
+				PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_PLAYERS :
+				PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_MOBS;
 	}
 
-	public boolean onEntityMerge(IServerData<CM, ?> serverData, Entity first, UUID firstThrower, UUID firstOwner, Entity second, UUID secondThrower, UUID secondOwner, IPlayerConfigOptionSpecAPI<Integer> playerOption, IPlayerConfigOptionSpecAPI<Integer> mobOption, IPlayerConfigOptionSpecAPI<Boolean> redirectOption){
+	public boolean onEntityMerge(IServerData<CM, ?> serverData, Entity first, UUID firstThrower, UUID firstOwner, Entity second, UUID secondThrower, UUID secondOwner, IPlayerConfigOptionSpecAPI<String> playerOption, IPlayerConfigOptionSpecAPI<String> mobOption, IPlayerConfigOptionSpecAPI<Boolean> redirectOption){
 		//needs to reflect any future changes to item pickup protection
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
@@ -2035,22 +2112,22 @@ public class ChunkProtection
 		boolean differentOwner =  !Objects.equals(firstOwner, secondOwner);
 		boolean differentLootOwner = !Objects.equals(ServerCore.getLootOwner(first), ServerCore.getLootOwner(second));
 		boolean firstProtected = firstConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
-		int firstItemPlayerProtection = !firstProtected ? 0 : firstConfig.getEffective(playerOption);
-		int firstItemMobsProtection = !firstProtected || mobOption == null ? 0 : firstConfig.getEffective(mobOption);
+		String firstItemPlayerException = !firstProtected ? EVERYONE_EXCEPTION_ID : firstConfig.getEffective(playerOption);
+		String firstItemMobsException = !firstProtected || mobOption == null ? EVERYONE_EXCEPTION_ID : firstConfig.getEffective(mobOption);
 		if(differentThrower || differentOwner || differentLootOwner) {
-			if(firstItemPlayerProtection > 0 || firstItemMobsProtection > 0)
+			if(!firstItemPlayerException.equals(EVERYONE_EXCEPTION_ID) || !firstItemMobsException.equals(EVERYONE_EXCEPTION_ID))
 				return true;
 			//if dead player ID exists it will be the same as thrower
 			UUID firstDeadPlayerId = ServerCore.getDeadPlayer(first);
 			if (firstDeadPlayerId != null) {
 				Entity firstDeadPlayer = getEntityById(ServerLevelHelper.getServerLevel(first.level()), firstDeadPlayerId);
-				if (checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, firstConfig, firstDeadPlayer, firstDeadPlayerId))
+				if (checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_PROTECTION_PLAYER_DEATH_LOOT, firstConfig, firstDeadPlayer, firstDeadPlayerId))
 					return true;
 			}
 			UUID secondDeadPlayerId = ServerCore.getDeadPlayer(second);
 			if (secondDeadPlayerId != null) {
 				Entity secondDeadPlayer = getEntityById(ServerLevelHelper.getServerLevel(first.level()), secondDeadPlayerId);
-				if (checkExceptionLeveledOption(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT, firstConfig, secondDeadPlayer, secondDeadPlayerId))
+				if (checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_PROTECTION_PLAYER_DEATH_LOOT, firstConfig, secondDeadPlayer, secondDeadPlayerId))
 					return true;
 			}
 		}
@@ -2068,13 +2145,15 @@ public class ChunkProtection
 		UUID secondClaimOwner = secondConfig.getPlayerId();
 		boolean sameClaimOwner = Objects.equals(firstClaimOwner, secondClaimOwner);
 		boolean secondProtected = secondConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
-		int secondItemPlayerProtection = !secondProtected ? 0 : secondConfig.getEffective(playerOption);
-		if(firstItemPlayerProtection != secondItemPlayerProtection || !sameClaimOwner && secondItemPlayerProtection > 1)//party-based protection still matters even if it's equal
+		String secondItemPlayerException = !secondProtected ? EVERYONE_EXCEPTION_ID : secondConfig.getEffective(playerOption);
+		if(!firstItemPlayerException.equals(secondItemPlayerException) ||
+				!sameClaimOwner && !secondItemPlayerException.equals(NO_EXCEPTION_ID) && !secondItemPlayerException.equals(EVERYONE_EXCEPTION_ID))//local player group-based protection still matters even if it's the same ID
 			return true;
-		int secondItemMobsProtection = !secondProtected || mobOption == null ? 0 : secondConfig.getEffective(mobOption);
-		if(firstItemMobsProtection != secondItemMobsProtection || !sameClaimOwner && secondItemMobsProtection > 1)//party-based protection still matters even if it's equal
+		String secondItemMobsException = !secondProtected || mobOption == null ? EVERYONE_EXCEPTION_ID : secondConfig.getEffective(mobOption);
+		if(!firstItemMobsException.equals(secondItemMobsException) ||
+				!sameClaimOwner && !secondItemMobsException.equals(NO_EXCEPTION_ID) && !secondItemMobsException.equals(EVERYONE_EXCEPTION_ID))//local player group-based protection still matters even if it's the same ID
 			return true;
-		if(firstItemPlayerProtection != firstItemMobsProtection && redirectOption != null) {//redirect matters
+		if(!firstItemPlayerException.equals(firstItemMobsException) && redirectOption != null) {//redirect matters
 			boolean firstItemProtectionRedirect = firstConfig.getEffective(redirectOption);
 			boolean secondItemProtectionRedirect = secondConfig.getEffective(redirectOption);
 			if (firstItemProtectionRedirect != secondItemProtectionRedirect)
@@ -2085,15 +2164,15 @@ public class ChunkProtection
 	}
 
 	public boolean onItemStackMerge(IServerData<CM, ?> serverData, ItemEntity first, ItemEntity second) {
-		return onEntityMerge(serverData, first, ServerCore.getItemEntityThrower(first), ServerCore.getItemEntityOwner(first), second, ServerCore.getItemEntityThrower(second), ServerCore.getItemEntityOwner(second), PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT);
+		return onEntityMerge(serverData, first, ServerCore.getItemEntityThrower(first), ServerCore.getItemEntityOwner(first), second, ServerCore.getItemEntityThrower(second), ServerCore.getItemEntityOwner(second), PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_MOBS, PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_PICKUP_REDIRECT);
 	}
 
 	public boolean onExperiencePickup(IServerData<CM, ?> serverData, ExperienceOrb orb, Player player) {
-		return onEntityPickup(serverData, player, orb, null, null, cantPickupXPInTickCache, usedExperienceOrbProtectionOptionGetter);
+		return onEntityPickup(serverData, player, orb, null, null, cantPickupXPInTickCache, usedExperienceOrbExceptionOptionGetter);
 	}
 
 	public boolean onExperienceMerge(IServerData<CM, ?> serverData, ExperienceOrb from, ExperienceOrb into) {
-		return onEntityMerge(serverData, into, null, null, from, null, null, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_XP_PICKUP, null, null);
+		return onEntityMerge(serverData, into, null, null, from, null, null, PlayerConfigOptions.CLAIM_EXCEPTION_XP_PICKUP, null, null);
 	}
 
 	public boolean onProjectileEntityImpact(IServerData<CM, ?> serverData, Projectile projectile, EntityHitResult hitResult){
@@ -2157,9 +2236,9 @@ public class ChunkProtection
 			return false;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 		IPlayerConfig posClaimConfig = getClaimConfig(playerConfigs, toClaim);
-		if(affectsBlocks && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER))
+		if(affectsBlocks && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_OTHER))
 			return true;
-		return affectsEntities && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER);
+		return affectsEntities && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_OTHER);
 	}
 
 	private boolean onPosAffectedByAnotherPos(IServerData<CM, ?> serverData, ServerLevel world, IPlayerChunkClaim toClaim, int toChunkX, int toChunkZ, int fromChunkX, int fromChunkZ, boolean affectsBlocks, boolean affectsEntities) {

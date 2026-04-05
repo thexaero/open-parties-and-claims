@@ -107,6 +107,7 @@ public final class PlayerConfigIO
 			PlayerConfig<P> config = loadFile(path, filePathConfig, false);
 			if(config == null)
 				throw new RuntimeException("Server, expired, default and wilderness claim configs must load properly! Check the game logs for errors.");
+			tryLoadingCustomGroups(config);
 			resultConsumer.accept(config);
 		} else {
 			if(filePathConfig.getPath() == path) {
@@ -132,7 +133,7 @@ public final class PlayerConfigIO
 			config.setStorage(storage);
 			if(filePathConfig == wildernessConfigPathConfig)
 				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
-
+			tryLoadingCustomGroups(config);
 			resultConsumer.accept(config);
 		}
 	}
@@ -153,6 +154,13 @@ public final class PlayerConfigIO
 			saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPathConfig.getPath());
 		return super.save();
 		
+	}
+
+	@Override
+	protected void saveFile(PlayerConfig<P> object, Path filePath) {
+		if(!(object instanceof PlayerSubConfig) && object.getPlayerGroups().isSaveNeeded())
+			object.getPlayerGroups().getIo().saveToConfig();
+		super.saveFile(object, filePath);
 	}
 
 	private void saveGlobalConfigSubConfigs(PlayerConfig<P> globalConfig){
@@ -197,6 +205,12 @@ public final class PlayerConfigIO
 
 	@Override
 	protected void onObjectLoad(PlayerConfig<P> loadedObject) {
+		tryLoadingCustomGroups(loadedObject);
+	}
+
+	private void tryLoadingCustomGroups(PlayerConfig<P> config){
+		if(config.getPlayerGroups() != null)
+			config.getPlayerGroups().getIo().loadFromConfig();
 	}
 	
 	public static final class Builder
