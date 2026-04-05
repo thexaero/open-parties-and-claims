@@ -26,6 +26,7 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -520,9 +521,13 @@ public class PlayerGroupsScreen extends XPACScreen {
 	public class GroupList extends ObjectSelectionList<GroupList.Entry> {
 
 		public GroupList(Minecraft minecraft, int screenW, int screenH) {
-			super(minecraft, screenW / 2, screenH, HEADER_HEIGHT, screenH - FOOTER_HEIGHT, ROW_HEIGHT);
+			super(minecraft, screenW / 2, screenH - FOOTER_HEIGHT - HEADER_HEIGHT, HEADER_HEIGHT, ROW_HEIGHT);
 			createEntries();
-			setRenderSelection(false);
+		}
+
+		@Override
+		protected boolean isSelectedItem(int index) {
+			return false;//not rendering the defeault selection indicator
 		}
 
 		private void createEntries(){
@@ -570,7 +575,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 		@Override
 		public int getRowLeft() {
-			 return x0;
+			 return getX();
 		}
 
 		@Override
@@ -640,9 +645,9 @@ public class PlayerGroupsScreen extends XPACScreen {
 					guiGraphics.vLine(separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
 				}
 				if(isFirst)
-					guiGraphics.vLine(separatorLineX, y0, y, separatorLineColor);
+					guiGraphics.vLine(separatorLineX, getY(), y, separatorLineColor);
 				if(isLast)
-					guiGraphics.vLine(separatorLineX, y + ROW_HEIGHT - 1, y1, separatorLineColor);
+					guiGraphics.vLine(separatorLineX, y + ROW_HEIGHT - 1, getBottom(), separatorLineColor);
 				guiGraphics.drawString(
 						font, groupName,
 						separatorLineX - 7 - font.width(groupName), y + rowHeight / 2 - 2, labelColor
@@ -658,12 +663,15 @@ public class PlayerGroupsScreen extends XPACScreen {
 		private long selectionTime;
 
 		public ContentsList(Minecraft minecraft, int screenW, int screenH, CustomPlayerConfigGroupData source) {
-			super(minecraft, screenW - screenW / 2, screenH, HEADER_HEIGHT, screenH - FOOTER_HEIGHT, ROW_HEIGHT);
-			x0 = screenW / 2;
-			x1 = screenW;
-			setRenderSelection(false);
+			super(minecraft, screenW - screenW / 2, screenH - FOOTER_HEIGHT - HEADER_HEIGHT, HEADER_HEIGHT, ROW_HEIGHT);
+			setX(screenW / 2);
 			createEntries();
 			reload(source);
+		}
+
+		@Override
+		protected boolean isSelectedItem(int index) {
+			return false;//not rendering the defeault selection indicator
 		}
 
 		private void reload(CustomPlayerConfigGroupData newSource){

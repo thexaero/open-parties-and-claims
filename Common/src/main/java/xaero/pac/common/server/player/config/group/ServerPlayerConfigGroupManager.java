@@ -20,7 +20,7 @@ package xaero.pac.common.server.player.config.group;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -281,7 +281,7 @@ public class ServerPlayerConfigGroupManager extends CustomPlayerConfigGroupDataM
 		);
 	}
 
-	private int getBaseLimit(ForgeConfigSpec.IntValue serverConfigOption, PermissionNode<Integer> permission){
+	private int getBaseLimit(ModConfigSpec.IntValue serverConfigOption, PermissionNode<Integer> permission){
 		MinecraftServer server = config.getManager().getServer();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
@@ -292,7 +292,7 @@ public class ServerPlayerConfigGroupManager extends CustomPlayerConfigGroupDataM
 	}
 
 	private int getFullLimit(
-			ForgeConfigSpec.IntValue serverConfigOption,
+			ModConfigSpec.IntValue serverConfigOption,
 			PermissionNode<Integer> permission,
 			IPlayerConfigOptionSpecAPI<Integer> bonusOption
 	){

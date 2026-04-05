@@ -26,7 +26,6 @@ import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.XPACScreen;
-import xaero.pac.client.gui.widget.FixedEditBox;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownWidgetCallback;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
@@ -93,7 +92,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 		selectionMenuY = height / 7 + 65;
 		if(allowManualInput){
 			String existingManualInput = manualInputBox == null ? null : manualInputBox.getValue();
-			manualInputBox = new FixedEditBox(font, width / 2 - 99, height / 7 + 65, 200, 20, manualInputNarration);
+			manualInputBox = new EditBox(font, width / 2 - 99, height / 7 + 65, 200, 20, manualInputNarration);
 			manualInputBox.setMaxLength(manualInputMaxLength);
 			addRenderableWidget(manualInputBox);
 			if(existingManualInput != null)
@@ -181,7 +180,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		if(needsButtonUpdate)
 			updateButtons();
-		renderBackground(guiGraphics);
+		renderBackground(guiGraphics, mouseX, mouseY, partial);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 
@@ -211,8 +210,6 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 	@Override
 	public void tick() {
 		super.tick();
-		if(manualInputBox != null)
-			manualInputBox.tick();
 	}
 
 	protected abstract void includeInData(String input);

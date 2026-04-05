@@ -40,7 +40,7 @@ public class PlayerConfigOptionValueType<T> {
 	private final boolean shouldDisplayInQuotes;
 
 	//The default for the value type, but can be customized per option type like in PlayerConfigRangedOptionSpec
-	private final BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
+	private final BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
 
 	protected PlayerConfigOptionValueType(
 			Class<T> jType,
@@ -52,7 +52,7 @@ public class PlayerConfigOptionValueType<T> {
 			Function<T, Component> componentWriter,
 			List<String> defaultCommandSuggestions,
 			boolean shouldDisplayInQuotes,
-			BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner
+			BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner
 	) {
 		this.jType = jType;
 		this.id = id;
@@ -94,7 +94,7 @@ public class PlayerConfigOptionValueType<T> {
 		return componentWriter;
 	}
 
-	public BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> getDefaultSpecDefiner() {
+	public BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> getDefaultSpecDefiner() {
 		return defaultSpecDefiner;
 	}
 
@@ -118,7 +118,7 @@ public class PlayerConfigOptionValueType<T> {
 		protected Function<T, Component> componentWriter;
 		protected List<String> defaultCommandSuggestions;
 		protected boolean shouldDisplayInQuotes;
-		protected BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
+		protected BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
 
 		@SuppressWarnings("unchecked")
 		protected Builder(Class<T> jType){

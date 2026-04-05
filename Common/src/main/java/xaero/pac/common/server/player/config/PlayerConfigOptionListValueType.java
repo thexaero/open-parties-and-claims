@@ -22,7 +22,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOption
 			Function<List<T>, Component> componentWriter,
 			List<String> defaultCommandSuggestions,
 			boolean shouldDisplayInQuotes,
-			BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<List<T>>> defaultSpecDefiner
+			BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<List<T>>> defaultSpecDefiner
 	) {
 		super(
 				(Class<List<T>>)(Object)List.class, id, syncEncoder, syncDecoder,

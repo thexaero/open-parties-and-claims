@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.player.config.io.serialization.updater.IPlayerConfigConfigurableTransformer;
 import xaero.pac.common.server.player.config.io.serialization.updater.IPlayerConfigOpConfigurableTransformer;
@@ -86,7 +86,7 @@ public class ServerConfigUpdater {
 
 	private void updateConfigurablePlayerConfigOptions(
 			int loadedTargetVersion,
-			ForgeConfigSpec.ConfigValue<List<? extends String>> listOption,
+			ModConfigSpec.ConfigValue<List<? extends String>> listOption,
 			BiPredicate<IPlayerConfigTransformer, List<String>> transformerHandler
 	){
 		List<String> configurableOptions = new ArrayList<>(listOption.get());

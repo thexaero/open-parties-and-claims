@@ -26,7 +26,6 @@ import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.XPACScreen;
-import xaero.pac.client.gui.widget.FixedEditBox;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.packet.config.group.PlayerConfigGroupExistencePacket;
 import xaero.pac.common.player.config.PlayerConfigConstants;
@@ -70,7 +69,7 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 	protected void init() {
 		super.init();
 		String existingInput = idTextBox == null ? null : idTextBox.getValue();
-		idTextBox = new FixedEditBox(
+		idTextBox = new EditBox(
 				font, width / 2 - 100, height / 7 + 60,
 				200, 20,
 				Component.translatable("gui.xaero_pac_ui_player_config_player_groups_id_edit_box")
@@ -138,7 +137,6 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 	@Override
 	public void tick() {
 		super.tick();
-		idTextBox.tick();
 	}
 
 	@Override
@@ -152,7 +150,7 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics);
+		renderBackground(guiGraphics, mouseX, mouseY, partial);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, TITLE, width / 2, 26, -1);
 		guiGraphics.drawCenteredString(font, CHOOSE_ID, width / 2, this.height / 7 + 25, -1);

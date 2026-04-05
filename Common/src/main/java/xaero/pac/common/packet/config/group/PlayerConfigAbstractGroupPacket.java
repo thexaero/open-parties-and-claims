@@ -100,7 +100,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 		@Override
 		public P apply(FriendlyByteBuf input) {
 			try {
-				CompoundTag nbt = input.readNbt(new NbtAccounter(getNbtReadLimit()));
+				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.create(getNbtReadLimit()));
 				if(nbt == null)
 					return null;
 				String typeString = nbt.getString("t");
