@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui.group;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -81,21 +81,17 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 		addRenderableWidget(idTextBox);
 		idTextBox.setResponder(this::onIdTextBox);
 		addRenderableWidget(
-				confirmButton = new Button(
-						width / 2 - 105, height / 7 + 128,
-						100, 20,
+				confirmButton = Button.builder(
 						Component.translatable("gui.xaero_pac_confirm"), this::onConfirm
-				)
+				).bounds(width / 2 - 105, height / 7 + 128, 100, 20).build()
 		);
 		addRenderableWidget(
-				new Button(
-						width / 2 + 5, this.height / 7 + 128,
-						100, 20,
+				Button.builder(
 						Component.translatable("gui.xaero_pac_cancel"), b -> goBack()
-				)
+				).bounds(width / 2 + 5, this.height / 7 + 128, 100, 20).build()
 		);
 		setFocused(idTextBox);
-		idTextBox.setFocus(true);
+		idTextBox.setFocused(true);
 		updateButtons();
 	}
 
@@ -155,16 +151,16 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 	}
 
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		renderBackground(poseStack);
-		super.render(poseStack, mouseX, mouseY, partial);
-		drawCenteredString(poseStack, font, TITLE, width / 2, 26, -1);
-		drawCenteredString(poseStack, font, CHOOSE_ID, width / 2, this.height / 7 + 25, -1);
-		drawCenteredString(poseStack, font, ALLOWED_CHARS1, width / 2, this.height / 7 + 35, 0xFFAAAAAA);
-		drawCenteredString(poseStack, font, ALLOWED_CHARS_2, width / 2, this.height / 7 + 45, 0xFFAAAAAA);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		renderBackground(guiGraphics);
+		super.render(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.drawCenteredString(font, TITLE, width / 2, 26, -1);
+		guiGraphics.drawCenteredString(font, CHOOSE_ID, width / 2, this.height / 7 + 25, -1);
+		guiGraphics.drawCenteredString(font, ALLOWED_CHARS1, width / 2, this.height / 7 + 35, 0xFFAAAAAA);
+		guiGraphics.drawCenteredString(font, ALLOWED_CHARS_2, width / 2, this.height / 7 + 45, 0xFFAAAAAA);
 		InputValidity inputValidity = getInputValidity();
 		if(inputValidity.message != null)
-			drawString(poseStack, font, inputValidity.message, width / 2 + 105, height / 7 + 64, 0xFFFF5555);
+			guiGraphics.drawString(font, inputValidity.message, width / 2 + 105, height / 7 + 64, 0xFFFF5555);
 	}
 
 	public static final class Builder {

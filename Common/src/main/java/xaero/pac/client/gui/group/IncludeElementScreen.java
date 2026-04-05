@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui.group;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -100,7 +100,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 				manualInputBox.setValue(existingManualInput);
 			manualInputBox.setResponder(this::onManualInputBox);
 			setFocused(manualInputBox);
-			manualInputBox.setFocus(true);
+			manualInputBox.setFocused(true);
 			selectionMenuY -= 40;
 		}
 		if(options.length > 1) {
@@ -117,18 +117,14 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 			addRenderableWidget(selectionMenu);
 		}
 		addRenderableWidget(
-				confirmButton = new Button(
-						width / 2 - 105, height / 7 + 128,
-						100, 20,
+				confirmButton = Button.builder(
 						Component.translatable("gui.xaero_pac_confirm"), this::onConfirm
-				)
+				).bounds(width / 2 - 105, height / 7 + 128, 100, 20).build()
 		);
 		addRenderableWidget(
-				new Button(
-						width / 2 + 5, this.height / 7 + 128,
-						100, 20,
+				Button.builder(
 						Component.translatable("gui.xaero_pac_cancel"), b -> goBack()
-				)
+				).bounds(width / 2 + 5, this.height / 7 + 128, 100, 20).build()
 		);
 		updateButtons();
 	}
@@ -182,23 +178,23 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 	}
 
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		if(needsButtonUpdate)
 			updateButtons();
-		renderBackground(poseStack);
-		super.render(poseStack, mouseX, mouseY, partial);
+		renderBackground(guiGraphics);
+		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 
 	@Override
-	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		super.renderPreDropdown(poseStack, mouseX, mouseY, partial);
-		drawCenteredString(poseStack, font, title, width / 2, 26, -1);
+	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.drawCenteredString(font, title, width / 2, 26, -1);
 		if(selectionMenu == null)
-			drawCenteredString(poseStack, font, allIncludedErrorMessage, width / 2, selectionMenuY, -1);
+			guiGraphics.drawCenteredString(font, allIncludedErrorMessage, width / 2, selectionMenuY, -1);
 		else
-			drawCenteredString(poseStack, font, selectionMenuHint, width / 2, selectionMenuY - 15, -1);
+			guiGraphics.drawCenteredString(font, selectionMenuHint, width / 2, selectionMenuY - 15, -1);
 		if(allowManualInput)
-			drawCenteredString(poseStack, font, manualInputHint, width / 2, height / 7 + 50, -1);
+			guiGraphics.drawCenteredString(font, manualInputHint, width / 2, height / 7 + 50, -1);
 	}
 
 	@Override
@@ -206,7 +202,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 		if(manualInputBox != null) {
 			manualInputBox.setValue(options[selected]);
 			setFocused(manualInputBox);
-			manualInputBox.setFocus(true);
+			manualInputBox.setFocused(true);
 		}
 		needsButtonUpdate = true;
 		return true;

@@ -18,12 +18,12 @@
 
 package xaero.pac.client.gui.group;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -46,7 +46,6 @@ import xaero.pac.common.player.config.group.custom.ICustomPlayerGroupMember;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PlayerGroupsScreen extends XPACScreen {
@@ -121,27 +120,22 @@ public class PlayerGroupsScreen extends XPACScreen {
 			groupDataCopy = null;
 		initLists(wasEffectivelySyncingBeforeInit);
 		addRenderableWidget(
-				new Button(
-						width / 2 - 100, height - 30, 200, 20,
+				Button.builder(
 						Component.translatable("gui.xaero_pac_back"),
 						b -> goBack()
-				)
+				).bounds(width / 2 - 100, height - 30, 200, 20).build()
 		);
 		addRenderableWidget(
-				createGroupButton = new Button(
-						width / 2 - 205, 10, 80, 20,
+				createGroupButton = Button.builder(
 						Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_create_group"),
-						this::onCreateGroupButton,
-						new ButtonStateOnTooltip(this::getCreateGroupButtonState)
-				)
+						this::onCreateGroupButton
+				).bounds(width / 2 - 205, 10, 80, 20).build()
 		);
 		addRenderableWidget(
-				deleteGroupButton = new Button(
-						width / 2 + 125, 10, 80, 20,
+				deleteGroupButton = Button.builder(
 						Component.translatable("gui.xaero_pac_ui_player_config_player_groups_button_delete_group"),
-						this::onDeleteGroupButton,
-						new ButtonStateOnTooltip(this::getDeleteGroupButtonState)
-				)
+						this::onDeleteGroupButton
+				).bounds(width / 2 + 125, 10, 80, 20).build()
 		);
 		List<ContentsButtonInfo> contentsButtonInfoList = new ArrayList<>();
 		contentsButtonInfoList.add(new ContentsButtonInfo(
@@ -165,7 +159,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 				this::getExcludeGroupButtonState
 		));
 		addContentsButtons(contentsButtonInfoList, 85, 5);
-		refreshButtonActiveStates();
+		refreshButtonStates();
 	}
 
 	private boolean isEffectivelySyncing(){
@@ -225,12 +219,11 @@ public class PlayerGroupsScreen extends XPACScreen {
 		int contentsButtonsStart = Math.min(width / 2 + 10, width - 10 - totalContentsButtons);
 		for (int i = 0; i < buttons.size(); i++) {
 			ContentsButtonInfo buttonInfo = buttons.get(i);
-			Button button = new Button(
-					contentsButtonsStart + i * footerButtonDifference, height - FOOTER_HEIGHT + 5, buttonWidth, 20,
+			Button button = Button.builder(
 					buttonInfo.label,
-					buttonInfo.action,
-					new ButtonStateOnTooltip(buttonInfo.stateSupplier)
-			);
+					buttonInfo.action
+			).bounds(contentsButtonsStart + i * footerButtonDifference, height - FOOTER_HEIGHT + 5, buttonWidth, 20)
+					.build();
 			addRenderableWidget(button);
 			contentsButtons.put(button, buttonInfo);
 		}
@@ -275,13 +268,20 @@ public class PlayerGroupsScreen extends XPACScreen {
 				minecraft.player != null && minecraft.player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
 	}
 
-	private void refreshButtonActiveStates(){
+	private void refreshButtonStates(){
 		if(createGroupButton == null)
 			return;
-		createGroupButton.active = getCreateGroupButtonState() == ButtonState.ENABLED;
-		deleteGroupButton.active = getDeleteGroupButtonState() == ButtonState.ENABLED;
-		contentsButtons.forEach((button, activeState) ->
-				button.active = desyncErrorOnInit == null && activeState.stateSupplier.get() == ButtonState.ENABLED
+		ButtonState createButtonState = getCreateGroupButtonState();
+		createGroupButton.active = createButtonState == ButtonState.ENABLED;
+		createGroupButton.setTooltip(createButtonState.tooltip);
+		ButtonState deleteButtonState = getDeleteGroupButtonState();
+		deleteGroupButton.active = deleteButtonState == ButtonState.ENABLED;
+		deleteGroupButton.setTooltip(deleteButtonState.tooltip);
+		contentsButtons.forEach((button, activeState) -> {
+					ButtonState buttonState = activeState.stateSupplier.get();
+					button.active = desyncErrorOnInit == null && buttonState == ButtonState.ENABLED;
+					button.setTooltip(buttonState.tooltip);
+				}
 		);
 	}
 
@@ -417,37 +417,37 @@ public class PlayerGroupsScreen extends XPACScreen {
 	}
 
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		groupList.render(poseStack, mouseX, mouseY, partial);
-		contentsList.render(poseStack, mouseX, mouseY, partial);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		groupList.render(guiGraphics, mouseX, mouseY, partial);
+		contentsList.render(guiGraphics, mouseX, mouseY, partial);
 		int messageCenterY = (height - FOOTER_HEIGHT + HEADER_HEIGHT) / 2 - 4;
 		if(wasEffectivelySyncingOnInit()){
 			if(desyncErrorOnInit != null)
-				drawCenteredString(
-						poseStack, font, FIXING_DESYNC, width / 2, HEADER_HEIGHT + 10,
+				guiGraphics.drawCenteredString(
+						font, FIXING_DESYNC, width / 2, HEADER_HEIGHT + 10,
 						LIST_TITLE_LABEL_COLOR
 				);
 			else
-				drawCenteredString(
-					poseStack, font, SYNCHRONIZING, width / 2, messageCenterY,
+				guiGraphics.drawCenteredString(
+					font, SYNCHRONIZING, width / 2, messageCenterY,
 					LIST_TITLE_LABEL_COLOR
 				);
 			if(!isEffectivelySyncing())
 				refreshForResync();
 		} else if(groupList.children().isEmpty())
-			drawCenteredString(
-					poseStack, font, NO_GROUPS, width / 2, messageCenterY,
+			guiGraphics.drawCenteredString(
+					font, NO_GROUPS, width / 2, messageCenterY,
 					LIST_TITLE_LABEL_COLOR
 			);
-		super.render(poseStack, mouseX, mouseY, partial);
-		drawCenteredString(poseStack, font, TITLE, width / 2, 20, -1);
-		drawCenteredString(poseStack, font, configTitle, width / 2, 31, -1);
+		super.render(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.drawCenteredString(font, TITLE, width / 2, 20, -1);
+		guiGraphics.drawCenteredString(font, configTitle, width / 2, 31, -1);
 
 		if(latestDesyncError != null && latestDesyncError.getDesyncScreenMessage() != null &&
 				(System.currentTimeMillis() - latestDesyncErrorTime) < 3000) {
-			Gui.fill(poseStack, 0, messageCenterY - 18, width, messageCenterY + 6, 0xCC000000);
-			drawCenteredString(
-					poseStack, font, latestDesyncError.getDesyncScreenMessage(), width / 2, messageCenterY - 10,
+			guiGraphics.fill(0, messageCenterY - 18, width, messageCenterY + 6, 0xCC000000);
+			guiGraphics.drawCenteredString(
+					font, latestDesyncError.getDesyncScreenMessage(), width / 2, messageCenterY - 10,
 					0xFFAA0000
 			);
 		}
@@ -456,7 +456,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 	@Override
 	public void setFocused(@Nullable GuiEventListener element) {
 		super.setFocused(element);
-		refreshButtonActiveStates();
+		refreshButtonStates();
 	}
 
 	public void onDesyncError(
@@ -545,6 +545,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			if(entry != null) {
 				selectionWorksForGroupDeletion = true;
 				selectionWorksForGroupExclusion = false;
+				refreshButtonStates();//here because on 1.20.1+ setSelected is called after setting focus, not before
 			}
 			if(entry == getSelected())
 				return;
@@ -573,7 +574,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected boolean isFocused() {
+		public boolean isFocused() {
 			return PlayerGroupsScreen.this.getFocused() == this;
 		}
 
@@ -612,7 +613,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public void render(
-					PoseStack poseStack,
+					GuiGraphics guiGraphics,
 					int index,
 					int y,
 					int x,
@@ -632,18 +633,18 @@ public class PlayerGroupsScreen extends XPACScreen {
 					separatorLineX -= 6;//room for the scroll bar
 				int labelColor = -1;
 				if(isSelected){
-					hLine(poseStack, x, separatorLineX, y, separatorLineColor);
-					hLine(poseStack, x, separatorLineX, y + ROW_HEIGHT - 1, separatorLineColor);
+					guiGraphics.hLine(x, separatorLineX, y, separatorLineColor);
+					guiGraphics.hLine(x, separatorLineX, y + ROW_HEIGHT - 1, separatorLineColor);
 				} else {
 					labelColor = hovered ? LIST_TITLE_LABEL_COLOR : 0xFF808080;
-					vLine(poseStack, separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
+					guiGraphics.vLine(separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
 				}
 				if(isFirst)
-					vLine(poseStack, separatorLineX, y0, y, separatorLineColor);
+					guiGraphics.vLine(separatorLineX, y0, y, separatorLineColor);
 				if(isLast)
-					vLine(poseStack, separatorLineX, y + ROW_HEIGHT - 1, y1, separatorLineColor);
-				drawString(
-						poseStack, font, groupName,
+					guiGraphics.vLine(separatorLineX, y + ROW_HEIGHT - 1, y1, separatorLineColor);
+				guiGraphics.drawString(
+						font, groupName,
 						separatorLineX - 7 - font.width(groupName), y + rowHeight / 2 - 2, labelColor
 				);
 			}
@@ -702,7 +703,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected boolean isFocused() {
+		public boolean isFocused() {
 			return PlayerGroupsScreen.this.getFocused() == this;
 		}
 
@@ -725,14 +726,14 @@ public class PlayerGroupsScreen extends XPACScreen {
 				selectionWorksForGroupExclusion = true;
 			}
 			super.setSelected(entry);
-			refreshButtonActiveStates();
+			refreshButtonStates();
 		}
 
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) {
 			if(isMouseOver(mouseX, mouseY)) {
 				selectionWorksForGroupDeletion = false;//not navigating with TAB, so can safely disable the group deletion button
-				refreshButtonActiveStates();
+				refreshButtonStates();
 			}
 			return super.mouseClicked(mouseX, mouseY, button);
 		}
@@ -759,7 +760,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			protected void renderSelectionIndicator(
-					PoseStack poseStack,
+					GuiGraphics guiGraphics,
 					String indicator,
 					int labelX,
 					int labelY
@@ -767,7 +768,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 				if(isFocused() && (((System.currentTimeMillis() - selectionTime) / 500) & 1) == 1)
 					return;
 				int indicatorColor = isFocused() ? -1 : LIST_TITLE_LABEL_COLOR;
-				drawString(poseStack, font, indicator, labelX - 2 - font.width(indicator), labelY, indicatorColor);
+				guiGraphics.drawString(font, indicator, labelX - 2 - font.width(indicator), labelY, indicatorColor);
 			}
 
 		}
@@ -788,7 +789,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public void render(
-					PoseStack poseStack,
+					GuiGraphics guiGraphics,
 					int index,
 					int y,
 					int x,
@@ -803,10 +804,10 @@ public class PlayerGroupsScreen extends XPACScreen {
 				int labelX = x + 1;
 				int labelY = y + rowHeight / 2 - 2;
 				if(isSelected)
-					renderSelectionIndicator(poseStack, "-", labelX, labelY);
-				drawString(poseStack, font, title, labelX, labelY, LIST_TITLE_LABEL_COLOR);
+					renderSelectionIndicator(guiGraphics, "-", labelX, labelY);
+				guiGraphics.drawString(font, title, labelX, labelY, LIST_TITLE_LABEL_COLOR);
 				if(hovered)
-					renderComponentHoverEffect(poseStack, title.getStyle(), mouseX, mouseY);
+					guiGraphics.renderComponentHoverEffect(font, title.getStyle(), mouseX, mouseY);
 			}
 
 		}
@@ -827,7 +828,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public void render(
-					PoseStack poseStack,
+					GuiGraphics guiGraphics,
 					int index,
 					int y,
 					int x,
@@ -845,12 +846,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 //				if(!isSelected)
 //					labelColor = hovered ? LIST_TITLE_LABEL_COLOR : 0xFF808080;
 				if(isSelected)
-					renderSelectionIndicator(poseStack, "→", labelX, labelY);
+					renderSelectionIndicator(guiGraphics, "→", labelX, labelY);
 				else if(hovered)
 					labelX -= 1;
-				drawString(poseStack, font, label, labelX, labelY, labelColor);
+				guiGraphics.drawString(font, label, labelX, labelY, labelColor);
 				if(hovered)
-					renderComponentHoverEffect(poseStack, label.getStyle(), mouseX, mouseY);
+					guiGraphics.renderComponentHoverEffect(font, label.getStyle(), mouseX, mouseY);
 			}
 
 		}
@@ -955,33 +956,9 @@ public class PlayerGroupsScreen extends XPACScreen {
 				PlayerConfigGroupActionError.OUT_OF_SPACE.getDesyncScreenMessage().copy()
 						.withStyle(s -> s.withColor(ChatFormatting.DARK_RED))
 		);
-		final Component tooltip;
+		final Tooltip tooltip;
 		ButtonState(Component tooltip) {
-			this.tooltip = tooltip;
-		}
-	}
-
-	private class ButtonStateOnTooltip implements Button.OnTooltip {
-
-		private final Supplier<ButtonState> stateSupplier;
-
-		private ButtonStateOnTooltip(Supplier<ButtonState> stateSupplier) {
-			this.stateSupplier = stateSupplier;
-		}
-
-		@Override
-		public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
-			ButtonState state = stateSupplier.get();
-			if(state.tooltip == null)
-				return;
-			renderTooltip(poseStack, state.tooltip, mouseX, mouseY);
-		}
-		@Override
-		public void narrateTooltip(Consumer<Component> narrationConsumer) {
-			ButtonState state = stateSupplier.get();
-			if(state.tooltip == null)
-				return;
-			narrationConsumer.accept(state.tooltip);
+			this.tooltip = tooltip == null ? null : Tooltip.create(tooltip);
 		}
 	}
 
