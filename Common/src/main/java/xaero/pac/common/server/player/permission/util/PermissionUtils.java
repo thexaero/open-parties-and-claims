@@ -20,7 +20,7 @@ package xaero.pac.common.server.player.permission.util;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
@@ -32,7 +32,7 @@ public class PermissionUtils {
 			UUID playerId,
 			MinecraftServer server,
 			ServerPlayer player,
-			ForgeConfigSpec.IntValue serverConfigOption,
+			ModConfigSpec.IntValue serverConfigOption,
 			IPermissionNodeAPI<Integer> permissionNode,
 			IPlayerPermissionSystemAPI permissionSystem
 	){

@@ -20,7 +20,7 @@ package xaero.pac.common.server.player.config;
 
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 import java.util.Map;
@@ -171,7 +171,7 @@ public class PlayerConfigOptionValueType<T> {
 			return self;
 		}
 
-		public B setDefaultSpecDefiner(BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner) {
+		public B setDefaultSpecDefiner(BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner) {
 			this.defaultSpecDefiner = defaultSpecDefiner;
 			return self;
 		}
