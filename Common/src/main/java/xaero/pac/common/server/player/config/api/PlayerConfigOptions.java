@@ -563,7 +563,7 @@ public class PlayerConfigOptions {
 				.setCategory(PlayerConfigOptionCategory.BLOCK_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_BLOCKS_BY_ENCHANTMENTS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.blocksByEnchantments\"")
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.blocksByEnchantments")
 				.setDefaultValue(PlayerConfigConstants.NO_EXCEPTION_ID)
 				.setComment(
 						"When a player group is chosen, claimed chunk protection makes an exception for enchantments " +

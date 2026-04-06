@@ -26,7 +26,6 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -417,12 +416,13 @@ public class PlayerGroupsScreen extends XPACScreen {
 		);
 	}
 
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		this.renderDirtBackground(guiGraphics);
-	}
-
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		if(wasEffectivelySyncingOnInit()){
+			if(!isEffectivelySyncing())
+				refreshForResync();
+		}
+		super.render(guiGraphics, mouseX, mouseY, partial);
 		int messageCenterY = (height - FOOTER_HEIGHT + HEADER_HEIGHT) / 2 - 4;
 		if(wasEffectivelySyncingOnInit()){
 			if(desyncErrorOnInit != null)
@@ -432,17 +432,14 @@ public class PlayerGroupsScreen extends XPACScreen {
 				);
 			else
 				guiGraphics.drawCenteredString(
-					font, SYNCHRONIZING, width / 2, messageCenterY,
-					LIST_TITLE_LABEL_COLOR
+						font, SYNCHRONIZING, width / 2, messageCenterY,
+						LIST_TITLE_LABEL_COLOR
 				);
-			if(!isEffectivelySyncing())
-				refreshForResync();
 		} else if(groupList.children().isEmpty())
 			guiGraphics.drawCenteredString(
 					font, NO_GROUPS, width / 2, messageCenterY,
 					LIST_TITLE_LABEL_COLOR
 			);
-		super.render(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, TITLE, width / 2, 20, -1);
 		guiGraphics.drawCenteredString(font, configTitle, width / 2, 31, -1);
 

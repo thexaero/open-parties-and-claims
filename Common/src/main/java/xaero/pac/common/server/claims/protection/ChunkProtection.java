@@ -882,7 +882,7 @@ public class ChunkProtection
 	}
 
 	public boolean onEnchantmentEffectOnBlock(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos) {
-		return onEntityPlaceBlock(serverData, entity, world, pos, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_ENCHANTMENT);
+		return onEntityPlaceBlock(serverData, entity, world, pos, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_ENCHANTMENTS);
 	}
 
 	public boolean onEnchantmentEffectOnBlockDisk(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos, int radius) {
@@ -897,7 +897,7 @@ public class ChunkProtection
 		for(int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++)
 			for(int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++){
 				reusableBlockPos.set(chunkX << 4, pos.getY(), chunkZ << 4);
-				if(onEntityPlaceBlock(serverData, entity, world, reusableBlockPos, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_ENCHANTMENT))
+				if(onEntityPlaceBlock(serverData, entity, world, reusableBlockPos, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_ENCHANTMENTS))
 					return true;
 			}
 		return false;
