@@ -103,7 +103,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 			manualInputBox.setFocused(true);
 			selectionMenuY -= 40;
 		}
-		if(options.length > 1) {
+		if(options.length > 0) {
 			selectionMenu = DropDownWidget.Builder.begin()
 					.setX(width / 2 - 100)
 					.setY(selectionMenuY)
