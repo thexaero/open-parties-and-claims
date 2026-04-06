@@ -34,41 +34,40 @@ public class CustomPlayerConfigGroupProfileUtils {
 		MinecraftServer server = storageConfig.getManager().getServer();
 		String name = member.getDisplayName();
 		server.getProfileCache().getAsync(name).thenAccept(lookedUpProfile -> {
-			OpenPartiesAndClaims.LOGGER.info("Thread: " + Thread.currentThread());//TODO REMOVE THIS
-//			if(member.getId() != null)//was already handled
-//				return;
-//			if(storageConfig.getPlayerGroups().getCustom(group.getId()) != group)//group was removed
-//				return;
-//			UUID memberId;
-//			if(lookedUpProfile.isEmpty())
-//				memberId = CustomPlayerConfigGroupData.UNKNOWN_ID;
-//			else
-//				memberId = lookedUpProfile.get().getId();
-//			CustomPlayerGroupMember previousIdHolder = group.getData().confirmMemberId(member, memberId);
-//			if(member.getId() == null)//member was previously removed
-//				return;
-//			storageConfig.getPlayerGroups().setResaveNeeded();
-//			if(!storageConfig.getPlayerGroups().isLoaded())
-//				return;
-//			if(previousIdHolder != null) {
-//				storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
-//						null, storageConfig, group.getId(),
-//						PlayerConfigGroupMemberPacket.Action.EXCLUDE,
-//						memberId, previousIdHolder.getDisplayName()
-//				);
-//				storageConfig.getPlayerGroups().decrementUsedSpace();
-//			}
-//			//excluding the original name-only entry
-//			storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
-//					null, storageConfig, group.getId(),
-//					PlayerConfigGroupMemberPacket.Action.EXCLUDE,
-//					null, member.getDisplayName()
-//			);
-//			storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
-//					null, storageConfig, group.getId(),
-//					PlayerConfigGroupMemberPacket.Action.INCLUDE,
-//					memberId, member.getDisplayName()
-//			);
+			if(member.getId() != null)//was already handled
+				return;
+			if(storageConfig.getPlayerGroups().getCustom(group.getId()) != group)//group was removed
+				return;
+			UUID memberId;
+			if(lookedUpProfile.isEmpty())
+				memberId = CustomPlayerConfigGroupData.UNKNOWN_ID;
+			else
+				memberId = lookedUpProfile.get().getId();
+			CustomPlayerGroupMember previousIdHolder = group.getData().confirmMemberId(member, memberId);
+			if(member.getId() == null)//member was previously removed
+				return;
+			storageConfig.getPlayerGroups().setResaveNeeded();
+			if(!storageConfig.getPlayerGroups().isLoaded())
+				return;
+			if(previousIdHolder != null) {
+				storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
+						null, storageConfig, group.getId(),
+						PlayerConfigGroupMemberPacket.Action.EXCLUDE,
+						memberId, previousIdHolder.getDisplayName()
+				);
+				storageConfig.getPlayerGroups().decrementUsedSpace();
+			}
+			//excluding the original name-only entry
+			storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
+					null, storageConfig, group.getId(),
+					PlayerConfigGroupMemberPacket.Action.EXCLUDE,
+					null, member.getDisplayName()
+			);
+			storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
+					null, storageConfig, group.getId(),
+					PlayerConfigGroupMemberPacket.Action.INCLUDE,
+					memberId, member.getDisplayName()
+			);
 		});
 	}
 
