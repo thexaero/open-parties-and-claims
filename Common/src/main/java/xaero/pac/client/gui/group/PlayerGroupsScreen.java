@@ -206,8 +206,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 		if(selectedContentsIndex != -1)
 			contentsList.children().get(selectedContentsIndex).select();
 		contentsList.setScrollAmount(contentsScroll);
-		addWidget(groupList);
-		addWidget(contentsList);
+		addRenderableWidget(groupList);
+		addRenderableWidget(contentsList);
 		selectionWorksForGroupDeletion = false;
 		selectionWorksForGroupExclusion = false;
 	}
@@ -417,10 +417,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 		);
 	}
 
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		this.renderDirtBackground(guiGraphics);
+	}
+
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		groupList.render(guiGraphics, mouseX, mouseY, partial);
-		contentsList.render(guiGraphics, mouseX, mouseY, partial);
 		int messageCenterY = (height - FOOTER_HEIGHT + HEADER_HEIGHT) / 2 - 4;
 		if(wasEffectivelySyncingOnInit()){
 			if(desyncErrorOnInit != null)
@@ -631,7 +633,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			){
 				boolean isFirst = index == 0;
 				boolean isLast = index == getItemCount() - 1;
-				boolean isSelected = isSelectedItem(index);
+				boolean isSelected = GroupList.super.isSelectedItem(index);
 				int separatorLineColor = isFocused() ? -1 : LIST_TITLE_LABEL_COLOR;
 				int separatorLineX = x + rowWidth - 1;
 				if(getMaxScroll() > 0)
