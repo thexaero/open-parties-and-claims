@@ -104,7 +104,7 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_BLOCKS_REDIRECT;
 	/**
-	 * Whether the claimed chunk protection includes protection against fire spread.
+	 * Whether the claimed chunk protection makes an exception for fire spread.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_FIRE_SPREAD;
 	/**
@@ -112,7 +112,7 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_FROST_WALKING;
 	/**
-	 * Whether the claimed chunk protection includes protection against explosions.
+	 * Whether the claimed chunk protection makes an exception for explosions affecting blocks.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_BLOCKS_BY_EXPLOSIONS;
 	/**
@@ -164,23 +164,23 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_ENTITIES_REDIRECT;
 	/**
-	 * Whether the claimed chunk protection includes entity protection against explosions.
+	 * Whether the claimed chunk protection makes an exception for explosions affecting entities.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_ENTITIES_BY_EXPLOSIONS;
 	/**
-	 * Whether the claimed chunk protection includes entity protection against fire damage.
+	 * Whether the claimed chunk protection makes an exception for fire hurting entities.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_ENTITIES_BY_FIRE;
 	/**
-	 * Whether the claimed chunk protection includes player protection against players.
+	 * Whether the claimed chunk protection makes an exception for player VS player combat.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS;
 	/**
-	 * Whether the claimed chunk protection includes player protection against mobs.
+	 * Whether the claimed chunk protection makes an exception for mobs attacking players.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_PLAYERS_BY_MOBS;
 	/**
-	 * Whether the claimed chunk protection includes player protection against non-living entities.
+	 * Whether the claimed chunk protection makes an exception for other entities attacking players.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_PLAYERS_BY_OTHER;
 	/**
@@ -208,7 +208,7 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_PLAYER_LIGHTNING;
 	/**
-	 * Whether the claimed chunk protection includes protection against crop trample.
+	 * Whether the claimed chunk protection makes an exception for crop trample.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_CROP_TRAMPLE;
 	/**
@@ -277,15 +277,15 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_MOB_GRIEFING_OVERRIDE;
 	/**
-	 * Whether the claimed chunk protection includes protection against village raids.
+	 * Whether the claimed chunk protection makes an exception for village raids.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_RAIDS;
 	/**
-	 * Whether the claimed chunk protection includes natural spawn prevention for hostile mobs.
+	 * Whether the claimed chunk protection makes an exception for natural spawn of hostile mobs.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_HOSTILE_NATURAL_SPAWN;
 	/**
-	 * Whether the claimed chunk protection includes natural spawn prevention for friendly mobs.
+	 * Whether the claimed chunk protection makes an exception for natural spawn of friendly mobs.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> CLAIM_EXCEPTION_FRIENDLY_NATURAL_SPAWN;
 	/**
@@ -734,7 +734,7 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.raids")
 				.setDefaultValue(false)
 				.setComment(
-						"When enabled, claimed chunk protection includes makes an exception for village raids. " +
+						"When enabled, claimed chunk protection makes an exception for village raids. " +
 								"The protection stops raiders from spawning inside the protected chunks, from entering them " +
 								"and from hurting protectable entities, even if entity protection is turned off."
 				)
