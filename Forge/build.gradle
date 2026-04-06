@@ -1,7 +1,7 @@
 plugins {
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
-    id 'org.spongepowered.mixin'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
 java.withSourcesJar()
@@ -88,12 +88,12 @@ repositories {
 }
 
 dependencies {
+
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
     compileOnly project(":CreateSupportCommon")
 
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-forge:20.4.3"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
-
     //implementation "xaero.map:xaeroworldmap-forge-${minecraft_version}:+:dev"
     compileOnly fg.deobf("curse.maven:ftbranks-314905:3890135")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
     compileOnly fg.deobf("curse.maven:architectury-419699:4581905")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
