@@ -599,7 +599,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public boolean mouseClicked(double mouseX, double mouseY, int button) {
-				if(button == 0) {
+				if(mouseX < getScrollbarPosition() && button == 0) {
 					select();
 					return true;
 				}
@@ -628,6 +628,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					boolean hovered,
 					float partialTicks
 			){
+				hovered &= mouseX < getScrollbarPosition();
 				boolean isFirst = index == 0;
 				boolean isLast = index == getItemCount() - 1;
 				boolean isSelected = GroupList.super.isSelectedItem(index);
@@ -721,7 +722,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 		@Override
 		public int getRowWidth() {
-			return width - 32;
+			return width - Math.max(32, width / 8);
 		}
 
 		@Override
@@ -755,7 +756,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public boolean mouseClicked(double mouseX, double mouseY, int button) {
-				if(button == 0) {
+				if(mouseX < getScrollbarPosition() && button == 0) {
 					select();
 					return true;
 				}
@@ -807,6 +808,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					boolean hovered,
 					float partialTicks
 			){
+				hovered &= mouseX < getScrollbarPosition();
 				boolean isSelected = getSelected() == this;
 				int labelX = x + 1;
 				int labelY = y + rowHeight / 2 - 2;
@@ -846,6 +848,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					boolean hovered,
 					float partialTicks
 			){
+				hovered &= mouseX < getScrollbarPosition();
 				boolean isSelected = getSelected() == this;
 				int labelX = x + 10;
 				int labelY = y + rowHeight / 2 - 2;
