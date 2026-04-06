@@ -18,6 +18,7 @@
 
 package xaero.pac.common.platform.services;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import xaero.pac.client.controls.KeyBindingHelperFabric;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
@@ -50,6 +51,11 @@ public class PlatformHelperFabric implements IPlatformHelper {
 	@Override
 	public boolean isDevelopmentEnvironment() {
 		return FabricLoader.getInstance().isDevelopmentEnvironment();
+	}
+
+	@Override
+	public boolean isDedicatedServer() {
+		return FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER;
 	}
 
 	@Override

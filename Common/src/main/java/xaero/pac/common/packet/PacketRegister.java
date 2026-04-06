@@ -22,6 +22,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.LoadCommon;
 import xaero.pac.common.packet.claims.*;
 import xaero.pac.common.packet.config.*;
+import xaero.pac.common.packet.config.group.*;
 import xaero.pac.common.packet.parties.ClientboundPartyAllyPacket;
 import xaero.pac.common.packet.parties.ClientboundPartyNamePacket;
 import xaero.pac.common.packet.parties.ClientboundPartyPacket;
@@ -119,6 +120,50 @@ public class PacketRegister {
 
 		packetHandler.register(36, ClientboundClaimsClaimUpdateNextZPosPacket.class, ClientboundClaimsClaimUpdateNextZPosPacket.ENCODER, ClientboundClaimsClaimUpdateNextZPosPacket.DECODER, null, new ClientboundClaimsClaimUpdateNextZPosPacket.ClientHandler());
 
+		PlayerConfigGroupExistencePacket.Codec playerConfigGroupExistencePacketCodec = new PlayerConfigGroupExistencePacket.Codec();
+		packetHandler.register(37, PlayerConfigGroupExistencePacket.class,
+				playerConfigGroupExistencePacketCodec, playerConfigGroupExistencePacketCodec,
+				new PlayerConfigGroupExistencePacket.ServerHandler(), new PlayerConfigGroupExistencePacket.ClientHandler()
+		);
+
+		ClientboundPlayerConfigGroupsSyncStatePacket.Codec playerConfigGroupsSyncCodec = new ClientboundPlayerConfigGroupsSyncStatePacket.Codec();
+		packetHandler.register(38, ClientboundPlayerConfigGroupsSyncStatePacket.class, playerConfigGroupsSyncCodec, playerConfigGroupsSyncCodec, null, new ClientboundPlayerConfigGroupsSyncStatePacket.ClientHandler());
+
+		ClientboundGroupActionErrorPacket.Codec groupActionErrorPacketCodec = new ClientboundGroupActionErrorPacket.Codec();
+		packetHandler.register(39, ClientboundGroupActionErrorPacket.class, groupActionErrorPacketCodec, groupActionErrorPacketCodec, null, new ClientboundGroupActionErrorPacket.ClientHandler());
+
+		PlayerConfigGroupMemberPacket.Codec playerConfigGroupMemberPacketCodec = new PlayerConfigGroupMemberPacket.Codec();
+		packetHandler.register(40, PlayerConfigGroupMemberPacket.class,
+				playerConfigGroupMemberPacketCodec, playerConfigGroupMemberPacketCodec,
+				new PlayerConfigGroupMemberPacket.ServerHandler(), new PlayerConfigGroupMemberPacket.ClientHandler()
+		);
+
+		PlayerConfigGroupGroupPacket.Codec playerConfigGroupGroupPacketCodec = new PlayerConfigGroupGroupPacket.Codec();
+		packetHandler.register(41, PlayerConfigGroupGroupPacket.class,
+				playerConfigGroupGroupPacketCodec, playerConfigGroupGroupPacketCodec,
+				new PlayerConfigGroupGroupPacket.ServerHandler(), new PlayerConfigGroupGroupPacket.ClientHandler()
+		);
+
+		ClientboundPlayerConfigResetGroupsPacket.Codec resetGroupsPacketCodec =
+				new ClientboundPlayerConfigResetGroupsPacket.Codec();
+		packetHandler.register(42, ClientboundPlayerConfigResetGroupsPacket.class,
+				resetGroupsPacketCodec, resetGroupsPacketCodec,
+				null, new ClientboundPlayerConfigResetGroupsPacket.ClientHandler()
+		);
+
+		PlayerConfigGroupDesyncPacket.Codec groupsDesyncCodec =
+				new PlayerConfigGroupDesyncPacket.Codec();
+		packetHandler.register(43, PlayerConfigGroupDesyncPacket.class,
+				groupsDesyncCodec, groupsDesyncCodec,
+				new PlayerConfigGroupDesyncPacket.ServerHandler(), new PlayerConfigGroupDesyncPacket.ClientHandler()
+		);
+
+		ClientboundPlayerConfigGroupLimitsPacket.Codec groupLimitsCodec =
+				new ClientboundPlayerConfigGroupLimitsPacket.Codec();
+		packetHandler.register(44, ClientboundPlayerConfigGroupLimitsPacket.class,
+				groupLimitsCodec, groupLimitsCodec,
+				null, new ClientboundPlayerConfigGroupLimitsPacket.ClientHandler()
+		);
 	}
 
 }

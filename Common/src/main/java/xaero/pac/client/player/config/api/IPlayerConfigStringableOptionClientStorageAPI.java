@@ -29,7 +29,7 @@ import java.util.function.Function;
 /**
  * API for a stringable player config option value storage on the client side
  */
-public interface IPlayerConfigStringableOptionClientStorageAPI<T extends Comparable<T>> extends IPlayerConfigOptionClientStorageAPI<T> {
+public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlayerConfigOptionClientStorageAPI<T> {
 
 	@Override
 	@Nonnull
@@ -80,16 +80,23 @@ public interface IPlayerConfigStringableOptionClientStorageAPI<T extends Compara
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * Gets the string output writer for this option.
+	 * @deprecated Use {@link #getComponentWriterCast()} instead.
+	 */
+	@Deprecated
+	@Nonnull
+	public Function<Object, Component> getCommandOutputWriterCast();
+
+	/**
+	 * Gets the component output writer for this option.
 	 * <p>
 	 * It is the same one that is used for displaying option values in command outputs.
 	 * <p>
 	 * It accepts values of any type but will only work with the right one.
 	 *
-	 * @return the string output writer function, not null
+	 * @return the component output writer function, not null
 	 */
 	@Nonnull
-	public Function<Object, Component> getCommandOutputWriterCast();
+	public Function<Object, Component> getComponentWriterCast();
 
 	/**
 	 * Gets the string value input validator for this option.
