@@ -546,16 +546,14 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 		@Override
 		public void setSelected(@Nullable Entry entry) {
-			if(entry != null) {
-				selectionWorksForGroupDeletion = true;
-				selectionWorksForGroupExclusion = false;
-				refreshButtonStates();//here because on 1.20.1+ setSelected is called after setting focus, not before
-			}
+			if(entry == null)
+				return;//on this version, navigating off the list automatically sets selection to null, which we don't want
+			selectionWorksForGroupDeletion = true;
+			selectionWorksForGroupExclusion = false;
+			refreshButtonStates();//here because on 1.20.1+ setSelected is called after setting focus, not before
 			if(entry == getSelected())
 				return;
 			super.setSelected(entry);
-			if(entry == null)
-				return;
 			String selectedGroupId = entry.groupId;
 			groupDataCopy = getGroupEditorData(selectedGroupId, true);
 			contentsList.reload(groupDataCopy);
@@ -727,12 +725,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 		@Override
 		public void setSelected(@Nullable AbstractEntry entry) {
+			if(entry == null)
+				return;//on this version, navigating off the list automatically sets selection to null, which we don't want
 			selectionTime = System.currentTimeMillis();
-			if(entry != null){
-				if(entry != getSelected() && entry instanceof ElementEntry)
-					selectionWorksForGroupDeletion = false;//not always done so that the user can TAB-navigate to the group deletion button
-				selectionWorksForGroupExclusion = true;
-			}
+			if(entry != getSelected() && entry instanceof ElementEntry)
+				selectionWorksForGroupDeletion = false;//not always done so that the user can TAB-navigate to the group deletion button
+			selectionWorksForGroupExclusion = true;
 			super.setSelected(entry);
 			refreshButtonStates();
 		}
