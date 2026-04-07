@@ -32,6 +32,7 @@ import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 import xaero.pac.common.server.player.util.ServerPlayerUtils;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -62,9 +63,9 @@ public class PlayerConfigGroupMemberPacket extends PlayerConfigAbstractGroupPack
 
 		@Override
 		protected PlayerConfigGroupMemberPacket readConcreteData(CompoundTag nbt, PlayerConfigType type, UUID ownerId, String groupId) {
-			Action add = Action.values()[nbt.getInt("a")];
-			UUID memberId = nbt.contains("i") ? nbt.getUUID("i") : null;
-			String memberName = nbt.contains("n", Tag.TAG_STRING) ? nbt.getString("n") : null;
+			Action add = Action.values()[nbt.getIntOr("a", 0)];
+			UUID memberId = XaeroNbtUtil.getUUID(nbt, "i").orElse(null);
+			String memberName = nbt.getString("n").orElse(null);
 			if(memberName != null && memberName.length() > 100)//suspiciously long
 				return null;
 			return new PlayerConfigGroupMemberPacket(type, ownerId, groupId, add, memberId, memberName);
@@ -74,7 +75,7 @@ public class PlayerConfigGroupMemberPacket extends PlayerConfigAbstractGroupPack
 		protected void writeConcreteData(PlayerConfigGroupMemberPacket t, CompoundTag nbt) {
 			nbt.putInt("a", t.action.ordinal());
 			if(t.playerId != null)
-				nbt.putUUID("i", t.playerId);
+				XaeroNbtUtil.putUUID(nbt, "i", t.playerId);
 			if(t.playerName != null)
 				nbt.putString("n", t.playerName);
 		}

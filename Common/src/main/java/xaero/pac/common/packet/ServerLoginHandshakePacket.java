@@ -48,7 +48,7 @@ public class ServerLoginHandshakePacket {
 				nbt = input.readNbt();
 				if(nbt == null)
 					return null;
-				int networkVersion = nbt.getInt("v");
+				int networkVersion = nbt.getIntOr("v", 0);
 				return new ServerLoginHandshakePacket(networkVersion);
 			} catch(Throwable t){
 				//received from an older client mod considered version 0

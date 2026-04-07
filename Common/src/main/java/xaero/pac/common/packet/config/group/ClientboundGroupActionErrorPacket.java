@@ -51,7 +51,7 @@ public class ClientboundGroupActionErrorPacket extends PlayerConfigAbstractGroup
 
 		@Override
 		protected ClientboundGroupActionErrorPacket readConcreteData(CompoundTag nbt, PlayerConfigType type, UUID ownerId, String groupId) {
-			PlayerConfigGroupActionError error = PlayerConfigGroupActionError.values()[nbt.getInt("e")];
+			PlayerConfigGroupActionError error = PlayerConfigGroupActionError.values()[nbt.getIntOr("e", 0)];
 			return new ClientboundGroupActionErrorPacket(type, ownerId, error);
 		}
 

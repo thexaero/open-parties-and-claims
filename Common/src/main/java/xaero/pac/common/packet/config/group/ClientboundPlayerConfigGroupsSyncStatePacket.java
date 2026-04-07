@@ -19,7 +19,6 @@
 package xaero.pac.common.packet.config.group;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
@@ -27,6 +26,8 @@ import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage
 import xaero.pac.common.packet.config.ClientboundPlayerConfigAbstractStatePacket;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+
+import java.util.Optional;
 
 public class ClientboundPlayerConfigGroupsSyncStatePacket extends ClientboundPlayerConfigAbstractStatePacket {
 
@@ -46,12 +47,12 @@ public class ClientboundPlayerConfigGroupsSyncStatePacket extends ClientboundPla
 				boolean otherPlayer,
 				String subId
 		) {
-			if(!nbt.contains("s", Tag.TAG_BYTE)) {
+			Optional<Boolean> state = nbt.getBoolean("s");
+			if(state.isEmpty()) {
 				OpenPartiesAndClaims.LOGGER.info("Unknown player config sync state!");
 				return null;
 			}
-			boolean state = nbt.getBoolean("s");
-			return new ClientboundPlayerConfigGroupsSyncStatePacket(type, otherPlayer, state);
+			return new ClientboundPlayerConfigGroupsSyncStatePacket(type, otherPlayer, state.get());
 		}
 
 		@Override

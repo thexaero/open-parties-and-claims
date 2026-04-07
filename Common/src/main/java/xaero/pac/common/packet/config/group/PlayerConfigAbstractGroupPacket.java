@@ -50,6 +50,7 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -103,7 +104,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.create(getNbtReadLimit()));
 				if(nbt == null)
 					return null;
-				String typeString = nbt.getString("t");
+				String typeString = nbt.getStringOr("t", "");
 				if(typeString.length() > 100) {
 					if(PacketUtils.shouldLogDeserializationError())
 						OpenPartiesAndClaims.LOGGER.info("Player config type string is too long!");
@@ -119,20 +120,20 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 						OpenPartiesAndClaims.LOGGER.info("Received unknown player config type!");
 					return null;
 				}
-				boolean hasGroupId = nbt.contains("i", CompoundTag.TAG_STRING);
+				String groupId = nbt.getString("i").orElse(null);
+				boolean hasGroupId = groupId != null;
 				if(!hasGroupId && requiresGroupId()){
 					if(PacketUtils.shouldLogDeserializationError())
 						OpenPartiesAndClaims.LOGGER.info("Player config group ID string was not found!");
 					return null;
 				}
-				String groupId = hasGroupId ? nbt.getString("i") : null;
 				if(groupId != null && groupId.length() > 100) {
 					if(PacketUtils.shouldLogDeserializationError())
 						OpenPartiesAndClaims.LOGGER.info("Player config group ID string is too long!");
 					return null;
 				}
-				UUID ownerId = nbt.contains("o") ? nbt.getUUID("o") : null;
-				CompoundTag concreteNbt = nbt.getCompound("c");
+				UUID ownerId = XaeroNbtUtil.getUUID(nbt, "o").orElse(null);
+				CompoundTag concreteNbt = nbt.getCompoundOrEmpty("c");
 				return readConcreteData(concreteNbt, type, ownerId, groupId);
 			} catch(Throwable t) {
 				return null;
@@ -144,7 +145,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 			CompoundTag nbt = new CompoundTag();
 			nbt.putString("t", t.type.toString());
 			if(t.ownerId != null)
-				nbt.putUUID("o", t.ownerId);
+				XaeroNbtUtil.putUUID(nbt, "o", t.ownerId);
 			if(t.groupId != null)
 				nbt.putString("i", t.groupId);
 			CompoundTag concreteNbt = new CompoundTag();

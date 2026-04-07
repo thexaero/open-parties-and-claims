@@ -46,8 +46,8 @@ public class ClientboundPlayerConfigGroupLimitsPacket extends ClientboundPlayerC
 				boolean otherPlayer,
 				String subId
 		) {
-			int maxGroups = nbt.getInt("g");
-			int groupSpace = nbt.getInt("s");
+			int maxGroups = nbt.getIntOr("g", 0);
+			int groupSpace = nbt.getIntOr("s", 0);
 			return new ClientboundPlayerConfigGroupLimitsPacket(type, otherPlayer, maxGroups, groupSpace);
 		}
 

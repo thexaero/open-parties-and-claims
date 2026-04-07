@@ -98,7 +98,7 @@ public class CustomPlayerGroupMember implements ICustomPlayerGroupMember, ILinke
 		if(id != null)
 			result.withStyle(s ->
 					s.withHoverEvent(
-							new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(id.toString()))
+							new HoverEvent.ShowText(Component.literal(id.toString()))
 					)
 			);
 		return result;

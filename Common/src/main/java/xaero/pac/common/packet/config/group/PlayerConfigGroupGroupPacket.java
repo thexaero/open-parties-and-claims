@@ -56,8 +56,8 @@ public class PlayerConfigGroupGroupPacket extends PlayerConfigAbstractGroupPacke
 
 		@Override
 		protected PlayerConfigGroupGroupPacket readConcreteData(CompoundTag nbt, PlayerConfigType type, UUID ownerId, String groupId) {
-			Action add = Action.values()[nbt.getInt("a")];
-			String inclusionId = nbt.getString("i");
+			Action add = Action.values()[nbt.getIntOr("a", 0)];
+			String inclusionId = nbt.getStringOr("i", "");
 			if(inclusionId.length() > 100)//suspiciously long
 				return null;
 			return new PlayerConfigGroupGroupPacket(type, ownerId, groupId, add, inclusionId);

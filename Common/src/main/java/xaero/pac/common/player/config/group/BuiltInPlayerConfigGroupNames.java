@@ -31,7 +31,7 @@ public class BuiltInPlayerConfigGroupNames {
 	private static Component assign(String groupId, MutableComponent groupName){
 		groupName.withStyle(s ->
 				s.withHoverEvent(
-						new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(groupId))
+						new HoverEvent.ShowText(Component.literal(groupId))
 				)
 		);
 		NAME_MAP.put(groupId, groupName);

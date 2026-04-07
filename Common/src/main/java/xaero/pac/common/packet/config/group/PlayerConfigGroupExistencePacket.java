@@ -51,7 +51,7 @@ public class PlayerConfigGroupExistencePacket extends PlayerConfigAbstractGroupP
 
 		@Override
 		protected PlayerConfigGroupExistencePacket readConcreteData(CompoundTag nbt, PlayerConfigType type, UUID ownerId, String groupId) {
-			boolean add = nbt.getBoolean("a");
+			boolean add = nbt.getBooleanOr("a", false);
 			return new PlayerConfigGroupExistencePacket(type, ownerId, groupId, add);
 		}
 
