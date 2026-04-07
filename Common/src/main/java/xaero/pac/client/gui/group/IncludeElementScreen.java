@@ -100,6 +100,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 			manualInputBox.setResponder(this::onManualInputBox);
 			setFocused(manualInputBox);
 			manualInputBox.setFocused(true);
+			manualInputBox.setEditable(false);//so that space doesn't get typed when you enter the screen using it
 			selectionMenuY -= 40;
 		}
 		if(options.length > 0) {
@@ -178,6 +179,8 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		if(manualInputBox != null)
+			manualInputBox.setEditable(true);//restoring after preventing space being typed
 		if(needsButtonUpdate)
 			updateButtons();
 		renderBackground(guiGraphics, mouseX, mouseY, partial);
@@ -202,6 +205,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 			manualInputBox.setValue(options[selected]);
 			setFocused(manualInputBox);
 			manualInputBox.setFocused(true);
+			manualInputBox.setEditable(false);//so that space doesn't get typed when you use it on the dropdown menu
 		}
 		needsButtonUpdate = true;
 		return true;
