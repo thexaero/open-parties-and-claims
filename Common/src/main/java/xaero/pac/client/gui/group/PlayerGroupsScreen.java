@@ -182,7 +182,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 				selectedGroupId = selectedGroupBeforeResync;
 			selectedGroupBeforeResync = null;
 		}
-		double groupsScroll = groupList == null ? 0 : groupList.getScrollAmount();
+		double groupsScroll = groupList == null ? 0 : groupList.scrollAmount();
 		groupList = new GroupList(minecraft, width, height);
 		groupList.setScrollAmount(groupsScroll);
 		if(selectedGroupId != null)
@@ -199,7 +199,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 				if (selectedContentsEntry != null)
 					selectedContentsIndex = selectedContentsEntry.index;
 			}
-			contentsScroll = contentsList.getScrollAmount();
+			contentsScroll = contentsList.scrollAmount();
 		}
 		contentsList = new ContentsList(minecraft, width, height, groupDataCopy);
 		if(selectedContentsIndex != -1)
@@ -583,7 +583,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected int getScrollbarPosition() {
+		protected int scrollBarX() {
 			return width - 6;
 		}
 
@@ -599,7 +599,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public boolean mouseClicked(double mouseX, double mouseY, int button) {
-				if(mouseX < getScrollbarPosition() && button == 0) {
+				if(mouseX < scrollBarX() && button == 0) {
 					select();
 					return true;
 				}
@@ -628,13 +628,13 @@ public class PlayerGroupsScreen extends XPACScreen {
 					boolean hovered,
 					float partialTicks
 			){
-				hovered &= mouseX < getScrollbarPosition();
+				hovered &= mouseX < scrollBarX();
 				boolean isFirst = index == 0;
 				boolean isLast = index == getItemCount() - 1;
 				boolean isSelected = GroupList.super.isSelectedItem(index);
 				int separatorLineColor = isFocused() ? -1 : LIST_TITLE_LABEL_COLOR;
 				int separatorLineX = x + rowWidth - 1;
-				if(getMaxScroll() > 0)
+				if(maxScrollAmount() > 0)
 					separatorLineX -= 6;//room for the scroll bar
 				int labelColor = -1;
 				if(isSelected){
@@ -679,7 +679,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			clearEntries();
 			createEntries();
 			setSelected(null);
-			setScrollAmount(getScrollAmount());
+			setScrollAmount(scrollAmount());
 		}
 
 		private void createEntries(){
@@ -716,7 +716,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected int getScrollbarPosition() {
+		protected int scrollBarX() {
 			return PlayerGroupsScreen.this.width - width / 8;
 		}
 
@@ -756,7 +756,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public boolean mouseClicked(double mouseX, double mouseY, int button) {
-				if(mouseX < getScrollbarPosition() && button == 0) {
+				if(mouseX < scrollBarX() && button == 0) {
 					select();
 					return true;
 				}
@@ -808,7 +808,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					boolean hovered,
 					float partialTicks
 			){
-				hovered &= mouseX < getScrollbarPosition();
+				hovered &= mouseX < scrollBarX();
 				boolean isSelected = getSelected() == this;
 				int labelX = x + 1;
 				int labelY = y + rowHeight / 2 - 2;
@@ -848,7 +848,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					boolean hovered,
 					float partialTicks
 			){
-				hovered &= mouseX < getScrollbarPosition();
+				hovered &= mouseX < scrollBarX();
 				boolean isSelected = getSelected() == this;
 				int labelX = x + 10;
 				int labelY = y + rowHeight / 2 - 2;

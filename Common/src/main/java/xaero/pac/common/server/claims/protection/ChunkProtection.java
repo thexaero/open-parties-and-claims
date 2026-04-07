@@ -1312,7 +1312,7 @@ public class ChunkProtection
 		}
 		if(!checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_CHORUS_FRUIT, claimConfig, accessor, accessorId) && !hasChunkAccess(claimConfig, accessor, accessorId)) {
 			if(entity instanceof ServerPlayer player)
-				entity.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_CHORUS));
+				player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, CANT_CHORUS));
 			//OpenPartiesAndClaims.LOGGER.info("stopped {} from teleporting to {}", entity, pos);
 			return true;
 		}
