@@ -76,6 +76,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 	private static final int LIST_TITLE_LABEL_COLOR = 0xFFC8C8C8;
 	private List<String> groupIds;
+	private List<String> defaultGroupIds;
 	private final Map<String, CustomPlayerConfigGroupData> editorData;
 	private int maxGroups;
 	private int groupSpace;
@@ -310,6 +311,9 @@ public class PlayerGroupsScreen extends XPACScreen {
 		this.groupIds = configData.getPlayerGroups().getIds().stream()
 				.sorted(Comparator.comparing(String::toLowerCase))
 				.collect(ArrayList::new, ArrayList::add, ArrayList::addAll);//so that it's mutable
+		this.defaultGroupIds = configData.getManager().getDefaultPlayerConfig().getPlayerGroups().getAllIdsSorted().stream()
+				.sorted(Comparator.comparing(String::toLowerCase))
+				.toList();
 		this.editorData.clear();
 		this.maxGroups = configData.getPlayerGroups().getMaxGroups();
 		this.groupSpace = configData.getPlayerGroups().getGroupSpace();
@@ -360,6 +364,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 				IncludeGroupScreen.Builder.begin()
 						.setGroupData(groupDataCopy)
 						.setConfigData(configData)
+						.setGroupIds(groupIds)
+						.setDefaultGroupIds(defaultGroupIds)
 						.setListener(this::onGroupIncluded)
 						.setParent(this)
 						.build()
