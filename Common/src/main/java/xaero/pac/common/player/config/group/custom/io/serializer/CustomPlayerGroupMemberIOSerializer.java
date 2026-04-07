@@ -55,7 +55,7 @@ public class CustomPlayerGroupMemberIOSerializer {
 					);
 				}
 		}
-		String name = configValue.substring(0, separatorIndex);
+		String name = separatorIndex == 0 ? null : configValue.substring(0, separatorIndex);
 		return new CustomPlayerGroupMember(uuid, name);
 	}
 

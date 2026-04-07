@@ -18,6 +18,7 @@
 
 package xaero.pac.client.gui.group;
 
+import com.google.common.collect.Streams;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -86,24 +87,39 @@ public class IncludeGroupScreen extends IncludeElementScreen implements IDropDow
 
 	public static final class Builder extends IncludeElementScreen.Builder<Builder> {
 
+		private List<String> groupIds;
+		private List<String> defaultGroupIds;
 		private Builder(){}
 
 		@Override
 		public Builder setDefault(){
 			super.setDefault();
 			setAllowManualInput(false);
+			setGroupIds(null);
+			setDefaultGroupIds(null);
+			return self;
+		}
+
+		public Builder setGroupIds(List<String> groupIds) {
+			this.groupIds = groupIds;
+			return self;
+		}
+
+		public Builder setDefaultGroupIds(List<String> defaultGroupIds) {
+			this.defaultGroupIds = defaultGroupIds;
 			return self;
 		}
 
 		@Override
 		public IncludeGroupScreen build(){
+			if(groupIds == null || defaultGroupIds == null)
+				throw new IllegalStateException();
 			return (IncludeGroupScreen) super.build();
 		}
 
 		@Override
 		protected IncludeElementScreen buildInternally(Screen escape) {
-			List<String> allGroupIds = configData.getPlayerGroups().getAllIdsSorted();
-			List<String> filteredGroupIds = allGroupIds.stream()
+			List<String> filteredGroupIds = Streams.concat(groupIds.stream(), defaultGroupIds.stream())
 					.filter(s -> !s.equals(groupData.getId()) && !groupData.groupIdIsIncluded(s))
 					.toList();
 			String[] groupIds = filteredGroupIds.toArray(new String[0]);
