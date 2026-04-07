@@ -41,12 +41,13 @@ import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManag
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class ConfigGroupExcludePlayerCommand extends ConfigGroupCommand {
 
 	protected ConfigGroupExcludePlayerCommand() {
-		super("exclude-player", "player-name", true, true);
+		super("exclude-player", "name-or-uuid", true, true);
 	}
 
 	@Override
@@ -54,15 +55,24 @@ public class ConfigGroupExcludePlayerCommand extends ConfigGroupCommand {
 			CommandContext<CommandSourceStack> context,
 			IPlayerConfig playerConfig,
 			String inputGroupId,
-			String playerName
+			String playerIdentifier
 	) {
 		ICustomPlayerConfigGroup customPlayerConfigGroup = playerConfig.getPlayerGroups().getCustom(inputGroupId);
 		if(customPlayerConfigGroup == null)
 			return Either.right(PlayerConfigGroupActionError.GROUP_TO_EDIT_NOT_FOUND);
-		Optional<PlayerConfigGroupActionError> error = customPlayerConfigGroup.excludeMember(null, playerName);
+		Optional<PlayerConfigGroupActionError> error = null;
+		if (playerIdentifier.length() == 36) {
+			try {
+				UUID playerId = UUID.fromString(playerIdentifier);
+				error = customPlayerConfigGroup.excludeMember(playerId, null);
+			} catch (IllegalArgumentException iae) {
+			}
+		}
+		if(error == null)
+			error = customPlayerConfigGroup.excludeMember(null, playerIdentifier);//use as name
 		return error.<Either<Component, PlayerConfigGroupActionError>>map(Either::right)
 				.orElseGet(() ->
-						Either.left(new TranslatableComponent("gui.xaero_pac_config_exclude_player", playerName, inputGroupId))
+						Either.left(new TranslatableComponent("gui.xaero_pac_config_exclude_player", playerIdentifier, inputGroupId))
 				);
 	}
 

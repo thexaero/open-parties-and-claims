@@ -158,9 +158,9 @@ public abstract class ConfigGroupCommand {
 				return SharedSuggestionProvider.suggest(suggestionStream, builder);
 			});
 		}
-		ArgumentBuilder<CommandSourceStack, ?> afterMainLiteral;
+		ArgumentBuilder<CommandSourceStack, ?> afterMain;
 		if(secondaryArgumentName == null)
-			afterMainLiteral = groupIdArgument.executes(executor);
+			afterMain = groupIdArgument.executes(executor);
 		else {
 			RequiredArgumentBuilder<CommandSourceStack, ?> secondaryArgument =
 					Commands.argument(secondaryArgumentName, StringArgumentType.word()).executes(executor);
@@ -169,10 +169,10 @@ public abstract class ConfigGroupCommand {
 				if (secondaryArgumentSuggestor != null)
 					secondaryArgument.suggests(secondaryArgumentSuggestor);
 			}
-			afterMainLiteral = groupIdArgument.then(secondaryArgument);
+			afterMain = groupIdArgument.then(secondaryArgument);
 
 		}
-		return Commands.literal(mainLiteral).then(afterMainLiteral);
+		return Commands.literal(mainLiteral).then(afterMain);
 	}
 
 	private Command<CommandSourceStack> getExecutor(PlayerConfigType type){
