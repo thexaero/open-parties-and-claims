@@ -29,13 +29,19 @@ import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
+import javax.annotation.Nullable;
+import java.util.LinkedHashMap;
+import java.util.UUID;
+
 public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerConfigAbstractStatePacket {
 
 	private final boolean state;
+	private final UUID ownerId;
 
-	public ClientboundPlayerConfigSyncStatePacket(PlayerConfigType type, boolean otherPlayer, boolean state){
-		super(type, otherPlayer, PlayerConfig.MAIN_SUB_ID);
+	public ClientboundPlayerConfigSyncStatePacket(PlayerConfigType type, boolean state, @Nullable UUID ownerId){
+		super(type, type == PlayerConfigType.PLAYER && ownerId != null, PlayerConfig.MAIN_SUB_ID);
 		this.state = state;
+		this.ownerId = ownerId;
 	}
 
 	public static class Codec extends ClientboundPlayerConfigAbstractStatePacket.Codec<ClientboundPlayerConfigSyncStatePacket> {
@@ -47,12 +53,17 @@ public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerCon
 				return null;
 			}
 			boolean state = nbt.getBoolean("s");
-			return new ClientboundPlayerConfigSyncStatePacket(type, otherPlayer, state);
+			UUID ownerId = null;
+			if(nbt.contains("oi"))
+				ownerId = nbt.getUUID("oi");
+			return new ClientboundPlayerConfigSyncStatePacket(type, state, ownerId);
 		}
 
 		@Override
 		protected void encode(ClientboundPlayerConfigSyncStatePacket packet, CompoundTag nbt) {
 			nbt.putBoolean("s", packet.state);
+			if(packet.ownerId != null)
+				nbt.putUUID("oi", packet.ownerId);
 		}
 
 		@Override
@@ -66,12 +77,30 @@ public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerCon
 
 		@Override
 		protected void accept(ClientboundPlayerConfigSyncStatePacket t, IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> playerConfigStorageManager, IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage) {
-			if(!t.isOtherPlayer() && !storage.isSyncInProgress() && t.state)
+			if(!t.isOtherPlayer() && !storage.isSyncInProgress() && t.state)//null storage is only possible when otherPlayer
 				storage.reset();
+			boolean isOtherPlayerWaitScreen = t.isOtherPlayer() &&
+					Minecraft.getInstance().screen instanceof OtherPlayerConfigWaitScreen;
+			if(isOtherPlayerWaitScreen && t.state){
+				IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> prevOtherStorage = storage;
+				storage = playerConfigStorageManager
+						.beginConfigStorageBuild(LinkedHashMap::new)
+						.setType(PlayerConfigType.PLAYER)
+						.setOwner(t.ownerId)
+						.build();
+				if (prevOtherStorage != null && t.ownerId.equals(prevOtherStorage.getOwner()))
+					storage.setSelectedSubConfig(prevOtherStorage.getSelectedSubConfig());
+				playerConfigStorageManager.setOtherPlayerConfig(storage);
+			}
+			if(storage == null)
+				return;
 			storage.setSyncInProgress(t.state);
-			if(!t.state && t.isOtherPlayer() && Minecraft.getInstance().screen instanceof OtherPlayerConfigWaitScreen waitScreen){
-				OtherPlayerConfigWaitScreen.Listener listener = waitScreen.getListener();
-				if(listener != null)
+			if(t.state && storage.getPlayerGroups() != null)
+				storage.getPlayerGroups().setSyncInProgress(true);
+			if(isOtherPlayerWaitScreen && !t.state){
+				OtherPlayerConfigWaitScreen.Listener listener =
+						((OtherPlayerConfigWaitScreen) Minecraft.getInstance().screen).getListener();
+				if (listener != null)//only true when it's still the wait screen that made the request
 					listener.onConfigDataSyncDone(storage);
 			}
 		}

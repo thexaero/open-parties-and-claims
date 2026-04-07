@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.player.config;
 
+import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
 import xaero.pac.common.server.player.config.sync.IPlayerConfigSynchronizer;
 
@@ -44,5 +45,6 @@ public interface IPlayerConfigManager extends IPlayerConfigManagerAPI {
 	@Override
 	public IPlayerConfig getExpiredClaimConfig();
 	public IPlayerConfigSynchronizer getSynchronizer();
+	MinecraftServer getServer();
 	
 }

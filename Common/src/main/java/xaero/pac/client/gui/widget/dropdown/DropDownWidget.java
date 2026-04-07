@@ -92,10 +92,11 @@ public final class DropDownWidget extends AbstractWidget
 	private void drawSlot(GuiGraphics guiGraphics, String text, int slotIndex, int pos, int mouseX, int mouseY, boolean scrolling, int optionLimit, int xWithOffset, int yWithOffset){
 		int slotBackground;
 		int emptyOptionCount = hasEmptyOption ? 1 : 0;
+		boolean selectionHighlight = !closed && slotIndex - emptyOptionCount == selected;
 		if(closed && isHoveredOrFocused() || !closed && onDropDownSlot(mouseX, mouseY, slotIndex, scrolling, optionLimit))
-			slotBackground = slotIndex - emptyOptionCount == selected ? selectedHoveredBackground : TRIM_INSIDE;
+			slotBackground = selectionHighlight ? selectedHoveredBackground : TRIM_INSIDE;
 		else
-			slotBackground = slotIndex - emptyOptionCount == selected ? selectedBackground : DEFAULT_BACKGROUND;
+			slotBackground = selectionHighlight ? selectedBackground : DEFAULT_BACKGROUND;
 		if(openingUp)
 			pos = -pos - 1;
 		guiGraphics.fill(xWithOffset, yWithOffset + LINE_HEIGHT * pos, xWithOffset + width, yWithOffset + LINE_HEIGHT + LINE_HEIGHT *pos, slotBackground);
@@ -136,8 +137,10 @@ public final class DropDownWidget extends AbstractWidget
 		}
 		for(int i = first; i < first + amount; i++) {
 			String slotText;
-			if(hasEmptyOption && i == 0)
-				slotText = !closed ? "-" : I18n.get(realOptions[selected]).replace("§§", ":");
+			if(closed)
+				slotText = I18n.get(realOptions[selected]).replace("§§", ":");
+			else if(hasEmptyOption && i == 0)
+				slotText = "-";
 			else
 				slotText = I18n.get(options[i]).replace("§§", ":");
 			drawSlot(guiGraphics, slotText, i, i - first + (scrolling ? 1 : 0), mouseX, mouseY, scrolling, optionLimit, xWithOffset, yWithOffset);

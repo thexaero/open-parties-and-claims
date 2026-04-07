@@ -36,7 +36,7 @@ public final class ChunkProtectionExceptionGroup<T> {
 	private final String name;
 	private final ChunkProtectionExceptionType type;
 	private final ChunkProtectionExceptionSet<T> exceptionSet;
-	private IPlayerConfigOptionSpecAPI<Integer> playerConfigOption;
+	private IPlayerConfigOptionSpecAPI<String> playerConfigOption;
 	private final String contentString;
 	private final PlayerConfigOptionCategory optionCategory;
 	private final boolean ofSubjects;//(usually true) the group contains objects that are being interacted with as opposed to actors that interact
@@ -68,11 +68,11 @@ public final class ChunkProtectionExceptionGroup<T> {
 		exceptionSet.updateTagExceptions(server);
 	}
 
-	public void setPlayerConfigOption(IPlayerConfigOptionSpecAPI<Integer> playerConfigOption) {
+	public void setPlayerConfigOption(IPlayerConfigOptionSpecAPI<String> playerConfigOption) {
 		this.playerConfigOption = playerConfigOption;
 	}
 
-	public IPlayerConfigOptionSpecAPI<Integer> getPlayerConfigOption() {
+	public IPlayerConfigOptionSpecAPI<String> getPlayerConfigOption() {
 		return playerConfigOption;
 	}
 

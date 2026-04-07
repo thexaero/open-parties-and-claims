@@ -37,30 +37,10 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.*;
-
 public class PlayerSubConfig
 <
 	P extends IServerParty<?, ?, ?>
 > extends PlayerConfig<P> implements ILinkedChainNode<PlayerSubConfig<P>>, IPlayerConfig {
-
-	public static final Set<IPlayerConfigOptionSpecAPI<?>> STATIC_OVERRIDABLE_OPTIONS;
-
-	static {
-		STATIC_OVERRIDABLE_OPTIONS = new HashSet<>();
-		STATIC_OVERRIDABLE_OPTIONS.addAll(OPTIONS.values());
-		STATIC_OVERRIDABLE_OPTIONS.remove(USED_SUBCLAIM);
-		STATIC_OVERRIDABLE_OPTIONS.remove(USED_SERVER_SUBCLAIM);
-		STATIC_OVERRIDABLE_OPTIONS.remove(PARTY_NAME);
-		STATIC_OVERRIDABLE_OPTIONS.remove(BONUS_CHUNK_CLAIMS);
-		STATIC_OVERRIDABLE_OPTIONS.remove(BONUS_CHUNK_FORCELOADS);
-		STATIC_OVERRIDABLE_OPTIONS.remove(SHARE_LOCATION_WITH_PARTY);
-		STATIC_OVERRIDABLE_OPTIONS.remove(SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES);
-		STATIC_OVERRIDABLE_OPTIONS.remove(RECEIVE_LOCATIONS_FROM_PARTY);
-		STATIC_OVERRIDABLE_OPTIONS.remove(RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES);
-		STATIC_OVERRIDABLE_OPTIONS.remove(FORCELOAD);
-		STATIC_OVERRIDABLE_OPTIONS.remove(OFFLINE_FORCELOAD);
-	}
 
 	private final PlayerConfig<P> mainConfig;
 	private final String subId;
@@ -87,12 +67,12 @@ public class PlayerSubConfig
 
 	@Override
 	public boolean isOptionAllowed(@Nonnull IPlayerConfigOptionSpecAPI<?> option) {
-		return super.isOptionAllowed(option) && manager.getOverridableOptions().contains(option);
+		return super.isOptionAllowed(option) && option.isOverridable();
 	}
 
-	private <T extends Comparable<T>> T getInner(IPlayerConfigOptionSpecAPI<T> o, boolean inherit){
+	private <T> T getInner(IPlayerConfigOptionSpecAPI<T> o, boolean inherit){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
-		if(!manager.getOverridableOptions().contains(option))
+		if(!option.isOverridable())
 			return inherit ? mainConfig.getFromEffectiveConfig(option) : null;
 		if(isOptionDefaulted(option))
 			return inherit ? manager.getDefaultConfig().getFromEffectiveConfig(option) : null;
@@ -105,7 +85,7 @@ public class PlayerSubConfig
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+	public <T> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
 		return getInner(o, true);
 	}
 
@@ -114,22 +94,23 @@ public class PlayerSubConfig
 	}
 
 	@Override
-	protected <T extends Comparable<T>> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value) {
+	protected <T> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value) {
 		return value == null || super.isValidSetValue(option, value);
 	}
 
 	@Override
-	protected <T extends Comparable<T>> T getValueForDefaultConfigMatch(T actualEffective, T value) {
+	protected <T> T getValueForDefaultConfigMatch(IPlayerConfigOptionSpecAPI<T> o, T value) {
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public <T extends Comparable<T>> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
 		return null;
 	}
 
-	public PlayerConfig<P> getMainConfig() {
+	@Override
+	public PlayerConfig<P> getMain() {
 		return mainConfig;
 	}
 
