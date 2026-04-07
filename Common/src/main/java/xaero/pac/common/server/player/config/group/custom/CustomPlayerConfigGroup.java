@@ -105,7 +105,7 @@ public class CustomPlayerConfigGroup extends CachedPlayerConfigParentGroup imple
 	public Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberInternal(UUID id, String name) {
 		if(data.playerIdIsIncluded(id) || data.playerNameIsIncluded(name))
 			return Either.right(PlayerConfigGroupActionError.MEMBER_ALREADY_INCLUDED);
-		if(!CustomPlayerConfigGroupData.isValidPlayerName(name))
+		if(name != null && !CustomPlayerConfigGroupData.isValidPlayerName(name))
 			return Either.right(PlayerConfigGroupActionError.INVALID_PLAYER_NAME);
 		CustomPlayerGroupMember member = new CustomPlayerGroupMember(id, name);
 		data.includeMember(member);
