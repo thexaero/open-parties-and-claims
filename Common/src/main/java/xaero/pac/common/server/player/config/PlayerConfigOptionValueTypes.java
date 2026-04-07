@@ -39,7 +39,7 @@ public class PlayerConfigOptionValueTypes {
 			.setSyncDecoder(tag -> {
 				if(!(tag instanceof ByteTag byteTag))
 					return null;
-				return byteTag.getAsByte() == 1;
+				return byteTag.byteValue() == 1;
 			})
 			.setStringWriter(b -> b ? "true" : "false")
 			.setComponentWriter(b -> b ? PlayerConfigConstants.ON_COMPONENT : PlayerConfigConstants.OFF_COMPONENT)
@@ -54,7 +54,7 @@ public class PlayerConfigOptionValueTypes {
 			.setSyncDecoder(tag -> {
 				if(!(tag instanceof IntTag intTag))
 					return null;
-				return intTag.getAsInt();
+				return intTag.intValue();
 			})
 			.setStringWriter(i -> "" + i)
 			.setStringParser(Integer::parseInt)
@@ -67,7 +67,7 @@ public class PlayerConfigOptionValueTypes {
 			.setSyncDecoder(tag -> {
 				if(!(tag instanceof IntTag intTag))
 					return null;
-				return intTag.getAsInt();
+				return intTag.intValue();
 			})
 			.setStringWriter(i -> Integer.toUnsignedString(i, 16).toUpperCase())
 			.setStringParser(s -> Integer.parseUnsignedInt(s, 16))
@@ -80,7 +80,7 @@ public class PlayerConfigOptionValueTypes {
 			.setSyncDecoder(tag -> {
 				if(!(tag instanceof DoubleTag doubleTag))
 					return null;
-				return doubleTag.getAsDouble();
+				return doubleTag.doubleValue();
 			})
 			.setStringWriter(d -> "" + d)
 			.setStringParser(Double::parseDouble)
@@ -93,7 +93,7 @@ public class PlayerConfigOptionValueTypes {
 			.setSyncDecoder(tag -> {
 				if(!(tag instanceof FloatTag floatTag))
 					return null;
-				return floatTag.getAsFloat();
+				return floatTag.floatValue();
 			})
 			.setStringWriter(f -> "" + f)
 			.setStringParser(Float::parseFloat)
@@ -106,7 +106,7 @@ public class PlayerConfigOptionValueTypes {
 			.setSyncDecoder(tag -> {
 				if(!(tag instanceof StringTag stringTag))
 					return null;
-				return stringTag.getAsString();
+				return stringTag.asString().orElse(null);
 			})
 			.setStringWriter(s -> s)
 			.setStringParser(s -> s)
@@ -120,7 +120,7 @@ public class PlayerConfigOptionValueTypes {
 			.setSyncDecoder(tag -> {
 				if(!(tag instanceof StringTag stringTag))
 					return null;
-				return stringTag.getAsString();
+				return stringTag.asString().orElse(null);
 			})
 			.setStringWriter(s -> s)
 			.setStringParser(s -> s)
