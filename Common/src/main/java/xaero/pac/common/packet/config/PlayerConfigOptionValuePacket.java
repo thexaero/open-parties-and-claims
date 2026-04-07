@@ -21,6 +21,8 @@ package xaero.pac.common.packet.config;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.packet.util.PacketUtils;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
@@ -81,7 +83,8 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 					return null;
 				String typeString = nbt.getStringOr("t", "");
 				if(typeString.length() > 100) {
-					OpenPartiesAndClaims.LOGGER.info("Player config type string is too long!");
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Player config type string is too long!");
 					return null;
 				}
 				PlayerConfigType type = null;
@@ -90,69 +93,47 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 				} catch(IllegalArgumentException iae) {
 				}
 				if(type == null) {
-					OpenPartiesAndClaims.LOGGER.info("Received unknown player config type!");
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Received unknown player config type!");
 					return null;
 				}
 				String subID = nbt.getStringOr("si", null);
 				if(subID != null && subID.length() > 100) {
-					OpenPartiesAndClaims.LOGGER.info("Player config sub ID string is too long!");
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Player config sub ID string is too long!");
 					return null;
 				}
 				UUID owner = type != PlayerConfigType.PLAYER || nbt.getBooleanOr("co", false) ? null : XaeroNbtUtil.getUUID(nbt, "o").orElse(null);
 				ListTag entryListTag = nbt.getListOrEmpty("e");
 				if(entryListTag.size() < 0 || entryListTag.size() > 512) {//there are other max size checks when reading the nbt tag, but an extra one here won't hurt
-					OpenPartiesAndClaims.LOGGER.info("Received an illegal player config option entry number: " + entryListTag.size());
+					if(PacketUtils.shouldLogDeserializationError())
+						OpenPartiesAndClaims.LOGGER.info("Received an illegal player config option entry number: " + entryListTag.size());
 					return null;
 				}
 				List<Entry> entries = new ArrayList<>(entryListTag.size());
-				String warningToOutput = null;
 				for(Tag e : entryListTag) {
 					CompoundTag entryTag = (CompoundTag) e;
 					String optionId = entryTag.getStringOr("i", "");
 					if(optionId.length() > 1000) {
-						OpenPartiesAndClaims.LOGGER.info("Received player config option id string is not allowed!");
+						if(PacketUtils.shouldLogDeserializationError())
+							OpenPartiesAndClaims.LOGGER.info("Received player config option id string is not allowed!");
 						return null;
 					}
-					Object value;
-					Class<?> valueType;
-					if(!entryTag.contains("v")) {
-						value = null;
-						valueType = null;
-					} else {
-						Tag valueTag = entryTag.get("v");
-						if(valueTag instanceof ByteTag byteTag) {
-							value = byteTag.byteValue() != 0;
-							valueType = Boolean.class;
-						} else if(valueTag instanceof IntTag intTag) {
-							value = intTag.intValue();
-							valueType = Integer.class;
-						} else if(valueTag instanceof DoubleTag doubleTag) {
-							value = doubleTag.doubleValue();
-							valueType = Double.class;
-						} else if(valueTag instanceof FloatTag floatTag) {
-							value = floatTag.floatValue();
-							valueType = Float.class;
-						} else if(valueTag instanceof StringTag stringTag) {
-							value = stringTag.value();
-							valueType = String.class;
-							if(((String)value).length() > 1000) {
-								OpenPartiesAndClaims.LOGGER.info("Received a string option value that is too long: " + ((String)value).length());
-								return null;
-							}
-						} else {
-							if(warningToOutput == null)
-								warningToOutput = "Received unknown player config option value tag type: " + valueTag.getType();
-							continue;
+					Tag valueTag = null;
+					if(entryTag.contains("v"))
+						valueTag = entryTag.get("v");
+					if(valueTag instanceof StringTag stringTag) {
+						if (stringTag.value().length() > 1000) {
+							if(PacketUtils.shouldLogDeserializationError())
+								OpenPartiesAndClaims.LOGGER.info("Received a string option value that is too long: " + stringTag.value().length());
+							return null;
 						}
 					}
 					boolean mutable = entryTag.getBooleanOr("m", false);
 					boolean defaulted = entryTag.getBooleanOr("d", false);
-					Entry entry = new Entry(optionId, valueType, value, mutable, defaulted);
+					Entry entry = new Entry(optionId, valueTag, mutable, defaulted);
 					entries.add(entry);
-					
 				}
-				if(warningToOutput != null)
-					OpenPartiesAndClaims.LOGGER.info(warningToOutput);
 				return create(type, subID, owner, entries);
 			} catch(Throwable t) {
 				return null;
@@ -175,25 +156,11 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 			
 			for(Entry entry : t.entries) {
 				CompoundTag entryTag = new CompoundTag();
-				Object entryValue = entry.getValue();
 				entryTag.putString("i", entry.getId());
-				if(entryValue != null) {
-					if (entry.getType() == Boolean.class)
-						entryTag.putBoolean("v", (boolean) entryValue);
-					else if (entry.getType() == Integer.class)
-						entryTag.putInt("v", (int) entryValue);
-					else if (entry.getType() == Double.class)
-						entryTag.putDouble("v", (double) entryValue);
-					else if (entry.getType() == Float.class)
-						entryTag.putFloat("v", (float) entryValue);
-					else if (entry.getType() == String.class)
-						entryTag.putString("v", (String) entryValue);
-					else
-						OpenPartiesAndClaims.LOGGER.info("Sending an unknown player config option type: " + entry.getType());
-				}
+				if(entry.valueTag != null)
+					entryTag.put("v", entry.valueTag);
 				entryTag.putBoolean("m", entry.isMutable());
 				entryTag.putBoolean("d", entry.isDefaulted());
-				
 				entryListTag.add(entryTag);
 			}
 			
@@ -206,15 +173,13 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 	public static final class Entry {
 
 		private final String id;
-		private final Class<?> type;
-		private final Object value;
+		private final Tag valueTag;
 		private final boolean mutable;
 		private final boolean defaulted;
 
-		public Entry(String id, Class<?> type, Object value, boolean mutable, boolean defaulted) {
+		public Entry(String id, Tag valueTag, boolean mutable, boolean defaulted) {
 			this.id = id;
-			this.type = type;
-			this.value = value;
+			this.valueTag = valueTag;
 			this.mutable = mutable;
 			this.defaulted = defaulted;
 		}
@@ -223,12 +188,8 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 			return id;
 		}
 
-		public Class<?> getType() {
-			return type;
-		}
-
-		public Object getValue() {
-			return value;
+		public Tag getValueTag() {
+			return valueTag;
 		}
 
 		public boolean isMutable() {
@@ -237,6 +198,11 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 
 		public boolean isDefaulted() {
 			return defaulted;
+		}
+
+		public static <T> Entry of(PlayerConfigOptionSpec<T> option, T value, boolean mutable, boolean defaulted){
+			Tag valueTag = value == null ? null : option.getValueType().getSyncEncoder().apply(value);
+			return new Entry(option.getId(), valueTag, mutable, defaulted);
 		}
 
 	}

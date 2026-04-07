@@ -33,7 +33,7 @@ import java.util.function.Predicate;
  *
  * @param <T>  the type of values of this option
  */
-public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
+public interface IPlayerConfigOptionSpecAPI<T> {
 
 	/**
 	 * Gets the ID of this option.
@@ -150,12 +150,19 @@ public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * Gets the value->String converter of this option, mainly used for commands.
-	 *
-	 * @return the value->String converter, not null
+	 * @deprecated Use {@link #getComponentWriter()} instead
 	 */
+	@Deprecated
 	@Nonnull
 	public Function<T, Component> getCommandOutputWriter();
+
+	/**
+	 * Gets the value->Component converter of this option, mainly used for commands.
+	 *
+	 * @return the value->Component converter, not null
+	 */
+	@Nonnull
+	public Function<T, Component> getComponentWriter();
 
 	/**
 	 * Gets the config type filter of this option.
@@ -167,5 +174,22 @@ public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
 	 */
 	@Nonnull
 	Predicate<PlayerConfigType> getConfigTypeFilter();
+
+	/**
+	 * Gets whether this option can be overridden by a sub-config.
+	 *
+	 * @return true if this option is overridable, otherwise false
+	 */
+	boolean isOverridable();
+
+	/**
+	 * Gets whether this option can be directly configured, as opposed
+	 * to being configurable only by the mod's internal code, like the option
+	 * used for storing the custom player group data, which shouldn't be accessed
+	 * directly.
+	 *
+	 * @return true if this option is directly configurable, otherwise false
+	 */
+	boolean isDirectlyConfigurable();
 
 }

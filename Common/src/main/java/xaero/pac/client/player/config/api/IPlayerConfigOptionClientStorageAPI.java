@@ -27,7 +27,7 @@ import java.util.function.BiPredicate;
 /**
  * API for a player config option value storage on the client side
  */
-public interface IPlayerConfigOptionClientStorageAPI<T extends Comparable<T>> {
+public interface IPlayerConfigOptionClientStorageAPI<T> {
 
 	/**
 	 * Gets the option spec that this storage holds the value for.

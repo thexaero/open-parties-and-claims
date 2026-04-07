@@ -74,6 +74,10 @@ public class ServerConfig {
 	public final ModConfigSpec.EnumValue<ConfigListType> claimableDimensionsListType;
 	public final ModConfigSpec.BooleanValue allowExistingClaimsInUnclaimableDimensions;
 	public final ModConfigSpec.BooleanValue allowExistingForceloadsInUnclaimableDimensions;
+	public final ModConfigSpec.IntValue maxPlayerGroups;
+	public final ModConfigSpec.IntValue playerGroupSpace;
+	public final ModConfigSpec.ConfigValue<String> maxPlayerGroupsPermission;
+	public final ModConfigSpec.ConfigValue<String> playerGroupSpacePermission;
 	public final ModConfigSpec.IntValue maxPlayerClaims;
 	public final ModConfigSpec.IntValue maxPlayerClaimForceloads;
 	public final ModConfigSpec.IntValue maxPartyMembers;
@@ -123,6 +127,35 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_primary_party_system")
 			.worldRestart()
 			.define("primaryPartySystem", "argonauts_guilds");
+
+		maxPlayerGroups = builder
+				.comment("""
+					The maximum number of player groups that a player can create in their config. Bonus group limits can be configured for individual players in their config.
+					This value can be overridden with a player permission.""")
+				.translation("gui.xaero_pac_config_max_player_groups")
+				.worldRestart()
+				.defineInRange("maxPlayerGroups", 16, 0, 512);
+
+		playerGroupSpace = builder
+				.comment("""
+					The space (in entries) available for player groups in a player's config. The space is shared between groups. Bonus group limits can be configured for individual players in their config.
+					This value can be overridden with a player permission.
+					Be careful with how much group space you give to your normal players.""")
+				.translation("gui.xaero_pac_config_player_group_space")
+				.worldRestart()
+				.defineInRange("playerGroupSpace", 256, 0, 1024);
+
+		maxPlayerGroupsPermission = builder
+				.comment("The permission that should override the default \"maxPlayerGroups\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+				.translation("gui.xaero_pac_config_max_player_groups_permission")
+				.worldRestart()
+				.define("maxPlayerGroupsPermission", UsedPermissionNodes.MAX_PLAYER_GROUPS.getDefaultNodeString());
+
+		playerGroupSpacePermission = builder
+				.comment("The permission that should override the default \"playerGroupSpace\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+				.translation("gui.xaero_pac_config_player_group_space_permission")
+				.worldRestart()
+				.define("playerGroupSpacePermission", UsedPermissionNodes.PLAYER_GROUP_SPACE.getDefaultNodeString());
 
 		builder.push("parties");
 
@@ -707,14 +740,14 @@ public class ServerConfig {
 							"claims.color",
 							"claims.protection.fromParty",
 							"claims.protection.fromAllyParties",
-							"claims.protection.buttonsFromProjectiles",
-							"claims.protection.targetsFromProjectiles",
-							"claims.protection.platesFromPlayers",
-							"claims.protection.platesFromMobs",
-							"claims.protection.platesFromOther",
-							"claims.protection.tripwireFromPlayers",
-							"claims.protection.tripwireFromMobs",
-							"claims.protection.tripwireFromOther",
+							"claims.protection.exceptions.buttonsByProjectiles",
+							"claims.protection.exceptions.targetsByProjectiles",
+							"claims.protection.exceptions.platesByPlayers",
+							"claims.protection.exceptions.platesByMobs",
+							"claims.protection.exceptions.platesByOther",
+							"claims.protection.exceptions.tripwireByPlayers",
+							"claims.protection.exceptions.tripwireByMobs",
+							"claims.protection.exceptions.tripwireByOther",
 							"claims.protection.cropTrample",
 							"claims.protection.playerLightning",
 							"claims.protection.blocksFromEnchantments",
@@ -752,39 +785,39 @@ public class ServerConfig {
 							"parties.shareLocationWithMutualAllyParties",
 							"parties.receiveLocationsFromParty",
 							"parties.receiveLocationsFromMutualAllyParties",
-							"claims.protection.exceptionGroups.block.interact.Controls",
-							"claims.protection.exceptionGroups.block.interact.Doors",
-							"claims.protection.exceptionGroups.block.interact.Chests",
-							"claims.protection.exceptionGroups.block.interact.Barrels",
-							"claims.protection.exceptionGroups.block.interact.Ender_Chests",
-							"claims.protection.exceptionGroups.block.interact.Shulker_Boxes",
-							"claims.protection.exceptionGroups.block.interact.Furnaces",
-							"claims.protection.exceptionGroups.block.interact.Hoppers",
-							"claims.protection.exceptionGroups.block.interact.Dispenser-like",
-							"claims.protection.exceptionGroups.block.interact.Anvils",
-							"claims.protection.exceptionGroups.block.interact.Stonecutters",
-							"claims.protection.exceptionGroups.block.interact.Grindstones",
-							"claims.protection.exceptionGroups.block.interact.Cartography_Tables",
-							"claims.protection.exceptionGroups.block.interact.Lecterns",
-							"claims.protection.exceptionGroups.block.interact.Smithing_Tables",
-							"claims.protection.exceptionGroups.block.interact.Looms",
-							"claims.protection.exceptionGroups.block.interact.Jukeboxes",
-							"claims.protection.exceptionGroups.block.interact.Beds",
-							"claims.protection.exceptionGroups.block.interact.Beacons",
-							"claims.protection.exceptionGroups.block.interact.Enchanting_Tables",
-							"claims.protection.exceptionGroups.block.break.Crops",
-							"claims.protection.exceptionGroups.entity.interact.Traders",
-							"claims.protection.exceptionGroups.entity.handInteract.Item_Frames",
-							"claims.protection.exceptionGroups.entity.interact.Armor_Stands",
-							"claims.protection.exceptionGroups.entity.break.Livestock",
-							"claims.protection.exceptionGroups.entity.blockAccess.Villagers",
-							"claims.protection.exceptionGroups.entity.entityAccess.Zombies",
-							"claims.protection.exceptionGroups.entity.droppedItemAccess.Villagers",
-							"claims.protection.exceptionGroups.entity.droppedItemAccess.Piglins",
-							"claims.protection.exceptionGroups.entity.droppedItemAccess.Foxes",
-							"claims.protection.exceptionGroups.item.interact.Books",
-							"claims.protection.exceptionGroups.entity.barrier.Ender_Pearls",
-							"/*remove comment to enable*/claims.protection.exceptionGroups.entity.barrier.Players"
+							"claims.protection.exceptions.groups.block.interact.Controls",
+							"claims.protection.exceptions.groups.block.interact.Doors",
+							"claims.protection.exceptions.groups.block.interact.Chests",
+							"claims.protection.exceptions.groups.block.interact.Barrels",
+							"claims.protection.exceptions.groups.block.interact.Ender_Chests",
+							"claims.protection.exceptions.groups.block.interact.Shulker_Boxes",
+							"claims.protection.exceptions.groups.block.interact.Furnaces",
+							"claims.protection.exceptions.groups.block.interact.Hoppers",
+							"claims.protection.exceptions.groups.block.interact.Dispenser-like",
+							"claims.protection.exceptions.groups.block.interact.Anvils",
+							"claims.protection.exceptions.groups.block.interact.Stonecutters",
+							"claims.protection.exceptions.groups.block.interact.Grindstones",
+							"claims.protection.exceptions.groups.block.interact.Cartography_Tables",
+							"claims.protection.exceptions.groups.block.interact.Lecterns",
+							"claims.protection.exceptions.groups.block.interact.Smithing_Tables",
+							"claims.protection.exceptions.groups.block.interact.Looms",
+							"claims.protection.exceptions.groups.block.interact.Jukeboxes",
+							"claims.protection.exceptions.groups.block.interact.Beds",
+							"claims.protection.exceptions.groups.block.interact.Beacons",
+							"claims.protection.exceptions.groups.block.interact.Enchanting_Tables",
+							"claims.protection.exceptions.groups.block.break.Crops",
+							"claims.protection.exceptions.groups.entity.interact.Traders",
+							"claims.protection.exceptions.groups.entity.handInteract.Item_Frames",
+							"claims.protection.exceptions.groups.entity.interact.Armor_Stands",
+							"claims.protection.exceptions.groups.entity.break.Livestock",
+							"claims.protection.exceptions.groups.entity.blockAccess.Villagers",
+							"claims.protection.exceptions.groups.entity.entityAccess.Zombies",
+							"claims.protection.exceptions.groups.entity.droppedItemAccess.Villagers",
+							"claims.protection.exceptions.groups.entity.droppedItemAccess.Piglins",
+							"claims.protection.exceptions.groups.entity.droppedItemAccess.Foxes",
+							"claims.protection.exceptions.groups.item.interact.Books",
+							"claims.protection.exceptions.groups.entity.barrier.Ender_Pearls",
+							"/*remove comment to enable*/claims.protection.exceptions.groups.entity.barrier.Players"
 							), s -> s instanceof String);
 
 		opConfigurablePlayerConfigOptions = builder
@@ -795,7 +828,7 @@ public class ServerConfig {
 					Check the default player config .toml file for the option names.""")
 			.translation("gui.xaero_pac_config_op_configurable_player_options")
 			//.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("opConfigurablePlayerConfigOptions"), () -> Lists.newArrayList("claims.bonusChunkClaims", "claims.bonusChunkForceloads"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("opConfigurablePlayerConfigOptions"), () -> Lists.newArrayList("claims.bonusChunkClaims", "claims.bonusChunkForceloads", "bonusPlayerGroups", "bonusPlayerGroupSpace"), s -> s instanceof String);
 
 		builder.pop();
 	}
