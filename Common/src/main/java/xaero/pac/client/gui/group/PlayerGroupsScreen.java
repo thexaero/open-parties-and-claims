@@ -520,10 +520,13 @@ public class PlayerGroupsScreen extends XPACScreen {
 	@Override
 	public boolean keyPressed(int code, int $$1, int $$2) {
 		if(code == GLFW.GLFW_KEY_DELETE){
-			//only one button will actually do something
-			onDeleteGroupButton(null);
-			onExcludeGroupButton(null);
-			onExcludePlayerButton(null);
+			if(groupList.isFocused())
+				onDeleteGroupButton(null);
+			else if(contentsList.isFocused()){
+				//only one button will actually do something
+				onExcludeGroupButton(null);
+				onExcludePlayerButton(null);
+			}
 			return true;
 		}
 		return super.keyPressed(code, $$1, $$2);
