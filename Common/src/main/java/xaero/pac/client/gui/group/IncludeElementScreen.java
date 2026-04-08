@@ -183,7 +183,6 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 			manualInputBox.setEditable(true);//restoring after preventing space being typed
 		if(needsButtonUpdate)
 			updateButtons();
-		renderBackground(guiGraphics, mouseX, mouseY, partial);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 	}
 
