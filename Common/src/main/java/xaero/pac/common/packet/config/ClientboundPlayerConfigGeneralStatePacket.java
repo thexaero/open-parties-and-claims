@@ -66,6 +66,8 @@ public class ClientboundPlayerConfigGeneralStatePacket extends ClientboundPlayer
 
 		@Override
 		protected void accept(ClientboundPlayerConfigGeneralStatePacket t, IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> playerConfigStorageManager, IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage) {
+			if(storage == null)
+				return;
 			storage.setGeneralState(t.beingDeleted, t.subConfigLimit);
 		}
 

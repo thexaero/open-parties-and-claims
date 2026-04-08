@@ -63,6 +63,8 @@ public class ClientboundPlayerConfigRemoveSubPacket extends ClientboundPlayerCon
 
 		@Override
 		protected void accept(ClientboundPlayerConfigRemoveSubPacket t, IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> playerConfigStorageManager, IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage) {
+			if(storage == null)
+				return;
 			storage.removeSubConfig(t.subIdToRemove);
 		}
 

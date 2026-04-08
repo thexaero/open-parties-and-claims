@@ -26,17 +26,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.ConfigUtil;
-import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
-import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.io.ObjectManagerIOObject;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
+import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
-import xaero.pac.common.server.player.data.ServerPlayerData;
-import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -44,8 +43,6 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.*;
 
 public class PlayerConfig
 <
@@ -59,39 +56,42 @@ public class PlayerConfig
 	public final static String MAIN_SUB_ID = "main";
 	public final static String PLAYER_CONFIG_ROOT = "playerConfig";
 	public final static String PLAYER_CONFIG_ROOT_DOT = PLAYER_CONFIG_ROOT + ".";
-	public static final List<Integer> PROTECTION_LEVELS = List.of(0, 1, 2, 3);
-	public static final String PROTECTION_LEVELS_TOOLTIP = """
-					1) Every - protected from all players/entities that don't have chunk access.
-					2) Not Party - only players/entities not in the same party as you.
-					3) Not Ally - only players/entities not in any party allied by yours.""";
 
-	public static final String PROTECTION_LEVELS_TOOLTIP_PLAYERS = """
-					1) Every - protected from all players that don't have chunk access.
-					2) Not Party - only players not in the same party as you.
-					3) Not Ally - only players not in any party allied by yours.""";
-	public static final String PROTECTION_LEVELS_TOOLTIP_OWNED = """
-					1) Every - protected from all entities not owned by a player that has chunk access.
-					2) Not Party - all entities, except owned by a player in the same party as you.
-					3) Not Ally - all entities, except owned by a player in any party allied by yours.""";
-	public static final String PROTECTION_LEVELS_TOOLTIP_PROJECTILE = """
-					1) Every - protected from all projectiles not owned by a player that has chunk access.
-					2) Not Party - all projectiles, except owned by a player in the same party as you.
-					3) Not Ally - all projectiles, except owned by a player in any party allied by yours.""";
-
-	public static final String EXCEPTION_LEVELS_TOOLTIP = """
-					1) Party - players or entities owned by players in the same party as you.
-					2) Allies - players or entities owned by players in parties that are allied by yours.
-					3) Every - all players/entities.""";
-	public static final String EXCEPTION_LEVELS_TOOLTIP_PLAYERS = """
-					1) Party - players in the same party as you.
-					2) Allies - players in parties that are allied by yours.
-					3) Every - all players.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - players or entities owned by players in the same party as you.
+					(A) Allies - players or entities owned by players in parties that are allied by yours.
+					(E) Every - all players/entities, even if not owned by anyone.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - players in the same party as you.
+					(A) Allies - players in parties that are allied by yours.
+					(E) Every - all players.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - entities owned by players in the same party as you.
+					(A) Allies - entities owned by players in parties that are allied by yours.
+					(E) Every - all entities, even if not owned by anyone.""";
+	public static final String BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PROJECTILE = """
+					The built-in player groups are:
+					
+					(N) Nobody
+					(P) Party - projectiles owned by players in the same party as you.
+					(A) Allies - projectiles owned by players in parties that are allied by yours.
+					(E) Every - all projectiles, even if not owned by anyone.""";
 
 	protected final PlayerConfigManager<P, ?> manager;
 	private final PlayerConfigType type;
 	private final UUID playerId;
 	protected Config storage;
 	private boolean dirty;
+	private ServerPlayerConfigGroupManager playerGroups;
 	private final Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues;
 	private final LinkedChain<PlayerSubConfig<P>> linkedSubConfigs;
 	private final Map<String, PlayerSubConfig<P>> subByID;
@@ -116,6 +116,10 @@ public class PlayerConfig
 	public Config getStorage() {
 		if(storage == null) {
 			setStorage(ConfigUtil.deepCopy(manager.getDefaultConfig().getStorage(), LinkedHashMap::new));
+			storage.set(
+					PlayerConfigOptions.CUSTOM_PLAYER_GROUPS.getPath(),
+					PlayerConfigOptions.CUSTOM_PLAYER_GROUPS.getDefaultValue()
+			);//removing groups copied from the default config
 			setDirty(true);
 		}
 		return storage;
@@ -124,8 +128,19 @@ public class PlayerConfig
 	public void setStorage(Config storage) {
 		this.storage = storage;
 	}
-	
-	private <T extends Comparable<T>> void set(PlayerConfigOptionSpec<T> option, T value) {
+
+	public void setPlayerGroups(ServerPlayerConfigGroupManager customPlayerGroups) {
+		if(this.playerGroups != null)
+			throw new IllegalStateException();
+		this.playerGroups = customPlayerGroups;
+	}
+
+	@Override
+	public ServerPlayerConfigGroupManager getPlayerGroups() {
+		return playerGroups;
+	}
+
+	public <T> void forceSet(PlayerConfigOptionSpec<T> option, T value) {
 		if(value == null)
 			getStorage().remove(option.getPath());
 		else
@@ -134,16 +149,16 @@ public class PlayerConfig
 			setDirty(true);
 	}
 
-	private <T extends Comparable<T>> T get(PlayerConfigOptionSpec<T> option) {
+	private <T> T get(PlayerConfigOptionSpec<T> option) {
 		return getStorage().get(option.getPath());
 	}
 
-	protected <T extends Comparable<T>> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value){
+	protected <T> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value){
 		return option.getServerSideValidator().test(this, value);
 	}
 
-	protected <T extends Comparable<T>> T getValueForDefaultConfigMatch(T actualEffective, T value){
-		return actualEffective;//the value from the default config
+	protected <T> T getValueForDefaultConfigMatch(IPlayerConfigOptionSpecAPI<T> o, T value){
+		return manager.getDefaultConfig().getFromEffectiveConfig(o);//the value from the default config
 	}
 
 	@Override
@@ -153,80 +168,43 @@ public class PlayerConfig
 	
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> o, @Nullable T value) {
+	public <T> SetResult tryToSet(@Nonnull IPlayerConfigOptionSpecAPI<T> o, @Nullable T value) {
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
+		if(!option.isDirectlyConfigurable())
+			return SetResult.NOT_DIRECTLY_CONFIGURABLE;
 		if(!isOptionAllowed(option))
 			return SetResult.ILLEGAL_OPTION;
 		if(!isValidSetValue(option, value))
 			return SetResult.INVALID;
-		T beforeEffective = getFromEffectiveConfig(option);
-		set(option, value);
-		T nowEffective = value;
 		if(isOptionDefaulted(option)){
-			nowEffective = getValueForDefaultConfigMatch(manager.getDefaultConfig().getFromEffectiveConfig(option), value);
-			if (nowEffective != value)
-				set(option, nowEffective);//to avoid confusion when the option is no longer forced in the future
+			T defaultMatchValue = getValueForDefaultConfigMatch(o, value);
+			forceSet(option, defaultMatchValue);//to avoid confusion when the option is no longer forced in the future
 			return SetResult.DEFAULTED;
 		}
-		if(playerId != null && !Objects.equals(nowEffective, beforeEffective)) {
-			if(option == BONUS_CHUNK_FORCELOADS || option == BONUS_CHUNK_CLAIMS) {
-				ServerPlayer onlinePlayer = getOnlinePlayer();
-				if(onlinePlayer != null) {
-					IServerClaimsManager<?, ?, ?> claimsManager = manager.getClaimsManager();
-					claimsManager.getClaimsManagerSynchronizer().syncClaimLimits(this, onlinePlayer);
-				}
-			}
-			if(option == FORCELOAD || option == OFFLINE_FORCELOAD || option == BONUS_CHUNK_FORCELOADS)
-				manager.getForceLoadTicketManager().updateTicketsFor(manager, playerId, false);
-			else if(option == PARTY_NAME) {
-				P party = manager.getPartyManager().getPartyByOwner(playerId);
-				if(party != null)
-					manager.getPartyManager().getPartySynchronizer().syncToPartyAndAlliersUpdateName(party, (String)value);
-			} else if(option == SHARE_LOCATION_WITH_PARTY || option == SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES || option == RECEIVE_LOCATIONS_FROM_PARTY || option == RECEIVE_LOCATIONS_FROM_PARTY_MUTUAL_ALLIES) {
-				boolean castValue = (Boolean)nowEffective;
-				P party = manager.getPartyManager().getPartyByMember(playerId);
-				if(party != null) {
-					ServerPlayer onlinePlayer = getOnlinePlayer();
-					if(onlinePlayer != null) {
-						if(option == SHARE_LOCATION_WITH_PARTY || option == SHARE_LOCATION_WITH_PARTY_MUTUAL_ALLIES) {
-							ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(onlinePlayer);
-							IPartyMemberDynamicInfoSyncable syncedInfo = castValue ? mainCap.getPartyMemberDynamicInfo() : mainCap.getPartyMemberDynamicInfo().getRemover();
-							if(option == SHARE_LOCATION_WITH_PARTY)
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToPartyDynamicInfo(party, syncedInfo, party);
-							else
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToPartyMutualAlliesDynamicInfo(party, syncedInfo);
-						} else {
-							if(option == RECEIVE_LOCATIONS_FROM_PARTY)
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToClientAllDynamicInfo(onlinePlayer, party, !castValue);
-							else
-								manager.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().syncToClientMutualAlliesDynamicInfo(onlinePlayer, party, !castValue);
-						}
-					}
-				}
-			} else if(option == CLAIMS_NAME || option == CLAIMS_COLOR)
-				manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(this);
-			else if(option == USED_SUBCLAIM || option == USED_SERVER_SUBCLAIM) {
-				ServerPlayer onlinePlayer = getOnlinePlayer();
-				if(onlinePlayer != null)
-					manager.getClaimsManager().getClaimsManagerSynchronizer().syncCurrentSubClaim(this, onlinePlayer);
-			}
+		T beforeEffective = getFromEffectiveConfig(option);
+		forceSet(option, value);
+		if(playerId != null && !Objects.equals(value, beforeEffective)) {
+			IPlayerConfigChangeHandler<T> changeHandler = option.getServerChangeHandler();
+			if(changeHandler != null && option.getCategory().requiredFeaturesAreEnabled())
+				changeHandler.handle(manager, this, option, beforeEffective, value);
 		}
 		manager.getSynchronizer().syncOptionToClients(this, option);
 		return SetResult.SUCCESS;
 	}
 	
-	private ServerPlayer getOnlinePlayer() {
+	public ServerPlayer getOnlinePlayer() {
 		PlayerList serverPlayers = manager.getServer().getPlayerList();
 		return serverPlayers.getPlayer(playerId);
 	}
 
 	public static boolean isPlayerConfigurable(IPlayerConfigOptionSpecAPI<?> o){
-		return o == USED_SUBCLAIM || o == USED_SERVER_SUBCLAIM ||
+		return ((PlayerConfigOptionSpec<?>)o).isForcedPlayerConfigurable() ||
 				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getId()) ||
 				ServerConfig.CONFIG.playerConfigurablePlayerConfigOptions.get().contains(o.getShortenedId());
 	}
 
-	protected boolean isOptionDefaulted(PlayerConfigOptionSpec<?> option){
+	@Override
+	public boolean isOptionDefaulted(IPlayerConfigOptionSpecAPI<?> option){
 		return playerId != null && !Objects.equals(playerId, SERVER_CLAIM_UUID) && !Objects.equals(playerId, EXPIRED_CLAIM_UUID) &&
 				!isOptionOPConfigurable(option) &&
 				!isPlayerConfigurable(option);//kinda annoying that it iterates over the whole lists but the lists should be small
@@ -244,7 +222,7 @@ public class PlayerConfig
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+	public <T> T getFromEffectiveConfig(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		if(isOptionDefaulted(option))
 			return manager.getDefaultConfig().getFromEffectiveConfig(option);
@@ -252,26 +230,26 @@ public class PlayerConfig
 	}
 
 	@Override
-	public <T extends Comparable<T>> T getRaw(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
+	public <T> T getRaw(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		return get(option);
 	}
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> SetResult tryToReset(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> SetResult tryToReset(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
 		return tryToSet(option, getDefaultRawValue(option));
 	}
 
 	@Nonnull
 	@Override
-	public <T extends Comparable<T>> T getEffective(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
+	public <T> T getEffective(@Nonnull IPlayerConfigOptionSpecAPI<T> o) {
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		T value = getFromEffectiveConfig(option);
 		return applyDefaultReplacer(o, value);
 	}
 
-	public <T extends Comparable<T>> T applyDefaultReplacer(IPlayerConfigOptionSpecAPI<T> o, T value){
+	public <T> T applyDefaultReplacer(IPlayerConfigOptionSpecAPI<T> o, T value){
 		if(value == null)
 			return null;
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
@@ -377,8 +355,8 @@ public class PlayerConfig
 		removeFromSubConfigIds(id);
 		linkedSubConfigs.remove(subConfig);
 		manager.onSubConfigRemoved(subConfig);
-		if(type != PlayerConfigType.SERVER && getEffective(USED_SUBCLAIM).equals(id))
-			tryToReset(USED_SUBCLAIM);
+		if(type != PlayerConfigType.SERVER && getEffective(PlayerConfigOptions.USED_SUBCLAIM).equals(id))
+			tryToReset(PlayerConfigOptions.USED_SUBCLAIM);
 		if(manager.isLoaded())
 			manager.getSynchronizer().syncSubExistence(null, subConfig, false);
 		return subConfig;
@@ -428,7 +406,7 @@ public class PlayerConfig
 
 	@Nonnull
 	public PlayerConfig<P> getUsedSubConfig(){
-		String usedSubId = getEffective(USED_SUBCLAIM);
+		String usedSubId = getEffective(PlayerConfigOptions.USED_SUBCLAIM);
 		PlayerConfig<P> result = getSubConfig(usedSubId);
 		return result == null ? this : result;
 	}
@@ -436,12 +414,12 @@ public class PlayerConfig
 	@Nonnull
 	@Override
 	public IPlayerConfig getUsedServerSubConfig() {
-		return manager.getServerClaimConfig().getEffectiveSubConfig(getEffective(USED_SERVER_SUBCLAIM));
+		return manager.getServerClaimConfig().getEffectiveSubConfig(getEffective(PlayerConfigOptions.USED_SERVER_SUBCLAIM));
 	}
 
 	@Nullable
 	@Override
-	public <T extends Comparable<T>> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> T getDefaultRawValue(@Nonnull IPlayerConfigOptionSpecAPI<T> option) {
 		return option.getDefaultValue();
 	}
 
@@ -476,6 +454,7 @@ public class PlayerConfig
 		return null;
 	}
 
+	@Override
 	public PlayerConfigManager<P, ?> getManager() {
 		return manager;
 	}
@@ -501,6 +480,11 @@ public class PlayerConfig
 	public void setBeingDeleted() {
 		this.beingDeleted = true;
 		manager.getSynchronizer().syncGeneralState(null, this);
+	}
+
+	@Override
+	public PlayerConfig<P> getMain(){
+		return this;
 	}
 
 	public static abstract class Builder
@@ -570,7 +554,9 @@ public class PlayerConfig
 			List<String> subConfigIdStorage = Lists.newArrayList(PlayerConfig.MAIN_SUB_ID);
 			SortedValueList<String> subConfigIds = SortedValueList.Builder.<String>begin().setContent(subConfigIdStorage).build();
 			List<String> subConfigIdsUnmodifiable = Collections.unmodifiableList(subConfigIdStorage);
-			return new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
+			PlayerConfig<P> result = new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
+			result.setPlayerGroups(ServerPlayerConfigGroupManager.Builder.begin().setConfig(result).build());
+			return result;
 		}
 
 		public static <P extends IServerParty<?, ?, ?>> FinalBuilder<P> begin(){

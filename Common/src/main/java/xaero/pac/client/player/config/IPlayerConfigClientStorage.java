@@ -20,6 +20,7 @@ package xaero.pac.client.player.config;
 
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI;
+import xaero.pac.client.player.config.group.IClientPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
@@ -33,7 +34,7 @@ public interface IPlayerConfigClientStorage<OS extends IPlayerConfigStringableOp
 
 	//internal api
 	@Nonnull
-	public <T extends Comparable<T>> OS getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> OS getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	@Nonnull
 	public Stream<OS> typedOptionStream();
@@ -70,6 +71,9 @@ public interface IPlayerConfigClientStorage<OS extends IPlayerConfigStringableOp
 	@Override
 	boolean isBeingDeleted();
 
+	@Override
+	IClientPlayerConfigGroupManager getPlayerGroups();
+
 	public Stream<IPlayerConfigClientStorage<OS>> getSubConfigStream();
 
 	public void setSelectedSubConfig(String selectedSubConfig);
@@ -81,6 +85,8 @@ public interface IPlayerConfigClientStorage<OS extends IPlayerConfigStringableOp
 	public void removeSubConfig(String subId);
 
 	public void setGeneralState(boolean beingDeleted, int subConfigLimit);
+
+	UUID getOwnerForSync();
 
 	public static interface IBuilder<CS extends IPlayerConfigClientStorage<?>> {
 		

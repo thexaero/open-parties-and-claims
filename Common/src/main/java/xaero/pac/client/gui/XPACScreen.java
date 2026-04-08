@@ -22,13 +22,28 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
 
+import java.util.List;
+
 public class XPACScreen extends Screen implements IDropDownContainer {
+
+	public static boolean hasShiftDown(){
+		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT) ||
+				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RSHIFT);
+	}
+
+	public static boolean hasControlDown() {
+		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LCONTROL) ||
+				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RCONTROL);
+	}
 
 	private static final Component XPAC_TITLE = Component.translatable("gui.xaero_pac_ui_parties_and_claims");
 	protected final Screen escape;
@@ -114,14 +129,34 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		this.openDropdown = null;
 	}
 
-	public static boolean hasShiftDown(){
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT) ||
-				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RSHIFT);
+	private <T extends GuiEventListener & NarratableEntry, T2 extends GuiEventListener & Renderable & NarratableEntry>
+	void replaceWidget(T current, T replacement, T2 replaceRenderable) {
+		int childIndex = children().indexOf(current);
+		if(childIndex == -1)
+			return;
+		super.removeWidget(current);
+		if(replaceRenderable != null)
+			super.addRenderableWidget(replaceRenderable);
+		else
+			super.addWidget(replacement);
+		children().remove(replacement);
+		((List<GuiEventListener>)children()).add(childIndex, replacement);
 	}
 
-	public static boolean hasControlDown(){
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LCONTROL) ||
-				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RCONTROL);
+	protected <T extends GuiEventListener & NarratableEntry> void replaceWidget(T current, T replacement) {
+		replaceWidget(current, replacement, null);
+	}
+
+	protected <T extends GuiEventListener & Renderable & NarratableEntry> void replaceRenderableWidget(T current, T replacement) {
+		replaceWidget(current, null, replacement);
+	}
+
+	public Screen getEscape() {
+		return escape;
+	}
+
+	public Screen getParent() {
+		return parent;
 	}
 
 }

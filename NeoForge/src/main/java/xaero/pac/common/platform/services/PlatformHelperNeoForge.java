@@ -18,6 +18,7 @@
 
 package xaero.pac.common.platform.services;
 
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLConfig;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -52,6 +53,11 @@ public class PlatformHelperNeoForge implements IPlatformHelper {
 	@Override
 	public boolean isDevelopmentEnvironment() {
 		return !FMLEnvironment.isProduction();
+	}
+
+	@Override
+	public boolean isDedicatedServer() {
+		return FMLLoader.getDist() == Dist.DEDICATED_SERVER;
 	}
 
 	@Override

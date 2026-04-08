@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-public final class PlayerConfigStringableOptionClientStorage<T extends Comparable<T>> extends PlayerConfigOptionClientStorage<T> implements IPlayerConfigStringableOptionClientStorage<T> {
+public final class PlayerConfigStringableOptionClientStorage<T> extends PlayerConfigOptionClientStorage<T> implements IPlayerConfigStringableOptionClientStorage<T> {
 	
 	private final BiPredicate<IPlayerConfigClientStorageAPI, String> stringValidator;
 	
@@ -41,11 +41,22 @@ public final class PlayerConfigStringableOptionClientStorage<T extends Comparabl
 		return option.getCommandInputParser();
 	}
 
+	@Deprecated
 	@Nonnull
-	@SuppressWarnings("unchecked")
 	@Override
 	public Function<Object, Component> getCommandOutputWriterCast() {
-		return (Function<Object, Component>) (Object) option.getCommandOutputWriter();
+		return getComponentWriterCast();
+	}
+
+	@Nonnull
+	@Override
+	@SuppressWarnings("unchecked")
+	public Function<Object, Component> getComponentWriterCast() {
+		return (Function<Object, Component>) option.getComponentWriter();
+	}
+
+	public Function<Object, String> getStringWriterCast() {
+		return option.getStringWriterCast();
 	}
 
 	@Nonnull
@@ -54,7 +65,7 @@ public final class PlayerConfigStringableOptionClientStorage<T extends Comparabl
 		return stringValidator;
 	}
 	
-	public static final class Builder<T extends Comparable<T>> extends PlayerConfigOptionClientStorage.Builder<T, Builder<T>> {
+	public static final class Builder<T> extends PlayerConfigOptionClientStorage.Builder<T, Builder<T>> {
 
 		@Override
 		protected PlayerConfigOptionClientStorage<T> buildInternally() {
@@ -75,7 +86,7 @@ public final class PlayerConfigStringableOptionClientStorage<T extends Comparabl
 			return (PlayerConfigStringableOptionClientStorage<T>) super.build();
 		}
 		
-		public static <T extends Comparable<T>> Builder<T> begin(){
+		public static <T> Builder<T> begin(){
 			return new Builder<T>().setDefault();
 		}
 		

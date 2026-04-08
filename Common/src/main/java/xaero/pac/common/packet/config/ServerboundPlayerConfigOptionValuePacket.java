@@ -36,6 +36,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
@@ -69,7 +70,7 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 	public static class ServerHandler implements BiConsumer<ServerboundPlayerConfigOptionValuePacket, ServerPlayer> {
 
 		@SuppressWarnings("unchecked")
-		private <T extends Comparable<T>> IPlayerConfigAPI.SetResult setConfigUnchecked(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value) {
+		private <T> IPlayerConfigAPI.SetResult setConfigUnchecked(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value) {
 			return config.tryToSet(option, (T) value);
 		}
 
@@ -96,7 +97,8 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 					return;
 				}
 			}
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
 			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 			IPlayerConfig config =
 					t.getType() == PlayerConfigType.PLAYER ?
@@ -110,14 +112,26 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 													playerConfigs.getDefaultConfig();
 			if(t.subId != null)
 				config = config.getSubConfig(t.subId);
-			if(config != null) {
-				IPlayerConfigOptionSpecAPI<?> option = playerConfigs.getOptionForId(optionEntry.getId());
-				if(option != null) {
-					IPlayerConfigAPI.SetResult result = setConfigUnchecked(config, option, optionEntry.getValue());
-					if (result != IPlayerConfigAPI.SetResult.SUCCESS && (config.getType() != PlayerConfigType.PLAYER || serverPlayer.getUUID().equals(config.getPlayerId())))
-						playerConfigs.getSynchronizer().syncOptionToClient(serverPlayer, config, option);//restore the correct value
-				}
+			if(config == null)
+				return;
+			PlayerConfigOptionSpec<?> option =
+					(PlayerConfigOptionSpec<?>) playerConfigs.getOptionForId(optionEntry.getId());
+			if(option == null)
+				return;
+			if(!option.isSyncable())
+				return;
+			if(!option.isDirectlyConfigurable())
+				return;
+			Object value = null;
+			try {
+				value = option.getValueType().getSyncDecoder().apply(optionEntry.getValueTag());
+			} catch(Throwable e){
 			}
+			IPlayerConfigAPI.SetResult result = setConfigUnchecked(config, option, value);
+			if (result == IPlayerConfigAPI.SetResult.SUCCESS)
+				return;
+			if (config.getType() != PlayerConfigType.PLAYER || serverPlayer.getUUID().equals(config.getPlayerId()))
+				playerConfigs.getSynchronizer().syncOptionToClient(serverPlayer, config, option);//restore the correct value
 		}
 	}
 
