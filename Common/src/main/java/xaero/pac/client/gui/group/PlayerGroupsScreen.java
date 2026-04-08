@@ -461,8 +461,14 @@ public class PlayerGroupsScreen extends XPACScreen {
 					0xFFAA0000
 			);
 		}
-		if(hoveredContentsEntry != null)
+		if(hoveredContentsEntry != null){
+			int widthBackup = minecraft.getWindow().getWidth();
+			minecraft.getWindow().setWidth(widthBackup + 5);//to fix unnecessary splitting of uuid tooltips on 1.19+ when in the default resolution
+			minecraft.getWindow().setGuiScale(minecraft.getWindow().getGuiScale());
 			guiGraphics.renderComponentHoverEffect(font, hoveredContentsEntry.getLabel().getStyle(), mouseX, mouseY - 5);
+			minecraft.getWindow().setWidth(widthBackup);
+			minecraft.getWindow().setGuiScale(minecraft.getWindow().getGuiScale());
+		}
 	}
 
 	@Override
