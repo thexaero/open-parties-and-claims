@@ -57,7 +57,7 @@ public class PlatformHelperNeoForge implements IPlatformHelper {
 
 	@Override
 	public boolean isDedicatedServer() {
-		return FMLLoader.getDist() == Dist.DEDICATED_SERVER;
+		return FMLEnvironment.getDist() == Dist.DEDICATED_SERVER;
 	}
 
 	@Override
