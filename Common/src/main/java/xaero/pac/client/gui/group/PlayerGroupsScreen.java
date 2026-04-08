@@ -459,8 +459,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 					0xFFAA0000
 			);
 		}
-		if(hoveredContentsEntry != null)
+		if(hoveredContentsEntry != null) {
+			int widthBackup = width;
+			width += 5;//to fix unnecessary splitting of uuid tooltips on 1.19+ when in the default resolution
 			renderComponentHoverEffect(poseStack, hoveredContentsEntry.getLabel().getStyle(), mouseX, mouseY - 5);
+			width = widthBackup;
+		}
 	}
 
 	@Override
