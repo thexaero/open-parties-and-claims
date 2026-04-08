@@ -96,6 +96,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 	private PlayerConfigGroupActionError latestDesyncError;
 	private long latestDesyncErrorTime;
 	private Component configTitle;
+	private ContentsList.AbstractEntry hoveredContentsEntry;
 
 	private PlayerGroupsScreen(
 			Screen escape,
@@ -426,6 +427,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
+		hoveredContentsEntry = null;
 		groupList.render(poseStack, mouseX, mouseY, partial);
 		contentsList.render(poseStack, mouseX, mouseY, partial);
 		int messageCenterY = (height - FOOTER_HEIGHT + HEADER_HEIGHT) / 2 - 4;
@@ -459,6 +461,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 					0xFFAA0000
 			);
 		}
+		if(hoveredContentsEntry != null)
+			renderComponentHoverEffect(poseStack, hoveredContentsEntry.getLabel().getStyle(), mouseX, mouseY);
 	}
 
 	@Override
@@ -778,6 +782,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 				drawString(poseStack, font, indicator, labelX - 2 - font.width(indicator), labelY, indicatorColor);
 			}
 
+			public abstract Component getLabel();
+
 		}
 
 		public class TitleEntry extends AbstractEntry {
@@ -814,7 +820,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 					renderSelectionIndicator(poseStack, "-", labelX, labelY);
 				drawString(poseStack, font, title, labelX, labelY, LIST_TITLE_LABEL_COLOR);
 				if(hovered)
-					renderComponentHoverEffect(poseStack, title.getStyle(), mouseX, mouseY);
+					hoveredContentsEntry = this;
+			}
+
+			@Override
+			public Component getLabel() {
+				return title;
 			}
 
 		}
@@ -858,7 +869,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 					labelX -= 1;
 				drawString(poseStack, font, label, labelX, labelY, labelColor);
 				if(hovered)
-					renderComponentHoverEffect(poseStack, label.getStyle(), mouseX, mouseY);
+					hoveredContentsEntry = this;
+			}
+
+			@Override
+			public Component getLabel() {
+				return label;
 			}
 
 		}
