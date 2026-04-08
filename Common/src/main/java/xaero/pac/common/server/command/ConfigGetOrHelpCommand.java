@@ -39,6 +39,7 @@ import xaero.pac.common.packet.config.ClientboundPlayerConfigHelpPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.player.config.PlayerConfigConstants;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
@@ -164,7 +165,12 @@ public class ConfigGetOrHelpCommand {
 		return (context, builder) -> {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(context.getSource().getServer());
-			return SharedSuggestionProvider.suggest(serverData.getPlayerConfigs().getAllOptionsStream().map(IPlayerConfigOptionSpecAPI::getShortenedId), builder);
+			return SharedSuggestionProvider.suggest(
+					serverData.getPlayerConfigs().getAllOptionsStream()
+							.filter(IPlayerConfigOptionSpecAPI::isDirectlyConfigurable)
+							.map(IPlayerConfigOptionSpecAPI::getShortenedId),
+					builder
+			);
 		};
 	}
 	
@@ -179,6 +185,10 @@ public class ConfigGetOrHelpCommand {
 			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigs().getOptionForId(targetConfigOptionId);
 			if(option == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get_invalid_key"));
+				return 0;
+			}
+			if(!option.isDirectlyConfigurable()) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, PlayerConfigConstants.OPTION_NOT_DIRECTLY_CONFIGURABLE));
 				return 0;
 			}
 			

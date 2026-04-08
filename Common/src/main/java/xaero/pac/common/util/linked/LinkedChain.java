@@ -106,5 +106,4 @@ public class LinkedChain<V extends ILinkedChainNode<V>> implements Iterable<V> {
 	public Stream<V> stream(){
 		return Streams.stream(this);
 	}
-
 }

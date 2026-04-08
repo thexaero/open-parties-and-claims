@@ -43,7 +43,13 @@ public final class PlayerConfigSerializationHandler<
 
 	@Override
 	public PlayerConfig<P> deserialize(PlayerConfigDeserializationInfo info, PlayerConfigManager<P, CM> manager, String serializedData) {
-		PlayerConfig<P> config = info.getSubId() != null || info.getType() == PlayerConfigType.PLAYER ? manager.getConfig(info.getId()) : PlayerConfig.FinalBuilder.<P>begin().setType(info.getType()).setPlayerId(info.getId()).setManager(manager).build();
+		PlayerConfig<P> config = info.getSubId() != null || info.getType() == PlayerConfigType.PLAYER ?
+				manager.getConfig(info.getId()) :
+				PlayerConfig.FinalBuilder.<P>begin()
+						.setType(info.getType())
+						.setPlayerId(info.getId())
+						.setManager(manager)
+						.build();
 		PlayerConfig<P> targetConfig = config;
 		if(info.getSubId() != null)
 			targetConfig = config.createSubConfig(info.getSubId(), info.getSubIndex());

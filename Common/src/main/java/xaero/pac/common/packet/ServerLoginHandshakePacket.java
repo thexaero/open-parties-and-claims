@@ -18,9 +18,12 @@
 
 package xaero.pac.common.packet;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.packet.util.PacketConstants;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import java.util.function.BiConsumer;
@@ -29,19 +32,35 @@ import java.util.function.Function;
 
 public class ServerLoginHandshakePacket {
 
-	public ServerLoginHandshakePacket() {
+	private final int networkVersion;
+
+	public ServerLoginHandshakePacket(int networkVersion) {
 		super();
+		this.networkVersion = networkVersion;
 	}
 	
 	public static class Codec implements BiConsumer<ServerLoginHandshakePacket, FriendlyByteBuf>, Function<FriendlyByteBuf, ServerLoginHandshakePacket> {
 
 		@Override
 		public ServerLoginHandshakePacket apply(FriendlyByteBuf input) {
-			return new ServerLoginHandshakePacket();
+			CompoundTag nbt;
+			try {
+				nbt = input.readNbt();
+				if(nbt == null)
+					return null;
+				int networkVersion = nbt.getIntOr("v", 0);
+				return new ServerLoginHandshakePacket(networkVersion);
+			} catch(Throwable t){
+				//received from an older client mod considered version 0
+				return new ServerLoginHandshakePacket(0);
+			}
 		}
 
 		@Override
 		public void accept(ServerLoginHandshakePacket t, FriendlyByteBuf u) {
+			CompoundTag nbt = new CompoundTag();
+			nbt.putInt("v", t.networkVersion);
+			u.writeNbt(nbt);
 		}
 		
 	}
@@ -50,6 +69,10 @@ public class ServerLoginHandshakePacket {
 		
 		@Override
 		public void accept(ServerLoginHandshakePacket t) {
+			if(t.networkVersion != PacketConstants.NETWORK_VERSION) {
+				Minecraft.getInstance().getConnection().getConnection().disconnect(PacketConstants.NETWORK_VERSION_MISMATCH);
+				return;
+			}
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().reset();
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(t);
 		}
@@ -60,6 +83,10 @@ public class ServerLoginHandshakePacket {
 
 		@Override
 		public void accept(ServerLoginHandshakePacket t, ServerPlayer player) {
+			if(t.networkVersion != PacketConstants.NETWORK_VERSION) {
+				player.connection.disconnect(PacketConstants.NETWORK_VERSION_MISMATCH);
+				return;
+			}
 			((ServerPlayerData)ServerPlayerData.from(player)).setHasMod(true);
 		}
 

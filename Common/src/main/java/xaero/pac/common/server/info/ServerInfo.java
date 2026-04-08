@@ -22,15 +22,17 @@ import xaero.pac.common.server.io.ObjectManagerIOObject;
 
 public final class ServerInfo implements ObjectManagerIOObject {
 
-	public static final int CURRENT_VERSION = 1;
+	public static final int CURRENT_VERSION = 2;
 	private long totalUseTime;
 	private boolean dirty;
 	private final int loadedVersion;
+	private int targetPlayerConfigVersion;
 
-	public ServerInfo(long totalUseTime, int loadedVersion) {
+	public ServerInfo(long totalUseTime, int loadedVersion, int loadedTargetPlayerConfigVersion) {
 		super();
 		this.totalUseTime = totalUseTime;
 		this.loadedVersion = loadedVersion;
+		this.targetPlayerConfigVersion = loadedTargetPlayerConfigVersion;
 	}
 
 	@Override
@@ -60,4 +62,14 @@ public final class ServerInfo implements ObjectManagerIOObject {
 	public int getLoadedVersion() {
 		return loadedVersion;
 	}
+
+	public int getTargetPlayerConfigVersion() {
+		return targetPlayerConfigVersion;
+	}
+
+	public void setTargetPlayerConfigVersion(int targetPlayerConfigVersion) {
+		this.targetPlayerConfigVersion = targetPlayerConfigVersion;
+		setDirty(true);
+	}
+
 }
