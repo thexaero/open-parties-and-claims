@@ -462,7 +462,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			);
 		}
 		if(hoveredContentsEntry != null)
-			guiGraphics.renderComponentHoverEffect(font, hoveredContentsEntry.getLabel().getStyle(), mouseX, mouseY);
+			guiGraphics.renderComponentHoverEffect(font, hoveredContentsEntry.getLabel().getStyle(), mouseX, mouseY - 5);
 	}
 
 	@Override
