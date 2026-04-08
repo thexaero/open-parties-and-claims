@@ -269,7 +269,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 	private boolean canEdit(){
 		return configData == configData.getManager().getMyPlayerConfig() ||
-				minecraft.player != null && minecraft.player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+				minecraft.player != null && Commands.LEVEL_GAMEMASTERS.check(minecraft.player.permissions());
 	}
 
 	private void refreshButtonStates(){
@@ -501,7 +501,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			);
 			return;
 		}
-		resize(minecraft, width, height);
+		resize(width, height);
 	}
 
 	private CustomPlayerConfigGroupData getGroupEditorData(String groupId, boolean create){

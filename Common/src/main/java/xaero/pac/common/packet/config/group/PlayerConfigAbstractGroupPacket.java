@@ -197,7 +197,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 
 		@Override
 		public void accept(P packet, ServerPlayer serverPlayer) {
-			boolean isOp = serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+			boolean isOp = Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions());
 			if(!isOp){
 				if(packet.type != PlayerConfigType.PLAYER){
 					OpenPartiesAndClaims.LOGGER.warn(

@@ -124,7 +124,7 @@ public class PlayerConfigGroupMemberPacket extends PlayerConfigAbstractGroupPack
 				return;
 			}
 			if (packet.action == Action.INCLUDE) {
-				boolean isOp = serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+				boolean isOp = Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions());
 				if(!isOp && packet.playerId == null &&
 						!ServerPlayerUtils.playerNameIsKnown(ServerLevelHelper.getServer(serverPlayer), packet.playerName)){
 					//only ops are allowed to add previously unknown players

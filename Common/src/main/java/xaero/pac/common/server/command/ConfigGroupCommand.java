@@ -93,28 +93,28 @@ public abstract class ConfigGroupCommand {
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal("for")
-						.requires(sourceStack -> sourceStack.hasPermission(2))
+						.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 						.then(Commands.argument("player", GameProfileArgument.gameProfile()).then(Commands.literal("player-groups")
 						.then(getMainCommandPart(regularExecutor, PlayerConfigType.PLAYER))))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
 						.then(getMainCommandPart(PlayerConfigType.DEFAULT_PLAYER)))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
 						.then(getMainCommandPart(PlayerConfigType.SERVER))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
 						.then(getMainCommandPart(PlayerConfigType.EXPIRED))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
 						.then(getMainCommandPart(PlayerConfigType.WILDERNESS))));
 		dispatcher.register(command);
 	}
