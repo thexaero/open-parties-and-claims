@@ -93,6 +93,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 	private PlayerConfigGroupActionError latestDesyncError;
 	private long latestDesyncErrorTime;
 	private Component configTitle;
+	private ContentsList.AbstractEntry hoveredContentsEntry;
 
 	private PlayerGroupsScreen(
 			Screen escape,
@@ -424,6 +425,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		hoveredContentsEntry = null;
 		groupList.render(guiGraphics, mouseX, mouseY, partial);
 		contentsList.render(guiGraphics, mouseX, mouseY, partial);
 		int messageCenterY = (height - FOOTER_HEIGHT + HEADER_HEIGHT) / 2 - 4;
@@ -457,6 +459,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 					0xFFAA0000
 			);
 		}
+		if(hoveredContentsEntry != null)
+			guiGraphics.renderComponentHoverEffect(font, hoveredContentsEntry.getLabel().getStyle(), mouseX, mouseY);
 	}
 
 	@Override
@@ -777,6 +781,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 				guiGraphics.drawString(font, indicator, labelX - 2 - font.width(indicator), labelY, indicatorColor);
 			}
 
+			public abstract Component getLabel();
+
 		}
 
 		public class TitleEntry extends AbstractEntry {
@@ -813,7 +819,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 					renderSelectionIndicator(guiGraphics, "-", labelX, labelY);
 				guiGraphics.drawString(font, title, labelX, labelY, LIST_TITLE_LABEL_COLOR);
 				if(hovered)
-					guiGraphics.renderComponentHoverEffect(font, title.getStyle(), mouseX, mouseY);
+					hoveredContentsEntry = this;
+			}
+
+			@Override
+			public Component getLabel() {
+				return title;
 			}
 
 		}
@@ -857,7 +868,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 					labelX -= 1;
 				guiGraphics.drawString(font, label, labelX, labelY, labelColor);
 				if(hovered)
-					guiGraphics.renderComponentHoverEffect(font, label.getStyle(), mouseX, mouseY);
+					hoveredContentsEntry = this;
+			}
+
+			@Override
+			public Component getLabel() {
+				return label;
 			}
 
 		}
