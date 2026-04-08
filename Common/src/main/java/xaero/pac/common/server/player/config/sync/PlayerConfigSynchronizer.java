@@ -25,13 +25,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.packet.config.*;
+import xaero.pac.common.packet.config.group.*;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
+import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
+import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
@@ -59,8 +62,22 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 	private void sendToClient(ServerPlayer player, Object packet) {
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, packet);
 	}
+
+	private void sendToClient(
+			ServerPlayer player,
+			IPlayerConfig config,
+			Object packetOtherPlayer,
+			Object packetNotOtherPlayer
+	){
+		Object packet =
+				config.getType() == PlayerConfigType.PLAYER && !Objects.equals(player.getUUID(), config.getPlayerId()) ?
+						packetOtherPlayer : packetNotOtherPlayer;
+		sendToClient(player, packet);
+	}
 	
-	private <T extends Comparable<T>> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, IPlayerConfigOptionSpecAPI<T> option, boolean afterReset) {
+	private <T> PlayerConfigOptionValuePacket.Entry getPacketOptionEntry(ServerPlayer player, PlayerConfig<?> syncedConfig, PlayerConfigOptionSpec<T> option, boolean afterReset) {
+		if(!option.isSyncable())
+			return null;
 		boolean isOp = Commands.LEVEL_GAMEMASTERS.check(player.permissions());
 		boolean mutable = isOp && syncedConfig.getType() != PlayerConfigType.PLAYER;
 		boolean defaulted = !mutable && syncedConfig.getType() == PlayerConfigType.PLAYER;
@@ -73,13 +90,13 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 			}
 		}
 		T value = syncedConfig.getRaw(option);
-		if(mutable && syncedConfig instanceof PlayerSubConfig && !configManager.getOverridableOptions().contains(option)) {
+		if(mutable && syncedConfig instanceof PlayerSubConfig && !option.isOverridable()) {
 			mutable = false;
 			value = null;
 		}
 		if(afterReset && defaulted)
 			return null;
-		return new PlayerConfigOptionValuePacket.Entry(option.getId(), option.getType(), defaulted ? null : value, mutable, defaulted);
+		return PlayerConfigOptionValuePacket.Entry.of(option, defaulted ? null : value, mutable, defaulted);
 	}
 	
 	private void syncOptionsToClient(ServerPlayer player, PlayerConfig<?> config, List<PlayerConfigOptionValuePacket.Entry> entries) {
@@ -88,7 +105,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		sendToClient(player, packet);
 	}
 	
-	public <T extends Comparable<T>> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option) {
+	public <T> void syncOptionToClient(ServerPlayer player, IPlayerConfig config, PlayerConfigOptionSpec<T> option) {
 		PlayerConfigOptionValuePacket.Entry packetOptionEntry = getPacketOptionEntry(player, (PlayerConfig<?>)config, option, false);
 		if(packetOptionEntry != null)
 			syncOptionsToClient(player, (PlayerConfig<?>)config, Lists.newArrayList(packetOptionEntry));
@@ -101,6 +118,12 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 			if(packetOptionEntry != null)
 				entries.add(packetOptionEntry);
 		});
+		if(!(config instanceof PlayerSubConfig)){
+			ServerPlayerConfigGroupManager groupManager = config.getPlayerGroups();
+			syncGroupLimits(player, groupManager, config);
+			for (ICustomPlayerConfigGroup group : groupManager.getAllCustom())
+				syncGroupExistence(player, config, true, group.getId());
+		}
 		syncOptionsToClient(player, config, entries);
 		if(config.getType() == PlayerConfigType.PLAYER && !player.getUUID().equals(config.getPlayerId())) {
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
@@ -129,7 +152,16 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 	}
 
 	public void sendSyncState(ServerPlayer player, PlayerConfig<?> config, boolean state){
-		ClientboundPlayerConfigSyncStatePacket packet = new ClientboundPlayerConfigSyncStatePacket(config.getType(),
+		UUID ownerIdToUse = config.getType() == PlayerConfigType.PLAYER && Objects.equals(player.getUUID(), config.getPlayerId()) ?
+				null : config.getPlayerId();
+		ClientboundPlayerConfigSyncStatePacket packet = new ClientboundPlayerConfigSyncStatePacket(
+				config.getType(), state, ownerIdToUse
+		);
+		sendToClient(player, packet);
+	}
+
+	public void sendGroupSyncState(ServerPlayer player, PlayerConfig<?> config, boolean state){
+		ClientboundPlayerConfigGroupsSyncStatePacket packet = new ClientboundPlayerConfigGroupsSyncStatePacket(config.getType(),
 				config.getType() == PlayerConfigType.PLAYER && !Objects.equals(player.getUUID(), config.getPlayerId()), state);
 		sendToClient(player, packet);
 	}
@@ -140,22 +172,15 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 			ServerPlayer ownerPlayer = serverPlayerList.getPlayer(config.getPlayerId());
 			if(ownerPlayer != null)
 				action.accept(ownerPlayer);
-		} else {
-			List<ServerPlayer> allPlayers = serverPlayerList.getPlayers();
-			for(ServerPlayer player : allPlayers)
-				action.accept(player);
+			return;
 		}
+		List<ServerPlayer> allPlayers = serverPlayerList.getPlayers();
+		for(ServerPlayer player : allPlayers)
+			action.accept(player);
 	}
 	
-	public <T extends Comparable<T>> void syncOptionToClients(PlayerConfig<?> config, PlayerConfigOptionSpec<T> option) {
+	public <T> void syncOptionToClients(PlayerConfig<?> config, PlayerConfigOptionSpec<T> option) {
 		forAllRelevantClients(config, player -> syncOptionToClient(player, config, option));
-	}
-
-	private void syncGeneralState(ServerPlayer player, IPlayerConfig config, ClientboundPlayerConfigGeneralStatePacket packetOtherPlayer, ClientboundPlayerConfigGeneralStatePacket packetNotOtherPlayer){
-		ClientboundPlayerConfigGeneralStatePacket packet =
-				config.getType() == PlayerConfigType.PLAYER && !Objects.equals(player.getUUID(), config.getPlayerId()) ?
-					packetOtherPlayer : packetNotOtherPlayer;
-		sendToClient(player, packet);
 	}
 
 	public void syncGeneralState(ServerPlayer player, IPlayerConfig config){
@@ -168,22 +193,110 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		ClientboundPlayerConfigGeneralStatePacket packetNotOtherPlayer =
 				new ClientboundPlayerConfigGeneralStatePacket(config.getType(), false, subId, config.isBeingDeleted(), subConfigLimit);
 		if(player == null)
-			forAllRelevantClients(config, p -> syncGeneralState(p, config, packetOtherPlayer, packetNotOtherPlayer));
+			forAllRelevantClients(config, p -> sendToClient(p, config, packetOtherPlayer, packetNotOtherPlayer));
 		else
-			syncGeneralState(player, config, packetOtherPlayer, packetNotOtherPlayer);
+			sendToClient(player, config, packetOtherPlayer, packetNotOtherPlayer);
 	}
 
-	private void syncSubExistence(ServerPlayer player, PlayerSubConfig<?> config, boolean create, ClientboundPlayerConfigRemoveSubPacket removePacketOtherPlayer, ClientboundPlayerConfigRemoveSubPacket removePacketNotOtherPlayer) {
+	public void syncGroupExistence(ServerPlayer player, IPlayerConfig config, boolean add, String groupId){
+		PlayerConfigGroupExistencePacket packetOtherPlayer =
+				new PlayerConfigGroupExistencePacket(config.getType(), config.getPlayerId(), groupId, add);
+		PlayerConfigGroupExistencePacket packetNotOtherPlayer =
+				new PlayerConfigGroupExistencePacket(config.getType(), null, groupId, add);
+		if(player == null)
+			forAllRelevantClients(config, p -> sendToClient(p, config, packetOtherPlayer, packetNotOtherPlayer));
+		else
+			sendToClient(player, config, packetOtherPlayer, packetNotOtherPlayer);
+	}
+
+	public void syncGroupMemberUpdate(
+			ServerPlayer player,
+			IPlayerConfig config,
+			String groupId,
+			PlayerConfigGroupMemberPacket.Action action,
+			UUID playerId,
+			String playerName
+	){
+		PlayerConfigGroupMemberPacket packetOtherPlayer =
+				new PlayerConfigGroupMemberPacket(
+						config.getType(), config.getPlayerId(),
+						groupId, action,
+						playerId, playerName
+				);
+		PlayerConfigGroupMemberPacket packetNotOtherPlayer =
+				new PlayerConfigGroupMemberPacket(
+						config.getType(), null,
+						groupId, action,
+						playerId, playerName
+				);
+		if(player == null)
+			forAllRelevantClients(config, p -> sendToClient(p, config, packetOtherPlayer, packetNotOtherPlayer));
+		else
+			sendToClient(player, config, packetOtherPlayer, packetNotOtherPlayer);
+	}
+
+	public void syncGroupGroupUpdate(
+			  ServerPlayer player,
+			  IPlayerConfig config,
+			  String groupId,
+			  PlayerConfigGroupGroupPacket.Action action,
+			  String inclusionGroupId
+	){
+		PlayerConfigGroupGroupPacket packetOtherPlayer =
+				new PlayerConfigGroupGroupPacket(
+						config.getType(), config.getPlayerId(),
+						groupId, action, inclusionGroupId
+				);
+		PlayerConfigGroupGroupPacket packetNotOtherPlayer =
+				new PlayerConfigGroupGroupPacket(
+						config.getType(), null,
+						groupId, action, inclusionGroupId
+				);
+		if(player == null)
+			forAllRelevantClients(config, p -> sendToClient(p, config, packetOtherPlayer, packetNotOtherPlayer));
+		else
+			sendToClient(player, config, packetOtherPlayer, packetNotOtherPlayer);
+	}
+
+	public void syncGroupsReset(ServerPlayer player, IPlayerConfig config){
+		ClientboundPlayerConfigResetGroupsPacket packetOtherPlayer =
+				new ClientboundPlayerConfigResetGroupsPacket(config.getType(), config.getPlayerId());
+		ClientboundPlayerConfigResetGroupsPacket packetNotOtherPlayer =
+				new ClientboundPlayerConfigResetGroupsPacket(config.getType(), null);
+		if(player == null)
+			forAllRelevantClients(config, p -> sendToClient(p, config, packetOtherPlayer, packetNotOtherPlayer));
+		else
+			sendToClient(player, config, packetOtherPlayer, packetNotOtherPlayer);
+	}
+
+	@Override
+	public void syncGroupLimits(ServerPlayer player, IServerPlayerConfigGroupManager groupManager, IPlayerConfig config){
+		ClientboundPlayerConfigGroupLimitsPacket limitsPacket = new ClientboundPlayerConfigGroupLimitsPacket(
+				config.getType(), false, groupManager.getMaxGroups(), groupManager.getGroupSpace()
+		);
+		ClientboundPlayerConfigGroupLimitsPacket limitsPacketOtherPlayer = new ClientboundPlayerConfigGroupLimitsPacket(
+				config.getType(), true, groupManager.getMaxGroups(), groupManager.getGroupSpace()
+		);
+		if(player == null)
+			forAllRelevantClients(config, p -> sendToClient(p, config, limitsPacketOtherPlayer, limitsPacket));
+		else
+			sendToClient(player, config, limitsPacketOtherPlayer, limitsPacket);
+	}
+
+	private void syncSubExistence(
+			ServerPlayer player,
+			PlayerSubConfig<?> config,
+			boolean create,
+			ClientboundPlayerConfigRemoveSubPacket removePacketOtherPlayer,
+			ClientboundPlayerConfigRemoveSubPacket removePacketNotOtherPlayer
+	) {
 		if (create) {
 			syncToClient(player, config, true);
-			PlayerConfig<?> mainConfig = config.getMainConfig();
+			PlayerConfig<?> mainConfig = config.getMain();
 			confirmSubConfigCreationSync(player, mainConfig);
-		} else {
-			ClientboundPlayerConfigRemoveSubPacket packet =
-					config.getType() == PlayerConfigType.PLAYER && !Objects.equals(player.getUUID(), config.getPlayerId()) ?
-						removePacketOtherPlayer : removePacketNotOtherPlayer;
-			sendToClient(player, packet);
+			return;
 		}
+		sendToClient(player, config, removePacketOtherPlayer, removePacketNotOtherPlayer);
 	}
 
 	@Override
@@ -214,5 +327,4 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		if(!playerData.getConfigSyncSpreadoutTask().stillNeedsSyncing(mainConfig))//otherwise the status will be sent later
 			sendSyncState(player, (PlayerConfig<?>) mainConfig, false);
 	}
-
 }

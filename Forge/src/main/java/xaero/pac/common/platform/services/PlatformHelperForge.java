@@ -18,6 +18,7 @@
 
 package xaero.pac.common.platform.services;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -51,6 +52,11 @@ public class PlatformHelperForge implements IPlatformHelper {
 	@Override
 	public boolean isDevelopmentEnvironment() {
 		return !FMLLoader.isProduction();
+	}
+
+	@Override
+	public boolean isDedicatedServer() {
+		return FMLLoader.getDist() == Dist.DEDICATED_SERVER;
 	}
 
 	@Override

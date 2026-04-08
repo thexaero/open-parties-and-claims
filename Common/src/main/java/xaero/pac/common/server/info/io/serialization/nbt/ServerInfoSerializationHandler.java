@@ -30,6 +30,7 @@ public class ServerInfoSerializationHandler extends SerializationHandler<Compoun
 		CompoundTag tag = new CompoundTag();
 		tag.putLong("totalUseTime", object.getTotalUseTime());
 		tag.putInt("version", ServerInfo.CURRENT_VERSION);
+		tag.putInt("targetPlayerConfigVersion", object.getTargetPlayerConfigVersion());
 		return tag;
 	}
 
@@ -37,7 +38,8 @@ public class ServerInfoSerializationHandler extends SerializationHandler<Compoun
 	public ServerInfo deserialize(Object id, ServerInfoHolder manager, CompoundTag serializedData) {
 		long useTime = serializedData.getLongOr("totalUseTime", 0);
 		int loadedVersion = serializedData.getIntOr("version", 0);
-		return new ServerInfo(useTime, loadedVersion);
+		int targetPlayerConfigVersion = serializedData.getIntOr("targetPlayerConfigVersion", 0);
+		return new ServerInfo(useTime, loadedVersion, targetPlayerConfigVersion);
 	}
 
 }
