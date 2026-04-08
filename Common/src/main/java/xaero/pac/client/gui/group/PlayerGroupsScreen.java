@@ -659,7 +659,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					guiGraphics.vLine(separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
 				}
 				if(isFirst)
-					guiGraphics.vLine(separatorLineX, y0, y, separatorLineColor);
+					guiGraphics.vLine(separatorLineX, y0 - 1, y, separatorLineColor);
 				if(isLast)
 					guiGraphics.vLine(separatorLineX, y + ROW_HEIGHT - 1, y1, separatorLineColor);
 				guiGraphics.drawString(
