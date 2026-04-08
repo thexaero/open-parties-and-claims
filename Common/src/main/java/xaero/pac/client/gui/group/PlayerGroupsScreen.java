@@ -741,7 +741,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 		@Override
 		public int getRowWidth() {
-			return width - Math.max(32, width / 8);
+			return width - 32;
 		}
 
 		@Override
