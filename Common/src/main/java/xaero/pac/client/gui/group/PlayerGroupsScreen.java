@@ -386,6 +386,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 						selectedGroupId
 				)
 		);
+		refreshButtonActiveStates();
 	}
 
 	private void onPlayerIncluded(String playerName){
@@ -421,6 +422,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 						selectedPlayer.getId(), selectedPlayer.getDisplayName()
 				)
 		);
+		refreshButtonActiveStates();
 	}
 
 	@Override
