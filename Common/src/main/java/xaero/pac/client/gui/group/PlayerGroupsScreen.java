@@ -656,7 +656,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					vLine(poseStack, separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
 				}
 				if(isFirst)
-					vLine(poseStack, separatorLineX, y0, y, separatorLineColor);
+					vLine(poseStack, separatorLineX, y0 - 1, y, separatorLineColor);
 				if(isLast)
 					vLine(poseStack, separatorLineX, y + ROW_HEIGHT - 1, y1, separatorLineColor);
 				drawString(
