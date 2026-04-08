@@ -673,7 +673,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					guiGraphics.vLine(separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
 				}
 				if(isFirst)
-					guiGraphics.vLine(separatorLineX, getY(), y, separatorLineColor);
+					guiGraphics.vLine(separatorLineX, GroupList.this.getY() - 1, y, separatorLineColor);
 				if(isLast)
 					guiGraphics.vLine(separatorLineX, y + ROW_HEIGHT - 1, getBottom(), separatorLineColor);
 				guiGraphics.drawString(
@@ -750,7 +750,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 		@Override
 		public int getRowWidth() {
-			return width - Math.max(32, width / 8);
+			return width - 32;
 		}
 
 		@Override
