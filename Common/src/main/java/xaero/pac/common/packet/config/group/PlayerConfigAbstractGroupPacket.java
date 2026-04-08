@@ -50,6 +50,8 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
+import xaero.pac.common.server.player.util.ServerPlayerUtils;
+import xaero.pac.common.server.world.ServerLevelHelper;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import javax.annotation.Nullable;
@@ -200,7 +202,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 				if(packet.type != PlayerConfigType.PLAYER){
 					OpenPartiesAndClaims.LOGGER.warn(
 							"Non-op player {} attempted to affect groups of the {} config!",
-							serverPlayer.getGameProfile().getName(),
+							serverPlayer.getGameProfile().name(),
 							packet.type
 					);
 					return;
@@ -208,13 +210,13 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 				if(packet.ownerId != null) {
 					OpenPartiesAndClaims.LOGGER.warn(
 							"Non-op player {} attempted to affect groups for another player!",
-							serverPlayer.getGameProfile().getName()
+							serverPlayer.getGameProfile().name()
 					);
 					return;
 				}
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(serverPlayer.getServer());
+					serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
 			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
 			IPlayerConfig config = ServerPlayerConfigUtils.getTargetConfig(
 					packet.ownerId, serverPlayer.getUUID(), packet.type, playerConfigs
@@ -222,7 +224,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 			if(config == null) {
 				OpenPartiesAndClaims.LOGGER.warn(
 						"Player {} attempted to affect groups of an unknown config!",
-						serverPlayer.getGameProfile().getName()
+						serverPlayer.getGameProfile().name()
 				);
 				return;
 			}
@@ -232,7 +234,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 			} catch(Exception e){
 				OpenPartiesAndClaims.LOGGER.info(
 						"Player {} failed to affect a group with id \"{}\" because of an exception: {}",
-						serverPlayer.getGameProfile().getName(),
+						serverPlayer.getGameProfile().name(),
 						packet.groupId,
 						e.getMessage()
 				);

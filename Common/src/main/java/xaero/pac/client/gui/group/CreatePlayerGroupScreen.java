@@ -22,6 +22,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
@@ -140,17 +141,16 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 	}
 
 	@Override
-	public boolean keyPressed(int code, int $$1, int $$2) {
-		if(code == GLFW.GLFW_KEY_ENTER && confirmButtonIsActive()) {
-			confirmButton.onPress();
+	public boolean keyPressed(KeyEvent event) {
+		if(event.key() == GLFW.GLFW_KEY_ENTER && confirmButtonIsActive()) {
+			confirmButton.onPress(event);
 			return true;
 		}
-		return super.keyPressed(code, $$1, $$2);
+		return super.keyPressed(event);
 	}
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics, mouseX, mouseY, partial);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, TITLE, width / 2, 26, -1);
 		guiGraphics.drawCenteredString(font, CHOOSE_ID, width / 2, this.height / 7 + 25, -1);

@@ -27,6 +27,8 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -522,8 +524,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 	}
 
 	@Override
-	public boolean keyPressed(int code, int $$1, int $$2) {
-		if(code == GLFW.GLFW_KEY_DELETE){
+	public boolean keyPressed(KeyEvent event) {
+		if(event.key() == GLFW.GLFW_KEY_DELETE){
 			if(groupList.isFocused())
 				onDeleteGroupButton(null);
 			else if(contentsList.isFocused()){
@@ -533,7 +535,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 			return true;
 		}
-		return super.keyPressed(code, $$1, $$2);
+		return super.keyPressed(event);
 	}
 
 	public class GroupList extends ObjectSelectionList<GroupList.Entry> {
@@ -544,8 +546,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected boolean isSelectedItem(int index) {
-			return false;//not rendering the defeault selection indicator
+		protected void renderSelection(GuiGraphics guiGraphics, Entry entry, int color) {
+			//not rendering the defeault selection indicator
 		}
 
 		private void createEntries(){
@@ -615,8 +617,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public boolean mouseClicked(double mouseX, double mouseY, int button) {
-				if(mouseX < scrollBarX() && button == 0) {
+			public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+				if(event.x() < scrollBarX() && event.button() == 0) {
 					select();
 					return true;
 				}
@@ -633,22 +635,31 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public void render(
+			public int getContentX() {
+				return getX();
+			}
+
+			@Override
+			public int getContentWidth() {
+				return super.getWidth();
+			}
+
+			@Override
+			public void renderContent(
 					GuiGraphics guiGraphics,
-					int index,
-					int y,
-					int x,
-					int rowWidth,
-					int rowHeight,
 					int mouseX,
 					int mouseY,
 					boolean hovered,
 					float partialTicks
 			){
+				int x = getContentX();
+				int y = getContentY();
+				int rowWidth = getContentWidth();
+				int rowHeight = getContentHeight();
 				hovered &= mouseX < scrollBarX();
-				boolean isFirst = index == 0;
-				boolean isLast = index == getItemCount() - 1;
-				boolean isSelected = GroupList.super.isSelectedItem(index);
+				boolean isFirst = GroupList.super.children().getFirst() == this;
+				boolean isLast = GroupList.super.children().getLast() == this;
+				boolean isSelected = GroupList.super.getSelected() == this;
 				int separatorLineColor = isFocused() ? -1 : LIST_TITLE_LABEL_COLOR;
 				int separatorLineX = x + rowWidth - 1;
 				if(maxScrollAmount() > 0)
@@ -687,8 +698,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected boolean isSelectedItem(int index) {
-			return false;//not rendering the defeault selection indicator
+		protected void renderSelection(GuiGraphics guiGraphics, ContentsList.AbstractEntry entry, int color) {
+			//not rendering the defeault selection indicator
 		}
 
 		private void reload(CustomPlayerConfigGroupData newSource){
@@ -755,12 +766,12 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
-			if(isMouseOver(mouseX, mouseY)) {
+		public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+			if(isMouseOver(event.x(), event.y())) {
 				selectionWorksForGroupDeletion = false;//not navigating with TAB, so can safely disable the group deletion button
 				refreshButtonStates();
 			}
-			return super.mouseClicked(mouseX, mouseY, button);
+			return super.mouseClicked(event, doubleClick);
 		}
 
 		public abstract class AbstractEntry extends ObjectSelectionList.Entry<AbstractEntry> {
@@ -772,8 +783,18 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public boolean mouseClicked(double mouseX, double mouseY, int button) {
-				if(mouseX < scrollBarX() && button == 0) {
+			public int getContentX() {
+				return getX();
+			}
+
+			@Override
+			public int getContentWidth() {
+				return super.getWidth();
+			}
+
+			@Override
+			public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+				if(event.x() < scrollBarX() && event.button() == 0) {
 					select();
 					return true;
 				}
@@ -815,18 +836,16 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public void render(
+			public void renderContent(
 					GuiGraphics guiGraphics,
-					int index,
-					int y,
-					int x,
-					int rowWidth,
-					int rowHeight,
 					int mouseX,
 					int mouseY,
 					boolean hovered,
 					float partialTicks
 			){
+				int x = getContentX();
+				int y = getContentY();
+				int rowHeight = getContentHeight();
 				hovered &= mouseX < scrollBarX();
 				boolean isSelected = getSelected() == this;
 				int labelX = x + 1;
@@ -860,18 +879,16 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public void render(
+			public void renderContent(
 					GuiGraphics guiGraphics,
-					int index,
-					int y,
-					int x,
-					int rowWidth,
-					int rowHeight,
 					int mouseX,
 					int mouseY,
 					boolean hovered,
 					float partialTicks
 			){
+				int x = getContentX();
+				int y = getContentY();
+				int rowHeight = getContentHeight();
 				hovered &= mouseX < scrollBarX();
 				boolean isSelected = getSelected() == this;
 				int labelX = x + 10;

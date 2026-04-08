@@ -133,7 +133,7 @@ public class PlayerConfigGroupGroupPacket extends PlayerConfigAbstractGroupPacke
 			}
 			OpenPartiesAndClaims.LOGGER.warn(
 					"Player {} has requested a very unusual change of a group inclusion: {}!",
-					serverPlayer.getGameProfile().getName(),
+					serverPlayer.getGameProfile().name(),
 					packet.action
 			);
 		}

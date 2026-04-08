@@ -32,6 +32,7 @@ import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 import xaero.pac.common.server.player.util.ServerPlayerUtils;
+import xaero.pac.common.server.world.ServerLevelHelper;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import javax.annotation.Nullable;
@@ -125,7 +126,7 @@ public class PlayerConfigGroupMemberPacket extends PlayerConfigAbstractGroupPack
 			if (packet.action == Action.INCLUDE) {
 				boolean isOp = serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS);
 				if(!isOp && packet.playerId == null &&
-						!ServerPlayerUtils.playerNameIsKnown(serverPlayer.getServer(), packet.playerName)){
+						!ServerPlayerUtils.playerNameIsKnown(ServerLevelHelper.getServer(serverPlayer), packet.playerName)){
 					//only ops are allowed to add previously unknown players
 					sendError(serverPlayer, packet, PlayerConfigGroupActionError.UNKNOWN_PLAYER);
 					return;
@@ -145,7 +146,7 @@ public class PlayerConfigGroupMemberPacket extends PlayerConfigAbstractGroupPack
 			}
 			OpenPartiesAndClaims.LOGGER.warn(
 					"Player {} has requested a very unusual change of a group member: {}!",
-					serverPlayer.getGameProfile().getName(),
+					serverPlayer.getGameProfile().name(),
 					packet.action
 			);
 		}

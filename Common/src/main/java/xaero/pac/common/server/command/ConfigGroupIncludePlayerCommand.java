@@ -92,7 +92,7 @@ public class ConfigGroupIncludePlayerCommand extends ConfigGroupCommand {
 	) {
 		return serverData.getServer().getPlayerList().getPlayers().stream()
 				.map(ServerPlayer::getGameProfile)
-				.map(GameProfile::getName);
+				.map(GameProfile::name);
 	}
 	
 }

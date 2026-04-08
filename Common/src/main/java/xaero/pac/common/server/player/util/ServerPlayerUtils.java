@@ -19,7 +19,9 @@
 package xaero.pac.common.server.player.util;
 
 import net.minecraft.server.MinecraftServer;
-import xaero.pac.common.server.core.accessor.IGameProfileCache;
+import net.minecraft.server.players.CachedUserNameToIdResolver;
+import net.minecraft.server.players.UserNameToIdResolver;
+import xaero.pac.common.server.core.accessor.ICachedUserNameToIdResolver;
 
 import java.util.Locale;
 
@@ -28,7 +30,10 @@ public class ServerPlayerUtils {
 	public static boolean playerNameIsKnown(MinecraftServer server, String name){
 		if(name == null)
 			return false;
-		return ((IGameProfileCache)server.getProfileCache()).xaero_pac_PlayerNameIsKnown(name.toLowerCase(Locale.ROOT));
+		UserNameToIdResolver idResolver = server.services().nameToIdCache();
+		if(!(idResolver instanceof CachedUserNameToIdResolver))
+			return false;
+		return ((ICachedUserNameToIdResolver)idResolver).xaero_pac_PlayerNameIsKnown(name.toLowerCase(Locale.ROOT));
 	}
 
 	public static boolean isValidPlayerNameChar(char c){

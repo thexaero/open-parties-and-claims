@@ -123,12 +123,12 @@ public class IncludePlayerScreen extends IncludeElementScreen implements IDropDo
 					Stream.of(""),
 					mc.getConnection().getOnlinePlayers().stream()
 							.map(PlayerInfo::getProfile)
-							.map(GameProfile::getName)
+							.map(GameProfile::name)
 			).toList();
 			String excludedName =
 					configData.getType() == PlayerConfigType.PLAYER &&
 					configData.getOwner() == mc.player.getUUID() ?
-							mc.player.getGameProfile().getName() : null;
+							mc.player.getGameProfile().name() : null;
 			List<String> filteredPlayers = allOnlinePlayers.stream()
 					.filter(s -> !s.equals(excludedName) && !groupData.playerNameIsIncluded(s))
 					.toList();

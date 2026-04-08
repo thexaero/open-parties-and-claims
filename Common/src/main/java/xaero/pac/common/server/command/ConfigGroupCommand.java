@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -36,6 +35,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -255,12 +255,12 @@ public abstract class ConfigGroupCommand {
 			ServerPlayer sourcePlayer,
 			AdaptiveLocalizer adaptiveLocalizer
 	) throws CommandSyntaxException {
-		GameProfile inputPlayer = getConfigInputPlayer(context, sourcePlayer,
+		NameAndId inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 				"gui.xaero_pac_config_group_too_many_targets",
 				"gui.xaero_pac_config_group_invalid_target", adaptiveLocalizer);
 		if(inputPlayer == null)
 			return null;
-		return inputPlayer.getId();
+		return inputPlayer.id();
 	}
 
 	protected abstract Either<Component, PlayerConfigGroupActionError> executeCommand(

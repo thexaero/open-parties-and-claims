@@ -70,11 +70,11 @@ public class CustomPlayerConfigGroup extends CachedPlayerConfigParentGroup imple
 
 	@Override
 	public boolean isDirectlyInGroup(IPlayerConfig contextConfig, @Nonnull ServerPlayer player) {
-		if(data.updateMemberName(player.getUUID(), player.getGameProfile().getName())) {
+		if(data.updateMemberName(player.getUUID(), player.getGameProfile().name())) {
 			if(storageConfig.getPlayerGroups().isLoaded())
 				storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
 						null, storageConfig, data.getId(),
-						PlayerConfigGroupMemberPacket.Action.NAME, player.getUUID(), player.getGameProfile().getName()
+						PlayerConfigGroupMemberPacket.Action.NAME, player.getUUID(), player.getGameProfile().name()
 				);
 			storageConfig.getPlayerGroups().setResaveNeeded();
 		}

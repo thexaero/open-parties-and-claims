@@ -26,6 +26,7 @@ import xaero.pac.common.player.config.group.custom.CustomPlayerGroupMember;
 import xaero.pac.common.server.player.config.PlayerConfig;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class CustomPlayerConfigGroupProfileUtils {
 
@@ -33,7 +34,8 @@ public class CustomPlayerConfigGroupProfileUtils {
 		PlayerConfig<?> storageConfig = group.getStorageConfig();
 		MinecraftServer server = storageConfig.getManager().getServer();
 		String name = member.getDisplayName();
-		server.getProfileCache().getAsync(name).thenAccept(lookedUpProfile -> {
+		CompletableFuture.supplyAsync(() -> server.services().nameToIdCache().get(name))
+				.thenAcceptAsync(lookedUpProfile -> {
 			if(member.getId() != null)//was already handled
 				return;
 			if(storageConfig.getPlayerGroups().getCustom(group.getId()) != group)//group was removed
@@ -42,7 +44,7 @@ public class CustomPlayerConfigGroupProfileUtils {
 			if(lookedUpProfile.isEmpty())
 				memberId = CustomPlayerConfigGroupData.UNKNOWN_ID;
 			else
-				memberId = lookedUpProfile.get().getId();
+				memberId = lookedUpProfile.get().id();
 			CustomPlayerGroupMember previousIdHolder = group.getData().confirmMemberId(member, memberId);
 			if(member.getId() == null)//member was previously removed
 				return;
@@ -68,7 +70,7 @@ public class CustomPlayerConfigGroupProfileUtils {
 					PlayerConfigGroupMemberPacket.Action.INCLUDE,
 					memberId, member.getDisplayName()
 			);
-		});
+		}, server);
 	}
 
 }

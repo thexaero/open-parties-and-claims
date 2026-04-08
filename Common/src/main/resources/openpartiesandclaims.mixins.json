@@ -16,7 +16,7 @@
         "MixinFireBlock",
         "MixinFishingHook",
         "MixinFlowingFluid",
-        "MixinGameProfileCache",
+        "MixinCachedUserNameToIdResolver",
         "MixinItemEntity",
         "MixinLevel",
         "MixinLightningBolt",
