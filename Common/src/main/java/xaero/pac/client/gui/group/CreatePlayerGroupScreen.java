@@ -150,7 +150,6 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics, mouseX, mouseY, partial);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, TITLE, width / 2, 26, -1);
 		guiGraphics.drawCenteredString(font, CHOOSE_ID, width / 2, this.height / 7 + 25, -1);
