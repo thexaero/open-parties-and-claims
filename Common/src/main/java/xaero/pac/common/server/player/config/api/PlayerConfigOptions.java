@@ -502,7 +502,10 @@ public class PlayerConfigOptions {
 		FULL_ACCESS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.fullAccess")
 				.setDefaultValue(PlayerConfigConstants.PARTY_EXCEPTION_ID)
-				.setComment("The chosen group gets full access to the chunks claimed with this config.")
+				.setComment(
+						"The chosen group gets full access to the chunks claimed with this config.\n"
+						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
+				)
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
