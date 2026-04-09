@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.player.config.api;
 
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Lists;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.player.config.PlayerConfigConstants;
