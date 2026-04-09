@@ -164,7 +164,9 @@ public class PlayerConfigTransformers {
 				"playerConfig.claims.protection.exceptions.mobLoot",
 				"playerConfig.claims.protection.exceptions.itemPickupPlayers",
 				"playerConfig.claims.protection.exceptions.itemPickupMobs",
-				"playerConfig.claims.protection.exceptions.xpPickup"
+				"playerConfig.claims.protection.exceptions.xpPickup",
+				"playerConfig.claims.protection.exceptions.projectileHitHostileSpawn",
+				"playerConfig.claims.protection.exceptions.projectileHitFriendlySpawn"
 		);
 		transformers.add(//6
 				new PlayerConfigValueChanger(
