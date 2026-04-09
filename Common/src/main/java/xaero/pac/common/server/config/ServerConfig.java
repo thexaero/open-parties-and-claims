@@ -767,7 +767,7 @@ public class ServerConfig {
 							"claims.protection.exceptions.itemTossOther",
 							"claims.protection.exceptions.itemTossRedirect",
 							"claims.protection.exceptions.mobLoot",
-							"claims.protection.exceptions.playerDeathLoot",
+							"claims.protection.playerDeathLoot",
 							"claims.protection.exceptions.itemPickupPlayers",
 							"claims.protection.exceptions.itemPickupMobs",
 							"claims.protection.exceptions.itemPickupRedirect",
