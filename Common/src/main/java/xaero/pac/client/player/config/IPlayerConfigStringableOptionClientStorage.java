@@ -18,7 +18,7 @@
 
 package xaero.pac.client.player.config;
 
-import xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI;
+import xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI;
 
 public interface IPlayerConfigStringableOptionClientStorage<T> extends IPlayerConfigStringableOptionClientStorageAPI<T>, IPlayerConfigOptionClientStorage<T> {
 
