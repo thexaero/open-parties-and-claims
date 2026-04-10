@@ -16,10 +16,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.client.player.config.api.v1;
+package xaero.pac.client.player.config.api;
 
-import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
-import xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
 import java.util.function.BiPredicate;
 
