@@ -252,13 +252,6 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		return valueType.getStringParser();
 	}
 
-	@Deprecated
-	@Nonnull
-	@Override
-	public Function<T, Component> getCommandOutputWriter() {
-		return getComponentWriter();
-	}
-
 	@Nonnull
 	@Override
 	public Function<T, Component> getComponentWriter() {
