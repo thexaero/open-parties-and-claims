@@ -156,7 +156,14 @@ public interface IPlayerConfigClientStorageAPI {
 	IClientPlayerConfigGroupManagerAPI getPlayerGroups();
 
 	/**
-	 * @deprecated use {@link #getOption(IPlayerConfigOptionSpecAPI)} instead
+	 * @deprecated use {@link #getOption(IPlayerConfigOptionSpecAPI)} instead<p>
+	 * Gets the config option value storage for a specified config option in this config.
+	 * <p>
+	 * All player config option types are statically accessible in {@link xaero.pac.common.server.player.config.api.PlayerConfigOptions}.
+	 *
+	 * @param option  the player config option, not null
+	 * @return the value storage for the config option, not null
+	 * @param <T>  the type of the option value
 	 */
 	@Deprecated
 	default <T extends Comparable<T>>xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI<?> getOptionStorage(@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<T> option){
@@ -174,7 +181,10 @@ public interface IPlayerConfigClientStorageAPI {
 	}
 
 	/**
-	 * @deprecated use {@link #options()} instead
+	 * @deprecated use {@link #options()} instead<p>
+	 * Gets a stream of all config option value storages for this config.
+	 *
+	 * @return the {@link Stream} of all config option value storages, not null
 	 */
 	@Deprecated
 	default Stream<xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI<?>> optionStream(){

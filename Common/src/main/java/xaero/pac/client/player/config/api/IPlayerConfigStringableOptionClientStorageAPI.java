@@ -71,19 +71,34 @@ public interface IPlayerConfigStringableOptionClientStorageAPI<T extends Compara
 	public boolean isMutable();
 
 	/**
-	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead<p>
+	 * Gets the string input parser for this option.
+	 * <p>
+	 * It is the same one that is used for parsing command inputs.
+	 *
+	 * @return the string input parser function, not null
 	 */
 	@Deprecated
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead<p>
+	 * Gets the string output writer for this option.
+	 * <p>
+	 * It is the same one that is used for displaying option values in command outputs.
+	 * <p>
+	 * It accepts values of any type but will only work with the right one.
+	 *
+	 * @return the string output writer function, not null
 	 */
 	@Deprecated
 	public Function<Object, Component> getCommandOutputWriterCast();
 
 	/**
-	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead<p>
+	 * Gets the string value input validator for this option.
+	 *
+	 * @return the string value input validator function, not null
 	 */
 	@Deprecated
 	public BiPredicate<IPlayerConfigClientStorageAPI, String> getStringValidator();
