@@ -16,11 +16,10 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.config.api.v1;
+package xaero.pac.common.server.player.config.api;
 
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import java.util.List;
 import java.util.function.BiPredicate;
