@@ -159,7 +159,7 @@ public interface IPlayerConfigClientStorageAPI {
 	 * @deprecated use {@link #getOption(IPlayerConfigOptionSpecAPI)} instead
 	 */
 	@Deprecated
-	default <T extends Comparable<T>> xaero.pac.client.player.config.api.v1.IPlayerConfigStringableOptionClientStorageAPI<?> getOptionStorage(@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI<T> option){
+	default <T extends Comparable<T>>xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI<?> getOptionStorage(@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<T> option){
 		CompatPlayerConfigOptionSpec<T, ?> compatOption = (CompatPlayerConfigOptionSpec<T, ?>) option;
 		return createCompatOptionStorage(compatOption);
 	}
@@ -177,8 +177,8 @@ public interface IPlayerConfigClientStorageAPI {
 	 * @deprecated use {@link #options()} instead
 	 */
 	@Deprecated
-	default Stream<xaero.pac.client.player.config.api.v1.IPlayerConfigStringableOptionClientStorageAPI<?>> optionStream(){
-		return xaero.pac.common.server.player.config.api.v1.PlayerConfigOptions.OPTIONS.values().stream().map(this::getOptionStorage);
+	default Stream<xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI<?>> optionStream(){
+		return xaero.pac.common.server.player.config.api.PlayerConfigOptions.OPTIONS.values().stream().map(this::getOptionStorage);
 	}
 
 }

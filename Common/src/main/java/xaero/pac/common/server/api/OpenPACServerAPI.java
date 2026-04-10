@@ -90,7 +90,7 @@ public class OpenPACServerAPI {
 	 */
 	@Deprecated
 	@Nonnull
-	public xaero.pac.common.server.player.config.api.v1.IPlayerConfigManagerAPI getPlayerConfigs() {
+	public xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI getPlayerConfigs() {
 		return serverData.getPlayerConfigs();
 	}
 
