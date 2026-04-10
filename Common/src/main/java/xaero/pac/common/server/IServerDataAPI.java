@@ -34,7 +34,7 @@ public interface IServerDataAPI {
 	public IPlayerConfigManagerAPI getPlayerConfigManager();
 
 	@Deprecated
-	public xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI getPlayerConfigs();
+	public xaero.pac.common.server.player.config.api.v1.IPlayerConfigManagerAPI getPlayerConfigs();
 
 	public OpenPACServerAPI getAPI();
 

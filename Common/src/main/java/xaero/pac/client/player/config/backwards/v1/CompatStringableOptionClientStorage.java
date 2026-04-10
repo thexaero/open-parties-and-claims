@@ -20,8 +20,8 @@ package xaero.pac.client.player.config.backwards.v1;
 
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
-import xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.client.player.config.api.v1.IPlayerConfigStringableOptionClientStorageAPI;
+import xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.backwards.v1.CompatPlayerConfigOptionSpec;
 
 import javax.annotation.Nonnull;

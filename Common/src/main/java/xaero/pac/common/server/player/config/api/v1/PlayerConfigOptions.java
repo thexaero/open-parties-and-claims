@@ -16,7 +16,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.config.api;
+package xaero.pac.common.server.player.config.api.v1;
 
 import static xaero.pac.common.player.config.PlayerConfigConstants.*;
 import xaero.pac.common.server.player.config.*;

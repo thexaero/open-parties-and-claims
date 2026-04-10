@@ -295,8 +295,8 @@ public interface IChunkProtectionAPI {
 	 */
 	@Deprecated
 	default boolean checkProtectionLeveledOption(
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigAPI claimConfig,
 			@Nonnull Entity accessor
 	){
 		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
@@ -313,8 +313,8 @@ public interface IChunkProtectionAPI {
 	 */
 	@Deprecated
 	default boolean checkProtectionLeveledOption(
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigAPI claimConfig,
 			@Nonnull UUID accessorId
 	) {
 		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
@@ -331,8 +331,8 @@ public interface IChunkProtectionAPI {
 	 */
 	@Deprecated
 	default boolean checkExceptionLeveledOption(
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigAPI claimConfig,
 			@Nonnull Entity accessor
 	){
 		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
@@ -349,8 +349,8 @@ public interface IChunkProtectionAPI {
 	 */
 	@Deprecated
 	default boolean checkExceptionLeveledOption(
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
-			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.v1.IPlayerConfigAPI claimConfig,
 			@Nonnull UUID accessorId
 	){
 		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
@@ -366,7 +366,7 @@ public interface IChunkProtectionAPI {
 	 * @deprecated use {@link #getConfig(IPlayerChunkClaimAPI)} instead
 	 */
 	@Deprecated
-	default xaero.pac.common.server.player.config.api.IPlayerConfigAPI getClaimConfig(@Nullable IPlayerChunkClaimAPI claim){
+	default xaero.pac.common.server.player.config.api.v1.IPlayerConfigAPI getClaimConfig(@Nullable IPlayerChunkClaimAPI claim){
 		IPlayerConfigAPI actualConfig = getConfig(claim);
 		return new CompatPlayerConfig(actualConfig);
 	}
