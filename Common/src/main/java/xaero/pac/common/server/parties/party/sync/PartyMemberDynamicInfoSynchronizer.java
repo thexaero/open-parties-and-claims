@@ -29,7 +29,7 @@ import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
