@@ -52,6 +52,7 @@ import xaero.pac.common.server.player.PlayerLogoutHandler;
 import xaero.pac.common.server.player.PlayerTickHandler;
 import xaero.pac.common.server.player.PlayerWorldJoinHandler;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
+import xaero.pac.common.server.player.config.backwards.v1.CompatPlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import xaero.pac.common.server.player.localization.ServerTranslationLoader;
@@ -95,6 +96,9 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private AdaptiveLocalizer adaptiveLocalizer;
 	private final OpenPACServerAPI api;
 
+	@Deprecated
+	private final CompatPlayerConfigManager compatPlayerConfigs;
+
 	public ServerData(MinecraftServer server, PartyManager partyManager, PartyManagerIO<?> partyManagerIO,
 					  PlayerLogInPartyAssigner playerPartyAssigner, PartyPlayerInfoUpdater partyMemberInfoUpdater,
 					  PartyExpirationHandler partyExpirationHandler, ServerTickHandler serverTickHandler,
@@ -136,6 +140,8 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.playerPermissionSystemManager = playerPermissionSystemManager;
 		this.playerPartySystemManager = playerPartySystemManager;
 		api = new OpenPACServerAPI(this);
+
+		compatPlayerConfigs = new CompatPlayerConfigManager(playerConfigs);
 	}
 
 	public void onServerResourcesReload(ResourceManager resourceManager){
@@ -199,7 +205,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	}
 
 	@Override
-	public PlayerConfigManager<ServerParty, ServerClaimsManager> getPlayerConfigs() {
+	public PlayerConfigManager<ServerParty, ServerClaimsManager> getPlayerConfigManager() {
 		return playerConfigs;
 	}
 	
@@ -310,6 +316,12 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	@Override
 	public OpenPACServerAPI getAPI() {
 		return api;
+	}
+
+	@Deprecated
+	@Override
+	public xaero.pac.common.server.player.config.api.v1.IPlayerConfigManagerAPI getPlayerConfigs() {
+		return compatPlayerConfigs;
 	}
 
 }

@@ -30,8 +30,8 @@ import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionG
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.dynamic.PlayerConfigDynamicOptionsLoader;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
@@ -43,7 +43,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static xaero.pac.common.server.player.config.api.PlayerConfigOptions.OPTIONS;
+import static xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions.OPTIONS;
 
 public final class PlayerConfigManager
 <
