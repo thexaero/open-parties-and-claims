@@ -41,7 +41,7 @@ import xaero.pac.common.server.lazypacket.task.schedule.LazyPacketScheduleTaskHa
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
@@ -137,8 +137,8 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		if(!playerData.checkBaseClaimLimitsSync(currentBaseClaimLimit, currentBaseForceloadLimit))
 			return;
 		if(playerData.haveCheckedBaseForceloadLimitOnce()) {
-			syncClaimLimits(serverData.getPlayerConfigs().getLoadedConfig(player.getUUID()), player);
-			serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), false);
+			syncClaimLimits(serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID()), player);
+			serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigManager(), player.getUUID(), false);
 		}
 		playerData.setCheckedBaseForceloadLimitOnce();
 		playerData.setLastClaimLimitsSyncValues(currentBaseClaimLimit, currentBaseForceloadLimit);
@@ -329,7 +329,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 
 	@Override
 	public void syncOnLogin(ServerPlayer player) {
-		IPlayerConfigManager configManager = serverData.getPlayerConfigs();
+		IPlayerConfigManager configManager = serverData.getPlayerConfigManager();
 		IPlayerConfig config = configManager.getLoadedConfig(player.getUUID());
 		startSyncing(player);
 		syncClaimLimits(config, player);

@@ -100,7 +100,7 @@ public class ConfigCommandUtil {
 			} else
 				configOwnerId = PlayerConfig.SERVER_CLAIM_UUID;
 			String lowerCaseInput = builder.getRemainingLowerCase();
-			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configOwnerId);
+			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(configOwnerId);
 			List<String> subConfigIds = playerConfig.getSubConfigIds();
 			Stream<String> baseStream = subConfigIds.stream();
 			if(!lowerCaseInput.isEmpty())

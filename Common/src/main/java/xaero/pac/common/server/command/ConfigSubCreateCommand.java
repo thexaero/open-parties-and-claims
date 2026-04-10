@@ -108,7 +108,7 @@ public class ConfigSubCreateCommand {
 				return 0;//going too fast
 			playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
 
-			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
+			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
 
 			if(playerConfig.getSubCount() >= playerConfig.getSubConfigLimit()){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub_id_limit_reached", playerConfig.getSubConfigLimit()));

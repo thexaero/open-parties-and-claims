@@ -19,9 +19,9 @@
 package xaero.pac.client.player.config;
 
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
-import xaero.pac.client.player.config.api.IPlayerConfigStringableOptionClientStorageAPI;
+import xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI;
 import xaero.pac.client.player.config.group.IClientPlayerConfigGroupManager;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
@@ -34,7 +34,7 @@ public interface IPlayerConfigClientStorage<OS extends IPlayerConfigStringableOp
 
 	//internal api
 	@Nonnull
-	public <T> OS getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
+	public <T> IPlayerConfigStringableOptionClientStorage<T> getOption(@Nonnull IPlayerConfigOptionSpecAPI<T> option);
 
 	@Nonnull
 	public Stream<OS> typedOptionStream();
@@ -42,7 +42,7 @@ public interface IPlayerConfigClientStorage<OS extends IPlayerConfigStringableOp
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default Stream<IPlayerConfigStringableOptionClientStorageAPI<?>> optionStream(){
+	default Stream<IPlayerConfigStringableOptionClientStorageAPI<?>> options(){
 		return (Stream<IPlayerConfigStringableOptionClientStorageAPI<?>>)(Object)typedOptionStream();
 	}
 

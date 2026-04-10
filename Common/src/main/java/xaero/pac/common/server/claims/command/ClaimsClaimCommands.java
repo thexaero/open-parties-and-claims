@@ -95,7 +95,7 @@ public class ClaimsClaimCommands {
 				ClaimResult<?> result = null;
 				try {
 					if(shouldClaim) {
-						IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(player.getUUID());
+						IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
 						IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
 						int subConfigIndex = usedSubConfig.getSubIndex();
 						result = claimsManager.tryToClaimTyped(world.dimension().identifier(), playerId, subConfigIndex, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, shouldReplace);

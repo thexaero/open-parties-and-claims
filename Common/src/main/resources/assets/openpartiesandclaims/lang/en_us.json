@@ -499,5 +499,6 @@
 	"gui.xaero_pac_config_delete_group_confirmation_request" : "Please add \" confirm\" at the end of the command to confirm the deletion.",
 	"gui.xaero_pac_config_delete_group_confirmation_fail" : "Please make sure the \" confirm\" at the end of the command is typed correctly.",
 	"gui.xaero_pac_config_group_too_many_targets" : "Only one target player is allowed!",
-	"gui.xaero_pac_config_group_invalid_target" : "Invalid target player!"
+	"gui.xaero_pac_config_group_invalid_target" : "Invalid target player!",
+	"gui.xaero_pac_config_deprecated_api_option" : "Deprecated Option"
 }

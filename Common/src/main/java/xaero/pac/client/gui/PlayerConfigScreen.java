@@ -47,8 +47,8 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigHexOptionSpec;
 import xaero.pac.common.server.player.config.PlayerConfigListIterationOptionSpec;
 import xaero.pac.common.server.player.config.PlayerConfigStringOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
@@ -246,7 +246,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				PlayerConfigStringableOptionClientStorage<T> option){
 			T value;
 			if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
-				value = defaultPlayerConfigData.getOptionStorage(option.getOption()).getValue();
+				value = defaultPlayerConfigData.getOption(option.getOption()).getValue();
 			else
 				value = option.getValue();
 			return value;
@@ -375,10 +375,10 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			PlayerConfigStringableOptionClientStorage<String> usedSubConfigOptionStorage;
 			if(data.getType() == PlayerConfigType.SERVER){
 				usedSubConfigSyncDest = mainPlayerConfigData;
-				usedSubConfigOptionStorage = mainPlayerConfigData.getOptionStorage(PlayerConfigOptions.USED_SERVER_SUBCLAIM);
+				usedSubConfigOptionStorage = mainPlayerConfigData.getOption(PlayerConfigOptions.USED_SERVER_SUBCLAIM);
 			} else {
 				usedSubConfigSyncDest = data;
-				usedSubConfigOptionStorage = data.getOptionStorage(PlayerConfigOptions.USED_SUBCLAIM);
+				usedSubConfigOptionStorage = data.getOption(PlayerConfigOptions.USED_SUBCLAIM);
 			}
 
 			String selected = data.getSelectedSubConfig();

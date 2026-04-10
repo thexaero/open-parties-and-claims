@@ -217,7 +217,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
-			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 			IPlayerConfig config = ServerPlayerConfigUtils.getTargetConfig(
 					packet.ownerId, serverPlayer.getUUID(), packet.type, playerConfigs
 			);

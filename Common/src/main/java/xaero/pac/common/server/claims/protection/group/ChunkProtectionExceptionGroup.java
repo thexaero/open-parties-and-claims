@@ -25,7 +25,7 @@ import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionSet;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
 import xaero.pac.common.server.claims.protection.ExceptionElementType;
 import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import java.util.regex.Pattern;
 import java.util.stream.Stream;

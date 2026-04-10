@@ -52,8 +52,8 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI.SetResult;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI.SetResult;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
@@ -217,7 +217,7 @@ public class ConfigSetCommand {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigs().getOptionForId(targetConfigOptionId);
+			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigManager().getOptionForId(targetConfigOptionId);
 			if(option == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_key"));
 				return 0;
@@ -241,10 +241,10 @@ public class ConfigSetCommand {
 			
 			IPlayerConfig playerConfig =
 					type == PlayerConfigType.DEFAULT_PLAYER ?
-						serverData.getPlayerConfigs().getDefaultConfig() : 
+						serverData.getPlayerConfigManager().getDefaultConfig() :
 							type == PlayerConfigType.EXPIRED ?
-								serverData.getPlayerConfigs().getExpiredClaimConfig() : 
-										serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
+								serverData.getPlayerConfigManager().getExpiredClaimConfig() :
+										serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
 			IPlayerConfig effectivePlayerConfig = getEffectiveConfig(context, playerConfig);
 			if(effectivePlayerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_sub"));
@@ -285,7 +285,7 @@ public class ConfigSetCommand {
 		return (context, builder) -> {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(context.getSource().getServer());
-			IPlayerConfigManager configs = serverData.getPlayerConfigs();
+			IPlayerConfigManager configs = serverData.getPlayerConfigManager();
 			String optionKey = context.getArgument("key", String.class);
 			IPlayerConfigOptionSpecAPI<?> option = configs.getOptionForId(optionKey);
 			if (option == null)

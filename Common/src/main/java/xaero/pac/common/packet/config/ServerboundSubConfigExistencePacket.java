@@ -135,7 +135,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				}
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
-			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 			IPlayerConfig config = !isServer ?
 										playerConfigs.getLoadedConfig(ownerId) :
 										playerConfigs.getServerClaimConfig();

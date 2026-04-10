@@ -38,8 +38,8 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
@@ -100,7 +100,7 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
-			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 			IPlayerConfig config =
 					t.getType() == PlayerConfigType.PLAYER ?
 							playerConfigs.getLoadedConfig(ownerId) :

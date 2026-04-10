@@ -44,9 +44,9 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
@@ -117,9 +117,9 @@ public class ClaimsSubClaimUseCommand {
 				return 0;
 			UUID configPlayerUUID = inputPlayer.id();
 
-			IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
+			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
 			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;
-			IPlayerConfig rootConfig = type == PlayerConfigType.SERVER ? serverData.getPlayerConfigs().getServerClaimConfig() : playerConfig;
+			IPlayerConfig rootConfig = type == PlayerConfigType.SERVER ? serverData.getPlayerConfigManager().getServerClaimConfig() : playerConfig;
 
 			IPlayerConfig result = rootConfig.getSubConfig(inputSubId);
 			if(result == null){
