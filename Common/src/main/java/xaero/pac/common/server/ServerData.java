@@ -320,7 +320,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 
 	@Deprecated
 	@Override
-	public xaero.pac.common.server.player.config.api.v1.IPlayerConfigManagerAPI getPlayerConfigs() {
+	public xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI getPlayerConfigs() {
 		return compatPlayerConfigs;
 	}
 
