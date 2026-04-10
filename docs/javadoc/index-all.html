@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="script-dir/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="jquery-ui.overrides.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
-<script type="text/javascript" src="script-dir/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="script-dir/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="index-page">
@@ -57,6 +57,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds a new ally party to this party.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#addCustom(java.lang.String)" class="member-name-link">addCustom(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Attempts to add a new custom group to this group manager with a specified ID.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#addCustomLimited(java.lang.String)" class="member-name-link">addCustomLimited(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Attempts to add a new custom group to this group manager with a specified ID.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#addMember(java.util.UUID,xaero.pac.common.parties.party.member.PartyMemberRank,java.lang.String)" class="member-name-link">addMember(UUID, PartyMemberRank, String)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>
 <div class="block">Adds a new party member with specified player UUID, rank and username.</div>
@@ -100,6 +108,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The bonus chunk forceloads on top of the normal limit.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#BONUS_PLAYER_GROUP_SPACE" class="member-name-link">BONUS_PLAYER_GROUP_SPACE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">The bonus player group total that this player can create.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#BONUS_PLAYER_GROUPS" class="member-name-link">BONUS_PLAYER_GROUPS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">The number of bonus player groups that this player can create.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
@@ -125,9 +141,228 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Directly replaces the current claim state of a chunk.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_DISPENSER_BARRIER" class="member-name-link">CLAIM_DISPENSER_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against directly dispensing into the claim.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_BLOCKS_BY_EXPLOSIONS" class="member-name-link">CLAIM_EXCEPTION_BLOCKS_BY_EXPLOSIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for explosions affecting blocks.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_BLOCKS_BY_MOBS" class="member-name-link">CLAIM_EXCEPTION_BLOCKS_BY_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for mobs breaking/placing blocks.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_BLOCKS_BY_OTHER" class="member-name-link">CLAIM_EXCEPTION_BLOCKS_BY_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for non-living entities breaking/placing blocks.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for players breaking and interacting with blocks.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_BLOCKS_REDIRECT" class="member-name-link">CLAIM_EXCEPTION_BLOCKS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk block protection redirects the used config option to the owner of the entity.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_BUTTONS_BY_PROJECTILES" class="member-name-link">CLAIM_EXCEPTION_BUTTONS_BY_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for buttons being pressed by projectiles.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_CHORUS_FRUIT" class="member-name-link">CLAIM_EXCEPTION_CHORUS_FRUIT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for chorus fruit teleportation into the claim.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_CROP_TRAMPLE" class="member-name-link">CLAIM_EXCEPTION_CROP_TRAMPLE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for crop trample.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ENTITIES_BY_EXPLOSIONS" class="member-name-link">CLAIM_EXCEPTION_ENTITIES_BY_EXPLOSIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for explosions affecting entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ENTITIES_BY_FIRE" class="member-name-link">CLAIM_EXCEPTION_ENTITIES_BY_FIRE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for fire hurting entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ENTITIES_BY_MOBS" class="member-name-link">CLAIM_EXCEPTION_ENTITIES_BY_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for mobs interacting with entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ENTITIES_BY_OTHER" class="member-name-link">CLAIM_EXCEPTION_ENTITIES_BY_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for non-living entities interacting with entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ENTITIES_BY_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_ENTITIES_BY_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for players interacting with entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ENTITIES_REDIRECT" class="member-name-link">CLAIM_EXCEPTION_ENTITIES_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk entity protection redirects the used config option to the owner of the attacking entity.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_FIRE_SPREAD" class="member-name-link">CLAIM_EXCEPTION_FIRE_SPREAD</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for fire spread.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_FRIENDLY_NATURAL_SPAWN" class="member-name-link">CLAIM_EXCEPTION_FRIENDLY_NATURAL_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for natural spawn of friendly mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_FRIENDLY_SPAWNERS" class="member-name-link">CLAIM_EXCEPTION_FRIENDLY_SPAWNERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection disables spawners for friendly mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_FROST_WALKING" class="member-name-link">CLAIM_EXCEPTION_FROST_WALKING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for frost walking.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_HOSTILE_NATURAL_SPAWN" class="member-name-link">CLAIM_EXCEPTION_HOSTILE_NATURAL_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for natural spawn of hostile mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_HOSTILE_SPAWNERS" class="member-name-link">CLAIM_EXCEPTION_HOSTILE_SPAWNERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection disables spawners for hostile mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_PICKUP_MOBS" class="member-name-link">CLAIM_EXCEPTION_ITEM_PICKUP_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for items being picked up by mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_PICKUP_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_ITEM_PICKUP_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for items being picked up by players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_PICKUP_REDIRECT" class="member-name-link">CLAIM_EXCEPTION_ITEM_PICKUP_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk item pickup protection redirects the used config option to the owner of the entity picking up the item.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_TOSS_MOBS" class="member-name-link">CLAIM_EXCEPTION_ITEM_TOSS_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for items being dropped by mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_TOSS_OTHER" class="member-name-link">CLAIM_EXCEPTION_ITEM_TOSS_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for items being dropped by non-living entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_TOSS_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_ITEM_TOSS_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for items being dropped by players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_TOSS_REDIRECT" class="member-name-link">CLAIM_EXCEPTION_ITEM_TOSS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk item drop protection redirects the used config option to the owner of the dropping entity.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_ITEM_USE" class="member-name-link">CLAIM_EXCEPTION_ITEM_USE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for item use.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_NETHER_PORTALS_MOBS" class="member-name-link">CLAIM_EXCEPTION_NETHER_PORTALS_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for mobs using nether portals.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_NETHER_PORTALS_OTHER" class="member-name-link">CLAIM_EXCEPTION_NETHER_PORTALS_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for non-living entities using nether portals.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_NETHER_PORTALS_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_NETHER_PORTALS_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for players using nether portals.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLATES_BY_MOBS" class="member-name-link">CLAIM_EXCEPTION_PLATES_BY_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for pressure plates being pressed by mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLATES_BY_OTHER" class="member-name-link">CLAIM_EXCEPTION_PLATES_BY_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for pressure plates being pressed by non-living entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLATES_BY_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_PLATES_BY_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for pressure plates being pressed by players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLAYER_LIGHTNING" class="member-name-link">CLAIM_EXCEPTION_PLAYER_LIGHTNING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for player-caused lightnings.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLAYERS_BY_MOBS" class="member-name-link">CLAIM_EXCEPTION_PLAYERS_BY_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for mobs attacking players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLAYERS_BY_OTHER" class="member-name-link">CLAIM_EXCEPTION_PLAYERS_BY_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for other entities attacking players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for player VS player combat.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PLAYERS_REDIRECT" class="member-name-link">CLAIM_EXCEPTION_PLAYERS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk player protection redirects the used config option to the owner of the attacking entity.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PROJECTILE_HIT_FRIENDLY_SPAWN" class="member-name-link">CLAIM_EXCEPTION_PROJECTILE_HIT_FRIENDLY_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for non-hostile mobs being spawned by
+ landing projectiles (e.g.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_PROJECTILE_HIT_HOSTILE_SPAWN" class="member-name-link">CLAIM_EXCEPTION_PROJECTILE_HIT_HOSTILE_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for hostile mobs being spawned by
+ landing projectiles (e.g.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_RAIDS" class="member-name-link">CLAIM_EXCEPTION_RAIDS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for village raids.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_TARGETS_BY_PROJECTILES" class="member-name-link">CLAIM_EXCEPTION_TARGETS_BY_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for target blocks being pressed by projectiles.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_TRIPWIRE_BY_MOBS" class="member-name-link">CLAIM_EXCEPTION_TRIPWIRE_BY_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for tripwires being pressed by mobs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_TRIPWIRE_BY_OTHER" class="member-name-link">CLAIM_EXCEPTION_TRIPWIRE_BY_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for tripwires being pressed by non-living entities.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_TRIPWIRE_BY_PLAYERS" class="member-name-link">CLAIM_EXCEPTION_TRIPWIRE_BY_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for tripwires being pressed by players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_EXCEPTION_XP_PICKUP" class="member-name-link">CLAIM_EXCEPTION_XP_PICKUP</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for experience orbs being picked up by players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_FLUID_BARRIER" class="member-name-link">CLAIM_FLUID_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against fluids flowing into the claim.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#CLAIM_LIMIT_REACHED" class="member-name-link">CLAIM_LIMIT_REACHED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The maximum number of claims was reached</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_MOB_GRIEFING_OVERRIDE" class="member-name-link">CLAIM_MOB_GRIEFING_OVERRIDE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection options for block/entity/items override the value of the vanilla "mob griefing" game rule.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_PISTON_BARRIER" class="member-name-link">CLAIM_PISTON_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against pistons pushing into the claim.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_PROTECTION_MOB_LOOT" class="member-name-link">CLAIM_PROTECTION_MOB_LOOT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for mob loot being dropped.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_PROTECTION_NEIGHBOR_CHUNKS_ITEM_USE" class="member-name-link">CLAIM_PROTECTION_NEIGHBOR_CHUNKS_ITEM_USE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
+ neighbor chunks of the claim.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CLAIM_PROTECTION_PLAYER_DEATH_LOOT" class="member-name-link">CLAIM_PROTECTION_PLAYER_DEATH_LOOT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk protection makes an exception for items dropped on player death.</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.html" class="type-name-link" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="xaero/pac/common/claims/result/api/ClaimResult.html" title="type parameter in ClaimResult">C</a> extends <a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt; - Class in <a href="xaero/pac/common/claims/result/api/package-summary.html">xaero.pac.common.claims.result.api</a></dt>
 <dd>
@@ -165,6 +400,12 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/world/capability/api/ClientWorldMainCapabilityAPI.html#%3Cinit%3E()" class="member-name-link">ClientWorldMainCapabilityAPI()</a> - Constructor for class xaero.pac.client.world.capability.api.<a href="xaero/pac/client/world/capability/api/ClientWorldMainCapabilityAPI.html" title="class in xaero.pac.client.world.capability.api">ClientWorldMainCapabilityAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#copyData()" class="member-name-link">copyData()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
+<dd>
+<div class="block">Creates a copy of the stored data.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#copyData()" class="member-name-link">copyData()</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html#createPartyForOwner(net.minecraft.world.entity.player.Player)" class="member-name-link">createPartyForOwner(Player)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IPartyManagerAPI</a></dt>
 <dd>
 <div class="block">Creates a new party to be owned by a specified logged in player.</div>
@@ -173,9 +414,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new sub-config for a specified sub-config ID when possible.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#CUSTOM_PLAYER_GROUPS" class="member-name-link">CUSTOM_PLAYER_GROUPS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">The option used to store player groups.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
+<dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#dataExists(java.lang.String)" class="member-name-link">dataExists(String)</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html#dataExists(java.lang.String)" class="member-name-link">dataExists(String)</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataManagerAPI</a></dt>
+<dd>
+<div class="block">Checks whether a specified group ID corresponds to one of the custom groups whose data is stored in this
+ group manager.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#dataExists(java.lang.String)" class="member-name-link">dataExists(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#DEFAULT_PLAYER" class="member-name-link">DEFAULT_PLAYER</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
 <dd>
 <div class="block">The default player config</div>
@@ -187,6 +441,18 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#excludeGroup(java.lang.String)" class="member-name-link">excludeGroup(String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Attempts to exclude the group with a specified ID from this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#excludeMember(java.util.UUID,java.lang.String)" class="member-name-link">excludeMember(UUID, String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Attempts to exclude the member entry with a specified UUID and/or name from this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#excludeMember(xaero.pac.common.player.config.group.custom.api.ICustomPlayerGroupMemberAPI)" class="member-name-link">excludeMember(ICustomPlayerGroupMemberAPI)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Attempts to exclude a specified member entry from this group.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#EXPIRED" class="member-name-link">EXPIRED</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
 <dd>
 <div class="block">Expired claims config</div>
@@ -210,6 +476,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the player data for a specified logged in player.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#FULL_ACCESS" class="member-name-link">FULL_ACCESS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Which player group has full access to the claimed chunks.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
@@ -225,6 +495,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerRegionClaimsAPI.html#get(int,int)" class="member-name-link">get(int, int)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerRegionClaimsAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerRegionClaimsAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the group with a specified ID and wraps the group if it originates from the default player config.</div>
+</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAllyInfoStorageAPI.html#get(java.util.UUID)" class="member-name-link">get(UUID)</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAllyInfoStorageAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAllyInfoStorageAPI</a></dt>
 <dd>
 <div class="block">Gets info about an ally party with the specified ID.</div>
@@ -262,6 +536,14 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the API for the server-side adaptive text localizer that lets you create translated text components
  that are readable even by players that don't have the mod installed.</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#getAllIdsSorted()" class="member-name-link">getAllIdsSorted()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html#getAllIdsSorted()" class="member-name-link">getAllIdsSorted()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataManagerAPI</a></dt>
+<dd>
+<div class="block">Gets a sorted list of all group IDs that can be used as config option exception values in this config.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#getAllIdsSorted()" class="member-name-link">getAllIdsSorted()</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#getAllOptionsStream()" class="member-name-link">getAllOptionsStream()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
 <dd>
 <div class="block">Gets a stream of all player config option types, including the dynamic ones.</div>
@@ -426,13 +708,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the String->value parser of this option, mainly used for commands.</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#getCommandMessage()" class="member-name-link">getCommandMessage()</a> - Method in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Gets this error's message to display after using a command.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getCommandOutputWriter()" class="member-name-link">getCommandOutputWriter()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
-<div class="block">Gets the value->String converter of this option, mainly used for commands.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getComponentWriter()"><code>IPlayerConfigOptionSpecAPI.getComponentWriter()</code></a> instead</div>
+</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html#getCommandOutputWriterCast()" class="member-name-link">getCommandOutputWriterCast()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>
-<div class="block">Gets the string output writer for this option.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html#getComponentWriterCast()"><code>IPlayerConfigStringableOptionClientStorageAPI.getComponentWriterCast()</code></a> instead.</div>
+</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#getComment()" class="member-name-link">getComment()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
 <dd>
@@ -463,6 +753,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getCommentTranslationArgs()" class="member-name-link">getCommentTranslationArgs()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
 <div class="block">Gets the translation key arguments for the comment of this option.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getComponentWriter()" class="member-name-link">getComponentWriter()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets the value->Component converter of this option, mainly used for commands.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html#getComponentWriterCast()" class="member-name-link">getComponentWriterCast()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
+<dd>
+<div class="block">Gets the component output writer for this option.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getConfigTypeFilter()" class="member-name-link">getConfigTypeFilter()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
@@ -496,6 +794,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the index of the sub-config currently used for new claims.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#getCustom(java.lang.String)" class="member-name-link">getCustom(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the API for the custom group with a specified ID in this group manager.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigManagerAPI.html#getDefaultConfig()" class="member-name-link">getDefaultConfig()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigManagerAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the default player config instance.</div>
@@ -523,6 +825,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getDefaultValue()" class="member-name-link">getDefaultValue()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
 <div class="block">Gets the default value that this option is set to in configs.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#getDesyncScreenMessage()" class="member-name-link">getDesyncScreenMessage()</a> - Method in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Gets this error's message to display on the player group screen.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientDimensionClaimsManagerAPI.html#getDimension()" class="member-name-link">getDimension()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientDimensionClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientDimensionClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -559,6 +865,30 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getDimensionStream()" class="member-name-link">getDimensionStream()</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets a stream of all read-only dimension claims managers.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#getDirectGroupIds()" class="member-name-link">getDirectGroupIds()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
+<dd>
+<div class="block">Gets a set containing all group IDs directly included in this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigParentGroupAPI.html#getDirectGroupIds()" class="member-name-link">getDirectGroupIds()</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigParentGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigParentGroupAPI</a></dt>
+<dd>
+<div class="block">Gets a set containing all group IDs directly included in this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#getDirectGroupIds()" class="member-name-link">getDirectGroupIds()</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#getDirectMembers()" class="member-name-link">getDirectMembers()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
+<dd>
+<div class="block">Gets a set of member entries directly included in this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#getDirectMembers()" class="member-name-link">getDirectMembers()</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerGroupMemberAPI.html#getDisplayLabel()" class="member-name-link">getDisplayLabel()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerGroupMemberAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerGroupMemberAPI</a></dt>
+<dd>
+<div class="block">Gets the display label for this member entry, including the tooltip.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerGroupMemberAPI.html#getDisplayName()" class="member-name-link">getDisplayName()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerGroupMemberAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerGroupMemberAPI</a></dt>
+<dd>
+<div class="block">Gets the name of the player if it is part of the entry.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#getEffective(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI)" class="member-name-link">getEffective(IPlayerConfigOptionSpecAPI&lt;T&gt;)</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>
@@ -612,6 +942,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the raw config value from the effective config of a config option, e.g.</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#getGroupSpace()" class="member-name-link">getGroupSpace()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html#getGroupSpace()" class="member-name-link">getGroupSpace()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the total group space available in this group manager for non-op players.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#getGroupSpace()" class="member-name-link">getGroupSpace()</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
@@ -624,11 +962,23 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the UUID of this party.</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerGroupMemberAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerGroupMemberAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerGroupMemberAPI</a></dt>
+<dd>
+<div class="block">Gets the UUID of the player if it is part of the entry.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
 <div class="block">Gets the ID of this option.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Gets the ID of this group.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#getIds()" class="member-name-link">getIds()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Gets a set of all custom group IDs the client is currently aware of for this config.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getIntPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getIntPermission(ServerPlayer, IPermissionNodeAPI&lt;Integer&gt;)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
 <dd>
@@ -670,6 +1020,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the maximum distance for claiming/forceloading a chunk allowed by the server.</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#getMaxGroups()" class="member-name-link">getMaxGroups()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html#getMaxGroups()" class="member-name-link">getMaxGroups()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the maximum number of groups that a non-op player can create in this group manager.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#getMaxGroups()" class="member-name-link">getMaxGroups()</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#getMemberCount()" class="member-name-link">getMemberCount()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/parties/party/api/IPartyAPI.html#getMemberCount()" class="member-name-link">getMemberCount()</a> - Method in interface xaero.pac.common.parties.party.api.<a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyAPI</a></dt>
@@ -844,6 +1202,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the API for the server-side player config manager.</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#getPlayerGroups()" class="member-name-link">getPlayerGroups()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
+<dd>
+<div class="block">Gets the API for this config's player groups.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#getPlayerGroups()" class="member-name-link">getPlayerGroups()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
+<dd>
+<div class="block">Gets the API for this config's player groups.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html#getPlayerId()" class="member-name-link">getPlayerId()</a> - Method in interface xaero.pac.client.claims.player.api.<a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html#getPlayerId()" class="member-name-link">getPlayerId()</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></dt>
@@ -958,6 +1324,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the number of result types (<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api"><code>ClaimResult.Type</code></a>).</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#getSize()" class="member-name-link">getSize()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
+<dd>
+<div class="block">Gets the size of this custom player group (included members and groups).</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#getSize()" class="member-name-link">getSize()</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#getStaffInfoStream()" class="member-name-link">getStaffInfoStream()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/parties/party/api/IPartyAPI.html#getStaffInfoStream()" class="member-name-link">getStaffInfoStream()</a> - Method in interface xaero.pac.common.parties.party.api.<a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyAPI</a></dt>
@@ -1112,6 +1484,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the number of members in the local client player's party, meant for the UI.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#getUnwrapped(java.lang.String)" class="member-name-link">getUnwrapped(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the group with a specified ID without wrapping groups that originate from the default player config.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#getUsedServerSubConfig()" class="member-name-link">getUsedServerSubConfig()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="block">Gets the server sub-config currently used for new claims.</div>
@@ -1185,6 +1561,40 @@ loadScripts(document, 'script');</script>
 <div class="block">Gives an entity UUID a full pass to circumvent claim protection when affecting entities/blocks/items,
  except when the methods of this API are used, e.g.</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#GROUP_ALREADY_EXISTS" class="member-name-link">GROUP_ALREADY_EXISTS</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to create a group with an ID that is already used.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#GROUP_ALREADY_INCLUDED" class="member-name-link">GROUP_ALREADY_INCLUDED</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to include a group in a group which is already included.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#GROUP_COUNT_LIMIT" class="member-name-link">GROUP_COUNT_LIMIT</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to create a new group but the group count limit has been reached.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#GROUP_ID_TOO_LONG" class="member-name-link">GROUP_ID_TOO_LONG</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to use a group ID that is longer than 16 characters.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#GROUP_INCLUSION_NOT_FOUND" class="member-name-link">GROUP_INCLUSION_NOT_FOUND</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to affect a group's group inclusion entry that is not in the group.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#GROUP_TO_EDIT_NOT_FOUND" class="member-name-link">GROUP_TO_EDIT_NOT_FOUND</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to edit a group using a group ID that isn't used.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#GROUP_TO_REMOVE_NOT_FOUND" class="member-name-link">GROUP_TO_REMOVE_NOT_FOUND</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to remove a group using a group ID that isn't used.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#groupIdIsIncluded(java.lang.String)" class="member-name-link">groupIdIsIncluded(String)</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
+<dd>
+<div class="block">Checks whether a specified group ID is included in this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#groupIdIsIncluded(java.lang.String)" class="member-name-link">groupIdIsIncluded(String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
@@ -1279,6 +1689,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for claim info of a player on the client side</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" class="type-name-link" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a> - Interface in <a href="xaero/pac/client/player/config/group/api/package-summary.html">xaero.pac.client.player.config.group.api</a></dt>
+<dd>
+<div class="block">API for player groups of a player config on the client side</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientRegionClaimsAPI.html" class="type-name-link" title="interface in xaero.pac.client.claims.api">IClientRegionClaimsAPI</a> - Interface in <a href="xaero/pac/client/claims/api/package-summary.html">xaero.pac.client.claims.api</a></dt>
 <dd>
 <div class="block">API for region claims on the client side</div>
@@ -1286,6 +1700,22 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/world/api/IClientWorldDataAPI.html" class="type-name-link" title="interface in xaero.pac.client.world.api">IClientWorldDataAPI</a> - Interface in <a href="xaero/pac/client/world/api/package-summary.html">xaero.pac.client.world.api</a></dt>
 <dd>
 <div class="block">API for data attached to a client world</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a> - Interface in <a href="xaero/pac/common/server/player/config/group/custom/api/package-summary.html">xaero.pac.common.server.player.config.group.custom.api</a></dt>
+<dd>
+<div class="block">API for a custom player config group</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" class="type-name-link" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a> - Interface in <a href="xaero/pac/common/player/config/group/custom/api/package-summary.html">xaero.pac.common.player.config.group.custom.api</a></dt>
+<dd>
+<div class="block">API for stored data of a custom player config group</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataManagerAPI</a> - Interface in <a href="xaero/pac/common/player/config/group/custom/api/package-summary.html">xaero.pac.common.player.config.group.custom.api</a></dt>
+<dd>
+<div class="block">API for a custom player config group data manager</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerGroupMemberAPI.html" class="type-name-link" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerGroupMemberAPI</a> - Interface in <a href="xaero/pac/common/player/config/group/custom/api/package-summary.html">xaero.pac.common.player.config.group.custom.api</a></dt>
+<dd>
+<div class="block">The API for a player group member entry</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/api/IDimensionClaimsManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.claims.api">IDimensionClaimsManagerAPI</a> - Interface in <a href="xaero/pac/common/claims/api/package-summary.html">xaero.pac.common.claims.api</a></dt>
 <dd>
@@ -1295,9 +1725,33 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The option is not allowed in this config</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#includeGroup(java.lang.String)" class="member-name-link">includeGroup(String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Attempts to include the group with a specified ID in this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#includeGroupLimited(java.lang.String)" class="member-name-link">includeGroupLimited(String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Attempts to include the group with a specified ID in this group.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#includeMember(java.util.UUID,java.lang.String)" class="member-name-link">includeMember(UUID, String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Attempts to include a member in this group using specified UUID or player name.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#includeMemberLimited(java.util.UUID,java.lang.String)" class="member-name-link">includeMemberLimited(UUID, String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Attempts to include a member in this group using specified UUID or player name.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.SetResult.html#INVALID" class="member-name-link">INVALID</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api">IPlayerConfigAPI.SetResult</a></dt>
 <dd>
 <div class="block">The value is not valid for the option</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#INVALID_GROUP_ID" class="member-name-link">INVALID_GROUP_ID</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to use an invalid group ID.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#INVALID_PLAYER_NAME" class="member-name-link">INVALID_PLAYER_NAME</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to include a player in a group with a name that isn't valid.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#invitePlayer(java.util.UUID,java.lang.String)" class="member-name-link">invitePlayer(UUID, String)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>
@@ -1359,19 +1813,27 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for the player config storage manager on the client side</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a> - Interface in <a href="xaero/pac/common/server/player/config/group/api/package-summary.html">xaero.pac.common.server.player.config.group.api</a></dt>
+<dd>
+<div class="block">API for a player group</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigManagerAPI</a> - Interface in <a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a></dt>
 <dd>
 <div class="block">API for the player config manager on the server side</div>
 </dd>
-<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" class="type-name-link" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt;&gt; - Interface in <a href="xaero/pac/client/player/config/api/package-summary.html">xaero.pac.client.player.config.api</a></dt>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" class="type-name-link" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="type parameter in IPlayerConfigOptionClientStorageAPI">T</a>&gt; - Interface in <a href="xaero/pac/client/player/config/api/package-summary.html">xaero.pac.client.player.config.api</a></dt>
 <dd>
 <div class="block">API for a player config option value storage on the client side</div>
 </dd>
-<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="type parameter in IPlayerConfigOptionSpecAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="type parameter in IPlayerConfigOptionSpecAPI">T</a>&gt;&gt; - Interface in <a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a></dt>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="type parameter in IPlayerConfigOptionSpecAPI">T</a>&gt; - Interface in <a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a></dt>
 <dd>
 <div class="block">A player config option instance used for player config option representation in various API features.</div>
 </dd>
-<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" class="type-name-link" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt; - Interface in <a href="xaero/pac/client/player/config/api/package-summary.html">xaero.pac.client.player.config.api</a></dt>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigParentGroupAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigParentGroupAPI</a> - Interface in <a href="xaero/pac/common/server/player/config/group/api/package-summary.html">xaero.pac.common.server.player.config.group.api</a></dt>
+<dd>
+<div class="block">API for a player group that may contain other groups</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" class="type-name-link" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt; - Interface in <a href="xaero/pac/client/player/config/api/package-summary.html">xaero.pac.client.player.config.api</a></dt>
 <dd>
 <div class="block">API for a stringable player config option value storage on the client side</div>
 </dd>
@@ -1443,6 +1905,25 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html#isDefaulted()" class="member-name-link">isDefaulted()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#isDirectlyConfigurable()" class="member-name-link">isDirectlyConfigurable()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets whether this option can be directly configured, as opposed
+ to being configurable only by the mod's internal code, like the option
+ used for storing the custom player group data, which shouldn't be accessed
+ directly.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#isDirectlyInGroup(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">isDirectlyInGroup(IPlayerConfigAPI, UUID)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player with a specified UUID is directly in this group in a specified context.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#isDirectlyInGroup(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,net.minecraft.server.level.ServerPlayer)" class="member-name-link">isDirectlyInGroup(IPlayerConfigAPI, ServerPlayer)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Checks whether a server player is directly in this group in a specified context.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#isDirectlyInGroup(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,net.minecraft.server.level.ServerPlayer,java.util.UUID)" class="member-name-link">isDirectlyInGroup(IPlayerConfigAPI, ServerPlayer, UUID)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player with either a specified object or a UUID is directly in this group in a specified context.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a> - Interface in <a href="xaero/pac/common/server/claims/api/package-summary.html">xaero.pac.common.server.claims.api</a></dt>
 <dd>
 <div class="block">API for the claims manager on the server side</div>
@@ -1459,6 +1940,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for claim info of a player on the server side</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a> - Interface in <a href="xaero/pac/common/server/player/config/group/api/package-summary.html">xaero.pac.common.server.player.config.group.api</a></dt>
+<dd>
+<div class="block">API for player groups of a player config on the server side</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerRegionClaimsAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.claims.api">IServerRegionClaimsAPI</a> - Interface in <a href="xaero/pac/common/server/claims/api/package-summary.html">xaero.pac.common.server.claims.api</a></dt>
 <dd>
 <div class="block">API for region claims on the server side</div>
@@ -1466,6 +1951,18 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html#isForceloadable()" class="member-name-link">isForceloadable()</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></dt>
 <dd>
 <div class="block">Checks whether this claim is marked for forceloading.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#isInGroup(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">isInGroup(IPlayerConfigAPI, UUID)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player with a specified UUID is in this group in a specified context.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#isInGroup(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,net.minecraft.server.level.ServerPlayer)" class="member-name-link">isInGroup(IPlayerConfigAPI, ServerPlayer)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Checks whether a server player is in this group in a specified context.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#isInGroup(xaero.pac.common.server.player.config.api.IPlayerConfigAPI,net.minecraft.server.level.ServerPlayer,java.util.UUID)" class="member-name-link">isInGroup(IPlayerConfigAPI, ServerPlayer, UUID)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player with either a specified object or a UUID is in this group in a specified context.</div>
 </dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#isInvited(java.util.UUID)" class="member-name-link">isInvited(UUID)</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -1493,6 +1990,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks whether an option is allowed in this config.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#isOverridable()" class="member-name-link">isOverridable()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets whether this option can be overridden by a sub-config.</div>
+</dd>
 <dt><a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html#isOwner()" class="member-name-link">isOwner()</a> - Method in interface xaero.pac.common.parties.party.member.api.<a href="xaero/pac/common/parties/party/member/api/IPartyMemberAPI.html" title="interface in xaero.pac.common.parties.party.member.api">IPartyMemberAPI</a></dt>
 <dd>
 <div class="block">Checks whether this party member is the owner of the party.</div>
@@ -1515,6 +2016,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks whether the local client player is in server claim mode.</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#isSyncInProgress()" class="member-name-link">isSyncInProgress()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Checks whether server-client synchronization of player groups is currently in progress.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
@@ -1530,6 +2035,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The maximum forceload number int "permission".</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#MAX_PLAYER_GROUPS" class="member-name-link">MAX_PLAYER_GROUPS</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The maximum player group count int "permission".</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#MEMBER_ALREADY_INCLUDED" class="member-name-link">MEMBER_ALREADY_INCLUDED</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to include a player in a group who is already included.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#MEMBER_NOT_FOUND" class="member-name-link">MEMBER_NOT_FOUND</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to affect a group member entry that is not in the group.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#message" class="member-name-link">message</a> - Variable in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">A message describing the result</div>
@@ -1537,6 +2054,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:N">N</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#NO_EFFECT" class="member-name-link">NO_EFFECT</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when an operation didn't necessarily fail but had no effect.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The user doesn't have permission to make server claims</div>
@@ -1548,6 +2069,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NOT_CLAIMED_BY_USER_FORCELOAD" class="member-name-link">NOT_CLAIMED_BY_USER_FORCELOAD</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The chunk isn't claimed by who is trying to (un)forceload it</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.SetResult.html#NOT_DIRECTLY_CONFIGURABLE" class="member-name-link">NOT_DIRECTLY_CONFIGURABLE</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api">IPlayerConfigAPI.SetResult</a></dt>
+<dd>
+<div class="block">The option is not directly configurable</div>
 </dd>
 </dl>
 <h2 class="title" id="I:O">O</h2>
@@ -1675,6 +2200,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets a stream of all config option value storages for this config.</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#OUT_OF_SPACE" class="member-name-link">OUT_OF_SPACE</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when trying to include something in a group but the group space has been exhausted for the config.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:P">P</h2>
 <dl class="index">
@@ -1690,6 +2219,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A player config</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#PLAYER_GROUP_SPACE" class="member-name-link">PLAYER_GROUP_SPACE</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The player group space int "permission".</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" class="type-name-link" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a> - Enum Class in <a href="xaero/pac/common/player/config/group/api/package-summary.html">xaero.pac.common.player.config.group.api</a></dt>
+<dd>
+<div class="block">Enum that defines different errors that may occur during various player group operations.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" class="type-name-link" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a> - Class in <a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a></dt>
 <dd>
 <div class="block">An access point for all static player config option specifications/representations.</div>
@@ -1700,236 +2237,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">All possible player config types</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#playerIdIsIncluded(java.util.UUID)" class="member-name-link">playerIdIsIncluded(UUID)</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player with a specified UUID is one of the member entries.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#playerIdIsIncluded(java.util.UUID)" class="member-name-link">playerIdIsIncluded(UUID)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#playerNameIsIncluded(java.lang.String)" class="member-name-link">playerNameIsIncluded(String)</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
+<dd>
+<div class="block">Checks whether a specified player name is one of the member entries.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#playerNameIsIncluded(java.lang.String)" class="member-name-link">playerNameIsIncluded(String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS" class="member-name-link">PROTECT_CLAIMED_CHUNKS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the player's claimed chunks are protected at all.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_EXPLOSIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against explosions.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against mobs breaking/placing blocks.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against non-living entities breaking/placing blocks.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against players breaking and interacting with blocks.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BLOCKS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk block protection redirects the used config option to the owner of the entity.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES" class="member-name-link">PROTECT_CLAIMED_CHUNKS_BUTTONS_FROM_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of buttons being pressed by projectiles.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_CHORUS_FRUIT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against chorus fruit teleportation into the claim.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE" class="member-name-link">PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against crop trample.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_DISPENSER_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against directly dispensing into the claim.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_EXPLOSIONS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes entity protection against explosions.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_FIRE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes entity protection against fire damage.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes entity protection against mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes entity protection against non-living entities.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes entity protection against players.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ENTITIES_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk entity protection redirects the used config option to the owner of the attacking entity.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FLUID_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against fluids flowing into the claim.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FRIENDLY_NATURAL_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes natural spawn prevention for friendly mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FRIENDLY_SPAWNERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection disables spawners for friendly mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FROM_ALLY_PARTIES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against allies of the party that the player is in.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FROM_FIRE_SPREAD</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against fire spread.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection from frost walking.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_FROM_PARTY" class="member-name-link">PROTECT_CLAIMED_CHUNKS_FROM_PARTY</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against the party that the player is in.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN" class="member-name-link">PROTECT_CLAIMED_CHUNKS_HOSTILE_NATURAL_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes natural spawn prevention for hostile mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_HOSTILE_SPAWNERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection disables spawners for hostile mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against items being picked up by mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against items being picked up by players.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_PICKUP_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk item pickup protection redirects the used config option to the owner of the entity picking up the item.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against items being dropped by mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against items being dropped by non-living entities.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against items being dropped by players.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_TOSS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk item drop protection redirects the used config option to the owner of the dropping entity.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_ITEM_USE" class="member-name-link">PROTECT_CLAIMED_CHUNKS_ITEM_USE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against item use.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE" class="member-name-link">PROTECT_CLAIMED_CHUNKS_MOB_GRIEFING_OVERRIDE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection options for block/entity/items override the value of the vanilla "mob griefing" game rule.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_MOB_LOOT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_MOB_LOOT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection from mob loot being dropped unless killed by players with access.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE" class="member-name-link">PROTECT_CLAIMED_CHUNKS_NEIGHBOR_CHUNKS_ITEM_USE</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against at-air (or sometimes other) item use in
- neighbor chunks of the claim.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against mobs using nether portals.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against non-living entities using nether portals.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_NETHER_PORTALS_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against players using nether portals.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PISTON_BARRIER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against pistons pushing into the claim.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLATES_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of pressure plates being pressed by mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLATES_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of pressure plates being pressed by non-living entities.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLATES_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of pressure plates being pressed by players.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYER_DEATH_LOOT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection for items dropped on player death.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYER_LIGHTNING</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against player-caused lightnings.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes player protection against mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes player protection against non-living entities.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYERS_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes player protection against players.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PLAYERS_REDIRECT</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk player protection redirects the used config option to the owner of the attacking entity.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_FRIENDLY_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes prevention of non-hostile mobs being spawned by
- landing projectiles (e.g.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN" class="member-name-link">PROTECT_CLAIMED_CHUNKS_PROJECTILE_HIT_HOSTILE_SPAWN</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes prevention of hostile mobs being spawned by
- landing projectiles (e.g.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_RAIDS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_RAIDS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against village raids.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES" class="member-name-link">PROTECT_CLAIMED_CHUNKS_TARGETS_FROM_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of target blocks being pressed by projectiles.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_MOBS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of tripwires being pressed by mobs.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER" class="member-name-link">PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_OTHER</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of tripwires being pressed by non-living entities.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS" class="member-name-link">PROTECT_CLAIMED_CHUNKS_TRIPWIRE_FROM_PLAYERS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection of tripwires being pressed by players.</div>
-</dd>
-<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PROTECT_CLAIMED_CHUNKS_XP_PICKUP" class="member-name-link">PROTECT_CLAIMED_CHUNKS_XP_PICKUP</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
-<dd>
-<div class="block">Whether the claimed chunk protection includes protection against experience orbs being picked up by players.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:R">R</h2>
@@ -1967,6 +2289,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#removeAllyParty(java.util.UUID)" class="member-name-link">removeAllyParty(UUID)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>
 <div class="block">Removes an ally party from this party.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#removeCustom(java.lang.String)" class="member-name-link">removeCustom(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
+<dd>
+<div class="block">Attempts to remove a custom group from this group manager with a specified ID.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#removeFullPass(java.util.UUID)" class="member-name-link">removeFullPass(UUID)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
 <dd>
@@ -2062,6 +2388,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the player shares their in-game location with their party's mutual allies.</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#shouldRefreshGroupScreen()" class="member-name-link">shouldRefreshGroupScreen()</a> - Method in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Gets whether this error should cause the player group screen to refresh.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#subConfigExists(int)" class="member-name-link">subConfigExists(int)</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="block">Checks whether a sub-config with a specified index exists.</div>
@@ -2097,6 +2427,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#SUCCESSFUL_UNFORCELOAD" class="member-name-link">SUCCESSFUL_UNFORCELOAD</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">Successfully unforceloaded a chunk</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#supportsConfigType(xaero.pac.common.server.player.config.api.PlayerConfigType)" class="member-name-link">supportsConfigType(PlayerConfigType)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
+<dd>
+<div class="block">Checks whether this player group supports a specified player config type.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:T">T</h2>
@@ -2157,6 +2491,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Removes the player invitation for a specified player UUID.</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#UNKNOWN_PLAYER" class="member-name-link">UNKNOWN_PLAYER</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Error returned when a non-op player tries to include a player in a group who the server isn't aware of yet.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#USED_SERVER_SUBCLAIM" class="member-name-link">USED_SERVER_SUBCLAIM</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">The current sub-config ID that the player uses for new server claims.</div>
@@ -2178,6 +2516,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.SetResult.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api">IPlayerConfigAPI.SetResult</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -2187,6 +2529,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#values()" class="member-name-link">values()</a> - Static method in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#values()" class="member-name-link">values()</a> - Static method in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
@@ -2225,6 +2572,8 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/player/config/api/package-summary.html">xaero.pac.client.player.config.api</a> - package xaero.pac.client.player.config.api</dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/client/player/config/group/api/package-summary.html">xaero.pac.client.player.config.group.api</a> - package xaero.pac.client.player.config.group.api</dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/world/api/package-summary.html">xaero.pac.client.world.api</a> - package xaero.pac.client.world.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/world/capability/api/package-summary.html">xaero.pac.client.world.capability.api</a> - package xaero.pac.client.world.capability.api</dt>
@@ -2245,6 +2594,10 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/parties/party/member/api/package-summary.html">xaero.pac.common.parties.party.member.api</a> - package xaero.pac.common.parties.party.member.api</dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/api/package-summary.html">xaero.pac.common.player.config.group.api</a> - package xaero.pac.common.player.config.group.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/group/custom/api/package-summary.html">xaero.pac.common.player.config.group.custom.api</a> - package xaero.pac.common.player.config.group.custom.api</dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/api/package-summary.html">xaero.pac.common.server.api</a> - package xaero.pac.common.server.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/claims/api/package-summary.html">xaero.pac.common.server.claims.api</a> - package xaero.pac.common.server.claims.api</dt>
@@ -2258,6 +2611,10 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/server/parties/system/api/package-summary.html">xaero.pac.common.server.parties.system.api</a> - package xaero.pac.common.server.parties.system.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a> - package xaero.pac.common.server.player.config.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/api/package-summary.html">xaero.pac.common.server.player.config.group.api</a> - package xaero.pac.common.server.player.config.group.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/config/group/custom/api/package-summary.html">xaero.pac.common.server.player.config.group.custom.api</a> - package xaero.pac.common.server.player.config.group.custom.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/data/api/package-summary.html">xaero.pac.common.server.player.data.api</a> - package xaero.pac.common.server.player.data.api</dt>
 <dd>&nbsp;</dd>

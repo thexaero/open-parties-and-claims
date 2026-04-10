@@ -61,7 +61,7 @@ extends IServerDataAPI {
 	@Override
 	public CM getServerClaimsManager();
 	@Override
-	public IPlayerConfigManager getPlayerConfigs();
+	public IPlayerConfigManager getPlayerConfigManager();
 	@Override
 	public AdaptiveLocalizer getAdaptiveLocalizer();
 	@Override

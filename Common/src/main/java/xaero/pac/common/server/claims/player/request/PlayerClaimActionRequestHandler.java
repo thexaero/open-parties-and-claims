@@ -78,7 +78,7 @@ public class PlayerClaimActionRequestHandler {
 		UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
-		IPlayerConfig playerConfig = serverData.getPlayerConfigs().getLoadedConfig(player.getUUID());
+		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
 		IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
 		int subConfigIndex = usedSubConfig.getSubIndex();
 		int fromX = player.chunkPosition().x;

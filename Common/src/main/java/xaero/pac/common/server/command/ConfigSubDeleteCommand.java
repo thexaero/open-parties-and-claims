@@ -116,7 +116,7 @@ public class ConfigSubDeleteCommand {
 				return 0;//going too fast
 			playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
 
-			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
+			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
 			PlayerConfig<?> result = playerConfig.getSubConfig(inputSubId);
 			if(result == null){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_not_exist"));
