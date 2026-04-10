@@ -18,8 +18,8 @@
 
 package xaero.pac.common.server.player.config.backwards.v1;
 
-import xaero.pac.common.server.player.config.api.v1.IPlayerConfigAPI;
-import xaero.pac.common.server.player.config.api.v1.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
