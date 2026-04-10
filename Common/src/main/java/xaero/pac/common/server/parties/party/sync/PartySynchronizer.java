@@ -39,7 +39,7 @@ import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.party.ServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import java.util.List;
@@ -167,7 +167,7 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 	}
 
 	public void sendBasePartyPackets(ServerPlayer player, ServerParty party){
-		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 		sendToClient(player,
 				party == null ?
 						new ClientboundPartyPacket(null, null, 0, 0, 0, 0, 0, 0) :
@@ -202,7 +202,7 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 	}
 	
 	private String fetchConfiguredPartyName(ServerParty party) {
-		return fetchConfiguredPartyName(serverData.getPlayerConfigs(), party);
+		return fetchConfiguredPartyName(serverData.getPlayerConfigManager(), party);
 	}
 	
 	private String fetchConfiguredPartyName(IPlayerConfigManager playerConfigs, ServerParty party) {

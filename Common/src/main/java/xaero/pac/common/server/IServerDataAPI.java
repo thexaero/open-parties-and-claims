@@ -22,7 +22,7 @@ import xaero.pac.common.server.api.OpenPACServerAPI;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.protection.api.IChunkProtectionAPI;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigManagerAPI;
 import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 
 public interface IServerDataAPI {
@@ -31,7 +31,10 @@ public interface IServerDataAPI {
 
 	public IServerClaimsManagerAPI getServerClaimsManager();
 
-	public IPlayerConfigManagerAPI getPlayerConfigs();
+	public IPlayerConfigManagerAPI getPlayerConfigManager();
+
+	@Deprecated
+	public xaero.pac.common.server.player.config.api.v1.IPlayerConfigManagerAPI getPlayerConfigs();
 
 	public OpenPACServerAPI getAPI();
 

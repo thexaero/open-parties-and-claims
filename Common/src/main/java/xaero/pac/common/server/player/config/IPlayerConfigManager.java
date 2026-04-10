@@ -19,7 +19,7 @@
 package xaero.pac.common.server.player.config;
 
 import net.minecraft.server.MinecraftServer;
-import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigManagerAPI;
 import xaero.pac.common.server.player.config.sync.IPlayerConfigSynchronizer;
 
 import javax.annotation.Nonnull;

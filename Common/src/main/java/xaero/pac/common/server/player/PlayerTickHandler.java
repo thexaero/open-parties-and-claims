@@ -50,7 +50,7 @@ public class PlayerTickHandler {
 			return;
 		mainCap.onTick();
 		if(mainCap.shouldResyncPlayerConfigs()) {
-			serverData.getPlayerConfigs().getSynchronizer().syncAllToClient(player);
+			serverData.getPlayerConfigManager().getSynchronizer().syncAllToClient(player);
 			mainCap.setShouldResyncPlayerConfigs(false);
 		}
 		if(ServerConfig.CONFIG.claimsEnabled.get()) {

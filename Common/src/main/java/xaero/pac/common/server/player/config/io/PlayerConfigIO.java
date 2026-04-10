@@ -34,7 +34,7 @@ import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigDeserializationInfo;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigSerializationHandler;
