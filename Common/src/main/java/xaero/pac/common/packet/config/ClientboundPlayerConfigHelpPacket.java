@@ -28,7 +28,7 @@ import xaero.pac.client.gui.PlayerConfigScreen;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

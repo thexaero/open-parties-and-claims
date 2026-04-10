@@ -107,7 +107,7 @@ public class ConfigSubListCommand {
 				configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
 
 
-			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
+			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
 
 			List<String> subConfigIds =  playerConfig.getSubConfigIds();
 			int startAt = IntegerArgumentType.getInteger(context, "start-at");

@@ -18,8 +18,8 @@
 
 package xaero.pac.common.server.player.config;
 
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 
 import javax.annotation.Nonnull;

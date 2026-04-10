@@ -24,8 +24,8 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 

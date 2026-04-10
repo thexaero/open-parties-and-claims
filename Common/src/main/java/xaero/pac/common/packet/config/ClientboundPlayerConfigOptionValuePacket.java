@@ -77,7 +77,7 @@ public class ClientboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 					value = option.getValueType().getSyncDecoder().apply(entry.getValueTag());
 				} catch(Throwable e){
 				}
-				IPlayerConfigStringableOptionClientStorage<?> optionStorage = forwardedStorage.getOptionStorage(option);
+				IPlayerConfigStringableOptionClientStorage<?> optionStorage = forwardedStorage.getOption(option);
 				optionStorage.setCastValue(value);
 				optionStorage.setMutable(entry.isMutable());
 				optionStorage.setDefaulted(entry.isDefaulted());

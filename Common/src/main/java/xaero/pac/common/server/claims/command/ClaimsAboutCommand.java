@@ -48,7 +48,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Collection;
@@ -85,7 +85,7 @@ public class ClaimsAboutCommand {
 			}
 			final GameProfile profile = targetProfile;
 			IPlayerConfigManager
-					configManager = serverData.getPlayerConfigs();
+					configManager = serverData.getPlayerConfigManager();
 			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 				claimsManager = serverData.getServerClaimsManager();
 			IPlayerConfig 

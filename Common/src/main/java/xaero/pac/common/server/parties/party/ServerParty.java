@@ -28,7 +28,7 @@ import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.util.linked.ILinkedChainNode;
 import xaero.pac.common.util.linked.LinkedChain;
 

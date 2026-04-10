@@ -59,7 +59,7 @@ public class PlayerLoginHandler {
 		IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo = serverData.getServerClaimsManager().getPlayerInfo(player.getUUID());
 		((ServerPlayerClaimInfo)(Object)playerClaimInfo).setPlayerUsername(player.getGameProfile().getName());
 
-		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), false);
+		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigManager(), player.getUUID(), false);
 		
 		serverData.getPlayerPartyAssigner().assign(serverData, player, serverData.getPartyMemberInfoUpdater());
 
@@ -102,7 +102,7 @@ public class PlayerLoginHandler {
 	}
 	
 	public void handlePostWorldJoin(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		serverData.getPlayerConfigs().getSynchronizer().syncOnLogin(player);
+		serverData.getPlayerConfigManager().getSynchronizer().syncOnLogin(player);
 		
 		IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(player.getUUID());
