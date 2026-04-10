@@ -118,7 +118,7 @@ public class PlayerConfigOptions {
 	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions}
 	 */
 	@Deprecated
-	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING;
+	public static final IPlayerConfigOptionSpecAPI<Integer> PROTECT_CLAIMED_BLOCKS_FROM_ENCHANTMENTS;
 	/**
 	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions}
 	 */
@@ -542,11 +542,11 @@ public class PlayerConfigOptions {
 				.setFromRealConverter(flippedBoolean)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFireSpread")
 				.build(allOptions);
-		PROTECT_CLAIMED_CHUNKS_FROM_FROST_WALKING = CompatPlayerConfigOptionSpec.Builder.<Integer, String>begin(PlayerConfigOptionValueTypes.INTEGER)
-				.setRealOption(xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions.CLAIM_EXCEPTION_FROST_WALKING)
+		PROTECT_CLAIMED_BLOCKS_FROM_ENCHANTMENTS = CompatPlayerConfigOptionSpec.Builder.<Integer, String>begin(PlayerConfigOptionValueTypes.INTEGER)
+				.setRealOption(xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_ENCHANTMENTS)
 				.setToRealConverter(protectionToGroup)
 				.setFromRealConverter(groupToProtection)
-				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.fromFrostWalking")
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.blocksFromEnchantments")
 				.build(allOptions);
 		PROTECT_CLAIMED_CHUNKS_CROP_TRAMPLE = CompatPlayerConfigOptionSpec.Builder.<Boolean, Boolean>begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setRealOption(xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions.CLAIM_EXCEPTION_CROP_TRAMPLE)
