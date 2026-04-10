@@ -292,6 +292,16 @@ public interface IChunkProtectionAPI {
 
 	/**
 	 * @deprecated use negated {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, Entity)} instead
+	 * Checks whether a player/claim config option with multiple protection levels protects from a specified entity.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already
+	 * use option values.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param option  the protection option to check, not null
+	 * @param claimConfig  the claim config to check the option value for, not null
+	 * @param accessor  the entity to check against the current value of the option, not null
+	 * @return true if the option is set to protect from the specified entity, false otherwise
 	 */
 	@Deprecated
 	default boolean checkProtectionLeveledOption(
@@ -310,6 +320,20 @@ public interface IChunkProtectionAPI {
 
 	/**
 	 * @deprecated use negated {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, UUID)} instead
+	 * Checks whether a player/claim config option with multiple protection levels protects from the entity with a
+	 * specified UUID.
+	 * <p>
+	 * Please use {@link #checkProtectionLeveledOption(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI, xaero.pac.common.server.player.config.api.IPlayerConfigAPI, Entity)}
+	 * when you have an actual entity reference.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already
+	 * use option values.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param option  the protection option to check, not null
+	 * @param claimConfig  the claim config to check the option value for, not null
+	 * @param accessorId  the UUID of the entity to check against the current value of the option, not null
+	 * @return true if the option is set to protect from the specified entity, false otherwise
 	 */
 	@Deprecated
 	default boolean checkProtectionLeveledOption(
@@ -328,6 +352,16 @@ public interface IChunkProtectionAPI {
 
 	/**
 	 * @deprecated use {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, Entity)} instead
+	 * Checks whether a player/claim config option with multiple exception levels includes a specified entity.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already
+	 * use option values.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param option  the exception option to check, not null
+	 * @param claimConfig  the claim config to check the option value for, not null
+	 * @param accessor  the entity to check against the current value of the option, not null
+	 * @return true if the option is set to include the specified entity, false otherwise
 	 */
 	@Deprecated
 	default boolean checkExceptionLeveledOption(
@@ -346,6 +380,20 @@ public interface IChunkProtectionAPI {
 
 	/**
 	 * @deprecated use {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, UUID)} instead
+	 * Checks whether a player/claim config option with multiple exception levels includes the entity with a
+	 * specified UUID.
+	 * <p>
+	 * Please use {@link #checkExceptionLeveledOption(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI, xaero.pac.common.server.player.config.api.IPlayerConfigAPI, Entity)}
+	 * when you have an actual entity reference.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already
+	 * use option values.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param option  the exception option to check, not null
+	 * @param claimConfig  the claim config to check the option value for, not null
+	 * @param accessorId  the UUID of the entity to check against the current value of the option, not null
+	 * @return true if the option is set to include the specified entity, false otherwise
 	 */
 	@Deprecated
 	default boolean checkExceptionLeveledOption(
@@ -363,7 +411,13 @@ public interface IChunkProtectionAPI {
 	}
 
 	/**
-	 * @deprecated use {@link #getConfig(IPlayerChunkClaimAPI)} instead
+	 * @deprecated use {@link #getConfig(IPlayerChunkClaimAPI)} instead<p>
+	 * Gets the player/claim config used for a specified claim state.
+	 * <p>
+	 * You can fetch claim states of chunks from the {@link xaero.pac.common.server.claims.api.IServerClaimsManagerAPI}.
+	 *
+	 * @param claim  the claim state to get the used config of, null for wilderness
+	 * @return the player config used by the claim
 	 */
 	@Deprecated
 	default xaero.pac.common.server.player.config.api.IPlayerConfigAPI getClaimConfig(@Nullable IPlayerChunkClaimAPI claim){

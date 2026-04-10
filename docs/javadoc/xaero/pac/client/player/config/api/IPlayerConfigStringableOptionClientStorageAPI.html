@@ -69,7 +69,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">xaero.pac.client.player.config.api</a></div>
-<h1 title="Interface IPlayerConfigStringableOptionClientStorageAPI" class="title">Interface IPlayerConfigStringableOptionClientStorageAPI&lt;T&gt;</h1>
+<h1 title="Interface IPlayerConfigStringableOptionClientStorageAPI" class="title">Interface IPlayerConfigStringableOptionClientStorageAPI&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;</h1>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
@@ -77,9 +77,12 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerConfigStringableOptionClientStorageAPI&lt;T&gt;</span><span class="extends-implements">
+<div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerConfigStringableOptionClientStorageAPI&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;&gt;</span><span class="extends-implements">
 extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;T&gt;</span></div>
-<div class="block">API for a stringable player config option value storage on the client side</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2"><code>IPlayerConfigStringableOptionClientStorageAPI</code></a> instead</div>
+</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -94,78 +97,77 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCommandInputParser()" class="member-name-link">getCommandInputParser</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the string input parser for this option.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getCommandInputParser()" class="member-name-link">getCommandInputParser</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2"><code>IPlayerConfigStringableOptionClientStorageAPI</code></a> instead</div>
+</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>net.minecraft.network.chat.Component&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getCommandOutputWriterCast()" class="member-name-link">getCommandOutputWriterCast</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">Use <a href="#getComponentWriterCast()"><code>getComponentWriterCast()</code></a> instead.</div>
+<div class="deprecation-comment">use <a href="v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2"><code>IPlayerConfigStringableOptionClientStorageAPI</code></a> instead</div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getComment()" class="member-name-link">getComment</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the default comment text for the option.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getComment()" class="member-name-link">getComment</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getId()" class="member-name-link">getId</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getOption()" class="member-name-link">getOption</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getStringValidator()" class="member-name-link">getStringValidator</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2"><code>IPlayerConfigStringableOptionClientStorageAPI</code></a> instead</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>net.minecraft.network.chat.Component&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getComponentWriterCast()" class="member-name-link">getComponentWriterCast</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the component output writer for this option.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getId()" class="member-name-link">getId</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the option string ID.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOption()" class="member-name-link">getOption</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the option spec that this storage holds the value for.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getStringValidator()" class="member-name-link">getStringValidator</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the string value input validator for this option.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTooltipPrefix()" class="member-name-link">getTooltipPrefix</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the text prefix for the option tooltip on the UI screens.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTranslation()" class="member-name-link">getTranslation</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the translation key for the name of the option.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the type of the option value that this storage holds.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getValidator()" class="member-name-link">getValidator</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the option value validator that checks whether a certain value is valid for the option.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getValue()" class="member-name-link">getValue</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the stored option value.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDefaulted()" class="member-name-link">isDefaulted</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks whether this option is forced to its default player config value.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isMutable()" class="member-name-link">isMutable</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks whether the local client player can edit this option's value.</div>
-</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getTooltipPrefix()" class="member-name-link">getTooltipPrefix</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getTranslation()" class="member-name-link">getTranslation</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getValidator()" class="member-name-link">getValidator</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getValue()" class="member-name-link">getValue</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#isDefaulted()" class="member-name-link">isDefaulted</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#isMutable()" class="member-name-link">isMutable</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</div>
 </div>
 </div>
 </div>
@@ -188,11 +190,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getOption</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="../../../../common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getOption</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getOption()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the option spec that this storage holds the value for.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getOption()">getOption</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getOption()">getOption</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the option spec of this storage, not null</dd>
 </dl>
@@ -203,11 +204,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getId</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getId</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getId()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the option string ID.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getId()">getId</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getId()">getId</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the option string ID, not null</dd>
 </dl>
@@ -218,11 +218,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getComment</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getComment</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getComment()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the default comment text for the option.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getComment()">getComment</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getComment()">getComment</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the default comment text, not null</dd>
 </dl>
@@ -233,11 +232,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getTranslation</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getTranslation</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getTranslation()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the translation key for the name of the option.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTranslation()">getTranslation</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTranslation()">getTranslation</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>translation key for the name of the option, not null</dd>
 </dl>
@@ -248,11 +246,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getType</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getType</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getType()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the type of the option value that this storage holds.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getType()">getType</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getType()">getType</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the type of the option value, not null</dd>
 </dl>
@@ -263,11 +260,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getValue</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="return-type"><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a></span>&nbsp;<span class="element-name">getValue</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getValue()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the stored option value.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValue()">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValue()">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the stored value</dd>
 </dl>
@@ -278,11 +274,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getValidator</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getValidator</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getValidator()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the option value validator that checks whether a certain value is valid for the option.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValidator()">getValidator</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getValidator()">getValidator</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the option value validator, not null</dd>
 </dl>
@@ -293,11 +288,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>getTooltipPrefix</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getTooltipPrefix</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#getTooltipPrefix()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Gets the text prefix for the option tooltip on the UI screens.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTooltipPrefix()">getTooltipPrefix</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#getTooltipPrefix()">getTooltipPrefix</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>the tooltip prefix, null if there is none</dd>
 </dl>
@@ -307,11 +301,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <section class="detail" id="isDefaulted()">
 <h3>isDefaulted</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isDefaulted</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#isDefaulted()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Checks whether this option is forced to its default player config value.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isDefaulted()">isDefaulted</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isDefaulted()">isDefaulted</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>true if the option value is defaulted, otherwise false</dd>
 </dl>
@@ -321,11 +314,10 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <section class="detail" id="isMutable()">
 <h3>isMutable</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isMutable</span>()</div>
-<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#isMutable()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Checks whether the local client player can edit this option's value.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isMutable()">isMutable</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
+<dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isMutable()">isMutable</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>true if the option value is mutable, otherwise false</dd>
 </dl>
@@ -334,11 +326,14 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <li>
 <section class="detail" id="getCommandInputParser()">
 <h3>getCommandInputParser</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</span>&nbsp;<span class="element-name">getCommandInputParser</span>()</div>
-<div class="block">Gets the string input parser for this option.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2"><code>IPlayerConfigStringableOptionClientStorageAPI</code></a> instead<p>
+ Gets the string input parser for this option.
  <p>
  It is the same one that is used for parsing command inputs.</div>
+</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the string input parser function, not null</dd>
@@ -349,35 +344,30 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <section class="detail" id="getCommandOutputWriterCast()">
 <h3>getCommandOutputWriterCast</h3>
 <div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
-@Nonnull
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>net.minecraft.network.chat.Component&gt;</span>&nbsp;<span class="element-name">getCommandOutputWriterCast</span>()</div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">Use <a href="#getComponentWriterCast()"><code>getComponentWriterCast()</code></a> instead.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="getComponentWriterCast()">
-<h3>getComponentWriterCast</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>,<wbr>net.minecraft.network.chat.Component&gt;</span>&nbsp;<span class="element-name">getComponentWriterCast</span>()</div>
-<div class="block">Gets the component output writer for this option.
+<div class="deprecation-comment">use <a href="v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2"><code>IPlayerConfigStringableOptionClientStorageAPI</code></a> instead<p>
+ Gets the string output writer for this option.
  <p>
  It is the same one that is used for displaying option values in command outputs.
  <p>
  It accepts values of any type but will only work with the right one.</div>
+</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the component output writer function, not null</dd>
+<dd>the string output writer function, not null</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getStringValidator()">
 <h3>getStringValidator</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
 </span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiPredicate.html" title="class or interface in java.util.function" class="external-link">BiPredicate</a>&lt;<a href="IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getStringValidator</span>()</div>
-<div class="block">Gets the string value input validator for this option.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2"><code>IPlayerConfigStringableOptionClientStorageAPI</code></a> instead<p>
+ Gets the string value input validator for this option.</div>
+</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the string value input validator function, not null</dd>
