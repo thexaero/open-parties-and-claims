@@ -42,7 +42,7 @@ public class PlayerLogoutHandler {
 		ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		if(!mainCap.hasHandledLogin())
 			return;
-		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigs(), player.getUUID(), true);
+		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigManager(), player.getUUID(), true);
 		//PlayerMainCapability playerMainCap = (PlayerMainCapability) player.getCapability(PlayerCapabilityProvider.MAIN_CAP).orElse(null);
 		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = serverData.getPartyManager().getPartyByMember(player.getUUID());
 		if(playerParty != null) {

@@ -1,0 +1,196 @@
+/*
+ * Open Parties and Claims - adds chunk claims and player parties to Minecraft
+ * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of version 3 of the GNU Lesser General Public License
+ * (LGPL-3.0-only) as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received copies of the GNU Lesser General Public License
+ * and the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package xaero.pac.common.server.player.config.api.v2;
+
+import net.minecraft.network.chat.Component;
+import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+/**
+ * A player config option instance used for player config option representation in various API features.
+ *
+ * @param <T>  the type of values of this option
+ */
+public interface IPlayerConfigOptionSpecAPI<T> {
+
+	/**
+	 * Gets the ID of this option.
+	 * <p>
+	 * Use {@link #getPath()} if you need it separated into elements.
+	 *
+	 * @return the string ID, not null
+	 */
+	@Nonnull
+	public String getId();
+
+	/**
+	 * Gets the shortened ID of this option, without the "playerConfig." prefix.
+	 *
+	 * @return the shortened string ID, not null
+	 */
+	@Nonnull
+	public String getShortenedId();
+
+	/**
+	 * Gets the path of this option, which is just the ID from {@link #getId()} but separated into elements.
+	 *
+	 * @return the path, not null
+	 */
+	@Nonnull
+	public List<String> getPath();
+
+	/**
+	 * Gets the type of values that this option can have.
+	 *
+	 * @return the type of values, not null
+	 */
+	@Nonnull
+	public Class<T> getType();
+
+	/**
+	 * Gets the translation key for the name of this option.
+	 *
+	 * @return the translation key, not null
+	 */
+	@Nonnull
+	public String getTranslation();
+
+	/**
+	 * Gets the translation key arguments for the name of this option.
+	 *
+	 * @return the translation key arguments, not null
+	 */
+	@Nonnull
+	public String[] getTranslationArgs();
+
+	/**
+	 * Gets the translation key for the comment of this option.
+	 *
+	 * @return the comment translation key, not null
+	 */
+	@Nonnull
+	public String getCommentTranslation();
+
+	/**
+	 * Gets the translation key arguments for the comment of this option.
+	 *
+	 * @return the comment translation key arguments, not null
+	 */
+	@Nonnull
+	public String[] getCommentTranslationArgs();
+
+	/**
+	 * Gets the default en_us comment for this option.
+	 *
+	 * @return the default comment, not null
+	 */
+	@Nonnull
+	public String getComment();
+
+	/**
+	 * Gets the default value that this option is set to in configs.
+	 *
+	 * @return the default value, not null
+	 */
+	@Nonnull
+	public T getDefaultValue();
+
+	/**
+	 * Gets the client-side validator for potential values of this option.
+	 *
+	 * @return the client-side value validator, not null
+	 */
+	@Nonnull
+	public BiPredicate<IPlayerConfigClientStorageAPI, T> getClientSideValidator();
+
+	/**
+	 * Gets the server-side validator for potential values of this option.
+	 *
+	 * @return the server-side value validator, not null
+	 */
+	@Nonnull
+	public BiPredicate<IPlayerConfigAPI, T> getServerSideValidator();
+
+	/**
+	 * Gets the prefix applied to the tooltip of this option on the UI.
+	 *
+	 * @return the tooltip prefix, null if no prefix
+	 */
+	@Nullable
+	public String getTooltipPrefix();
+
+	/**
+	 * Gets the String->value parser of this option, mainly used for commands.
+	 *
+	 * @return the String->value parser, not null
+	 */
+	@Nonnull
+	public Function<String, T> getCommandInputParser();
+
+	/**
+	 * @deprecated Use {@link #getComponentWriter()} instead
+	 */
+	@Deprecated
+	@Nonnull
+	public Function<T, Component> getCommandOutputWriter();
+
+	/**
+	 * Gets the value->Component converter of this option, mainly used for commands.
+	 *
+	 * @return the value->Component converter, not null
+	 */
+	@Nonnull
+	public Function<T, Component> getComponentWriter();
+
+	/**
+	 * Gets the config type filter of this option.
+	 * <p>
+	 * The filter allows this option to only appear and be configurable on some types of player configs
+	 * (e.g. just the server claims config).
+	 *
+	 * @return the config type filter, not null
+	 */
+	@Nonnull
+	Predicate<PlayerConfigType> getConfigTypeFilter();
+
+	/**
+	 * Gets whether this option can be overridden by a sub-config.
+	 *
+	 * @return true if this option is overridable, otherwise false
+	 */
+	boolean isOverridable();
+
+	/**
+	 * Gets whether this option can be directly configured, as opposed
+	 * to being configurable only by the mod's internal code, like the option
+	 * used for storing the custom player group data, which shouldn't be accessed
+	 * directly.
+	 *
+	 * @return true if this option is directly configurable, otherwise false
+	 */
+	boolean isDirectlyConfigurable();
+
+}

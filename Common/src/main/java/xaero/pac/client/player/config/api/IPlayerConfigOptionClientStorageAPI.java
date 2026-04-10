@@ -20,114 +20,90 @@ package xaero.pac.client.player.config.api;
 
 import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.BiPredicate;
 
 /**
- * API for a player config option value storage on the client side
+ * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
  */
-public interface IPlayerConfigOptionClientStorageAPI<T> {
+@Deprecated
+public interface IPlayerConfigOptionClientStorageAPI<T extends Comparable<T>> {
 
 	/**
-	 * Gets the option spec that this storage holds the value for.
-	 *
-	 * @return the option spec of this storage, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public IPlayerConfigOptionSpecAPI<T> getOption();
 
 	/**
-	 * Gets the option string ID.
-	 *
-	 * @return the option string ID, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public String getId();
 
 	/**
-	 * Gets the default comment text for the option.
-	 *
-	 * @return the default comment text, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public String getComment();
 
 	/**
-	 * Gets the translation key for the name of the option.
-	 *
-	 * @return translation key for the name of the option, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public String getTranslation();
 
 	/**
-	 * Gets the translation key arguments for the name of this option.
-	 *
-	 * @return the translation key arguments, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
+	@Deprecated
 	public Object[] getTranslationArgs();
 
 	/**
-	 * Gets the translation key for the comment of this option.
-	 *
-	 * @return the comment translation key, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public String getCommentTranslation();
 
 	/**
-	 * Gets the translation key arguments for the comment of this option.
-	 *
-	 * @return the comment translation key arguments, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public Object[] getCommentTranslationArgs();
 
 	/**
-	 * Gets the type of the option value that this storage holds.
-	 *
-	 * @return the type of the option value, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public Class<T> getType();
 
 	/**
-	 * Gets the stored option value.
-	 *
-	 * @return the stored value
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nullable
+	@Deprecated
 	public T getValue();
 
 	/**
-	 * Gets the option value validator that checks whether a certain value is valid for the option.
-	 *
-	 * @return the option value validator, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public BiPredicate<IPlayerConfigClientStorageAPI, T> getValidator();
 
 	/**
-	 * Gets the text prefix for the option tooltip on the UI screens.
-	 *
-	 * @return the tooltip prefix, null if there is none
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
-	@Nullable
+	@Deprecated
 	public String getTooltipPrefix();
 
 	/**
-	 * Checks whether this option is forced to its default player config value.
-	 *
-	 * @return true if the option value is defaulted, otherwise false
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
+	@Deprecated
 	public boolean isDefaulted();
 
 	/**
-	 * Checks whether the local client player can edit this option's value.
-	 *
-	 * @return true if the option value is mutable, otherwise false
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI} instead
 	 */
+	@Deprecated
 	public boolean isMutable();
 	
 }

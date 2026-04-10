@@ -51,7 +51,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Collection;
@@ -120,7 +120,7 @@ public class AboutPartyCommand {
 			casterPlayer.sendMessage(new TextComponent(profile.getName()).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(profile.getId().toString())))), casterPlayerId);
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_current_party").withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
 			String partyName = playerParty.getDefaultName();
-			IPlayerConfig ownerConfig = serverData.getPlayerConfigs().getLoadedConfig(playerParty.getOwner().getUUID());
+			IPlayerConfig ownerConfig = serverData.getPlayerConfigManager().getLoadedConfig(playerParty.getOwner().getUUID());
 			String partyCustomName = ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 			String tooltipPrefix = !partyCustomName.isEmpty() ? partyName + "\n" : "";
 			if(!partyCustomName.isEmpty())
@@ -151,7 +151,7 @@ public class AboutPartyCommand {
 				if(allyParty != null) {
 					if(!partyAlliesComponent.getSiblings().isEmpty())
 						partyAlliesComponent.getSiblings().add(new TextComponent(", "));
-					IPlayerConfig allyOwnerConfig = serverData.getPlayerConfigs().getLoadedConfig(allyParty.getOwner().getUUID());
+					IPlayerConfig allyOwnerConfig = serverData.getPlayerConfigManager().getLoadedConfig(allyParty.getOwner().getUUID());
 					String configuredAllyName = allyOwnerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 					String allyDefaultName = allyParty.getDefaultName();
 					String allyTooltipPrefix = !configuredAllyName.isEmpty() ? allyDefaultName + "\n" : "";

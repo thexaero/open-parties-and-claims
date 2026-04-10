@@ -27,9 +27,10 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 /**
- * API for a stringable player config option value storage on the client side
+ * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead
  */
-public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlayerConfigOptionClientStorageAPI<T> {
+@Deprecated
+public interface IPlayerConfigStringableOptionClientStorageAPI<T extends Comparable<T>> extends IPlayerConfigOptionClientStorageAPI<T> {
 
 	@Override
 	@Nonnull
@@ -70,40 +71,21 @@ public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlaye
 	public boolean isMutable();
 
 	/**
-	 * Gets the string input parser for this option.
-	 * <p>
-	 * It is the same one that is used for parsing command inputs.
-	 *
-	 * @return the string input parser function, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead
 	 */
-	@Nonnull
+	@Deprecated
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * @deprecated Use {@link #getComponentWriterCast()} instead.
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead
 	 */
 	@Deprecated
-	@Nonnull
 	public Function<Object, Component> getCommandOutputWriterCast();
 
 	/**
-	 * Gets the component output writer for this option.
-	 * <p>
-	 * It is the same one that is used for displaying option values in command outputs.
-	 * <p>
-	 * It accepts values of any type but will only work with the right one.
-	 *
-	 * @return the component output writer function, not null
+	 * @deprecated use {@link xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI} instead
 	 */
-	@Nonnull
-	public Function<Object, Component> getComponentWriterCast();
-
-	/**
-	 * Gets the string value input validator for this option.
-	 *
-	 * @return the string value input validator function, not null
-	 */
-	@Nonnull
+	@Deprecated
 	public BiPredicate<IPlayerConfigClientStorageAPI, String> getStringValidator();
 	
 }

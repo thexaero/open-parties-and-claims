@@ -87,7 +87,7 @@ public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTa
 	public void onTick(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, ServerPlayer player, int perTick) {
 		int toSync = perTick;
 		while(toSync > 0 && !configsToSync.isEmpty()) {
-			PlayerConfigSynchronizer synchronizer = (PlayerConfigSynchronizer) serverData.getPlayerConfigs().getSynchronizer();
+			PlayerConfigSynchronizer synchronizer = (PlayerConfigSynchronizer) serverData.getPlayerConfigManager().getSynchronizer();
 			PlayerConfig<?> config = (PlayerConfig<?>) configsToSync.getFirst();
 
 			if (currentSubIterator == null) {
@@ -110,7 +110,7 @@ public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTa
 		}
 		//only sync group contents after all config values have been synced so that the config UI access doesn't get delayed
 		while(toSync > 0 && !configsForGroupSync.isEmpty()) {
-			PlayerConfigSynchronizer synchronizer = (PlayerConfigSynchronizer) serverData.getPlayerConfigs().getSynchronizer();
+			PlayerConfigSynchronizer synchronizer = (PlayerConfigSynchronizer) serverData.getPlayerConfigManager().getSynchronizer();
 			PlayerConfig<?> config = (PlayerConfig<?>) configsForGroupSync.getFirst();
 			if(groupIterator == null)
 				groupIterator = config.getPlayerGroups().getAllCustom().iterator();

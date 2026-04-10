@@ -21,175 +21,111 @@ package xaero.pac.common.server.player.config.api;
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * A player config option instance used for player config option representation in various API features.
- *
- * @param <T>  the type of values of this option
+ * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
  */
-public interface IPlayerConfigOptionSpecAPI<T> {
+@Deprecated
+public interface IPlayerConfigOptionSpecAPI<T extends Comparable<T>> {
 
 	/**
-	 * Gets the ID of this option.
-	 * <p>
-	 * Use {@link #getPath()} if you need it separated into elements.
-	 *
-	 * @return the string ID, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public String getId();
 
 	/**
-	 * Gets the shortened ID of this option, without the "playerConfig." prefix.
-	 *
-	 * @return the shortened string ID, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public String getShortenedId();
 
 	/**
-	 * Gets the path of this option, which is just the ID from {@link #getId()} but separated into elements.
-	 *
-	 * @return the path, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public List<String> getPath();
 
 	/**
-	 * Gets the type of values that this option can have.
-	 *
-	 * @return the type of values, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public Class<T> getType();
 
 	/**
-	 * Gets the translation key for the name of this option.
-	 *
-	 * @return the translation key, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public String getTranslation();
 
 	/**
-	 * Gets the translation key arguments for the name of this option.
-	 *
-	 * @return the translation key arguments, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public String[] getTranslationArgs();
 
 	/**
-	 * Gets the translation key for the comment of this option.
-	 *
-	 * @return the comment translation key, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public String getCommentTranslation();
 
 	/**
-	 * Gets the translation key arguments for the comment of this option.
-	 *
-	 * @return the comment translation key arguments, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public String[] getCommentTranslationArgs();
 
 	/**
-	 * Gets the default en_us comment for this option.
-	 *
-	 * @return the default comment, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public String getComment();
 
 	/**
-	 * Gets the default value that this option is set to in configs.
-	 *
-	 * @return the default value, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public T getDefaultValue();
 
 	/**
-	 * Gets the client-side validator for potential values of this option.
-	 *
-	 * @return the client-side value validator, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public BiPredicate<IPlayerConfigClientStorageAPI, T> getClientSideValidator();
 
 	/**
-	 * Gets the server-side validator for potential values of this option.
-	 *
-	 * @return the server-side value validator, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public BiPredicate<IPlayerConfigAPI, T> getServerSideValidator();
 
 	/**
-	 * Gets the prefix applied to the tooltip of this option on the UI.
-	 *
-	 * @return the tooltip prefix, null if no prefix
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nullable
+	@Deprecated
 	public String getTooltipPrefix();
 
 	/**
-	 * Gets the String->value parser of this option, mainly used for commands.
-	 *
-	 * @return the String->value parser, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
+	@Deprecated
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * @deprecated Use {@link #getComponentWriter()} instead
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
 	@Deprecated
-	@Nonnull
 	public Function<T, Component> getCommandOutputWriter();
 
 	/**
-	 * Gets the value->Component converter of this option, mainly used for commands.
-	 *
-	 * @return the value->Component converter, not null
+	 * @deprecated switch to {@link xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI}
 	 */
-	@Nonnull
-	public Function<T, Component> getComponentWriter();
-
-	/**
-	 * Gets the config type filter of this option.
-	 * <p>
-	 * The filter allows this option to only appear and be configurable on some types of player configs
-	 * (e.g. just the server claims config).
-	 *
-	 * @return the config type filter, not null
-	 */
-	@Nonnull
+	@Deprecated
 	Predicate<PlayerConfigType> getConfigTypeFilter();
-
-	/**
-	 * Gets whether this option can be overridden by a sub-config.
-	 *
-	 * @return true if this option is overridable, otherwise false
-	 */
-	boolean isOverridable();
-
-	/**
-	 * Gets whether this option can be directly configured, as opposed
-	 * to being configurable only by the mod's internal code, like the option
-	 * used for storing the custom player group data, which shouldn't be accessed
-	 * directly.
-	 *
-	 * @return true if this option is directly configurable, otherwise false
-	 */
-	boolean isDirectlyConfigurable();
 
 }

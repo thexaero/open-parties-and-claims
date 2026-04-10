@@ -24,17 +24,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
-import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.backwards.v1.CompatPlayerConfig;
+import xaero.pac.common.server.player.config.backwards.v1.CompatPlayerConfigOptionSpec;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -224,7 +220,7 @@ public interface IChunkProtectionAPI {
 	 * @return the player config used by the claim
 	 */
 	@Nonnull
-	IPlayerConfigAPI getClaimConfig(@Nullable IPlayerChunkClaimAPI claim);
+	IPlayerConfigAPI getConfig(@Nullable IPlayerChunkClaimAPI claim);
 
 	/**
 	 * Directly checks whether a specified entity has full access to a claim with the specified config.
@@ -254,67 +250,125 @@ public interface IChunkProtectionAPI {
 	boolean hasChunkAccess(@Nonnull IPlayerConfigAPI claimConfig, @Nonnull UUID accessorId);
 
 	/**
-	 * Checks whether a player/claim config option with multiple protection levels protects from a specified entity.
+	 * Checks whether the group that a player group exception option is set to includes a specified player/entity.
+	 * <p>
+	 * The specified entity is supposed to be a player, but because of the existence of entities that take on a real
+	 * player's UUID, the method accepts any type of entity.
 	 * <p>
 	 * You most likely don't have to use this method at all. The action-specific protection check methods already
 	 * use option values.
 	 * This is meant for things that are not covered by the rest of the API.
 	 *
-	 * @param option  the protection option to check, not null
+	 * @param option  the option to check, not null
 	 * @param claimConfig  the claim config to check the option value for, not null
 	 * @param accessor  the entity to check against the current value of the option, not null
-	 * @return true if the option is set to protect from the specified entity, false otherwise
+	 * @return true if the specified player/entity is in the group the option is set to, otherwise false
 	 */
-	boolean checkProtectionLeveledOption(@Nonnull IPlayerConfigOptionSpecAPI<Integer> option, @Nonnull IPlayerConfigAPI claimConfig, @Nonnull Entity accessor);
+	boolean checkPlayerGroupExceptionOption(
+			@Nonnull IPlayerConfigOptionSpecAPI<String> option,
+			@Nonnull IPlayerConfigAPI claimConfig,
+			@Nonnull Entity accessor
+	);
 
 	/**
-	 * Checks whether a player/claim config option with multiple protection levels protects from the entity with a
-	 * specified UUID.
+	 * Checks whether the group that a player group exception option is set to includes the player with a specified UUID.
 	 * <p>
-	 * Please use {@link #checkProtectionLeveledOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, Entity)}
-	 * when you have an actual entity reference.
+	 * The specified UUID is supposed to correspond to a player, even if you get it from another type of entity.
 	 * <p>
 	 * You most likely don't have to use this method at all. The action-specific protection check methods already
 	 * use option values.
 	 * This is meant for things that are not covered by the rest of the API.
 	 *
-	 * @param option  the protection option to check, not null
+	 * @param option  the option to check, not null
 	 * @param claimConfig  the claim config to check the option value for, not null
-	 * @param accessorId  the UUID of the entity to check against the current value of the option, not null
-	 * @return true if the option is set to protect from the specified entity, false otherwise
+	 * @param accessorId  the UUID of the player to check against the current value of the option, not null
+	 * @return true if the player with the specified UUID is in the group the option is set to, otherwise false
 	 */
-	boolean checkProtectionLeveledOption(@Nonnull IPlayerConfigOptionSpecAPI<Integer> option, @Nonnull IPlayerConfigAPI claimConfig, @Nonnull UUID accessorId);
+	boolean checkPlayerGroupExceptionOption(
+			@Nonnull IPlayerConfigOptionSpecAPI<String> option,
+			@Nonnull IPlayerConfigAPI claimConfig,
+			@Nonnull UUID accessorId
+	);
 
 	/**
-	 * Checks whether a player/claim config option with multiple exception levels includes a specified entity.
-	 * <p>
-	 * You most likely don't have to use this method at all. The action-specific protection check methods already
-	 * use option values.
-	 * This is meant for things that are not covered by the rest of the API.
-	 *
-	 * @param option  the exception option to check, not null
-	 * @param claimConfig  the claim config to check the option value for, not null
-	 * @param accessor  the entity to check against the current value of the option, not null
-	 * @return true if the option is set to include the specified entity, false otherwise
+	 * @deprecated use negated {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, Entity)} instead
 	 */
-	boolean checkExceptionLeveledOption(@Nonnull IPlayerConfigOptionSpecAPI<Integer> option, @Nonnull IPlayerConfigAPI claimConfig, @Nonnull Entity accessor);
+	@Deprecated
+	default boolean checkProtectionLeveledOption(
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull Entity accessor
+	){
+		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
+		CompatPlayerConfig compatConfig = (CompatPlayerConfig) claimConfig;
+		return !checkPlayerGroupExceptionOption(
+				compatOption.realOption,
+				compatConfig.realConfig,
+				accessor
+		);
+	}
 
 	/**
-	 * Checks whether a player/claim config option with multiple exception levels includes the entity with a
-	 * specified UUID.
-	 * <p>
-	 * Please use {@link #checkExceptionLeveledOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, Entity)}
-	 * when you have an actual entity reference.
-	 * <p>
-	 * You most likely don't have to use this method at all. The action-specific protection check methods already
-	 * use option values.
-	 * This is meant for things that are not covered by the rest of the API.
-	 *
-	 * @param option  the exception option to check, not null
-	 * @param claimConfig  the claim config to check the option value for, not null
-	 * @param accessorId  the UUID of the entity to check against the current value of the option, not null
-	 * @return true if the option is set to include the specified entity, false otherwise
+	 * @deprecated use negated {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, UUID)} instead
 	 */
-	boolean checkExceptionLeveledOption(@Nonnull IPlayerConfigOptionSpecAPI<Integer> option, @Nonnull IPlayerConfigAPI claimConfig, @Nonnull UUID accessorId);
+	@Deprecated
+	default boolean checkProtectionLeveledOption(
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull UUID accessorId
+	) {
+		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
+		CompatPlayerConfig compatConfig = (CompatPlayerConfig) claimConfig;
+		return !checkPlayerGroupExceptionOption(
+				compatOption.realOption,
+				compatConfig.realConfig,
+				accessorId
+		);
+	}
+
+	/**
+	 * @deprecated use {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, Entity)} instead
+	 */
+	@Deprecated
+	default boolean checkExceptionLeveledOption(
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull Entity accessor
+	){
+		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
+		CompatPlayerConfig compatConfig = (CompatPlayerConfig) claimConfig;
+		return checkPlayerGroupExceptionOption(
+				compatOption.realOption,
+				compatConfig.realConfig,
+				accessor
+		);
+	}
+
+	/**
+	 * @deprecated use {@link #checkPlayerGroupExceptionOption(IPlayerConfigOptionSpecAPI, IPlayerConfigAPI, UUID)} instead
+	 */
+	@Deprecated
+	default boolean checkExceptionLeveledOption(
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI<Integer> option,
+			@Nonnull xaero.pac.common.server.player.config.api.IPlayerConfigAPI claimConfig,
+			@Nonnull UUID accessorId
+	){
+		CompatPlayerConfigOptionSpec<Integer, String> compatOption = (CompatPlayerConfigOptionSpec<Integer, String>) option;
+		CompatPlayerConfig compatConfig = (CompatPlayerConfig) claimConfig;
+		return checkPlayerGroupExceptionOption(
+				compatOption.realOption,
+				compatConfig.realConfig,
+				accessorId
+		);
+	}
+
+	/**
+	 * @deprecated use {@link #getConfig(IPlayerChunkClaimAPI)} instead
+	 */
+	@Deprecated
+	default xaero.pac.common.server.player.config.api.IPlayerConfigAPI getClaimConfig(@Nullable IPlayerChunkClaimAPI claim){
+		IPlayerConfigAPI actualConfig = getConfig(claim);
+		return new CompatPlayerConfig(actualConfig);
+	}
 
 }

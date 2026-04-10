@@ -52,7 +52,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
@@ -168,7 +168,7 @@ public class ConfigGetOrHelpCommand {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(context.getSource().getServer());
 			return SharedSuggestionProvider.suggest(
-					serverData.getPlayerConfigs().getAllOptionsStream()
+					serverData.getPlayerConfigManager().getAllOptionsStream()
 							.filter(IPlayerConfigOptionSpecAPI::isDirectlyConfigurable)
 							.map(IPlayerConfigOptionSpecAPI::getShortenedId),
 					builder
@@ -184,7 +184,7 @@ public class ConfigGetOrHelpCommand {
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigs().getOptionForId(targetConfigOptionId);
+			PlayerConfigOptionSpec<?> option = (PlayerConfigOptionSpec<?>) serverData.getPlayerConfigManager().getOptionForId(targetConfigOptionId);
 			if(option == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get_invalid_key"));
 				return 0;
@@ -206,10 +206,10 @@ public class ConfigGetOrHelpCommand {
 			}
 			IPlayerConfig playerConfig =
 					type == PlayerConfigType.DEFAULT_PLAYER ?
-							serverData.getPlayerConfigs().getDefaultConfig() : 
+							serverData.getPlayerConfigManager().getDefaultConfig() :
 								type == PlayerConfigType.EXPIRED ?
-										serverData.getPlayerConfigs().getExpiredClaimConfig() : 
-											serverData.getPlayerConfigs().getLoadedConfig(configPlayerUUID);
+										serverData.getPlayerConfigManager().getExpiredClaimConfig() :
+											serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
 			IPlayerConfig effectivePlayerConfig = getEffectiveConfig(context, playerConfig);
 			if(effectivePlayerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get_invalid_sub"));

@@ -91,7 +91,7 @@ public class TransferPartyCommand {
 								if (newOwnerPlayer != null)
 									server.getCommands().sendCommands(newOwnerPlayer);
 								server.getCommands().sendCommands(player);
-								new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, new TranslatableComponent("gui.xaero_parties_transfer_success", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+								new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, new TranslatableComponent("gui.xaero_parties_transfer_success", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 								return 1;
 							}
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_transfer_failed"));

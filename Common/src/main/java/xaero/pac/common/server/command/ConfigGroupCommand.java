@@ -145,7 +145,7 @@ public abstract class ConfigGroupCommand {
 				}
 				IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
 						configPlayerUUID, sourcePlayer.getUUID(),
-						type, serverData.getPlayerConfigs()
+						type, serverData.getPlayerConfigManager()
 				);
 				if(playerConfig == null)
 					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
@@ -200,7 +200,7 @@ public abstract class ConfigGroupCommand {
 			}
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
 					configPlayerUUID, sourcePlayer.getUUID(),
-					type, serverData.getPlayerConfigs()
+					type, serverData.getPlayerConfigManager()
 			);
 			Either<Component, PlayerConfigGroupActionError> result = executeCommand(context, playerConfig, inputGroupId, inputSecondaryArgument);
 			if(result.right().isPresent()) {
@@ -232,7 +232,7 @@ public abstract class ConfigGroupCommand {
 			}
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
 					configPlayerUUID, sourcePlayer.getUUID(),
-					type, serverData.getPlayerConfigs()
+					type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null)
 				return SharedSuggestionProvider.suggest(Stream.empty(), builder);

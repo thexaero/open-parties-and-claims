@@ -25,7 +25,7 @@ import xaero.pac.common.server.IServerDataAPI;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.protection.api.IChunkProtectionAPI;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
-import xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigManagerAPI;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 
@@ -81,7 +81,16 @@ public class OpenPACServerAPI {
 	 * @return instance of the server-side player config manager API, not null
 	 */
 	@Nonnull
-	public IPlayerConfigManagerAPI getPlayerConfigs() {
+	public IPlayerConfigManagerAPI getPlayerConfigManager() {
+		return serverData.getPlayerConfigManager();
+	}
+
+	/**
+	 * @deprecated use {@link #getPlayerConfigManager()} instead!
+	 */
+	@Deprecated
+	@Nonnull
+	public xaero.pac.common.server.player.config.api.IPlayerConfigManagerAPI getPlayerConfigs() {
 		return serverData.getPlayerConfigs();
 	}
 
