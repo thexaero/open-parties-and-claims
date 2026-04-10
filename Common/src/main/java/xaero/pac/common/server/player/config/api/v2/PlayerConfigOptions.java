@@ -16,13 +16,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.config.api;
+package xaero.pac.common.server.player.config.api.v2;
 
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Lists;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.player.config.PlayerConfigConstants;
 import xaero.pac.common.server.player.config.*;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.PlayerConfigCommonChangeHandlers;
 
 import java.util.*;
@@ -242,7 +243,7 @@ public class PlayerConfigOptions {
 	/**
 	 * Whether the claimed chunk protection makes an exception for mob loot being dropped.
 	 */
-	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_PROTECTION_MOB_LOOT;
+	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_MOB_LOOT;
 	/**
 	 * Whether the claimed chunk protection makes an exception for items dropped on player death.
 	 */
@@ -502,7 +503,10 @@ public class PlayerConfigOptions {
 		FULL_ACCESS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.fullAccess")
 				.setDefaultValue(PlayerConfigConstants.PARTY_EXCEPTION_ID)
-				.setComment("The chosen group gets full access to the chunks claimed with this config.")
+				.setComment(
+						"The chosen group gets full access to the chunks claimed with this config.\n"
+						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
+				)
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_BLOCKS_BY_PLAYERS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
@@ -887,7 +891,7 @@ public class PlayerConfigOptions {
 				.setComment("When enabled, instead of always simply using the direct \"Allow Mob/Other Item Toss\" option for item tosses coming from non-player entities, if the tossing entity (e.g. a special arrow) has an owner (e.g. a player), then the item toss protection option corresponding to the owner is used (e.g. \"Allow Player Item Toss\").")
 				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
-		CLAIM_PROTECTION_MOB_LOOT = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
+		CLAIM_EXCEPTION_MOB_LOOT = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.mobLoot")
 				.setDefaultValue(PlayerConfigConstants.EVERYONE_EXCEPTION_ID)
 				.setComment(

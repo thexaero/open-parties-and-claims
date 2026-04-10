@@ -90,7 +90,7 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 			}
 			serverPlayer.getServer().getProfileCache().get(t.ownerName).ifPresent(gp -> {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(serverPlayer.getServer());
-				IPlayerConfigManager playerConfigs = serverData.getPlayerConfigs();
+				IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 				IPlayerConfig config = playerConfigs.getLoadedConfig(gp.getId());
 				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(serverPlayer);
 				playerData.getConfigSyncSpreadoutTask().addConfigToSync(config);

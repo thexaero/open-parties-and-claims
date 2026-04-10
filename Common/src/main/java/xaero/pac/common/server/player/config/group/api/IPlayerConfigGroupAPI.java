@@ -19,7 +19,7 @@
 package xaero.pac.common.server.player.config.group.api;
 
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.server.player.config.api.IPlayerConfigAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;

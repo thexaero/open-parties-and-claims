@@ -16,8 +16,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.server.player.config.api;
+package xaero.pac.common.server.player.config.api.v2;
 
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.api.IServerPlayerConfigGroupManagerAPI;
 
 import javax.annotation.Nonnull;
