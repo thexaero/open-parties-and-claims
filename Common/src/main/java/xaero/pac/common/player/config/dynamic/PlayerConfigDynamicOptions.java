@@ -19,7 +19,7 @@
 package xaero.pac.common.player.config.dynamic;
 
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

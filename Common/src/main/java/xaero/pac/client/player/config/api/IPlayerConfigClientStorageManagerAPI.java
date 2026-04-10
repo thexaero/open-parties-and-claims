@@ -19,7 +19,7 @@
 package xaero.pac.client.player.config.api;
 
 import net.minecraft.client.gui.screens.Screen;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

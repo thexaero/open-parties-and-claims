@@ -102,7 +102,7 @@ public class InvitePartyCommand {
 							targetPlayer.sendSystemMessage(acceptComponent);
 							XaeroNbtUtil.putUUID(Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer), "xaero_OPAC_LastInviteId", playerParty.getId());
 
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigs(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 							return 1;
 						}))));
 		dispatcher.register(command);

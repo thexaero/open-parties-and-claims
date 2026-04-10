@@ -26,7 +26,7 @@ import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.MapFactory;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
@@ -78,7 +78,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> PlayerConfigStringableOptionClientStorage<T> getOptionStorage(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
+	public <T> PlayerConfigStringableOptionClientStorage<T> getOption(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
 		PlayerConfigStringableOptionClientStorage<T> result = (PlayerConfigStringableOptionClientStorage<T>) options.get(option);
 		if(result == null){
@@ -111,7 +111,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 	@Nonnull
 	@Override
 	public Stream<PlayerConfigStringableOptionClientStorage<?>> typedOptionStream(){
-		return manager.getAllOptionsStream().map(this::getOptionStorage);
+		return manager.getAllOptionsStream().map(this::getOption);
 	}
 
 	@Override

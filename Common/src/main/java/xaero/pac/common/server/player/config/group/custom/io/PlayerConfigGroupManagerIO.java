@@ -27,7 +27,7 @@ import xaero.pac.common.player.config.group.custom.ICustomPlayerGroupMember;
 import xaero.pac.common.player.config.group.custom.io.serializer.CustomPlayerGroupDataIOSerializer;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.group.custom.CustomPlayerConfigGroup;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
