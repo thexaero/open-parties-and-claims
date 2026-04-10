@@ -86,7 +86,10 @@ public class OpenPACServerAPI {
 	}
 
 	/**
-	 * @deprecated use {@link #getPlayerConfigManager()} instead!
+	 * @deprecated use {@link #getPlayerConfigManager()} instead!<p>
+	 * Gets the API for the server-side player config manager.
+	 *
+	 * @return instance of the server-side player config manager API, not null
 	 */
 	@Deprecated
 	@Nonnull

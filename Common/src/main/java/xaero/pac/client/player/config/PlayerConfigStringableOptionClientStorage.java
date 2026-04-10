@@ -41,13 +41,6 @@ public final class PlayerConfigStringableOptionClientStorage<T> extends PlayerCo
 		return option.getCommandInputParser();
 	}
 
-	@Deprecated
-	@Nonnull
-	@Override
-	public Function<Object, Component> getCommandOutputWriterCast() {
-		return getComponentWriterCast();
-	}
-
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
