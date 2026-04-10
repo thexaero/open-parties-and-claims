@@ -151,13 +151,6 @@ public interface IPlayerConfigOptionSpecAPI<T> {
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * @deprecated Use {@link #getComponentWriter()} instead
-	 */
-	@Deprecated
-	@Nonnull
-	public Function<T, Component> getCommandOutputWriter();
-
-	/**
 	 * Gets the value->Component converter of this option, mainly used for commands.
 	 *
 	 * @return the value->Component converter, not null
