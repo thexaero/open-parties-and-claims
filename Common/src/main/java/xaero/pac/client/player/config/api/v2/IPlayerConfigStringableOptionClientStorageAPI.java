@@ -81,13 +81,6 @@ public interface IPlayerConfigStringableOptionClientStorageAPI<T> extends IPlaye
 	public Function<String, T> getCommandInputParser();
 
 	/**
-	 * @deprecated Use {@link #getComponentWriterCast()} instead.
-	 */
-	@Deprecated
-	@Nonnull
-	public Function<Object, Component> getCommandOutputWriterCast();
-
-	/**
 	 * Gets the component output writer for this option.
 	 * <p>
 	 * It is the same one that is used for displaying option values in command outputs.
