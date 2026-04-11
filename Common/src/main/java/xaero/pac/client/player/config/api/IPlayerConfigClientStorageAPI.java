@@ -156,6 +156,13 @@ public interface IPlayerConfigClientStorageAPI {
 	IClientPlayerConfigGroupManagerAPI getPlayerGroups();
 
 	/**
+	 * Gets the main config whether this is a sub-config or not.
+	 *
+	 * @return this sub-config's parent main config, or this config if it is the main config
+	 */
+	IPlayerConfigClientStorageAPI getMain();
+
+	/**
 	 * @deprecated use {@link #getOption(IPlayerConfigOptionSpecAPI)} instead<p>
 	 * Gets the config option value storage for a specified config option in this config.
 	 * <p>
