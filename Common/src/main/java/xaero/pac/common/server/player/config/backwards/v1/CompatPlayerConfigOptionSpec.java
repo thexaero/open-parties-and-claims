@@ -62,8 +62,8 @@ public class CompatPlayerConfigOptionSpec<T extends Comparable<T>, R> implements
 			List<String> path,
 			String translation,
 			String[] translationArgs,
-			BiPredicate<PlayerConfig<?>, T> serverSideValidator,
-			BiPredicate<PlayerConfigClientStorage, T> clientSideValidator,
+			BiPredicate<IPlayerConfigAPI, T> serverSideValidator,
+			BiPredicate<IPlayerConfigClientStorageAPI, T> clientSideValidator,
 			xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI<R> realOption,
 			BiFunction<T, R, R> toRealConverter,
 			Function<R, T> fromRealConverter
@@ -75,8 +75,8 @@ public class CompatPlayerConfigOptionSpec<T extends Comparable<T>, R> implements
 		this.path = path;
 		this.translation = translation;
 		this.translationArgs = translationArgs;
-		this.serverSideValidatorAPI = (c,v) -> serverSideValidator.test((PlayerConfig<?>) c, v);
-		this.clientSideValidatorAPI = (c,v) -> clientSideValidator.test((PlayerConfigClientStorage) c, v);
+		this.serverSideValidatorAPI = serverSideValidator;
+		this.clientSideValidatorAPI = clientSideValidator;
 		this.realOption = realOption;
 		this.toRealConverter = toRealConverter;
 		this.fromRealConverter = fromRealConverter;
@@ -233,7 +233,7 @@ public class CompatPlayerConfigOptionSpec<T extends Comparable<T>, R> implements
 			return self;
 		}
 
-		public BiPredicate<PlayerConfig<?>, T> buildServerSideValidator() {
+		public BiPredicate<IPlayerConfigAPI, T> buildServerSideValidator() {
 			xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI<R> realOption = this.realOption;
 			if(realOption == null)
 				return (c, v) -> true;
@@ -241,11 +241,14 @@ public class CompatPlayerConfigOptionSpec<T extends Comparable<T>, R> implements
 			return (c, v) -> {
 				if(v == null)
 					return false;
-				return realOption.getServerSideValidator().test(c, toRealConverter.apply(v, c.getEffective(realOption)));
+				CompatPlayerConfig compatConfig = (CompatPlayerConfig) c;
+				return realOption.getServerSideValidator().test(compatConfig.realConfig,
+						toRealConverter.apply(v, compatConfig.realConfig.getEffective(realOption))
+				);
 			};
 		}
 
-		public BiPredicate<PlayerConfigClientStorage, T> buildClientSideValidator() {
+		public BiPredicate<IPlayerConfigClientStorageAPI, T> buildClientSideValidator() {
 			xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI<R> realOption = this.realOption;
 			if(realOption == null)
 				return (c, v) -> true;
