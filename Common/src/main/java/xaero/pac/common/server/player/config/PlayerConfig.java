@@ -154,7 +154,7 @@ public class PlayerConfig
 	}
 
 	protected <T> boolean isValidSetValue(@Nonnull PlayerConfigOptionSpec<T> option, @Nullable T value){
-		return option.getServerSideValidator().test(this, value);
+		return value != null && option.getServerSideValidator().test(this, value);
 	}
 
 	protected <T> T getValueForDefaultConfigMatch(IPlayerConfigOptionSpecAPI<T> o, T value){
