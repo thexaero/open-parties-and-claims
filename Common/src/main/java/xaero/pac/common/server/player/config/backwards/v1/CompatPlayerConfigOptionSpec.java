@@ -238,8 +238,11 @@ public class CompatPlayerConfigOptionSpec<T extends Comparable<T>, R> implements
 			if(realOption == null)
 				return (c, v) -> true;
 			BiFunction<T, R, R> toRealConverter = this.toRealConverter;
-			return (c, v) ->
-					realOption.getServerSideValidator().test(c, toRealConverter.apply(v, c.getEffective(realOption)));
+			return (c, v) -> {
+				if(v == null)
+					return false;
+				return realOption.getServerSideValidator().test(c, toRealConverter.apply(v, c.getEffective(realOption)));
+			};
 		}
 
 		public BiPredicate<PlayerConfigClientStorage, T> buildClientSideValidator() {
@@ -248,6 +251,8 @@ public class CompatPlayerConfigOptionSpec<T extends Comparable<T>, R> implements
 				return (c, v) -> true;
 			BiFunction<T, R, R> toRealConverter = this.toRealConverter;
 			return (c, v) -> {
+				if(v == null)
+					return false;
 				R currentEffectiveReal = c.getOption(realOption).getValue();
 				if(currentEffectiveReal == null)
 					currentEffectiveReal = c.getMain().getOption(realOption).getValue();
