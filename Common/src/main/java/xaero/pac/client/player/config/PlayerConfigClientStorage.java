@@ -252,6 +252,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		return manager;
 	}
 
+	@Override
 	public PlayerConfigClientStorage getMain(){
 		return this;
 	}
