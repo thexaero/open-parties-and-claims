@@ -1,6 +1,6 @@
 plugins {
     // Required for NeoGradle to work
-    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.4.1"
 }
 
 subprojects {
@@ -8,7 +8,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(25)
     //java.withSourcesJar()
     //java.withJavadocJar()
 
@@ -69,7 +69,7 @@ subprojects {
     tasks.withType(JavaCompile).configureEach {
 
         it.options.encoding = 'UTF-8'
-        it.options.release = 21
+        it.options.release = 25
     }
 
     def platform_server_core_class = 'xaero/pac/common/server/core/ServerCoreForge'

@@ -1,7 +1,7 @@
 plugins {
     id 'idea'
-    id 'net.minecraftforge.gradle' version '[6.0.46,6.2)'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+    // id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
 java.withSourcesJar()
@@ -10,14 +10,14 @@ base {
     archivesName = "${mod_name}-forge-${minecraft_version}"
 }
 
-mixin {
-    add(sourceSets.main, "${mod_id}.refmap.json")
-
-    config("${mod_id}.mixins.json")
-    config("${mod_id}.forge.mixins.json")
-    config("${mod_id}.create.mixins.json")
-    config("${mod_id}.create.forge.mixins.json")
-}
+//mixin {
+//    add(sourceSets.main, "${mod_id}.refmap.json")
+//
+//    config("${mod_id}.mixins.json")
+//    config("${mod_id}.forge.mixins.json")
+//    config("${mod_id}.create.mixins.json")
+//    config("${mod_id}.create.forge.mixins.json")
+//}
 
 jar {
     manifest {
@@ -26,9 +26,6 @@ jar {
 }
 
 minecraft {
-    mappings channel: 'official', version: minecraft_version
-
-    reobf = false
     
     if (project.hasProperty('forge_ats_enabled') && project.findProperty('forge_ats_enabled').toBoolean()) {
         // This location is hardcoded in Forge and can not be changed.
@@ -38,51 +35,25 @@ minecraft {
     }
 
     runs {
-        client {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Client'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args "--username=Dev"
+        configureEach {
+            workingDir = layout.projectDirectory.dir('run')
 
-            mods {
-                modClientRun {
-                    source sourceSets.main
-//                    source project(":Common").sourceSets.main
-//                    source project(":CreateSupportCommon").sourceSets.main
-                }
-            }
+            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
         }
 
-        server {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            taskName 'Server'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                modServerRun {
-                    source sourceSets.main
-//                    source project(":Common").sourceSets.main
-//                    source project(":CreateSupportCommon").sourceSets.main
-                }
-            }
+        register('client')
+
+        register('server') {
+            args '--nogui'
         }
 
-        data {
-            workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            taskName 'Data'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                modDataRun {
-                    source sourceSets.main
-//                    source project(":Common").sourceSets.main
-                }
-            }
+        register('gameTestServer')
+
+        register('data') {
+            workingDir = layout.projectDirectory.dir('run-data')
+
+            args '--mod', mod_id, '--all', '--output', layout.projectDirectory.dir('src/generated/resources'), '--existing', layout.projectDirectory.dir('src/main/resources')
         }
     }
 }
@@ -90,13 +61,16 @@ minecraft {
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 repositories {
+    minecraft.mavenizer(it) // In Kotlin, it = this
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
     maven {
         url "https://chocolateminecraft.com/maven"
     }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
     compileOnly project(":Common")
     compileOnly project(":CreateSupportCommon")
 
@@ -112,11 +86,11 @@ dependencies {
     compileOnly "maven.modrinth:resourceful-lib:2.1.1"//source: https://github.com/Team-Resourceful/ResourcefulLib
     compileOnly "maven.modrinth:odyssey-roles:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
 
-    compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${forge_create_version}:slim") { transitive = false }
-    compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:${forge_ponder_version}")
-    compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-1.20.1:${forge_flywheel_version}")
-    //runtimeOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-1.20.1:${forge_flywheel_version}")
-    compileOnly fg.deobf("com.tterrag.registrate:Registrate:${forge_registrate_version}")
+    compileOnly("com.simibubi.create:create-1.20.1:${forge_create_version}:slim") { transitive = false }
+    compileOnly "net.createmod.ponder:Ponder-Forge-1.20.1:${forge_ponder_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-forge-api-1.20.1:${forge_flywheel_version}"
+    //runtimeOnly "dev.engine-room.flywheel:flywheel-forge-1.20.1:${forge_flywheel_version}"
+    compileOnly "com.tterrag.registrate:Registrate:${forge_registrate_version}"
     //runtimeOnly "io.github.llamalad7:mixinextras-forge:0.4.1"
 
 
@@ -128,7 +102,9 @@ dependencies {
     // Hack fix for now, force jopt-simple to be exactly 5.0.4 because Mojang ships that version, but some transtive dependencies request 6.0+
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
-    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
+//    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
+
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
 }
 
 tasks.withType(JavaCompile) {
@@ -156,7 +132,7 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
-            fg.component(it)
+            //fg.component(it)
         }
     }
 }
