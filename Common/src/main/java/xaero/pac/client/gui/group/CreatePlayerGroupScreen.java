@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui.group;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -150,15 +150,15 @@ public class CreatePlayerGroupScreen extends XPACScreen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.render(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, TITLE, width / 2, 26, -1);
-		guiGraphics.drawCenteredString(font, CHOOSE_ID, width / 2, this.height / 7 + 25, -1);
-		guiGraphics.drawCenteredString(font, ALLOWED_CHARS1, width / 2, this.height / 7 + 35, 0xFFAAAAAA);
-		guiGraphics.drawCenteredString(font, ALLOWED_CHARS_2, width / 2, this.height / 7 + 45, 0xFFAAAAAA);
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.centeredText(font, TITLE, width / 2, 26, -1);
+		guiGraphics.centeredText(font, CHOOSE_ID, width / 2, this.height / 7 + 25, -1);
+		guiGraphics.centeredText(font, ALLOWED_CHARS1, width / 2, this.height / 7 + 35, 0xFFAAAAAA);
+		guiGraphics.centeredText(font, ALLOWED_CHARS_2, width / 2, this.height / 7 + 45, 0xFFAAAAAA);
 		InputValidity inputValidity = getInputValidity();
 		if(inputValidity.message != null)
-			guiGraphics.drawString(font, inputValidity.message, width / 2 + 105, height / 7 + 64, 0xFFFF5555);
+			guiGraphics.text(font, inputValidity.message, width / 2 + 105, height / 7 + 64, 0xFFFF5555);
 	}
 
 	public static final class Builder {

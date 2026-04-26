@@ -28,14 +28,16 @@
     },
     "mixins": [
       "${mod_id}.mixins.json",
-      "${mod_id}.fabric.mixins.json",
+      "${mod_id}.fabric.mixins.json"
+    ],
+    "mixins_temp_disabled": [
       "${mod_id}.create.mixins.json",
       "${mod_id}.create.fabric.mixins.json"
     ],
   
     "depends": {
       "fabricloader": "${fabric_loader_version_range}",
-      "fabric": "${fabric_api_range}",
+      "fabric-api": "${fabric_api_range}",
       "minecraft": "${minecraft_version_range}",
       "java": "${java_fabric_range}",
       "forgeconfigapiport" : "${forgeconfigapiport_fabric_range}"

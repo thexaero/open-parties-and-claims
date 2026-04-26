@@ -120,8 +120,8 @@ public final class PlayerClaimInfoManagerIO<S>
 					Identifier dim = e.getKey();
 					PlayerDimensionClaims dimensionClaims = e.getValue();
 					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> {
-						serverClaimsManager.claim(dim, loadedObject.getPlayerId(), claim.getSubConfigIndex(), pos.x,
-								pos.z, claim.isForceloadable());
+						serverClaimsManager.claim(dim, loadedObject.getPlayerId(), claim.getSubConfigIndex(), pos.x(),
+								pos.z(), claim.isForceloadable());
 					};
 					dimensionClaims.getTypedStream().forEach(posList -> {
 						PlayerChunkClaim claim = posList.getClaimState();

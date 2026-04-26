@@ -67,7 +67,7 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 			playerInfo.getTypedStream().map(Entry::getValue).forEach(dim -> {
 				Identifier dimensionId = dim.getDimension();
 				if(notManyClaims) {
-					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> tracker.onChunkChange(dimensionId, pos.x, pos.z, claim);
+					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> tracker.onChunkChange(dimensionId, pos.x(), pos.z(), claim);
 					dim.getTypedStream().forEach(posList -> {
 						PlayerChunkClaim state = posList.getClaimState();
 						int claimSubConfigIndex = state.getSubConfigIndex();

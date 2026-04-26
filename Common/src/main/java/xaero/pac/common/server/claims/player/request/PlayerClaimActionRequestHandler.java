@@ -81,8 +81,8 @@ public class PlayerClaimActionRequestHandler {
 		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
 		IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
 		int subConfigIndex = usedSubConfig.getSubIndex();
-		int fromX = player.chunkPosition().x;
-		int fromZ = player.chunkPosition().z;
+		int fromX = player.chunkPosition().x();
+		int fromZ = player.chunkPosition().z();
 		AreaClaimResult result = manager.tryClaimActionOverArea(player.level().dimension().identifier(), playerId, subConfigIndex,
 				fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
 				request.getAction(), playerData.isClaimsAdminMode());

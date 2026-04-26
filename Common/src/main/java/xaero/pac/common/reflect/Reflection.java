@@ -18,24 +18,17 @@
 
 package xaero.pac.common.reflect;
 
-import xaero.pac.common.platform.Services;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class Reflection {
 	
-	public static Field getFieldReflection(Class<?> c, String deobfName, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor) {
-		Field field = Services.PLATFORM.getMappingHelper().findForgeField(c, deobfName, forgeObfuscatedName);
-		if(field == null) {
-			try {
-				fabricObfuscatedName = Services.PLATFORM.getMappingHelper().fixFabricFieldMapping(c, fabricObfuscatedName, fabricObfuscatedDescriptor);
-				field = c.getDeclaredField(fabricObfuscatedName);
-			} catch (NoSuchFieldException e1) {
-				throw new RuntimeException(e1);
-			}
+	public static Field getFieldReflection(Class<?> c, String deobfName) {
+		try {
+			return c.getDeclaredField(deobfName);
+		} catch (NoSuchFieldException e1) {
+			throw new RuntimeException(e1);
 		}
-		return field;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -63,17 +56,12 @@ public class Reflection {
 		field.setAccessible(accessibleBU);
 	}
 	
-	public static Method getMethodReflection(Class<?> c, String deobfName, String forgeObfuscatedName, String fabricObfuscatedName, String fabricObfuscatedDescriptor, Class<?>... parameters) {
-		Method method = Services.PLATFORM.getMappingHelper().findForgeMethod(c, deobfName, forgeObfuscatedName);
-		if(method == null){
-			try {
-				fabricObfuscatedName = Services.PLATFORM.getMappingHelper().fixFabricMethodMapping(c, fabricObfuscatedName, fabricObfuscatedDescriptor);
-				method = c.getDeclaredMethod(fabricObfuscatedName, parameters);
-			} catch (NoSuchMethodException e1) {
-				throw new RuntimeException(e1);
-			}
+	public static Method getMethodReflection(Class<?> c, String deobfName, Class<?>... parameters) {
+		try {
+			return c.getDeclaredMethod(deobfName, parameters);
+		} catch (NoSuchMethodException e1) {
+			throw new RuntimeException(e1);
 		}
-		return method;
 	}
 	
 	@SuppressWarnings("unchecked")

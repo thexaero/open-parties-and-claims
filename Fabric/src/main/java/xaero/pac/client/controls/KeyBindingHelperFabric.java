@@ -19,7 +19,7 @@
 package xaero.pac.client.controls;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 
@@ -27,7 +27,7 @@ public class KeyBindingHelperFabric implements IKeyBindingHelper {
 
 	@Override
 	public InputConstants.Key getBoundKey(KeyMapping keyBinding) {
-		return KeyBindingHelper.getBoundKeyOf(keyBinding);
+		return KeyMappingHelper.getBoundKeyOf(keyBinding);
 	}
 
 }

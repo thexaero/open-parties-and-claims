@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.OpenPartiesAndClaimsFabric;
 
-@Mixin(PersistentEntitySectionManager.Callback.class)
+@Mixin(targets = "net/minecraft/world/level/entity/PersistentEntitySectionManager$Callback")
 public class MixinFabricPersistentEntitySectionManagerCallback {
 
 	private long OPAC_oldSectionKey;

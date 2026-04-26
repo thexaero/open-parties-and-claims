@@ -62,8 +62,8 @@ public class ClaimsClaimCommands {
 			.executes(context -> {
 				ServerPlayer player = context.getSource().getPlayerOrException();
 				ServerLevel world = player.level();
-				int chunkX = player.chunkPosition().x;
-				int chunkZ = player.chunkPosition().z;
+				int chunkX = player.chunkPosition().x();
+				int chunkZ = player.chunkPosition().z();
 				try {
 					ColumnPos columnPos = ColumnPosArgument.getColumnPos(context, "block pos");
 					chunkX = columnPos.x() >> 4;
@@ -98,7 +98,7 @@ public class ClaimsClaimCommands {
 						IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
 						IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
 						int subConfigIndex = usedSubConfig.getSubIndex();
-						result = claimsManager.tryToClaimTyped(world.dimension().identifier(), playerId, subConfigIndex, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, shouldReplace);
+						result = claimsManager.tryToClaimTyped(world.dimension().identifier(), playerId, subConfigIndex, player.chunkPosition().x(), player.chunkPosition().z(), chunkX, chunkZ, shouldReplace);
 						
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> claimOwnerInfo = claimsManager.getPlayerInfo(result.getClaimResult().getPlayerId());
@@ -106,7 +106,7 @@ public class ClaimsClaimCommands {
 							return 0;
 						}
 					} else {
-						result = claimsManager.tryToUnclaimTyped(world.dimension().identifier(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, shouldReplace);
+						result = claimsManager.tryToUnclaimTyped(world.dimension().identifier(), playerId, player.chunkPosition().x(), player.chunkPosition().z(), chunkX, chunkZ, shouldReplace);
 						if(!result.getResultType().success) {
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, result.getResultType().message));
 							return 0;

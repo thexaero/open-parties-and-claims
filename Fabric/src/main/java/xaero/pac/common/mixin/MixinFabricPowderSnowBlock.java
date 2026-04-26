@@ -33,7 +33,7 @@ import xaero.pac.common.server.core.ServerCoreFabric;
 @Mixin(PowderSnowBlock.class)
 public class MixinFabricPowderSnowBlock {
 
-	@Inject(method = "method_67681", at = @At("HEAD"))
+	@Inject(method = "lambda$entityInside$0", at = @At("HEAD"))
 	private static void onMobGriefGameRuleMethod(Level level, BlockPos pos, Entity entity, CallbackInfo callbackInfo){
 		ServerCoreFabric.tryToSetMobGriefingEntity(entity);
 	}

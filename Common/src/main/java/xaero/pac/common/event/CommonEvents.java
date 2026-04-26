@@ -520,7 +520,7 @@ public abstract class CommonEvents {
 		while(iterator.hasNext()){
 			Triple<BlockPos, BlockState, BlockState> blockEntry = iterator.next();
 			BlockPos pos = blockEntry.getLeft();
-			if(chunkPositions.add(new ChunkPos(pos))) {
+			if(chunkPositions.add(ChunkPos.containing(pos))) {
 				//not protecting destroyed blocks here because it causes dupes with mods like create
 				BlockState placedBlock = blockEntry.getRight();
 				if(placedBlock == null || placedBlock.isAir())//even 1 instance of a block break can create a dupe

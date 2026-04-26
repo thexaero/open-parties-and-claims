@@ -20,7 +20,7 @@ package xaero.pac.client.gui;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -47,9 +47,9 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigHexOptionSpec;
 import xaero.pac.common.server.player.config.PlayerConfigListIterationOptionSpec;
 import xaero.pac.common.server.player.config.PlayerConfigStringOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -133,23 +133,23 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.render(guiGraphics, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
 	}
 
 	@Override
-	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	protected void renderPreDropdown(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		if(shouldWaitForData){
 			if(!data.isSyncInProgress())
 				refresh();
 			else
-				guiGraphics.drawCenteredString(font, SYNCING_IN_PROGRESS, width / 2, height / 7 + 64, -1);
+				guiGraphics.centeredText(font, SYNCING_IN_PROGRESS, width / 2, height / 7 + 64, -1);
 		}
 		if(beingDeletedStateOnOpen != optionValueSourceData.isBeingDeleted())
 			refresh();
 		else if(optionValueSourceData.isBeingDeleted())
-			guiGraphics.drawCenteredString(font, BEING_DELETED, width / 2, height / 7 + 124, -1);
+			guiGraphics.centeredText(font, BEING_DELETED, width / 2, height / 7 + 124, -1);
 	}
 
 	public static MutableComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){
@@ -437,7 +437,6 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setTooltip(minecraft.font.split(Component.translatable("gui.xaero_pac_ui_sub_config_create_widget_tooltip", Component.translatable("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH)), 200))
 					.setMutable(canCreateSubs && data.getSubCount() < data.getSubConfigLimit())
 					.setStartValue("")
-					.setFilter(Objects::nonNull)
 					.setValidator(s -> PlayerConfig.isValidSubId(s) && !usedSubConfigOptionStorage.getValidator().test(data, s))
 					.setResponder((el, s) -> {
 						data.setSyncInProgress(true);
@@ -526,7 +525,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						
 					} else if(type == Double.class || type == Float.class)
 						filter = s -> s != null && s.matches("^[-\\.0-9]*$");
-					
+					final Predicate<String> finalFilter = filter;
 					TextWidgetListElement.Builder elementBuilder = TextWidgetListElement.Builder.begin()
 							.setW(elementWidth)
 							.setH(elementHeight)
@@ -534,8 +533,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							.setTooltip(tooltip)
 							.setMutable(optionStorage.isMutable())
 							.setStartValue(value == null ? "" : optionStorage.getStringWriterCast().apply(value))
-							.setFilter(filter)
-							.setValidator(s -> subConfigSelected && s.isEmpty() || optionStorage.getStringValidator().test(optionValueSourceData, s))
+							.setValidator(s -> subConfigSelected && s.isEmpty() || finalFilter.test(s) && optionStorage.getStringValidator().test(optionValueSourceData, s))
 							.setResponder((el, s) -> {
 								if(!optionStorage.isMutable())
 									return;

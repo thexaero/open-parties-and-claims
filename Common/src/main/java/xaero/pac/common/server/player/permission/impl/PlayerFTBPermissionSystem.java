@@ -19,7 +19,6 @@
 package xaero.pac.common.server.player.permission.impl;
 
 import dev.ftb.mods.ftbranks.api.FTBRanksAPI;
-import dev.ftb.mods.ftbranks.api.OptionalBoolean;
 import dev.ftb.mods.ftbranks.api.PermissionValue;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
@@ -55,10 +54,8 @@ public class PlayerFTBPermissionSystem implements IPlayerPermissionSystemAPI {
 		//going through value types manually (string must be last because a lot of types can have asString implemented)
 		Optional<?> optional = permissionValue.asNumber();
 		if(optional.isEmpty()) {
-			OptionalBoolean optionalBoolean = permissionValue.asBoolean();
-			if(optionalBoolean.isPresent())
-				optional = Optional.of(optionalBoolean.get());
-			else {
+			optional = permissionValue.asBoolean();
+			if(optional.isEmpty()) {
 				optional = permissionValue.asString();
 				if (optional.isEmpty())
 					return Optional.empty();

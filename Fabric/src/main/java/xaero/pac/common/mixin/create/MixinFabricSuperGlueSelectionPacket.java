@@ -18,28 +18,18 @@
 
 package xaero.pac.common.mixin.create;
 
-import com.simibubi.create.content.contraptions.glue.SuperGlueSelectionPacket;
-import com.simibubi.create.foundation.networking.SimplePacketBase;
-import net.minecraft.core.BlockPos;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.common.server.core.ServerCore;
-
-@Mixin(SuperGlueSelectionPacket.class)
+//@Mixin(SuperGlueSelectionPacket.class)
 public class MixinFabricSuperGlueSelectionPacket {
 
-	@Shadow
-	private BlockPos from;
-	@Shadow
-	private BlockPos to;
-
-	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
-	public void onActivate(SimplePacketBase.Context ctx, CallbackInfo ci){
-		if(!ServerCore.isCreateGlueSelectionAllowed(from, to, ctx.getSender()))
-			ci.cancel();
-	}
+//	@Shadow
+//	private BlockPos from;
+//	@Shadow
+//	private BlockPos to;
+//
+//	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
+//	public void onActivate(SimplePacketBase.Context ctx, CallbackInfo ci){
+//		if(!ServerCore.isCreateGlueSelectionAllowed(from, to, ctx.getSender()))
+//			ci.cancel();
+//	}
 
 }

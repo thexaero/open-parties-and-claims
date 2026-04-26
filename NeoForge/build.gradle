@@ -50,9 +50,9 @@ dependencies {
     compileOnly project(":Common")
     compileOnly project(":CreateSupportCommon")
 
-    compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
+    compileOnly "curse.maven:ftbranks-314905:7921450"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
     compileOnly "curse.maven:architectury-419699:4581905"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-    compileOnly "curse.maven:ftblibrary-404465:4596511"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+    compileOnly "curse.maven:ftblibrary-404465:7971743"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
     compileOnly "maven.modrinth:resourceful-lib:ihzjCwEV"//source: https://github.com/Team-Resourceful/ResourcefulLib
     compileOnly "maven.modrinth:odyssey-roles:1.3.1"//source: https://github.com/terrarium-earth/Prometheus

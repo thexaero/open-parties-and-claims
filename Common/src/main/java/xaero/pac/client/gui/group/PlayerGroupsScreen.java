@@ -20,7 +20,7 @@ package xaero.pac.client.gui.group;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.Tooltip;
@@ -31,6 +31,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
@@ -428,48 +429,45 @@ public class PlayerGroupsScreen extends XPACScreen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		if(wasEffectivelySyncingOnInit()){
 			if(!isEffectivelySyncing())
 				refreshForResync();
 		}
 		hoveredContentsEntry = null;
-		super.render(guiGraphics, mouseX, mouseY, partial);
+		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
 		int messageCenterY = (height - FOOTER_HEIGHT + HEADER_HEIGHT) / 2 - 4;
 		if(wasEffectivelySyncingOnInit()){
 			if(desyncErrorOnInit != null)
-				guiGraphics.drawCenteredString(
+				guiGraphics.centeredText(
 						font, FIXING_DESYNC, width / 2, HEADER_HEIGHT + 10,
 						LIST_TITLE_LABEL_COLOR
 				);
 			else
-				guiGraphics.drawCenteredString(
+				guiGraphics.centeredText(
 						font, SYNCHRONIZING, width / 2, messageCenterY,
 						LIST_TITLE_LABEL_COLOR
 				);
 		} else if(groupList.children().isEmpty())
-			guiGraphics.drawCenteredString(
+			guiGraphics.centeredText(
 					font, NO_GROUPS, width / 2, messageCenterY,
 					LIST_TITLE_LABEL_COLOR
 			);
-		guiGraphics.drawCenteredString(font, TITLE, width / 2, 20, -1);
-		guiGraphics.drawCenteredString(font, configTitle, width / 2, 31, -1);
+		guiGraphics.centeredText(font, TITLE, width / 2, 20, -1);
+		guiGraphics.centeredText(font, configTitle, width / 2, 31, -1);
 
 		if(latestDesyncError != null && latestDesyncError.getDesyncScreenMessage() != null &&
 				(System.currentTimeMillis() - latestDesyncErrorTime) < 3000) {
 			guiGraphics.fill(0, messageCenterY - 18, width, messageCenterY + 6, 0xCC000000);
-			guiGraphics.drawCenteredString(
+			guiGraphics.centeredText(
 					font, latestDesyncError.getDesyncScreenMessage(), width / 2, messageCenterY - 10,
 					0xFFAA0000
 			);
 		}
 		if(hoveredContentsEntry != null){
-			int widthBackup = minecraft.getWindow().getWidth();
-			minecraft.getWindow().setWidth(widthBackup + 5);//to fix unnecessary splitting of uuid tooltips on 1.19+ when in the default resolution
-			minecraft.getWindow().setGuiScale(minecraft.getWindow().getGuiScale());
-			guiGraphics.renderComponentHoverEffect(font, hoveredContentsEntry.getLabel().getStyle(), mouseX, mouseY - 5);
-			minecraft.getWindow().setWidth(widthBackup);
-			minecraft.getWindow().setGuiScale(minecraft.getWindow().getGuiScale());
+			HoverEvent hoverEvent = hoveredContentsEntry.getLabel().getStyle().getHoverEvent();
+			if(hoverEvent instanceof HoverEvent.ShowText(Component tooltip))
+				guiGraphics.setTooltipForNextFrame(tooltip, mouseX, mouseY - 5);
 		}
 	}
 
@@ -548,7 +546,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected void renderSelection(GuiGraphics guiGraphics, Entry entry, int color) {
+		protected void extractSelection(GuiGraphicsExtractor guiGraphics, Entry entry, int color) {
 			//not rendering the defeault selection indicator
 		}
 
@@ -647,8 +645,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public void renderContent(
-					GuiGraphics guiGraphics,
+			public void extractContent(
+					GuiGraphicsExtractor guiGraphics,
 					int mouseX,
 					int mouseY,
 					boolean hovered,
@@ -668,17 +666,17 @@ public class PlayerGroupsScreen extends XPACScreen {
 					separatorLineX -= 6;//room for the scroll bar
 				int labelColor = -1;
 				if(isSelected){
-					guiGraphics.hLine(x, separatorLineX, y, separatorLineColor);
-					guiGraphics.hLine(x, separatorLineX, y + ROW_HEIGHT - 1, separatorLineColor);
+					guiGraphics.horizontalLine(x, separatorLineX, y, separatorLineColor);
+					guiGraphics.horizontalLine(x, separatorLineX, y + ROW_HEIGHT - 1, separatorLineColor);
 				} else {
 					labelColor = hovered ? LIST_TITLE_LABEL_COLOR : 0xFF808080;
-					guiGraphics.vLine(separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
+					guiGraphics.verticalLine(separatorLineX, y - 1, y + ROW_HEIGHT, separatorLineColor);
 				}
 				if(isFirst)
-					guiGraphics.vLine(separatorLineX, GroupList.this.getY() - 1, y, separatorLineColor);
+					guiGraphics.verticalLine(separatorLineX, GroupList.this.getY() - 1, y, separatorLineColor);
 				if(isLast)
-					guiGraphics.vLine(separatorLineX, y + ROW_HEIGHT - 1, getBottom(), separatorLineColor);
-				guiGraphics.drawString(
+					guiGraphics.verticalLine(separatorLineX, y + ROW_HEIGHT - 1, getBottom(), separatorLineColor);
+				guiGraphics.text(
 						font, groupName,
 						separatorLineX - 7 - font.width(groupName), y + rowHeight / 2 - 2, labelColor
 				);
@@ -700,7 +698,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 		}
 
 		@Override
-		protected void renderSelection(GuiGraphics guiGraphics, ContentsList.AbstractEntry entry, int color) {
+		protected void extractSelection(GuiGraphicsExtractor guiGraphics, ContentsList.AbstractEntry entry, int color) {
 			//not rendering the defeault selection indicator
 		}
 
@@ -808,7 +806,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			protected void renderSelectionIndicator(
-					GuiGraphics guiGraphics,
+					GuiGraphicsExtractor guiGraphics,
 					String indicator,
 					int labelX,
 					int labelY
@@ -816,7 +814,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 				if(isFocused() && (((System.currentTimeMillis() - selectionTime) / 500) & 1) == 1)
 					return;
 				int indicatorColor = isFocused() ? -1 : LIST_TITLE_LABEL_COLOR;
-				guiGraphics.drawString(font, indicator, labelX - 2 - font.width(indicator), labelY, indicatorColor);
+				guiGraphics.text(font, indicator, labelX - 2 - font.width(indicator), labelY, indicatorColor);
 			}
 
 			public abstract Component getLabel();
@@ -838,8 +836,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public void renderContent(
-					GuiGraphics guiGraphics,
+			public void extractContent(
+					GuiGraphicsExtractor guiGraphics,
 					int mouseX,
 					int mouseY,
 					boolean hovered,
@@ -854,7 +852,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 				int labelY = y + rowHeight / 2 - 2;
 				if(isSelected)
 					renderSelectionIndicator(guiGraphics, "-", labelX, labelY);
-				guiGraphics.drawString(font, title, labelX, labelY, LIST_TITLE_LABEL_COLOR);
+				guiGraphics.text(font, title, labelX, labelY, LIST_TITLE_LABEL_COLOR);
 				if(hovered)
 					hoveredContentsEntry = this;
 			}
@@ -881,8 +879,8 @@ public class PlayerGroupsScreen extends XPACScreen {
 			}
 
 			@Override
-			public void renderContent(
-					GuiGraphics guiGraphics,
+			public void extractContent(
+					GuiGraphicsExtractor guiGraphics,
 					int mouseX,
 					int mouseY,
 					boolean hovered,
@@ -902,7 +900,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 					renderSelectionIndicator(guiGraphics, "→", labelX, labelY);
 				else if(hovered)
 					labelX -= 1;
-				guiGraphics.drawString(font, label, labelX, labelY, labelColor);
+				guiGraphics.text(font, label, labelX, labelY, labelColor);
 				if(hovered)
 					hoveredContentsEntry = this;
 			}

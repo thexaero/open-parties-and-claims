@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -75,14 +75,14 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 		return listener;
 	}
 
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, message, width / 2, height / 6 + 64, -1);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.centeredText(font, message, width / 2, height / 6 + 64, -1);
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.render(guiGraphics, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
 		tryToStartListening();
 	}
 

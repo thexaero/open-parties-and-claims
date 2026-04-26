@@ -171,7 +171,7 @@ public abstract class ClaimsManager
 	@Nullable
 	@Override
 	public PlayerChunkClaim get(@Nonnull Identifier dimension, @Nonnull ChunkPos chunkPos) {
-		return get(dimension, chunkPos.x, chunkPos.z);
+		return get(dimension, chunkPos.x(), chunkPos.z());
 	}
 
 	@Nullable

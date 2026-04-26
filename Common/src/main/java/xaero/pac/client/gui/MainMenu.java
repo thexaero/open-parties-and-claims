@@ -19,7 +19,7 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -175,7 +175,7 @@ public class MainMenu extends XPACScreen {
 		
 		claimButton.active = forceloadButton.active = false;
 		if(serverHasMod && !OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isLoading()) {
-			IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
+			IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x(), minecraft.player.chunkPosition().z());
 			boolean adminMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isAdminMode();
 			boolean serverMode = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isServerMode();
 			UUID claimTargetUUID = serverMode ? PlayerConfig.SERVER_CLAIM_UUID : minecraft.player.getUUID();
@@ -208,7 +208,7 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onClaimButton(Button b) {
-		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
+		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x(), minecraft.player.chunkPosition().z());
 		if(wouldClaim(currentClaim))
 			CommandUtil.sendCommand(minecraft, CLAIM_COMMAND.getString().substring(1));
 		else
@@ -217,7 +217,7 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onForceloadButton(Button b) {
-		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
+		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x(), minecraft.player.chunkPosition().z());
 		if(currentClaim == null)
 			return;
 		if(!currentClaim.isForceloadable())
@@ -231,23 +231,23 @@ public class MainMenu extends XPACScreen {
 		goBack();
 	}
 
-	private void drawPartyInfo(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+	private void drawPartyInfo(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial){
 		IClientPartyStorage<IClientPartyAllyInfo, IClientParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>, IClientPartyMemberDynamicInfoSyncableStorage<IPartyMemberDynamicInfoSyncable>>
 				partyStorage = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage();
 		String actualPartyName = partyStorage.getPartyName();
 		if(actualPartyName == null || actualPartyName.isEmpty())
 			actualPartyName = "N/A";
-		guiGraphics.drawString(font, partyNameSupplier.get(actualPartyName), width / 2 - 24, height / 7 + 42, -1);
+		guiGraphics.text(font, partyNameSupplier.get(actualPartyName), width / 2 - 24, height / 7 + 42, -1);
 		if(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null) {
 			String actualOwnerName = partyStorage.getParty().getOwner().getUsername();
-			guiGraphics.drawString(font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 7 + 54, -1);
-			guiGraphics.drawString(font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 7 + 66, -1);
-			guiGraphics.drawString(font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 7 + 78, -1);
-			guiGraphics.drawString(font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 7 + 90, -1);
+			guiGraphics.text(font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 7 + 54, -1);
+			guiGraphics.text(font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 7 + 66, -1);
+			guiGraphics.text(font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 7 + 78, -1);
+			guiGraphics.text(font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 7 + 90, -1);
 		}
 	}
 
-	private void drawClaimsInfo(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+	private void drawClaimsInfo(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial){
 		IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 				claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		if(claimsManager.hasPlayerInfo(minecraft.player.getUUID())) {
@@ -270,40 +270,40 @@ public class MainMenu extends XPACScreen {
 			if(claimsColor == null && currentSubConfigIndex != -1)
 				claimsColor = playerInfo.getClaimsColor();
 
-			guiGraphics.drawString(font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 7 + 114, -1);
-			guiGraphics.drawString(font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 7 + 126, -1);
-			guiGraphics.drawString(font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 7 + 138, -1);
-			guiGraphics.drawString(font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 7 + 150, -1);
+			guiGraphics.text(font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 7 + 114, -1);
+			guiGraphics.text(font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 7 + 126, -1);
+			guiGraphics.text(font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 7 + 138, -1);
+			guiGraphics.text(font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 7 + 150, -1);
 		}
 
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, title, width / 2, 16, -1);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.centeredText(font, title, width / 2, 16, -1);
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		updateButtons();
-		super.render(guiGraphics, mouseX, mouseY, partial);
+		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
 		if(!serverHasMod)
-			guiGraphics.drawCenteredString(font, NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
+			guiGraphics.centeredText(font, NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
 		else {
 			if(serverHasPartiesEnabled) {
 				if (OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().isLoading())
-					guiGraphics.drawString(font, PARTY_SYNCING, width / 2 - 104 - font.width(PARTY_SYNCING), height / 7 + 42, -1);
+					guiGraphics.text(font, PARTY_SYNCING, width / 2 - 104 - font.width(PARTY_SYNCING), height / 7 + 42, -1);
 				drawPartyInfo(guiGraphics, mouseX, mouseY, partial);
 			} else
-				guiGraphics.drawCenteredString(font, NO_PARTIES, width / 2, height / 7 + 42, 0xFFAAAAAA);
+				guiGraphics.centeredText(font, NO_PARTIES, width / 2, height / 7 + 42, 0xFFAAAAAA);
 
 			if(serverHasClaimsEnabled) {
 				if (OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isLoading())
-					guiGraphics.drawString(font, CLAIMS_SYNCING, width / 2 - 104 - font.width(CLAIMS_SYNCING), height / 7 + 114, -1);
+					guiGraphics.text(font, CLAIMS_SYNCING, width / 2 - 104 - font.width(CLAIMS_SYNCING), height / 7 + 114, -1);
 				drawClaimsInfo(guiGraphics, mouseX, mouseY, partial);
 			} else
-				guiGraphics.drawCenteredString(font, NO_CLAIMS, width / 2, height / 7 + 114, 0xFFAAAAAA);
+				guiGraphics.centeredText(font, NO_CLAIMS, width / 2, height / 7 + 114, 0xFFAAAAAA);
 		}
 	}
 	

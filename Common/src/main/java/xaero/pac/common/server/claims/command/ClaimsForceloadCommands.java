@@ -56,8 +56,8 @@ public class ClaimsForceloadCommands {
 			.executes(context -> {
 				ServerPlayer player = context.getSource().getPlayerOrException();
 				ServerLevel world = player.level();
-				int chunkX = player.chunkPosition().x;
-				int chunkZ = player.chunkPosition().z;
+				int chunkX = player.chunkPosition().x();
+				int chunkZ = player.chunkPosition().z();
 				try {
 					ColumnPos columnPos = ColumnPosArgument.getColumnPos(context, "block pos");
 					chunkX = columnPos.x() >> 4;
@@ -87,7 +87,7 @@ public class ClaimsForceloadCommands {
 				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 				boolean shouldReplace = opReplaceCurrent || playerData.isClaimsAdminMode();
 
-			 	ClaimResult<?> result = claimsManager.tryToForceloadTyped(world.dimension().identifier(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);
+			 	ClaimResult<?> result = claimsManager.tryToForceloadTyped(world.dimension().identifier(), playerId, player.chunkPosition().x(), player.chunkPosition().z(), chunkX, chunkZ, enable, shouldReplace);
 			 	
 			 	try {
 				 	if(!result.getResultType().success) {

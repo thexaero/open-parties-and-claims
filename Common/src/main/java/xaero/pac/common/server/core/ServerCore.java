@@ -289,7 +289,7 @@ public class ServerCore {
 				serverData = ServerData.from(serverLevel.getServer());
 		if(serverData == null)
 			return true;
-		if(serverData.getChunkProtection().onCreateModAffectPositionedObjects(serverData, serverLevel, points, p -> new ChunkPos(p.xaero_OPAC_getPos()), arm.getBlockPos(), false, false, true, false)){
+		if(serverData.getChunkProtection().onCreateModAffectPositionedObjects(serverData, serverLevel, points, p -> ChunkPos.containing(p.xaero_OPAC_getPos()), arm.getBlockPos(), false, false, true, false)){
 			points.clear();
 			return false;
 		}
@@ -709,7 +709,7 @@ public class ServerCore {
 				|| checkEnchantmentOnDiskUsable(level) && HANDLING_ENCHANTMENT_ON_DISK != -1;
 	}
 
-	private static final Field ENTITY_PORTAL_PROCESS_FIELD = Reflection.getFieldReflection(Entity.class, "portalProcess", "f_336952_", "field_51994", "Lnet/minecraft/class_9787;");
+	private static final Field ENTITY_PORTAL_PROCESS_FIELD = Reflection.getFieldReflection(Entity.class, "portalProcess");
 
 	public static boolean onHandleNetherPortal(Entity entity) {
 		ServerLevel serverLevel = ServerLevelHelper.getServerLevel(entity.level());

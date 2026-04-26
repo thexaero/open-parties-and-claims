@@ -28,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCore;
 
@@ -49,6 +50,16 @@ public class MixinPlayer {
 	) {
 		if(ServerCore.onStabAttack((LivingEntity) (Object)this, targetEntity, slot))
 			info.setReturnValue(false);
+	}
+
+	@Inject(method = "attack", at = @At("HEAD"))
+	public void onAttackPre(Entity target, CallbackInfo info) {
+		ServerCore.preResourcesDrop((Entity)(Object)this);
+	}
+
+	@Inject(method = "attack", at = @At("RETURN"))
+	public void onAttack(Entity target, CallbackInfo info) {
+		ServerCore.postResourcesDrop((Entity)(Object)this);
 	}
 
 }

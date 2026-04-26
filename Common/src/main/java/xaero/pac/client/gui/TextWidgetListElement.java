@@ -19,7 +19,7 @@
 package xaero.pac.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -28,6 +28,8 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.client.gui.widget.TextWidgetEditBox;
 
 import java.util.List;
@@ -107,16 +109,15 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 	}
 	
 	@Override
-	public final void render(GuiGraphics guiGraphics) {
+	public final void render(GuiGraphicsExtractor guiGraphics) {
 		super.render(guiGraphics);
-		guiGraphics.drawString(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 0xFFE0E0E0/*copied from editbox class*/);
+		guiGraphics.text(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 0xFFE0E0E0/*copied from editbox class*/);
 	}
 	
 	public static final class Builder extends SimpleValueWidgetListElement.Builder<String, TextWidgetListElement, Builder> {
 		
 		private Component title;
 		private BiConsumer<TextWidgetListElement, String> responder;
-		private Predicate<String> filter;
 		private Predicate<String> validator;
 		private int boxWidth;
 		private int maxLength;
@@ -127,7 +128,6 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 			setBoxWidth(50);
 			setTitle(null);
 			setResponder(null);
-			setFilter(Objects::nonNull);
 			setValidator(Objects::nonNull);
 			setMaxLength(32);
 			return this;
@@ -153,18 +153,13 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 			return this;
 		}
 		
-		public Builder setFilter(Predicate<String> filter) {
-			this.filter = filter;
-			return this;
-		}
-		
 		public Builder setValidator(Predicate<String> validator) {
 			this.validator = validator;
 			return this;
 		}
 		
 		public TextWidgetListElement build() {
-			if(title == null || filter == null)
+			if(title == null)
 				throw new IllegalStateException();
 			return (TextWidgetListElement) super.build();
 		}
@@ -176,7 +171,6 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 				box.setMaxLength(maxLength);
 				box.setValue(el.getDraftValue());
 				box.setResponder(s -> el.onTextTyped(s));
-				box.setFilter(filter);
 				return box;
 			};
 			return new TextWidgetListElement(w, h, mutable, title, widgetSupplier, clientTooltip, responder, validator, startValue);

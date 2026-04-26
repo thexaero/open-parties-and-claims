@@ -103,7 +103,7 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 						claimPosIterator = claimPosList.getStream().iterator();
 						while (claimPosIterator.hasNext() && locations.size() < perTick) {
 							ChunkPos claimChunkPos = claimPosIterator.next();
-							locations.add(new ClaimLocation(dimId, claimChunkPos.x, claimChunkPos.z));
+							locations.add(new ClaimLocation(dimId, claimChunkPos.x(), claimChunkPos.z()));
 							totalCount++;
 							tickCount++;
 						}

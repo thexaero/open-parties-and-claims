@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -72,7 +72,7 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 		return tooltip;
 	}
 	
-	public void render(GuiGraphics guiGraphics) {
+	public void render(GuiGraphicsExtractor guiGraphics) {
 	}
 	
 	public static abstract class Builder<E extends WidgetListElement<E>, B extends Builder<E, B>> {

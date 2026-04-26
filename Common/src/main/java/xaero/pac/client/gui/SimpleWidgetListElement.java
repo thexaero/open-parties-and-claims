@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
@@ -33,7 +33,7 @@ public class SimpleWidgetListElement extends WidgetListElement<SimpleWidgetListE
 	}
 	
 	@Override
-	public final void render(GuiGraphics guiGraphics) {
+	public final void render(GuiGraphicsExtractor guiGraphics) {
 		super.render(guiGraphics);
 	}
 	

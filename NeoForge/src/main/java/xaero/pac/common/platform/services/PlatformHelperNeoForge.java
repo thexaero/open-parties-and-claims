@@ -22,13 +22,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLConfig;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.controls.keybinding.KeyBindingHelperNeoForge;
 import xaero.pac.common.entity.EntityAccessNeoForge;
-import xaero.pac.common.reflect.IMappingHelper;
-import xaero.pac.common.reflect.MappingHelperNeoForge;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessNeoForge;
 
@@ -38,7 +35,6 @@ public class PlatformHelperNeoForge implements IPlatformHelper {
 	private final KeyBindingHelperNeoForge keyBindingRegistryForge = new KeyBindingHelperNeoForge();
 	private final ServerChunkCacheAccessNeoForge serverChunkCacheAccessNeoForge = new ServerChunkCacheAccessNeoForge();
 	private final EntityAccessNeoForge entityAccessNeoForge = new EntityAccessNeoForge();
-	private final MappingHelperNeoForge mappingHelperNeoForge = new MappingHelperNeoForge();
 
 	@Override
 	public String getPlatformName() {
@@ -73,11 +69,6 @@ public class PlatformHelperNeoForge implements IPlatformHelper {
 	@Override
 	public EntityAccessNeoForge getEntityAccess() {
 		return entityAccessNeoForge;
-	}
-
-	@Override
-	public IMappingHelper getMappingHelper() {
-		return mappingHelperNeoForge;
 	}
 
 	@Override

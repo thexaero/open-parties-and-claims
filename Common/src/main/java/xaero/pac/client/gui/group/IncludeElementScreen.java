@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui.group;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -179,24 +179,24 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		if(manualInputBox != null)
 			manualInputBox.setEditable(true);//restoring after preventing space being typed
 		if(needsButtonUpdate)
 			updateButtons();
-		super.render(guiGraphics, mouseX, mouseY, partial);
+		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
 	}
 
 	@Override
-	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	protected void renderPreDropdown(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, title, width / 2, 26, -1);
+		guiGraphics.centeredText(font, title, width / 2, 26, -1);
 		if(selectionMenu == null)
-			guiGraphics.drawCenteredString(font, allIncludedErrorMessage, width / 2, selectionMenuY, -1);
+			guiGraphics.centeredText(font, allIncludedErrorMessage, width / 2, selectionMenuY, -1);
 		else
-			guiGraphics.drawCenteredString(font, selectionMenuHint, width / 2, selectionMenuY - 15, -1);
+			guiGraphics.centeredText(font, selectionMenuHint, width / 2, selectionMenuY - 15, -1);
 		if(allowManualInput)
-			guiGraphics.drawCenteredString(font, manualInputHint, width / 2, height / 7 + 50, -1);
+			guiGraphics.centeredText(font, manualInputHint, width / 2, height / 7 + 50, -1);
 	}
 
 	@Override

@@ -45,8 +45,8 @@ public class PacketHandlerFabric extends PacketHandlerFull {
 
 	public void registerCommon() {
 		PacketPayloadCodec payloadCodec = new PacketPayloadCodec();
-		PayloadTypeRegistry.playS2C().register(PacketPayload.TYPE, payloadCodec);
-		PayloadTypeRegistry.playC2S().register(PacketPayload.TYPE, payloadCodec);
+		PayloadTypeRegistry.clientboundPlay().register(PacketPayload.TYPE, payloadCodec);
+		PayloadTypeRegistry.serverboundPlay().register(PacketPayload.TYPE, payloadCodec);
 		ServerPlayNetworking.registerGlobalReceiver(PacketPayload.TYPE, new ServerPacketReceiverFabric(this));
 	}
 

@@ -94,7 +94,7 @@ public abstract class DimensionClaimsManager
 	}
 	
 	public PlayerChunkClaim get(ChunkPos chunkPos) {
-		return get(chunkPos.x, chunkPos.z);
+		return get(chunkPos.x(), chunkPos.z());
 	}
 	
 	public PlayerChunkClaim get(BlockPos blockPos) {

@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -128,17 +128,17 @@ public class ConfigMenu extends XPACScreen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, title, width / 2, 16, -1);
-		guiGraphics.drawCenteredString(font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 132, -1);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.centeredText(font, title, width / 2, 16, -1);
+		guiGraphics.centeredText(font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 132, -1);
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.render(guiGraphics, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
 		if (!serverHasMod)
-			guiGraphics.drawCenteredString(font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
+			guiGraphics.centeredText(font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
 	}
 
 }

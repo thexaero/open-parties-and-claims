@@ -18,21 +18,13 @@
 
 package xaero.pac.common.mixin.create;
 
-import com.simibubi.create.content.equipment.potatoCannon.PotatoProjectileEntity;
-import net.minecraft.world.phys.EntityHitResult;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.common.server.core.ServerCore;
-
-@Mixin(PotatoProjectileEntity.class)
+//@Mixin(PotatoProjectileEntity.class)
 public class MixinFabricPotatoProjectileEntity {
 
-	@Inject(at = @At("HEAD"), method = "onHitEntity", cancellable = true)
-	public void onOnHitEntity(EntityHitResult ray, CallbackInfo ci){
-		if(!ServerCore.isProjectileHitAllowed((PotatoProjectileEntity)(Object)this, ray))
-			ci.cancel();
-	}
+//	@Inject(at = @At("HEAD"), method = "onHitEntity", cancellable = true)
+//	public void onOnHitEntity(EntityHitResult ray, CallbackInfo ci){
+//		if(!ServerCore.isProjectileHitAllowed((PotatoProjectileEntity)(Object)this, ray))
+//			ci.cancel();
+//	}
 
 }

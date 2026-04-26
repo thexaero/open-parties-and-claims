@@ -19,12 +19,7 @@
 package xaero.pac.common.mixin;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.common.server.core.ServerCore;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
@@ -41,17 +36,6 @@ public class MixinServerPlayer implements IOpenPACServerPlayer {
 	@Override
 	public void setXaero_OPAC_PlayerData(ServerPlayerDataAPI data) {
 		xaero_OPAC_PlayerData = data;
-	}
-
-
-	@Inject(method = "attack", at = @At("HEAD"))
-	public void onAttackPre(Entity target, CallbackInfo info) {
-		ServerCore.preResourcesDrop((Entity)(Object)this);
-	}
-
-	@Inject(method = "attack", at = @At("RETURN"))
-	public void onAttack(Entity target, CallbackInfo info) {
-		ServerCore.postResourcesDrop((Entity)(Object)this);
 	}
 
 }

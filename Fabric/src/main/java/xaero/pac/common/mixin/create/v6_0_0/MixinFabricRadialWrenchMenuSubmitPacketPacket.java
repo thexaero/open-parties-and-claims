@@ -18,26 +18,16 @@
 
 package xaero.pac.common.mixin.create.v6_0_0;
 
-import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
-import com.simibubi.create.foundation.networking.SimplePacketBase;
-import net.minecraft.core.BlockPos;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.common.server.core.ServerCore;
-
-@Mixin(RadialWrenchMenuSubmitPacket.class)
+//@Mixin(RadialWrenchMenuSubmitPacket.class)
 public class MixinFabricRadialWrenchMenuSubmitPacketPacket {
 
-	@Shadow
-	private BlockPos blockPos;
-
-	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
-	public void onActivate(SimplePacketBase.Context ctx, CallbackInfo ci){
-		if(!ServerCore.isCreateBlockPacketAllowed(blockPos, ctx.getSender()))
-			ci.cancel();
-	}
+//	@Shadow
+//	private BlockPos blockPos;
+//
+//	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
+//	public void onActivate(SimplePacketBase.Context ctx, CallbackInfo ci){
+//		if(!ServerCore.isCreateBlockPacketAllowed(blockPos, ctx.getSender()))
+//			ci.cancel();
+//	}
 
 }

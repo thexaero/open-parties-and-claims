@@ -68,8 +68,8 @@ public class PlayerDimensionClaimsNbtSerializer {
 			ListTag positionsTag = new ListTag();
 			posList.getStream().forEach(pos -> {
 				CompoundTag posTag = new CompoundTag();
-				posTag.putInt("x", pos.x);
-				posTag.putInt("z", pos.z);
+				posTag.putInt("x", pos.x());
+				posTag.putInt("z", pos.z());
 				positionsTag.add(posTag);
 			});
 			posListTag.put("positions", positionsTag);

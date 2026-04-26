@@ -18,7 +18,7 @@
 
 package xaero.pac.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
@@ -28,7 +28,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
@@ -105,13 +104,13 @@ public abstract class WidgetListScreen extends XPACScreen {
 		return super.addWidget(p_96625_);
 	}
 
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, displayedTitle, width / 2, 16, -1);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.centeredText(font, displayedTitle, width / 2, 16, -1);
 	}
 
 	@Override
-	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	protected void renderPreDropdown(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		int startIndex = getStartIndex();
 		int endIndex = getEndIndex();
@@ -125,7 +124,7 @@ public abstract class WidgetListScreen extends XPACScreen {
 		if (openDropdown == null && tooltipElement != null) {
 			List<ClientTooltipComponent> tooltip = tooltipElement.getTooltip();
 			if (tooltip != null)
-				guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY + ROW_HEIGHT + 10, DefaultTooltipPositioner.INSTANCE, null);
+				guiGraphics.tooltip(font, tooltip, mouseX, mouseY + ROW_HEIGHT + 10, DefaultTooltipPositioner.INSTANCE, null);
 		}
 	}
 

@@ -19,7 +19,7 @@
 package xaero.pac.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
@@ -49,9 +49,9 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics) {
+	public void render(GuiGraphicsExtractor guiGraphics) {
 		super.render(guiGraphics);
-		guiGraphics.drawString(Minecraft.getInstance().font, title, x, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+		guiGraphics.text(Minecraft.getInstance().font, title, x, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
 
 	}
 

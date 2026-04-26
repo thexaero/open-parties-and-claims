@@ -18,25 +18,16 @@
 
 package xaero.pac.common.mixin.create;
 
-import com.simibubi.create.content.contraptions.glue.SuperGlueRemovalPacket;
-import com.simibubi.create.foundation.networking.SimplePacketBase;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.common.server.core.ServerCore;
-
-@Mixin(SuperGlueRemovalPacket.class)
+//@Mixin(SuperGlueRemovalPacket.class)
 public class MixinFabricSuperGlueRemovalPacket {
 
-	@Shadow(remap = false)
-	private int entityId;
-
-	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
-	public void onActivate(SimplePacketBase.Context ctx, CallbackInfo ci){
-		if(!ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender()))
-			ci.cancel();
-	}
+//	@Shadow(remap = false)
+//	private int entityId;
+//
+//	@Inject(method = "lambda$handle$0", remap = false, at = @At("HEAD"), cancellable = true)
+//	public void onActivate(SimplePacketBase.Context ctx, CallbackInfo ci){
+//		if(!ServerCore.isCreateGlueRemovalAllowed(entityId, ctx.getSender()))
+//			ci.cancel();
+//	}
 
 }

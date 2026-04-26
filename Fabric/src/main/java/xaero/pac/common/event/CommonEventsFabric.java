@@ -18,10 +18,9 @@
 
 package xaero.pac.common.event;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -99,7 +98,7 @@ public class CommonEventsFabric extends CommonEvents {
 		ServerPlayerEvents.COPY_FROM.register(this::onPlayerClone);
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarting);
 		ServerLifecycleEvents.SERVER_STOPPED.register(this::onServerStopped);
-		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(this::onPlayerChangedDimension);
+		ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(this::onPlayerChangedDimension);
 		ServerTickEvents.START_SERVER_TICK.register(server -> onServerTick(server, true));
 		ServerTickEvents.END_SERVER_TICK.register(server -> onServerTick(server, false));
 		CommandRegistrationCallback.EVENT.register(this::onRegisterCommands);

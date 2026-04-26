@@ -18,24 +18,12 @@
 
 package xaero.pac.common.mixin.create;
 
-import com.simibubi.create.content.equipment.symmetryWand.SymmetryWandItem;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xaero.pac.common.server.core.ServerCore;
-
-@Mixin(value = SymmetryWandItem.class, priority = 1000001)
+//@Mixin(value = SymmetryWandItem.class, priority = 1000001)
 public class MixinFabricSymmetryWandItem {
 
-	@Inject(method = "remove", remap = false, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/equipment/symmetryWand/mirror/SymmetryMirror;process(Ljava/util/Map;)V"))
-	private static void onRemove(Level world, ItemStack wand, Player player, BlockPos pos, BlockState ogBlock, CallbackInfo ci){
-		ServerCore.onCreateModSymmetryProcessed(world, player);
-	}
+//	@Inject(method = "remove", remap = false, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/equipment/symmetryWand/mirror/SymmetryMirror;process(Ljava/util/Map;)V"))
+//	private static void onRemove(Level world, ItemStack wand, Player player, BlockPos pos, BlockState ogBlock, CallbackInfo ci){
+//		ServerCore.onCreateModSymmetryProcessed(world, player);
+//	}
 
 }

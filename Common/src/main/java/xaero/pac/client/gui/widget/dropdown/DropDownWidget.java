@@ -19,11 +19,10 @@
 package xaero.pac.client.gui.widget.dropdown;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -93,7 +92,7 @@ public final class DropDownWidget extends AbstractWidget
 		return getY() + yOffset;
 	}
 
-	private void drawSlot(GuiGraphics guiGraphics, String text, int slotIndex, int pos, int mouseX, int mouseY, boolean scrolling, int optionLimit, int xWithOffset, int yWithOffset){
+	private void drawSlot(GuiGraphicsExtractor guiGraphics, String text, int slotIndex, int pos, int mouseX, int mouseY, boolean scrolling, int optionLimit, int xWithOffset, int yWithOffset){
 		int slotBackground;
 		int emptyOptionCount = hasEmptyOption ? 1 : 0;
 		boolean selectionHighlight = !closed && slotIndex - emptyOptionCount == selected;
@@ -105,7 +104,7 @@ public final class DropDownWidget extends AbstractWidget
 			pos = -pos - 1;
 		guiGraphics.fill(xWithOffset, yWithOffset + LINE_HEIGHT * pos, xWithOffset + width, yWithOffset + LINE_HEIGHT + LINE_HEIGHT *pos, slotBackground);
 
-		guiGraphics.hLine(xWithOffset + 1, xWithOffset + width - 1, yWithOffset + LINE_HEIGHT *pos, TRIM_INSIDE);
+		guiGraphics.horizontalLine(xWithOffset + 1, xWithOffset + width - 1, yWithOffset + LINE_HEIGHT *pos, TRIM_INSIDE);
 		int textWidth = Minecraft.getInstance().font.width(text);
 		boolean shortened = false;
 		while(textWidth > width - 2) {
@@ -119,10 +118,10 @@ public final class DropDownWidget extends AbstractWidget
 			else
 				text = "..." + text;
 		int textColor = /*slotIndex - 1 == selected ? 0x555555 : */0xFFFFFFFF;
-		guiGraphics.drawCenteredString(Minecraft.getInstance().font, text, xWithOffset + width/2, yWithOffset + 2 + LINE_HEIGHT * pos, textColor);
+		guiGraphics.centeredText(Minecraft.getInstance().font, text, xWithOffset + width/2, yWithOffset + 2 + LINE_HEIGHT * pos, textColor);
 	}
 
-	private void drawMenu(GuiGraphics guiGraphics, int amount, int mouseX, int mouseY, int scaledHeight, int optionLimit){
+	private void drawMenu(GuiGraphicsExtractor guiGraphics, int amount, int mouseX, int mouseY, int scaledHeight, int optionLimit){
 		boolean scrolling = scrolling(optionLimit);
 		int totalH = LINE_HEIGHT * (amount + (scrolling ? 2 : 0));
 		int height = scaledHeight;
@@ -151,10 +150,10 @@ public final class DropDownWidget extends AbstractWidget
 		}
 		int trimPosY = yWithOffset - (openingUp ? totalH : 0);
 		int trim = closed ? DropDownWidget.TRIM : TRIM_OPEN;
-		guiGraphics.vLine(xWithOffset, trimPosY, trimPosY + totalH, trim);
-		guiGraphics.vLine(xWithOffset + width, trimPosY, trimPosY + totalH, trim);
-		guiGraphics.hLine(xWithOffset, xWithOffset + width, trimPosY, trim);
-		guiGraphics.hLine(xWithOffset, xWithOffset + width, trimPosY + totalH, trim);
+		guiGraphics.verticalLine(xWithOffset, trimPosY, trimPosY + totalH, trim);
+		guiGraphics.verticalLine(xWithOffset + width, trimPosY, trimPosY + totalH, trim);
+		guiGraphics.horizontalLine(xWithOffset, xWithOffset + width, trimPosY, trim);
+		guiGraphics.horizontalLine(xWithOffset, xWithOffset + width, trimPosY + totalH, trim);
 	}
 	
 	private boolean scrolling(int optionLimit) {
@@ -234,7 +233,7 @@ public final class DropDownWidget extends AbstractWidget
 	}
 
 	@Override
-	public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+	public void extractWidgetRenderState(@Nonnull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		int scaledHeight = Minecraft.getInstance().screen.height;
 		isHovered = visible && onDropDown(mouseX, mouseY, scaledHeight);
 		if(!visible)
@@ -242,7 +241,7 @@ public final class DropDownWidget extends AbstractWidget
 		render(guiGraphics, mouseX, mouseY, Minecraft.getInstance().screen.height, true);
 	}
 
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, int scaledHeight, boolean closedOnly){
+	public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, int scaledHeight, boolean closedOnly){
 		if(!closed && closedOnly)
 			return;
 		int optionLimit = optionLimit(scaledHeight);

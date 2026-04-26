@@ -24,8 +24,6 @@ import xaero.pac.client.controls.KeyBindingHelperFabric;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.common.entity.EntityAccessFabric;
 import xaero.pac.common.entity.IEntityAccess;
-import xaero.pac.common.reflect.IMappingHelper;
-import xaero.pac.common.reflect.MappingHelperFabric;
 import xaero.pac.common.server.world.IServerChunkCacheAccess;
 import xaero.pac.common.server.world.ServerChunkCacheAccessFabric;
 
@@ -36,7 +34,6 @@ public class PlatformHelperFabric implements IPlatformHelper {
 	private final KeyBindingHelperFabric keyBindingHelperFabric = new KeyBindingHelperFabric();
 	private final EntityAccessFabric entityAccessFabric = new EntityAccessFabric();
 	private final ServerChunkCacheAccessFabric serverChunkCacheAccessFabric = new ServerChunkCacheAccessFabric();
-	private final MappingHelperFabric mappingHelperFabric = new MappingHelperFabric();
 
 	@Override
 	public String getPlatformName() {
@@ -71,11 +68,6 @@ public class PlatformHelperFabric implements IPlatformHelper {
 	@Override
 	public IEntityAccess getEntityAccess() {
 		return entityAccessFabric;
-	}
-
-	@Override
-	public IMappingHelper getMappingHelper() {
-		return mappingHelperFabric;
 	}
 
 	@Override
