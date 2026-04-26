@@ -33,6 +33,8 @@ public class MixinPloughMovementBehaviour {
 
 	@Inject(method = "visitNewPosition", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;useOn(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;"), cancellable = true)
 	public void onVisitNewPosition(MovementContext context, BlockPos pos, CallbackInfo ci){
+		if(context == null)//can apparently happen in MixinHarvesterMovementBehaviour with some Create addons present, so adding here just in case
+			return;
 		if(!ServerCore.canCreatePloughPos(context.world, (ICreateContraption) context.contraption, pos))
 			ci.cancel();
 	}
