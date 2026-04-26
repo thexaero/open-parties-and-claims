@@ -185,7 +185,7 @@ subprojects {
     publishing {
         repositories {
             maven {
-                url "file://" + System.getenv("local_mod_maven")
+                url file(System.getenv("local_mod_maven"))
             }
         }
     }
