@@ -521,6 +521,8 @@ public class ServerCore {
 	}
 
 	public static BlockPos getEffectiveAnchor(ICreateContraption contraption){
+		if(contraption == null)
+			return null;
 		if(contraption.getXaero_OPAC_placementPos() == null)
 			return contraption.getXaero_OPAC_anchor();
 		return contraption.getXaero_OPAC_placementPos();

@@ -55,6 +55,8 @@ public class MixinDeployerMovementBehaviour {
 
 	@Inject(method = "activate", remap = false, at = @At("HEAD"), cancellable = true)
 	public void onActivate(CallbackInfo ci){
+		if(OPAC_lastMovementContext == null)//can apparently happen in MixinHarvesterMovementBehaviour with some Create addons present, so adding here just in case
+			return;
 		if(OPAC_lastPos == null || !ServerCore.isCreateDeployerBlockInteractionAllowed(OPAC_lastMovementContext.world, (ICreateContraption) OPAC_lastMovementContext.contraption, OPAC_lastPos))
 			ci.cancel();
 	}
