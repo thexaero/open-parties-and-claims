@@ -33,6 +33,8 @@ public class MixinHarvesterMovementBehaviour {
 
 	@ModifyVariable(method = "visitNewPosition", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
 	public BlockState onVisitNewPosition(BlockState actual, MovementContext movementContext, BlockPos pos){
+		if(movementContext == null)//can apparently happen with some Create addons present
+			return actual;
 		ServerCore.CAPTURED_TARGET_POS = pos;
 		return ServerCore.replaceBlockFetchOnCreateModBreak(actual, movementContext.world, (ICreateContraption) movementContext.contraption);
 	}
