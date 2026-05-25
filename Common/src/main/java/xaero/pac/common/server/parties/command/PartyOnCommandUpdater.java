@@ -21,6 +21,7 @@ package xaero.pac.common.server.parties.command;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -45,6 +46,13 @@ public class PartyOnCommandUpdater {
 		if(massMessage != null)
 			onlineMember.sendSystemMessage(massMessage);
 	}
+
+	private Component createMassMessage(Component partyNameComponent, AdaptiveLocalizer adaptiveLocalizer, ServerPlayer onlinePlayer, Component massMessageContent) {
+		MutableComponent massMessage = Component.literal("");
+		massMessage.getSiblings().add(partyNameComponent.copy());
+		massMessage.getSiblings().add(adaptiveLocalizer.getFor(onlinePlayer, massMessageContent).copy());
+		return massMessage;
+	}
 	
 	public 
 	<
@@ -55,8 +63,6 @@ public class PartyOnCommandUpdater {
 		if(!partyCustomName.isEmpty())
 			partyName = partyCustomName;
 		Component partyNameComponent = Component.literal("[" + partyName + "] ").withStyle(s -> s.withColor(ChatFormatting.GOLD).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(party.getDefaultName()))));
-		Component massMessage = Component.literal("");
-		massMessage.getSiblings().add(partyNameComponent);
 
 		MinecraftServer server = serverData.getServer();
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
@@ -67,9 +73,7 @@ public class PartyOnCommandUpdater {
 				M memberInfo = iterator.next();
 				ServerPlayer onlinePlayer = playerList.getPlayer(memberInfo.getUUID());
 				if(onlinePlayer != null) {
-					massMessage.getSiblings().clear();
-					massMessage.getSiblings().add(partyNameComponent);
-					massMessage.getSiblings().add(adaptiveLocalizer.getFor(onlinePlayer, massMessageContent));
+					Component massMessage = createMassMessage(partyNameComponent, adaptiveLocalizer, onlinePlayer, massMessageContent);
 					onOnlineMember(commandCasterId, server, memberInfo, onlinePlayer, shouldUpdateCommandsForMember, massMessage);
 				}
 			}
@@ -77,9 +81,7 @@ public class PartyOnCommandUpdater {
 			for (ServerPlayer onlinePlayer : playerList.getPlayers()) {
 				M memberInfo = party.getMemberInfo(onlinePlayer.getUUID());
 				if(memberInfo != null) {
-					massMessage.getSiblings().clear();
-					massMessage.getSiblings().add(partyNameComponent);
-					massMessage.getSiblings().add(adaptiveLocalizer.getFor(onlinePlayer, massMessageContent));
+					Component massMessage = createMassMessage(partyNameComponent, adaptiveLocalizer, onlinePlayer, massMessageContent);
 					onOnlineMember(commandCasterId, server, memberInfo, onlinePlayer, shouldUpdateCommandsForMember, massMessage);
 				}
 			}
