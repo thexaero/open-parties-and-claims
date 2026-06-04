@@ -218,7 +218,7 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestClaim(int x, int z, boolean byServer){
-		requestClaim(x, z, byServer ? ClaimingModes.SERVER : ClaimingModes.PLAYER);
+		requestClaim(x, z, byServer ? ClaimingModes.SERVER : null);
 	}
 
 	/**
@@ -236,7 +236,7 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestUnclaim(int x, int z, boolean byServer){
-		requestUnclaim(x, z, byServer ? ClaimingModes.SERVER : ClaimingModes.PLAYER);
+		requestUnclaim(x, z, byServer ? ClaimingModes.SERVER : null);
 	}
 
 	/**
@@ -255,7 +255,7 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestForceload(int x, int z, boolean enable, boolean byServer){
-		requestForceload(x, z, enable, byServer ? ClaimingModes.SERVER : ClaimingModes.PLAYER);
+		requestForceload(x, z, enable, byServer ? ClaimingModes.SERVER : null);
 	}
 
 	/**
@@ -275,7 +275,7 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestAreaClaim(int left, int top, int right, int bottom, boolean byServer){
-		requestAreaClaim(left, top, right, bottom, byServer ? ClaimingModes.SERVER : ClaimingModes.PLAYER);
+		requestAreaClaim(left, top, right, bottom, byServer ? ClaimingModes.SERVER : null);
 	}
 
 	/**
@@ -295,7 +295,7 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestAreaUnclaim(int left, int top, int right, int bottom, boolean byServer){
-		requestAreaUnclaim(left, top, right, bottom, byServer ? ClaimingModes.SERVER : ClaimingModes.PLAYER);
+		requestAreaUnclaim(left, top, right, bottom, byServer ? ClaimingModes.SERVER : null);
 	}
 
 	/**
@@ -316,7 +316,7 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, boolean byServer){
-		requestAreaForceload(left, top, right, bottom, enable, byServer ? ClaimingModes.SERVER : ClaimingModes.PLAYER);
+		requestAreaForceload(left, top, right, bottom, enable, byServer ? ClaimingModes.SERVER : null);
 	}
 
 	/**
@@ -328,9 +328,9 @@ public interface IClientClaimsManagerAPI
 	 *
 	 * @param x  the X coordinate of the chunk
 	 * @param z  the Z coordinate of the chunk
-	 * @param claimingMode  the claiming mode to use, not null
+	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestClaim(int x, int z, IClaimingModeAPI claimingMode);
+	public void requestClaim(int x, int z, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests a chunk unclaim by the local client player using a specified claiming mode.
@@ -341,9 +341,9 @@ public interface IClientClaimsManagerAPI
 	 *
 	 * @param x  the X coordinate of the chunk
 	 * @param z  the Z coordinate of the chunk
-	 * @param claimingMode  the claiming mode to use, not null
+	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestUnclaim(int x, int z, IClaimingModeAPI claimingMode);
+	public void requestUnclaim(int x, int z, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests a chunk (un)forceload by the local client player using a specified claiming mode.
@@ -355,9 +355,9 @@ public interface IClientClaimsManagerAPI
 	 * @param x  the X coordinate of the chunk
 	 * @param z  the Z coordinate of the chunk
 	 * @param enable  true to forceload the chunk, false to unforceload
-	 * @param claimingMode  the claiming mode to use, not null
+	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestForceload(int x, int z, boolean enable, IClaimingModeAPI claimingMode);
+	public void requestForceload(int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
@@ -370,9 +370,9 @@ public interface IClientClaimsManagerAPI
 	 * @param top  the lowest Z coordinate of the area
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
-	 * @param claimingMode  the claiming mode to use, not null
+	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestAreaClaim(int left, int top, int right, int bottom, IClaimingModeAPI claimingMode);
+	public void requestAreaClaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.
@@ -385,9 +385,9 @@ public interface IClientClaimsManagerAPI
 	 * @param top  the lowest Z coordinate of the area
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
-	 * @param claimingMode  the claiming mode to use, not null
+	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestAreaUnclaim(int left, int top, int right, int bottom, IClaimingModeAPI claimingMode);
+	public void requestAreaUnclaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode);
 
 
 	/**
@@ -402,9 +402,9 @@ public interface IClientClaimsManagerAPI
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param enable  true to forceload the chunks, false to unforceload
-	 * @param claimingMode  the claiming mode to use, not null
+	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, IClaimingModeAPI claimingMode);
+	public void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Gets a claim state of the same type (see {@link IPlayerChunkClaimAPI#isSameClaimType(IPlayerChunkClaimAPI)}) as

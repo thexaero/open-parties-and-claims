@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.ClaimsManager;
@@ -63,10 +64,9 @@ public class ServerboundClaimActionRequestPacket {
 				int bottom = tag.getInt("b");
 				if(left > right || top > bottom)
 					return null;
-				String claimingModeId = tag.getString("m");
-				ClaimingMode claimingMode = (ClaimingMode) ClaimingModes.get(claimingModeId);
-				if(claimingMode == null)
-					return null;
+				ClaimingMode claimingMode = null;
+				if(tag.contains("m", Tag.TAG_STRING))
+					claimingMode = (ClaimingMode) ClaimingModes.get(tag.getString("m"));
 				return new ServerboundClaimActionRequestPacket(new ClaimActionRequest(action, left, top, right, bottom, claimingMode));
 			} catch(Throwable t) {
 				return null;
@@ -81,7 +81,8 @@ public class ServerboundClaimActionRequestPacket {
 			tag.putInt("t", t.request.getTop());
 			tag.putInt("r", t.request.getRight());
 			tag.putInt("b", t.request.getBottom());
-			tag.putString("m", t.request.getMode().getId());
+			if(t.request.getMode() != null)
+				tag.putString("m", t.request.getMode().getId());
 			u.writeNbt(tag);
 		}
 		

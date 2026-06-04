@@ -64,7 +64,7 @@ public class PlayerClaimActionRequestHandler {
 			return;
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		ClaimingMode claimType = request.getMode();
-		if(claimType == ClaimingModes.PLAYER)
+		if(claimType == null)
 			claimType = playerData.getClaimingMode();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(player.getServer());

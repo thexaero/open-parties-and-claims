@@ -65,6 +65,7 @@ import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -338,32 +339,32 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public void requestClaim(int x, int z, IClaimingModeAPI claimingModeAPI) {
+	public void requestClaim(int x, int z, @Nullable IClaimingModeAPI claimingModeAPI) {
 		requestAreaClaim(x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestUnclaim(int x, int z, IClaimingModeAPI claimingModeAPI){
+	public void requestUnclaim(int x, int z, @Nullable IClaimingModeAPI claimingModeAPI){
 		requestAreaUnclaim(x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestForceload(int x, int z, boolean enable, IClaimingModeAPI claimingModeAPI){
+	public void requestForceload(int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
 		requestAreaForceload(x, z, x, z, enable, claimingModeAPI);
 	}
 
 	@Override
-	public void requestAreaClaim(int left, int top, int right, int bottom, IClaimingModeAPI claimingModeAPI){
+	public void requestAreaClaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.CLAIM, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaUnclaim(int left, int top, int right, int bottom, IClaimingModeAPI claimingModeAPI){
+	public void requestAreaUnclaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.UNCLAIM, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, IClaimingModeAPI claimingModeAPI){
+	public void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? Action.FORCELOAD : Action.UNFORCELOAD, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
