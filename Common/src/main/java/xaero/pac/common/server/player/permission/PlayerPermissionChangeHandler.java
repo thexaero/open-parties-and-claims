@@ -39,14 +39,7 @@ public class PlayerPermissionChangeHandler {
 
 	public void sendCommandsAndUpdatePermissions(
 			ServerPlayer player,
-			IServerData<
-					IServerClaimsManager<
-							IPlayerChunkClaim,
-							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
-							IServerDimensionClaimsManager<IServerRegionClaims>
-							>,
-					?
-					> serverData,
+			IServerData<?,?> serverData,
 			boolean checkTime
 	) {
 		serverData.getPlayerConfigPermissionUpdater().update(player, serverData, checkTime, false);

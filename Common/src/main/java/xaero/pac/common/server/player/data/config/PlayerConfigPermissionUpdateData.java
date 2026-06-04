@@ -20,19 +20,8 @@ package xaero.pac.common.server.player.data.config;
 
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.player.config.PlayerConfigPermissions;
 import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.claims.IServerClaimsManager;
-import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
-import xaero.pac.common.server.claims.IServerRegionClaims;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -54,8 +43,7 @@ public class PlayerConfigPermissionUpdateData extends PlayerConfigPermissions {
 
 	public boolean update(
 			ServerPlayer player,
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, ?>
-					serverData
+			IServerData<?,?> serverData
 	) {
 		boolean prevView = canView();
 		boolean prevEdit = canEdit();

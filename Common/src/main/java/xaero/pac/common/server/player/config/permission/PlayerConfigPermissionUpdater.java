@@ -20,14 +20,7 @@ package xaero.pac.common.server.player.config.permission;
 
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.claims.IServerClaimsManager;
-import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
-import xaero.pac.common.server.claims.IServerRegionClaims;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.config.PlayerConfigPermissionUpdateData;
@@ -36,14 +29,7 @@ public class PlayerConfigPermissionUpdater {
 
 	public void update(
 			ServerPlayer player,
-			IServerData<
-					IServerClaimsManager<
-							IPlayerChunkClaim,
-							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
-							IServerDimensionClaimsManager<IServerRegionClaims>
-							>,
-					?
-					> serverData,
+			IServerData<?,?> serverData,
 			boolean checkTime,
 			boolean sendCommandsOnChange
 	) {
@@ -54,14 +40,7 @@ public class PlayerConfigPermissionUpdater {
 	public void update(
 			ServerPlayerData playerData,
 			ServerPlayer player,
-			IServerData<
-					IServerClaimsManager<
-							IPlayerChunkClaim,
-							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
-							IServerDimensionClaimsManager<IServerRegionClaims>
-							>,
-					?
-					> serverData,
+			IServerData<?,?> serverData,
 			boolean checkTime,
 			boolean sendCommandsOnChange
 	) {
@@ -88,14 +67,7 @@ public class PlayerConfigPermissionUpdater {
 			PlayerConfigType configType,
 			ServerPlayerData playerData,
 			ServerPlayer player,
-			IServerData<
-					IServerClaimsManager<
-							IPlayerChunkClaim,
-							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
-							IServerDimensionClaimsManager<IServerRegionClaims>
-							>,
-					?
-					> serverData
+			IServerData<?,?> serverData
 	){
 		PlayerConfigPermissionUpdateData updateData = playerData.getPlayerConfigPermissionUpdateData(configType);
 		if(updateData.update(player, serverData)) {
