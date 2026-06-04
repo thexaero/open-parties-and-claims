@@ -209,7 +209,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 	}
 
 	@Override
-	public void syncToPlayersClaimOwnerPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo, Component partyName) {
+	public void syncToPlayersClaimOwnerPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo, Component partyName, boolean partyOwned) {
 		ServerConfig.ClaimsSyncType syncType = ServerConfig.CONFIG.claimsSynchronization.get();
 		if(syncType == ServerConfig.ClaimsSyncType.NOT_SYNCED)
 			return;
@@ -217,7 +217,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		List<ClientboundClaimOwnerPropertiesPacket.PlayerProperties> packetBuilder =
 				Lists.newArrayList(
 						new ClientboundClaimOwnerPropertiesPacket.PlayerProperties(
-								playerInfo.getPlayerId(), playerInfo.getPlayerUsername(), partyName
+								playerInfo.getPlayerId(), playerInfo.getPlayerUsername(), partyName, partyOwned
 						)
 				);
 		if(claimInfoShouldReachEveryone(syncType, playerInfo.getPlayerId())) {

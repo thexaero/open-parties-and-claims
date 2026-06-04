@@ -59,6 +59,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private final Deque<PlayerClaimReplaceSpreadoutTask> replaceTaskQueue;
 
 	private Component lastPartyNameSynced;
+	private boolean lastPartyOwnedSynced;
 	private long partyNameSyncedTime;
 
 	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
@@ -113,7 +114,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 
 	public Component fetchPartyName(){
-		if(playerConfig.getType() != PlayerConfigType.PLAYER)
+		if(playerConfig.getType() != PlayerConfigType.PLAYER || !ServerConfig.CONFIG.partyOwnedClaims.get())
 			return null;
 		return manager.getClaimsManager().getPartySystemManager().getPrimaryPartyNameByOwner(playerId);
 	}
@@ -127,11 +128,14 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 				setDirty(true);
 			partyNameSyncedTime = System.currentTimeMillis();
 			Component partyName = fetchPartyName();
-			if(manager.isLoaded())
+			boolean partyOwned = isPartyOwned();
+			if(manager.isLoaded()) {
 				manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersClaimOwnerPropertiesUpdate(
-						this, partyName
-				);
+						this, partyName, partyOwned
+						);
+			}
 			lastPartyNameSynced = partyName;
+			lastPartyOwnedSynced = partyOwned;
 		}
 	}
 
@@ -141,12 +145,14 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 			return;
 		partyNameSyncedTime = System.currentTimeMillis();
 		Component partyName = fetchPartyName();
-		if(Objects.equals(partyName, lastPartyNameSynced))
+		boolean partyOwned = isPartyOwned();
+		if(Objects.equals(partyName, lastPartyNameSynced) && partyOwned == lastPartyOwnedSynced)
 			return;
 		manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersClaimOwnerPropertiesUpdate(
-				this, partyName
+				this, partyName, partyOwned
 		);
 		lastPartyNameSynced = partyName;
+		lastPartyOwnedSynced = partyOwned;
 	}
 
 	@Override
@@ -274,6 +280,13 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public long getPartyNameSyncedTime() {
 		return partyNameSyncedTime;
+	}
+
+	@Override
+	public boolean isPartyOwned() {
+		if(playerConfig.getType() != PlayerConfigType.PLAYER || !ServerConfig.CONFIG.partyOwnedClaims.get())
+			return false;
+		return manager.getClaimsManager().getPartySystemManager().isPrimaryPartyOwner(playerId);
 	}
 
 }

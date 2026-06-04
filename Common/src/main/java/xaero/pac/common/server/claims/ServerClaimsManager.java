@@ -434,7 +434,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(ServerConfig.CONFIG.partyOwnedClaims.get()) {
 			Component partyName = playerClaimInfo.fetchPartyName();
 			if(partyName == null) {
-				if(!configManager.getPartySystemManager().isPrimaryPartyOwner(playerClaimInfo.getPlayerId()))
+				if(!playerClaimInfo.isPartyOwned())
 					return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
 				partyName = playerClaimInfo.getDefaultPartyName();
 			}

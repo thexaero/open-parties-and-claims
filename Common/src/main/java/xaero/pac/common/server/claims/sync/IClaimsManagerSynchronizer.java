@@ -29,7 +29,7 @@ public interface IClaimsManagerSynchronizer {
 	public void syncClaimLimits(IPlayerConfig config, ServerPlayer player);
 	public void updateClaimLimitsSyncOnTick(ServerPlayerData playerData, ServerPlayer player);
 	public void syncCurrentSubClaim(IPlayerConfig config, ServerPlayer player);
-	public void syncToPlayersClaimOwnerPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo, Component partyName);
+	public void syncToPlayersClaimOwnerPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo, Component partyName, boolean partyOwned);
 	public void syncToPlayersSubClaimPropertiesUpdate(IPlayerConfig subConfig);
 	public void syncToPlayersSubClaimPropertiesRemove(IPlayerConfig subConfig);
 	public void syncOnLogin(ServerPlayer player);

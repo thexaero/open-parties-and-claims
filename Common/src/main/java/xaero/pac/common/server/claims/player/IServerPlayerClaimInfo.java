@@ -71,6 +71,9 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 		return (Stream<Entry<ResourceLocation, IPlayerDimensionClaimsAPI>>)(Object)getTypedStream();
 	}
 
+	@Override
+	boolean isPartyOwned();
+
 	public Stream<Entry<ResourceLocation, DC>> getFullStream();
 
 	public long getRegisteredActivity();
@@ -88,5 +91,4 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	public PlayerClaimReplaceSpreadoutTask removeNextReplacementTask();
 
 	long getPartyNameSyncedTime();
-
 }

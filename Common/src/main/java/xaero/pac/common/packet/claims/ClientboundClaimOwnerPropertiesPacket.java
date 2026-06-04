@@ -62,6 +62,7 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 				String partyNameJson = Component.Serializer.toJson(propertiesEntry.partyName);
 				propertiesEntryNbt.putString("pn", partyNameJson);
 			}
+			propertiesEntryNbt.putBoolean("po", propertiesEntry.partyOwned);
 			propertiesListTag.add(propertiesEntryNbt);
 		}
 		nbt.put("l", propertiesListTag);
@@ -96,7 +97,8 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 					if(propertiesEntryNbt.contains("pn", Tag.TAG_STRING))
 						partyNameJson = propertiesEntryNbt.getString("pn");
 					Component partyName = partyNameJson == null ? null : Component.Serializer.fromJson(partyNameJson);
-					propertiesList.add(new PlayerProperties(playerId, username, partyName));
+					boolean partyOwned = propertiesEntryNbt.getBoolean("po");
+					propertiesList.add(new PlayerProperties(playerId, username, partyName, partyOwned));
 				}
 				return new ClientboundClaimOwnerPropertiesPacket(propertiesList);
 			} catch(Throwable t) {
@@ -113,7 +115,7 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 		public void handle(ClientboundClaimOwnerPropertiesPacket t) {
 			for (PlayerProperties propertiesEntry : t.properties) {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().
-					onPlayerInfo(propertiesEntry.playerId, propertiesEntry.username, propertiesEntry.partyName);
+					onPlayerInfo(propertiesEntry.playerId, propertiesEntry.username, propertiesEntry.partyName, propertiesEntry.partyOwned);
 			}
 		}
 		
@@ -124,18 +126,20 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 		private final UUID playerId;
 		private final String username;
 		private final Component partyName;
+		private final boolean partyOwned;
 		
-		public PlayerProperties(UUID playerId, String username, Component partyName) {
+		public PlayerProperties(UUID playerId, String username, Component partyName, boolean partyOwned) {
 			super();
 			this.playerId = playerId;
 			this.username = username;
 			this.partyName = partyName;
+			this.partyOwned = partyOwned;
 		}
 		
 		@Override
 		public String toString() {
 			String partyNameString = partyName == null ? null : partyName.getString();
-			return String.format("[%s, %s, %s]", playerId, username, partyNameString);
+			return String.format("[%s, %s, %s, %s]", playerId, username, partyNameString, partyOwned);
 		}
 		
 	}

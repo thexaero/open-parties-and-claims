@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 public final class ClientPlayerClaimInfo extends PlayerClaimInfo<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager> implements IClientPlayerClaimInfo<PlayerDimensionClaims> {
 
 	private Component partyName;
+	private boolean partyOwned;
 	private final Int2ObjectMap<ClientPlayerSubClaimInfo> subClaimInfo;
 	
 	public ClientPlayerClaimInfo(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
@@ -97,10 +98,19 @@ public final class ClientPlayerClaimInfo extends PlayerClaimInfo<ClientPlayerCla
 		this.partyName = partyName;
 	}
 
+	public void setPartyOwned(boolean partyOwned) {
+		this.partyOwned = partyOwned;
+	}
+
+	@Override
+	public boolean isPartyOwned() {
+		return partyOwned;
+	}
+
 	public Component getPartyName() {
 		if(!manager.usingPartyOwnedClaims())
 			return null;
-		if(partyName == null)
+		if(partyName == null && partyOwned)
 			return getDefaultPartyName();
 		return partyName;
 	}
