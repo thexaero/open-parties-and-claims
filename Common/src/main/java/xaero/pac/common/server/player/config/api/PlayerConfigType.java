@@ -20,8 +20,11 @@ package xaero.pac.common.server.player.config.api;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * All possible player config types
@@ -29,24 +32,29 @@ import javax.annotation.Nonnull;
 public enum PlayerConfigType {
 
 	/** Server claims config */
-	SERVER(new TranslatableComponent("gui.xaero_pac_config_type_server")),
+	SERVER(new TranslatableComponent("gui.xaero_pac_config_type_server"), PlayerConfigOptions.USED_SERVER_SUBCLAIM),
 
 	/** Expired claims config */
-	EXPIRED(new TranslatableComponent("gui.xaero_pac_config_type_expired")),
+	EXPIRED(new TranslatableComponent("gui.xaero_pac_config_type_expired"), null),
 
 	/** Wilderness config */
-	WILDERNESS(new TranslatableComponent("gui.xaero_pac_config_type_wilderness")),
+	WILDERNESS(new TranslatableComponent("gui.xaero_pac_config_type_wilderness"), null),
 
 	/** The default player config */
-	DEFAULT_PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_default_player")),
+	DEFAULT_PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_default_player"), null),
 
 	/** A player config */
-	PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_player"));
+	PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_player"), PlayerConfigOptions.USED_SUBCLAIM),
+
+	/** Party claims config */
+	PARTY_CLAIMS(new TranslatableComponent("gui.xaero_pac_config_type_party_claims"), PlayerConfigOptions.USED_PARTY_SUBCLAIM);
 
 	private final Component name;
+	private final IPlayerConfigOptionSpecAPI<String> subClaimOption;
 
-	PlayerConfigType(Component name){
+	PlayerConfigType(Component name, IPlayerConfigOptionSpecAPI<String> subClaimOption){
 		this.name = name;
+		this.subClaimOption = subClaimOption;
 	}
 
 	/**
@@ -58,4 +66,16 @@ public enum PlayerConfigType {
 	public Component getName() {
 		return name;
 	}
+
+	/**
+	 * Gets the player config option used for storing the sub-config ID currently used for claiming for a config of
+	 * this type.
+	 *
+	 * @return the player config option used for storing the sub-config ID used for claiming, can be null
+	 */
+	@Nullable
+	public IPlayerConfigOptionSpecAPI<String> getSubClaimOption() {
+		return subClaimOption;
+	}
+
 }

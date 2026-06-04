@@ -41,7 +41,7 @@ public class PlayerConfigCommonChangeHandlers {
 		if(onlinePlayer == null)
 			return;
 		IServerClaimsManager<?, ?, ?> claimsManager = manager.getClaimsManager();
-		claimsManager.getClaimsManagerSynchronizer().syncClaimLimits(config, onlinePlayer);
+		claimsManager.getClaimsManagerSynchronizer().syncClaimLimits(config, onlinePlayer);//would get automatically synced anyway but this makes it instant
 	}
 
 	public static <P extends IServerParty<?, ?, ?>> void handleForceloading(
@@ -51,7 +51,7 @@ public class PlayerConfigCommonChangeHandlers {
 			Object oldValue,
 			Object newValue
 	){
-		manager.getForceLoadTicketManager().updateTicketsFor(manager, config.getPlayerId(), false);
+		manager.getForceLoadTicketManager().updateTicketsFor(config.getPlayerId(), false);
 	}
 
 	public static <P extends IServerParty<?, ?, ?>> void handleBonusForceloads(
@@ -76,6 +76,8 @@ public class PlayerConfigCommonChangeHandlers {
 		if(party == null)
 			return;
 		manager.getPartyManager().getPartySynchronizer().syncToPartyAndAlliersUpdateName(party, newValue);
+		manager.getClaimsManager().getPlayerInfo(config.getPlayerId())
+				.resyncPartyName(manager.getPartyManager().getPartySystem());//it's always the built-in OPAC party system, not necessarily the primary one
 	}
 
 	public static <P extends IServerParty<?, ?, ?>> void handleShareLocationWithParty(

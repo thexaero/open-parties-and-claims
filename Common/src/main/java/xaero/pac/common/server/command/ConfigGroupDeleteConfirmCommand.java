@@ -25,9 +25,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.player.config.group.api.PlayerConfigGroupActionError;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class ConfigGroupDeleteConfirmCommand extends ConfigGroupCommand {
 
@@ -53,6 +55,11 @@ public class ConfigGroupDeleteConfirmCommand extends ConfigGroupCommand {
 				.orElseGet(() ->
 						Either.left(new TranslatableComponent("gui.xaero_pac_config_delete_group", inputGroupId))
 				);
+	}
+
+	@Override
+	protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId) {
+		return systemManager.canCreatePartyConfigGroups(playerId);
 	}
 
 }

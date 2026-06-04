@@ -115,5 +115,4 @@ public interface IPlayerClaimInfoAPI {
 	@Nullable
 	public IPlayerDimensionClaimsAPI getDimension(@Nonnull ResourceLocation id);
 	
-	
 }

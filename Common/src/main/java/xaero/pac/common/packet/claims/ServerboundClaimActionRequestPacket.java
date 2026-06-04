@@ -22,6 +22,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.request.ClaimActionRequest;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
@@ -61,8 +63,11 @@ public class ServerboundClaimActionRequestPacket {
 				int bottom = tag.getInt("b");
 				if(left > right || top > bottom)
 					return null;
-				boolean byServer = tag.getBoolean("s");
-				return new ServerboundClaimActionRequestPacket(new ClaimActionRequest(action, left, top, right, bottom, byServer));
+				String claimingModeId = tag.getString("m");
+				ClaimingMode claimingMode = (ClaimingMode) ClaimingModes.get(claimingModeId);
+				if(claimingMode == null)
+					return null;
+				return new ServerboundClaimActionRequestPacket(new ClaimActionRequest(action, left, top, right, bottom, claimingMode));
 			} catch(Throwable t) {
 				return null;
 			}
@@ -76,7 +81,7 @@ public class ServerboundClaimActionRequestPacket {
 			tag.putInt("t", t.request.getTop());
 			tag.putInt("r", t.request.getRight());
 			tag.putInt("b", t.request.getBottom());
-			tag.putBoolean("s", t.request.isByServer());
+			tag.putString("m", t.request.getMode().getId());
 			u.writeNbt(tag);
 		}
 		

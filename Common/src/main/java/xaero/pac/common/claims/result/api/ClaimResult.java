@@ -115,6 +115,22 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		 */
 		NO_SERVER_PERMISSION(new TranslatableComponent("gui.xaero_claims_claim_no_server_permission").withStyle(ChatFormatting.RED), false, true),
 
+		/**
+		 * The user doesn't have permission to make party claims
+		 * <p>
+		 * This result type is only used for party claim requests made by online players.
+		 * Permissions for party claims are not checked by the try methods in the server claims manager.
+		 */
+		NO_PARTY_PERMISSION(new TranslatableComponent("gui.xaero_claims_claim_no_party_permission").withStyle(ChatFormatting.RED), false, true),
+
+		/**
+		 * The user doesn't have permission to make party claims
+		 * <p>
+		 * This result type is only used for party claim requests made by online players.
+		 * Permissions for party claims are not checked by the try methods in the server claims manager.
+		 */
+		NOT_IN_PARTY(new TranslatableComponent("gui.xaero_claims_claim_not_in_party").withStyle(ChatFormatting.RED), false, true),
+
 		/** Successfully unforceloaded a chunk */
 		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false),
 

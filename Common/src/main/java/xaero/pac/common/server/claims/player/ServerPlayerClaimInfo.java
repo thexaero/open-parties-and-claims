@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.player;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.player.*;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -32,9 +33,11 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import javax.annotation.Nonnull;
@@ -55,6 +58,9 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private boolean replacementInProgress;
 	private final Deque<PlayerClaimReplaceSpreadoutTask> replaceTaskQueue;
 
+	private Component lastPartyNameSynced;
+	private long partyNameSyncedTime;
+
 	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
 								 ServerPlayerClaimInfoManager manager, Deque<PlayerClaimReplaceSpreadoutTask> replaceSpreadoutTasks) {
 		super(username, playerId, claims, manager);
@@ -68,7 +74,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	public void onClaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
 		super.onClaim(configManager, dimension, claim, x, z);
 		if(claim.isForceloadable())
-			manager.getTicketManager().addTicket(configManager, dimension, playerId, x, z);
+			manager.getTicketManager().addTicket(dimension, playerId, x, z);
 		setDirty(true);
 		beenUsed = true;
 		if(manager.isLoaded())
@@ -79,7 +85,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
 		super.onUnclaim(configManager, dimension, claim, x, z);
 		if(claim.isForceloadable())
-			manager.getTicketManager().removeTicket(configManager, dimension, playerId, x, z);
+			manager.getTicketManager().removeTicket(dimension, playerId, x, z);
 		setDirty(true);
 		beenUsed = true;
 		if(manager.isLoaded())
@@ -105,6 +111,12 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	public String getFileName() {
 		return playerId.toString();
 	}
+
+	public Component fetchPartyName(){
+		if(playerConfig.getType() != PlayerConfigType.PLAYER)
+			return null;
+		return manager.getClaimsManager().getPartySystemManager().getPrimaryPartyNameByOwner(playerId);
+	}
 	
 	@Override
 	public void setPlayerUsername(String playerUsername) {
@@ -113,8 +125,28 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 		if(changed) {
 			if(beenUsed)
 				setDirty(true);
-			manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersClaimOwnerPropertiesUpdate(this);
+			partyNameSyncedTime = System.currentTimeMillis();
+			Component partyName = fetchPartyName();
+			if(manager.isLoaded())
+				manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersClaimOwnerPropertiesUpdate(
+						this, partyName
+				);
+			lastPartyNameSynced = partyName;
 		}
+	}
+
+	@Override
+	public void resyncPartyName(IPlayerPartySystemAPI<?> partySystem) {
+		if(partySystem != manager.getClaimsManager().getPartySystemManager().getPrimarySystem())
+			return;
+		partyNameSyncedTime = System.currentTimeMillis();
+		Component partyName = fetchPartyName();
+		if(Objects.equals(partyName, lastPartyNameSynced))
+			return;
+		manager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersClaimOwnerPropertiesUpdate(
+				this, partyName
+		);
+		lastPartyNameSynced = partyName;
 	}
 
 	@Override
@@ -233,6 +265,15 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public IPlayerConfig getConfig() {
 		return playerConfig;
+	}
+
+	public Component getLastPartyNameSynced() {
+		return lastPartyNameSynced;
+	}
+
+	@Override
+	public long getPartyNameSyncedTime() {
+		return partyNameSyncedTime;
 	}
 
 }

@@ -19,14 +19,19 @@
 package xaero.pac.common.server.parties.system.api;
 
 /**
+ * @deprecated use {@link xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI} instead
+ * <p>
  * The API for registering party system implementations.
  * <p>
  * Party system implementations must be registered during the
  * xaero.pac.common.event.api.OPACServerAddonRegister.EVENT on Fabric or OPACServerAddonRegisterEvent on Forge.
  */
-public interface IPlayerPartySystemRegisterAPI {
+@Deprecated
+public interface IPlayerPartySystemRegisterAPI extends xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI {
 
 	/**
+	 * @deprecated use {@link xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI} instead
+	 * <p>
 	 * Registers a party system implementation to be available to OPAC
 	 * under a specified name.
 	 * <p>
@@ -36,6 +41,9 @@ public interface IPlayerPartySystemRegisterAPI {
 	 * @param name  the name to register the party system under, not null
 	 * @param system  the party system implementation, not null
 	 */
-	void register(String name, IPlayerPartySystemAPI<?> system);
+	@Deprecated
+	default void register(String name, IPlayerPartySystemAPI<?> system){
+		register(name, (xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)system);
+	}
 
 }

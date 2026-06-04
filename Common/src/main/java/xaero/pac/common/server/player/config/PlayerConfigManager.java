@@ -30,6 +30,7 @@ import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionG
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.PlayerPartySystemManager;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.dynamic.PlayerConfigDynamicOptionsLoader;
@@ -67,10 +68,19 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	private PlayerConfigIO<P, CM> io;
 	private final PlayerConfigDynamicOptions dynamicOptions;
 	private final ForgeConfigSpec playerConfigSpec;
+	private final PlayerPartySystemManager partySystemManager;
 
-	private PlayerConfigManager(MinecraftServer server, ForceLoadTicketManager forceLoadTicketManager,
-								Map<UUID, PlayerConfig<P>> configs, Set<PlayerConfig<P>> configsToSave, PlayerConfigSynchronizer synchronizer,
-								IPartyManager<P> partyManager, PlayerConfigDynamicOptions dynamicOptions, ForgeConfigSpec playerConfigSpec) {
+	private PlayerConfigManager(
+			MinecraftServer server,
+			ForceLoadTicketManager forceLoadTicketManager,
+			Map<UUID, PlayerConfig<P>> configs,
+			Set<PlayerConfig<P>> configsToSave,
+			PlayerConfigSynchronizer synchronizer,
+			IPartyManager<P> partyManager,
+			PlayerConfigDynamicOptions dynamicOptions,
+			ForgeConfigSpec playerConfigSpec,
+			PlayerPartySystemManager partySystemManager
+	) {
 		super();
 		this.server = server;
 		this.forceLoadTicketManager = forceLoadTicketManager;
@@ -80,6 +90,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		this.partyManager = partyManager;
 		this.dynamicOptions = dynamicOptions;
 		this.playerConfigSpec = playerConfigSpec;
+		this.partySystemManager = partySystemManager;
 	}
 	
 	public void setClaimsManager(CM claimsManager) {
@@ -95,7 +106,16 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			throw new IllegalStateException();
 		return getConfig(id);
 	}
-	
+
+	@Nullable
+	@Override
+	public PlayerConfig<P> getPartyOwnerConfig(@Nonnull UUID memberId) {
+		UUID partyOwner = partySystemManager.getPrimaryPartyOwnerByMember(memberId);
+		if(partyOwner == null)
+			return null;
+		return getLoadedConfig(partyOwner);
+	}
+
 	public PlayerConfig<P> getConfig(UUID id) {
 		if(id == null)
 			return wildernessConfig;
@@ -164,7 +184,8 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	public void addToSave(PlayerConfig<P> object) {
 		configsToSave.add(object);
 	}
-	
+
+	@Override
 	public ForceLoadTicketManager getForceLoadTicketManager() {
 		return forceLoadTicketManager;
 	}
@@ -228,6 +249,11 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		return result;
 	}
 
+	@Override
+	public PlayerPartySystemManager getPartySystemManager() {
+		return partySystemManager;
+	}
+
 	public static final class Builder
 	<
 		P extends IServerParty<?, ?, ?>,
@@ -235,6 +261,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	> {
 		private MinecraftServer server;
 		private IPartyManager<P> partyManager;
+		private PlayerPartySystemManager partySystemManager;
 		private Map<String, ChunkProtectionExceptionGroup<Block>> blockExceptionGroups;
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityExceptionGroups;
 		private Map<String, ChunkProtectionExceptionGroup<Item>> itemExceptionGroups;
@@ -249,6 +276,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		private Builder<P, CM> setDefault() {
 			setServer(null);
 			setPartyManager(null);
+			setPartySystemManager(null);
 			return this;
 		}
 
@@ -259,6 +287,11 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		
 		public Builder<P, CM> setPartyManager(IPartyManager<P> partyManager) {
 			this.partyManager = partyManager;
+			return this;
+		}
+
+		public Builder<P, CM> setPartySystemManager(PlayerPartySystemManager partySystemManager) {
+			this.partySystemManager = partySystemManager;
 			return this;
 		}
 
@@ -300,10 +333,13 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		public PlayerConfigManager<P, CM> build() {
 			if (server == null || partyManager == null || blockExceptionGroups == null || entityExceptionGroups == null ||
 					itemExceptionGroups == null || entityBarrierGroups == null || blockAccessEntityGroups == null ||
-					entityAccessEntityGroups == null || droppedItemAccessEntityGroups == null)
+					entityAccessEntityGroups == null || droppedItemAccessEntityGroups == null || partySystemManager == null)
 				throw new IllegalStateException();
 			PlayerConfigSynchronizer playerConfigSynchronizer = new PlayerConfigSynchronizer(server);
-			ForceLoadTicketManager forceLoadTicketManager = ForceLoadTicketManager.Builder.begin().setServer(server).build();
+			ForceLoadTicketManager forceLoadTicketManager = ForceLoadTicketManager.Builder.begin()
+					.setServer(server)
+					.setPartySystemManager(partySystemManager)
+					.build();
 
 			PlayerConfigDynamicOptions.Builder dynamicOptionsBuilder = PlayerConfigDynamicOptions.Builder.begin();
 			new PlayerConfigDynamicOptionsLoader().load(dynamicOptionsBuilder, blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, blockAccessEntityGroups, entityAccessEntityGroups, droppedItemAccessEntityGroups);
@@ -314,8 +350,13 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			OPTIONS.values().forEach(optionConsumer);
 			dynamicOptions.getOptions().values().forEach(optionConsumer);
 
-			PlayerConfigManager<P, CM> result = new PlayerConfigManager<>(server, forceLoadTicketManager, new HashMap<>(), new HashSet<>(), playerConfigSynchronizer, partyManager, dynamicOptions, configSpecBuilder.build());
+			PlayerConfigManager<P, CM> result = new PlayerConfigManager<>(
+					server, forceLoadTicketManager, new HashMap<>(), new HashSet<>(),
+					playerConfigSynchronizer, partyManager, dynamicOptions, configSpecBuilder.build(),
+					partySystemManager
+			);
 			playerConfigSynchronizer.setConfigManager(result);
+			forceLoadTicketManager.setConfigManager(result);
 			return result;
 		}
 

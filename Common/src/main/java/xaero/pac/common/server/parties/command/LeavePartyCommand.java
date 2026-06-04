@@ -72,7 +72,7 @@ public class LeavePartyCommand {
 						
 						new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, new TranslatableComponent("gui.xaero_parties_leave_party_message", new TextComponent(memberToRemove.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 						
-						server.getCommands().sendCommands(player);
+						serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 						player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_leave_caster_message", playerParty.getDefaultName()), player.getUUID());
 						return 1;
 					}

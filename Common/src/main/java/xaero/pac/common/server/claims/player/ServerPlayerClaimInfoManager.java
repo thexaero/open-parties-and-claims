@@ -133,10 +133,38 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		toSave.remove(playerInfo);
 	}
 
-	public int getPlayerBaseLimit(UUID playerId, ServerPlayer player, ForgeConfigSpec.IntValue limitConfig, IPermissionNodeAPI<Integer> permissionNode){
-		return PermissionUtils.getOverriddenServerConfigInt(
+	public int getPlayerBaseLimit(
+			UUID playerId,
+			ServerPlayer player,
+			ForgeConfigSpec.IntValue limitConfig,
+			ForgeConfigSpec.IntValue partyBonusConfig,
+			ForgeConfigSpec.IntValue partyOwnerBonusConfig,
+			IPermissionNodeAPI<Integer> permissionNode
+	){
+		if(playerId == null)
+			playerId = player.getUUID();
+		int result = PermissionUtils.getOverriddenServerConfigInt(
 				playerId, server, player, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
 		);
+		if(ServerConfig.CONFIG.partyOwnedClaims.get())
+			result += getPartyOwnershipBonus(playerId, partyBonusConfig, partyOwnerBonusConfig);
+		return result;
+	}
+
+	private int getPartyOwnershipBonus(
+			UUID playerId,
+			ForgeConfigSpec.IntValue partyBonusConfig,
+			ForgeConfigSpec.IntValue partyOwnerBonusConfig
+	){
+		if(partyBonusConfig == null || !configManager.getPartySystemManager().isPrimaryPartyOwner(playerId))
+			return 0;
+		int memberCount = configManager.getPartySystemManager().getPrimaryMemberCount(playerId);
+		if(memberCount > 0)
+			memberCount--;//owner doesn't count
+		int result = memberCount * partyBonusConfig.get();
+		if(memberCount > 0)
+			result += partyOwnerBonusConfig.get();
+		return result;
 	}
 	
 	public ServerPlayerClaimsExpirationHandler getExpirationHandler() {
@@ -150,6 +178,11 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	@Override
 	public Iterator<ServerPlayerClaimInfo> getExpirationIterator() {
 		return iterator();
+	}
+
+	@Override
+	public boolean usingPartyOwnedClaims() {
+		return ServerConfig.CONFIG.partyOwnedClaims.get();
 	}
 
 }

@@ -27,6 +27,7 @@ import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
@@ -71,10 +72,13 @@ public final class ServerPlayerClaimsExpirationHandler extends ObjectExpirationH
 	public boolean checkIfActive(ServerPlayerClaimInfo playerInfo) {
 		if(
 				Objects.equals(PlayerConfig.EXPIRED_CLAIM_UUID, playerInfo.getPlayerId()) ||
-				Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, playerInfo.getPlayerId()) ||
-				server.getPlayerList().getPlayer(playerInfo.getPlayerId()) != null)//player is logged in
+				Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, playerInfo.getPlayerId())
+		)
 			return true;
-		return false;
+		if(ServerConfig.CONFIG.partyOwnedClaims.get() &&
+				claimsManager.getPartySystemManager().isPrimaryPartyOwner(playerInfo.getPlayerId()))
+			return ServerData.from(server).getPrimaryPartyOnlineCounter().isPartyOnline(playerInfo.getPlayerId());
+		return server.getPlayerList().getPlayer(playerInfo.getPlayerId()) != null;//player is logged in
 	}
 
 	@Override

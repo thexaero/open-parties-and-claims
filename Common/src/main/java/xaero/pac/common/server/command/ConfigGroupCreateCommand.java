@@ -24,8 +24,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.player.config.group.api.PlayerConfigGroupActionError;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
+
+import java.util.UUID;
 
 public class ConfigGroupCreateCommand extends ConfigGroupCommand {
 
@@ -46,6 +49,11 @@ public class ConfigGroupCreateCommand extends ConfigGroupCommand {
 				l -> new TranslatableComponent("gui.xaero_pac_config_create_group", inputGroupId),
 				e -> e
 		);
+	}
+
+	@Override
+	protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId) {
+		return systemManager.canCreatePartyConfigGroups(playerId);
 	}
 
 }

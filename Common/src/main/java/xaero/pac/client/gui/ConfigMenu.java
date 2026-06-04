@@ -26,14 +26,25 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.client.claims.IClientClaimsManager;
+import xaero.pac.client.claims.IClientDimensionClaimsManager;
+import xaero.pac.client.claims.IClientRegionClaims;
+import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
 import xaero.pac.client.gui.widget.FixedEditBox;
+import xaero.pac.client.player.config.IPlayerConfigClientStorage;
+import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
+import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.world.capability.ClientWorldMainCapability;
 import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 
 public class ConfigMenu extends XPACScreen {
 	
 	private static final TranslatableComponent ANOTHER_PLAYER_TITLE = new TranslatableComponent("gui.xaero_pac_ui_other_player_config_name_title");
 	private boolean serverHasMod;
+	private Button partyClaimsConfigButton;
 	private Button myPlayerConfigButton;
 	private Button serverClaimsConfigButton;
 	private Button expiredClaimsConfigButton;
@@ -50,34 +61,46 @@ public class ConfigMenu extends XPACScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(myPlayerConfigButton = new Button(width / 2 - 100, height / 7 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_my_player_config"), this::onPlayerConfigButton));
-		addRenderableWidget(serverClaimsConfigButton = new Button(width / 2 - 100, height / 7 + 32, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_server_claims_config"), this::onServerClaimsConfigButton));
-		addRenderableWidget(expiredClaimsConfigButton = new Button(width / 2 - 100, height / 7 + 56, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_expired_claims_config"), this::onExpiredClaimsConfigButton));
-		addRenderableWidget(wildernessConfigButton = new Button(width / 2 - 100, height / 7 + 80, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_wilderness_config"), this::onWildernessConfigButton));
-		addRenderableWidget(defaultConfigButton = new Button(width / 2 - 100, height / 7 + 104, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_default_player_config"), this::onDefaultConfigButton));
-		addRenderableWidget(otherPlayerNameBox = new FixedEditBox(font, width / 2 - 99, height / 7 + 148, 98, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_name_field")));
-		addRenderableWidget(otherPlayerConfigButton = new Button(width / 2, height / 7 + 148, 100, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_button"), this::onOtherPlayerConfigButton));
+		addRenderableWidget(myPlayerConfigButton = new Button(width / 2 - 205, height / 7 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_my_player_config"), this::onPlayerConfigButton));
+		addRenderableWidget(partyClaimsConfigButton = new Button(width / 2 - 205, height / 7 + 32, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_party_claims_config"), this::onPartyClaimsConfigButton));
+		addRenderableWidget(defaultConfigButton = new Button(width / 2 - 205, height / 7 + 56, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_default_player_config"), this::onDefaultConfigButton));
+		addRenderableWidget(serverClaimsConfigButton = new Button(width / 2 + 5, height / 7 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_server_claims_config"), this::onServerClaimsConfigButton));
+		addRenderableWidget(expiredClaimsConfigButton = new Button(width / 2 + 5, height / 7 + 32, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_expired_claims_config"), this::onExpiredClaimsConfigButton));
+		addRenderableWidget(wildernessConfigButton = new Button(width / 2 + 5, height / 7 + 56, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_wilderness_config"), this::onWildernessConfigButton));
+		addRenderableWidget(otherPlayerNameBox = new FixedEditBox(font, width / 2 - 99, height / 7 + 100, 98, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_name_field")));
+		addRenderableWidget(otherPlayerConfigButton = new Button(width / 2, height / 7 + 100, 100, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_button"), this::onOtherPlayerConfigButton));
+		IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
+				claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		updateOtherPlayerButton();
+		IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
+				configStorage = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 		ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(minecraft.level, ClientWorldCapabilityTypes.MAIN_CAP);
 		otherPlayerNameBox.setValue(otherPlayerNameString);
 		otherPlayerNameBox.setResponder(s -> {otherPlayerNameString = s; updateOtherPlayerButton();});
-		otherPlayerNameBox.setEditable(mainCap.getClientWorldData().serverHasMod() && minecraft.player.hasPermissions(2));
+		otherPlayerNameBox.setEditable(mainCap.getClientWorldData().serverHasMod() && configStorage.isAdmin());
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
 
-		serverHasMod = myPlayerConfigButton.active = serverClaimsConfigButton.active = mainCap.getClientWorldData().serverHasMod();
-		expiredClaimsConfigButton.active =
-				wildernessConfigButton.active = 
-				defaultConfigButton.active = 
-				mainCap.getClientWorldData().serverHasMod() && minecraft.player.hasPermissions(2);
+		serverHasMod = mainCap.getClientWorldData().serverHasMod();
+		myPlayerConfigButton.active = serverHasMod && configStorage.getMyPlayerConfig().getPermissions().canView();
+		serverClaimsConfigButton.active = serverHasMod && configStorage.getServerClaimsConfig().getPermissions().canView();
+		expiredClaimsConfigButton.active = serverHasMod && configStorage.getExpiredClaimsConfig().getPermissions().canView();
+		wildernessConfigButton.active = serverHasMod && configStorage.getWildernessConfig().getPermissions().canView();
+		defaultConfigButton.active = serverHasMod && configStorage.getDefaultPlayerConfig().getPermissions().canView();
+		partyClaimsConfigButton.active = serverHasMod && claimsManager.usingPartyOwnedClaims() && claimsManager.isInParty()
+				&& configStorage.getPartyClaimsConfig().getPermissions().canView();
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
-	
+
 	private void onBackButton(Button b) {
 		goBack();
 	}
 	
 	private void onPlayerConfigButton(Button b) {
 		OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().openMyPlayerConfigScreen(escape, this);
+	}
+
+	private void onPartyClaimsConfigButton(Button button) {
+		OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().openPartyClaimsConfigScreen(escape, this);
 	}
 	
 	private void onServerClaimsConfigButton(Button b) {
@@ -130,7 +153,7 @@ public class ConfigMenu extends XPACScreen {
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		renderBackground(poseStack);
 		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
-		drawCenteredString(poseStack, font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 132, -1);
+		drawCenteredString(poseStack, font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 85, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
 		if(!serverHasMod)
 			drawCenteredString(poseStack, font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);

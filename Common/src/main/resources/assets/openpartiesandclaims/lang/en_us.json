@@ -67,6 +67,9 @@
 	"gui.xaero_claims_admin_mode_disabled" : "Admin mode disabled!",
 	"gui.xaero_claims_server_mode_enabled" : "Server claim mode enabled!",
 	"gui.xaero_claims_server_mode_disabled" : "Server claim mode disabled!",
+	"gui.xaero_claims_party_mode_enabled" : "Party claim mode enabled!",
+	"gui.xaero_claims_party_mode_disabled" : "Party claim mode disabled!",
+	"gui.xaero_claims_player_mode_enabled" : "Switched to claiming as yourself!",
 	"gui.xaero_claims_nonally_mode_enabled" : "Non-ally mode enabled! You are now viewing/accessing your claims as a non-ally would.",
 	"gui.xaero_claims_nonally_mode_disabled" : "Non-ally mode disabled!",
 	"gui.xaero_claims_claimed" : "Successfully claimed the chunk(s)!",
@@ -82,13 +85,15 @@
 	"gui.xaero_claims_claim_unclaim_not_yours" : "You can't unclaim a chunk that you haven't claimed!",
 	"gui.xaero_claims_too_many_chunks" : "Too many chunks for a single action!",
 	"gui.xaero_claims_are_disabled" : "The chunk claims feature is disabled!",
-	"gui.xaero_claims_claim_no_server_permission" : "You no longer have permission to make server claims!",
+	"gui.xaero_claims_claim_no_server_permission" : "You don't have permission to make server claims!",
+	"gui.xaero_claims_claim_no_party_permission" : "You don't have permission to claim as your party!",
+	"gui.xaero_claims_claim_not_in_party" : "You are not in a party but are trying to act as one!",
 	"gui.xaero_claims_sub_current_too_many_targets" : "Only one target player is allowed!",
 	"gui.xaero_claims_sub_current_invalid_target" : "Invalid target player!",
 	"gui.xaero_claims_sub_current" : "The currently used sub-claim config is \"%1$s\".",
 	"gui.xaero_claims_sub_use_too_many_targets" : "Only one target player is allowed!",
 	"gui.xaero_claims_sub_use_invalid_target" : "Invalid target player!",
-	"gui.xaero_claims_sub_use_not_exist" : "The input sub-config ID does not exist!",
+	"gui.xaero_claims_sub_use_not_exist" : "The input sub-config does not exist!",
 	"gui.xaero_claims_sub_use_invalid_value" : "The input sub-config ID is not valid!",
 	"gui.xaero_claims_sub_use" : "Successfully switched to claiming with the sub-config \"%1$s\".",
 	
@@ -115,7 +120,8 @@
 	"gui.xaero_pac_config_option_set_invalid_sub" : "Invalid sub-config ID!",
 	"gui.xaero_pac_config_option_set_illegal_option" : "The specified option key is not allowed in this config!",
 	"gui.xaero_pac_config_option_sub_inherited" : "-",
-	
+	"gui.xaero_pac_config_option_invalid_config" : "Invalid player config! Something went wrong. Please report this to Xaero.",
+
 	"gui.xaero_pac_config_option_get_invalid_key" : "Invalid option key!",
 	"gui.xaero_pac_config_option_get_too_many_targets" : "Only one target player is allowed!",
 	"gui.xaero_pac_config_option_get_invalid_target" : "Invalid target player!",
@@ -127,6 +133,7 @@
 	"gui.xaero_pac_config_type_wilderness" : "Wilderness Config",
 	"gui.xaero_pac_config_type_default_player" : "Default Player Config",
 	"gui.xaero_pac_config_type_player" : "Player Config",
+	"gui.xaero_pac_config_type_party_claims" : "Party Claims Config",
 
 	"gui.xaero_pac_config_delete_sub_started" : "Began converting all claims that use the sub-config \"%1$s\"...",
 	"gui.xaero_pac_config_delete_sub_complete" : "Successfully converted its sub-claim and deleted the sub-config \"%1$s\"!",
@@ -186,10 +193,12 @@
 	"gui.xaero_claims_protection_create_cant_remove_glue" : "You are not allowed to remove glue from some (or all) of the claims that contain this glue selection.",
 	"gui.xaero_claims_protection_create_train_controls_protected" : "You are not allowed to control this train! Press ESCAPE to free yourself.",
 
-	"gui.xaero_pac_title_entered_wilderness" : "Wilderness",
-	"gui.xaero_pac_title_entered_claim" : "%1$s's Claim%2$s",
-	"gui.xaero_pac_title_entered_server_claim" : "Server Claim%1$s",
-	"gui.xaero_pac_title_entered_expired_claim" : "Expired Claim%1$s",
+	"gui.xaero_pac_full_title_format" : "%1$s - %2$s",
+	"gui.xaero_pac_title_wilderness" : "Wilderness",
+	"gui.xaero_pac_title_player_claim" : "%1$s's Claim%2$s",
+	"gui.xaero_pac_title_server_claim" : "Server Claim%1$s",
+	"gui.xaero_pac_title_expired_claim" : "Expired Claim%1$s",
+	"gui.xaero_pac_title_party_claim" : "%1$s%2$s",
 	"gui.xaero_pac_marked_for_forceload" : " (Forceloadable)",
 	
 	"gui.xaero_pac_ui_handshake_not_received" : "Handshake not received from the server! The mod isn't installed?",
@@ -197,7 +206,7 @@
 	"gui.xaero_pac_ui_claims_disabled" : "The claims feature is disabled by the server!",
 	"gui.xaero_pac_ui_parties_and_claims" : "Open Parties and Claims",
 	"gui.xaero_pac_ui_main_menu" : "Main Menu",
-	"gui.xaero_pac_ui_config_menu" : "Player Config Menu",
+	"gui.xaero_pac_ui_config_menu" : "Player/Claims Config Menu",
 	"gui.xaero_pac_ui_about_party" : "About",
 	"gui.xaero_pac_ui_claim" : "Claim",
 	"gui.xaero_pac_ui_unclaim" : "Unclaim",
@@ -210,6 +219,7 @@
 	"gui.xaero_pac_ui_expired_claims_config" : "Expired Claims Config",
 	"gui.xaero_pac_ui_wilderness_config" : "Wilderness Config",
 	"gui.xaero_pac_ui_default_player_config" : "Default Player Config",
+	"gui.xaero_pac_ui_party_claims_config" : "Party Claims Config",
 	"gui.xaero_pac_ui_other_player_config_name_field" : "Name of the player to view the config of",
 	"gui.xaero_pac_ui_other_player_config_name_title" : "Another Player:",
 	"gui.xaero_pac_ui_other_player_config_button" : "Edit Config",
@@ -499,5 +509,12 @@
 	"gui.xaero_pac_config_delete_group_confirmation_fail" : "Please make sure the \" confirm\" at the end of the command is typed correctly.",
 	"gui.xaero_pac_config_group_too_many_targets" : "Only one target player is allowed!",
 	"gui.xaero_pac_config_group_invalid_target" : "Invalid target player!",
-	"gui.xaero_pac_config_deprecated_api_option" : "Deprecated Option"
+	"gui.xaero_pac_config_deprecated_api_option" : "Deprecated Option",
+
+	"gui.xaero_pac_default_party_name" : "%1$s's Party",
+	"gui.xaero_pac_player_config_player_groups_no_permission" : "You don't have permission to do this in this config!",
+	"gui.xaero_pac_claiming_as_narration" : "Select Claiming Mode",
+	"gui.xaero_pac_claiming_as_myself" : "Claiming as Myself",
+	"gui.xaero_pac_claiming_as_party" : "Claiming as Party",
+	"gui.xaero_pac_claiming_as_server" : "Claiming as Server"
 }

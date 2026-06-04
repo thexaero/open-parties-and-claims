@@ -90,6 +90,10 @@ public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerCon
 						.build();
 				if (prevOtherStorage != null && t.ownerId.equals(prevOtherStorage.getOwner()))
 					storage.setSelectedSubConfig(prevOtherStorage.getSelectedSubConfig());
+				storage.getPermissions().update(
+						true, true, true,
+						true, true, true
+				);
 				playerConfigStorageManager.setOtherPlayerConfig(storage);
 			}
 			if(storage == null)

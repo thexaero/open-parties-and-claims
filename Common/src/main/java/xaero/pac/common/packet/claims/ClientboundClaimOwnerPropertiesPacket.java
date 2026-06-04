@@ -20,7 +20,9 @@ package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
@@ -56,6 +58,10 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 			CompoundTag propertiesEntryNbt = new CompoundTag();
 			propertiesEntryNbt.putUUID("p", propertiesEntry.playerId);
 			propertiesEntryNbt.putString("u", propertiesEntry.username);
+			if(propertiesEntry.partyName != null){
+				String partyNameJson = Component.Serializer.toJson(propertiesEntry.partyName);
+				propertiesEntryNbt.putString("pn", partyNameJson);
+			}
 			propertiesListTag.add(propertiesEntryNbt);
 		}
 		nbt.put("l", propertiesListTag);
@@ -67,7 +73,7 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 		@Override
 		public ClientboundClaimOwnerPropertiesPacket apply(FriendlyByteBuf input) {
 			try {
-				if(input.readableBytes() > 32768)
+				if(input.readableBytes() > 65536)
 					return null;
 				CompoundTag nbt = input.readAnySizeNbt();
 				if(nbt == null)
@@ -86,7 +92,11 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 						return null;
 					}
 					UUID playerId = propertiesEntryNbt.getUUID("p");
-					propertiesList.add(new PlayerProperties(playerId, username));
+					String partyNameJson = null;
+					if(propertiesEntryNbt.contains("pn", Tag.TAG_STRING))
+						partyNameJson = propertiesEntryNbt.getString("pn");
+					Component partyName = partyNameJson == null ? null : Component.Serializer.fromJson(partyNameJson);
+					propertiesList.add(new PlayerProperties(playerId, username, partyName));
 				}
 				return new ClientboundClaimOwnerPropertiesPacket(propertiesList);
 			} catch(Throwable t) {
@@ -103,7 +113,7 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 		public void handle(ClientboundClaimOwnerPropertiesPacket t) {
 			for (PlayerProperties propertiesEntry : t.properties) {
 				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().
-					onPlayerInfo(propertiesEntry.playerId, propertiesEntry.username);
+					onPlayerInfo(propertiesEntry.playerId, propertiesEntry.username, propertiesEntry.partyName);
 			}
 		}
 		
@@ -113,16 +123,19 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 		
 		private final UUID playerId;
 		private final String username;
+		private final Component partyName;
 		
-		public PlayerProperties(UUID playerId, String username) {
+		public PlayerProperties(UUID playerId, String username, Component partyName) {
 			super();
 			this.playerId = playerId;
 			this.username = username;
+			this.partyName = partyName;
 		}
 		
 		@Override
 		public String toString() {
-			return String.format("[%s, %s]", playerId, username);
+			String partyNameString = partyName == null ? null : partyName.getString();
+			return String.format("[%s, %s, %s]", playerId, username, partyNameString);
 		}
 		
 	}

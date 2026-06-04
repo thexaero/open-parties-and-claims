@@ -25,10 +25,18 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.ServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
@@ -41,8 +49,11 @@ import java.util.function.Predicate;
 public class PartyOnCommandUpdater {
 
 	private void onOnlineMember(UUID commandCasterId, MinecraftServer server, IPartyMember mi, ServerPlayer onlineMember, Predicate<IPartyMember> shouldUpdateCommandsForMember, Component massMessage) {
-		if(shouldUpdateCommandsForMember.test(mi))
-			server.getCommands().sendCommands(onlineMember);
+		if(shouldUpdateCommandsForMember.test(mi)) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(server);
+			serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(onlineMember, serverData, false);
+		}
 		if(massMessage != null)
 			onlineMember.sendMessage(massMessage, commandCasterId);
 	}

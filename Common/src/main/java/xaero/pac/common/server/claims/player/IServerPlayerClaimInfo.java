@@ -87,4 +87,6 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 
 	public PlayerClaimReplaceSpreadoutTask removeNextReplacementTask();
 
+	long getPartyNameSyncedTime();
+
 }

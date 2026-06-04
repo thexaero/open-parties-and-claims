@@ -18,13 +18,17 @@
 
 package xaero.pac.common.server.parties.system.impl;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
+import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,11 +67,56 @@ public class DefaultPlayerPartySystem implements IPlayerPartySystemAPI<IServerPa
 
 	@Override
 	public boolean isPermittedToPartyClaim(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, PartyMemberRank.CLAIMER);
+	}
+
+	@Override
+	public boolean canEditPartyConfig(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, PartyMemberRank.ADMIN);
+	}
+
+	@Override
+	public boolean canCreatePartyConfigGroups(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, PartyMemberRank.ADMIN);
+	}
+
+	@Override
+	public boolean canIncludeGroupsInPartyConfigGroups(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, PartyMemberRank.ADMIN);
+	}
+
+	@Override
+	public boolean canIncludePlayersInPartyConfigGroups(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, PartyMemberRank.MODERATOR);
+	}
+
+	private boolean isAtLeast(UUID playerId, PartyMemberRank rank){
 		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party = getPartyByMember(playerId);
 		if(party == null)
 			return false;
 		IPartyMember member = party.getMemberInfo(playerId);
-		return member != null && member.getRank().ordinal() >= PartyMemberRank.MODERATOR.ordinal();//needs a new rank when actually used
+		return member != null && member.getRank().ordinal() >= rank.ordinal();
+	}
+
+	@Nullable
+	@Override
+	public UUID getOwner(@Nonnull IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party) {
+		return party.getOwner().getUUID();
+	}
+
+	@Nullable
+	@Override
+	public Component getName(@Nonnull IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party) {
+		IPlayerConfig ownerConfig = partyManager.getPlayerConfigs().getLoadedConfig(party.getOwner().getUUID());
+		String partyCustomName = ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
+		if(partyCustomName.isEmpty())
+			return null;
+		return new TextComponent(partyCustomName);
+	}
+
+	@Override
+	public int getMemberCount(@Nonnull IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> party) {
+		return party.getMemberCount();
 	}
 
 }

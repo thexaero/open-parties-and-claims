@@ -99,7 +99,8 @@ public class KickPartyCommand {
 								UUID targetPlayerId = targetPlayerInfo.getUUID();
 								ServerPlayer kickedPlayer = server.getPlayerList().getPlayer(targetPlayerId);
 								if(kickedPlayer != null) {
-									server.getCommands().sendCommands(kickedPlayer);
+									serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(kickedPlayer, serverData, false);
+
 									Component acceptComponent = adaptiveLocalizer.getFor(kickedPlayer, "gui.xaero_parties_kick_target_message", playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.RED));
 									kickedPlayer.sendMessage(acceptComponent, playerId);
 								}
