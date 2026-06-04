@@ -77,6 +77,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A (default node string)->(node instance) map of all player permission nodes.</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html#ALL_IMMUTABLE" class="member-name-link">ALL_IMMUTABLE</a> - Static variable in class xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a></dt>
+<dd>
+<div class="block">Immutable view of the map of all claiming modes by ID</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ALREADY_CLAIMED" class="member-name-link">ALREADY_CLAIMED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The chunk is already claimed</div>
@@ -131,6 +135,64 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canClaimAs()" class="member-name-link">canClaimAs()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player can claim chunks as this config.</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canCreateGroups()" class="member-name-link">canCreateGroups()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player can create/delete player groups in this config.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#canCreatePartyConfigGroups(java.util.UUID)" class="member-name-link">canCreatePartyConfigGroups(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#canCreatePartyConfigGroups(java.util.UUID)" class="member-name-link">canCreatePartyConfigGroups(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Checks if a player is permitted to create player groups in the party's claims config (the party owner's config).</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canEdit()" class="member-name-link">canEdit()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player can edit the config.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#canEditPartyConfig(java.util.UUID)" class="member-name-link">canEditPartyConfig(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#canEditPartyConfig(java.util.UUID)" class="member-name-link">canEditPartyConfig(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Checks if a player is permitted to edit the party's claims config (the party owner's config).</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canIncludeGroupsInGroups()" class="member-name-link">canIncludeGroupsInGroups()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player can include/exclude player groups in other player groups of this config.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#canIncludeGroupsInPartyConfigGroups(java.util.UUID)" class="member-name-link">canIncludeGroupsInPartyConfigGroups(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#canIncludeGroupsInPartyConfigGroups(java.util.UUID)" class="member-name-link">canIncludeGroupsInPartyConfigGroups(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Checks if a player is permitted to include/exclude player groups in other player groups in the
+ party's claims config (the party owner's config).</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canIncludePlayersInGroups()" class="member-name-link">canIncludePlayersInGroups()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player can include/exclude players in the player groups of this config.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#canIncludePlayersInPartyConfigGroups(java.util.UUID)" class="member-name-link">canIncludePlayersInPartyConfigGroups(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#canIncludePlayersInPartyConfigGroups(java.util.UUID)" class="member-name-link">canIncludePlayersInPartyConfigGroups(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Checks if a player is permitted to include/exclude players in player groups in the
+ party's claims config (the party owner's config).</div>
+</dd>
+<dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canView()" class="member-name-link">canView()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
+<dd>
+<div class="block">Checks whether the player can view the config.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#checkExceptionLeveledOption(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI,xaero.pac.common.server.player.config.api.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">checkExceptionLeveledOption(IPlayerConfigOptionSpecAPI&lt;Integer&gt;, IPlayerConfigAPI, UUID)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -418,6 +480,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the claimed chunk protection makes an exception for items dropped on player death.</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" class="type-name-link" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a> - Class in <a href="xaero/pac/common/claims/player/mode/api/package-summary.html">xaero.pac.common.claims.player.mode.api</a></dt>
+<dd>
+<div class="block">Access point for all claiming modes in the mod</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html#%3Cinit%3E()" class="member-name-link">ClaimingModes()</a> - Constructor for class xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.html" class="type-name-link" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="xaero/pac/common/claims/result/api/ClaimResult.html" title="type parameter in ClaimResult">C</a> extends <a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt; - Class in <a href="xaero/pac/common/claims/result/api/package-summary.html">xaero.pac.common.claims.result.api</a></dt>
 <dd>
 <div class="block">A claim result for a single chunk</div>
@@ -587,6 +655,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerRegionClaimsAPI.html#get(int,int)" class="member-name-link">get(int, int)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerRegionClaimsAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerRegionClaimsAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Static method in class xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a></dt>
+<dd>
+<div class="block">Gets the claiming mode with a specified ID.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#get(java.lang.String)" class="member-name-link">get(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the group with a specified ID and wraps the group if it originates from the default player config.</div>
@@ -720,6 +792,10 @@ loadScripts(document, 'script');</script>
  You can fetch claim states of chunks from the <a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api"><code>IServerClaimsManagerAPI</code></a>.</div>
 </div>
 </dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimCount()" class="member-name-link">getClaimCount()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the claim count of the local client player.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html#getClaimCount()" class="member-name-link">getClaimCount()</a> - Method in interface xaero.pac.client.claims.player.api.<a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerClaimInfoAPI.html#getClaimCount()" class="member-name-link">getClaimCount()</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a></dt>
@@ -728,9 +804,25 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html#getClaimCount()" class="member-name-link">getClaimCount()</a> - Method in interface xaero.pac.common.server.claims.player.api.<a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimCount(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getClaimCount(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the claim count for a specified claiming mode.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimingMode()" class="member-name-link">getClaimingMode()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the currently enabled claiming mode.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html#getClaimingMode()" class="member-name-link">getClaimingMode()</a> - Method in class xaero.pac.common.server.player.data.api.<a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html" title="class in xaero.pac.common.server.player.data.api">ServerPlayerDataAPI</a></dt>
+<dd>
+<div class="block">Gets the current claiming mode.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimLimit()" class="member-name-link">getClaimLimit()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the local client player's chunk claim limit.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimLimit(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getClaimLimit(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the claim limit for a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.html#getClaimResult()" class="member-name-link">getClaimResult()</a> - Method in class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a></dt>
 <dd>
@@ -971,21 +1063,41 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerDimensionClaimsManagerAPI.html#getCount()" class="member-name-link">getCount()</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerDimensionClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentPartyOwner()" class="member-name-link">getCurrentPartyOwner()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the UUID of the owner of the primary party that the local player is in.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentServerSubConfigId()" class="member-name-link">getCurrentServerSubConfigId()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Gets the string ID of the sub-config currently used for new server claims.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentSubConfigId(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.getCurrentSubConfigId(IClaimingModeAPI)</code></a> instead
+ <p>
+ Gets the string ID of the sub-config currently used for new server claims.</div>
+</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentServerSubConfigIndex()" class="member-name-link">getCurrentServerSubConfigIndex()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Gets the index of the sub-config currently used for new server claims.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentSubConfigIndex(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.getCurrentSubConfigIndex(IClaimingModeAPI)</code></a> instead
+ <p>
+ Gets the index of the sub-config currently used for new server claims.</div>
+</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentSubConfigId()" class="member-name-link">getCurrentSubConfigId()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the string ID of the sub-config currently used for new claims.</div>
 </dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentSubConfigId(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getCurrentSubConfigId(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the string ID of the sub-config currently used for a specified claiming mode.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentSubConfigIndex()" class="member-name-link">getCurrentSubConfigIndex()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the index of the sub-config currently used for new claims.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getCurrentSubConfigIndex(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getCurrentSubConfigIndex(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the index of the sub-config currently used for a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#getCustom(java.lang.String)" class="member-name-link">getCustom(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
 <dd>
@@ -1010,6 +1122,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#getDefaultName()" class="member-name-link">getDefaultName()</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getDefaultName(IPlayerChunkClaimAPI)</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the default display name that would be used for a provided claim state.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getDefaultNodeString()" class="member-name-link">getDefaultNodeString()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
 <dd>
 <div class="block">Gets the default string representation of this node.</div>
@@ -1178,6 +1294,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Converts a text component to be readable by a specified player, if necessary.</div>
 </dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getForceloadCount()" class="member-name-link">getForceloadCount()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the forceload count of the local client player.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html#getForceloadCount()" class="member-name-link">getForceloadCount()</a> - Method in interface xaero.pac.client.claims.player.api.<a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerClaimInfoAPI.html#getForceloadCount()" class="member-name-link">getForceloadCount()</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a></dt>
@@ -1186,9 +1306,17 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html#getForceloadCount()" class="member-name-link">getForceloadCount()</a> - Method in interface xaero.pac.common.server.claims.player.api.<a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getForceloadCount(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getForceloadCount(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the forceload count for a specified claiming mode.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getForceloadLimit()" class="member-name-link">getForceloadLimit()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the local client player's chunk claim forceload limit.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getForceloadLimit(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getForceloadLimit(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the forceload limit for a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyMemberDynamicInfoSyncableStorageAPI.html#getForPlayer(java.util.UUID)" class="member-name-link">getForPlayer(UUID)</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyMemberDynamicInfoSyncableStorageAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyMemberDynamicInfoSyncableStorageAPI</a></dt>
 <dd>
@@ -1209,6 +1337,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html#getFromEffectiveConfig(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI)" class="member-name-link">getFromEffectiveConfig(IPlayerConfigOptionSpecAPI&lt;T&gt;)</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="block">Gets the raw config value from the effective config of a config option, e.g.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getFullName(IPlayerChunkClaimAPI)</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#getGroupSpace()" class="member-name-link">getGroupSpace()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -1237,6 +1369,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.client.player.config.api.v2.<a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/IClaimingModeAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></dt>
+<dd>
+<div class="block">Gets the String ID of the claiming mode.</div>
+</dd>
 <dt><a href="xaero/pac/common/parties/party/api/IPartyAPI.html#getId()" class="member-name-link">getId()</a> - Method in interface xaero.pac.common.parties.party.api.<a href="xaero/pac/common/parties/party/api/IPartyAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyAPI</a></dt>
 <dd>
 <div class="block">Gets the UUID of this party.</div>
@@ -1339,6 +1475,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#getMemberCount()" class="member-name-link">getMemberCount()</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#getMemberCount(P)" class="member-name-link">getMemberCount(P)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#getMemberCount(P)" class="member-name-link">getMemberCount(P)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Gets the member count of a specified party.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#getMemberInfo(java.lang.String)" class="member-name-link">getMemberInfo(String)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>
 <div class="block">Gets info about the party member with a specified username.</div>
@@ -1374,6 +1518,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getName()" class="member-name-link">getName()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
 <dd>
 <div class="block">Gets the text component of the name of this node, to be used in UIs.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#getName(P)" class="member-name-link">getName(P)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#getName(P)" class="member-name-link">getName(P)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Gets the display name of a specified party.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html#getNodeString()" class="member-name-link">getNodeString()</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPermissionNodeAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPermissionNodeAPI</a></dt>
 <dd>
@@ -1454,6 +1606,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#getOwner()" class="member-name-link">getOwner()</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#getOwner(P)" class="member-name-link">getOwner(P)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#getOwner(P)" class="member-name-link">getOwner(P)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Gets the UUID of the owner of a specified party.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html#getPartiesThatAlly(java.util.UUID)" class="member-name-link">getPartiesThatAlly(UUID)</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IPartyManagerAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IPartyManagerAPI</a></dt>
 <dd>
 <div class="block">Gets a stream of all parties that ally a party with a specified UUID.</div>
@@ -1470,7 +1630,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the party from the UUID of a party member.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#getPartyByMember(java.util.UUID)" class="member-name-link">getPartyByMember(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#getPartyByMember(java.util.UUID)" class="member-name-link">getPartyByMember(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
 <dd>
 <div class="block">Gets the party that the player with a specified UUID is a part of.</div>
 </dd>
@@ -1478,9 +1638,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the owned party from the UUID of a party's owner.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#getPartyByOwner(java.util.UUID)" class="member-name-link">getPartyByOwner(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#getPartyByOwner(java.util.UUID)" class="member-name-link">getPartyByOwner(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
 <dd>
 <div class="block">Gets the party that the player with a specified UUID owns.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#getPartyClaimsConfig()" class="member-name-link">getPartyClaimsConfig()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the read-only "player config" storage for the claims of the party that the local client player is in.</div>
 </dd>
 <dt><a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html#getPartyId()" class="member-name-link">getPartyId()</a> - Method in interface xaero.pac.common.parties.party.ally.api.<a href="xaero/pac/common/parties/party/ally/api/IPartyAllyAPI.html" title="interface in xaero.pac.common.parties.party.ally.api">IPartyAllyAPI</a></dt>
 <dd>
@@ -1494,9 +1658,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the party/ally player dynamic info storage.</div>
 </dd>
+<dt><a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html#getPartyName()" class="member-name-link">getPartyName()</a> - Method in interface xaero.pac.client.claims.player.api.<a href="xaero/pac/client/claims/player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></dt>
+<dd>
+<div class="block">Gets the display name of the party that owns the claims stored in this player claim info.</div>
+</dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html#getPartyName()" class="member-name-link">getPartyName()</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyStorageAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyStorageAPI</a></dt>
 <dd>
 <div class="block">Gets the name of the local client player's party.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigManagerAPI.html#getPartyOwnerConfig(java.util.UUID)" class="member-name-link">getPartyOwnerConfig(UUID)</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigManagerAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigManagerAPI</a></dt>
+<dd>
+<div class="block">Gets or creates the player config of the owner of the party that the player with
+ a specified UUID is a member of.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getPath()" class="member-name-link">getPath()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
@@ -1512,6 +1685,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermission(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getPermission(ServerPlayer, IPermissionNodeAPI&lt;Boolean&gt;)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
 <dd>
 <div class="block">Gets the value of a boolean permission for a specified player.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#getPermissions()" class="member-name-link">getPermissions()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
+<dd>
+<div class="block">Gets the API for the permissions the local client player has for this config.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html#getPermissionTyped(net.minecraft.server.level.ServerPlayer,xaero.pac.common.server.player.permission.api.IPermissionNodeAPI)" class="member-name-link">getPermissionTyped(ServerPlayer, IPermissionNodeAPI&lt;T&gt;)</a> - Method in interface xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/IPlayerPermissionSystemAPI.html" title="interface in xaero.pac.common.server.player.permission.api">IPlayerPermissionSystemAPI</a></dt>
 <dd>
@@ -1745,6 +1922,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html#getStringValidator()" class="member-name-link">getStringValidator()</a> - Method in interface xaero.pac.client.player.config.api.v2.<a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>
 <div class="block">Gets the string value input validator for this option.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#getSubClaimOption()" class="member-name-link">getSubClaimOption()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets the player config option used for storing the sub-config ID currently used for claiming for a config of
+ this type.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#getSubConfig(java.lang.String)" class="member-name-link">getSubConfig(String)</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
 <dd>
@@ -2015,7 +2197,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html#getUsedServerSubConfig()" class="member-name-link">getUsedServerSubConfig()</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></dt>
 <dd>
-<div class="block">Gets the server sub-config currently used for new claims.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html#getUsedSubConfig(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IPlayerConfigAPI.getUsedSubConfig(IClaimingModeAPI)</code></a> instead
+ <p>
+ Gets the server sub-config currently used for new claims.</div>
+</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#getUsedSubConfig()" class="member-name-link">getUsedSubConfig()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>
@@ -2027,6 +2213,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html#getUsedSubConfig()" class="member-name-link">getUsedSubConfig()</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="block">Gets the sub-config currently used for new claims.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html#getUsedSubConfig(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getUsedSubConfig(IClaimingModeAPI)</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></dt>
+<dd>
+<div class="block">Gets the sub-config currently used for new claims for a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html#getUsername()" class="member-name-link">getUsername()</a> - Method in interface xaero.pac.common.parties.party.api.<a href="xaero/pac/common/parties/party/api/IPartyPlayerInfoAPI.html" title="interface in xaero.pac.common.parties.party.api">IPartyPlayerInfoAPI</a></dt>
 <dd>
@@ -2189,6 +2379,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a> - Interface in <a href="xaero/pac/common/server/claims/protection/api/package-summary.html">xaero.pac.common.server.claims.protection.api</a></dt>
 <dd>
 <div class="block">API for the claim-based chunk protection.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/IClaimingModeAPI.html" class="type-name-link" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a> - Interface in <a href="xaero/pac/common/claims/player/mode/api/package-summary.html">xaero.pac.common.claims.player.mode.api</a></dt>
+<dd>
+<div class="block">A claiming mode</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" class="type-name-link" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a> - Interface in <a href="xaero/pac/common/claims/api/package-summary.html">xaero.pac.common.claims.api</a></dt>
 <dd>
@@ -2435,6 +2629,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">API for a player group that may contain other groups</div>
 </dd>
+<dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" class="type-name-link" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a> - Interface in <a href="xaero/pac/common/player/config/api/package-summary.html">xaero.pac.common.player.config.api</a></dt>
+<dd>
+<div class="block">The API for the permissions a player has for a config</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" class="type-name-link" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a> extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;&gt; - Interface in <a href="xaero/pac/client/player/config/api/package-summary.html">xaero.pac.client.player.config.api</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -2451,10 +2649,37 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a>&lt;<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt; - Interface in <a href="xaero/pac/common/server/parties/system/api/package-summary.html">xaero.pac.common.server.parties.system.api</a></dt>
 <dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2"><code>IPlayerPartySystemAPI</code></a> instead
+ <p>
+ The interface to be overridden by addons that wish to implement additional party systems to be used
+ by Open Parties and Claims (just the claiming feature as of writing this).
+ <p>
+ Player position synchronization is a part of the default party system. Similar functionality should
+ be implemented in other party systems and supported separately by the map mods that display party
+ members. OPAC does not synchronize or provide party member/ally positions from other party systems,
+ even if they're implemented using this interface.
+ <p>
+ Party system implementations must be registered in <a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api"><code>IPlayerPartySystemRegisterAPI</code></a>.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt; - Interface in <a href="xaero/pac/common/server/parties/system/api/v2/package-summary.html">xaero.pac.common.server.parties.system.api.v2</a></dt>
+<dd>
 <div class="block">The interface to be overridden by addons that wish to implement additional party systems to be used
  by Open Parties and Claims (just the claiming feature as of writing this).</div>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemRegisterAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemRegisterAPI</a> - Interface in <a href="xaero/pac/common/server/parties/system/api/package-summary.html">xaero.pac.common.server.parties.system.api</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2"><code>IPlayerPartySystemRegisterAPI</code></a> instead
+ <p>
+ The API for registering party system implementations.
+ <p>
+ Party system implementations must be registered during the
+ xaero.pac.common.event.api.OPACServerAddonRegister.EVENT on Fabric or OPACServerAddonRegisterEvent on Forge.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemRegisterAPI.html" class="type-name-link" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemRegisterAPI</a> - Interface in <a href="xaero/pac/common/server/parties/system/api/v2/package-summary.html">xaero.pac.common.server.parties.system.api.v2</a></dt>
 <dd>
 <div class="block">The API for registering party system implementations.</div>
 </dd>
@@ -2474,6 +2699,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#isAdminMode()" class="member-name-link">isAdminMode()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Checks whether the local client player is in admin mode.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/v2/IPlayerConfigOptionClientStorageAPI.html#isAdminMutable()" class="member-name-link">isAdminMutable()</a> - Method in interface xaero.pac.client.player.config.api.v2.<a href="xaero/pac/client/player/config/api/v2/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigOptionClientStorageAPI</a></dt>
+<dd>
+<div class="block">Checks whether the local client player can edit this option's value if the player is a config admin (op).</div>
 </dd>
 <dt><a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html#isAlly(java.util.UUID)" class="member-name-link">isAlly(UUID)</a> - Method in interface xaero.pac.client.parties.party.api.<a href="xaero/pac/client/parties/party/api/IClientPartyAPI.html" title="interface in xaero.pac.client.parties.party.api">IClientPartyAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -2514,7 +2743,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html#isClaimsServerMode()" class="member-name-link">isClaimsServerMode()</a> - Method in class xaero.pac.common.server.player.data.api.<a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html" title="class in xaero.pac.common.server.player.data.api">ServerPlayerDataAPI</a></dt>
 <dd>
-<div class="block">Checks if the player is using the server claim mode.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html#getClaimingMode()"><code>ServerPlayerDataAPI.getClaimingMode()</code></a> instead
+ <p>
+ Checks if the player is using the server claim mode.</div>
+</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#isDefaulted()" class="member-name-link">isDefaulted()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
 <dd>
@@ -2621,7 +2854,7 @@ loadScripts(document, 'script');</script>
 &nbsp;</dd>
 <dt><a href="xaero/pac/client/player/config/api/v2/IPlayerConfigOptionClientStorageAPI.html#isMutable()" class="member-name-link">isMutable()</a> - Method in interface xaero.pac.client.player.config.api.v2.<a href="xaero/pac/client/player/config/api/v2/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigOptionClientStorageAPI</a></dt>
 <dd>
-<div class="block">Checks whether the local client player can edit this option's value.</div>
+<div class="block">Checks whether the local client player can edit this option's value, taking permissions into account.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html#isMutable()" class="member-name-link">isMutable()</a> - Method in interface xaero.pac.client.player.config.api.v2.<a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -2644,14 +2877,18 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks whether this party member is the owner of the party.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#isPermittedToPartyClaim(java.util.UUID)" class="member-name-link">isPermittedToPartyClaim(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#isPermittedToPartyClaim(java.util.UUID)" class="member-name-link">isPermittedToPartyClaim(UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
 <dd>
 <div class="block">Checks if a player is permitted to claim as the party that they belong to but don't own.</div>
 </dd>
-<dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html#isPlayerAllying(java.util.UUID,java.util.UUID)" class="member-name-link">isPlayerAllying(UUID, UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a></dt>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#isPlayerAllying(java.util.UUID,java.util.UUID)" class="member-name-link">isPlayerAllying(UUID, UUID)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
 <dd>
 <div class="block">Checks if a player with UUID <code>playerId</code> considers a player with UUID <code>potentialAllyPlayerId</code>
  an ally.</div>
+</dd>
+<dt><a href="xaero/pac/client/player/config/api/v2/IPlayerConfigOptionClientStorageAPI.html#isPlayerMutable()" class="member-name-link">isPlayerMutable()</a> - Method in interface xaero.pac.client.player.config.api.v2.<a href="xaero/pac/client/player/config/api/v2/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigOptionClientStorageAPI</a></dt>
+<dd>
+<div class="block">Checks whether the local client player can edit this option's value, regardless of admin status.</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html#isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">isSameClaimType(IPlayerChunkClaimAPI)</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></dt>
 <dd>
@@ -2660,7 +2897,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#isServerMode()" class="member-name-link">isServerMode()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Checks whether the local client player is in server claim mode.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimingMode()"><code>IClientClaimsManagerAPI.getClaimingMode()</code></a> instead
+ <p>
+ Checks whether the local client player is in server claim mode.</div>
+</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#isSyncInProgress()" class="member-name-link">isSyncInProgress()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
 <dd>
@@ -2704,6 +2945,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Error returned when an operation didn't necessarily fail but had no effect.</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NO_PARTY_PERMISSION" class="member-name-link">NO_PARTY_PERMISSION</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The user doesn't have permission to make party claims</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The user doesn't have permission to make server claims</div>
@@ -2719,6 +2964,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.SetResult.html#NOT_DIRECTLY_CONFIGURABLE" class="member-name-link">NOT_DIRECTLY_CONFIGURABLE</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI.SetResult</a></dt>
 <dd>
 <div class="block">The option is not directly configurable</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NOT_IN_PARTY" class="member-name-link">NOT_IN_PARTY</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The user doesn't have permission to make party claims</div>
 </dd>
 </dl>
 <h2 class="title" id="I:O">O</h2>
@@ -2836,6 +3085,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Constructor for internal usage.</div>
 </dd>
+<dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#openPartyClaimsConfigScreen(net.minecraft.client.gui.screens.Screen,net.minecraft.client.gui.screens.Screen)" class="member-name-link">openPartyClaimsConfigScreen(Screen, Screen)</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
+<dd>
+<div class="block">Opens the config GUI screen for the claims of the party that the local client player is in.</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html#openServerClaimsConfigScreen(net.minecraft.client.gui.screens.Screen,net.minecraft.client.gui.screens.Screen)" class="member-name-link">openServerClaimsConfigScreen(Screen, Screen)</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageManagerAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageManagerAPI</a></dt>
 <dd>
 <div class="block">Opens the config GUI screen for the server claims "player config".</div>
@@ -2872,6 +3125,14 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:P">P</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html#PARTY" class="member-name-link">PARTY</a> - Static variable in class xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a></dt>
+<dd>
+<div class="block">Mode for claiming as your party</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#PARTY_CLAIMS" class="member-name-link">PARTY_CLAIMS</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Party claims config</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#PARTY_NAME" class="member-name-link">PARTY_NAME</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -2889,6 +3150,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#PLAYER" class="member-name-link">PLAYER</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
 <dd>
 <div class="block">A player config</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html#PLAYER" class="member-name-link">PLAYER</a> - Static variable in class xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a></dt>
+<dd>
+<div class="block">Mode for claiming as yourself</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#PLAYER_GROUP_SPACE" class="member-name-link">PLAYER_GROUP_SPACE</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
 <dd>
@@ -3301,6 +3566,18 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemRegisterAPI.html#register(java.lang.String,xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)" class="member-name-link">register(String, IPlayerPartySystemAPI&lt;?&gt;)</a> - Method in interface xaero.pac.common.server.parties.system.api.<a href="xaero/pac/common/server/parties/system/api/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemRegisterAPI</a></dt>
 <dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2"><code>IPlayerPartySystemRegisterAPI</code></a> instead
+ <p>
+ Registers a party system implementation to be available to OPAC
+ under a specified name.
+ <p>
+ The primary party system used by the mod is configured in the main server config file
+ with the "primaryPartySystem" option.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemRegisterAPI.html#register(java.lang.String,xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)" class="member-name-link">register(String, IPlayerPartySystemAPI&lt;?&gt;)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemRegisterAPI</a></dt>
+<dd>
 <div class="block">Registers a party system implementation to be available to OPAC
  under a specified name.</div>
 </dd>
@@ -3355,27 +3632,121 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaClaim(int,int,int,int,boolean)" class="member-name-link">requestAreaClaim(int, int, int, int, boolean)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Requests new chunks claims over a specified area by the local client player or by the server.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.requestAreaClaim(int, int, int, int, IClaimingModeAPI)</code></a>
+ <p>
+ Requests new chunks claims over a specified area by the local client player or by the server.
+ <p>
+ Only OPs can request claims by the server.
+ <p>
+ Register a claim result listener with <a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaClaim(int, int, int, int, IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Requests new chunks claims over a specified area by the local client player using a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaForceload(int,int,int,int,boolean,boolean)" class="member-name-link">requestAreaForceload(int, int, int, int, boolean, boolean)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Requests chunk (un)forceloads over a specified area by the local client player or by the server.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.requestAreaForceload(int, int, int, int, boolean, IClaimingModeAPI)</code></a>
+ <p>
+ Requests chunk (un)forceloads over a specified area by the local client player or by the server.
+ <p>
+ Only OPs can request (un)forceloads by the server.
+ <p>
+ Register a claim result listener with <a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaForceload(int, int, int, int, boolean, IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Requests chunk (un)forceloads over a specified area by the local client player using a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaUnclaim(int,int,int,int,boolean)" class="member-name-link">requestAreaUnclaim(int, int, int, int, boolean)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Requests chunk unclaims over a specified area by the local client player or by the server.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.requestAreaUnclaim(int, int, int, int, IClaimingModeAPI)</code></a>
+ <p>
+ Requests chunk unclaims over a specified area by the local client player or by the server.
+ <p>
+ Only OPs can request unclaims by the server.
+ <p>
+ Register a claim result listener with <a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaUnclaim(int, int, int, int, IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestClaim(int,int,boolean)" class="member-name-link">requestClaim(int, int, boolean)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Requests a new chunk claim by the local client player or by the server.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.requestClaim(int, int, IClaimingModeAPI)</code></a>
+ <p>
+ Requests a new chunk claim by the local client player, party or by the server.
+ <p>
+ Only OPs can request claims by the server.
+ <p>
+ Register a claim result listener with <a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestClaim(int, int, IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Requests a new chunk claim by the local client player using a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestForceload(int,int,boolean,boolean)" class="member-name-link">requestForceload(int, int, boolean, boolean)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Requests a chunk (un)forceload by the local client player or by the server.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.requestForceload(int, int, boolean, IClaimingModeAPI)</code></a>
+ <p>
+ Requests a chunk (un)forceload by the local client player or by the server.
+ <p>
+ Only OPs can request (un)forceloads by the server.
+ <p>
+ Register a claim result listener with <a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestForceload(int, int, boolean, IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Requests a chunk (un)forceload by the local client player using a specified claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestUnclaim(int,int,boolean)" class="member-name-link">requestUnclaim(int, int, boolean)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Requests a chunk unclaim by the local client player or by the server.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>IClientClaimsManagerAPI.requestUnclaim(int, int, IClaimingModeAPI)</code></a>
+ <p>
+ Requests a chunk unclaim by the local client player or by the server.
+ <p>
+ Only OPs can request unclaims by the server.
+ <p>
+ Register a claim result listener with <a href="xaero/pac/client/claims/tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestUnclaim(int, int, IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Requests a chunk unclaim by the local client player using a specified claiming mode.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html#resyncPartyName(xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)" class="member-name-link">resyncPartyName(IPlayerPartySystemAPI&lt;?&gt;)</a> - Method in interface xaero.pac.common.server.claims.player.api.<a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html#resyncPartyName(xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)"><code>IServerPlayerClaimInfoAPI.resyncPartyName(IPlayerPartySystemAPI)</code></a> instead.
+ <p>
+ Resyncs the name of the party that owns the claims stored in this player claim info, which is displayed when the
+ mod is in party-owned-claims mode. The party that owns the claims is the party owned by this player.
+ <p>
+ If the specified party system argument is not the primary system, then nothing will happen, as only the primary
+ party system is used in party-owned-claims mode. So if a party is renamed in any of the party systems, then this
+ method can be safely called, whether it's the primary system or not.
+ <p>
+ Calling this method is optional because the mod automatically detects party name changes every second, if at
+ least one party member is online. This method can be used to speed it up or to update the name for parties that
+ don't have anyone online. The default built-in party system does so.</div>
+</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html#resyncPartyName(xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)" class="member-name-link">resyncPartyName(IPlayerPartySystemAPI&lt;?&gt;)</a> - Method in interface xaero.pac.common.server.claims.player.api.<a href="xaero/pac/common/server/claims/player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a></dt>
+<dd>
+<div class="block">Resyncs the name of the party that owns the claims stored in this player claim info, which is displayed when the
+ mod is in party-owned-claims mode.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
@@ -3383,6 +3754,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#SERVER" class="member-name-link">SERVER</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
 <dd>
 <div class="block">Server claims config</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html#SERVER" class="member-name-link">SERVER</a> - Static variable in class xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a></dt>
+<dd>
+<div class="block">Mode for claiming as the server</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#SERVER_CLAIMS" class="member-name-link">SERVER_CLAIMS</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
 <dd>
@@ -3590,6 +3965,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Error returned when a non-op player tries to include a player in a group who the server isn't aware of yet.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html#USED_PARTY_SUBCLAIM" class="member-name-link">USED_PARTY_SUBCLAIM</a> - Static variable in class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api.v2">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">The current sub-config ID that the player uses for new party claims.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#USED_SERVER_SUBCLAIM" class="member-name-link">USED_SERVER_SUBCLAIM</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -3704,6 +4083,8 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/player/api/package-summary.html">xaero.pac.common.claims.player.api</a> - package xaero.pac.common.claims.player.api</dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/player/mode/api/package-summary.html">xaero.pac.common.claims.player.mode.api</a> - package xaero.pac.common.claims.player.mode.api</dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/result/api/package-summary.html">xaero.pac.common.claims.result.api</a> - package xaero.pac.common.claims.result.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/tracker/api/package-summary.html">xaero.pac.common.claims.tracker.api</a> - package xaero.pac.common.claims.tracker.api</dt>
@@ -3713,6 +4094,8 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/parties/party/api/package-summary.html">xaero.pac.common.parties.party.api</a> - package xaero.pac.common.parties.party.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/parties/party/member/api/package-summary.html">xaero.pac.common.parties.party.member.api</a> - package xaero.pac.common.parties.party.member.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/player/config/api/package-summary.html">xaero.pac.common.player.config.api</a> - package xaero.pac.common.player.config.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/player/config/group/api/package-summary.html">xaero.pac.common.player.config.group.api</a> - package xaero.pac.common.player.config.group.api</dt>
 <dd>&nbsp;</dd>
@@ -3729,6 +4112,8 @@ the order they are declared.</div>
 <dt><a href="xaero/pac/common/server/parties/party/api/package-summary.html">xaero.pac.common.server.parties.party.api</a> - package xaero.pac.common.server.parties.party.api</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/parties/system/api/package-summary.html">xaero.pac.common.server.parties.system.api</a> - package xaero.pac.common.server.parties.system.api</dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/package-summary.html">xaero.pac.common.server.parties.system.api.v2</a> - package xaero.pac.common.server.parties.system.api.v2</dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a> - package xaero.pac.common.server.player.config.api</dt>
 <dd>&nbsp;</dd>

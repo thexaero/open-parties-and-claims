@@ -131,19 +131,24 @@ extends <a href="../../../../common/claims/player/api/IPlayerClaimInfoAPI.html" 
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the number of forceloadable claims owned by the player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerId()" class="member-name-link">getPlayerId</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPartyName()" class="member-name-link">getPartyName</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the display name of the party that owns the claims stored in this player claim info.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerId()" class="member-name-link">getPlayerId</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the UUID of the player.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerUsername()" class="member-name-link">getPlayerUsername</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerUsername()" class="member-name-link">getPlayerUsername</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the username of the player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../../../../common/claims/player/api/IPlayerDimensionClaimsAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerDimensionClaimsAPI</a>&gt;&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getStream()" class="member-name-link">getStream</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;net.minecraft.resources.ResourceLocation,<wbr><a href="../../../../common/claims/player/api/IPlayerDimensionClaimsAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerDimensionClaimsAPI</a>&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getStream()" class="member-name-link">getStream</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a stream of all dimension claim info entries for the player.</div>
 </div>
 </div>
@@ -322,6 +327,20 @@ extends <a href="../../../../common/claims/player/api/IPlayerClaimInfoAPI.html" 
 <dd><code>id</code> - the dimension ID, not null</dd>
 <dt>Returns:</dt>
 <dd>the claim info of the dimension, null if no claims exist for the specified dimension ID</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPartyName()">
+<h3>getPartyName</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getPartyName</span>()</div>
+<div class="block">Gets the display name of the party that owns the claims stored in this player claim info.
+ <p>
+ The party that owns the claims is the party owned by this player.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the Component display name of the party that owns the claims, null if not owned by a party</dd>
 </dl>
 </section>
 </li>

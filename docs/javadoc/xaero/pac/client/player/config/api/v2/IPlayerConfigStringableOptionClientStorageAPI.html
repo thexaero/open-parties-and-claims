@@ -157,14 +157,14 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isMutable()" class="member-name-link">isMutable</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks whether the local client player can edit this option's value.</div>
+<div class="block">Checks whether the local client player can edit this option's value, taking permissions into account.</div>
 </div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-xaero.pac.client.player.config.api.v2.IPlayerConfigOptionClientStorageAPI">Methods inherited from interface&nbsp;xaero.pac.client.player.config.api.v2.<a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigOptionClientStorageAPI</a></h3>
-<code><a href="IPlayerConfigOptionClientStorageAPI.html#getCommentTranslation()">getCommentTranslation</a>, <a href="IPlayerConfigOptionClientStorageAPI.html#getCommentTranslationArgs()">getCommentTranslationArgs</a>, <a href="IPlayerConfigOptionClientStorageAPI.html#getTranslationArgs()">getTranslationArgs</a></code></div>
+<code><a href="IPlayerConfigOptionClientStorageAPI.html#getCommentTranslation()">getCommentTranslation</a>, <a href="IPlayerConfigOptionClientStorageAPI.html#getCommentTranslationArgs()">getCommentTranslationArgs</a>, <a href="IPlayerConfigOptionClientStorageAPI.html#getTranslationArgs()">getTranslationArgs</a>, <a href="IPlayerConfigOptionClientStorageAPI.html#isAdminMutable()">isAdminMutable</a>, <a href="IPlayerConfigOptionClientStorageAPI.html#isPlayerMutable()">isPlayerMutable</a></code></div>
 </section>
 </li>
 </ul>
@@ -315,7 +315,7 @@ extends <a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in x
 <h3>isMutable</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isMutable</span>()</div>
 <div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html#isMutable()">IPlayerConfigOptionClientStorageAPI</a></code></span></div>
-<div class="block">Checks whether the local client player can edit this option's value.</div>
+<div class="block">Checks whether the local client player can edit this option's value, taking permissions into account.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="IPlayerConfigOptionClientStorageAPI.html#isMutable()">isMutable</a></code>&nbsp;in interface&nbsp;<code><a href="IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigOptionClientStorageAPI</a>&lt;<a href="IPlayerConfigStringableOptionClientStorageAPI.html" title="type parameter in IPlayerConfigStringableOptionClientStorageAPI">T</a>&gt;</code></dd>
