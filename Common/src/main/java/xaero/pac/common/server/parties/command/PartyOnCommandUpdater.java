@@ -23,79 +23,49 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.ServerData;
-import xaero.pac.common.server.claims.IServerClaimsManager;
-import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
-import xaero.pac.common.server.claims.IServerRegionClaims;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.util.Iterator;
 import java.util.UUID;
 import java.util.function.Predicate;
 
 public class PartyOnCommandUpdater {
-
-	private void onOnlineMember(UUID commandCasterId, MinecraftServer server, IPartyMember mi, ServerPlayer onlineMember, Predicate<IPartyMember> shouldUpdateCommandsForMember, Component massMessage) {
-		if(shouldUpdateCommandsForMember.test(mi)) {
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(server);
-			serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(onlineMember, serverData, false);
-		}
-		if(massMessage != null)
-			onlineMember.sendMessage(massMessage, commandCasterId);
-	}
 	
-	public 
-	<
-		M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly
-	> void update(UUID commandCasterId, IServerData<?,?> serverData, IServerParty<M, I, A> party, IPlayerConfigManager configs, Predicate<IPartyMember> shouldUpdateCommandsForMember, Component massMessageContent) {
+	public <M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly> void update(
+			UUID commandCasterId,
+			IServerData<?,?> serverData,
+			IServerParty<M, I, A> party,
+			IPlayerConfigManager configs,
+			Predicate<IPartyMember> shouldUpdateCommandsForMember,
+			Component massMessageContent
+	) {
 		String partyName = party.getDefaultName();
 		String partyCustomName = configs.getLoadedConfig(party.getOwner().getUUID()).getEffective(PlayerConfigOptions.PARTY_NAME);
 		if(!partyCustomName.isEmpty())
 			partyName = partyCustomName;
-		Component partyNameComponent = new TextComponent("[" + partyName + "] ").withStyle(s -> s.withColor(ChatFormatting.GOLD).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(party.getDefaultName()))));
-		Component massMessage = new TextComponent("");
-		massMessage.getSiblings().add(partyNameComponent);
+		Component partyNameComponent = new TextComponent("[" + partyName + "] ").withStyle(s ->
+				s.withColor(ChatFormatting.GOLD).withHoverEvent(
+						new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(party.getDefaultName()))
+				)
+		);
 
 		MinecraftServer server = serverData.getServer();
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-		PlayerList playerList = server.getPlayerList();
-		if(playerList.getPlayerCount() > party.getMemberCount()) {
-			Iterator<M> iterator = party.getTypedMemberInfoStream().iterator();
-			while(iterator.hasNext()) {
-				M memberInfo = iterator.next();
-				ServerPlayer onlinePlayer = playerList.getPlayer(memberInfo.getUUID());
-				if(onlinePlayer != null) {
-					massMessage.getSiblings().clear();
-					massMessage.getSiblings().add(partyNameComponent);
-					massMessage.getSiblings().add(adaptiveLocalizer.getFor(onlinePlayer, massMessageContent));
-					onOnlineMember(commandCasterId, server, memberInfo, onlinePlayer, shouldUpdateCommandsForMember, massMessage);
-				}
-			}
-		} else {
-			for (ServerPlayer onlinePlayer : playerList.getPlayers()) {
-				M memberInfo = party.getMemberInfo(onlinePlayer.getUUID());
-				if(memberInfo != null) {
-					massMessage.getSiblings().clear();
-					massMessage.getSiblings().add(partyNameComponent);
-					massMessage.getSiblings().add(adaptiveLocalizer.getFor(onlinePlayer, massMessageContent));
-					onOnlineMember(commandCasterId, server, memberInfo, onlinePlayer, shouldUpdateCommandsForMember, massMessage);
-				}
-			}
-		}
+		party.getOnlineMemberStream().forEach(memberPlayer -> {
+			M memberInfo = party.getMemberInfo(memberPlayer.getUUID());
+			Component memberMessage = new TextComponent("");//can't reuse because onlineMember.sendMessage might not encode the message immediately, which can cause a race condition
+			memberMessage.getSiblings().add(partyNameComponent);
+			memberMessage.getSiblings().add(adaptiveLocalizer.getFor(memberPlayer, massMessageContent));
+			if(shouldUpdateCommandsForMember.test(memberInfo))
+				serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(memberPlayer, serverData, false);
+			memberPlayer.sendMessage(memberMessage, commandCasterId);
+		});
 	}
 
 }

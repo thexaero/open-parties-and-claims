@@ -2236,9 +2236,9 @@ public class ChunkProtection
 			return false;
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 		IPlayerConfig posClaimConfig = getClaimConfig(playerConfigs, toClaim);
-		if(affectsBlocks && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_OTHER))
+		if(affectsBlocks && !posClaimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_BLOCKS_BY_OTHER).equals(EVERYONE_EXCEPTION_ID))
 			return true;
-		return affectsEntities && isProtectionEnabled(posClaimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_OTHER);
+		return affectsEntities && !posClaimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_ENTITIES_BY_OTHER).equals(EVERYONE_EXCEPTION_ID);
 	}
 
 	private boolean onPosAffectedByAnotherPos(IServerData<CM, ?> serverData, ServerLevel world, IPlayerChunkClaim toClaim, int toChunkX, int toChunkZ, int fromChunkX, int fromChunkZ, boolean affectsBlocks, boolean affectsEntities) {
