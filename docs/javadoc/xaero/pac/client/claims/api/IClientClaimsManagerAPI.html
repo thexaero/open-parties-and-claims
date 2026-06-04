@@ -898,6 +898,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <h3>requestClaim</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestClaim</span><wbr><span class="parameters">(int&nbsp;x,
  int&nbsp;z,
+ @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
 <div class="block">Requests a new chunk claim by the local client player using a specified claiming mode.
  <p>
@@ -908,7 +909,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dt>Parameters:</dt>
 <dd><code>x</code> - the X coordinate of the chunk</dd>
 <dd><code>z</code> - the Z coordinate of the chunk</dd>
-<dd><code>claimingMode</code> - the claiming mode to use, not null</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
 </dl>
 </section>
 </li>
@@ -917,6 +918,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <h3>requestUnclaim</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestUnclaim</span><wbr><span class="parameters">(int&nbsp;x,
  int&nbsp;z,
+ @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
 <div class="block">Requests a chunk unclaim by the local client player using a specified claiming mode.
  <p>
@@ -927,7 +929,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dt>Parameters:</dt>
 <dd><code>x</code> - the X coordinate of the chunk</dd>
 <dd><code>z</code> - the Z coordinate of the chunk</dd>
-<dd><code>claimingMode</code> - the claiming mode to use, not null</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
 </dl>
 </section>
 </li>
@@ -937,6 +939,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestForceload</span><wbr><span class="parameters">(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;enable,
+ @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
 <div class="block">Requests a chunk (un)forceload by the local client player using a specified claiming mode.
  <p>
@@ -948,7 +951,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dd><code>x</code> - the X coordinate of the chunk</dd>
 <dd><code>z</code> - the Z coordinate of the chunk</dd>
 <dd><code>enable</code> - true to forceload the chunk, false to unforceload</dd>
-<dd><code>claimingMode</code> - the claiming mode to use, not null</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
 </dl>
 </section>
 </li>
@@ -959,6 +962,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
+ @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
 <div class="block">Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
  <p>
@@ -971,7 +975,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dd><code>top</code> - the lowest Z coordinate of the area</dd>
 <dd><code>right</code> - the highest X coordinate of the area</dd>
 <dd><code>bottom</code> - the highest Z coordinate of the area</dd>
-<dd><code>claimingMode</code> - the claiming mode to use, not null</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
 </dl>
 </section>
 </li>
@@ -982,6 +986,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
+ @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
 <div class="block">Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.
  <p>
@@ -994,7 +999,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dd><code>top</code> - the lowest Z coordinate of the area</dd>
 <dd><code>right</code> - the highest X coordinate of the area</dd>
 <dd><code>bottom</code> - the highest Z coordinate of the area</dd>
-<dd><code>claimingMode</code> - the claiming mode to use, not null</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
 </dl>
 </section>
 </li>
@@ -1006,6 +1011,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;enable,
+ @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
 <div class="block">Requests chunk (un)forceloads over a specified area by the local client player using a specified claiming mode.
  <p>
@@ -1019,7 +1025,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dd><code>right</code> - the highest X coordinate of the area</dd>
 <dd><code>bottom</code> - the highest Z coordinate of the area</dd>
 <dd><code>enable</code> - true to forceload the chunks, false to unforceload</dd>
-<dd><code>claimingMode</code> - the claiming mode to use, not null</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
 </dl>
 </section>
 </li>
