@@ -24,15 +24,18 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
+import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.ConfigUtil;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.io.ObjectManagerIOObject;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
@@ -162,7 +165,7 @@ public class PlayerConfig
 	}
 
 	@Override
-	public  boolean isOptionAllowed(@Nonnull IPlayerConfigOptionSpecAPI<?> option){
+	public boolean isOptionAllowed(@Nonnull IPlayerConfigOptionSpecAPI<?> option){
 		return option.getConfigTypeFilter().test(getType());
 	}
 	
@@ -407,14 +410,20 @@ public class PlayerConfig
 	@Nonnull
 	public PlayerConfig<P> getUsedSubConfig(){
 		String usedSubId = getEffective(PlayerConfigOptions.USED_SUBCLAIM);
-		PlayerConfig<P> result = getSubConfig(usedSubId);
-		return result == null ? this : result;
+		return getEffectiveSubConfig(usedSubId);
+	}
+
+	@Deprecated
+	@Nonnull
+	@Override
+	public IPlayerConfig getUsedServerSubConfig() {
+		return getUsedSubConfig(ClaimingModes.SERVER);
 	}
 
 	@Nonnull
 	@Override
-	public IPlayerConfig getUsedServerSubConfig() {
-		return manager.getServerClaimConfig().getEffectiveSubConfig(getEffective(PlayerConfigOptions.USED_SERVER_SUBCLAIM));
+	public IPlayerConfig getUsedSubConfig(@Nonnull IClaimingModeAPI claimingMode) {
+		return ((ClaimingMode)claimingMode).getSubConfigGetter().apply(this);
 	}
 
 	@Nullable

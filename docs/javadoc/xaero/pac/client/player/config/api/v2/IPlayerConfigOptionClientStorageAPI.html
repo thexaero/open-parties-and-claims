@@ -149,14 +149,24 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the stored option value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDefaulted()" class="member-name-link">isDefaulted</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isAdminMutable()" class="member-name-link">isAdminMutable</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks whether this option is forced to its default player config value.</div>
+<div class="block">Checks whether the local client player can edit this option's value if the player is a config admin (op).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isMutable()" class="member-name-link">isMutable</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDefaulted()" class="member-name-link">isDefaulted</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks whether the local client player can edit this option's value.</div>
+<div class="block">Checks whether this option is forced to its default player config value.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isMutable()" class="member-name-link">isMutable</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether the local client player can edit this option's value, taking permissions into account.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isPlayerMutable()" class="member-name-link">isPlayerMutable</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether the local client player can edit this option's value, regardless of admin status.</div>
 </div>
 </div>
 </div>
@@ -318,10 +328,32 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isMutable()">
 <h3>isMutable</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isMutable</span>()</div>
-<div class="block">Checks whether the local client player can edit this option's value.</div>
+<div class="block">Checks whether the local client player can edit this option's value, taking permissions into account.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>true if the option value is mutable, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isPlayerMutable()">
+<h3>isPlayerMutable</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isPlayerMutable</span>()</div>
+<div class="block">Checks whether the local client player can edit this option's value, regardless of admin status.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if the option value is player-mutable, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isAdminMutable()">
+<h3>isAdminMutable</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isAdminMutable</span>()</div>
+<div class="block">Checks whether the local client player can edit this option's value if the player is a config admin (op).</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if the option value is admin-mutable, otherwise false</dd>
 </dl>
 </section>
 </li>

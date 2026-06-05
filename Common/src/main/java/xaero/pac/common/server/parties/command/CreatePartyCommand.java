@@ -62,7 +62,7 @@ public class CreatePartyCommand {
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 					partyManager.createPartyForOwner(player);
 					player.sendSystemMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_party_created"));
-					server.getCommands().sendCommands(player);
+					serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 					return 1;
 				}));
 		dispatcher.register(command);

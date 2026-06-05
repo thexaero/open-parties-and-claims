@@ -18,6 +18,7 @@
 
 package xaero.pac.client.claims.player;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.client.claims.player.api.IClientPlayerClaimInfoAPI;
 import xaero.pac.common.claims.player.IPlayerClaimInfo;
@@ -25,6 +26,7 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -57,5 +59,9 @@ public interface IClientPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	default Stream<Entry<ResourceLocation, IPlayerDimensionClaimsAPI>> getStream(){
 		return (Stream<Entry<ResourceLocation, IPlayerDimensionClaimsAPI>>)(Object)getTypedStream();
 	}
+
+	@Override
+	@Nullable
+	Component getPartyName();
 
 }

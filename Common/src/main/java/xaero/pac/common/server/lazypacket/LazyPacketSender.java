@@ -98,7 +98,11 @@ public class LazyPacketSender {//sends packets over time with no unnecessary rus
 	public boolean isClogged(ServerPlayer player){
 		return manager.isClogged(player);
 	}
-	
+
+	public boolean isDropped(ServerPlayer player) {
+		return manager.isDropped(player);
+	}
+
 	public static final class Builder {
 		
 		private MinecraftServer server;

@@ -70,12 +70,12 @@ public class ClaimsAdminModeCommand {
 					MinecraftServer server = player.getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 							serverData = ServerData.from(server);
-					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-					mainCapability.setClaimsAdminMode(!mainCapability.isClaimsAdminMode());
-					mainCapability.setClaimsNonallyMode(false);
+					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+					playerData.setClaimsAdminMode(!playerData.isClaimsAdminMode());
+					playerData.setClaimsNonallyMode(false);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-					player.sendSystemMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"));
-					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(mainCapability.isClaimsAdminMode(), mainCapability.isClaimsServerMode()));
+					player.sendSystemMessage(adaptiveLocalizer.getFor(player, playerData.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"));
+					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
 					return 1;
 				}));
 		dispatcher.register(command);

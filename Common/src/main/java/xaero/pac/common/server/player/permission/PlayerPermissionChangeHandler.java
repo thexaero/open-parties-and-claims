@@ -31,13 +31,19 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.data.ServerPlayerData;
-import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 public class PlayerPermissionChangeHandler {
 
 	public void handle(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
-		((ServerPlayerData)ServerPlayerDataAPI.from((player))).setShouldResyncPlayerConfigs(true);
+	}
+
+	public void sendCommandsAndUpdatePermissions(
+			ServerPlayer player,
+			IServerData<?,?> serverData,
+			boolean checkTime
+	) {
+		serverData.getPlayerConfigPermissionUpdater().update(player, serverData, checkTime, false);
+		serverData.getServer().getCommands().sendCommands(player);
 	}
 
 }

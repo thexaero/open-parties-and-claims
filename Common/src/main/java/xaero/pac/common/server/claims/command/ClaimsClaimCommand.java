@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,28 +18,46 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
+import net.minecraftforge.common.ForgeConfigSpec;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
+import xaero.pac.common.server.command.AbstractChunkCommand;
 import xaero.pac.common.server.config.ServerConfig;
 
-public class ClaimsClaimCommand {
-	
-	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
-		
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(ClaimsClaimCommands.createClaimCommand(Commands.literal("claim"), true, false, false));
-		dispatcher.register(command);
-		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("claim").then(ClaimsClaimCommands.createClaimCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), true, false, false)));
-		dispatcher.register(command);
-		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("claim").then(ClaimsClaimCommands.createClaimCommand(Commands.literal("anyway").requires(source -> source.hasPermission(2)), true, false, true)));
-		dispatcher.register(command);
-		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("claim").then(Commands.literal("anyway").requires(source -> source.hasPermission(2)).then(ClaimsClaimCommands.createClaimCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), true, false, true))));
-		dispatcher.register(command);
+import java.util.function.Predicate;
+
+public class ClaimsClaimCommand extends AbstractChunkCommand {
+
+	private final ClaimingMode mode;
+
+	public ClaimsClaimCommand(boolean add, ClaimingMode mode) {
+		super(
+				ClaimsCommandRegister.COMMAND_PREFIX, add,
+				mode == ClaimingModes.PLAYER ? null : mode.getId(),
+				"claim", "unclaim"
+		);
+		this.mode = mode;
 	}
-	
+
+	@Override
+	protected ArgumentBuilder<CommandSourceStack, ?> createChunkCommand(
+			ArgumentBuilder<CommandSourceStack, ?> builder,
+			boolean shouldApply,
+			boolean opForce
+	) {
+		return ClaimsClaimCommands.createClaimCommand(builder, shouldApply, mode, opForce);
+	}
+
+	@Override
+	protected ForgeConfigSpec.BooleanValue getFeatureConfigOption() {
+		return ServerConfig.CONFIG.claimsEnabled;
+	}
+
+	@Override
+	protected Predicate<CommandSourceStack> getRequirement() {
+		return mode.getCommandVisibilityRequirement();
+	}
+
 }

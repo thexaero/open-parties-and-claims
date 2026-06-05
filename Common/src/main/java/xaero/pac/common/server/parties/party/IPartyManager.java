@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 import xaero.pac.common.server.parties.party.sync.IPartySynchronizer;
+import xaero.pac.common.server.parties.system.impl.DefaultPlayerPartySystem;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 
 import javax.annotation.Nonnull;
@@ -78,5 +79,7 @@ public interface IPartyManager<
 	default Stream<IServerPartyAPI> getPartiesThatAlly(@Nonnull UUID allyId) {
 		return (Stream<IServerPartyAPI>)(Object)getTypedPartiesThatAlly(allyId);
 	}
+
+	DefaultPlayerPartySystem getPartySystem();
 
 }

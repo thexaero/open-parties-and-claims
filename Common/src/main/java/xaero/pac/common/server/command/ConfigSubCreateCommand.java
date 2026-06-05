@@ -44,18 +44,22 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
+import static xaero.pac.common.server.command.ConfigCommandUtil.getPartyClaimsRequirement;
 
 public class ConfigSubCreateCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
 		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER);
+		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS);
 
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
 				.then(Commands.literal("player-config")
@@ -73,11 +77,25 @@ public class ConfigSubCreateCommand {
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(getMainCommandPart(serverExecutor)));
 		dispatcher.register(command);
+
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
+				.requires(getPartyClaimsRequirement(false))
+				.then(getMainCommandPart(partyExecutor, getPartyClaimsRequirement(true))));
+		dispatcher.register(command);
 	}
 
-	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(Command<CommandSourceStack> executor){
+	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(
+			Command<CommandSourceStack> executor
+	){
+		return getMainCommandPart(executor, s -> true);
+	}
+
+	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(
+			Command<CommandSourceStack> executor,
+			Predicate<CommandSourceStack> requirement
+	){
 		return Commands.literal("sub")
-				.then(Commands.literal("create")
+				.then(Commands.literal("create").requires(requirement)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
 				.executes(executor)));
 	}
@@ -90,10 +108,9 @@ public class ConfigSubCreateCommand {
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
-			GameProfile inputPlayer = null;
-			UUID configPlayerUUID = type == PlayerConfigType.SERVER ? PlayerConfig.SERVER_CLAIM_UUID : null;
+			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
-				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
+				GameProfile inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_create_sub_too_many_targets",
 						"gui.xaero_pac_config_create_sub_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
@@ -101,14 +118,19 @@ public class ConfigSubCreateCommand {
 				configPlayerUUID = inputPlayer.getId();
 			}
 
-
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			if(serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
 				return 0;//going too fast
 			playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
 
-			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
-
+			PlayerConfig<?> playerConfig = (PlayerConfig<?>) ServerPlayerConfigUtils.getTargetConfig(
+					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+			);
+			if(playerConfig == null) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
+				return 0;
+			}
+			configPlayerUUID = playerConfig.getPlayerId();
 			if(playerConfig.getSubCount() >= playerConfig.getSubConfigLimit()){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub_id_limit_reached", playerConfig.getSubConfigLimit()));
 				return 0;

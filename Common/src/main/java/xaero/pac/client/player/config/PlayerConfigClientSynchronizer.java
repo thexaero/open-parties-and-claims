@@ -29,7 +29,7 @@ public class PlayerConfigClientSynchronizer {
 	public <T> void syncToServer(PlayerConfigClientStorage config, PlayerConfigStringableOptionClientStorage<T> option) {
 		if(!option.isSyncable())
 			return;
-		PlayerConfigOptionValuePacket.Entry packetOptionEntry = PlayerConfigOptionValuePacket.Entry.of(option.getOption(), option.getValue(), option.isMutable(), option.isDefaulted());
+		PlayerConfigOptionValuePacket.Entry packetOptionEntry = PlayerConfigOptionValuePacket.Entry.of(option.getOption(), option.getValue(), option.isPlayerMutable(), option.isAdminMutable());
 
 		ServerboundPlayerConfigOptionValuePacket packet = new ServerboundPlayerConfigOptionValuePacket(config.getType(), config.getSubId(), config.getOwner(), Lists.newArrayList(packetOptionEntry));
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(packet);

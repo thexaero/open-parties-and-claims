@@ -41,6 +41,8 @@ public class ClientPlayerConfigUtils {
 			return playerConfigStorageManager.getWildernessConfig();
 		if(type == PlayerConfigType.DEFAULT_PLAYER)
 			return playerConfigStorageManager.getDefaultPlayerConfig();
+		if(type == PlayerConfigType.PARTY_CLAIMS)
+			return playerConfigStorageManager.getPartyClaimsConfig();
 		if(type != PlayerConfigType.PLAYER)
 			return null;
 		if(isOtherPlayer)
@@ -62,6 +64,8 @@ public class ClientPlayerConfigUtils {
 			return playerConfigStorageManager.getWildernessConfig();
 		if(type == PlayerConfigType.DEFAULT_PLAYER)
 			return playerConfigStorageManager.getDefaultPlayerConfig();
+		if(type == PlayerConfigType.PARTY_CLAIMS)
+			return playerConfigStorageManager.getPartyClaimsConfig();
 		if(type != PlayerConfigType.PLAYER)
 			return null;
 		if(ownerId == null)
