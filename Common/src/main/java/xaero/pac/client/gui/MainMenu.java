@@ -152,7 +152,9 @@ public class MainMenu extends XPACScreen {
 		addRenderableWidget(configsButton = Button.builder(Component.translatable("gui.xaero_pac_ui_config_menu"), this::onConfigsButton).bounds(width / 2 - 100, height / 8 + 8, 200, 20).build());
 		
 		aboutPartyButton = Button.builder(Component.translatable("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton).tooltip(Tooltip.create(ABOUT_PARTY_COMMAND)).bounds(width / 2 - 100, height / 8 + 40, 70, 20).build();
-		
+
+		addRenderableWidget(claimingModeMenu = setupClaimModeDropdown());
+
 		claimButton = Button.builder(CLAIM, this::onClaimButton).tooltip(Tooltip.create(CLAIM_COMMAND)).bounds(width / 2 - 100, height / 8 + 124, 70, 20).build();
 		
 		forceloadButton = Button.builder(FORCELOAD, this::onForceloadButton).tooltip(Tooltip.create(FORCELOAD_COMMAND)).bounds(width / 2 - 100, height / 8 + 148, 70, 20).build();
