@@ -26,8 +26,8 @@ import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.MapFactory;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,6 +49,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 	private boolean syncInProgress;
 	private boolean beingDeleted;
 	private int subConfigLimit;
+	private final PlayerConfigClientPermissions permissions;
 
 	protected PlayerConfigClientStorage(
 			PlayerConfigClientStorageManager manager,
@@ -58,7 +59,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 			List<String> subConfigIdsUnmodifiable,
 			SortedValueList<String> subConfigIds,
 			Map<String, PlayerSubConfigClientStorage> subConfigs,
-			ClientPlayerConfigGroupManager playerGroups
+			ClientPlayerConfigGroupManager playerGroups, PlayerConfigClientPermissions permissions
 	) {
 		super();
 		this.manager = manager;
@@ -69,6 +70,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		this.subConfigIds = subConfigIds;
 		this.subConfigs = subConfigs;
 		this.playerGroups = playerGroups;
+		this.permissions = permissions;
 	}
 
 	protected <T> T getDefaultValue(PlayerConfigOptionSpec<T> option) {
@@ -203,6 +205,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 			subConfigIds.add(PlayerConfig.MAIN_SUB_ID);
 			subConfigs.clear();
 			playerGroups.reset();
+			permissions.reset();
 			setSyncInProgress(true);
 		}
 	}
@@ -243,6 +246,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		return subConfigLimit;
 	}
 
+	@Nonnull
 	@Override
 	public ClientPlayerConfigGroupManager getPlayerGroups() {
 		return playerGroups;
@@ -252,9 +256,16 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		return manager;
 	}
 
+	@Nonnull
 	@Override
 	public PlayerConfigClientStorage getMain(){
 		return this;
+	}
+
+	@Nonnull
+	@Override
+	public PlayerConfigClientPermissions getPermissions() {
+		return permissions;
 	}
 
 	public static abstract class Builder<B extends Builder<B>> implements IBuilder<PlayerConfigClientStorage> {
@@ -324,10 +335,11 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 			ClientPlayerConfigGroupManager playerGroups = ClientPlayerConfigGroupManager.Builder.begin()
 					.setConfigType(type)
 					.build();
+			PlayerConfigClientPermissions permissions = new PlayerConfigClientPermissions();
 			PlayerConfigClientStorage result = new PlayerConfigClientStorage(
 					manager, type, owner, options, subConfigIdsUnmodifiable,
-					subConfigIds, mapFactory.get(), playerGroups
-					);
+					subConfigIds, mapFactory.get(), playerGroups, permissions
+			);
 			playerGroups.setConfig(result);
 			return result;
 		}

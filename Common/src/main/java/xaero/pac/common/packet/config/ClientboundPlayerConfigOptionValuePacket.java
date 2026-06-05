@@ -79,8 +79,8 @@ public class ClientboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 				}
 				IPlayerConfigStringableOptionClientStorage<?> optionStorage = forwardedStorage.getOption(option);
 				optionStorage.setCastValue(value);
-				optionStorage.setMutable(entry.isMutable());
-				optionStorage.setDefaulted(entry.isDefaulted());
+				optionStorage.setPlayerMutable(entry.isPlayerMutable());
+				optionStorage.setAdminMutable(entry.isAdminMutable());
 			});
 		}
 

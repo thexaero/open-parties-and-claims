@@ -18,10 +18,7 @@
 
 package xaero.pac.client.player.config.sub;
 
-import xaero.pac.client.player.config.IPlayerConfigClientStorage;
-import xaero.pac.client.player.config.PlayerConfigClientStorage;
-import xaero.pac.client.player.config.PlayerConfigClientStorageManager;
-import xaero.pac.client.player.config.PlayerConfigStringableOptionClientStorage;
+import xaero.pac.client.player.config.*;
 import xaero.pac.client.player.config.group.ClientPlayerConfigGroupManager;
 import xaero.pac.common.list.SortedValueList;
 import xaero.pac.common.misc.MapFactory;
@@ -53,7 +50,7 @@ public final class PlayerSubConfigClientStorage extends PlayerConfigClientStorag
 	) {
 		super(
 				manager, type, owner, options, subConfigIdsUnmodifiable,
-				subConfigIds, subConfigs, playerGroups
+				subConfigIds, subConfigs, playerGroups, null
 		);
 		this.subID = subID;
 		this.mainConfig = mainConfig;
@@ -101,9 +98,16 @@ public final class PlayerSubConfigClientStorage extends PlayerConfigClientStorag
 		return 0;
 	}
 
+	@Nonnull
 	@Override
 	public PlayerConfigClientStorage getMain() {
 		return mainConfig;
+	}
+
+	@Nonnull
+	@Override
+	public PlayerConfigClientPermissions getPermissions() {
+		return getMain().getPermissions();
 	}
 
 	public final static class Builder extends PlayerConfigClientStorage.Builder<Builder> {

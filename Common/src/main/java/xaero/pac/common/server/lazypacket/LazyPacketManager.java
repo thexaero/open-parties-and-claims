@@ -95,7 +95,11 @@ public class LazyPacketManager {
 	public boolean isClogged(ServerPlayer player){
 		return getForPlayer(player.getUUID()).isClogged();
 	}
-	
+
+	public boolean isDropped(ServerPlayer player) {
+		return getForPlayer(player.getUUID()).isDropped();
+	}
+
 	public static final class Builder {
 
 		private MinecraftServer server;
