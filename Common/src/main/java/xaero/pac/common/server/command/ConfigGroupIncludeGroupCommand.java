@@ -35,11 +35,13 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class ConfigGroupIncludeGroupCommand extends ConfigGroupCommand {
@@ -79,6 +81,11 @@ public class ConfigGroupIncludeGroupCommand extends ConfigGroupCommand {
 					> serverData
 	) {
 		return groupManager.getAllIdsSorted().stream();
+	}
+
+	@Override
+	protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId) {
+		return systemManager.canIncludeGroupsInPartyConfigGroups(playerId);
 	}
 
 }

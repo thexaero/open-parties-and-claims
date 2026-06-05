@@ -19,7 +19,11 @@
 package xaero.pac.common.server.parties.party;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.parties.party.member.PartyMember;
 import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.ServerData;
@@ -30,7 +34,9 @@ import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.sync.PartySynchronizer;
 import xaero.pac.common.server.parties.party.task.PartyRemovalSpreadoutTask;
+import xaero.pac.common.server.parties.system.impl.DefaultPlayerPartySystem;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.server.player.party.ServerPlayerPartyOnlineCounterUpdater;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -43,6 +49,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	
 	private final MinecraftServer server;
 	private final PartySynchronizer partySynchronizer;
+	private final ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater;
 	private final Map<UUID, ServerParty> partiesByOwner;
 	private final Map<UUID, ServerParty> partiesById;
 	private final Map<UUID, ServerParty> partiesByMember;
@@ -54,12 +61,24 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	private boolean loaded;
 	private PartyExpirationHandler expirationHandler;
 	private final ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler;
+	private DefaultPlayerPartySystem partySystem;
 	
-	private PartyManager(MinecraftServer server, PartySynchronizer partySynchronizer, Map<UUID, ServerParty> partiesByOwner, Map<UUID, ServerParty> partiesById,
-						 Map<UUID, ServerParty> partiesByMember, Map<UUID, Set<UUID>> partiesByAlly, LinkedChain<ServerParty> partyChain, Set<ServerParty> toSave, ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler) {
+	private PartyManager(
+			MinecraftServer server,
+			PartySynchronizer partySynchronizer,
+			ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater,
+			Map<UUID, ServerParty> partiesByOwner,
+			Map<UUID, ServerParty> partiesById,
+			Map<UUID, ServerParty> partiesByMember,
+			Map<UUID, Set<UUID>> partiesByAlly,
+			LinkedChain<ServerParty> partyChain,
+			Set<ServerParty> toSave,
+			ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler
+	) {
 		super();
 		this.server = server;
 		this.partySynchronizer = partySynchronizer;
+		this.playerPartyOnlineCounterUpdater = playerPartyOnlineCounterUpdater;
 		this.partiesByOwner = partiesByOwner;
 		this.partiesById = partiesById;
 		this.partiesByMember = partiesByMember;
@@ -96,6 +115,17 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	
 	public void setIo(PartyManagerIO<?> io) {
 		this.io = io;
+	}
+
+	public void setPartySystem(DefaultPlayerPartySystem partySystem) {
+		if(this.partySystem != null)
+			throw new IllegalStateException();
+		this.partySystem = partySystem;
+	}
+
+	@Override
+	public DefaultPlayerPartySystem getPartySystem() {
+		return partySystem;
 	}
 
 	@Nullable
@@ -180,18 +210,23 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		io.delete(party);
 		toSave.remove(party);
 		partyRemovalTaskHandler.addTask(new PartyRemovalSpreadoutTask(this, party), ServerData.from(server));
+		if(loaded)
+			partySynchronizer.resyncPartyNameForClaims(partyOwnerId);
 	}
 
 	public void addParty(ServerParty party) {
 		party.setDirty(true);
-		ServerParty currentOwnerParty = getPartyByOwner(party.getOwner().getUUID());
+		UUID partyOwnerId = party.getOwner().getUUID();
+		ServerParty currentOwnerParty = getPartyByOwner(partyOwnerId);
 		if(currentOwnerParty != null)
 			removeTypedParty(currentOwnerParty);//it has a different ID and needs to be removed
-		partiesByOwner.put(party.getOwner().getUUID(), party);
+		partiesByOwner.put(partyOwnerId, party);
 		partiesById.put(party.getId(), party);
 		party.getTypedMemberInfoStream().forEach(mi -> onMemberAdded(party, mi));
 		party.getTypedAllyPartiesStream().forEach(ally -> onAllyAdded(party, ally.getPartyId()));
 		partyChain.add(party);
+		if(loaded)
+			partySynchronizer.resyncPartyNameForClaims(partyOwnerId);
 	}
 	
 	public void onAllyAdded(ServerParty party, UUID allyId) {
@@ -211,15 +246,25 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 
 	public void onMemberAdded(ServerParty party, PartyMember m) {
 		partiesByMember.put(m.getUUID(), party);
-		if(loaded)
+		if(loaded) {
 			getPartySynchronizer().syncToMember(m, party);
+			getPartySynchronizer().syncPrimaryPartySwitch(party.getOwner().getUUID(), m);
+			ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(m.getUUID());
+			if(onlinePlayer != null)
+				playerPartyOnlineCounterUpdater.onAddedToDefaultParty(onlinePlayer, this, party);
+		}
 	}
 
 	public void onMemberRemoved(ServerParty party, PartyMember m) {
 		if(partiesByMember.get(m.getUUID()) == party) {//might not be true when there are inconsistencies in the saved data or during party spreadout removal
 			partiesByMember.remove(m.getUUID());
-			if (loaded)
+			if (loaded) {
 				getPartySynchronizer().syncToMember(m, null);
+				getPartySynchronizer().syncPrimaryPartySwitch(null, m);
+				ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(m.getUUID());
+				if(onlinePlayer != null)
+					playerPartyOnlineCounterUpdater.onRemovedFromDefaultParty(onlinePlayer, this, party);
+			}
 		}
 	}
 
@@ -281,9 +326,12 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 
 		private MinecraftServer server;
 		private ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler;
+		private ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater;
 		
 		public Builder setDefault() {
 			setServer(null);
+			setPartyRemovalTaskHandler(null);
+			setPlayerPartyOnlineCounterUpdater(null);
 			return this;
 		}
 		
@@ -297,14 +345,27 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 			return this;
 		}
 
+		public Builder setPlayerPartyOnlineCounterUpdater(ServerPlayerPartyOnlineCounterUpdater playerClaimPartyForceloadUpdater) {
+			this.playerPartyOnlineCounterUpdater = playerClaimPartyForceloadUpdater;
+			return this;
+		}
+
 		public PartyManager build() {
-			if(server == null || partyRemovalTaskHandler == null)
+			if(server == null || partyRemovalTaskHandler == null || playerPartyOnlineCounterUpdater == null)
 				throw new IllegalStateException();
 
 			PartySynchronizer partySynchronizer = PartySynchronizer.Builder.begin()
 					.setServer(server)
 					.build();
-			PartyManager result = new PartyManager(server, partySynchronizer, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new LinkedChain<>(), new HashSet<>(), partyRemovalTaskHandler);
+			PartyManager result = new PartyManager(
+					server, partySynchronizer, playerPartyOnlineCounterUpdater,
+					new HashMap<>(), new HashMap<>(), new HashMap<>(),
+					new HashMap<>(), new LinkedChain<>(), new HashSet<>(),
+					partyRemovalTaskHandler
+			);
+			@SuppressWarnings("unchecked")
+			IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> internalAPI = (IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>)(Object)result;
+			result.setPartySystem(new DefaultPlayerPartySystem(internalAPI));
 			partySynchronizer.setPartyManager(result);
 			return result;
 		}
@@ -312,7 +373,6 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		public static Builder begin() {
 			return new Builder().setDefault();
 		}
-		
 	}
 
 }

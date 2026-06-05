@@ -21,15 +21,20 @@ package xaero.pac.client.claims.sync;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.BitStorage;
 import xaero.pac.client.claims.ClientClaimsManager;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
+import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 public class ClientClaimsSyncHandler {
@@ -47,8 +52,8 @@ public class ClientClaimsSyncHandler {
 		this.claimsManager = claimsManager;
 	}
 	
-	public void onPlayerInfo(UUID playerId, String username) {
-		claimsManager.getPlayerClaimInfoManager().updatePlayerInfo(playerId, username, claimsManager);
+	public void onPlayerInfo(UUID playerId, String username, Component partyName, boolean partyOwned) {
+		claimsManager.getPlayerClaimInfoManager().updatePlayerInfo(playerId, username, partyName, partyOwned, claimsManager);
 	}
 
 	public void onSubClaimInfo(UUID playerId, int subConfigIndex, String claimsName, Integer claimsColor) {
@@ -63,21 +68,20 @@ public class ClientClaimsSyncHandler {
 		claimsManager.setLoading(start);
 	}
 	
-	public void onClaimLimits(int loadingClaimCount, int loadingForceloadCount, int claimLimit,
-			int forceloadLimit, int maxClaimDistance, boolean alwaysUseLoadingValues) {
-		claimsManager.setLoadingClaimCount(loadingClaimCount);
-		claimsManager.setLoadingForceloadCount(loadingForceloadCount);
-		claimsManager.setClaimLimit(claimLimit);
-		claimsManager.setForceloadLimit(forceloadLimit);
+	public void onClaimLimits(
+			Collection<ClaimingModeLimits> limits,
+			int maxClaimDistance,
+			boolean alwaysUseLoadingValues
+	) {
+		for (ClaimingModeLimits modeLimit : limits)
+			claimsManager.updateLimits(modeLimit);
 		claimsManager.setMaxClaimDistance(maxClaimDistance);
 		claimsManager.setAlwaysUseLoadingValues(alwaysUseLoadingValues);
 	}
 
-	public void onSubConfigIndices(int currentSubConfigIndex, int currentServerSubConfigIndex, String currentSubConfigId, String currentServerSubConfigId){
-		claimsManager.setCurrentSubConfigIndex(currentSubConfigIndex);
-		claimsManager.setCurrentServerSubConfigIndex(currentServerSubConfigIndex);
-		claimsManager.setCurrentSubConfigId(currentSubConfigId);
-		claimsManager.setCurrentServerSubConfigId(currentServerSubConfigId);
+	public void onSubConfigIndices(Collection<ClaimingModeSubInfo> subInfoCollection){
+		for (ClaimingModeSubInfo subInfo : subInfoCollection)
+			claimsManager.updateSubInfo(subInfo);
 	}
 
 	public void onDimension(ResourceLocation dim) {
@@ -135,9 +139,9 @@ public class ClientClaimsSyncHandler {
 		claimsManager.getClaimResultTracker().onClaimResult(result);
 	}
 
-	public void onClaimModes(boolean adminMode, boolean serverMode) {
+	public void onClaimModes(boolean adminMode, ClaimingMode claimingMode) {
 		claimsManager.setAdminMode(adminMode);
-		claimsManager.setServerMode(serverMode);
+		claimsManager.setClaimingMode(claimingMode);
 	}
 
 	public void onClaimStateRemoved(int syncIndex) {
@@ -150,10 +154,19 @@ public class ClientClaimsSyncHandler {
 		claimsManager.removeSubClaim(playerId, subConfigIndex);
 	}
 
+	public void onClaimGeneral(boolean partyOwnedClaims, UUID partyOwnerId) {
+		claimsManager.setPartyOwnedClaims(partyOwnedClaims);
+		claimsManager.setCurrentPartyOwner(partyOwnerId);
+	}
+
 	public void reset(){
 		dimensionSyncing = null;
 		lastClaimUpdateState = null;
 		lastClaimUpdateDimension = null;
+	}
+
+	public void onClaimsReset() {
+		claimsManager.reset();
 	}
 
 }

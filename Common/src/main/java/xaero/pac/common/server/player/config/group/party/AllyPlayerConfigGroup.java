@@ -51,7 +51,7 @@ public class AllyPlayerConfigGroup extends SimpleBuiltInPlayerConfigGroup {
 
 	@Override
 	public boolean supportsConfigType(@Nonnull PlayerConfigType type) {
-		return type == PlayerConfigType.PLAYER;
+		return type == PlayerConfigType.PLAYER || type == PlayerConfigType.PARTY_CLAIMS;
 	}
 
 	@Override

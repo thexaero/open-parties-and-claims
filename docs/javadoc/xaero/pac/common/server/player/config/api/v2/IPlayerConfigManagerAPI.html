@@ -115,13 +115,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the option type specification with a specified string option id, including dynamic options.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getServerClaimConfig()" class="member-name-link">getServerClaimConfig</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPartyOwnerConfig(java.util.UUID)" class="member-name-link">getPartyOwnerConfig</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;memberId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the server claims config instance.</div>
+<div class="block">Gets or creates the player config of the owner of the party that the player with
+ a specified UUID is a member of.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getWildernessConfig()" class="member-name-link">getWildernessConfig</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getServerClaimConfig()" class="member-name-link">getServerClaimConfig</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the server claims config instance.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getWildernessConfig()" class="member-name-link">getWildernessConfig</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the wilderness config instance.</div>
 </div>
 </div>
@@ -154,6 +160,27 @@ loadScripts(document, 'script');</script>
 <dd><code>id</code> - the UUID of the player, null for wilderness</dd>
 <dt>Returns:</dt>
 <dd>the player config instance, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPartyOwnerConfig(java.util.UUID)">
+<h3>getPartyOwnerConfig</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="return-type"><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></span>&nbsp;<span class="element-name">getPartyOwnerConfig</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;memberId)</span></div>
+<div class="block">Gets or creates the player config of the owner of the party that the player with
+ a specified UUID is a member of.
+ <p>
+ The party owner's config is used as the config for the claims owned by the party when the server has party-owned
+ claims enabled.
+ <p>
+ The party system used is the configured primary party system.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>memberId</code> - the UUID of the player who is a member of the party, not null</dd>
+<dt>Returns:</dt>
+<dd>the party owner's player config, null if the player is not in a party</dd>
 </dl>
 </section>
 </li>

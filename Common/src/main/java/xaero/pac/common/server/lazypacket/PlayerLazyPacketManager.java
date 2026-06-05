@@ -112,6 +112,10 @@ public class PlayerLazyPacketManager {
 		return isWaitingForConfirmation() && System.currentTimeMillis() - startedWaitingAt > 1000;//no response for a second
 	}
 
+	public boolean isDropped() {
+		return dropped;
+	}
+
 	public static final class Builder {
 
 		private MinecraftServer server;

@@ -21,9 +21,10 @@ package xaero.pac.client.player.config.api;
 import xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI;
 import xaero.pac.client.player.config.backwards.v1.CompatStringableOptionClientStorage;
 import xaero.pac.client.player.config.group.api.IClientPlayerConfigGroupManagerAPI;
+import xaero.pac.common.player.config.api.IPlayerConfigPermissionAPI;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.backwards.v1.CompatPlayerConfigOptionSpec;
 
 import javax.annotation.Nonnull;
@@ -153,6 +154,7 @@ public interface IPlayerConfigClientStorageAPI {
 	 *
 	 * @return the player groups API for this config.
 	 */
+	@Nonnull
 	IClientPlayerConfigGroupManagerAPI getPlayerGroups();
 
 	/**
@@ -160,7 +162,16 @@ public interface IPlayerConfigClientStorageAPI {
 	 *
 	 * @return this sub-config's parent main config, or this config if it is the main config
 	 */
+	@Nonnull
 	IPlayerConfigClientStorageAPI getMain();
+
+	/**
+	 * Gets the API for the permissions the local client player has for this config.
+	 *
+	 * @return this config's permission API for the local client player
+	 */
+	@Nonnull
+	IPlayerConfigPermissionAPI getPermissions();
 
 	/**
 	 * @deprecated use {@link #getOption(IPlayerConfigOptionSpecAPI)} instead<p>

@@ -21,7 +21,10 @@ package xaero.pac.common.server.parties.system.impl;
 import dev.ftb.mods.ftbteams.FTBTeamsAPI;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamRank;
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +46,16 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 	@Nullable
 	@Override
 	public Team getPartyByMember(@Nonnull UUID playerId) {
-		return FTBTeamsAPI.getPlayerTeam(playerId);
+		Team team = FTBTeamsAPI.getPlayerTeam(playerId);
+
+		//NIL_UUID is used for FTB self-teams, which is also used for the Server Claims Config
+		//if this is removed, nothing bad will happen, because of other checks, but it's best to catch it anyway
+		//this also skips the config type check in PlayerPartySystemManager.getPrimaryPartyOwnerByMemberHelper,
+		// so it's in theory good for performance too
+		if(team == null || Util.NIL_UUID.equals(team.getOwner()))
+			return null;
+
+		return team;
 	}
 
 	@Override
@@ -57,8 +69,49 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 
 	@Override
 	public boolean isPermittedToPartyClaim(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, TeamRank.OFFICER);
+	}
+
+	@Override
+	public boolean canCreatePartyConfigGroups(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, TeamRank.OWNER);
+	}
+
+	@Override
+	public boolean canIncludePlayersInPartyConfigGroups(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, TeamRank.OFFICER);
+	}
+
+	@Override
+	public boolean canIncludeGroupsInPartyConfigGroups(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, TeamRank.OWNER);
+	}
+
+	@Override
+	public boolean canEditPartyConfig(@Nonnull UUID playerId) {
+		return isAtLeast(playerId, TeamRank.OWNER);
+	}
+
+	private boolean isAtLeast(UUID playerId, TeamRank rank){
 		Team playerTeam = getPartyByMember(playerId);
-		return playerTeam != null && playerTeam.getHighestRank(playerId).ordinal() >= TeamRank.OFFICER.ordinal();
+		return playerTeam != null && playerTeam.getHighestRank(playerId).ordinal() >= rank.ordinal();
+	}
+
+	@Nullable
+	@Override
+	public UUID getOwner(@Nonnull Team party) {
+		return party.getOwner();
+	}
+
+	@Nullable
+	@Override
+	public Component getName(@Nonnull Team party) {
+		return new TextComponent(party.getDisplayName());
+	}
+
+	@Override
+	public int getMemberCount(@Nonnull Team party) {
+		return party.getMembers().size();
 	}
 
 }

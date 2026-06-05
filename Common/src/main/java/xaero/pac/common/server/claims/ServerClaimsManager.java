@@ -21,6 +21,9 @@ package xaero.pac.common.server.claims;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,6 +40,7 @@ import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.parties.system.PlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
@@ -50,21 +54,25 @@ import java.util.*;
 
 public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder> implements IServerClaimsManager<PlayerChunkClaim, ServerPlayerClaimInfo, ServerDimensionClaimsManager> {
 
+	private MinecraftServer server;
 	private final int MAX_REQUEST_SIZE = 100;//will go 1 chunk beyond this before cancelling but that's fine
 	private final ClaimsManagerSynchronizer claimsManagerSynchronizer;
 	private final ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
 	private final ServerClaimsPermissionHandler permissionHandler;
+	private final PlayerPartySystemManager partySystemManager;
 	private final LinkedChain<ServerClaimStateHolder> linkedClaimStates;
 	private boolean loaded;
 	
 	protected ServerClaimsManager(MinecraftServer server, ServerPlayerClaimInfoManager playerClaimInfoManager,
-								  IPlayerConfigManager configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
-								  ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
-								  Map<PlayerChunkClaim, ServerClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler, ServerClaimsPermissionHandler permissionHandler, LinkedChain<ServerClaimStateHolder> linkedClaimStates) {
+	                              IPlayerConfigManager configManager, Map<ResourceLocation, ServerDimensionClaimsManager> dimensions,
+	                              ClaimsManagerSynchronizer claimsManagerSynchronizer, Int2ObjectMap<PlayerChunkClaim> indexToClaimState,
+	                              Map<PlayerChunkClaim, ServerClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler, ServerClaimsPermissionHandler permissionHandler, PlayerPartySystemManager partySystemManager, LinkedChain<ServerClaimStateHolder> linkedClaimStates) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
+		this.server = server;
 		this.claimsManagerSynchronizer = claimsManagerSynchronizer;
 		this.claimReplaceTaskHandler = claimReplaceTaskHandler;
 		this.permissionHandler = permissionHandler;
+		this.partySystemManager = partySystemManager;
 		this.linkedClaimStates = linkedClaimStates;
 	}
 	
@@ -346,22 +354,38 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	public int getPlayerBaseClaimLimit(@Nonnull UUID playerId){
-		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaims, UsedPermissionNodes.MAX_PLAYER_CLAIMS);
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				playerId, null,
+				ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.claimBonusPerPartyMember,
+				ServerConfig.CONFIG.claimBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_CLAIMS
+		);
 	}
 
 	@Override
 	public int getPlayerBaseForceloadLimit(@Nonnull UUID playerId){
-		return playerClaimInfoManager.getPlayerBaseLimit(playerId, null, ServerConfig.CONFIG.maxPlayerClaimForceloads, UsedPermissionNodes.MAX_PLAYER_FORCELOADS);
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				playerId, null,
+				ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.forceloadBonusPerPartyMember,
+				ServerConfig.CONFIG.forceloadBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_FORCELOADS
+		);
 	}
 
 	@Override
 	public int getPlayerBaseClaimLimit(@Nonnull ServerPlayer player){
-		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaims, UsedPermissionNodes.MAX_PLAYER_CLAIMS);
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				null, player,
+				ServerConfig.CONFIG.maxPlayerClaims, ServerConfig.CONFIG.claimBonusPerPartyMember,
+				ServerConfig.CONFIG.claimBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_CLAIMS
+		);
 	}
 
 	@Override
 	public int getPlayerBaseForceloadLimit(@Nonnull ServerPlayer player){
-		return playerClaimInfoManager.getPlayerBaseLimit(null, player, ServerConfig.CONFIG.maxPlayerClaimForceloads, UsedPermissionNodes.MAX_PLAYER_FORCELOADS);
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				null, player,
+				ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.forceloadBonusPerPartyMember,
+				ServerConfig.CONFIG.forceloadBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_FORCELOADS
+		);
 	}
 
 	public Iterator<ServerClaimStateHolder> getClaimStateHolderIterator(){
@@ -383,6 +407,15 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return permissionHandler;
 	}
 
+	@Override
+	public PlayerPartySystemManager getPartySystemManager() {
+		return partySystemManager;
+	}
+
+	public MinecraftServer getServer() {
+		return server;
+	}
+
 	public boolean isLoaded() {
 		return loaded;
 	}
@@ -390,7 +423,33 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public void onLoad() {
 		loaded = true;
 	}
-	
+
+	@Override
+	public String getWildernessName() {
+		return configManager.getWildernessConfig().getEffective(PlayerConfigOptions.CLAIMS_NAME);
+	}
+
+	@Override
+	protected MutableComponent constructPlayerClaimName(ServerPlayerClaimInfo playerClaimInfo, Component forceloadedComponent) {
+		if(ServerConfig.CONFIG.partyOwnedClaims.get()) {
+			Component partyName = playerClaimInfo.fetchPartyName();
+			if(partyName == null) {
+				if(!playerClaimInfo.isPartyOwned())
+					return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+				partyName = playerClaimInfo.getDefaultPartyName();
+			}
+			return new TranslatableComponent(
+					"gui.xaero_pac_title_party_claim",
+					partyName, forceloadedComponent
+			);
+		}
+		return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+	}
+
+	public IPlayerConfigManager getConfigManager(){
+		return configManager;
+	}
+
 	public final static class Builder extends ClaimsManager.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder, Builder>{
 
 		private MinecraftServer server;
@@ -399,6 +458,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		private ClaimsManagerSynchronizer claimsManagerSynchronizer;
 		private ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler;
 		private ServerClaimsPermissionHandler permissionHandler;
+		private PlayerPartySystemManager partySystemManager;
 		
 		public static Builder begin() {
 			return new Builder().setDefault();
@@ -411,6 +471,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			setTicketManager(null);
 			setClaimsManagerSynchronizer(null);
 			setConfigManager(null);
+			setPartySystemManager(null);
 			return this;
 		}
 
@@ -444,9 +505,18 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return self;
 		}
 
+		public Builder setPartySystemManager(PlayerPartySystemManager partySystemManager) {
+			this.partySystemManager = partySystemManager;
+			return self;
+		}
+
 		@Override
 		public ServerClaimsManager build() {
-			if(server == null || ticketManager == null || claimsManagerSynchronizer == null || configManager == null || claimReplaceTaskHandler == null || permissionHandler == null)
+			if(
+					server == null || ticketManager == null || claimsManagerSynchronizer == null ||
+							configManager == null || claimReplaceTaskHandler == null || permissionHandler == null ||
+							partySystemManager == null
+			)
 				throw new IllegalStateException();
 			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>(), new HashSet<>());
 			setPlayerClaimInfoManager(playerInfoManager);
@@ -463,7 +533,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		protected ServerClaimsManager buildInternally(Map<PlayerChunkClaim, ServerClaimStateHolder> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState) {
 			LinkedChain<ServerClaimStateHolder> linkedClaimStates = new LinkedChain<>();
 			claimStates.values().forEach(linkedClaimStates::add);
-			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler, permissionHandler, linkedClaimStates);
+			return new ServerClaimsManager(server, playerClaimInfoManager, configManager, dimensions, claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker, claimReplaceTaskHandler, permissionHandler, partySystemManager, linkedClaimStates);
 		}
 		
 	}

@@ -18,6 +18,7 @@
 
 package xaero.pac.client.claims.player.api;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.player.api.IPlayerClaimInfoAPI;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
@@ -71,5 +72,15 @@ public interface IClientPlayerClaimInfoAPI extends IPlayerClaimInfoAPI {
 
 	@Nullable
 	public IPlayerDimensionClaimsAPI getDimension(@Nonnull ResourceLocation id);
+
+	/**
+	 * Gets the display name of the party that owns the claims stored in this player claim info.
+	 * <p>
+	 * The party that owns the claims is the party owned by this player.
+	 *
+	 * @return the Component display name of the party that owns the claims, null if not owned by a party
+	 */
+	@Nullable
+	Component getPartyName();
 
 }

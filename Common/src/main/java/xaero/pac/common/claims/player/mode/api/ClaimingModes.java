@@ -1,0 +1,180 @@
+/*
+ * Open Parties and Claims - adds chunk claims and player parties to Minecraft
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of version 3 of the GNU Lesser General Public License
+ * (LGPL-3.0-only) as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received copies of the GNU Lesser General Public License
+ * and the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package xaero.pac.common.claims.player.mode.api;
+
+import net.minecraft.network.chat.TranslatableComponent;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
+import xaero.pac.common.claims.result.api.ClaimResult;
+import xaero.pac.common.server.claims.command.ClaimsClaimCommands;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+/**
+ * Access point for all claiming modes in the mod
+ */
+public class ClaimingModes {
+
+	/**
+	 * Map of all claiming modes by ID
+	 */
+	private static final Map<String, IClaimingModeAPI> ALL = new HashMap<>();
+	/**
+	 * Immutable view of the map of all claiming modes by ID
+	 */
+	public static final Map<String, IClaimingModeAPI> ALL_IMMUTABLE = Collections.unmodifiableMap(ALL);
+
+	/**
+	 * Mode for claiming as yourself
+	 */
+	public static final IClaimingModeAPI PLAYER = ClaimingMode.Builder.begin()
+			.setId("player")
+			.setConfigType(PlayerConfigType.PLAYER)
+			.setSubClaimOption(PlayerConfigOptions.USED_SUBCLAIM)
+			.setCommandVisibilityRequirement(s -> true)
+			.setSubConfigGetter(IPlayerConfig::getUsedSubConfig)
+			.setLimitsBuilder((player, claimsManager) -> {
+				UUID playerId = player.getUUID();
+				IServerPlayerClaimInfo<?> playerClaims = claimsManager.getPlayerInfo(playerId);
+				IPlayerConfig playerConfig = claimsManager.getConfigManager().getLoadedConfig(playerId);
+				int claimCount = playerClaims.getClaimCount();
+				int forceloadCount = playerClaims.getForceloadCount();
+				int claimLimit = claimsManager.getPlayerBaseClaimLimit(playerId) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+				int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(playerId) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+				return new ClaimingModeLimits(
+						ClaimingModes.PLAYER, claimCount, forceloadCount, claimLimit, forceloadLimit
+				);
+			})
+			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_myself"))
+			.setEnableMessage(new TranslatableComponent("gui.xaero_claims_player_mode_enabled"))
+			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_player_mode_enabled"))//purposely the same
+			.build(ALL);
+
+	/**
+	 * Mode for claiming as your party
+	 */
+	public static final IClaimingModeAPI PARTY = ClaimingMode.Builder.begin()
+			.setId("party")
+			.setConfigType(PlayerConfigType.PARTY_CLAIMS)
+			.setSubClaimOption(PlayerConfigOptions.USED_PARTY_SUBCLAIM)
+			.setCommandVisibilityRequirement(ClaimsClaimCommands.getPartyClaimRequirement())
+			.setForcedUUIDGetter((original, claimsManager) ->
+					claimsManager.getPartySystemManager().getPrimaryPartyOwnerByMember(original)
+			)
+			.setPermissionChecker((player, claimsManager) -> {
+				if(claimsManager.getPermissionHandler().playerHasPartyClaimPermission(player))
+					return null;
+				if(claimsManager.getPartySystemManager().isInAPrimaryParty(player.getUUID()))
+					return ClaimResult.Type.NO_PARTY_PERMISSION;
+				return ClaimResult.Type.NOT_IN_PARTY;
+			})
+			.setSubConfigGetter(config -> {
+				UUID playerId = config.getPlayerId();
+				IPlayerConfig partyOwnerConfig = playerId == null ? config : config.getManager().getPartyOwnerConfig(playerId);
+				if(partyOwnerConfig == null)
+					partyOwnerConfig = config;
+				return partyOwnerConfig.getEffectiveSubConfig(config.getEffective(PlayerConfigOptions.USED_PARTY_SUBCLAIM));
+			})
+			.setLimitsBuilder((player, claimsManager) -> {
+				int partyClaimCount = 0;
+				int partyForceloadCount = 0;
+				int partyClaimLimit = 0;
+				int partyForceloadLimit = 0;
+				if(ServerConfig.CONFIG.partyOwnedClaims.get()){
+					UUID partyOwner = claimsManager.getPartySystemManager().getPrimaryPartyOwnerByMember(player.getUUID());
+					if(partyOwner != null) {
+						IServerPlayerClaimInfo<?> partyOwnerClaims = claimsManager.getPlayerInfo(partyOwner);
+						IPlayerConfig partyOwnerConfig = claimsManager.getConfigManager().getLoadedConfig(partyOwner);
+						partyClaimCount = partyOwnerClaims.getClaimCount();
+						partyForceloadCount = partyOwnerClaims.getForceloadCount();
+						partyClaimLimit = claimsManager.getPlayerBaseClaimLimit(partyOwner) + partyOwnerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+						partyForceloadLimit = claimsManager.getPlayerBaseForceloadLimit(partyOwner) + partyOwnerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+					}
+				}
+				return new ClaimingModeLimits(
+						ClaimingModes.PARTY, partyClaimCount, partyForceloadCount, partyClaimLimit, partyForceloadLimit
+				);
+			})
+			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_party"))
+			.setEnableMessage(new TranslatableComponent("gui.xaero_claims_party_mode_enabled"))
+			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_party_mode_disabled"))
+			.build(ALL);
+
+	/**
+	 * Mode for claiming as the server
+	 */
+	public static final IClaimingModeAPI SERVER = ClaimingMode.Builder.begin()
+			.setId("server")
+			.setConfigType(PlayerConfigType.SERVER)
+			.setSubClaimOption(PlayerConfigOptions.USED_SERVER_SUBCLAIM)
+			.setCommandVisibilityRequirement(ClaimsClaimCommands.getServerClaimCommandRequirement())
+			.setForcedUUIDGetter((original, claimsManager) ->
+					PlayerConfig.SERVER_CLAIM_UUID
+			)
+			.setClientCountsSourceId(PlayerConfig.SERVER_CLAIM_UUID)
+			.setPermissionChecker((player, claimsManager) -> {
+				if(claimsManager.getPermissionHandler().playerHasServerClaimPermission(player))
+					return null;
+				return ClaimResult.Type.NO_SERVER_PERMISSION;
+			})
+			.setSubConfigGetter(config ->
+					config.getManager()
+							.getServerClaimConfig()
+							.getEffectiveSubConfig(config.getEffective(PlayerConfigOptions.USED_SERVER_SUBCLAIM))
+			)
+			.setLimitsBuilder((player, claimsManager) -> {
+				int serverClaimCount = 0;
+				int serverForceloadCount = 0;
+				if(claimsManager.getPermissionHandler().playerHasServerClaimPermission(player)){
+					IServerPlayerClaimInfo<?> serverClaims = claimsManager.getPlayerInfo(PlayerConfig.SERVER_CLAIM_UUID);
+					serverClaimCount = serverClaims.getClaimCount();
+					serverForceloadCount = serverClaims.getForceloadCount();
+				}
+				return new ClaimingModeLimits(
+						ClaimingModes.SERVER, serverClaimCount, serverForceloadCount, -1, -1
+				);
+			})
+			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_server"))
+			.setEnableMessage(new TranslatableComponent("gui.xaero_claims_server_mode_enabled"))
+			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_server_mode_disabled"))
+			.build(ALL);
+
+	/**
+	 * Gets the claiming mode with a specified ID.
+	 *
+	 * @param id  the String ID of the claiming mode, not null
+	 * @return the claiming mode, null if it doesn't exist
+	 */
+	@Nullable
+	public static IClaimingModeAPI get(@Nonnull String id){
+		return ALL.get(id);
+	}
+
+}

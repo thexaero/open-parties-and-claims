@@ -18,6 +18,8 @@
 
 package xaero.pac.common.claims.player;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.util.linked.ILinkedChainNode;
@@ -27,6 +29,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -41,6 +44,8 @@ public abstract class PlayerClaimInfo
 	private String playerUsername;
 	protected final UUID playerId;
 	protected final Map<ResourceLocation, PlayerDimensionClaims> claims;
+	private Component defaultPartyNameCache;
+	private String defaultPartyNameCachedFor;
 
 	private boolean destroyed;
 	private PCI nextInChain;
@@ -163,5 +168,12 @@ public abstract class PlayerClaimInfo
 		destroyed = true;
 	}
 
+	public Component getDefaultPartyName() {
+		if(defaultPartyNameCachedFor == null || !Objects.equals(defaultPartyNameCachedFor, getPlayerUsername())){
+			defaultPartyNameCache = new TranslatableComponent("gui.xaero_pac_default_party_name", getPlayerUsername());
+			defaultPartyNameCachedFor = getPlayerUsername();
+		}
+		return defaultPartyNameCache;
+	}
 	
 }
