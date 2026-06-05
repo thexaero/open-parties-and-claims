@@ -993,7 +993,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 						.withStyle(s -> s.withColor(ChatFormatting.DARK_RED))
 		),
 		NO_PERMISSION(
-				new TranslatableComponent("gui.xaero_pac_player_config_player_groups_no_permission")
+				Component.translatable("gui.xaero_pac_player_config_player_groups_no_permission")
 						.withStyle(s -> s.withColor(ChatFormatting.DARK_RED))
 		);
 		final Component tooltip;

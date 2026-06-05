@@ -19,7 +19,6 @@
 package xaero.pac.common.claims.player;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.util.linked.ILinkedChainNode;
@@ -170,7 +169,7 @@ public abstract class PlayerClaimInfo
 
 	public Component getDefaultPartyName() {
 		if(defaultPartyNameCachedFor == null || !Objects.equals(defaultPartyNameCachedFor, getPlayerUsername())){
-			defaultPartyNameCache = new TranslatableComponent("gui.xaero_pac_default_party_name", getPlayerUsername());
+			defaultPartyNameCache = Component.translatable("gui.xaero_pac_default_party_name", getPlayerUsername());
 			defaultPartyNameCachedFor = getPlayerUsername();
 		}
 		return defaultPartyNameCache;

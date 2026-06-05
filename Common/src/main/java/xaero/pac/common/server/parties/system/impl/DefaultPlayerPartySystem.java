@@ -19,7 +19,6 @@
 package xaero.pac.common.server.parties.system.impl;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -111,7 +110,7 @@ public class DefaultPlayerPartySystem implements IPlayerPartySystemAPI<IServerPa
 		String partyCustomName = ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 		if(partyCustomName.isEmpty())
 			return null;
-		return new TextComponent(partyCustomName);
+		return Component.literal(partyCustomName);
 	}
 
 	@Override

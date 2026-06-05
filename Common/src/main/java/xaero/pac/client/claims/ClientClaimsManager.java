@@ -23,7 +23,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.IClientData;
@@ -440,7 +439,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	protected MutableComponent constructPlayerClaimName(ClientPlayerClaimInfo playerClaimInfo, Component forceloadedComponent) {
 		if(partyOwnedClaims && playerClaimInfo.isPartyOwned() && playerClaimInfo.getPartyName() != null)
-			return new TranslatableComponent(
+			return Component.translatable(
 					"gui.xaero_pac_title_party_claim",
 					playerClaimInfo.getPartyName(), forceloadedComponent
 			);

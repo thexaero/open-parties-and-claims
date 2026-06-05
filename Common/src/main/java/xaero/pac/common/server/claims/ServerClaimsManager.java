@@ -23,7 +23,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -438,7 +437,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 					return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
 				partyName = playerClaimInfo.getDefaultPartyName();
 			}
-			return new TranslatableComponent(
+			return Component.translatable(
 					"gui.xaero_pac_title_party_claim",
 					partyName, forceloadedComponent
 			);

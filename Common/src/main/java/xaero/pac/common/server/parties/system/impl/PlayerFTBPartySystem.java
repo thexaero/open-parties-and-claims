@@ -23,7 +23,6 @@ import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamRank;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 
 import javax.annotation.Nonnull;
@@ -106,7 +105,7 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 	@Nullable
 	@Override
 	public Component getName(@Nonnull Team party) {
-		return new TextComponent(party.getDisplayName());
+		return Component.literal(party.getDisplayName());
 	}
 
 	@Override

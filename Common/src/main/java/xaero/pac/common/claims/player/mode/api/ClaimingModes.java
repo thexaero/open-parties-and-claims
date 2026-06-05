@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.player.mode.api;
 
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.result.api.ClaimResult;
@@ -72,9 +72,9 @@ public class ClaimingModes {
 						ClaimingModes.PLAYER, claimCount, forceloadCount, claimLimit, forceloadLimit
 				);
 			})
-			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_myself"))
-			.setEnableMessage(new TranslatableComponent("gui.xaero_claims_player_mode_enabled"))
-			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_player_mode_enabled"))//purposely the same
+			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_myself"))
+			.setEnableMessage(Component.translatable("gui.xaero_claims_player_mode_enabled"))
+			.setDisableMessage(Component.translatable("gui.xaero_claims_player_mode_enabled"))//purposely the same
 			.build(ALL);
 
 	/**
@@ -122,9 +122,9 @@ public class ClaimingModes {
 						ClaimingModes.PARTY, partyClaimCount, partyForceloadCount, partyClaimLimit, partyForceloadLimit
 				);
 			})
-			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_party"))
-			.setEnableMessage(new TranslatableComponent("gui.xaero_claims_party_mode_enabled"))
-			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_party_mode_disabled"))
+			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_party"))
+			.setEnableMessage(Component.translatable("gui.xaero_claims_party_mode_enabled"))
+			.setDisableMessage(Component.translatable("gui.xaero_claims_party_mode_disabled"))
 			.build(ALL);
 
 	/**
@@ -161,9 +161,9 @@ public class ClaimingModes {
 						ClaimingModes.SERVER, serverClaimCount, serverForceloadCount, -1, -1
 				);
 			})
-			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_server"))
-			.setEnableMessage(new TranslatableComponent("gui.xaero_claims_server_mode_enabled"))
-			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_server_mode_disabled"))
+			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_server"))
+			.setEnableMessage(Component.translatable("gui.xaero_claims_server_mode_enabled"))
+			.setDisableMessage(Component.translatable("gui.xaero_claims_server_mode_disabled"))
 			.build(ALL);
 
 	/**
