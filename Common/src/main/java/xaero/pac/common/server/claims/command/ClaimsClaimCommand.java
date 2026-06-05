@@ -20,7 +20,7 @@ package xaero.pac.common.server.claims.command;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.server.command.AbstractChunkCommand;
@@ -51,7 +51,7 @@ public class ClaimsClaimCommand extends AbstractChunkCommand {
 	}
 
 	@Override
-	protected ForgeConfigSpec.BooleanValue getFeatureConfigOption() {
+	protected ModConfigSpec.BooleanValue getFeatureConfigOption() {
 		return ServerConfig.CONFIG.claimsEnabled;
 	}
 

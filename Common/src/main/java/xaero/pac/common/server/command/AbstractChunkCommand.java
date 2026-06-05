@@ -24,7 +24,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.function.Predicate;
 
@@ -98,7 +98,7 @@ public abstract class AbstractChunkCommand {
 		dispatcher.register(command);
 	}
 
-	protected abstract ForgeConfigSpec.BooleanValue getFeatureConfigOption();
+	protected abstract ModConfigSpec.BooleanValue getFeatureConfigOption();
 	protected abstract Predicate<CommandSourceStack> getRequirement();
 	protected abstract ArgumentBuilder<CommandSourceStack, ?> createChunkCommand(
 			ArgumentBuilder<CommandSourceStack, ?> builder,

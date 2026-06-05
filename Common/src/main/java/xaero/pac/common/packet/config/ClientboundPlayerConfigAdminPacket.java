@@ -19,6 +19,7 @@
 package xaero.pac.common.packet.config;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 
@@ -42,7 +43,7 @@ public class ClientboundPlayerConfigAdminPacket {
 			try {
 				if(input.readableBytes() > 1024)
 					return null;
-				CompoundTag tag = input.readAnySizeNbt();
+				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
 				boolean admin = tag.getBoolean("a");
