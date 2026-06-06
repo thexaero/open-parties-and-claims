@@ -21,7 +21,9 @@ package xaero.pac.common.server.player.config.sync;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
+import xaero.pac.common.server.player.data.config.PlayerConfigPermissionUpdateData;
 
 public interface IPlayerConfigSynchronizer {
 
@@ -31,7 +33,11 @@ public interface IPlayerConfigSynchronizer {
 
 	public void syncOnLogin(ServerPlayer player);
 
+	public void sendSyncState(ServerPlayer player, IPlayerConfig config, boolean state);
+
 	public void confirmSubConfigCreationSync(ServerPlayer player, IPlayerConfig mainConfig);
+
+	public void requestPartyClaimsConfigSync(IPlayerConfig partyConfig, ServerPlayer player);
 
 	public void syncGeneralState(ServerPlayer player, IPlayerConfig config);
 
@@ -41,4 +47,11 @@ public interface IPlayerConfigSynchronizer {
 
 	void syncGroupLimits(ServerPlayer serverPlayer, IServerPlayerConfigGroupManager groupManager, IPlayerConfig config);
 
+	public void forceConfigType(PlayerConfigType forceConfigType);
+
+	public void sendPermissions(ServerPlayer player, PlayerConfigType type, PlayerConfigPermissionUpdateData data);
+
+	void sendPermissions(ServerPlayer player, PlayerConfigType type);
+
+	void syncAdmin(ServerPlayer player, boolean admin);
 }

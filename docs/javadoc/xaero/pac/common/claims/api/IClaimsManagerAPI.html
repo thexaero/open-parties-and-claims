@@ -112,10 +112,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim state for a specified chunk.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IDimensionClaimsManagerAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimension(net.minecraft.resources.ResourceLocation)" class="member-name-link">getDimension</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getDefaultName</a><wbr>(<a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the default display name that would be used for a provided claim state.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IDimensionClaimsManagerAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimension(net.minecraft.resources.ResourceLocation)" class="member-name-link">getDimension</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the read-only claims manager for a specified dimension ID.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getFullName</a><wbr>(<a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
@@ -256,6 +266,36 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the claim change tracker</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">
+<h3>getDefaultName</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getDefaultName</span><wbr><span class="parameters">(@Nullable
+ <a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</span></div>
+<div class="block">Gets the default display name that would be used for a provided claim state.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimState</code> - the claim state, can be null for wilderness</dd>
+<dt>Returns:</dt>
+<dd>the default display name, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">
+<h3>getFullName</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getFullName</span><wbr><span class="parameters">(@Nullable
+ <a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</span></div>
+<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimState</code> - the claim state, can be null for wilderness</dd>
+<dt>Returns:</dt>
+<dd>the full display name, not null</dd>
 </dl>
 </section>
 </li>

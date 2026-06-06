@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.player.config;
 
+import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
@@ -55,9 +56,13 @@ public interface IPlayerConfig extends IPlayerConfigAPI {
 	@Nonnull
 	public IPlayerConfig getUsedSubConfig();
 
+	@Deprecated
 	@Nonnull
 	@Override
 	IPlayerConfig getUsedServerSubConfig();
+
+	@Nonnull
+	public IPlayerConfig getUsedSubConfig(@Nonnull IClaimingModeAPI claimingMode);
 
 	@Nullable
 	@Override

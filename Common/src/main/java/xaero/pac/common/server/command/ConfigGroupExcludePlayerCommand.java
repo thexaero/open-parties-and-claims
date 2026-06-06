@@ -35,6 +35,7 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
@@ -91,6 +92,11 @@ public class ConfigGroupExcludePlayerCommand extends ConfigGroupCommand {
 		return targetGroup.getDirectMembersInternal().stream().map(member ->
 				member.getDisplayName() == null ? member.getId().toString() : member.getDisplayName()
 		);
+	}
+
+	@Override
+	protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId) {
+		return systemManager.canIncludePlayersInPartyConfigGroups(playerId);
 	}
 
 }

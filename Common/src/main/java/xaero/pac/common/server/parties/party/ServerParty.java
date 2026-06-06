@@ -74,6 +74,7 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 					managedBy.getPartySynchronizer().syncToPartyUpdateOwner(this);
 					IPlayerConfig newOwnerConfig = managedBy.getPlayerConfigs().getLoadedConfig(newOwnerId);
 					managedBy.getPartySynchronizer().syncToPartyAndAlliersUpdateName(this, newOwnerConfig.getEffective(PlayerConfigOptions.PARTY_NAME));
+					managedBy.getPartySynchronizer().syncPrimaryPartySwitchForAll(this);
 				}
 			}
 			setDirty(true);

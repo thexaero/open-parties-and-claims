@@ -46,6 +46,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.List;
@@ -53,14 +54,17 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
+import static xaero.pac.common.server.command.ConfigCommandUtil.getPartyClaimsRequirement;
 
 public class ConfigSubListCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
 		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER);
+		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS);
 
 		Predicate<CommandSourceStack> serverRequirement = ClaimsClaimCommands.getServerClaimCommandRequirement();
+		Predicate<CommandSourceStack> partyRequirement = getPartyClaimsRequirement(false);
 
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
 				.then(Commands.literal("player-config")
@@ -77,6 +81,11 @@ public class ConfigSubListCommand {
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
 				.requires(serverRequirement)
 				.then(getMainCommandPart(serverExecutor)));
+		dispatcher.register(command);
+
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
+				.requires(partyRequirement)
+				.then(getMainCommandPart(partyExecutor)));
 		dispatcher.register(command);
 	}
 
@@ -95,7 +104,7 @@ public class ConfigSubListCommand {
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			GameProfile inputPlayer;
-			UUID configPlayerUUID;
+			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_sub_list_too_many_targets",
@@ -103,11 +112,16 @@ public class ConfigSubListCommand {
 				if(inputPlayer == null)
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
-			} else
-				configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
+			}
 
-
-			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
+			PlayerConfig<?> playerConfig = (PlayerConfig<?>) ServerPlayerConfigUtils.getTargetConfig(
+					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+			);
+			if(playerConfig == null) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
+				return 0;
+			}
+			configPlayerUUID = playerConfig.getPlayerId();
 
 			List<String> subConfigIds =  playerConfig.getSubConfigIds();
 			int startAt = IntegerArgumentType.getInteger(context, "start-at");

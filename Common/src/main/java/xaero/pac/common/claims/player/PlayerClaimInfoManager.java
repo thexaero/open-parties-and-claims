@@ -97,4 +97,6 @@ public abstract class PlayerClaimInfoManager
 		linkedPlayerInfo.remove(playerInfo);
 	}
 
+	public abstract boolean usingPartyOwnedClaims();
+
 }

@@ -56,15 +56,16 @@ public class ServerStartingCallback {
 		try {
 			serverData.getPlayerPermissionSystemManager().preRegister();
 			serverData.getPlayerPartySystemManager().preRegister();
-			serverData.getPlayerPartySystemManager().register("default", new DefaultPlayerPartySystem(serverData.getPartyManager()));
+			DefaultPlayerPartySystem defaultPartySystem = serverData.getPartyManager().getPartySystem();
+			serverData.getPlayerPartySystemManager().register("default", defaultPartySystem);
 			OpenPartiesAndClaims.INSTANCE.getCommonEvents().fireAddonRegisterEvent(serverData);
 		} finally {
 			serverData.getPlayerPermissionSystemManager().postRegister();
 			serverData.getPlayerPartySystemManager().postRegister();
 		}
+		serverData.getPlayerPartySystemManager().updatePrimarySystem(ServerConfig.CONFIG.primaryPartySystem.get());
 		playerClaimInfoManagerIO.load();
 		serverData.getPlayerPermissionSystemManager().updateUsedSystem(ServerConfig.CONFIG.permissionSystem.get());
-		serverData.getPlayerPartySystemManager().updatePrimarySystem(ServerConfig.CONFIG.primaryPartySystem.get());
 	}
 	
 }

@@ -25,6 +25,7 @@ import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.player.config.group.IClientPlayerConfigGroupManager;
 import xaero.pac.common.player.config.group.api.PlayerConfigGroupActionError;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
@@ -106,12 +107,16 @@ public class PlayerConfigGroupGroupPacket extends PlayerConfigAbstractGroupPacke
 	public static class ServerHandler extends PlayerConfigAbstractGroupPacket.ServerHandler<PlayerConfigGroupGroupPacket> {
 
 		@Override
+		protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId) {
+			return systemManager.canIncludeGroupsInPartyConfigGroups(playerId);
+		}
+
+		@Override
 		public void handle(
 				PlayerConfigGroupGroupPacket packet,
 				ServerPlayer serverPlayer,
 				IServerPlayerConfigGroupManager groupManager,
-				IPlayerConfig config
-		) {
+				IPlayerConfig config) {
 			ICustomPlayerConfigGroup group = groupManager.getCustom(packet.groupId);
 			if(group == null){
 				sendError(serverPlayer, packet, PlayerConfigGroupActionError.GROUP_TO_EDIT_NOT_FOUND);
