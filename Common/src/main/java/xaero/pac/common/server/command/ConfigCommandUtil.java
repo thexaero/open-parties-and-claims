@@ -18,12 +18,12 @@
 
 package xaero.pac.common.server.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
@@ -142,7 +142,7 @@ public class ConfigCommandUtil {
 				return false;
 			if(!edit)
 				return true;
-			if(sourceStack.hasPermission(2))
+			if(Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				return true;
 			if(sourcePlayer.getUUID().equals(partyConfigOwner))
 				return true;

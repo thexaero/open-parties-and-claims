@@ -58,7 +58,7 @@ public abstract class ClaimAbstractSubClaimCommand {
 	){
 		LiteralArgumentBuilder<CommandSourceStack> mainPart = Commands.literal("sub-claim")
 				.then(Commands.literal("for")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(getExecutivePart(mode))));
 		registerCommand(mainPart, mode, dispatcher);

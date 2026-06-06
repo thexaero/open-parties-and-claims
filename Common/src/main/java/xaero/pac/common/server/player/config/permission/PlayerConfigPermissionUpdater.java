@@ -45,7 +45,7 @@ public class PlayerConfigPermissionUpdater {
 			boolean sendCommandsOnChange
 	) {
 		boolean lastSyncedConfigAdmin = playerData.getSyncedConfigAdmin();
-		boolean admin = player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+		boolean admin = Commands.LEVEL_GAMEMASTERS.check(player.permissions());
 		if(admin != lastSyncedConfigAdmin){
 			serverData.getPlayerConfigManager().getSynchronizer().syncAdmin(player, admin);
 			playerData.setSyncedConfigAdmin(admin);

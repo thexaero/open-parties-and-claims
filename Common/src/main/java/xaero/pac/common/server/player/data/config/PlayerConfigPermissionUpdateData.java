@@ -57,7 +57,7 @@ public class PlayerConfigPermissionUpdateData extends PlayerConfigPermissions {
 				player.getUUID(), player.getUUID(), type, configManager
 		);
 		boolean otherPlayer = type == PlayerConfigType.PLAYER && !Objects.equals(player.getUUID(), config.getPlayerId());
-		boolean isAdmin = player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+		boolean isAdmin = Commands.LEVEL_GAMEMASTERS.check(player.permissions());
 		boolean requiresAdmin = otherPlayer || type != PlayerConfigType.PLAYER && type != PlayerConfigType.PARTY_CLAIMS;
 		boolean edit = isAdmin || !requiresAdmin;
 		boolean view = edit || type == PlayerConfigType.SERVER;

@@ -323,7 +323,7 @@ public abstract class ConfigGroupCommand {
 				return false;
 			if(!affect)
 				return true;
-			if(sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS))
+			if(Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
 				return true;
 			if(sourcePlayer.getUUID().equals(partyConfigOwner))
 				return true;

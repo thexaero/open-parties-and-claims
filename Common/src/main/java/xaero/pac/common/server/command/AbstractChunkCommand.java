@@ -69,14 +69,14 @@ public abstract class AbstractChunkCommand {
 
 		mainPart = Commands.literal(actionLiteral).then(
 				createChunkCommand(
-						Commands.literal("anyway").requires(source -> source.hasPermission(2)),
+						Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())),
 						apply, true
 				)
 		);
 		registerCommand(dispatcher, mainPart, requirement);
 
 		mainPart = Commands.literal(actionLiteral).then(
-				Commands.literal("anyway").requires(source -> source.hasPermission(2))
+				Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions()))
 				.then(createChunkCommand(
 						Commands.argument("block-pos", ColumnPosArgument.columnPos()),
 						apply, true

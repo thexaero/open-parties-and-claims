@@ -22,8 +22,8 @@ import dev.ftb.mods.ftbteams.api.FTBTeamsAPI;
 import dev.ftb.mods.ftbteams.api.Team;
 import dev.ftb.mods.ftbteams.api.TeamRank;
 import dev.ftb.mods.ftbteams.api.property.TeamProperties;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
 
 import javax.annotation.Nonnull;
