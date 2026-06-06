@@ -18,7 +18,6 @@
 
 package xaero.pac.common.packet.claims;
 
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtAccounter;
@@ -26,6 +25,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.json.XaeroJsonUtil;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 			XaeroNbtUtil.putUUID(propertiesEntryNbt, "p", propertiesEntry.playerId);
 			propertiesEntryNbt.putString("u", propertiesEntry.username);
 			if(propertiesEntry.partyName != null){
-				String partyNameJson = Component.Serializer.toJson(propertiesEntry.partyName, RegistryAccess.EMPTY);
+				String partyNameJson = XaeroJsonUtil.toJson(propertiesEntry.partyName);
 				propertiesEntryNbt.putString("pn", partyNameJson);
 			}
 			propertiesEntryNbt.putBoolean("po", propertiesEntry.partyOwned);
@@ -96,7 +96,7 @@ public class ClientboundClaimOwnerPropertiesPacket extends LazyPacket<Clientboun
 					}
 					UUID playerId = XaeroNbtUtil.getUUID(propertiesEntryNbt, "p").orElse(null);
 					String partyNameJson = propertiesEntryNbt.getStringOr("pn", null);
-					Component partyName = partyNameJson == null ? null : Component.Serializer.fromJson(partyNameJson, RegistryAccess.EMPTY);
+					Component partyName = partyNameJson == null ? null : XaeroJsonUtil.fromJson(partyNameJson);
 					boolean partyOwned = propertiesEntryNbt.getBooleanOr("po", false);
 					propertiesList.add(new PlayerProperties(playerId, username, partyName, partyOwned));
 				}
