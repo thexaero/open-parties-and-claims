@@ -49,6 +49,10 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> USED_SERVER_SUBCLAIM;
 	/**
+	 * The current sub-config ID that the player uses for new party claims.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<String> USED_PARTY_SUBCLAIM;
+	/**
 	 * The name of the player's party if they own one.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> PARTY_NAME;
@@ -365,6 +369,29 @@ public class PlayerConfigOptions {
 				.setForcedPlayerConfigurable(true)
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleUsedSubClaim)
 				.build(allOptions);
+		USED_PARTY_SUBCLAIM = PlayerConfigListIterationOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.STRING)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER)
+				.setServerSideListGetter(pc -> {
+					if(pc.getPlayerId() == null)
+						return pc.getSubConfigIds();
+					PlayerConfig<?> partyOwnerConfig = pc.getManager().getPartyOwnerConfig(pc.getPlayerId());
+					if(partyOwnerConfig == null)
+						return pc.getSubConfigIds();
+					return partyOwnerConfig.getSubConfigIds();
+				})
+				.setClientSideListGetter(pc ->
+						OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().
+								getPartyClaimsConfig().getSubConfigIds()
+				)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.usedPartySub")
+				.setDefaultValue(PlayerConfig.MAIN_SUB_ID)
+				.setValueValidator(PlayerConfig::isValidSubId)
+				.setComment("The current sub-config ID used for new party chunk claims.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.setForcedPlayerConfigurable(true)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleUsedSubClaim)
+				.build(allOptions);
 
 		CLAIMS_NAME = PlayerConfigStringOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.name")
@@ -465,7 +492,7 @@ public class PlayerConfigOptions {
 				.setSyncable(false)//custom player groups are synced separately on demand
 				.build(allOptions);
 		BONUS_PLAYER_GROUPS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.PARTY_CLAIMS)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "bonusPlayerGroups")
 				.setDefaultValue(0)
 				.setComment("The number of additional player groups that you can create on top of the base limit.")
@@ -474,7 +501,7 @@ public class PlayerConfigOptions {
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleAbstractBonusGroupLimit)
 				.build(allOptions);
 		BONUS_PLAYER_GROUP_SPACE = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.PARTY_CLAIMS)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "bonusPlayerGroupSpace")
 				.setDefaultValue(0)
 				.setComment("The bonus space (in entries) you have available for your player groups on top of the base space. The space is shared by all your player groups.")
@@ -483,7 +510,7 @@ public class PlayerConfigOptions {
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleAbstractBonusGroupLimit)
 				.build(allOptions);
 		BONUS_CHUNK_CLAIMS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER || t == PlayerConfigType.PARTY_CLAIMS)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusChunkClaims")
 				.setDefaultValue(0)
 				.setComment("The number of additional chunk claims that you can make on top of the normal limit.")
@@ -492,7 +519,7 @@ public class PlayerConfigOptions {
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleAbstractBonusClaims)
 				.build(allOptions);
 		BONUS_CHUNK_FORCELOADS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
-				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
+				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER || t == PlayerConfigType.PARTY_CLAIMS)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusChunkForceloads")
 				.setDefaultValue(0)
 				.setComment("The number of additional chunk claim forceloads that you can make on top of the normal limit.")

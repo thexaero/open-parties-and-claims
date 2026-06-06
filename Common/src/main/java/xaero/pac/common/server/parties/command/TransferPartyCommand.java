@@ -88,8 +88,8 @@ public class TransferPartyCommand {
 								UUID targetPlayerId = targetMember.getUUID();
 								ServerPlayer newOwnerPlayer = server.getPlayerList().getPlayer(targetPlayerId);
 								if (newOwnerPlayer != null)
-									server.getCommands().sendCommands(newOwnerPlayer);
-								server.getCommands().sendCommands(player);
+									serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(newOwnerPlayer, serverData, false);
+								serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 								new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_transfer_success", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 								return 1;
 							}

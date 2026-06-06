@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.player.config.api.v2;
 
+import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.api.IServerPlayerConfigGroupManagerAPI;
 
@@ -182,12 +183,24 @@ public interface IPlayerConfigAPI {
 	public IPlayerConfigAPI getUsedSubConfig();
 
 	/**
+	 * @deprecated Use {@link #getUsedSubConfig(IClaimingModeAPI)} instead
+	 * <p>
 	 * Gets the server sub-config currently used for new claims.
 	 *
 	 * @return the server sub-config, not null
 	 */
+	@Deprecated
 	@Nonnull
 	public IPlayerConfigAPI getUsedServerSubConfig();
+
+	/**
+	 * Gets the sub-config currently used for new claims for a specified claiming mode.
+	 *
+	 * @param claimingMode  the claiming mode, not null
+	 * @return the sub-config used for the claiming mode, not null
+	 */
+	@Nonnull
+	public IPlayerConfigAPI getUsedSubConfig(@Nonnull IClaimingModeAPI claimingMode);
 
 	/**
 	 * Creates a new sub-config for a specified sub-config ID when possible.

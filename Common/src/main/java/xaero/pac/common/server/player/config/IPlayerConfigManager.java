@@ -19,6 +19,8 @@
 package xaero.pac.common.server.player.config;
 
 import net.minecraft.server.MinecraftServer;
+import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigManagerAPI;
 import xaero.pac.common.server.player.config.sync.IPlayerConfigSynchronizer;
 
@@ -32,6 +34,9 @@ public interface IPlayerConfigManager extends IPlayerConfigManagerAPI {
 	@Nonnull
 	@Override
 	public IPlayerConfig getLoadedConfig(@Nullable UUID id);
+	@Nullable
+	@Override
+	public IPlayerConfig getPartyOwnerConfig(@Nonnull UUID memberId);
 	@Nonnull
 	@Override
 	public IPlayerConfig getDefaultConfig();
@@ -46,5 +51,7 @@ public interface IPlayerConfigManager extends IPlayerConfigManagerAPI {
 	public IPlayerConfig getExpiredClaimConfig();
 	public IPlayerConfigSynchronizer getSynchronizer();
 	MinecraftServer getServer();
+	public IPlayerPartySystemManager getPartySystemManager();
+	public ForceLoadTicketManager getForceLoadTicketManager();
 	
 }

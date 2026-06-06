@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -58,11 +59,23 @@ public abstract class ServerPlayerDataAPI {
 	public abstract boolean isClaimsNonallyMode();
 
 	/**
+	 * @deprecated Use {@link #getClaimingMode()} instead
+	 * <p>
 	 * Checks if the player is using the server claim mode.
 	 *
 	 * @return true if the player is in the server claim mode, otherwise false
 	 */
+	@Deprecated
 	public abstract boolean isClaimsServerMode();
+
+	/**
+	 * Gets the current claiming mode.
+	 * <p>
+	 * All claiming modes can be accessed through {@link xaero.pac.common.claims.player.mode.api.ClaimingModes}
+	 *
+	 * @return the current claiming mode, not null
+	 */
+	public abstract IClaimingModeAPI getClaimingMode();
 
 	/**
 	 * Gets the player data for a specified logged in player.

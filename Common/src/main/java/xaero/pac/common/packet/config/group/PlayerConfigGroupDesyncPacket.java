@@ -24,6 +24,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
 import xaero.pac.client.player.config.group.IClientPlayerConfigGroupManager;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
@@ -69,6 +70,11 @@ public class PlayerConfigGroupDesyncPacket extends PlayerConfigAbstractGroupPack
 	}
 
 	public static class ServerHandler extends PlayerConfigAbstractGroupPacket.ServerHandler<PlayerConfigGroupDesyncPacket> {
+
+		@Override
+		protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId) {
+			return true;
+		}
 
 		@Override
 		public void handle(PlayerConfigGroupDesyncPacket packet, ServerPlayer serverPlayer, IServerPlayerConfigGroupManager groupManager, IPlayerConfig config) {

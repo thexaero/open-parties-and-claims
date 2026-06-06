@@ -104,6 +104,8 @@ public final class ServerRegionClaims extends RegionClaims<ServerPlayerClaimInfo
 	}
 
 	public boolean containsStateOwner(UUID ownerId){
+		if(ownerId == null)
+			return false;
 		return claimOwnerStateCounts.containsKey(ownerId);
 	}
 

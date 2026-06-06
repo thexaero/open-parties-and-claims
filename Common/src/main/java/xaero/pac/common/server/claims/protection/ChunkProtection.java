@@ -58,6 +58,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.function.TriFunction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -564,7 +565,7 @@ public class ChunkProtection
 				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission((ServerPlayer) accessor, playerData);
 				if (
 						playerData.isClaimsAdminMode() ||
-						playerData.isClaimsServerMode() &&
+						playerData.getClaimingMode() == ClaimingModes.SERVER &&
 								claimsManager.getPermissionHandler().playerHasServerClaimPermission((ServerPlayer) accessor) &&
 								claimConfig.getType() == PlayerConfigType.SERVER
 				)

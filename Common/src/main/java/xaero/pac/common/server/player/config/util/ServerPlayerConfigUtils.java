@@ -40,6 +40,8 @@ public class ServerPlayerConfigUtils {
 			return playerConfigs.getDefaultConfig();
 		if(type == PlayerConfigType.WILDERNESS)
 			return playerConfigs.getWildernessConfig();
+		if(type == PlayerConfigType.PARTY_CLAIMS)
+			return playerConfigs.getPartyOwnerConfig(callerId);
 		if(type != PlayerConfigType.PLAYER)
 			return null;
 		UUID effectiveOwnerId = ownerId == null ? callerId : ownerId;

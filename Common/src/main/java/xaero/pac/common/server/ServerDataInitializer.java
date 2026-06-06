@@ -66,8 +66,11 @@ import xaero.pac.common.server.player.PlayerWorldJoinHandler;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfigOptionCategory;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.player.config.permission.PlayerConfigPermissionUpdater;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.party.PrimaryPartyOnlineCounter;
+import xaero.pac.common.server.player.party.ServerPlayerPartyOnlineCounterUpdater;
 import xaero.pac.common.server.player.permission.PlayerPermissionChangeHandler;
 import xaero.pac.common.server.player.permission.PlayerPermissionSystemManager;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
@@ -137,10 +140,13 @@ public class ServerDataInitializer {
 					.build();
 			serverTickHandler.registerSpreadoutTaskHandler(partyRemovalTaskHandler);
 
+			PlayerPartySystemManager playerPartySystemManager = PlayerPartySystemManager.Builder.begin(LinkedHashMap::new).build();
+			ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater = new ServerPlayerPartyOnlineCounterUpdater();
 			PartyPlayerInfoUpdater partyMemberInfoUpdater = new PartyPlayerInfoUpdater();
 			PartyManager partyManager = PartyManager.Builder.begin()
 					.setServer(server)
 					.setPartyRemovalTaskHandler(partyRemovalTaskHandler)
+					.setPlayerPartyOnlineCounterUpdater(playerPartyOnlineCounterUpdater)
 					.build();
 			PartyExpirationHandler partyExpirationHandler = PartyExpirationHandler.Builder.begin()
 					.setManager(partyManager)
@@ -164,7 +170,10 @@ public class ServerDataInitializer {
 			partyManager.setIo(partyManagerIO);
 			
 			PlayerLogInPartyAssigner playerPartyAssigner = new PlayerLogInPartyAssigner();
-			PlayerTickHandler playerTickHandler = PlayerTickHandler.Builder.begin().build();
+			PlayerConfigPermissionUpdater playerConfigPermissionUpdater = new PlayerConfigPermissionUpdater();
+			PlayerTickHandler playerTickHandler = PlayerTickHandler.Builder.begin()
+					.setPlayerClaimPartyForceloadUpdater(playerPartyOnlineCounterUpdater)
+					.build();
 			PlayerLoginHandler playerLoginHandler = new PlayerLoginHandler();
 			PlayerLogoutHandler playerLogoutHandler = new PlayerLogoutHandler();
 			PlayerPermissionChangeHandler playerPermissionChangeHandler = new PlayerPermissionChangeHandler();
@@ -193,6 +202,7 @@ public class ServerDataInitializer {
 			PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs = PlayerConfigManager.Builder.<ServerParty, ServerClaimsManager>begin()
 					.setServer(server)
 					.setPartyManager(partyManager)
+					.setPartySystemManager(playerPartySystemManager)
 					.setBlockExceptionGroups(blockExceptionGroups)
 					.setEntityExceptionGroups(entityExceptionGroups)
 					.setItemExceptionGroups(itemExceptionGroups)
@@ -201,6 +211,7 @@ public class ServerDataInitializer {
 					.setEntityAccessEntityGroups(entityAccessEntityGroups)
 					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
+			playerPartySystemManager.setConfigManager(playerConfigs);
 			partyManager.setPlayerConfigs(playerConfigs);
 			PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO = PlayerConfigIO.Builder.<ServerParty, ServerClaimsManager>begin()
 					.setServer(server)
@@ -218,6 +229,11 @@ public class ServerDataInitializer {
 			}
 
 			ForceLoadTicketManager forceLoadManager = playerConfigs.getForceLoadTicketManager();
+			PrimaryPartyOnlineCounter primaryPartyOnlineCounter = PrimaryPartyOnlineCounter.Builder.begin()
+					.setForceloadManager(forceLoadManager)
+					.build();
+			forceLoadManager.setPrimaryPartyOnlineCounter(primaryPartyOnlineCounter);
+			playerPartyOnlineCounterUpdater.setPrimaryPartyOnlineCounter(primaryPartyOnlineCounter);
 			ClaimsManagerSynchronizer claimsSynchronizer = ClaimsManagerSynchronizer.Builder.begin().setServer(server).build();
 			ServerClaimsPermissionHandler serverClaimsPermissionHandler = new ServerClaimsPermissionHandler();
 			ServerClaimsManager serverClaimsManager = ServerClaimsManager.Builder.begin()
@@ -227,6 +243,7 @@ public class ServerDataInitializer {
 					.setClaimsManagerSynchronizer(claimsSynchronizer)
 					.setClaimReplaceTaskHandler(claimReplaceTaskHandler)
 					.setPermissionHandler(serverClaimsPermissionHandler)
+					.setPartySystemManager(playerPartySystemManager)
 					.build();
 			forceLoadManager.setClaimsManager(serverClaimsManager);
 			playerConfigs.setClaimsManager(serverClaimsManager);
@@ -251,7 +268,6 @@ public class ServerDataInitializer {
 			serverClaimsManager.setExpirationHandler(claimsExpirationHandler);
 
 			PlayerPermissionSystemManager playerPermissionSystemManager = PlayerPermissionSystemManager.Builder.begin(LinkedHashMap::new).build();
-			PlayerPartySystemManager playerPartySystemManager = PlayerPartySystemManager.Builder.begin(LinkedHashMap::new).build();
 			ObjectManagerLiveSaver playerClaimInfoLiveSaver = new ObjectManagerLiveSaver(playerClaimInfoManagerIO, autosaveInterval, autosaveInterval / 3 * 2);
 			ChunkProtection<ServerClaimsManager> chunkProtection = ChunkProtection.Builder
 					.<ServerClaimsManager>begin()
@@ -271,8 +287,8 @@ public class ServerDataInitializer {
 
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 
 					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
-					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
-					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, playerWorldJoinHandler, serverInfo, serverInfoIO, 
+					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerConfigPermissionUpdater, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
+					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, primaryPartyOnlineCounter, playerWorldJoinHandler, serverInfo, serverInfoIO,
 					claimsExpirationHandler, objectExpirationCheckTaskHandler, playerPermissionSystemManager, playerPartySystemManager);
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);

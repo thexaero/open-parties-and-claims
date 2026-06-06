@@ -40,6 +40,7 @@ import xaero.pac.common.server.parties.party.ServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.sync.IPlayerConfigSynchronizer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import java.util.List;
@@ -209,6 +210,50 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		IPlayerConfig ownerConfig = party == null ? null : playerConfigs.getLoadedConfig(party.getOwner().getUUID());
 		String configuredName = ownerConfig == null ? null : ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 		return configuredName;
+	}
+
+	public void resyncPartyNameForClaims(UUID partyOwner) {
+		//will only resync if the default party system is used
+		serverData.getServerClaimsManager().getPlayerInfo(partyOwner).resyncPartyName(partyManager.getPartySystem());
+	}
+
+	public void syncPrimaryPartySwitch(UUID partyOwner, PartyMember member){
+		if(serverData.getPlayerPartySystemManager().getPrimarySystem() != partyManager.getPartySystem())
+			return;
+		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+			return;
+		PlayerList playerList = server.getPlayerList();
+		ServerPlayer player = playerList.getPlayer(member.getUUID());
+		if(player == null)
+			return;
+		IPlayerConfig partyConfig = partyOwner == null ? null : serverData.getPlayerConfigManager().getLoadedConfig(partyOwner);
+		syncPrimaryPartySwitch(player, partyOwner, partyConfig);
+	}
+
+	public void syncPrimaryPartySwitchForAll(ServerParty serverParty) {
+		if(serverData.getPlayerPartySystemManager().getPrimarySystem() != partyManager.getPartySystem())
+			return;
+		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+			return;
+		UUID partyOwner = serverParty.getOwner().getUUID();
+		IPlayerConfig partyConfig = serverData.getPlayerConfigManager().getLoadedConfig(partyOwner);
+		serverParty.getOnlineMemberStream().forEach(
+				player -> syncPrimaryPartySwitch(player, partyOwner, partyConfig)
+		);
+	}
+
+	private void syncPrimaryPartySwitch(ServerPlayer player, UUID partyOwner, IPlayerConfig partyConfig){
+		IPlayerConfigSynchronizer playerConfigSynchronizer = serverData.getPlayerConfigManager().getSynchronizer();
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+		UUID lastPartyOwner = playerData.getLastPartyClaimsSyncPartyOwner();
+		playerData.setLastPartyClaimsSync(System.currentTimeMillis(), partyOwner);
+		playerConfigSynchronizer.requestPartyClaimsConfigSync(partyConfig, player);
+		if(ServerConfig.CONFIG.claimsSynchronization.get() != ServerConfig.ClaimsSyncType.OWNED_ONLY)
+			return;
+		if((lastPartyOwner == null || partyOwner == null) &&
+				(player.getUUID().equals(lastPartyOwner) || player.getUUID().equals(partyOwner)))//don't need a resync in such cases because nothing changes
+			return;
+		serverData.getServerClaimsManager().getClaimsManagerSynchronizer().fullClaimsSync(player, true);
 	}
 
 	@Override

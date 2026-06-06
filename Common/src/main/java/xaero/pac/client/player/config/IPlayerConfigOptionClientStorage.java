@@ -28,8 +28,8 @@ public interface IPlayerConfigOptionClientStorage<T> extends IPlayerConfigOption
 
 	public void setCastValue(Object value);
 	
-	public void setDefaulted(boolean defaulted);
-	
-	public void setMutable(boolean mutable);
+	public void setPlayerMutable(boolean mutable);
+
+	public void setAdminMutable(boolean mutable);
 
 }
