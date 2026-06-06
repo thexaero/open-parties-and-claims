@@ -233,13 +233,13 @@ public class MainMenu extends XPACScreen {
 			boolean wouldClaim = wouldClaim(currentClaim);
 			claimButton.setMessage(wouldClaim ? CLAIM : UNCLAIM);
 			claimButton.setTooltip(Tooltip.create(wouldClaim ? CLAIM_COMMAND : UNCLAIM_COMMAND));
-			claimButton.getTooltip().setDelay(-1);
+//			claimButton.getTooltip().setDelay(-1);
 
 			forceloadButton.active = currentClaim != null && (adminMode || currentClaim.getPlayerId().equals(claimTargetUUID));
 			boolean wouldForceload = currentClaim == null || !currentClaim.isForceloadable();
 			forceloadButton.setMessage(wouldForceload ? FORCELOAD : UNFORCELOAD);
 			forceloadButton.setTooltip(Tooltip.create(wouldForceload ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND));
-			forceloadButton.getTooltip().setDelay(-1);
+//			forceloadButton.getTooltip().setDelay(-1);
 
 			updateClaimingModeDropdown(claimsManager);
 		}
