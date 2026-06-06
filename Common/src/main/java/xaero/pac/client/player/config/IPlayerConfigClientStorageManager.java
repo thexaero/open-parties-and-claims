@@ -46,6 +46,9 @@ public interface IPlayerConfigClientStorageManager<CS extends IPlayerConfigClien
 	@Override
 	@Nonnull
 	public CS getMyPlayerConfig();
+	@Override
+	@Nonnull
+	public CS getPartyClaimsConfig();
 
 	public void setOtherPlayerConfig(CS otherPlayerConfig);
 	public CS getOtherPlayerConfig();
@@ -53,4 +56,7 @@ public interface IPlayerConfigClientStorageManager<CS extends IPlayerConfigClien
 	public void setWaitingForOtherPlayerConfig(boolean waitingForOtherPlayerConfig);
 	public IPlayerConfigClientStorage.IBuilder<CS> beginConfigStorageBuild(MapFactory mapFactory);
 	public void setDynamicOptions(PlayerConfigDynamicOptions dynamicOptions);
+	void setAdmin(boolean admin);
+	boolean isAdmin();
+
 }

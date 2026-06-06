@@ -125,10 +125,24 @@ public interface IPlayerConfigOptionClientStorageAPI<T> {
 	public boolean isDefaulted();
 
 	/**
-	 * Checks whether the local client player can edit this option's value.
+	 * Checks whether the local client player can edit this option's value, taking permissions into account.
 	 *
 	 * @return true if the option value is mutable, otherwise false
 	 */
 	public boolean isMutable();
+
+	/**
+	 * Checks whether the local client player can edit this option's value, regardless of admin status.
+	 *
+	 * @return true if the option value is player-mutable, otherwise false
+	 */
+	public boolean isPlayerMutable();
+
+	/**
+	 * Checks whether the local client player can edit this option's value if the player is a config admin (op).
+	 *
+	 * @return true if the option value is admin-mutable, otherwise false
+	 */
+	public boolean isAdminMutable();
 	
 }

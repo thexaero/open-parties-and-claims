@@ -46,22 +46,25 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfigDeletionStarter;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
-import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
-import static xaero.pac.common.server.command.ConfigCommandUtil.getSubConfigSuggestionProvider;
+import static xaero.pac.common.server.command.ConfigCommandUtil.*;
 
 public class ConfigSubDeleteCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
 		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER);
+		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS);
 
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
+		SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PARTY_CLAIMS);
 
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
 				.then(Commands.literal("player-config")
@@ -79,11 +82,27 @@ public class ConfigSubDeleteCommand {
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(getMainCommandPart(serverSubConfigSuggestionProvider, serverExecutor)));
 		dispatcher.register(command);
+
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
+				.requires(getPartyClaimsRequirement(false))
+				.then(getMainCommandPart(partySubConfigSuggestionProvider, partyExecutor, getPartyClaimsRequirement(true))));
+		dispatcher.register(command);
 	}
 
-	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(SuggestionProvider<CommandSourceStack> subConfigSuggestionProvider, Command<CommandSourceStack> executor){
+	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(
+			SuggestionProvider<CommandSourceStack> subConfigSuggestionProvider,
+			Command<CommandSourceStack> executor
+	){
+		return getMainCommandPart(subConfigSuggestionProvider, executor, s -> true);
+	}
+
+	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(
+			SuggestionProvider<CommandSourceStack> subConfigSuggestionProvider,
+			Command<CommandSourceStack> executor,
+			Predicate<CommandSourceStack> requirement
+	){
 		return Commands.literal("sub")
-				.then(Commands.literal("delete")
+				.then(Commands.literal("delete").requires(requirement)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
 				.suggests(subConfigSuggestionProvider)
 				.executes(executor)));
@@ -98,25 +117,29 @@ public class ConfigSubDeleteCommand {
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
-			NameAndId inputPlayer = null;
-			UUID configPlayerUUID;
+			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
-				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
+				NameAndId inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_delete_sub_too_many_targets",
 						"gui.xaero_pac_config_delete_sub_invalid_target", adaptiveLocalizer);
 				if(inputPlayer == null)
 					return 0;
 				configPlayerUUID = inputPlayer.id();
-			} else
-				configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
-
+			}
 
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			if(serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
 				return 0;//going too fast
 			playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
 
-			PlayerConfig<?> playerConfig = (PlayerConfig<?>) serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
+			PlayerConfig<?> playerConfig = (PlayerConfig<?>) ServerPlayerConfigUtils.getTargetConfig(
+					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+			);
+			if(playerConfig == null) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
+				return 0;
+			}
+			configPlayerUUID = playerConfig.getPlayerId();
 			PlayerConfig<?> result = playerConfig.getSubConfig(inputSubId);
 			if(result == null){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_not_exist"));

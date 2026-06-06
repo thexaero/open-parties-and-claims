@@ -60,7 +60,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
-import xaero.pac.common.event.api.OPACServerAddonRegister;
+import xaero.pac.common.event.api.v2.OPACServerAddonRegister;
 import xaero.pac.common.mods.ModSupportFabric;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -72,7 +72,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCoreFabric;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
@@ -274,6 +274,8 @@ public class CommonEventsFabric extends CommonEvents {
 	@Override
 	public void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker());
+		//TODO remove this when the deprecated event is removed
+		xaero.pac.common.event.api.OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker());
 	}
 
 }

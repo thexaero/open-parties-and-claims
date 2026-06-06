@@ -52,9 +52,9 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI.SetResult;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
@@ -89,29 +89,36 @@ public class ConfigSetCommand {
 		SuggestionProvider<CommandSourceStack> optionSuggestor = ConfigGetOrHelpCommand.getOptionSuggestor();
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
+		SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PARTY_CLAIMS);
 
 		registerSetCommands("set", dispatcher, optionSuggestor, playerSubConfigSuggestionProvider,
-				serverSubConfigSuggestionProvider, false);
+				serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider, false);
 
 		registerSetCommands("reset", dispatcher, optionSuggestor, playerSubConfigSuggestionProvider,
-				serverSubConfigSuggestionProvider, true);
+				serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider, true);
 	}
 
-	private void registerSetCommands(String literalPrefix, CommandDispatcher<CommandSourceStack> dispatcher,
-									 SuggestionProvider<CommandSourceStack> optionSuggestor,
-									 SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider,
-									 SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider,
-									 boolean reset){
+	private void registerSetCommands(
+			String literalPrefix,
+			CommandDispatcher<CommandSourceStack> dispatcher,
+			SuggestionProvider<CommandSourceStack> optionSuggestor,
+			SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider,
+			SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider,
+			SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider,
+			boolean reset
+	){
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER, reset);
 		Command<CommandSourceStack> defaultExecutor = getExecutor(PlayerConfigType.DEFAULT_PLAYER, reset);
 		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER, reset);
 		Command<CommandSourceStack> expiredExecutor = getExecutor(PlayerConfigType.EXPIRED, reset);
 		Command<CommandSourceStack> wildernessExecutor = getExecutor(PlayerConfigType.WILDERNESS, reset);
+		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS, reset);
 		SuggestionProvider<CommandSourceStack> regularValueSuggestor = getValueSuggestor(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> defaultValueSuggestor = getValueSuggestor(PlayerConfigType.DEFAULT_PLAYER);
 		SuggestionProvider<CommandSourceStack> serverValueSuggestor = getValueSuggestor(PlayerConfigType.SERVER);
 		SuggestionProvider<CommandSourceStack> expiredValueSuggestor = getValueSuggestor(PlayerConfigType.EXPIRED);
 		SuggestionProvider<CommandSourceStack> wildernessValueSuggestor = getValueSuggestor(PlayerConfigType.WILDERNESS);
+		SuggestionProvider<CommandSourceStack> partyValueSuggestor = getValueSuggestor(PlayerConfigType.PARTY_CLAIMS);
 
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal(literalPrefix)
@@ -191,6 +198,24 @@ public class ConfigSetCommand {
 				.then(addValueArgumentIfNeeded(reset, wildernessExecutor, wildernessValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
 		dispatcher.register(command);
+
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
+				.requires(getPartyClaimsRequirement(false))
+				.then(Commands.literal(literalPrefix).requires(getPartyClaimsRequirement(true))
+				.then(addValueArgumentIfNeeded(reset, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.suggests(optionSuggestor)))));
+		dispatcher.register(command);
+
+		//sub version of this ^
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
+				.requires(getPartyClaimsRequirement(false))
+				.then(Commands.literal("sub")
+				.then(Commands.literal(literalPrefix).requires(getPartyClaimsRequirement(true))
+				.then(Commands.argument("sub-id", StringArgumentType.word())
+				.suggests(partySubConfigSuggestionProvider)
+				.then(addValueArgumentIfNeeded(reset, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.suggests(optionSuggestor)))))));
+		dispatcher.register(command);
 	}
 
 	private <T extends ArgumentBuilder<CommandSourceStack, T>> T addValueArgumentIfNeeded(
@@ -226,8 +251,12 @@ public class ConfigSetCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, PlayerConfigConstants.OPTION_NOT_DIRECTLY_CONFIGURABLE));
 				return 0;
 			}
+			if(!option.getConfigTypeFilter().test(type)){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_illegal_option"));
+				return 0;
+			}
 			NameAndId inputPlayer = null;
-			UUID configPlayerUUID = type == PlayerConfigType.SERVER ? PlayerConfig.SERVER_CLAIM_UUID : null;
+			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_option_set_too_many_targets",
@@ -239,12 +268,14 @@ public class ConfigSetCommand {
 
 			String valueInput = reset ? null : StringArgumentType.getString(context, "value");
 			
-			IPlayerConfig playerConfig =
-					type == PlayerConfigType.DEFAULT_PLAYER ?
-						serverData.getPlayerConfigManager().getDefaultConfig() :
-							type == PlayerConfigType.EXPIRED ?
-								serverData.getPlayerConfigManager().getExpiredClaimConfig() :
-										serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
+			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
+					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+			);
+			if(playerConfig == null) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
+				return 0;
+			}
+			configPlayerUUID = playerConfig.getPlayerId();
 			IPlayerConfig effectivePlayerConfig = getEffectiveConfig(context, playerConfig);
 			if(effectivePlayerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_sub"));

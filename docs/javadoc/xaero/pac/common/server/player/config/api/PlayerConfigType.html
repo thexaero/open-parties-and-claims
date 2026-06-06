@@ -113,16 +113,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Expired claims config</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#PLAYER" class="member-name-link">PLAYER</a></code></div>
+<div class="col-first even-row-color"><code><a href="#PARTY_CLAIMS" class="member-name-link">PARTY_CLAIMS</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Party claims config</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#PLAYER" class="member-name-link">PLAYER</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A player config</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#SERVER" class="member-name-link">SERVER</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#SERVER" class="member-name-link">SERVER</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Server claims config</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#WILDERNESS" class="member-name-link">WILDERNESS</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#WILDERNESS" class="member-name-link">WILDERNESS</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Wilderness config</div>
 </div>
 </div>
@@ -144,14 +148,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the display name of the config type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="v2/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSubClaimOption()" class="member-name-link">getSubClaimOption</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the player config option used for storing the sub-config ID currently used for claiming for a config of
+ this type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </div>
@@ -210,6 +220,13 @@ the order they are declared.</div>
 <div class="block">A player config</div>
 </section>
 </li>
+<li>
+<section class="detail" id="PARTY_CLAIMS">
+<h3>PARTY_CLAIMS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></span>&nbsp;<span class="element-name">PARTY_CLAIMS</span></div>
+<div class="block">Party claims config</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -258,6 +275,19 @@ not permitted.)</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the display name of the config type, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubClaimOption()">
+<h3>getSubClaimOption</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="v2/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">getSubClaimOption</span>()</div>
+<div class="block">Gets the player config option used for storing the sub-config ID currently used for claiming for a config of
+ this type.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the player config option used for storing the sub-config ID used for claiming, can be null</dd>
 </dl>
 </section>
 </li>

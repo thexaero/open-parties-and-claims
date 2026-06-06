@@ -22,7 +22,7 @@ import net.minecraft.network.chat.Component;
 
 public class PacketConstants {
 
-	public static final int NETWORK_VERSION = 1;
+	public static final int NETWORK_VERSION = 2;
 	public static final Component NETWORK_VERSION_MISMATCH =
 			Component.literal("Open Parties and Claims versions between server and client aren't compatible!");
 

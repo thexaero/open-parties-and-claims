@@ -88,7 +88,7 @@ extends <a href="../../../../claims/player/api/IPlayerClaimInfoAPI.html" title="
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -158,9 +158,25 @@ extends <a href="../../../../claims/player/api/IPlayerClaimInfoAPI.html" title="
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a stream of all dimension claim info entries for the player.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#resyncPartyName(xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)" class="member-name-link">resyncPartyName</a><wbr>(<a href="../../../parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a>&lt;?&gt;&nbsp;partySystem)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#resyncPartyName(xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)"><code>resyncPartyName(IPlayerPartySystemAPI)</code></a> instead.</div>
+</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#resyncPartyName(xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)" class="member-name-link">resyncPartyName</a><wbr>(<a href="../../../parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;?&gt;&nbsp;partySystem)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Resyncs the name of the party that owns the claims stored in this player claim info, which is displayed when the
+ mod is in party-owned-claims mode.</div>
 </div>
 </div>
 </div>
+</div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-xaero.pac.common.claims.player.api.IPlayerClaimInfoAPI">Methods inherited from interface&nbsp;xaero.pac.common.claims.player.api.<a href="../../../../claims/player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a></h3>
+<code><a href="../../../../claims/player/api/IPlayerClaimInfoAPI.html#isPartyOwned()">isPartyOwned</a></code></div>
 </section>
 </li>
 </ul>
@@ -372,6 +388,55 @@ extends <a href="../../../../claims/player/api/IPlayerClaimInfoAPI.html" title="
 <dd><code>subId</code> - the string ID of the sub-config used by the sub-claim, not null</dd>
 <dt>Returns:</dt>
 <dd>the sub-claim color Integer, null if no such sub-claim exists</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="resyncPartyName(xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)">
+<h3>resyncPartyName</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">resyncPartyName</span><wbr><span class="parameters">(@Nonnull
+ <a href="../../../parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;?&gt;&nbsp;partySystem)</span></div>
+<div class="block">Resyncs the name of the party that owns the claims stored in this player claim info, which is displayed when the
+ mod is in party-owned-claims mode. The party that owns the claims is the party owned by this player.
+ <p>
+ If the specified party system argument is not the primary system, then nothing will happen, as only the primary
+ party system is used in party-owned-claims mode. So if a party is renamed in any of the party systems, then this
+ method can be safely called, whether it's the primary system or not.
+ <p>
+ Calling this method is optional because the mod automatically detects party name changes every second, if at
+ least one party member is online. This method can be used to speed it up or to update the name for parties that
+ don't have anyone online. The default built-in party system does so.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>partySystem</code> - the party system in which the party owned by this player was renamed and might require
+                        resync, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="resyncPartyName(xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)">
+<h3>resyncPartyName</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resyncPartyName</span><wbr><span class="parameters">(@Nonnull
+ <a href="../../../parties/system/api/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a>&lt;?&gt;&nbsp;partySystem)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#resyncPartyName(xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)"><code>resyncPartyName(IPlayerPartySystemAPI)</code></a> instead.
+ <p>
+ Resyncs the name of the party that owns the claims stored in this player claim info, which is displayed when the
+ mod is in party-owned-claims mode. The party that owns the claims is the party owned by this player.
+ <p>
+ If the specified party system argument is not the primary system, then nothing will happen, as only the primary
+ party system is used in party-owned-claims mode. So if a party is renamed in any of the party systems, then this
+ method can be safely called, whether it's the primary system or not.
+ <p>
+ Calling this method is optional because the mod automatically detects party name changes every second, if at
+ least one party member is online. This method can be used to speed it up or to update the name for parties that
+ don't have anyone online. The default built-in party system does so.</div>
+</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>partySystem</code> - the party system in which the party owned by this player was renamed and might require
+                        resync, not null</dd>
 </dl>
 </section>
 </li>

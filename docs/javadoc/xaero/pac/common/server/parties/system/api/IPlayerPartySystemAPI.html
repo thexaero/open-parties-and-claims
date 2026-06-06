@@ -76,9 +76,18 @@ loadScripts(document, 'script');</script>
 <dt>Type Parameters:</dt>
 <dd><code>P</code> - the type of parties in the implemented system</dd>
 </dl>
+<dl class="notes">
+<dt>All Superinterfaces:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;P&gt;</code></dd>
+</dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerPartySystemAPI&lt;P&gt;</span></div>
-<div class="block">The interface to be overridden by addons that wish to implement additional party systems to be used
+<div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerPartySystemAPI&lt;P&gt;</span><span class="extends-implements">
+extends <a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;P&gt;</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2"><code>IPlayerPartySystemAPI</code></a> instead
+ <p>
+ The interface to be overridden by addons that wish to implement additional party systems to be used
  by Open Parties and Claims (just the claiming feature as of writing this).
  <p>
  Player position synchronization is a part of the default party system. Similar functionality should
@@ -87,6 +96,7 @@ loadScripts(document, 'script');</script>
  even if they're implemented using this interface.
  <p>
  Party system implementations must be registered in <a href="IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api"><code>IPlayerPartySystemRegisterAPI</code></a>.</div>
+</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -95,37 +105,62 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPartyByMember(java.util.UUID)" class="member-name-link">getPartyByMember</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the party that the player with a specified UUID is a part of.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#canCreatePartyConfigGroups(java.util.UUID)" class="member-name-link">canCreatePartyConfigGroups</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Checks if a player is permitted to create player groups in the party's claims config (the party owner's config).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPartyByOwner(java.util.UUID)" class="member-name-link">getPartyByOwner</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the party that the player with a specified UUID owns.</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#canEditPartyConfig(java.util.UUID)" class="member-name-link">canEditPartyConfig</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Checks if a player is permitted to edit the party's claims config (the party owner's config).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isPermittedToPartyClaim(java.util.UUID)" class="member-name-link">isPermittedToPartyClaim</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks if a player is permitted to claim as the party that they belong to but don't own.</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#canIncludeGroupsInPartyConfigGroups(java.util.UUID)" class="member-name-link">canIncludeGroupsInPartyConfigGroups</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Checks if a player is permitted to include/exclude player groups in other player groups in the
+ party's claims config (the party owner's config).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isPlayerAllying(java.util.UUID,java.util.UUID)" class="member-name-link">isPlayerAllying</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;potentialAllyPlayerId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks if a player with UUID <code>playerId</code> considers a player with UUID <code>potentialAllyPlayerId</code>
- an ally.</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#canIncludePlayersInPartyConfigGroups(java.util.UUID)" class="member-name-link">canIncludePlayersInPartyConfigGroups</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Checks if a player is permitted to include/exclude players in player groups in the
+ party's claims config (the party owner's config).</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#getMemberCount(P)" class="member-name-link">getMemberCount</a><wbr>(<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&nbsp;party)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Gets the member count of a specified party.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#getName(P)" class="member-name-link">getName</a><wbr>(<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&nbsp;party)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Gets the display name of a specified party.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#getOwner(P)" class="member-name-link">getOwner</a><wbr>(<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&nbsp;party)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Gets the UUID of the owner of a specified party.</div>
 </div>
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI">Methods inherited from interface&nbsp;xaero.pac.common.server.parties.system.api.v2.<a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></h3>
+<code><a href="v2/IPlayerPartySystemAPI.html#getPartyByMember(java.util.UUID)">getPartyByMember</a>, <a href="v2/IPlayerPartySystemAPI.html#getPartyByOwner(java.util.UUID)">getPartyByOwner</a>, <a href="v2/IPlayerPartySystemAPI.html#isPermittedToPartyClaim(java.util.UUID)">isPermittedToPartyClaim</a>, <a href="v2/IPlayerPartySystemAPI.html#isPlayerAllying(java.util.UUID,java.util.UUID)">isPlayerAllying</a></code></div>
 </section>
 </li>
 </ul>
@@ -138,66 +173,132 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="getPartyByOwner(java.util.UUID)">
-<h3>getPartyByOwner</h3>
+<section class="detail" id="canEditPartyConfig(java.util.UUID)">
+<h3>canEditPartyConfig</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canEditPartyConfig</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html#canEditPartyConfig(java.util.UUID)">IPlayerPartySystemAPI</a></code></span></div>
+<div class="block">Checks if a player is permitted to edit the party's claims config (the party owner's config).</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html#canEditPartyConfig(java.util.UUID)">canEditPartyConfig</a></code>&nbsp;in interface&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the UUID of the player, not null</dd>
+<dt>Returns:</dt>
+<dd>true, if the player is permitted to edit the party's claims config, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="canCreatePartyConfigGroups(java.util.UUID)">
+<h3>canCreatePartyConfigGroups</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canCreatePartyConfigGroups</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html#canCreatePartyConfigGroups(java.util.UUID)">IPlayerPartySystemAPI</a></code></span></div>
+<div class="block">Checks if a player is permitted to create player groups in the party's claims config (the party owner's config).</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html#canCreatePartyConfigGroups(java.util.UUID)">canCreatePartyConfigGroups</a></code>&nbsp;in interface&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the UUID of the player, not null</dd>
+<dt>Returns:</dt>
+<dd>true, if the player is permitted to create player groups, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="canIncludeGroupsInPartyConfigGroups(java.util.UUID)">
+<h3>canIncludeGroupsInPartyConfigGroups</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canIncludeGroupsInPartyConfigGroups</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html#canIncludeGroupsInPartyConfigGroups(java.util.UUID)">IPlayerPartySystemAPI</a></code></span></div>
+<div class="block">Checks if a player is permitted to include/exclude player groups in other player groups in the
+ party's claims config (the party owner's config).</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html#canIncludeGroupsInPartyConfigGroups(java.util.UUID)">canIncludeGroupsInPartyConfigGroups</a></code>&nbsp;in interface&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the UUID of the player, not null</dd>
+<dt>Returns:</dt>
+<dd>true, if the player is permitted to include/exclude player groups in other player groups, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="canIncludePlayersInPartyConfigGroups(java.util.UUID)">
+<h3>canIncludePlayersInPartyConfigGroups</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canIncludePlayersInPartyConfigGroups</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html#canIncludePlayersInPartyConfigGroups(java.util.UUID)">IPlayerPartySystemAPI</a></code></span></div>
+<div class="block">Checks if a player is permitted to include/exclude players in player groups in the
+ party's claims config (the party owner's config).</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html#canIncludePlayersInPartyConfigGroups(java.util.UUID)">canIncludePlayersInPartyConfigGroups</a></code>&nbsp;in interface&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the UUID of the player, not null</dd>
+<dt>Returns:</dt>
+<dd>true, if the player is permitted to include/exclude player groups in other player groups, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getOwner(P)">
+<h3 id="getOwner(java.lang.Object)">getOwner</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="return-type"><a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a></span>&nbsp;<span class="element-name">getPartyByOwner</span><wbr><span class="parameters">(@Nonnull
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
-<div class="block">Gets the party that the player with a specified UUID owns.</div>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></span>&nbsp;<span class="element-name">getOwner</span><wbr><span class="parameters">(@Nonnull
+ <a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&nbsp;party)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html#getOwner(P)">IPlayerPartySystemAPI</a></code></span></div>
+<div class="block">Gets the UUID of the owner of a specified party.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html#getOwner(P)">getOwner</a></code>&nbsp;in interface&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>playerId</code> - the UUID of the player, not null</dd>
+<dd><code>party</code> - the party the owner of which will be returned, not null</dd>
 <dt>Returns:</dt>
-<dd>the party that the player owns, null if the player doesn't own one</dd>
+<dd>the UUID of the party owner, null if the party has no owner (things won't work!)</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getPartyByMember(java.util.UUID)">
-<h3>getPartyByMember</h3>
+<section class="detail" id="getName(P)">
+<h3 id="getName(java.lang.Object)">getName</h3>
 <div class="member-signature"><span class="annotations">@Nullable
-</span><span class="return-type"><a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a></span>&nbsp;<span class="element-name">getPartyByMember</span><wbr><span class="parameters">(@Nonnull
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
-<div class="block">Gets the party that the player with a specified UUID is a part of.</div>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getName</span><wbr><span class="parameters">(@Nonnull
+ <a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&nbsp;party)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html#getName(P)">IPlayerPartySystemAPI</a></code></span></div>
+<div class="block">Gets the display name of a specified party.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html#getName(P)">getName</a></code>&nbsp;in interface&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>playerId</code> - the UUID of the player, not null</dd>
+<dd><code>party</code> - the party the display name of which will be returned, not null</dd>
 <dt>Returns:</dt>
-<dd>the party that the player is in, null if the player isn't in one</dd>
+<dd>the party display name as a Component, null if the party doesn't have one</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="isPlayerAllying(java.util.UUID,java.util.UUID)">
-<h3>isPlayerAllying</h3>
-<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isPlayerAllying</span><wbr><span class="parameters">(@Nonnull
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
- @Nonnull
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;potentialAllyPlayerId)</span></div>
-<div class="block">Checks if a player with UUID <code>playerId</code> considers a player with UUID <code>potentialAllyPlayerId</code>
- an ally.</div>
+<section class="detail" id="getMemberCount(P)">
+<h3 id="getMemberCount(java.lang.Object)">getMemberCount</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getMemberCount</span><wbr><span class="parameters">(@Nonnull
+ <a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&nbsp;party)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html#getMemberCount(P)">IPlayerPartySystemAPI</a></code></span></div>
+<div class="block">Gets the member count of a specified party.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="v2/IPlayerPartySystemAPI.html#getMemberCount(P)">getMemberCount</a></code>&nbsp;in interface&nbsp;<code><a href="v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a>&lt;<a href="IPlayerPartySystemAPI.html" title="type parameter in IPlayerPartySystemAPI">P</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>playerId</code> - the UUID of the player to check the allies of, not null</dd>
-<dd><code>potentialAllyPlayerId</code> - the UUID of the player to check the ally status of, not null</dd>
+<dd><code>party</code> - the party the member count of which will be returned, not null</dd>
 <dt>Returns:</dt>
-<dd>true, if <code>playerId</code> considers <code>potentialAllyPlayerId</code> an ally, otherwise false</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="isPermittedToPartyClaim(java.util.UUID)">
-<h3>isPermittedToPartyClaim</h3>
-<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isPermittedToPartyClaim</span><wbr><span class="parameters">(@Nonnull
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
-<div class="block">Checks if a player is permitted to claim as the party that they belong to but don't own.
- <p>
- This is not used by Open Parties and Claims as of writing this.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>playerId</code> - the UUID of the player, not null</dd>
-<dt>Returns:</dt>
-<dd>true, if the player is permitted to claim as the party, otherwise false</dd>
+<dd>the member count of the party</dd>
 </dl>
 </section>
 </li>

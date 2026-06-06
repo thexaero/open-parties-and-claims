@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -191,46 +191,53 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the type <a href="../PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api"><code>PlayerConfigType</code></a> of this config.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getUsedServerSubConfig()" class="member-name-link">getUsedServerSubConfig</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the server sub-config currently used for new claims.</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#getUsedServerSubConfig()" class="member-name-link">getUsedServerSubConfig</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#getUsedSubConfig(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>getUsedSubConfig(IClaimingModeAPI)</code></a> instead</div>
+</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getUsedSubConfig()" class="member-name-link">getUsedSubConfig</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the sub-config currently used for new claims.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isBeingDeleted()" class="member-name-link">isBeingDeleted</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getUsedSubConfig(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getUsedSubConfig</a><wbr>(<a href="../../../../../claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the sub-config currently used for new claims for a specified claiming mode.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isBeingDeleted()" class="member-name-link">isBeingDeleted</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether this player (sub-)config is in the process of being deleted.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isOptionAllowed(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI)" class="member-name-link">isOptionAllowed</a><wbr>(<a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;?&gt;&nbsp;option)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isOptionAllowed(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI)" class="member-name-link">isOptionAllowed</a><wbr>(<a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;?&gt;&nbsp;option)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether an option is allowed in this config.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subConfigExists(int)" class="member-name-link">subConfigExists</a><wbr>(int&nbsp;subIndex)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subConfigExists(int)" class="member-name-link">subConfigExists</a><wbr>(int&nbsp;subIndex)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a sub-config with a specified index exists.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subConfigExists(java.lang.String)" class="member-name-link">subConfigExists</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subConfigExists(java.lang.String)" class="member-name-link">subConfigExists</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a sub-config with a specified string ID exists.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI.SetResult</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToReset(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI)" class="member-name-link">tryToReset</a><wbr>(<a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;T&gt;&nbsp;option)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI.SetResult</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToReset(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI)" class="member-name-link">tryToReset</a><wbr>(<a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;T&gt;&nbsp;option)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to reset the value of a specified config option to the default raw value, as
  in <a href="#getDefaultRawValue(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI)"><code>getDefaultRawValue(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI&lt;T&gt;)</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI.SetResult</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToSet(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI,T)" class="member-name-link">tryToSet</a><wbr>(<a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;T&gt;&nbsp;option,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI.SetResult</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToSet(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI,T)" class="member-name-link">tryToSet</a><wbr>(<a href="IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;T&gt;&nbsp;option,
  T&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to set the value of a specified config option to a specified value.</div>
 </div>
 </div>
@@ -476,12 +483,32 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getUsedServerSubConfig()">
 <h3>getUsedServerSubConfig</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@Nonnull
 </span><span class="return-type"><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></span>&nbsp;<span class="element-name">getUsedServerSubConfig</span>()</div>
-<div class="block">Gets the server sub-config currently used for new claims.</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#getUsedSubConfig(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>getUsedSubConfig(IClaimingModeAPI)</code></a> instead
+ <p>
+ Gets the server sub-config currently used for new claims.</div>
+</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the server sub-config, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getUsedSubConfig(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>getUsedSubConfig</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></span>&nbsp;<span class="element-name">getUsedSubConfig</span><wbr><span class="parameters">(@Nonnull
+ <a href="../../../../../claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Gets the sub-config currently used for new claims for a specified claiming mode.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimingMode</code> - the claiming mode, not null</dd>
+<dt>Returns:</dt>
+<dd>the sub-config used for the claiming mode, not null</dd>
 </dl>
 </section>
 </li>

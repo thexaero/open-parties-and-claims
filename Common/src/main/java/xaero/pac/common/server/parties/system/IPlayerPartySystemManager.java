@@ -18,8 +18,9 @@
 
 package xaero.pac.common.server.parties.system;
 
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
+import net.minecraft.network.chat.Component;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 
 import java.util.UUID;
 
@@ -33,7 +34,17 @@ public interface IPlayerPartySystemManager extends IPlayerPartySystemRegisterAPI
 	IPlayerPartySystemAPI<?> getPrimarySystem();
 	Iterable<IPlayerPartySystemAPI<?>> getRegisteredSystems();
 	boolean isInAParty(UUID playerId);
+	boolean isInAPrimaryParty(UUID playerId);
 	boolean areInSameParty(UUID playerId, UUID otherPlayerId);
 	boolean isPlayerAllying(UUID playerId, UUID potentialAllyPlayerId);
+	UUID getPrimaryPartyOwnerByMember(UUID playerId);
+	Component getPrimaryPartyNameByOwner(UUID ownerId);
+	boolean canEditPartyConfig(UUID playerId);
+	boolean canCreatePartyConfigGroups(UUID playerId);
+	boolean canIncludeGroupsInPartyConfigGroups(UUID playerId);
+	boolean canIncludePlayersInPartyConfigGroups(UUID playerId);
+	boolean canPartyClaim(UUID uuid);
+	boolean isPrimaryPartyOwner(UUID playerId);
+	int getPrimaryMemberCount(UUID ownerId);
 
 }
