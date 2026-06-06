@@ -19,6 +19,7 @@
 package xaero.pac.common.claims.player.request;
 
 import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
 
 public class ClaimActionRequest {
 	
@@ -27,17 +28,17 @@ public class ClaimActionRequest {
 	private final int top;
 	private final int right;
 	private final int bottom;
-	private final boolean byServer;
+	private final ClaimingMode mode;
 	private final int totalChunks;
 	
-	public ClaimActionRequest(ClaimsManager.Action action, int left, int top, int right, int bottom, boolean byServer) {
+	public ClaimActionRequest(ClaimsManager.Action action, int left, int top, int right, int bottom, ClaimingMode mode) {
 		super();
 		this.action = action;
 		this.left = left;
 		this.top = top;
 		this.right = right;
 		this.bottom = bottom;
-		this.byServer = byServer;
+		this.mode = mode;
 		this.totalChunks = (1 + right - left) * (1 + top - bottom);
 	}
 
@@ -60,11 +61,11 @@ public class ClaimActionRequest {
 	public int getBottom() {
 		return bottom;
 	}
-	
-	public boolean isByServer() {
-		return byServer;
+
+	public ClaimingMode getMode() {
+		return mode;
 	}
-	
+
 	public int getTotalChunks() {
 		return totalChunks;
 	}

@@ -94,6 +94,11 @@ public class ServerConfig {
 	public final ModConfigSpec.ConfigValue<String> adminModePermission;
 	public final ModConfigSpec.ConfigValue<String> permissionSystem;
 	public final ModConfigSpec.ConfigValue<String> primaryPartySystem;
+	public final ModConfigSpec.BooleanValue partyOwnedClaims;
+	public final ModConfigSpec.IntValue claimBonusPerPartyMember;
+	public final ModConfigSpec.IntValue forceloadBonusPerPartyMember;
+	public final ModConfigSpec.IntValue claimBonusForPartyOwner;
+	public final ModConfigSpec.IntValue forceloadBonusForPartyOwner;
 
 	private ServerConfig(ModConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -204,9 +209,57 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_claims_enabled")
 			.worldRestart()
 		   	.define("enabled", true);
+
+		partyOwnedClaims = builder
+			.comment(
+					"""
+					Whether parties from the primary party system (option "primaryPartySystem") should act as owners of claims.
+					The technical owner of a party's claims is still a player: the party owner.
+					Party members who are at least the rank equivalent of Claimer can claim and unclaim as the party (owner).
+					Party members who are at least the rank equivalent of Moderator can also include and exclude players
+					to/from the player groups of the party's claim config.
+					Party members who are at least the rank equivalent of Admin can also fully edit the party's claim config.
+					Changing this option does not automatically reassign claims based on party relations or actual chunk claimers,
+					so it is recommended to only set this option once based on the server's intended gameplay style.
+					Other important options related to this feature are "claimBonusPerPartyMember", "forceloadBonusPerPartyMember",
+					"claimBonusForPartyOwner" and "forceloadBonusForPartyOwner"."""
+			)
+			.translation("gui.xaero_pac_config_party_owned_claims")
+			.worldRestart()
+			.define("partyOwnedClaims", false);
+
+		claimBonusPerPartyMember = builder
+				.comment("How much the party's claim limit should be increased per party member when option \"partyOwnedClaims\" is enabled.")
+				.translation("gui.xaero_pac_config_claims_claim_bonus_per_party_player")
+				.worldRestart()
+				.defineInRange("claimBonusPerPartyMember", 100, 0, Integer.MAX_VALUE);
+
+		forceloadBonusPerPartyMember = builder
+			.comment("How much the party's forceload limit should be increased per party member when option \"partyOwnedClaims\" is enabled.")
+			.translation("gui.xaero_pac_config_claims_forceload_bonus_per_party_player")
+			.worldRestart()
+			.defineInRange("forceloadBonusPerPartyMember", 2, 0, Integer.MAX_VALUE);
+
+		claimBonusForPartyOwner = builder
+			.comment("""
+					How much the party's claim limit should be increased when a player's party has at least another member and
+					"partyOwnedClaims" is enabled. This bonus is added on top of "claimBonusPerPartyMember". The main use for this
+					is to prevent players from claiming until they have started a party with another player ("maxPlayerClaims" should be 0).""")
+			.translation("gui.xaero_pac_config_claims_claim_bonus_for_party_owner")
+			.worldRestart()
+			.defineInRange("claimBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
+
+		forceloadBonusForPartyOwner = builder
+			.comment("""
+					How much the party's forceload limit should be increased when a player's party has at least another member and
+					"partyOwnedClaims" is enabled. This bonus is added on top of "forceloadBonusPerPartyMember". The main use for this
+					is to prevent players from forceloading until they have started a party with another player ("maxPlayerClaimForceloads" should be 0).""")
+			.translation("gui.xaero_pac_config_claims_forceload_bonus_for_party_owner")
+			.worldRestart()
+			.defineInRange("forceloadBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
 		
 		playerClaimsExpirationTime = builder
-			.comment("For how long a player can stay completely inactive on the server until their claims are expired (in hours). This improves performance for servers running for years.")
+			.comment("For how long a player/party can stay completely inactive on the server until their claims are expired (in hours). This improves performance for servers running for years.")
 			.translation("gui.xaero_pac_config_claims_expiration_time")
 			.worldRestart()
 			.defineInRange("playerClaimsExpirationTime", 8760, 1, Integer.MAX_VALUE);
@@ -302,7 +355,9 @@ public class ServerConfig {
 		claimsSynchronization = builder
 			.comment("""
 					Whether to synchronize world chunk claims to the game clients. Enables client-side mods to access the claims data, e.g. to display it on a map.
-					ALL - all claims are synced. OWNED_ONLY - only the claims that the client player owns and server claims are synced. NOT_SYNCED - claims are not synced.""")
+					ALL - all claims are synced.
+					OWNED_ONLY - only the claims that the client player or their primary party owns and server claims are synced. Party-owned claims need to be enabled with "partyOwnedClaims".
+					NOT_SYNCED - claims are not synced.""")
 			.translation("gui.xaero_pac_config_claims_synchronization")
 			.worldRestart()
 		   	.defineEnum("claimsSynchronization", ClaimsSyncType.ALL);

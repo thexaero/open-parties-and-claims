@@ -23,6 +23,7 @@ import net.minecraft.ChatFormatting;
 public enum PartyMemberRank {
 	
 	MEMBER(ChatFormatting.GRAY),
+	CLAIMER(ChatFormatting.GREEN),
 	MODERATOR(ChatFormatting.AQUA),
 	ADMIN(ChatFormatting.YELLOW);
 	

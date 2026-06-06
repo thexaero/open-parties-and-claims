@@ -71,6 +71,14 @@ public interface IPlayerConfigClientStorageManagerAPI {
 	public IPlayerConfigClientStorageAPI getMyPlayerConfig();
 
 	/**
+	 * Gets the read-only "player config" storage for the claims of the party that the local client player is in.
+	 *
+	 * @return the party claims config, not null
+	 */
+	@Nonnull
+	public IPlayerConfigClientStorageAPI getPartyClaimsConfig();
+
+	/**
 	 * Opens the config GUI screen for the server claims "player config".
 	 *
 	 * @param escape  the screen to switch to when the escape key is hit, can be null
@@ -111,6 +119,14 @@ public interface IPlayerConfigClientStorageManagerAPI {
 	public void openMyPlayerConfigScreen(@Nullable Screen escape, @Nullable Screen parent);
 
 	/**
+	 * Opens the config GUI screen for the claims of the party that the local client player is in.
+	 *
+	 * @param escape  the screen to switch to when the escape key is hit, can be null
+	 * @param parent  the screen to switch to when the screen is exited normally, can be null
+	 */
+	public void openPartyClaimsConfigScreen(@Nullable Screen escape, @Nullable Screen parent);
+
+	/**
 	 * Opens the config GUI screen for the player with a specified username.
 	 *
 	 * @param escape  the screen to switch to when the escape key is hit, can be null
@@ -137,5 +153,4 @@ public interface IPlayerConfigClientStorageManagerAPI {
 	 */
 	@Nullable
 	public IPlayerConfigOptionSpecAPI<?> getOptionForId(@Nonnull String id);
-	
 }

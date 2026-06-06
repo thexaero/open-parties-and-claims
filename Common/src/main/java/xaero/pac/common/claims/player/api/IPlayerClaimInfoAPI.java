@@ -114,6 +114,12 @@ public interface IPlayerClaimInfoAPI {
 	 */
 	@Nullable
 	public IPlayerDimensionClaimsAPI getDimension(@Nonnull ResourceLocation id);
-	
+
+	/**
+	 * Gets whether these claims are party-owned.
+	 *
+	 * @return true if these claims are owned by a party, otherwise false
+	 */
+	boolean isPartyOwned();
 	
 }

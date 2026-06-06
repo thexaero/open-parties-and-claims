@@ -234,34 +234,46 @@ public class PlayerGroupsScreen extends XPACScreen {
 	private ButtonState getIncludePlayerButtonState() {
 		if(usedGroupSpace >= groupSpace)
 			return ButtonState.OUT_OF_SPACE;
-		return canEdit() && groupDataCopy != null ? ButtonState.ENABLED : ButtonState.DISABLED;
+		if(!configData.getPermissions().canIncludePlayersInGroups())
+			return ButtonState.NO_PERMISSION;
+		return groupDataCopy != null ? ButtonState.ENABLED : ButtonState.DISABLED;
+	}
+
+	private ButtonState getExcludePlayerButtonState() {
+		if(!configData.getPermissions().canIncludePlayersInGroups())
+			return ButtonState.NO_PERMISSION;
+		return groupDataCopy != null && contentsList.getSelected() instanceof ContentsList.PlayerEntry ?
+				ButtonState.ENABLED : ButtonState.DISABLED;
 	}
 
 	private ButtonState getIncludeGroupButtonState() {
 		if(usedGroupSpace >= groupSpace)
 			return ButtonState.OUT_OF_SPACE;
-		return canEdit() && groupDataCopy != null ? ButtonState.ENABLED : ButtonState.DISABLED;
+		if(!configData.getPermissions().canIncludeGroupsInGroups())
+			return ButtonState.NO_PERMISSION;
+		return groupDataCopy != null ? ButtonState.ENABLED : ButtonState.DISABLED;
 	}
 
 	private ButtonState getExcludeGroupButtonState() {
-		return canEdit() && groupDataCopy != null && selectionWorksForGroupExclusion &&
+		if(!configData.getPermissions().canIncludeGroupsInGroups())
+			return ButtonState.NO_PERMISSION;
+		return groupDataCopy != null && selectionWorksForGroupExclusion &&
 				contentsList.getSelected() instanceof ContentsList.GroupInclusionEntry ?
-				ButtonState.ENABLED : ButtonState.DISABLED;
-	}
-
-	private ButtonState getExcludePlayerButtonState() {
-		return canEdit() && groupDataCopy != null && contentsList.getSelected() instanceof ContentsList.PlayerEntry ?
 				ButtonState.ENABLED : ButtonState.DISABLED;
 	}
 
 	private ButtonState getCreateGroupButtonState(){
 		if(groupIds != null && groupIds.size() >= maxGroups)
 			return ButtonState.MAX_GROUPS_REACHED;
-		return canEdit() && !syncingOnInit && desyncErrorOnInit == null ? ButtonState.ENABLED : ButtonState.DISABLED;
+		if(!configData.getPermissions().canCreateGroups())
+			return ButtonState.NO_PERMISSION;
+		return !syncingOnInit && desyncErrorOnInit == null ? ButtonState.ENABLED : ButtonState.DISABLED;
 	}
 
 	private ButtonState getDeleteGroupButtonState(){
-		return canEdit() && groupDataCopy != null && selectionWorksForGroupDeletion && desyncErrorOnInit == null ?
+		if(!configData.getPermissions().canCreateGroups())
+			return ButtonState.NO_PERMISSION;
+		return groupDataCopy != null && selectionWorksForGroupDeletion && desyncErrorOnInit == null ?
 				ButtonState.ENABLED : ButtonState.DISABLED;
 	}
 
@@ -995,6 +1007,10 @@ public class PlayerGroupsScreen extends XPACScreen {
 		),
 		OUT_OF_SPACE(
 				PlayerConfigGroupActionError.OUT_OF_SPACE.getDesyncScreenMessage().copy()
+						.withStyle(s -> s.withColor(ChatFormatting.DARK_RED))
+		),
+		NO_PERMISSION(
+				Component.translatable("gui.xaero_pac_player_config_player_groups_no_permission")
 						.withStyle(s -> s.withColor(ChatFormatting.DARK_RED))
 		);
 		final Tooltip tooltip;

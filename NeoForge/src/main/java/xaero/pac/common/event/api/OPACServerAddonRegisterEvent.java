@@ -23,7 +23,10 @@ import net.neoforged.bus.api.Event;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
-
+/**
+ * @deprecated switch to {@link xaero.pac.common.event.api.v2.OPACServerAddonRegisterEvent}
+ */
+@Deprecated
 public class OPACServerAddonRegisterEvent extends Event {
 
 	private final MinecraftServer server;
