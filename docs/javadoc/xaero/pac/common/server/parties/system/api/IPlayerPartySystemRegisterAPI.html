@@ -72,12 +72,22 @@ loadScripts(document, 'script');</script>
 <h1 title="Interface IPlayerPartySystemRegisterAPI" class="title">Interface IPlayerPartySystemRegisterAPI</h1>
 </div>
 <section class="class-description" id="class-description">
+<dl class="notes">
+<dt>All Superinterfaces:</dt>
+<dd><code><a href="v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemRegisterAPI</a></code></dd>
+</dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerPartySystemRegisterAPI</span></div>
-<div class="block">The API for registering party system implementations.
+<div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public interface </span><span class="element-name type-name-label">IPlayerPartySystemRegisterAPI</span><span class="extends-implements">
+extends <a href="v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemRegisterAPI</a></span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2"><code>IPlayerPartySystemRegisterAPI</code></a> instead
+ <p>
+ The API for registering party system implementations.
  <p>
  Party system implementations must be registered during the
  xaero.pac.common.event.api.OPACServerAddonRegister.EVENT on Fabric or OPACServerAddonRegisterEvent on Forge.</div>
+</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -86,22 +96,26 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#register(java.lang.String,xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)" class="member-name-link">register</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#register(java.lang.String,xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)" class="member-name-link">register</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a>&lt;?&gt;&nbsp;system)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Registers a party system implementation to be available to OPAC
- under a specified name.</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2"><code>IPlayerPartySystemRegisterAPI</code></a> instead</div>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI">Methods inherited from interface&nbsp;xaero.pac.common.server.parties.system.api.v2.<a href="v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemRegisterAPI</a></h3>
+<code><a href="v2/IPlayerPartySystemRegisterAPI.html#register(java.lang.String,xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI)">register</a></code></div>
 </section>
 </li>
 </ul>
@@ -116,13 +130,18 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="register(java.lang.String,xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI)">
 <h3>register</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api">IPlayerPartySystemAPI</a>&lt;?&gt;&nbsp;system)</span></div>
-<div class="block">Registers a party system implementation to be available to OPAC
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">use <a href="v2/IPlayerPartySystemRegisterAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2"><code>IPlayerPartySystemRegisterAPI</code></a> instead
+ <p>
+ Registers a party system implementation to be available to OPAC
  under a specified name.
  <p>
  The primary party system used by the mod is configured in the main server config file
  with the "primaryPartySystem" option.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>name</code> - the name to register the party system under, not null</dd>

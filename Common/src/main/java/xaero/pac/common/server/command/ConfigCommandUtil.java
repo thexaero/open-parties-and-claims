@@ -40,15 +40,17 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class ConfigCommandUtil {
@@ -89,22 +91,61 @@ public class ConfigCommandUtil {
 			MinecraftServer server = sourcePlayer.getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			UUID configOwnerId;
-			if(type != PlayerConfigType.SERVER) {
+			UUID configOwnerId = null;
+			if(type == PlayerConfigType.PLAYER) {
 				GameProfile gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
 				if (gameProfile == null)
 					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 				configOwnerId = gameProfile.getId();
-			} else
-				configOwnerId = PlayerConfig.SERVER_CLAIM_UUID;
+				if (configOwnerId == null)
+					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
+			}
 			String lowerCaseInput = builder.getRemainingLowerCase();
-			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(configOwnerId);
+			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
+					configOwnerId, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+			);
+			if(playerConfig == null)
+				return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 			List<String> subConfigIds = playerConfig.getSubConfigIds();
 			Stream<String> baseStream = subConfigIds.stream();
 			if(!lowerCaseInput.isEmpty())
 				baseStream = baseStream.filter(s -> s.toLowerCase().startsWith(lowerCaseInput));
 			return SharedSuggestionProvider.suggest(baseStream.limit(64), builder);
 		};
+	}
+
+	public static Predicate<CommandSourceStack> getPartyClaimsRequirement(boolean edit){
+		return CommandRequirementHelper.onServerThread(sourceStack -> {
+			if(!ServerConfig.CONFIG.claimsEnabled.get())
+				return false;
+			if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+				return false;
+			ServerPlayer sourcePlayer;
+			try {
+				sourcePlayer = sourceStack.getPlayerOrException();
+			} catch (CommandSyntaxException e) {
+				return false;
+			}
+			MinecraftServer server = sourceStack.getServer();
+			IServerData<
+					IServerClaimsManager<
+							IPlayerChunkClaim,
+							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
+							IServerDimensionClaimsManager<IServerRegionClaims>
+							>,
+					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
+					> serverData = ServerData.from(server);
+			UUID partyConfigOwner = serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(sourcePlayer.getUUID());
+			if(partyConfigOwner == null)//not in a party
+				return false;
+			if(!edit)
+				return true;
+			if(sourceStack.hasPermission(2))
+				return true;
+			if(sourcePlayer.getUUID().equals(partyConfigOwner))
+				return true;
+			return serverData.getPlayerPartySystemManager().canEditPartyConfig(sourcePlayer.getUUID());
+		});
 	}
 
 }

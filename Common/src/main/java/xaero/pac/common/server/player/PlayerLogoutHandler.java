@@ -30,10 +30,14 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.sync.IPartyMemberDynamicInfoSynchronizer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+
+import java.util.Objects;
+import java.util.UUID;
 
 public class PlayerLogoutHandler {
 	
@@ -42,7 +46,14 @@ public class PlayerLogoutHandler {
 		ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		if(!mainCap.hasHandledLogin())
 			return;
-		serverData.getForceLoadManager().updateTicketsFor(serverData.getPlayerConfigManager(), player.getUUID(), true);
+		UUID lastPartyOnlineUpdateOwner = mainCap.getLastPartyOnlineUpdateOwner();
+		if(lastPartyOnlineUpdateOwner != null)
+			serverData.getPrimaryPartyOnlineCounter().unregisterOnlinePartyMember(lastPartyOnlineUpdateOwner);
+		if(
+				!ServerConfig.CONFIG.partyOwnedClaims.get() ||
+				!Objects.equals(lastPartyOnlineUpdateOwner, player.getUUID())
+		)
+			serverData.getForceLoadManager().updateTicketsFor(player.getUUID(), true);
 		//PlayerMainCapability playerMainCap = (PlayerMainCapability) player.getCapability(PlayerCapabilityProvider.MAIN_CAP).orElse(null);
 		IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = serverData.getPartyManager().getPartyByMember(player.getUUID());
 		if(playerParty != null) {

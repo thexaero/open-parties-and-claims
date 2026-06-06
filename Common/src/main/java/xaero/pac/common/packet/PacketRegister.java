@@ -164,6 +164,31 @@ public class PacketRegister {
 				groupLimitsCodec, groupLimitsCodec,
 				null, new ClientboundPlayerConfigGroupLimitsPacket.ClientHandler()
 		);
+
+		packetHandler.register(45, ClientboundClaimPartyGeneralPacket.class,
+				ClientboundClaimPartyGeneralPacket.ENCODER, ClientboundClaimPartyGeneralPacket.DECODER,
+				null, new ClientboundClaimPartyGeneralPacket.ClientHandler()
+		);
+
+		ClientboundPlayerConfigPermissionsPacket.Codec playerConfigPermissionsCodec =
+				new ClientboundPlayerConfigPermissionsPacket.Codec();
+		packetHandler.register(46, ClientboundPlayerConfigPermissionsPacket.class,
+				playerConfigPermissionsCodec, playerConfigPermissionsCodec,
+				null, new ClientboundPlayerConfigPermissionsPacket.ClientHandler()
+		);
+
+		ClientboundPlayerConfigAdminPacket.Codec playerConfigAdminCodec =
+				new ClientboundPlayerConfigAdminPacket.Codec();
+		packetHandler.register(47, ClientboundPlayerConfigAdminPacket.class,
+				playerConfigAdminCodec, playerConfigAdminCodec,
+				null, new ClientboundPlayerConfigAdminPacket.ClientHandler()
+		);
+
+		packetHandler.register(48, ClientboundClaimsResetPacket.class,
+				ClientboundClaimsResetPacket.ENCODER, ClientboundClaimsResetPacket.DECODER,
+				null, new ClientboundClaimsResetPacket.ClientHandler()
+		);
+
 	}
 
 }

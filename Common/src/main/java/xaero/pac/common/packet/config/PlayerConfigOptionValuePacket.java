@@ -128,9 +128,9 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 							return null;
 						}
 					}
-					boolean mutable = entryTag.getBoolean("m");
-					boolean defaulted = entryTag.getBoolean("d");
-					Entry entry = new Entry(optionId, valueTag, mutable, defaulted);
+					boolean playerMutable = entryTag.getBoolean("p");
+					boolean adminMutable = entryTag.getBoolean("a");
+					Entry entry = new Entry(optionId, valueTag, playerMutable, adminMutable);
 					entries.add(entry);
 				}
 				return create(type, subID, owner, entries);
@@ -158,8 +158,8 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 				entryTag.putString("i", entry.getId());
 				if(entry.valueTag != null)
 					entryTag.put("v", entry.valueTag);
-				entryTag.putBoolean("m", entry.isMutable());
-				entryTag.putBoolean("d", entry.isDefaulted());
+				entryTag.putBoolean("p", entry.isPlayerMutable());
+				entryTag.putBoolean("a", entry.isAdminMutable());
 				entryListTag.add(entryTag);
 			}
 			
@@ -173,14 +173,14 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 
 		private final String id;
 		private final Tag valueTag;
-		private final boolean mutable;
-		private final boolean defaulted;
+		private final boolean playerMutable;
+		private final boolean adminMutable;
 
-		public Entry(String id, Tag valueTag, boolean mutable, boolean defaulted) {
+		public Entry(String id, Tag valueTag, boolean playerMutable, boolean adminMutable) {
 			this.id = id;
 			this.valueTag = valueTag;
-			this.mutable = mutable;
-			this.defaulted = defaulted;
+			this.playerMutable = playerMutable;
+			this.adminMutable = adminMutable;
 		}
 
 		public String getId() {
@@ -191,17 +191,17 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 			return valueTag;
 		}
 
-		public boolean isMutable() {
-			return mutable;
+		public boolean isPlayerMutable() {
+			return playerMutable;
 		}
 
-		public boolean isDefaulted() {
-			return defaulted;
+		public boolean isAdminMutable() {
+			return adminMutable;
 		}
 
-		public static <T> Entry of(PlayerConfigOptionSpec<T> option, T value, boolean mutable, boolean defaulted){
+		public static <T> Entry of(PlayerConfigOptionSpec<T> option, T value, boolean playerMutable, boolean adminMutable){
 			Tag valueTag = value == null ? null : option.getValueType().getSyncEncoder().apply(value);
-			return new Entry(option.getId(), valueTag, mutable, defaulted);
+			return new Entry(option.getId(), valueTag, playerMutable, adminMutable);
 		}
 
 	}

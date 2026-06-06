@@ -42,7 +42,9 @@ import xaero.pac.common.server.player.PlayerTickHandler;
 import xaero.pac.common.server.player.PlayerWorldJoinHandler;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.io.PlayerConfigIO;
+import xaero.pac.common.server.player.config.permission.PlayerConfigPermissionUpdater;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.player.party.PrimaryPartyOnlineCounter;
 import xaero.pac.common.server.player.permission.IPlayerPermissionSystemManager;
 import xaero.pac.common.server.player.permission.PlayerPermissionChangeHandler;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
@@ -78,6 +80,7 @@ extends IServerDataAPI {
 	public PartyExpirationHandler getPartyExpirationHandler();
 	public PartyManagerIO<?> getPartyManagerIO();
 	public PlayerConfigIO<P, CM> getPlayerConfigsIO();
+	public PlayerConfigPermissionUpdater getPlayerConfigPermissionUpdater();
 	public ObjectManagerLiveSaver getPartyLiveSaver();
 	public ObjectManagerLiveSaver getPlayerConfigLiveSaver();
 	public ObjectManagerLiveSaver getPlayerClaimInfoLiveSaver();
@@ -93,5 +96,6 @@ extends IServerDataAPI {
 	public IPlayerPartySystemManager getPlayerPartySystemManager();
 	public void onStop();
 	public void onServerResourcesReload(ResourceManager resourceManager);
+	public PrimaryPartyOnlineCounter getPrimaryPartyOnlineCounter();
 
 }

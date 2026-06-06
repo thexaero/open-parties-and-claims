@@ -38,6 +38,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.custom.CustomPlayerConfigGroup;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
@@ -47,26 +48,35 @@ import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTask;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTask<PlayerConfigSyncSpreadoutTask> {
 
-	private final Deque<IPlayerConfig> configsToSync;
-	private final Deque<IPlayerConfig> configsForGroupSync;
+	private final Deque<ConfigQueueEntry> configsToSync;
+	private final Deque<ConfigQueueEntry> configsForGroupSync;
 	private Iterator<IPlayerConfig> currentSubIterator;
 	private Iterator<ICustomPlayerConfigGroup> groupIterator;
 	private CustomPlayerConfigGroupData currentlySyncedGroup;
 	private Iterator<CustomPlayerGroupMember> groupMemberIterator;
 	private Iterator<CustomPlayerGroupIncludedGroup> groupIncludedGroupIterator;
 
-	private PlayerConfigSyncSpreadoutTask(Deque<IPlayerConfig>configsToSync, Deque<IPlayerConfig> configsForGroupSync) {
+	private PlayerConfigSyncSpreadoutTask(Deque<ConfigQueueEntry>configsToSync, Deque<ConfigQueueEntry> configsForGroupSync) {
 		this.configsToSync = configsToSync;
 		this.configsForGroupSync = configsForGroupSync;
 	}
 
 	public void addConfigToSync(IPlayerConfig config){
-		if(configsToSync.contains(config))
+		ConfigQueueEntry entry = new ConfigQueueEntry(config, null);
+		if(configsToSync.contains(entry))
 			return;
-		configsToSync.addLast(config);
+		configsToSync.addLast(entry);
+	}
+
+	public void addConfigToSync(IPlayerConfig config, PlayerConfigType forcedType){
+		ConfigQueueEntry entry = new ConfigQueueEntry(config, forcedType);
+		if(configsToSync.contains(entry))
+			return;
+		configsToSync.addLast(entry);
 	}
 
 	public boolean stillNeedsSyncing(IPlayerConfig config){
@@ -88,11 +98,13 @@ public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTa
 		int toSync = perTick;
 		while(toSync > 0 && !configsToSync.isEmpty()) {
 			PlayerConfigSynchronizer synchronizer = (PlayerConfigSynchronizer) serverData.getPlayerConfigManager().getSynchronizer();
-			PlayerConfig<?> config = (PlayerConfig<?>) configsToSync.getFirst();
-
+			ConfigQueueEntry configEntry = configsToSync.getFirst();
+			PlayerConfig<?> config = (PlayerConfig<?>) configEntry.config;
+			synchronizer.forceConfigType(configEntry.forcedType);
 			if (currentSubIterator == null) {
 				toSync -= 64;
 				synchronizer.sendSyncState(player, config, true);
+				synchronizer.sendPermissions(player, config.getType());
 				synchronizer.syncToClient(player, config, true);
 				currentSubIterator = config.getSubConfigIterator();
 			}
@@ -105,24 +117,29 @@ public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTa
 				synchronizer.sendSyncState(player, config, false);
 				configsToSync.removeFirst();
 				currentSubIterator = null;
-				configsForGroupSync.add(config);
+				configsForGroupSync.add(configEntry);
 			}
+			synchronizer.forceConfigType(null);
 		}
 		//only sync group contents after all config values have been synced so that the config UI access doesn't get delayed
 		while(toSync > 0 && !configsForGroupSync.isEmpty()) {
 			PlayerConfigSynchronizer synchronizer = (PlayerConfigSynchronizer) serverData.getPlayerConfigManager().getSynchronizer();
-			PlayerConfig<?> config = (PlayerConfig<?>) configsForGroupSync.getFirst();
+			ConfigQueueEntry configEntry = configsForGroupSync.getFirst();
+			PlayerConfig<?> config = (PlayerConfig<?>) configEntry.config;
 			if(groupIterator == null)
 				groupIterator = config.getPlayerGroups().getAllCustom().iterator();
 			if(currentlySyncedGroup == null && groupIterator.hasNext())
 				currentlySyncedGroup = ((CustomPlayerConfigGroup) groupIterator.next()).getData();
+			synchronizer.forceConfigType(configEntry.forcedType);
 			if(currentlySyncedGroup == null){
 				configsForGroupSync.removeFirst();
 				groupIterator = null;
 				synchronizer.sendGroupSyncState(player, config, false);
+				synchronizer.forceConfigType(null);
 				continue;
 			}
 			toSync = handleGroupContentsSync(toSync, synchronizer, config, player);
+			synchronizer.forceConfigType(null);
 		}
 	}
 
@@ -204,6 +221,30 @@ public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTa
 
 		public static Builder begin(){
 			return new Builder().setDefault();
+		}
+
+	}
+
+	private class ConfigQueueEntry {
+
+		private final IPlayerConfig config;
+		private final PlayerConfigType forcedType;
+
+		private ConfigQueueEntry(IPlayerConfig config, PlayerConfigType forcedType) {
+			this.config = config;
+			this.forcedType = forcedType;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o == null || getClass() != o.getClass()) return false;
+			ConfigQueueEntry that = (ConfigQueueEntry) o;
+			return config == that.config && forcedType == that.forcedType;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(config, forcedType);
 		}
 
 	}

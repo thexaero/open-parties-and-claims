@@ -52,7 +52,8 @@ public class LoadClient extends LoadCommon {
 				.setClientClaimsSyncHandler(claimsSyncHandler)
 				.build()
 				);
-		
+		claimsManager.setClientData(modMain.getClientDataInternal());
+
 		Patreon.checkPatreon();
 	}
 

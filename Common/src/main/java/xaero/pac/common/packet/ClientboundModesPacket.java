@@ -22,6 +22,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
+import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -30,12 +33,12 @@ import java.util.function.Function;
 public class ClientboundModesPacket {
 
 	private final boolean adminMode;
-	private final boolean serverMode;
+	private final ClaimingMode claimingMode;
 
-	public ClientboundModesPacket(boolean adminMode, boolean serverMode) {
+	public ClientboundModesPacket(boolean adminMode, ClaimingMode claimingMode) {
 		super();
 		this.adminMode = adminMode;
-		this.serverMode = serverMode;
+		this.claimingMode = claimingMode;
 	}
 	
 	public static class Codec implements BiConsumer<ClientboundModesPacket, FriendlyByteBuf>, Function<FriendlyByteBuf, ClientboundModesPacket> {
@@ -49,8 +52,11 @@ public class ClientboundModesPacket {
 				if(tag == null)
 					return null;
 				boolean adminMode = tag.getBoolean("am");
-				boolean serverMode = tag.getBoolean("sm");
-				return new ClientboundModesPacket(adminMode, serverMode);
+				String claimingModeId = tag.getString("cm");
+				ClaimingMode claimingMode = (ClaimingMode) ClaimingModes.get(claimingModeId);
+				if(claimingMode == null)
+					return null;
+				return new ClientboundModesPacket(adminMode, claimingMode);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);
 				return null;
@@ -61,7 +67,7 @@ public class ClientboundModesPacket {
 		public void accept(ClientboundModesPacket t, FriendlyByteBuf u) {
 			CompoundTag tag = new CompoundTag();
 			tag.putBoolean("am", t.adminMode);
-			tag.putBoolean("sm", t.serverMode);
+			tag.putString("cm", t.claimingMode.getId());
 			u.writeNbt(tag);
 		}
 
@@ -71,9 +77,13 @@ public class ClientboundModesPacket {
 		
 		@Override
 		public void accept(ClientboundModesPacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimModes(t.adminMode, t.serverMode);
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimModes(t.adminMode, t.claimingMode);
 		}
 		
+	}
+
+	public static ClientboundModesPacket get(ServerPlayerDataAPI playerData){
+		return new ClientboundModesPacket(playerData.isClaimsAdminMode(), (ClaimingMode) playerData.getClaimingMode());
 	}
 	
 }

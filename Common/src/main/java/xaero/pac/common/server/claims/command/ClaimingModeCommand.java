@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -28,6 +28,9 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
+import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.packet.ClientboundModesPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -44,21 +47,43 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-public class ClaimsServerModeCommand {
+public class ClaimingModeCommand {
+
+	private final ClaimingMode mode;
+
+	public ClaimingModeCommand(ClaimingMode mode) {
+		this.mode = mode;
+	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("server-claim-mode")
-				.requires(ClaimsClaimCommands.getServerClaimCommandRequirement())
+		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get())
+				.then(Commands.literal(mode.getId() + "-claim-mode")
+				.requires(mode.getCommandVisibilityRequirement())
 				.executes(context -> {
 					ServerPlayer player = context.getSource().getPlayerOrException();
 					MinecraftServer server = player.getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 							serverData = ServerData.from(server);
-					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-					mainCapability.setClaimsServerMode(!mainCapability.isClaimsServerMode());
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-					player.sendSystemMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsServerMode() ? "gui.xaero_claims_server_mode_enabled" : "gui.xaero_claims_server_mode_disabled"));
-					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(mainCapability.isClaimsAdminMode(), mainCapability.isClaimsServerMode()));
+					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+					if(mode.getPermissionChecker() != null){
+						ClaimResult.Type failureType = mode.getPermissionChecker().apply(player, serverData.getServerClaimsManager());
+						if (failureType != null) {
+							if(mode != ClaimingModes.PLAYER)
+								serverData.getServerClaimsManager().getPermissionHandler().resetClaimingMode(player);
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, failureType.message));
+							return 0;
+						}
+					}
+					boolean enabling = playerData.getClaimingMode() != mode;
+					playerData.setClaimingMode(enabling ? mode : ClaimingModes.PLAYER);
+					player.sendSystemMessage(
+							adaptiveLocalizer.getFor(
+									player,
+									enabling ? mode.getEnableMessage() : mode.getDisableMessage()
+							)
+					);
+					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
 					return 1;
 				}));
 		dispatcher.register(command);

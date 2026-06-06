@@ -30,48 +30,89 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.claims.player.ServerPlayerClaimPartyUpdater;
+import xaero.pac.common.server.claims.player.ServerPlayerClaimPartyNameUpdater;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimWelcomer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.party.ServerPlayerPartyOnlineCounterUpdater;
 
 public class PlayerTickHandler {
 
 	private final ServerPlayerClaimWelcomer claimWelcomer;
+	private final ServerPlayerClaimPartyNameUpdater claimPartyNameUpdater;
+	private final ServerPlayerClaimPartyUpdater claimPartyConfigUpdater;
+	private final ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater;
 
-	private PlayerTickHandler(ServerPlayerClaimWelcomer claimWelcomer) {
+	private PlayerTickHandler(
+			ServerPlayerClaimWelcomer claimWelcomer,
+			ServerPlayerClaimPartyNameUpdater claimPartyNameUpdater,
+			ServerPlayerClaimPartyUpdater claimPartyConfigUpdater,
+			ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater
+	) {
 		this.claimWelcomer = claimWelcomer;
+		this.claimPartyNameUpdater = claimPartyNameUpdater;
+		this.claimPartyConfigUpdater = claimPartyConfigUpdater;
+		this.playerPartyOnlineCounterUpdater = playerPartyOnlineCounterUpdater;
 	}
 
-	public void onTick(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-		if(!mainCap.hasHandledLogin())
+	public void onTick(
+			ServerPlayer player,
+			IServerData<
+					IServerClaimsManager<
+							IPlayerChunkClaim,
+							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
+							IServerDimensionClaimsManager<IServerRegionClaims>
+					>,
+					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
+			> serverData
+	) {
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
+		if(!playerData.hasHandledLogin())
 			return;
-		mainCap.onTick();
-		if(mainCap.shouldResyncPlayerConfigs()) {
+		playerData.onTick();
+		if(playerData.shouldResyncPlayerConfigs()) {
 			serverData.getPlayerConfigManager().getSynchronizer().syncAllToClient(player);
-			mainCap.setShouldResyncPlayerConfigs(false);
+			playerData.setShouldResyncPlayerConfigs(false);
 		}
+		serverData.getPlayerConfigPermissionUpdater().update(playerData, player, serverData, true, true);
 		if(ServerConfig.CONFIG.claimsEnabled.get()) {
-			claimWelcomer.onPlayerTick(mainCap, player, serverData);
+			claimWelcomer.onPlayerTick(playerData, player, serverData);
+			claimPartyNameUpdater.onPlayerTick(playerData, player, serverData);
+			claimPartyConfigUpdater.onPlayerTick(playerData, player, serverData);
 			IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
-			claimsManager.getClaimsManagerSynchronizer().updateClaimLimitsSyncOnTick(mainCap, player);
+			claimsManager.getClaimsManagerSynchronizer().updateClaimLimitsSyncOnTick(playerData, player);
 		}
+		playerPartyOnlineCounterUpdater.onPlayerTick(playerData, player, serverData);
 
-		serverData.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().onPlayerTick(mainCap, player);
+		serverData.getPartyManager().getPartySynchronizer().getOftenSyncedInfoSync().onPlayerTick(playerData, player);
 	}
 
 	public static final class Builder {
 
+		private ServerPlayerPartyOnlineCounterUpdater playerClaimPartyForceloadUpdater;
+
 		private Builder(){}
 
 		public Builder setDefault(){
+			setPlayerClaimPartyForceloadUpdater(null);
+			return this;
+		}
+
+		public Builder setPlayerClaimPartyForceloadUpdater(ServerPlayerPartyOnlineCounterUpdater playerClaimPartyForceloadUpdater) {
+			this.playerClaimPartyForceloadUpdater = playerClaimPartyForceloadUpdater;
 			return this;
 		}
 
 		public PlayerTickHandler build(){
-			return new PlayerTickHandler(new ServerPlayerClaimWelcomer());
+			if(playerClaimPartyForceloadUpdater == null)
+				throw new IllegalStateException();
+			return new PlayerTickHandler(
+					new ServerPlayerClaimWelcomer(), new ServerPlayerClaimPartyNameUpdater(),
+					new ServerPlayerClaimPartyUpdater(), playerClaimPartyForceloadUpdater
+			);
 		}
 
 		public static Builder begin(){
