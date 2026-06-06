@@ -23,6 +23,7 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -46,7 +47,7 @@ public class ClientboundClaimPartyGeneralPacket extends LazyPacket<ClientboundCl
 		CompoundTag tag = new CompoundTag();
 		tag.putBoolean("pm", partyOwnedClaims);
 		if(partyOwnerId != null)
-			tag.putUUID("po", partyOwnerId);
+			XaeroNbtUtil.putUUID(tag, "po", partyOwnerId);
 		u.writeNbt(tag);
 	}
 
@@ -65,8 +66,8 @@ public class ClientboundClaimPartyGeneralPacket extends LazyPacket<ClientboundCl
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				boolean partyOwnedClaims = tag.getBoolean("pm");
-				UUID partyOwnerId = tag.hasUUID("po") ? tag.getUUID("po") : null;
+				boolean partyOwnedClaims = tag.getBooleanOr("pm", false);
+				UUID partyOwnerId = XaeroNbtUtil.getUUID(tag, "po").orElse(null);
 				return new ClientboundClaimPartyGeneralPacket(partyOwnedClaims, partyOwnerId);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);

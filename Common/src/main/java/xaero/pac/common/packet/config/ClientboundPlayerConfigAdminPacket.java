@@ -46,7 +46,7 @@ public class ClientboundPlayerConfigAdminPacket {
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				boolean admin = tag.getBoolean("a");
+				boolean admin = tag.getBooleanOr("a", false);
 				return new ClientboundPlayerConfigAdminPacket(admin);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);

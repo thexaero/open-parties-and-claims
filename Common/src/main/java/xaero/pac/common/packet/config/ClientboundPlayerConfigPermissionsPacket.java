@@ -56,12 +56,12 @@ public class ClientboundPlayerConfigPermissionsPacket extends ClientboundPlayerC
 
 		@Override
 		protected ClientboundPlayerConfigPermissionsPacket decode(CompoundTag nbt, PlayerConfigType type, boolean otherPlayer, String subId) {
-			boolean view = nbt.getBoolean("v");
-			boolean edit = nbt.getBoolean("e");
-			boolean includePlayersInGroups = nbt.getBoolean("gp");
-			boolean includeGroupsInGroups = nbt.getBoolean("gg");
-			boolean createGroups = nbt.getBoolean("g");
-			boolean claimAs = nbt.getBoolean("c");
+			boolean view = nbt.getBooleanOr("v", false);
+			boolean edit = nbt.getBooleanOr("e", false);
+			boolean includePlayersInGroups = nbt.getBooleanOr("gp", false);
+			boolean includeGroupsInGroups = nbt.getBooleanOr("gg", false);
+			boolean createGroups = nbt.getBooleanOr("g", false);
+			boolean claimAs = nbt.getBooleanOr("c", false);
 			return new ClientboundPlayerConfigPermissionsPacket(
 					type, view, edit, includePlayersInGroups,
 					includeGroupsInGroups, createGroups,
