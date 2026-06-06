@@ -80,7 +80,7 @@ public abstract class ClaimsManager
 	protected abstract void onClaimStateAdded(CSH stateHolder);
 
 	protected void reset() {
-		Set<ResourceLocation> dimensionIds = new HashSet<>(dimensions.keySet());
+		Set<Identifier> dimensionIds = new HashSet<>(dimensions.keySet());
 		indexToClaimState.clear();
 		dimensions.clear();
 		claimStateHolders.clear();
@@ -88,7 +88,7 @@ public abstract class ClaimsManager
 		dimensions = new HashMap<>();
 		claimStateHolders = new HashMap<>();
 		playerClaimInfoManager.clear();
-		for (ResourceLocation dimensionId : dimensionIds)
+		for (Identifier dimensionId : dimensionIds)
 			claimsManagerTracker.onDimensionChange(dimensionId);
 	}
 
