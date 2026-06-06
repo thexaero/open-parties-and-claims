@@ -19,12 +19,12 @@
 package xaero.pac.common.server.claims;
 
 import net.minecraft.commands.Commands;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.packet.ClientboundModesPacket;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
@@ -46,16 +46,19 @@ public class ServerClaimsPermissionHandler {
 		return permissionSystem.getPermission(player, UsedPermissionNodes.SERVER_CLAIMS);
 	}
 
-	public boolean shouldPreventServerClaim(ServerPlayer player, ServerPlayerDataAPI playerData, MinecraftServer server){
-		if(!playerHasServerClaimPermission(player)) {
-			if (playerData.isClaimsServerMode()) {
-				((ServerPlayerData)playerData).setClaimsServerMode(false);
-				OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(playerData.isClaimsAdminMode(), playerData.isClaimsServerMode()));
-				server.getCommands().sendCommands(player);
-			}
+	public void resetClaimingMode(ServerPlayer player){
+		ServerPlayerDataAPI playerData = ServerPlayerData.from(player);
+		((ServerPlayerData)playerData).setClaimingMode(ClaimingModes.PLAYER);
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
+		serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
+	}
+
+	public boolean playerHasPartyClaimPermission(ServerPlayer player){
+		if(!serverData.getPlayerPartySystemManager().isInAPrimaryParty(player.getUUID()))
+			return false;
+		if(Commands.LEVEL_GAMEMASTERS.check(player.permissions()))
 			return true;
-		}
-		return false;
+		return serverData.getPlayerPartySystemManager().canPartyClaim(player.getUUID());
 	}
 
 	public boolean playerHasAdminModePermission(ServerPlayer player){
@@ -70,7 +73,7 @@ public class ServerClaimsPermissionHandler {
 	public void ensureAdminModeStatusPermission(ServerPlayer player, ServerPlayerDataAPI playerData){
 		if(playerData.isClaimsAdminMode() && !playerHasAdminModePermission(player)) {
 			((ServerPlayerData)playerData).setClaimsAdminMode(false);
-			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, new ClientboundModesPacket(playerData.isClaimsAdminMode(), playerData.isClaimsServerMode()));
+			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
 		}
 	}
 

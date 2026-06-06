@@ -25,8 +25,12 @@ import xaero.pac.client.claims.player.api.IClientPlayerClaimInfoAPI;
 import xaero.pac.client.claims.tracker.result.IClaimsManagerClaimResultTracker;
 import xaero.pac.common.claims.IClaimsManager;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
+import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
+import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public interface IClientClaimsManager
@@ -40,30 +44,26 @@ public interface IClientClaimsManager
 	public void addClaimState(C claim);
 	
 	public int getLoadingClaimCount();
-	
-	public void setLoadingClaimCount(int loadingClaimCount);
-	
+
 	public int getLoadingForceloadCount();
 
 	public boolean getAlwaysUseLoadingValues();
-	
-	public void setLoadingForceloadCount(int loadingForceloadCount);
-	
-	public void setClaimLimit(int claimLimit);
-	
-	public void setForceloadLimit(int forceloadLimit);
+
+	void updateLimits(ClaimingModeLimits limits);
 
 	public void setMaxClaimDistance(int maxClaimDistance);
 
-	public void setCurrentSubConfigIndex(int currentSubConfigIndex);
+	public void setClaimingMode(IClaimingModeAPI mode);
 
-	public void setCurrentServerSubConfigIndex(int currentServerSubConfigIndex);
-
-	public void setCurrentSubConfigId(String currentSubConfigId);
-
-	public void setCurrentServerSubConfigId(String currentServerSubConfigId);
+	public void updateSubInfo(ClaimingModeSubInfo subInfoCollection);
 
 	public IPlayerChunkClaim getPotentialClaimStateReflection();
+
+	public boolean usingPartyOwnedClaims();
+
+	public boolean isInParty();
+
+	public void setCurrentPartyOwner(UUID currentPartyOwner);
 	
 	@Nonnull
 	@Override

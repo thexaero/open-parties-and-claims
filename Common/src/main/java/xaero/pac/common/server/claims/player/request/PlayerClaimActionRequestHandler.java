@@ -23,6 +23,8 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
@@ -39,7 +41,6 @@ import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
@@ -64,22 +65,29 @@ public class PlayerClaimActionRequestHandler {
 		if(serverTickHandler.getTickCounter() == lastRequestTickCounter)
 			return;
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-		boolean shouldServerClaim = request.isByServer();
-		if(playerData.isClaimsServerMode())
-			shouldServerClaim = true;
+		ClaimingMode claimType = request.getMode();
+		if(claimType == null)
+			claimType = playerData.getClaimingMode();
 		MinecraftServer server = ServerLevelHelper.getServer(player);
-		if(shouldServerClaim && manager.getPermissionHandler().shouldPreventServerClaim(player, playerData, server)){
-			manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
-					new AreaClaimResult(Set.of(ClaimResult.Type.NO_SERVER_PERMISSION), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
-					player);
-			return;
-		}
-		manager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
-		UUID playerId = shouldServerClaim ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
+		if(claimType.getPermissionChecker() != null){
+			ClaimResult.Type failureType = claimType.getPermissionChecker().apply(player, manager);
+			if(failureType != null) {
+				if(claimType != ClaimingModes.PLAYER)
+					manager.getPermissionHandler().resetClaimingMode(player);
+				manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
+						new AreaClaimResult(Set.of(failureType), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
+						player);
+				return;
+			}
+		}
+		UUID playerId = player.getUUID();
+		manager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
+		if(claimType.getForcedUUIDGetter() != null)
+			playerId = claimType.getForcedUUIDGetter().apply(playerId, manager);
 		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
-		IPlayerConfig usedSubConfig = shouldServerClaim ? playerConfig.getUsedServerSubConfig() : playerConfig.getUsedSubConfig();
+		IPlayerConfig usedSubConfig = claimType.getSubConfigGetter().apply(playerConfig);
 		int subConfigIndex = usedSubConfig.getSubIndex();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;

@@ -45,6 +45,7 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
@@ -55,6 +56,7 @@ import xaero.pac.common.server.world.ServerLevelHelper;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -195,11 +197,15 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 			);
 		}
 
+		protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId){
+			return systemManager.canEditPartyConfig(playerId);
+		}
+
 		@Override
 		public void accept(P packet, ServerPlayer serverPlayer) {
 			boolean isOp = Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions());
 			if(!isOp){
-				if(packet.type != PlayerConfigType.PLAYER){
+				if(packet.type != PlayerConfigType.PLAYER && packet.type != PlayerConfigType.PARTY_CLAIMS){
 					OpenPartiesAndClaims.LOGGER.warn(
 							"Non-op player {} attempted to affect groups of the {} config!",
 							serverPlayer.getGameProfile().name(),
@@ -207,7 +213,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 					);
 					return;
 				}
-				if(packet.ownerId != null) {
+				if(packet.type != PlayerConfigType.PARTY_CLAIMS && packet.ownerId != null) {
 					OpenPartiesAndClaims.LOGGER.warn(
 							"Non-op player {} attempted to affect groups for another player!",
 							serverPlayer.getGameProfile().name()
@@ -227,6 +233,15 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 						serverPlayer.getGameProfile().name()
 				);
 				return;
+			}
+			if(!isOp && packet.type == PlayerConfigType.PARTY_CLAIMS && !Objects.equals(config.getPlayerId(), serverPlayer.getUUID())){
+				if (!canAffectPartyConfig(serverData.getPlayerPartySystemManager(), serverPlayer.getUUID())) {
+					OpenPartiesAndClaims.LOGGER.warn(
+							"Non-op player {} attempted to add/remove groups to/from party claims config without proper permission!",
+							serverPlayer.getGameProfile().name()
+					);
+					return;
+				}
 			}
 			IServerPlayerConfigGroupManager groupManager = config.getPlayerGroups();
 			try {

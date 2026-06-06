@@ -23,13 +23,17 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
+import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
+import xaero.pac.common.server.player.config.PlayerConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -193,7 +197,53 @@ public abstract class ClaimsManager
 	public int getClaimStateCount() {
 		return claimStateHolders.size();
 	}
-	
+
+	@Nonnull
+	@Override
+	public Component getDefaultName(IPlayerChunkClaimAPI claimState) {
+		if(claimState == null)
+			return Component.translatable("gui.xaero_pac_title_wilderness");
+		MutableComponent result;
+		UUID claimId = claimState.getPlayerId();
+		Component forceloadedComponent = claimState.isForceloadable() ?
+				Component.translatable("gui.xaero_pac_marked_for_forceload") : Component.literal("");
+		if (Objects.equals(claimId, PlayerConfig.SERVER_CLAIM_UUID))
+			result = Component.translatable("gui.xaero_pac_title_server_claim", forceloadedComponent);
+		else if (Objects.equals(claimId, PlayerConfig.EXPIRED_CLAIM_UUID))
+			result = Component.translatable("gui.xaero_pac_title_expired_claim", forceloadedComponent);
+		else {
+			PCI playerClaimInfo = getPlayerInfo(claimId);
+			result = constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+		}
+		return result;
+	}
+
+	@Nonnull
+	@Override
+	public Component getFullName(IPlayerChunkClaimAPI claimState) {
+		String customName = claimState == null ?
+				getWildernessName() :
+				getPlayerInfo(claimState.getPlayerId()).getClaimsName(claimState.getSubConfigIndex());
+		boolean hasCustom = customName != null && !customName.isEmpty();
+		if(claimState == null && hasCustom)
+			return Component.literal(customName);
+		Component defaultName = getDefaultName(claimState);
+		if(!hasCustom)
+			return defaultName;
+		return Component.translatable("gui.xaero_pac_full_title_format", customName, defaultName);
+	}
+
+	@Nullable
+	public abstract String getWildernessName();
+
+	protected MutableComponent constructPlayerClaimName(PCI playerClaimInfo, Component forceloadedComponent){
+		//overridden to apply party name instead if necessary
+		return Component.translatable(
+				"gui.xaero_pac_title_player_claim",
+				playerClaimInfo.getPlayerUsername(), forceloadedComponent
+		);
+	}
+
 	public abstract static class Builder
 	<
 		PCI extends PlayerClaimInfo<PCI, M>,

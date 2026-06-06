@@ -44,6 +44,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfigDeletionStarter;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.world.ServerLevelHelper;
 import xaero.pac.common.util.nbt.XaeroNbtUtil;
@@ -117,8 +118,12 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 		
 		@Override
 		public void accept(ServerboundSubConfigExistencePacket t, ServerPlayer serverPlayer) {
-			if(t.type != PlayerConfigType.PLAYER && t.type != PlayerConfigType.SERVER) {
+			if(t.type != PlayerConfigType.PLAYER && t.type != PlayerConfigType.SERVER && t.type != PlayerConfigType.PARTY_CLAIMS) {
 				OpenPartiesAndClaims.LOGGER.info("Someone is trying to create/delete a sub-config for an invalid config type! Name: " + serverPlayer.getGameProfile().name());
+				return;
+			}
+			if(t.type == PlayerConfigType.PARTY_CLAIMS && t.owner != null) {
+				OpenPartiesAndClaims.LOGGER.info("Someone is trying to create/delete a sub-config for party claims of another player: " + serverPlayer.getGameProfile().name());
 				return;
 			}
 			boolean isOP = Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions());
@@ -135,10 +140,16 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				}
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
+			if(!isOP && t.type == PlayerConfigType.PARTY_CLAIMS &&
+					!serverData.getPlayerPartySystemManager().canEditPartyConfig(serverPlayer.getUUID())
+			){
+				OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to add/remove party sub-config without required permissions! Name: " + serverPlayer.getGameProfile().name());
+				return;
+			}
 			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
-			IPlayerConfig config = !isServer ?
-										playerConfigs.getLoadedConfig(ownerId) :
-										playerConfigs.getServerClaimConfig();
+			IPlayerConfig config = ServerPlayerConfigUtils.getTargetConfig(ownerId, serverPlayer.getUUID(), t.type, playerConfigs);
+			if(config == null)
+				return;
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(serverPlayer);
 			if(serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
 				return;//going too fast

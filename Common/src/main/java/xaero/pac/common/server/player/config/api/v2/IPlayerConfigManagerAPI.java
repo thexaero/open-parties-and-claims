@@ -44,6 +44,21 @@ public interface IPlayerConfigManagerAPI {
 	public IPlayerConfigAPI getLoadedConfig(@Nullable UUID id);
 
 	/**
+	 * Gets or creates the player config of the owner of the party that the player with
+	 * a specified UUID is a member of.
+	 * <p>
+	 * The party owner's config is used as the config for the claims owned by the party when the server has party-owned
+	 * claims enabled.
+	 * <p>
+	 * The party system used is the configured primary party system.
+	 *
+	 * @param memberId  the UUID of the player who is a member of the party, not null
+	 * @return the party owner's player config, null if the player is not in a party
+	 */
+	@Nullable
+	public IPlayerConfigAPI getPartyOwnerConfig(@Nonnull UUID memberId);
+
+	/**
 	 * Gets the default player config instance.
 	 *
 	 * @return the default player config instance, not null
@@ -93,5 +108,4 @@ public interface IPlayerConfigManagerAPI {
 	 */
 	@Nullable
 	public IPlayerConfigOptionSpecAPI<?> getOptionForId(@Nonnull String id);
-
 }

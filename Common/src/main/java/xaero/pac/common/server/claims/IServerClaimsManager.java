@@ -29,6 +29,8 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.sync.IClaimsManagerSynchronizer;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
+import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 import javax.annotation.Nonnull;
@@ -46,6 +48,8 @@ public interface IServerClaimsManager
 	public IClaimsManagerSynchronizer getClaimsManagerSynchronizer();
 	public ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> getClaimReplaceTaskHandler();
 	public ServerClaimsPermissionHandler getPermissionHandler();
+	public IPlayerPartySystemManager getPartySystemManager();
+	public IPlayerConfigManager getConfigManager();
 
 	@Nonnull
 	@Override

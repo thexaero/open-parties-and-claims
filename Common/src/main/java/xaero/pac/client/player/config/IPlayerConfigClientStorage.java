@@ -21,8 +21,8 @@ package xaero.pac.client.player.config;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.client.player.config.api.v2.IPlayerConfigStringableOptionClientStorageAPI;
 import xaero.pac.client.player.config.group.IClientPlayerConfigGroupManager;
-import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,8 +71,13 @@ public interface IPlayerConfigClientStorage<OS extends IPlayerConfigStringableOp
 	@Override
 	boolean isBeingDeleted();
 
+	@Nonnull
 	@Override
 	IClientPlayerConfigGroupManager getPlayerGroups();
+
+	@Nonnull
+	@Override
+	IPlayerConfigClientPermissions getPermissions();
 
 	public Stream<IPlayerConfigClientStorage<OS>> getSubConfigStream();
 

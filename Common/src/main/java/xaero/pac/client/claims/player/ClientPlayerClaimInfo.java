@@ -19,6 +19,7 @@
 package xaero.pac.client.claims.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import xaero.pac.client.claims.player.sub.ClientPlayerSubClaimInfo;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
@@ -32,6 +33,8 @@ import java.util.stream.Stream;
 
 public final class ClientPlayerClaimInfo extends PlayerClaimInfo<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager> implements IClientPlayerClaimInfo<PlayerDimensionClaims> {
 
+	private Component partyName;
+	private boolean partyOwned;
 	private final Int2ObjectMap<ClientPlayerSubClaimInfo> subClaimInfo;
 	
 	public ClientPlayerClaimInfo(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims,
@@ -89,6 +92,27 @@ public final class ClientPlayerClaimInfo extends PlayerClaimInfo<ClientPlayerCla
 		if(sub == null)
 			return;
 		sub.setClaimsColor(color);
+	}
+
+	public void setPartyName(Component partyName) {
+		this.partyName = partyName;
+	}
+
+	public void setPartyOwned(boolean partyOwned) {
+		this.partyOwned = partyOwned;
+	}
+
+	@Override
+	public boolean isPartyOwned() {
+		return partyOwned;
+	}
+
+	public Component getPartyName() {
+		if(!manager.usingPartyOwnedClaims())
+			return null;
+		if(partyName == null && partyOwned)
+			return getDefaultPartyName();
+		return partyName;
 	}
 
 }

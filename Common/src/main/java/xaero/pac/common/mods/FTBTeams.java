@@ -18,10 +18,8 @@
 
 package xaero.pac.common.mods;
 
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 import xaero.pac.common.server.parties.system.impl.PlayerFTBPartySystem;
-import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
-import xaero.pac.common.server.player.permission.impl.PlayerFTBPermissionSystem;
 
 public class FTBTeams {
 

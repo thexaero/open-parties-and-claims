@@ -18,6 +18,7 @@
 
 package xaero.pac.client.player.config;
 
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 
@@ -29,8 +30,8 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 	
 	protected final PlayerConfigOptionSpec<T> option;
 	private T value;
-	private boolean defaulted;
-	private boolean mutable;
+	private boolean playerMutable;
+	private boolean adminMutable;
 	
 	public PlayerConfigOptionClientStorage(PlayerConfigOptionSpec<T> option, T value) {
 		super();
@@ -38,7 +39,6 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 			throw new IllegalArgumentException();
 		this.option = option;
 		this.value = value;
-		this.defaulted = true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -126,23 +126,37 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 	}
 
 	@Override
-	public void setDefaulted(boolean defaulted) {
-		this.defaulted = defaulted;
-	}
-
-	@Override
 	public boolean isDefaulted() {
-		return defaulted;
-	}
-
-	@Override
-	public void setMutable(boolean mutable) {
-		this.mutable = mutable;
+		return !playerMutable && !adminMutable;
 	}
 
 	@Override
 	public boolean isMutable() {
-		return mutable;
+		if(isPlayerMutable())
+			return true;
+		if(!isAdminMutable())
+			return false;
+		return OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().isAdmin();
+	}
+
+	@Override
+	public boolean isPlayerMutable() {
+		return playerMutable;
+	}
+
+	@Override
+	public boolean isAdminMutable() {
+		return adminMutable;
+	}
+
+	@Override
+	public void setPlayerMutable(boolean playerMutable) {
+		this.playerMutable = playerMutable;
+	}
+
+	@Override
+	public void setAdminMutable(boolean adminMutable) {
+		this.adminMutable = adminMutable;
 	}
 
 	public boolean isDynamic() {

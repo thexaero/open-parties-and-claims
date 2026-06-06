@@ -100,10 +100,10 @@ public class RankPartyCommand {
 							UUID targetPlayerId = targetMember.getUUID();
 							ServerPlayer rankedPlayer = server.getPlayerList().getPlayer(targetPlayerId);
 							if(rankedPlayer != null)
-								server.getCommands().sendCommands(rankedPlayer);
-							
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
+								serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(rankedPlayer, serverData, false);
 
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
+							
 							return 1;
 						})))));
 		dispatcher.register(command);

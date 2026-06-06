@@ -18,11 +18,15 @@
 
 package xaero.pac.common.server.parties.system.api;
 
+import net.minecraft.network.chat.Component;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
+ * @deprecated use {@link xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI} instead
+ * <p>
  * The interface to be overridden by addons that wish to implement additional party systems to be used
  * by Open Parties and Claims (just the claiming feature as of writing this).
  * <p>
@@ -35,44 +39,44 @@ import java.util.UUID;
  *
  * @param <P> the type of parties in the implemented system
  */
-public interface IPlayerPartySystemAPI<P> {
+@Deprecated
+public interface IPlayerPartySystemAPI<P> extends xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI<P> {
 
-	/**
-	 * Gets the party that the player with a specified UUID owns.
-	 *
-	 * @param playerId  the UUID of the player, not null
-	 * @return the party that the player owns, null if the player doesn't own one
-	 */
+	@Override
+	default boolean canEditPartyConfig(@Nonnull UUID playerId){
+		return false;
+	}
+
+	@Override
+	default boolean canCreatePartyConfigGroups(@Nonnull UUID playerId){
+		return false;
+	}
+
+	@Override
+	default boolean canIncludeGroupsInPartyConfigGroups(@Nonnull UUID playerId){
+		return false;
+	}
+
+	@Override
+	default boolean canIncludePlayersInPartyConfigGroups(@Nonnull UUID playerId){
+		return false;
+	}
+
+	@Override
 	@Nullable
-	P getPartyByOwner(@Nonnull UUID playerId);
+	default UUID getOwner(@Nonnull P party){
+		return null;
+	}
 
-	/**
-	 * Gets the party that the player with a specified UUID is a part of.
-	 *
-	 * @param playerId  the UUID of the player, not null
-	 * @return the party that the player is in, null if the player isn't in one
-	 */
+	@Override
 	@Nullable
-	P getPartyByMember(@Nonnull UUID playerId);
+	default Component getName(@Nonnull P party){
+		return null;
+	}
 
-	/**
-	 * Checks if a player with UUID {@code playerId} considers a player with UUID {@code potentialAllyPlayerId}
-	 * an ally.
-	 *
-	 * @param playerId  the UUID of the player to check the allies of, not null
-	 * @param potentialAllyPlayerId  the UUID of the player to check the ally status of, not null
-	 * @return true, if {@code playerId} considers {@code potentialAllyPlayerId} an ally, otherwise false
-	 */
-	boolean isPlayerAllying(@Nonnull UUID playerId, @Nonnull UUID potentialAllyPlayerId);
-
-	/**
-	 * Checks if a player is permitted to claim as the party that they belong to but don't own.
-	 * <p>
-	 * This is not used by Open Parties and Claims as of writing this.
-	 *
-	 * @param playerId  the UUID of the player, not null
-	 * @return true, if the player is permitted to claim as the party, otherwise false
-	 */
-	boolean isPermittedToPartyClaim(@Nonnull UUID playerId);
+	@Override
+	default int getMemberCount(@Nonnull P party){
+		return 0;
+	}
 
 }

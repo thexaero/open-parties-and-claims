@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,27 +18,45 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
+import xaero.pac.common.server.command.AbstractChunkCommand;
 import xaero.pac.common.server.config.ServerConfig;
 
-public class ClaimsForceloadCommand {
-	
-	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(ClaimsForceloadCommands.createForceloadCommand(Commands.literal("forceload"), true, false, false));
-		dispatcher.register(command);
-		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), true, false, false)));
-		dispatcher.register(command);
-		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(ClaimsForceloadCommands.createForceloadCommand(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())), true, false, true)));
-		dispatcher.register(command);
-		
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get()).then(Commands.literal("forceload").then(Commands.literal("anyway").requires(source -> Commands.LEVEL_GAMEMASTERS.check(source.permissions())).then(ClaimsForceloadCommands.createForceloadCommand(Commands.argument("block pos", ColumnPosArgument.columnPos()), true, false, true))));
-		dispatcher.register(command);
+import java.util.function.Predicate;
+
+public class ClaimsForceloadCommand extends AbstractChunkCommand {
+
+	private final ClaimingMode mode;
+
+	public ClaimsForceloadCommand(boolean add, ClaimingMode mode) {
+		super(
+				ClaimsCommandRegister.COMMAND_PREFIX, add,
+				mode == ClaimingModes.PLAYER ? null : mode.getId(), "forceload", "unforceload"
+		);
+		this.mode = mode;
+	}
+
+	@Override
+	protected ArgumentBuilder<CommandSourceStack, ?> createChunkCommand(
+			ArgumentBuilder<CommandSourceStack, ?> builder,
+			boolean shouldApply,
+			boolean opForce
+	) {
+		return ClaimsForceloadCommands.createForceloadCommand(builder, shouldApply, mode, opForce);
+	}
+
+	@Override
+	protected ModConfigSpec.BooleanValue getFeatureConfigOption() {
+		return ServerConfig.CONFIG.claimsEnabled;
+	}
+
+	@Override
+	protected Predicate<CommandSourceStack> getRequirement() {
+		return mode.getCommandVisibilityRequirement();
 	}
 
 }
