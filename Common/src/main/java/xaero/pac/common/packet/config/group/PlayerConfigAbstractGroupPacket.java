@@ -238,7 +238,7 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 				if (!canAffectPartyConfig(serverData.getPlayerPartySystemManager(), serverPlayer.getUUID())) {
 					OpenPartiesAndClaims.LOGGER.warn(
 							"Non-op player {} attempted to add/remove groups to/from party claims config without proper permission!",
-							serverPlayer.getGameProfile().getName()
+							serverPlayer.getGameProfile().name()
 					);
 					return;
 				}
