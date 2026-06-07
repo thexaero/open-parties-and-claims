@@ -165,8 +165,8 @@ public class ClientClaimsSyncHandler {
 		lastClaimUpdateDimension = null;
 	}
 
-	public void onClaimsReset() {
-		claimsManager.reset();
+	public void onClaimsReset(boolean notifyTracker) {
+		claimsManager.reset(notifyTracker);
 	}
 
 }

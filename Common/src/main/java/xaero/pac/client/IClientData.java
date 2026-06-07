@@ -54,7 +54,7 @@ public interface IClientData
 	public ClientTickHandler getClientTickHandler();
 	public ClientWorldLoadHandler getClientWorldLoadHandler();
 	public PlayerConfigClientSynchronizer getPlayerConfigClientSynchronizer();
-	public void reset();
+	public void reset(boolean notifyClaimsTracker);
 	public ClientClaimsSyncHandler getClientClaimsSyncHandler();
 	
 }

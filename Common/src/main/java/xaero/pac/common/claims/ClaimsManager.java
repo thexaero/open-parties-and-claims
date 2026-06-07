@@ -79,8 +79,8 @@ public abstract class ClaimsManager
 
 	protected abstract void onClaimStateAdded(CSH stateHolder);
 
-	protected void reset() {
-		Set<Identifier> dimensionIds = new HashSet<>(dimensions.keySet());
+	protected void reset(boolean notifyTracker) {
+		Set<Identifier> dimensionIds = notifyTracker ? new HashSet<>(dimensions.keySet()) : null;
 		indexToClaimState.clear();
 		dimensions.clear();
 		claimStateHolders.clear();
@@ -88,8 +88,9 @@ public abstract class ClaimsManager
 		dimensions = new HashMap<>();
 		claimStateHolders = new HashMap<>();
 		playerClaimInfoManager.clear();
-		for (Identifier dimensionId : dimensionIds)
-			claimsManagerTracker.onDimensionChange(dimensionId);
+		if(notifyTracker)
+			for (Identifier dimensionId : dimensionIds)
+				claimsManagerTracker.onDimensionChange(dimensionId);
 	}
 
 	protected WCM ensureDimension(Identifier dim) {

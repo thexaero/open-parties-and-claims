@@ -326,8 +326,8 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public void reset() {
-		super.reset();
+	public void reset(boolean notifyTracker) {
+		super.reset(notifyTracker);
 		adminMode = false;
 		claimingMode = ClaimingModes.PLAYER;
 		claimingModeInfoMap.values().forEach(ClientClaimingModeInfo::reset);
