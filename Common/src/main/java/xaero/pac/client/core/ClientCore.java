@@ -34,7 +34,7 @@ public class ClientCore {
 		if(!serverHasMod) {
 			//the border packet is sent after the handshake, so if we didn't get a handshake up until this point, then there is no mod on the server side
 			OpenPartiesAndClaims.LOGGER.info("No Open Parties and Claims on the server! Resetting.");
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().reset();
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().reset(true);
 		}
 	}
 	
