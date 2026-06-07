@@ -115,7 +115,7 @@ public class ClaimsClaimCommands {
 						
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> claimOwnerInfo = claimsManager.getPlayerInfo(result.getClaimResult().getPlayerId());
-							IPlayerChunkClaimAPI currentClaim = claimsManager.get(world.dimension().identifier(), player.chunkPosition().x, player.chunkPosition().z);
+							IPlayerChunkClaimAPI currentClaim = claimsManager.get(world.dimension().identifier(), player.chunkPosition().x(), player.chunkPosition().z());
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_claims_claim_already_claimed_by", claimsManager.getDefaultName(currentClaim)));
 							return 0;
 						}
