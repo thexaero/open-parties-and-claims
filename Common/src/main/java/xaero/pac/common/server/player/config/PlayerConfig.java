@@ -191,7 +191,8 @@ public class PlayerConfig
 			if(changeHandler != null && option.getCategory().requiredFeaturesAreEnabled())
 				changeHandler.handle(manager, this, option, beforeEffective, value);
 		}
-		manager.getSynchronizer().syncOptionToClients(this, option);
+		if(manager.isLoaded())
+			manager.getSynchronizer().syncOptionToClients(this, option);
 		return SetResult.SUCCESS;
 	}
 	
