@@ -19,6 +19,7 @@
 package xaero.pac.common.claims.api;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
@@ -100,5 +101,23 @@ public interface IClaimsManagerAPI {
 	 */
 	@Nonnull
 	public IClaimsManagerTrackerAPI getTracker();
+
+	/**
+	 * Gets the default display name that would be used for a provided claim state.
+	 *
+	 * @param claimState  the claim state, can be null for wilderness
+	 * @return the default display name, not null
+	 */
+	@Nonnull
+	public Component getDefaultName(@Nullable IPlayerChunkClaimAPI claimState);
+
+	/**
+	 * Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.
+	 *
+	 * @param claimState  the claim state, can be null for wilderness
+	 * @return the full display name, not null
+	 */
+	@Nonnull
+	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState);
 	
 }

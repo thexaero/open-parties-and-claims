@@ -30,7 +30,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -245,7 +244,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 				PlayerConfigClientStorage defaultPlayerConfigData,
 				PlayerConfigStringableOptionClientStorage<T> option){
 			T value;
-			if(option.isDefaulted() && data.getType() == PlayerConfigType.PLAYER)
+			if(option.isDefaulted())
 				value = defaultPlayerConfigData.getOption(option.getOption()).getValue();
 			else
 				value = option.getValue();
@@ -254,7 +253,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 
 		private <HT, T> CycleButton.OnValueChange<HT> getRegularValueChangeListener(SimpleValueWidgetListElement.Final<T> el, PlayerConfigStringableOptionClientStorage<T> option, Function<HT, T> holderToValue, PlayerConfigClientStorage data) {
 			return (b, vh) -> {
-				if(!option.isMutable())
+				if(!el.mutable)
 					return;
 				//on value change
 				T v = holderToValue.apply(vh);
@@ -327,7 +326,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setH(elementHeight)
 					.setWidgetSupplier(widgetSupplier)
 					.setTooltip(tooltip)
-					.setMutable(option.isMutable())
+					.setMutable(isMutable(data, option))
 					.setStartValue(value)
 					.build();
 		}
@@ -342,7 +341,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setH(elementHeight)
 					.setWidgetSupplier(widgetSupplier)
 					.setTooltip(tooltip)
-					.setMutable(option.isMutable())
+					.setMutable(isMutable(data, option))
 					.setStartValue(value)
 					.build();
 		}
@@ -376,6 +375,9 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			if(data.getType() == PlayerConfigType.SERVER){
 				usedSubConfigSyncDest = mainPlayerConfigData;
 				usedSubConfigOptionStorage = mainPlayerConfigData.getOption(PlayerConfigOptions.USED_SERVER_SUBCLAIM);
+			} else if(data.getType() == PlayerConfigType.PARTY_CLAIMS){
+				usedSubConfigSyncDest = mainPlayerConfigData;
+				usedSubConfigOptionStorage = mainPlayerConfigData.getOption(PlayerConfigOptions.USED_PARTY_SUBCLAIM);
 			} else {
 				usedSubConfigSyncDest = data;
 				usedSubConfigOptionStorage = data.getOption(PlayerConfigOptions.USED_SUBCLAIM);
@@ -397,7 +399,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 
 			elements.add(createSubConfigWidgetListElement(elementWidth, elementHeight, subConfigs, indexOfSelectedSub));
 			boolean isCurrentlyUsed = Objects.equals(usedSubConfigOptionStorage.getValue(), data.getSelectedSubConfig());
-			boolean canCreateSubs = data.getType() == PlayerConfigType.PLAYER || Commands.LEVEL_GAMEMASTERS.check(minecraft.player.permissions());
+			boolean canCreateSubs = data.getPermissions().canEdit();
 
 			WidgetListElement<?> useSubConfigButtonWidget = SimpleWidgetListElement.Builder.begin()
 					.setW(elementWidth)
@@ -450,10 +452,19 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			elements.add(createSubConfigWidget);
 		}
 
+		private boolean isMutable(PlayerConfigClientStorage data, PlayerConfigStringableOptionClientStorage<?> option){
+			return data.getPermissions().canEdit() &&
+					(option.isPlayerMutable() || manager.isAdmin() && option.isAdminMutable());
+		}
+
 		public PlayerConfigScreen build() {
-			if(manager == null || data == null
-					|| data.getType() == PlayerConfigType.PLAYER && defaultPlayerConfigData == null
-					|| data.getType() == PlayerConfigType.SERVER && mainPlayerConfigData == null)
+			if(manager == null || data == null)
+				throw new IllegalStateException();
+			if((data.getType() == PlayerConfigType.PLAYER || data.getType() == PlayerConfigType.PARTY_CLAIMS)
+					&& defaultPlayerConfigData == null)
+				throw new IllegalStateException();
+			if((data.getType() == PlayerConfigType.SERVER || data.getType() == PlayerConfigType.PARTY_CLAIMS)
+					&& mainPlayerConfigData == null)
 				throw new IllegalStateException();
 			boolean anotherPlayer = data.getType() == PlayerConfigType.PLAYER && data.getOwner() != null;
 			if(anotherPlayer && otherPlayerName == null)
@@ -474,11 +485,15 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					mainTitle = Component.translatable("gui.xaero_pac_ui_my_player_config");
 				else if(data.getType() == PlayerConfigType.SERVER)
 					mainTitle = Component.translatable("gui.xaero_pac_ui_server_claims_config");
+				else if(data.getType() == PlayerConfigType.PARTY_CLAIMS)
+					mainTitle = Component.translatable("gui.xaero_pac_ui_party_claims_config");
 				else
 					mainTitle = Component.translatable("gui.xaero_pac_ui_player_config");
 			}
 			boolean syncInProgress = data.isSyncInProgress();
-			if(!syncInProgress && (data.getType() == PlayerConfigType.PLAYER || data.getType() == PlayerConfigType.SERVER)) {
+			boolean hasSubConfigs = data.getType() == PlayerConfigType.PLAYER || data.getType() == PlayerConfigType.SERVER ||
+					data.getType() == PlayerConfigType.PARTY_CLAIMS;
+			if(!syncInProgress && hasSubConfigs) {
 				addSubConfigControls(elements, elementWidth, elementHeight);
 				title = Component.translatable(
 						"gui.xaero_pac_ui_player_config_sub",
@@ -500,10 +515,13 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						|| !optionStorage.isDirectlyConfigurable()
 						|| !optionStorage.getOption().getConfigTypeFilter().test(optionValueSourceData.getType())
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_SUBCLAIM
-						|| optionStorage.getOption() == PlayerConfigOptions.USED_SERVER_SUBCLAIM)
+						|| optionStorage.getOption() == PlayerConfigOptions.USED_SERVER_SUBCLAIM
+						|| optionStorage.getOption() == PlayerConfigOptions.USED_PARTY_SUBCLAIM
+				)
 					return;
 				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !optionStorage.getOption().isOverridable())
 					return;
+				final boolean mutable = isMutable(optionValueSourceData, optionStorage);
 				Class<?> type = optionStorage.getType();
 				Component optionTitle = Component.translatable(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
 				List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(getUICommentForOption(optionStorage.getOption()), 200);
@@ -531,11 +549,11 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							.setH(elementHeight)
 							.setTitle(optionTitle)
 							.setTooltip(tooltip)
-							.setMutable(optionStorage.isMutable())
+							.setMutable(mutable)
 							.setStartValue(value == null ? "" : optionStorage.getStringWriterCast().apply(value))
 							.setValidator(s -> subConfigSelected && s.isEmpty() || finalFilter.test(s) && optionStorage.getStringValidator().test(optionValueSourceData, s))
 							.setResponder((el, s) -> {
-								if(!optionStorage.isMutable())
+								if(!mutable)
 									return;
 								//on value change
 								Object newValue;

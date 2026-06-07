@@ -25,6 +25,10 @@ import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
+/**
+ * @deprecated Use {@link xaero.pac.common.event.api.v2.OPACServerAddonRegister} instead
+ */
+@Deprecated
 public interface OPACServerAddonRegister {
 
 	public static final Event<OPACServerAddonRegister> EVENT = EventFactory.createArrayBacked(OPACServerAddonRegister.class, (callbacks) -> (server, permissionSystemManagerAPI, partySystemManagerAPI, claimsManagerTrackerAPI) -> {

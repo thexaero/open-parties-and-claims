@@ -19,6 +19,7 @@
 package xaero.pac.client.claims.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.client.claims.ClientClaimsManager;
@@ -37,6 +38,8 @@ import java.util.function.BiConsumer;
 //only used by ClientClaimsManager
 public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager> {
 
+	private boolean partyOwnedClaims;
+
 	public ClientPlayerClaimInfoManager(Map<UUID, ClientPlayerClaimInfo> storage, LinkedChain<ClientPlayerClaimInfo> linkedPlayerInfo) {
 		super(storage, linkedPlayerInfo);
 	}
@@ -47,9 +50,11 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 		return new ClientPlayerClaimInfo(username, playerId, claims, this, new Int2ObjectOpenHashMap<>());
 	}
 	
-	public void updatePlayerInfo(UUID playerId, String username, ClientClaimsManager claimsManager) {
+	public void updatePlayerInfo(UUID playerId, String username, Component partyName, boolean partyOwned, ClientClaimsManager claimsManager) {
 		ClientPlayerClaimInfo playerInfo = getInfo(playerId);
 		playerInfo.setPlayerUsername(username);
+		playerInfo.setPartyName(partyName);
+		playerInfo.setPartyOwned(partyOwned);
 		if(playerInfo.getClaimsColor(-1) == null)
 			updateSubClaimInfo(playerId, -1, "", 0, claimsManager);//ensuring something is always there for the main sub
 	}
@@ -79,6 +84,15 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 					tracker.onDimensionChange(dimensionId);
 			});
 		}
+	}
+
+	public void setPartyOwnedClaims(boolean partyOwnedClaims) {
+		this.partyOwnedClaims = partyOwnedClaims;
+	}
+
+	@Override
+	public boolean usingPartyOwnedClaims() {
+		return partyOwnedClaims;
 	}
 
 }

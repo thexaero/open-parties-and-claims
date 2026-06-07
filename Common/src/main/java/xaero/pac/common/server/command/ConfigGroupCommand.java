@@ -49,7 +49,9 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
@@ -60,6 +62,7 @@ import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Comparator;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
@@ -116,6 +119,11 @@ public abstract class ConfigGroupCommand {
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
 				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
 						.then(getMainCommandPart(PlayerConfigType.WILDERNESS))));
+		dispatcher.register(command);
+
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
+				.requires(getPartyClaimsRequirement(false)).then(Commands.literal("player-groups")
+						.then(getMainCommandPart(PlayerConfigType.PARTY_CLAIMS).requires(getPartyClaimsRequirement(true)))));
 		dispatcher.register(command);
 	}
 
@@ -285,5 +293,42 @@ public abstract class ConfigGroupCommand {
 		throw new IllegalStateException("This must be overridden if suggestSecondaryArgument is true!");
 	}
 
+	protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId){
+		return systemManager.canEditPartyConfig(playerId);
+	}
+
+	private Predicate<CommandSourceStack> getPartyClaimsRequirement(boolean affect){
+		return CommandRequirementHelper.onServerThread(sourceStack -> {
+			if(!ServerConfig.CONFIG.claimsEnabled.get())
+				return false;
+			if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+				return false;
+			ServerPlayer sourcePlayer;
+			try {
+				sourcePlayer = sourceStack.getPlayerOrException();
+			} catch (CommandSyntaxException e) {
+				return false;
+			}
+			MinecraftServer server = sourceStack.getServer();
+			IServerData<
+					IServerClaimsManager<
+							IPlayerChunkClaim,
+							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
+							IServerDimensionClaimsManager<IServerRegionClaims>
+							>,
+					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
+					> serverData = ServerData.from(server);
+			UUID partyConfigOwner = serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(sourcePlayer.getUUID());
+			if(partyConfigOwner == null)//not in a party
+				return false;
+			if(!affect)
+				return true;
+			if(Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
+				return true;
+			if(sourcePlayer.getUUID().equals(partyConfigOwner))
+				return true;
+			return canAffectPartyConfig(serverData.getPlayerPartySystemManager(), sourcePlayer.getUUID());
+		});
+	}
 
 }

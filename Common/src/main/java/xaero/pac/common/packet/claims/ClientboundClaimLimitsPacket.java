@@ -22,29 +22,32 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLimitsPacket> {
 	
 	public static final Encoder<ClientboundClaimLimitsPacket> ENCODER = new Encoder<>();
 	public static final Decoder DECODER = new Decoder();
-	
-	private final int loadingClaimCount;
-	private final int loadingForceloadCount;
-	private final int claimLimit;
-	private final int forceloadLimit;
+
+	private final Collection<ClaimingModeLimits> limits;
 	private final int maxClaimDistance;
 	private final boolean alwaysUseLoadingValues;
 
-	public ClientboundClaimLimitsPacket(int loadingClaimCount, int loadingForceloadCount, int claimLimit,
-										int forceloadLimit, int maxClaimDistance, boolean alwaysUseLoadingValues) {
+	public ClientboundClaimLimitsPacket(
+			Collection<ClaimingModeLimits> limits,
+			int maxClaimDistance,
+			boolean alwaysUseLoadingValues
+	) {
 		super();
-		this.loadingClaimCount = loadingClaimCount;
-		this.loadingForceloadCount = loadingForceloadCount;
-		this.claimLimit = claimLimit;
-		this.forceloadLimit = forceloadLimit;
+		this.limits = limits;
 		this.maxClaimDistance = maxClaimDistance;
 		this.alwaysUseLoadingValues = alwaysUseLoadingValues;
 	}
@@ -52,10 +55,18 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 	@Override
 	protected void writeOnPrepare(FriendlyByteBuf u) {
 		CompoundTag tag = new CompoundTag();
-		tag.putInt("cc", loadingClaimCount);
-		tag.putInt("fc", loadingForceloadCount);
-		tag.putInt("cl", claimLimit);
-		tag.putInt("fl", forceloadLimit);
+		CompoundTag limitsTag = new CompoundTag();
+		for (ClaimingModeLimits modeLimits : limits) {
+			CompoundTag modeLimitsTag = new CompoundTag();
+			modeLimitsTag.putInt("cc", modeLimits.claimCount);
+			modeLimitsTag.putInt("fc", modeLimits.forceloadCount);
+			if(modeLimits.claimLimit != -1)
+				modeLimitsTag.putInt("cl", modeLimits.claimLimit);
+			if(modeLimits.forceloadLimit != -1)
+				modeLimitsTag.putInt("fl", modeLimits.forceloadLimit);
+			limitsTag.put(modeLimits.mode.getId(), modeLimitsTag);
+		}
+		tag.put("l", limitsTag);
 		tag.putInt("d", maxClaimDistance);
 		tag.putBoolean("a", alwaysUseLoadingValues);
 		u.writeNbt(tag);
@@ -71,18 +82,40 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 		@Override
 		public ClientboundClaimLimitsPacket apply(FriendlyByteBuf input) {
 			try {
-				if(input.readableBytes() > 2048)
+				if(input.readableBytes() > 2048 * ClaimingModes.ALL_IMMUTABLE.size())
 					return null;
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				int loadingClaimCount = tag.getIntOr("cc", 0);
-				int loadingForceloadCount = tag.getIntOr("fc", 0);
-				int claimLimit = tag.getIntOr("cl", 0);
-				int forceloadLimit = tag.getIntOr("fl", 0);
+				CompoundTag limitsTag = tag.getCompoundOrEmpty("l");
+				if(limitsTag.isEmpty())
+					return null;
+				List<ClaimingModeLimits> limits = new ArrayList<>();
+				for (String modeId : limitsTag.keySet()) {
+					if(modeId.length() > 100){
+						OpenPartiesAndClaims.LOGGER.info("Claiming mode ID string is too long!");
+						return null;
+					}
+					CompoundTag modeLimitsTag = limitsTag.getCompoundOrEmpty(modeId);
+					if(modeLimitsTag.isEmpty())
+						continue;
+					ClaimingMode mode = (ClaimingMode) ClaimingModes.get(modeId);
+					if(mode == null)
+						continue;
+					int claimCount = modeLimitsTag.getIntOr("cc", 0);
+					int forceloadCount = modeLimitsTag.getIntOr("fc", 0);
+					int claimLimit = modeLimitsTag.getIntOr("cl", -1);
+					int forceloadLimit = modeLimitsTag.getIntOr("fl", -1);
+					ClaimingModeLimits modeLimits = new ClaimingModeLimits(mode, claimCount, forceloadCount, claimLimit, forceloadLimit);
+					limits.add(modeLimits);
+				}
 				int maxClaimDistance = tag.getIntOr("d", 0);
 				boolean alwaysUseLoadingValues = tag.getBooleanOr("a", false);
-				return new ClientboundClaimLimitsPacket(loadingClaimCount, loadingForceloadCount, claimLimit, forceloadLimit, maxClaimDistance, alwaysUseLoadingValues);
+				return new ClientboundClaimLimitsPacket(
+						limits,
+						maxClaimDistance,
+						alwaysUseLoadingValues
+				);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);
 				return null;
@@ -95,9 +128,11 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 		
 		@Override
 		public void handle(ClientboundClaimLimitsPacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimLimits(t.loadingClaimCount, t.loadingForceloadCount, t.claimLimit, t.forceloadLimit, t.maxClaimDistance, t.alwaysUseLoadingValues);
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimLimits(
+					t.limits, t.maxClaimDistance, t.alwaysUseLoadingValues
+			);
 		}
 		
 	}
-	
+
 }

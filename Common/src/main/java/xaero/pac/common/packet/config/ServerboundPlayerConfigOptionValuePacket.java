@@ -38,9 +38,10 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.List;
@@ -85,7 +86,7 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 			Entry optionEntry = t.entries.get(0);
 			UUID ownerId = t.getType() != PlayerConfigType.PLAYER ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
 			if(!isOP) {
-				if(t.getType() != PlayerConfigType.PLAYER) {
+				if(t.getType() != PlayerConfigType.PLAYER && t.getType() != PlayerConfigType.PARTY_CLAIMS) {
 					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a config without required permissions! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
@@ -93,31 +94,34 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify a op-only option! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
-				if(!Objects.equals(ownerId, serverPlayer.getUUID())) {
+				if(t.getType() != PlayerConfigType.PARTY_CLAIMS && !Objects.equals(ownerId, serverPlayer.getUUID())) {
 					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify another player's config! Name: " + serverPlayer.getGameProfile().name());
 					return;
 				}
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(ServerLevelHelper.getServer(serverPlayer));
-			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
-			IPlayerConfig config =
-					t.getType() == PlayerConfigType.PLAYER ?
-							playerConfigs.getLoadedConfig(ownerId) :
-							t.getType() == PlayerConfigType.SERVER ?
-									playerConfigs.getServerClaimConfig() :
-									t.getType() == PlayerConfigType.EXPIRED ?
-											playerConfigs.getExpiredClaimConfig() :
-											t.getType() == PlayerConfigType.WILDERNESS ?
-													playerConfigs.getWildernessConfig() :
-													playerConfigs.getDefaultConfig();
-			if(t.subId != null)
-				config = config.getSubConfig(t.subId);
-			if(config == null)
+			if(!isOP && t.getType() == PlayerConfigType.PARTY_CLAIMS &&
+					!serverData.getPlayerPartySystemManager().canEditPartyConfig(serverPlayer.getUUID())
+					){
+				OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to modify party config without required permissions! Name: " + serverPlayer.getGameProfile().name());
 				return;
+			}
+			IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 			PlayerConfigOptionSpec<?> option =
 					(PlayerConfigOptionSpec<?>) playerConfigs.getOptionForId(optionEntry.getId());
 			if(option == null)
+				return;
+			if(!option.getConfigTypeFilter().test(t.getType())){
+				OpenPartiesAndClaims.LOGGER.info("Player is attempting to modify a config option in a player config of type that doesn't allow the option! Name: " + serverPlayer.getGameProfile().name());
+				return;
+			}
+			IPlayerConfig config = ServerPlayerConfigUtils.getTargetConfig(ownerId, serverPlayer.getUUID(), t.getType(), playerConfigs);
+			if(config == null)
+				return;
+			if(t.subId != null)
+				config = config.getSubConfig(t.subId);
+			if(config == null)
 				return;
 			if(!option.isSyncable())
 				return;

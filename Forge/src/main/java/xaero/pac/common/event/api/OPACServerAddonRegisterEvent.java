@@ -25,6 +25,10 @@ import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
+/**
+ * @deprecated switch to {@link xaero.pac.common.event.api.v2.OPACServerAddonRegisterEvent}
+ */
+@Deprecated
 public class OPACServerAddonRegisterEvent extends MutableEvent {
 
 	public static final EventBus<OPACServerAddonRegisterEvent> BUS = EventBus.create(OPACServerAddonRegisterEvent.class);

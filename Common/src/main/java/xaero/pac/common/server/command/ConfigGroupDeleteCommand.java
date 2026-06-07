@@ -24,7 +24,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import xaero.pac.common.player.config.group.api.PlayerConfigGroupActionError;
+import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+
+import java.util.UUID;
 
 public class ConfigGroupDeleteCommand extends ConfigGroupCommand {
 
@@ -43,6 +46,11 @@ public class ConfigGroupDeleteCommand extends ConfigGroupCommand {
 			String inputSecondaryArgument
 	) {
 		return Either.left(MESSAGE);
+	}
+
+	@Override
+	protected boolean canAffectPartyConfig(IPlayerPartySystemManager systemManager, UUID playerId) {
+		return systemManager.canCreatePartyConfigGroups(playerId);
 	}
 
 }

@@ -132,6 +132,8 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		int childIndex = children().indexOf(current);
 		if(childIndex == -1)
 			return;
+		if(current == openDropdown)
+			openDropdown = null;
 		super.removeWidget(current);
 		if(replaceRenderable != null)
 			super.addRenderableWidget(replaceRenderable);
@@ -139,6 +141,8 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 			super.addWidget(replacement);
 		children().remove(replacement);
 		((List<GuiEventListener>)children()).add(childIndex, replacement);
+		if(getFocused() == current)
+			setFocused(replacement);
 	}
 
 	protected <T extends GuiEventListener & NarratableEntry> void replaceWidget(T current, T replacement) {
@@ -146,7 +150,7 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	protected <T extends GuiEventListener & Renderable & NarratableEntry> void replaceRenderableWidget(T current, T replacement) {
-		replaceWidget(current, null, replacement);
+		replaceWidget(current, replacement, replacement);
 	}
 
 	public Screen getEscape() {

@@ -20,6 +20,10 @@ package xaero.pac.common.server.player.data;
 
 import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
+import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.parties.party.PartyMemberDynamicInfoSyncable;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
@@ -27,9 +31,14 @@ import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPropertiesSync;
 import xaero.pac.common.server.parties.party.sync.player.PlayerFullPartySync;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.data.config.PlayerConfigPermissionUpdateData;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ServerPlayerData extends ServerPlayerDataAPI {
@@ -38,11 +47,9 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	private boolean claimsAdminMode;
 	private boolean claimsNonallyMode;
-	private boolean claimsServerMode;
+	private ClaimingMode claimingMode = (ClaimingMode) ClaimingModes.PLAYER;
 	private IPlayerChunkClaim lastClaimCheck;
-	private int lastBaseClaimLimitSync;//used for detecting limit changes based on FTB ranks
-	private int lastBaseForceloadLimitSync;
-	private boolean checkedBaseForceloadLimitOnce;
+	private Map<IClaimingModeAPI, ClaimingModeLimits> lastLimitsSync;
 	private long lastClaimLimitsCheckTime;
 	private boolean shouldResyncPlayerConfigs;
 	private PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo;
@@ -61,24 +68,39 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private UUID lastOtherConfigRequest;
 	private boolean hasMod;
 	private boolean handledLogin;
+	private long lastPartyClaimsSyncTime;
+	private UUID lastPartyClaimsSyncPartyOwner;
+	private long lastPartyOnlineUpdateTime;
+	private UUID lastPartyOnlineUpdateOwner;
+	private Map<PlayerConfigType, PlayerConfigPermissionUpdateData> playerConfigPermissionUpdateData;
+	private long lastPlayerConfigPermissionUpdate;
+	private boolean syncedConfigAdmin;
 
 	public ServerPlayerData() {
 		super();
 	}
 
-	public void onLogin(PlayerFullPartySync playerFullPartySync, ClaimsManagerPlayerRegionSync claimsManagerPlayerSyncHandler,
-						ClaimsManagerPlayerStateSync claimsManagerPlayerStateSyncHandler,
-						ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync,
-						ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync,
-						PlayerClaimActionRequestHandler claimActionRequestHandler, PlayerConfigSyncSpreadoutTask configSyncSpreadoutTask) {
+	public void onLogin(
+			PlayerFullPartySync playerFullPartySync,
+						PlayerClaimActionRequestHandler claimActionRequestHandler,
+						PlayerConfigSyncSpreadoutTask configSyncSpreadoutTask
+	) {
 		//won't be called for fake players, e.g. turtles from cc
 		this.playerFullPartySync = playerFullPartySync;
+		this.claimActionRequestHandler = claimActionRequestHandler;
+		this.configSyncSpreadoutTask = configSyncSpreadoutTask;
+	}
+
+	public void setClaimSyncTasks(
+			ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync,
+			ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync,
+			ClaimsManagerPlayerStateSync claimsManagerPlayerStateSyncHandler,
+			ClaimsManagerPlayerRegionSync claimsManagerPlayerSyncHandler
+	) {
 		this.claimsManagerPlayerRegionSync = claimsManagerPlayerSyncHandler;
 		this.claimsManagerPlayerStateSync = claimsManagerPlayerStateSyncHandler;
 		this.claimsManagerPlayerClaimOwnerPropertiesSync = claimsManagerPlayerClaimOwnerPropertiesSync;
 		this.claimsManagerPlayerSubClaimPropertiesSync = claimsManagerPlayerSubClaimPropertiesSync;
-		this.claimActionRequestHandler = claimActionRequestHandler;
-		this.configSyncSpreadoutTask = configSyncSpreadoutTask;
 	}
 
 	@Override
@@ -92,8 +114,14 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	}
 
 	@Override
+	public ClaimingMode getClaimingMode() {
+		return claimingMode;
+	}
+
+	@Deprecated
+	@Override
 	public boolean isClaimsServerMode() {
-		return claimsServerMode;
+		return claimingMode == ClaimingModes.SERVER;
 	}
 
 	public void setOftenSyncedPartyMemberInfo(PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo) {
@@ -108,8 +136,12 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		this.claimsNonallyMode = claimsNonallyMode;
 	}
 
-	public void setClaimsServerMode(boolean claimsServerMode) {
-		this.claimsServerMode = claimsServerMode;
+	public void setClaimingMode(ClaimingMode claimingMode) {
+		this.claimingMode = claimingMode;
+	}
+
+	public void setClaimingMode(IClaimingModeAPI claimingMode) {
+		setClaimingMode((ClaimingMode) claimingMode);
 	}
 
 	public void setLastClaimCheck(IPlayerChunkClaim lastClaimCheck) {
@@ -152,21 +184,36 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return configSyncSpreadoutTask;
 	}
 
-	public void setLastClaimLimitsSyncValues(int lastBaseClaimLimitSync, int lastBaseForceloadLimitSync) {
-		this.lastBaseClaimLimitSync = lastBaseClaimLimitSync;
-		this.lastBaseForceloadLimitSync = lastBaseForceloadLimitSync;
+	public boolean checkAndSetClaimLimitsSync(Collection<ClaimingModeLimits> limits) {
+		if(!checkClaimLimitsSync(limits))
+			return false;
+		setClaimLimitsSync(limits);
+		return true;
 	}
 
-	public boolean checkBaseClaimLimitsSync(int currentBaseClaimLimit, int currentBaseForceloadLimit) {
-		return lastBaseClaimLimitSync != currentBaseClaimLimit || lastBaseForceloadLimitSync != currentBaseForceloadLimit;
+	public boolean checkClaimLimitsSync(Collection<ClaimingModeLimits> limits) {
+		if(lastLimitsSync == null)
+			return true;
+		for (ClaimingModeLimits modeLimits : limits) {
+			if(!modeLimits.equals(lastLimitsSync.get(modeLimits.mode)))
+				return true;
+		}
+		return false;
 	}
 
-	public boolean haveCheckedBaseForceloadLimitOnce() {
-		return checkedBaseForceloadLimitOnce;
+	public void setClaimLimitsSync(Collection<ClaimingModeLimits> limits) {
+		if(lastLimitsSync == null)
+			lastLimitsSync = new HashMap<>();
+		lastLimitsSync.clear();
+		for (ClaimingModeLimits modeLimits : limits)
+			lastLimitsSync.put(modeLimits.mode, modeLimits);
 	}
 
-	public void setCheckedBaseForceloadLimitOnce(){
-		checkedBaseForceloadLimitOnce = true;
+	public int getLastSyncedForceloadLimit(){
+		if(lastLimitsSync == null)
+			return 0;
+		ClaimingModeLimits playerLimits = lastLimitsSync.get(ClaimingModes.PLAYER);
+		return playerLimits.forceloadLimit;
 	}
 
 	public void setShouldResyncPlayerConfigs(boolean shouldResyncPlayerConfigs) {
@@ -240,7 +287,55 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return lastClaimLimitsCheckTime;
 	}
 
+	public void setLastPartyClaimsSync(long time, UUID owner) {
+		this.lastPartyClaimsSyncTime = time;
+		this.lastPartyClaimsSyncPartyOwner = owner;
+	}
+
+	public long getLastPartyClaimsSyncTime() {
+		return lastPartyClaimsSyncTime;
+	}
+
+	public UUID getLastPartyClaimsSyncPartyOwner() {
+		return lastPartyClaimsSyncPartyOwner;
+	}
+
+	public PlayerConfigPermissionUpdateData getPlayerConfigPermissionUpdateData(PlayerConfigType type) {
+		if(playerConfigPermissionUpdateData == null)
+			playerConfigPermissionUpdateData = new HashMap<>();
+		return playerConfigPermissionUpdateData.computeIfAbsent(type, t -> new PlayerConfigPermissionUpdateData(t, this));
+	}
+
+	public void setSyncedConfigAdmin(boolean syncedConfigAdmin) {
+		this.syncedConfigAdmin = syncedConfigAdmin;
+	}
+
+	public boolean getSyncedConfigAdmin() {
+		return syncedConfigAdmin;
+	}
+
+	public long getLastPlayerConfigPermissionUpdate() {
+		return lastPlayerConfigPermissionUpdate;
+	}
+
+	public void setLastPlayerConfigPermissionUpdate(long lastPlayerConfigPermissionUpdate) {
+		this.lastPlayerConfigPermissionUpdate = lastPlayerConfigPermissionUpdate;
+	}
+
 	public void onTick(){
+	}
+
+	public long getLastPartyOnlineUpdateTime() {
+		return this.lastPartyOnlineUpdateTime;
+	}
+
+	public UUID getLastPartyOnlineUpdateOwner() {
+		return this.lastPartyOnlineUpdateOwner;
+	}
+
+	public void setLastPartyOnlineUpdate(long time, UUID partyOwner) {
+		this.lastPartyOnlineUpdateTime = time;
+		this.lastPartyOnlineUpdateOwner = partyOwner;
 	}
 
 }

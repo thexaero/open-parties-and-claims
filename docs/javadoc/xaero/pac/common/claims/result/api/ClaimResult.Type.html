@@ -133,17 +133,25 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">The maximum number of forceloadable claims was reached</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a></code></div>
+<div class="col-first even-row-color"><code><a href="#NO_PARTY_PERMISSION" class="member-name-link">NO_PARTY_PERMISSION</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">The user doesn't have permission to make party claims</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The user doesn't have permission to make server claims</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED_BY_USER" class="member-name-link">NOT_CLAIMED_BY_USER</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#NOT_CLAIMED_BY_USER" class="member-name-link">NOT_CLAIMED_BY_USER</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The chunk isn't claimed by who is trying to unclaim it</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#NOT_CLAIMED_BY_USER_FORCELOAD" class="member-name-link">NOT_CLAIMED_BY_USER_FORCELOAD</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED_BY_USER_FORCELOAD" class="member-name-link">NOT_CLAIMED_BY_USER_FORCELOAD</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The chunk isn't claimed by who is trying to (un)forceload it</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#NOT_IN_PARTY" class="member-name-link">NOT_IN_PARTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The user doesn't have permission to make party claims</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#REPLACEMENT_IN_PROGRESS" class="member-name-link">REPLACEMENT_IN_PROGRESS</a></code></div>
 <div class="col-last odd-row-color">
@@ -341,6 +349,26 @@ the order they are declared.</div>
  <p>
  This result type is only used for server claim requests made by online players.
  Permissions for server claims are not checked by the try methods in the server claims manager.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="NO_PARTY_PERMISSION">
+<h3>NO_PARTY_PERMISSION</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NO_PARTY_PERMISSION</span></div>
+<div class="block">The user doesn't have permission to make party claims
+ <p>
+ This result type is only used for party claim requests made by online players.
+ Permissions for party claims are not checked by the try methods in the server claims manager.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="NOT_IN_PARTY">
+<h3>NOT_IN_PARTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NOT_IN_PARTY</span></div>
+<div class="block">The user doesn't have permission to make party claims
+ <p>
+ This result type is only used for party claim requests made by online players.
+ Permissions for party claims are not checked by the try methods in the server claims manager.</div>
 </section>
 </li>
 <li>

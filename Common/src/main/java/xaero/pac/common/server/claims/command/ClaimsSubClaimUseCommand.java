@@ -18,21 +18,18 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -46,69 +43,33 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
-import java.util.function.Predicate;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
 import static xaero.pac.common.server.command.ConfigCommandUtil.getSubConfigSuggestionProvider;
 
-public class ClaimsSubClaimUseCommand {
+public class ClaimsSubClaimUseCommand extends ClaimAbstractSubClaimCommand {
 
-	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
-		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
-		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER);
-
-		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
-		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
-
-		Predicate<CommandSourceStack> serverRequirement = ClaimsClaimCommands.getServerClaimCommandRequirement();
-
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX)
-				.then(Commands.literal("sub-claim")
-				.then(getMainCommandPart(playerSubConfigSuggestionProvider, regularExecutor)));
-		dispatcher.register(command);
-
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).then(Commands.literal("sub-claim")
-				.then(Commands.literal("for")
-				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
-				.then(Commands.argument("player", GameProfileArgument.gameProfile())
-				.then(getMainCommandPart(playerSubConfigSuggestionProvider, regularExecutor)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).then(Commands.literal("server")
-				.requires(serverRequirement)
-				.then(Commands.literal("sub-claim")
-				.then(getMainCommandPart(serverSubConfigSuggestionProvider, serverExecutor))));
-		dispatcher.register(command);
-
-		command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).then(Commands.literal("server")
-				.requires(serverRequirement)
-				.then(Commands.literal("sub-claim")
-				.then(Commands.literal("for")
-				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
-				.then(Commands.argument("player", GameProfileArgument.gameProfile())
-				.then(getMainCommandPart(serverSubConfigSuggestionProvider, serverExecutor))))));
-		dispatcher.register(command);
-	}
-
-	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(SuggestionProvider<CommandSourceStack> subConfigSuggestionProvider, Command<CommandSourceStack> executor){
+	@Override
+	protected LiteralArgumentBuilder<CommandSourceStack> getExecutivePart(ClaimingMode mode){
 		return Commands.literal("use")
 				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests(subConfigSuggestionProvider)
-				.executes(executor));
+				.suggests(getSubConfigSuggestionProvider(mode.getConfigType()))
+				.executes(getExecutor(mode)));
 	}
 
-	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
+	private static Command<CommandSourceStack> getExecutor(ClaimingMode mode){
+		IPlayerConfigOptionSpecAPI<String> option = mode.getSubClaimOption();
+		if(option == null)
+			throw new IllegalArgumentException();
 		return context -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
 			NameAndId inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 					"gui.xaero_claims_sub_use_too_many_targets",
@@ -118,10 +79,9 @@ public class ClaimsSubClaimUseCommand {
 			UUID configPlayerUUID = inputPlayer.id();
 
 			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
-			IPlayerConfigOptionSpecAPI<String> option = type == PlayerConfigType.SERVER ? PlayerConfigOptions.USED_SERVER_SUBCLAIM : PlayerConfigOptions.USED_SUBCLAIM;
-			IPlayerConfig rootConfig = type == PlayerConfigType.SERVER ? serverData.getPlayerConfigManager().getServerClaimConfig() : playerConfig;
+			IPlayerConfig rootConfig = ServerPlayerConfigUtils.getTargetConfig(configPlayerUUID, configPlayerUUID, mode.getConfigType(), serverData.getPlayerConfigManager());
 
-			IPlayerConfig result = rootConfig.getSubConfig(inputSubId);
+			IPlayerConfig result = rootConfig == null ? null : rootConfig.getSubConfig(inputSubId);
 			if(result == null){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_use_not_exist"));
 				return 0;

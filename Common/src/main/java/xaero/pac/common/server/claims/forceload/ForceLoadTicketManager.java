@@ -31,10 +31,12 @@ import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.player.PlayerForceloadTicketManager;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.parties.system.PlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+import xaero.pac.common.server.player.party.PrimaryPartyOnlineCounter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,20 +53,40 @@ public final class ForceLoadTicketManager {
 	private IServerClaimsManager<?, ?, ?> claimsManager;
 	private final MinecraftServer server;
 	private final Map<UUID, PlayerForceloadTicketManager> claimTickets;
-	private Map<Identifier, DimensionInfo> dimensionInfoMap;
+	private final Map<Identifier, DimensionInfo> dimensionInfoMap;
+	private final PlayerPartySystemManager partySystemManager;
+	private IPlayerConfigManager playerConfigManager;
+	private PrimaryPartyOnlineCounter primaryPartyOnlineCounter;
 	
-	private ForceLoadTicketManager(MinecraftServer server,
-			Map<UUID, PlayerForceloadTicketManager> claimTickets, Map<Identifier, DimensionInfo> dimensionInfoMap) {
+	private ForceLoadTicketManager(
+			MinecraftServer server,
+			Map<UUID, PlayerForceloadTicketManager> claimTickets,
+			Map<Identifier, DimensionInfo> dimensionInfoMap,
+			PlayerPartySystemManager partySystemManager
+	) {
 		super();
 		this.server = server;
 		this.claimTickets = claimTickets;
 		this.dimensionInfoMap = dimensionInfoMap;
+		this.partySystemManager = partySystemManager;
 	}
 	
 	public void setClaimsManager(IServerClaimsManager<?, ?, ?> claimsManager) {
 		if(this.claimsManager != null)
 			throw new IllegalStateException();
 		this.claimsManager = claimsManager;
+	}
+
+	public void setConfigManager(IPlayerConfigManager playerConfigManager) {
+		if(this.playerConfigManager != null)
+			throw new IllegalStateException();
+		this.playerConfigManager = playerConfigManager;
+	}
+
+	public void setPrimaryPartyOnlineCounter(PrimaryPartyOnlineCounter primaryPartyOnlineCounter) {
+		if(this.primaryPartyOnlineCounter != null)
+			throw new IllegalStateException();
+		this.primaryPartyOnlineCounter = primaryPartyOnlineCounter;
 	}
 
 	private PlayerForceloadTicketManager getPlayerTickets(UUID id){
@@ -122,16 +144,20 @@ public final class ForceLoadTicketManager {
 	}
 	
 	private boolean ticketsShouldBeEnabled(IPlayerConfig ownerConfig, boolean loggedOut) {
-		return ownerConfig.getEffective(PlayerConfigOptions.FORCELOAD) &&
-				(
-						Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, ownerConfig.getPlayerId()) || 
-						Objects.equals(PlayerConfig.EXPIRED_CLAIM_UUID, ownerConfig.getPlayerId()) || 
-						ownerConfig.getEffective(PlayerConfigOptions.OFFLINE_FORCELOAD) ||
-						!loggedOut && /*is online*/server.getPlayerList().getPlayer(ownerConfig.getPlayerId()) != null
-				);
+		if(!ownerConfig.getEffective(PlayerConfigOptions.FORCELOAD))
+			return false;
+		if(
+				Objects.equals(PlayerConfig.SERVER_CLAIM_UUID, ownerConfig.getPlayerId()) ||
+				Objects.equals(PlayerConfig.EXPIRED_CLAIM_UUID, ownerConfig.getPlayerId()) ||
+				ownerConfig.getEffective(PlayerConfigOptions.OFFLINE_FORCELOAD)
+		)
+			return true;
+		if(isOwnerOfPrimaryParty(ownerConfig.getPlayerId()))
+			return primaryPartyOnlineCounter.isPartyOnline(ownerConfig.getPlayerId());
+		return !loggedOut && /*is online*/server.getPlayerList().getPlayer(ownerConfig.getPlayerId()) != null;
 	}
-	
-	public void updateTicketsFor(IPlayerConfigManager playerConfigManager, UUID id, boolean loggedOut) {
+
+	public void updateTicketsFor(UUID id, boolean loggedOut) {
 		IPlayerConfig ownerConfig = playerConfigManager.getLoadedConfig(id);
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		boolean isServer = PlayerConfig.SERVER_CLAIM_UUID.equals(id);
@@ -150,7 +176,7 @@ public final class ForceLoadTicketManager {
 		playerTickets.setFailedToEnableSome(!withinLimit);
 	}
 
-	public void addTicket(IPlayerConfigManager playerConfigManager, Identifier dimension, UUID id, int x, int z) {
+	public void addTicket(Identifier dimension, UUID id, int x, int z) {
 		ClaimTicket ticket = new ClaimTicket(id, dimension, x, z);
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		playerTickets.add(ticket);
@@ -164,19 +190,25 @@ public final class ForceLoadTicketManager {
 		}
 	}
 
-	public void removeTicket(IPlayerConfigManager playerConfigManager, Identifier dimension, UUID id, int x, int z) {
+	public void removeTicket(Identifier dimension, UUID id, int x, int z) {
 		PlayerForceloadTicketManager playerTickets = getPlayerTickets(id);
 		ClaimTicket ticket = playerTickets.remove(new ClaimTicket(id, dimension, x, z));//find and remove the equivalent in the map
 		if (ticket.isEnabled()){
 			updateTicket(false, ticket);
 			if (playerTickets.failedToEnableSome())
-				updateTicketsFor(playerConfigManager, id, false);//to enable another one that was disabled by the forceload limit
+				updateTicketsFor(id, false);//to enable another one that was disabled by the forceload limit
 		}
 	}
 
 	public boolean hasEnabledTickets(ServerLevel level){
 		DimensionInfo dimensionInfo = dimensionInfoMap.get(level.dimension().identifier());
 		return dimensionInfo != null && dimensionInfo.enabledTicketCount > 0;
+	}
+
+	private boolean isOwnerOfPrimaryParty(UUID playerId) {
+		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+			return false;
+		return partySystemManager.isPrimaryPartyOwner(playerId);
 	}
 
 	public static final class DimensionInfo {
@@ -187,12 +219,19 @@ public final class ForceLoadTicketManager {
 	
 	public static final class Builder {
 		private MinecraftServer server;
+		private PlayerPartySystemManager partySystemManager;
 
 		private Builder() {
 		}
 
 		private Builder setDefault() {
+			setPartySystemManager(null);
 			setServer(null);
+			return this;
+		}
+
+		public Builder setPartySystemManager(PlayerPartySystemManager partySystemManager) {
+			this.partySystemManager = partySystemManager;
 			return this;
 		}
 
@@ -202,9 +241,11 @@ public final class ForceLoadTicketManager {
 		}
 
 		public ForceLoadTicketManager build() {
+			if(partySystemManager == null)
+				throw new IllegalStateException();
 			if (server == null)
 				throw new IllegalStateException();
-			return new ForceLoadTicketManager(server, new HashMap<>(), new HashMap<>());
+			return new ForceLoadTicketManager(server, new HashMap<>(), new HashMap<>(), partySystemManager);
 		}
 
 		public static Builder begin() {
