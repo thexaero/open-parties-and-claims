@@ -91,9 +91,9 @@ public final class ClientData implements IClientData<PlayerConfigClientStorageMa
 	}
 
 	@Override
-	public void reset() {
+	public void reset(boolean notifyClaimsTracker) {
 		clientPartyStorage.reset();
-		claimsManager.reset();
+		claimsManager.reset(notifyClaimsTracker);
 		clientClaimsSyncHandler.reset();
 		playerConfigStorageManager.reset();
 	}

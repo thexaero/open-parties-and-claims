@@ -18,18 +18,10 @@
 
 package xaero.pac.common.packet.claims;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
-import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 
 public class ClientboundClaimsResetPacket extends LazyPacket<ClientboundClaimsResetPacket> {
@@ -66,7 +58,7 @@ public class ClientboundClaimsResetPacket extends LazyPacket<ClientboundClaimsRe
 		
 		@Override
 		public void handle(ClientboundClaimsResetPacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimsReset();
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimsReset(true);
 		}
 		
 	}
