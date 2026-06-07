@@ -73,7 +73,7 @@ public class ServerLoginHandshakePacket {
 				Minecraft.getInstance().getConnection().getConnection().disconnect(PacketConstants.NETWORK_VERSION_MISMATCH);
 				return;
 			}
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().reset();
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().reset(true);
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(t);
 		}
 		
