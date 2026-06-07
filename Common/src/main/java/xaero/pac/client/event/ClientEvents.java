@@ -71,7 +71,7 @@ public abstract class ClientEvents {
 	}
 
 	public void onPlayerLogout(LocalPlayer player) {
-		clientData.reset();
+		clientData.reset(false);
 	}
 
 	public void onPlayerLogin(LocalPlayer player) {
