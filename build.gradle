@@ -62,6 +62,15 @@ subprojects {
         maven {
             url = "https://maven.ithundxr.dev/mirror"
         } // Registrate
+        maven { url = "https://maven.resourcefulbees.com/repository/maven-public/" }
+        maven { url "https://maven.shedaniel.me" }//REI
+        maven {
+            url = uri("https://jitpack.io")
+            content {
+                includeGroup("com.github.LlamaLad7")
+                includeGroup("com.github.llamalad7.mixinextras")
+            }
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
