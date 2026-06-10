@@ -18,11 +18,16 @@
 
 package xaero.pac.common.server.parties.system.impl;
 
+import com.google.common.collect.Streams;
+import com.mojang.authlib.GameProfile;
 import earth.terrarium.argonauts.api.guild.Guild;
 import earth.terrarium.argonauts.api.guild.GuildApi;
+import earth.terrarium.argonauts.common.handlers.base.MemberPermissions;
+import earth.terrarium.argonauts.common.handlers.base.members.Member;
 import earth.terrarium.argonauts.common.handlers.guild.members.GuildMember;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,7 +60,18 @@ public class PlayerArgonautsGuildSystem implements IPlayerPartySystemAPI<Guild> 
 
 	@Override
 	public boolean isPlayerAllying(@Nonnull UUID playerId, @Nonnull UUID potentialAllyPlayerId) {
-		return false;//don't think allies exist here
+		Guild party = GuildApi.API.getPlayerGuild(server, playerId);
+		if(party == null)
+			return false;
+		return party.members().isAllied(potentialAllyPlayerId);
+	}
+
+	private boolean checkPartyPermission(@Nonnull UUID playerId, String permission){
+		Guild guild = getPartyByMember(playerId);
+		if(guild == null)
+			return false;
+		GuildMember member = guild.members().get(playerId);
+		return member != null && member.hasPermission(permission);
 	}
 
 	@Override
@@ -64,7 +80,56 @@ public class PlayerArgonautsGuildSystem implements IPlayerPartySystemAPI<Guild> 
 		if(guild == null)
 			return false;
 		GuildMember member = guild.members().get(playerId);
-		return member != null && member.hasPermission("xaero.pac_party_claim");
+		if(member == null)
+			return false;
+		return member.hasPermission(MemberPermissions.MANAGE_MEMBERS) ||
+				member.hasPermission(MemberPermissions.MANAGE_PERMISSIONS) ||
+				member.hasPermission(MemberPermissions.MANAGE_SETTINGS) ||
+				member.hasPermission(MemberPermissions.MANAGE_ROLES);
+	}
+
+	@Override
+	public boolean canEditPartyConfig(@Nonnull UUID playerId) {
+		return checkPartyPermission(playerId, MemberPermissions.MANAGE_SETTINGS);
+	}
+
+	@Override
+	public boolean canCreatePartyConfigGroups(@Nonnull UUID playerId) {
+		return checkPartyPermission(playerId, MemberPermissions.MANAGE_SETTINGS);
+	}
+
+	@Override
+	public boolean canIncludeGroupsInPartyConfigGroups(@Nonnull UUID playerId) {
+		return checkPartyPermission(playerId, MemberPermissions.MANAGE_SETTINGS);
+	}
+
+	@Override
+	public boolean canIncludePlayersInPartyConfigGroups(@Nonnull UUID playerId) {
+		return checkPartyPermission(playerId, MemberPermissions.MANAGE_MEMBERS);
+	}
+
+	@Nullable
+	@Override
+	public UUID getOwner(@Nonnull Guild party) {
+		Member leader = party.members().getLeader();
+		if(leader == null)
+			return null;
+		GameProfile leaderProfile = leader.profile();
+		if(leaderProfile == null)
+			return null;
+		return leaderProfile.id();
+	}
+
+	@Nullable
+	@Override
+	public Component getName(@Nonnull Guild party) {
+		return party.displayName();
+	}
+
+	@Override
+	public int getMemberCount(@Nonnull Guild party) {
+		//this sucks but there's no other way to only count actual members...
+		return (int) Streams.stream(party.members().iterator()).count();
 	}
 
 }

@@ -54,9 +54,6 @@ dependencies {
     compileOnly "curse.maven:architectury-419699:4581905"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
     compileOnly "curse.maven:ftblibrary-404465:7971743"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
-    compileOnly "maven.modrinth:resourceful-lib:ihzjCwEV"//source: https://github.com/Team-Resourceful/ResourcefulLib
-    compileOnly "maven.modrinth:odyssey-roles:1.3.1"//source: https://github.com/terrarium-earth/Prometheus
-
     compileOnly("com.simibubi.create:create-1.21.1:${neoforge_create_version}:slim"){ transitive = false }
     compileOnly "net.createmod.ponder:Ponder-NeoForge-1.21.1:${neoforge_ponder_version}"
     compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-1.21.1:${neoforge_flywheel_version}"
@@ -64,8 +61,10 @@ dependencies {
 
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 
-    compileOnly "curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
-    compileOnly "maven.modrinth:odyssey-allies:1.1.0"//source: https://modrinth.com/mod/argonauts
+    compileOnly "curse.maven:ftbteams-404468:8074003"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
+    compileOnly "earth.terrarium.prometheus:prometheus-neoforge-1.20.4:1.4.2"//source: https://github.com/terrarium-earth/Prometheus
+    compileOnly "earth.terrarium.argonauts:argonauts-neoforge-1.20.4:1.2.4"//source: https://modrinth.com/mod/odyssey-allies
+
 }
 
 // NeoGradle compiles the game, but we don't want to add our common code to the game's code
