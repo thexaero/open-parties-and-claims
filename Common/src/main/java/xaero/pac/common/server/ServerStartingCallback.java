@@ -65,6 +65,7 @@ public class ServerStartingCallback {
 		}
 		serverData.getPlayerPartySystemManager().updatePrimarySystem(ServerConfig.CONFIG.primaryPartySystem.get());
 		playerClaimInfoManagerIO.load();
+		serverData.getForceLoadManager().setLoaded();
 		serverData.getPlayerPermissionSystemManager().updateUsedSystem(ServerConfig.CONFIG.permissionSystem.get());
 	}
 	
