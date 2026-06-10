@@ -37,8 +37,8 @@ dependencies {
     modCompileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
     modCompileOnly 'me.lucko:fabric-permissions-api:0.2-SNAPSHOT'//source: https://github.com/lucko/fabric-permissions-api
 
-    modCompileOnly "earth.terrarium.prometheus:prometheus-fabric-$minecraft_version:1.2.5"//source: https://github.com/terrarium-earth/Prometheus
-    modCompileOnly "earth.terrarium.argonauts:argonauts-fabric-$minecraft_version:1.0.10"//source: https://modrinth.com/mod/odyssey-allies
+    modCompileOnly "earth.terrarium.prometheus:prometheus-fabric-$minecraft_version:1.4.2"//source: https://github.com/terrarium-earth/Prometheus
+    modCompileOnly "earth.terrarium.argonauts:argonauts-fabric-$minecraft_version:1.2.4"//source: https://modrinth.com/mod/odyssey-allies
 
     modCompileOnly "curse.maven:ftbteams-438497:4616151"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-fabric
     modCompileOnly("com.simibubi.create:create-fabric-1.20.1:${fabric_create_version}"){
