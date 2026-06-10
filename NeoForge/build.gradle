@@ -49,9 +49,9 @@ dependencies {
     compileOnly project(":Common")
     //compileOnly project(":CreateSupportCommon")
 
-    compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
+    compileOnly "curse.maven:ftbranks-314905:5200704"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
     compileOnly "curse.maven:architectury-419699:4581905"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-    compileOnly "curse.maven:ftblibrary-404465:4596511"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+    compileOnly "curse.maven:ftblibrary-404465:5567594"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
     compileOnly("com.simibubi.create:create-1.21.1:${neoforge_create_version}:slim"){ transitive = false }
     compileOnly "net.createmod.ponder:Ponder-NeoForge-1.21.1:${neoforge_ponder_version}"

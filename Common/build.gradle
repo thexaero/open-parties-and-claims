@@ -53,9 +53,9 @@ dependencies {
         exclude group: "net.fabricmc"//has to be here to not cause Forge to crash for some reason
      }
      //same as forge for the deobfuscated class names in the api
-     compileOnly "curse.maven:ftbranks-314905:3890135"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
+     compileOnly "curse.maven:ftbranks-314905:5200704"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
      compileOnly "curse.maven:architectury-419699:3893635"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-     compileOnly "curse.maven:ftblibrary-404465:3890137"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+     compileOnly "curse.maven:ftblibrary-404465:5567594"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
      compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 

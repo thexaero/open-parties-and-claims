@@ -97,7 +97,7 @@ dependencies {
     //implementation "xaero.map:xaeroworldmap-forge-${minecraft_version}:+:dev"
     compileOnly fg.deobf("curse.maven:ftbranks-314905:5200703")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
     compileOnly fg.deobf("curse.maven:architectury-419699:4581905")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-    compileOnly fg.deobf("curse.maven:ftblibrary-404465:4596511")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+    compileOnly fg.deobf("curse.maven:ftblibrary-404465:5567593")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
     compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${forge_create_version}:slim") { transitive = false }
     compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:${forge_ponder_version}")
