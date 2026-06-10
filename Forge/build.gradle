@@ -99,9 +99,6 @@ dependencies {
     compileOnly fg.deobf("curse.maven:architectury-419699:4581905")//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
     compileOnly fg.deobf("curse.maven:ftblibrary-404465:4596511")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
-    compileOnly fg.deobf("maven.modrinth:resourceful-lib:2.1.1")//source: https://github.com/Team-Resourceful/ResourcefulLib
-    compileOnly fg.deobf("maven.modrinth:odyssey-roles:0.0.0")//source: https://github.com/terrarium-earth/Prometheus
-
     compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${forge_create_version}:slim") { transitive = false }
     compileOnly fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:${forge_ponder_version}")
     compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-1.20.1:${forge_flywheel_version}")
@@ -113,7 +110,10 @@ dependencies {
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
     
     compileOnly fg.deobf("curse.maven:ftbteams-404468:4616152")//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
-    compileOnly fg.deobf("maven.modrinth:odyssey-allies:IH2HFcvL")//source: https://modrinth.com/mod/argonauts
+    compileOnly fg.deobf("com.teamresourceful.resourcefullib:resourcefullib-forge-$minecraft_version:2.1.8")//source: https://github.com/terrarium-earth/Prometheus
+    compileOnly fg.deobf("earth.terrarium.prometheus:prometheus-forge-$minecraft_version:1.4.2")//source: https://github.com/terrarium-earth/Prometheus
+    compileOnly fg.deobf("earth.terrarium.argonauts:argonauts-forge-$minecraft_version:1.2.4")//source: https://modrinth.com/mod/odyssey-allies
+
 
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 }

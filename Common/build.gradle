@@ -59,11 +59,10 @@ dependencies {
 
      compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 
-     compileOnly "maven.modrinth:resourceful-lib:2.1.1"//source: https://github.com/Team-Resourceful/ResourcefulLib
-     compileOnly "maven.modrinth:odyssey-roles:0.0.0"//source: https://github.com/terrarium-earth/Prometheus
-
      compileOnly "curse.maven:ftbteams-404468:4616152"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
-     compileOnly "maven.modrinth:odyssey-allies:IH2HFcvL"//source: https://modrinth.com/mod/argonauts
+
+     compileOnly "earth.terrarium.prometheus:prometheus-forge-$minecraft_version:1.2.5"//source: https://github.com/terrarium-earth/Prometheus
+     compileOnly "earth.terrarium.argonauts:argonauts-forge-$minecraft_version:1.0.10"//source: https://modrinth.com/mod/odyssey-allies
 
      compileOnly "org.ow2.asm:asm:9.7"
      compileOnly "org.ow2.asm:asm-tree:9.7"
