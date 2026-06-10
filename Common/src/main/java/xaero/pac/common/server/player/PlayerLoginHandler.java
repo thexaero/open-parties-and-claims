@@ -41,6 +41,7 @@ import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.sync.PartySynchronizer;
 import xaero.pac.common.server.parties.party.sync.player.PlayerFullPartySync;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
@@ -61,7 +62,6 @@ public class PlayerLoginHandler {
 
 		UUID primaryPartyOwner = serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(player.getUUID());
 		if(primaryPartyOwner != null) {
-			playerData.setLastPartyClaimsSync(time, primaryPartyOwner);
 			playerData.setLastPartyOnlineUpdate(time, primaryPartyOwner);
 			serverData.getPrimaryPartyOnlineCounter().registerOnlinePartyMember(primaryPartyOwner);
 		}
@@ -92,7 +92,8 @@ public class PlayerLoginHandler {
 	
 	public void handlePostWorldJoin(ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-
+		UUID primaryPartyOwner = serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(player.getUUID());
+		playerData.setLastPartyClaimsSync(System.currentTimeMillis(), primaryPartyOwner);
 		serverData.getPlayerConfigPermissionUpdater().update(playerData, player, serverData, false, false);
 		serverData.getPlayerConfigManager().getSynchronizer().syncOnLogin(player);
 		
