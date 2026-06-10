@@ -19,7 +19,7 @@
 package xaero.pac.common.mods;
 
 import net.minecraft.server.MinecraftServer;
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemAPI;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 import xaero.pac.common.server.parties.system.impl.PlayerArgonautsGuildSystem;
 import xaero.pac.common.server.parties.system.impl.PlayerArgonautsPartySystem;
 
@@ -38,4 +38,5 @@ public class Argonauts {
 	public IPlayerPartySystemAPI<?> createGuildSystem(MinecraftServer server) {
 		return new PlayerArgonautsGuildSystem(server);
 	}
+
 }
