@@ -117,7 +117,7 @@ public class PlayerArgonautsGuildSystem implements IPlayerPartySystemAPI<Guild> 
 		GameProfile leaderProfile = leader.profile();
 		if(leaderProfile == null)
 			return null;
-		return leaderProfile.getId();
+		return leaderProfile.id();
 	}
 
 	@Nullable
