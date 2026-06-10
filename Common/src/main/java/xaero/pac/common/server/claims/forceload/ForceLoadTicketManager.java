@@ -54,6 +54,7 @@ public final class ForceLoadTicketManager {
 	private final PlayerPartySystemManager partySystemManager;
 	private IPlayerConfigManager playerConfigManager;
 	private PrimaryPartyOnlineCounter primaryPartyOnlineCounter;
+	private boolean loaded;
 	
 	private ForceLoadTicketManager(
 			MinecraftServer server,
@@ -149,6 +150,8 @@ public final class ForceLoadTicketManager {
 				ownerConfig.getEffective(PlayerConfigOptions.OFFLINE_FORCELOAD)
 		)
 			return true;
+		if(!loaded)
+			return false;
 		if(isOwnerOfPrimaryParty(ownerConfig.getPlayerId()))
 			return primaryPartyOnlineCounter.isPartyOnline(ownerConfig.getPlayerId());
 		return !loggedOut && /*is online*/server.getPlayerList().getPlayer(ownerConfig.getPlayerId()) != null;
@@ -206,6 +209,10 @@ public final class ForceLoadTicketManager {
 		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
 			return false;
 		return partySystemManager.isPrimaryPartyOwner(playerId);
+	}
+
+	public void setLoaded(){
+		loaded = true;
 	}
 
 	public static final class DimensionInfo {

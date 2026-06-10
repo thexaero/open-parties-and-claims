@@ -58,7 +58,7 @@ public class PlayerConfigSerializer {
 		updater.update(parsedData);
 		parsedData.remove(updater.getVersionPath());
 		if(!(config instanceof PlayerSubConfig))
-			config.getManager().getPlayerConfigSpec().correct(parsedData);
+			config.getManager().getPlayerConfigSpec().correct(parsedData, (action, path, incorrectValue, correctedValue) -> {}, null);//empty listeners make sure internal code doesn't decide to spam things like happened in 1.20.1
 		Config loadedConfig;
 		if(config.getPlayerId() != null && !Objects.equals(config.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) && !Objects.equals(config.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID)) {
 			loadedConfig = ConfigUtil.deepCopy(parsedData, LinkedHashMap::new);//removes comments
