@@ -66,7 +66,7 @@ public final class ClaimsManagerPlayerClaimOwnerPropertiesSync extends ClaimsMan
 		UUID playerId = pi.getPlayerId();
 		String username = pi.getPlayerUsername();
 		boolean partyOwned = pi.isPartyOwned();
-		packetBuilder.add(new ClientboundClaimOwnerPropertiesPacket.PlayerProperties(playerId, username, pi.fetchPartyName(), partyOwned));
+		packetBuilder.add(new ClientboundClaimOwnerPropertiesPacket.PlayerProperties(playerId, username, pi.getPartyNameForSync(), partyOwned));
 		if(packetBuilder.size() == ClientboundClaimOwnerPropertiesPacket.MAX_PROPERTIES) {
 			synchronizer.syncClaimOwnerProperties(packetBuilder, player);
 			packetBuilder.clear();
