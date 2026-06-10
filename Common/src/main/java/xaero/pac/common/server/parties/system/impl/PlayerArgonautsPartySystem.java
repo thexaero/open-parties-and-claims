@@ -110,7 +110,7 @@ public class PlayerArgonautsPartySystem implements IPlayerPartySystemAPI<Party> 
 		GameProfile leaderProfile = leader.profile();
 		if(leaderProfile == null)
 			return null;
-		return leaderProfile.getId();
+		return leaderProfile.id();
 	}
 
 	@Nullable
