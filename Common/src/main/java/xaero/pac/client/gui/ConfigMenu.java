@@ -126,7 +126,7 @@ public class ConfigMenu extends XPACScreen {
 	
 	private void onOtherPlayerConfigButton(Button b) {
 		if(isPlayerNameAllowed())
-			minecraft.setScreen(new OtherPlayerConfigWaitScreen(escape, this, otherPlayerNameString));
+			minecraft.gui.setScreen(new OtherPlayerConfigWaitScreen(escape, this, otherPlayerNameString));
 	}
 	
 	private void updateOtherPlayerButton() {

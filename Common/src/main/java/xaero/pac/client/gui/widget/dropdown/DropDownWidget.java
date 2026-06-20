@@ -234,11 +234,11 @@ public final class DropDownWidget extends AbstractWidget
 
 	@Override
 	public void extractWidgetRenderState(@Nonnull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
-		int scaledHeight = Minecraft.getInstance().screen.height;
+		int scaledHeight = Minecraft.getInstance().gui.screen().height;
 		isHovered = visible && onDropDown(mouseX, mouseY, scaledHeight);
 		if(!visible)
 			return;
-		render(guiGraphics, mouseX, mouseY, Minecraft.getInstance().screen.height, true);
+		render(guiGraphics, mouseX, mouseY, Minecraft.getInstance().gui.screen().height, true);
 	}
 
 	public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, int scaledHeight, boolean closedOnly){
@@ -310,7 +310,7 @@ public final class DropDownWidget extends AbstractWidget
 	@Override
 	public boolean mouseScrolled(double mouseXScaled, double mouseYScaled, double hWheel, double wheel) {
 		if (!isClosed()) {
-			mouseScrolled((int) wheel, (int) mouseXScaled, (int) mouseYScaled, Minecraft.getInstance().screen.height);
+			mouseScrolled((int) wheel, (int) mouseXScaled, (int) mouseYScaled, Minecraft.getInstance().gui.screen().height);
 			return true;
 		}
 		return super.mouseScrolled(mouseXScaled, mouseYScaled, hWheel, wheel);
@@ -345,7 +345,7 @@ public final class DropDownWidget extends AbstractWidget
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		if(isHovered) {
-			int scaledHeight = Minecraft.getInstance().screen.height;
+			int scaledHeight = Minecraft.getInstance().gui.screen().height;
 			mouseClicked((int) event.x(), (int) event.y(), event.button(), scaledHeight);
 			return true;
 		}
@@ -354,7 +354,7 @@ public final class DropDownWidget extends AbstractWidget
 
 	@Override
 	public boolean mouseReleased(MouseButtonEvent event) {
-		int scaledHeight = Minecraft.getInstance().screen.height;
+		int scaledHeight = Minecraft.getInstance().gui.screen().height;
 		mouseReleased((int) event.x(), (int) event.y(), event.button(), scaledHeight);
 		return false;
 	}

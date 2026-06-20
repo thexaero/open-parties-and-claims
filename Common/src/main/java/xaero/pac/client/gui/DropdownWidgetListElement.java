@@ -129,7 +129,7 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 							.setOptions(stringOptions)
 							.setNarrationTitle(title)
 							.setCallback(el)
-							.setContainer((IDropDownContainer) Minecraft.getInstance().screen)
+							.setContainer((IDropDownContainer) Minecraft.getInstance().gui.screen())
 							.setSelected(el.currentIndex).build();
 			return new DropdownWidgetListElement<>(w, h, mutable, widgetSupplier, clientTooltip, startValue, startIndex, List.copyOf(options), valueChangeConsumer, title);
 		}

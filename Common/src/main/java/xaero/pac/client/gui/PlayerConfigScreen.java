@@ -120,7 +120,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 	}
 
 	public void openGroupsScreen(){
-		minecraft.setScreen(
+		minecraft.gui.setScreen(
 				PlayerGroupsScreen.Builder
 						.begin()
 						.setConfigData(data)
@@ -359,7 +359,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setValueChangeConsumer(v-> {
 						data.setSelectedSubConfig(v);
 						PlayerConfigScreen recreatedScreen = build();
-						Minecraft.getInstance().setScreen(recreatedScreen);
+						Minecraft.getInstance().gui.setScreen(recreatedScreen);
 						recreatedScreen.setFocused(recreatedScreen.children().get(0));//works while the sub-config menu is the first element
 					})
 					.build();
@@ -410,7 +410,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							b -> {
 								usedSubConfigOptionStorage.setValue(data.getSelectedSubConfig());
 								OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().syncToServer(usedSubConfigSyncDest, usedSubConfigOptionStorage);
-								minecraft.setScreen(build());
+								minecraft.gui.setScreen(build());
 							}).bounds(xy.getX(), xy.getY(), elementWidth, elementHeight).build()).build();
 			elements.add(useSubConfigButtonWidget);
 
@@ -421,12 +421,12 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setWidgetSupplier((el, xy) -> Button.builder(Component.translatable("gui.xaero_pac_ui_sub_config_delete_button", data.getSelectedSubConfig()),
 							b -> {
 								String s = data.getSelectedSubConfig();
-								minecraft.setScreen(new ConfirmScreen(result -> {
+								minecraft.gui.setScreen(new ConfirmScreen(result -> {
 									if(result) {
 										data.getOrCreateSubConfig(s).setBeingDeleted(true);
 										OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().requestDeleteSubConfig(data, s);
 									}
-									minecraft.setScreen(build());
+									minecraft.gui.setScreen(build());
 								}, Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm1", s),
 										Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm2")));
 							}).bounds(xy.getX(), xy.getY(), elementWidth, elementHeight).build()).build();
@@ -444,7 +444,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						data.setSyncInProgress(true);
 						data.setSelectedSubConfig(s);
 						OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().requestCreateSubConfig(data, s);
-						minecraft.setScreen(build());
+						minecraft.gui.setScreen(build());
 					})
 					.setMaxLength(PlayerConfig.MAX_SUB_ID_LENGTH)
 					.setBoxWidth(75)
@@ -474,9 +474,9 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			int elementHeight = 20;
 			BiConsumer<PlayerConfigScreen, Button> refreshHandler;
 			if(anotherPlayer)
-				refreshHandler = (s,b) -> s.minecraft.setScreen(new OtherPlayerConfigWaitScreen(s.escape, s.parent, otherPlayerName));
+				refreshHandler = (s,b) -> s.minecraft.gui.setScreen(new OtherPlayerConfigWaitScreen(s.escape, s.parent, otherPlayerName));
 			else
-				refreshHandler = (s,b) -> s.minecraft.setScreen(build());
+				refreshHandler = (s,b) -> s.minecraft.gui.setScreen(build());
 
 			Component mainTitle = this.title;
 			Component title = null;

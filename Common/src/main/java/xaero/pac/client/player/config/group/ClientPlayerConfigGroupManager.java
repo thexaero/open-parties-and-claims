@@ -109,7 +109,7 @@ public class ClientPlayerConfigGroupManager extends CustomPlayerConfigGroupDataM
 
 	public void onDesyncError(PlayerConfigGroupActionError error){
 		desyncError = error;
-		if(Minecraft.getInstance().screen instanceof PlayerGroupsScreen groupsScreen)
+		if(Minecraft.getInstance().gui.screen() instanceof PlayerGroupsScreen groupsScreen)
 			groupsScreen.onDesyncError(config);
 		beginDesyncFix();
 	}

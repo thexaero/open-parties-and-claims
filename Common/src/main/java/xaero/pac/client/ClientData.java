@@ -184,7 +184,7 @@ public final class ClientData implements IClientData<PlayerConfigClientStorageMa
 
 	@Override
 	public void openMainMenuScreen(@Nullable Screen escape, @Nullable Screen parent) {
-		Minecraft.getInstance().setScreen(new MainMenu(escape, parent));
+		Minecraft.getInstance().gui.setScreen(new MainMenu(escape, parent));
 	}
 	
 }

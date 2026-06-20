@@ -142,7 +142,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	@Override
 	public void openServerClaimsConfigScreen(@Nullable Screen escape, @Nullable Screen parent) {
 		PlayerConfigClientStorage config = getServerClaimsConfig();
-		Minecraft.getInstance().setScreen(
+		Minecraft.getInstance().gui.setScreen(
 				PlayerConfigScreen.Builder
 				.begin(ArrayList::new)
 				.setParent(parent)
@@ -157,7 +157,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	@Override
 	public void openExpiredClaimsConfigScreen(@Nullable Screen escape, @Nullable Screen parent) {
 		PlayerConfigClientStorage config = getExpiredClaimsConfig();
-		Minecraft.getInstance().setScreen(
+		Minecraft.getInstance().gui.setScreen(
 				PlayerConfigScreen.Builder
 				.begin(ArrayList::new)
 				.setParent(parent)
@@ -172,7 +172,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	@Override
 	public void openWildernessConfigScreen(@Nullable Screen escape, @Nullable Screen parent) {
 		PlayerConfigClientStorage config = getWildernessConfig();
-		Minecraft.getInstance().setScreen(
+		Minecraft.getInstance().gui.setScreen(
 				PlayerConfigScreen.Builder
 				.begin(ArrayList::new)
 				.setParent(parent)
@@ -187,7 +187,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	@Override
 	public void openDefaultPlayerConfigScreen(@Nullable Screen escape, @Nullable Screen parent) {
 		PlayerConfigClientStorage config = getDefaultPlayerConfig();
-		Minecraft.getInstance().setScreen(
+		Minecraft.getInstance().gui.setScreen(
 				PlayerConfigScreen.Builder
 				.begin(ArrayList::new)
 				.setParent(parent)
@@ -202,7 +202,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	@Override
 	public void openMyPlayerConfigScreen(@Nullable Screen escape, @Nullable Screen parent) {
 		PlayerConfigClientStorage config = getMyPlayerConfig();
-		Minecraft.getInstance().setScreen(
+		Minecraft.getInstance().gui.setScreen(
 				PlayerConfigScreen.Builder
 				.begin(ArrayList::new)
 				.setParent(parent)
@@ -217,7 +217,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	@Override
 	public void openPartyClaimsConfigScreen(@Nullable Screen escape, @Nullable Screen parent) {
 		PlayerConfigClientStorage config = getPartyClaimsConfig();
-		Minecraft.getInstance().setScreen(
+		Minecraft.getInstance().gui.setScreen(
 				PlayerConfigScreen.Builder
 				.begin(ArrayList::new)
 				.setParent(parent)
@@ -233,7 +233,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	@Override
 	public void openOtherPlayerConfigScreen(@Nullable Screen escape, @Nullable Screen parent, @Nonnull String playerName) {
 		if(!playerName.isEmpty())
-			Minecraft.getInstance().setScreen(new OtherPlayerConfigWaitScreen(escape, parent, playerName));
+			Minecraft.getInstance().gui.setScreen(new OtherPlayerConfigWaitScreen(escape, parent, playerName));
 	}
 
 	@Nonnull

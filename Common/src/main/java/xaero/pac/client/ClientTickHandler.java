@@ -32,7 +32,7 @@ public class ClientTickHandler {
 			firstTickHandled = true;
 		}
 		if(clientData.getKeyBindings().openModMenu.consumeClick())
-			Minecraft.getInstance().setScreen(new MainMenu(null, null));
+			Minecraft.getInstance().gui.setScreen(new MainMenu(null, null));
 	}
 
 }	

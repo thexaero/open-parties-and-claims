@@ -256,12 +256,12 @@ public class MainMenu extends XPACScreen {
 	}
 	
 	private void onConfigsButton(Button b) {
-		minecraft.setScreen(new ConfigMenu(escape, this));
+		minecraft.gui.setScreen(new ConfigMenu(escape, this));
 	}
 	
 	private void onAboutPartyButton(Button b) {
 		CommandUtil.sendCommand(minecraft, ABOUT_PARTY_COMMAND.getString().substring(1));
-		minecraft.setScreen(null);
+		minecraft.gui.setScreen(null);
 	}
 
 	private boolean wouldClaim(IPlayerChunkClaim currentClaim){

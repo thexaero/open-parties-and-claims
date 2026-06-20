@@ -63,11 +63,11 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 
 	@Override
 	public void onClose() {
-		minecraft.setScreen(escape);
+		minecraft.gui.setScreen(escape);
 	}
 	
 	public void goBack() {
-		minecraft.setScreen(parent);
+		minecraft.gui.setScreen(parent);
 	}
 
 	@Override

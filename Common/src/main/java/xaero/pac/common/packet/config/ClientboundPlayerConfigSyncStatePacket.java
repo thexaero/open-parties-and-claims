@@ -80,7 +80,7 @@ public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerCon
 			if(!t.isOtherPlayer() && !storage.isSyncInProgress() && t.state)//null storage is only possible when otherPlayer
 				storage.reset();
 			boolean isOtherPlayerWaitScreen = t.isOtherPlayer() &&
-					Minecraft.getInstance().screen instanceof OtherPlayerConfigWaitScreen;
+					Minecraft.getInstance().gui.screen() instanceof OtherPlayerConfigWaitScreen;
 			if(isOtherPlayerWaitScreen && t.state){
 				IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> prevOtherStorage = storage;
 				storage = playerConfigStorageManager
@@ -103,7 +103,7 @@ public class ClientboundPlayerConfigSyncStatePacket extends ClientboundPlayerCon
 				storage.getPlayerGroups().setSyncInProgress(true);
 			if(isOtherPlayerWaitScreen && !t.state){
 				OtherPlayerConfigWaitScreen.Listener listener =
-						((OtherPlayerConfigWaitScreen) Minecraft.getInstance().screen).getListener();
+						((OtherPlayerConfigWaitScreen) Minecraft.getInstance().gui.screen()).getListener();
 				if (listener != null)//only true when it's still the wait screen that made the request
 					listener.onConfigDataSyncDone(storage);
 			}

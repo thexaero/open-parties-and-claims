@@ -83,8 +83,8 @@ public class ClientboundPacDimensionHandshakePacket {
 			mainCap.getClientWorldDataInternal().setServerHasClaimsEnabled(t.claimsEnabled);
 			mainCap.getClientWorldDataInternal().setServerHasPartiesEnabled(t.partiesEnabled);
 			mainCap.getClientWorldDataInternal().setServerHasMod(true);
-			if(Minecraft.getInstance().screen instanceof ConfigMenu || Minecraft.getInstance().screen instanceof PlayerConfigScreen)
-				Minecraft.getInstance().setScreen(Minecraft.getInstance().screen);
+			if(Minecraft.getInstance().gui.screen() instanceof ConfigMenu || Minecraft.getInstance().gui.screen() instanceof PlayerConfigScreen)
+				Minecraft.getInstance().gui.setScreen(Minecraft.getInstance().gui.screen());
 		}
 		
 	}

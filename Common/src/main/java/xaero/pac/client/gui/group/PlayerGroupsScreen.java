@@ -337,7 +337,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 	private void onCreateGroupButton(Button b){
 		if(getCreateGroupButtonState() != ButtonState.ENABLED)
 			return;
-		minecraft.setScreen(
+		minecraft.gui.setScreen(
 				CreatePlayerGroupScreen.Builder.begin()
 						.setParent(this)
 						.setConfigData(configData)
@@ -351,11 +351,11 @@ public class PlayerGroupsScreen extends XPACScreen {
 		if(getDeleteGroupButtonState() != ButtonState.ENABLED)
 			return;
 		String selectedGroupId = groupDataCopy.getId();
-		minecraft.setScreen(
+		minecraft.gui.setScreen(
 				new ConfirmScreen(response -> {
 					if(response)
 						onGroupDeleted(selectedGroupId);
-					minecraft.setScreen(PlayerGroupsScreen.this);
+					minecraft.gui.setScreen(PlayerGroupsScreen.this);
 				},
 						DELETE_CONFIRMATION1,
 						Component.translatable(
@@ -374,7 +374,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 	private void onIncludeGroupButton(Button b){
 		if(getIncludeGroupButtonState() != ButtonState.ENABLED)
 			return;
-		minecraft.setScreen(
+		minecraft.gui.setScreen(
 				IncludeGroupScreen.Builder.begin()
 						.setGroupData(groupDataCopy)
 						.setConfigData(configData)
@@ -412,7 +412,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 	private void onIncludePlayerButton(Button b){
 		if(getIncludePlayerButtonState() != ButtonState.ENABLED)
 			return;
-		minecraft.setScreen(
+		minecraft.gui.setScreen(
 				IncludePlayerScreen.Builder.begin()
 						.setGroupData(groupDataCopy)
 						.setConfigData(configData)
@@ -502,10 +502,10 @@ public class PlayerGroupsScreen extends XPACScreen {
 	private void refreshForResync(){
 		if(desyncErrorOnInit != null && configData == configData.getManager().getOtherPlayerConfig()) {
 			if(!(parent instanceof PlayerConfigScreen configScreenParent)) {
-				minecraft.setScreen(null);
+				minecraft.gui.setScreen(null);
 				return;
 			}
-			minecraft.setScreen(
+			minecraft.gui.setScreen(
 					new OtherPlayerConfigWaitScreen(
 							escape, configScreenParent.getParent(),
 							configScreenParent.getOtherPlayerName(), true
@@ -530,7 +530,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 	@Override
 	public void goBack() {
 		super.goBack();
-		if(minecraft.screen instanceof PlayerConfigScreen playerConfigScreen &&
+		if(minecraft.gui.screen() instanceof PlayerConfigScreen playerConfigScreen &&
 				configData == configData.getManager().getOtherPlayerConfig())
 			playerConfigScreen.refresh();
 	}

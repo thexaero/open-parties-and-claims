@@ -111,7 +111,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 					.setDefaultPlayerConfigData((PlayerConfigClientStorage)(Object) manager.getDefaultPlayerConfig())
 					.setOtherPlayerName(otherPlayerName)
 					.build();
-			minecraft.setScreen(configScreen);
+			minecraft.gui.setScreen(configScreen);
 			if(autoOpenGroups)
 				configScreen.openGroupsScreen();
 		}
