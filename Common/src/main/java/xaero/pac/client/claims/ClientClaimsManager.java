@@ -477,12 +477,14 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 				claimingModeInfo.reset();
 				claimingModeInfoMap.put(claimingMode, claimingModeInfo);
 			}
-			return new ClientClaimsManager(
+			ClientClaimsManager result = new ClientClaimsManager(
 					playerClaimInfoManager, null, dimensions,
 					indexToClaimState, claimStates, claimsManagerTracker,
 					ClaimsManagerClaimResultTracker.Builder.begin().build(),
 					claimingModeInfoMap, ClaimingModes.PLAYER
 			);
+			playerClaimInfoManager.setClaimsManager(result);
+			return result;
 		}
 		
 	}

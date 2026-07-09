@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 public abstract class ClaimsManager
 <
 	PCI extends PlayerClaimInfo<PCI, M>,
-	M extends PlayerClaimInfoManager<PCI, M>,
+	M extends PlayerClaimInfoManager<PCI, M, ?>,
 	WRC extends RegionClaims<M, WRC>,
 	WCM extends DimensionClaimsManager<M, WRC>,
 	CSH extends ClaimStateHolder
@@ -253,7 +253,7 @@ public abstract class ClaimsManager
 	public abstract static class Builder
 	<
 		PCI extends PlayerClaimInfo<PCI, M>,
-		M extends PlayerClaimInfoManager<PCI, M>,
+		M extends PlayerClaimInfoManager<PCI, M, ?>,
 		WRC extends RegionClaims<M, WRC>,
 		WCM extends DimensionClaimsManager<M, WRC>,
 		CSH extends ClaimStateHolder,
