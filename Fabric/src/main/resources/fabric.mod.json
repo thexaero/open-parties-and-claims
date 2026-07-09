@@ -28,9 +28,7 @@
     },
     "mixins": [
       "${mod_id}.mixins.json",
-      "${mod_id}.fabric.mixins.json",
-      "${mod_id}.create.mixins.json",
-      "${mod_id}.create.fabric.mixins.json"
+      "${mod_id}.fabric.mixins.json"
     ],
   
     "depends": {
