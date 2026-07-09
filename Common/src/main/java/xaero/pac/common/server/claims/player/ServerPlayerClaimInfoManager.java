@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.apache.logging.log4j.core.jmx.Server;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
@@ -40,11 +41,10 @@ import xaero.pac.common.util.linked.LinkedChain;
 import java.util.*;
 
 //only used by ServerClaimsManager
-public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> 
+public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerClaimsManager>
 	implements ObjectManagerIOManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager>, ObjectManagerIOExpirableObjectManager<ServerPlayerClaimInfo> {
 
 	private final MinecraftServer server;
-	private ServerClaimsManager claimsManager;
 	private final IPlayerConfigManager configManager;
 	private final ForceLoadTicketManager ticketManager;
 	private final Set<ServerPlayerClaimInfo> toSave;
@@ -63,12 +63,6 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		claimableDimensionsSet = new HashSet<>();
 		for(String s : ServerConfig.CONFIG.claimableDimensionsList.get())
 			claimableDimensionsSet.add(new ResourceLocation(s));
-	}
-	
-	public void setClaimsManager(ServerClaimsManager claimsManager) {
-		if(this.claimsManager != null)
-			throw new IllegalStateException();
-		this.claimsManager = claimsManager;
 	}
 	
 	public void setIo(PlayerClaimInfoManagerIO<?> io) {

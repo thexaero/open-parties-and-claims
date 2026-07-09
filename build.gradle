@@ -65,6 +65,9 @@ subprojects {
         maven {
             url = "https://jitpack.io/"
         } // Mixin Extras, fabric ASM
+        maven {
+            url = "https://chocolateminecraft.com/maven"
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
