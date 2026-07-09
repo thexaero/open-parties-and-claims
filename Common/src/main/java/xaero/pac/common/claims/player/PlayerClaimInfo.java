@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 public abstract class PlayerClaimInfo
 <
 	PCI extends PlayerClaimInfo<PCI, M>,
-	M extends PlayerClaimInfoManager<PCI, M>
+	M extends PlayerClaimInfoManager<PCI, M, ?>
 > implements IPlayerClaimInfo<PlayerDimensionClaims>, ILinkedChainNode<PCI> {
 
 	protected final PCI self;

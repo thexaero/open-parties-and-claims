@@ -19,6 +19,8 @@
 package xaero.pac.common.claims.player;
 
 import net.minecraft.resources.Identifier;
+import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.HashMap;
@@ -31,12 +33,14 @@ import java.util.stream.Stream;
 public abstract class PlayerClaimInfoManager
 <
 	PCI extends PlayerClaimInfo<PCI, M>,
-	M extends PlayerClaimInfoManager<PCI, M>
+	M extends PlayerClaimInfoManager<PCI, M, ?>,
+	CM extends ClaimsManager<?, ?, ?, ?, ?>
 > {
 
 	protected final M self;
 	private Map<UUID, PCI> storage;
 	private LinkedChain<PCI> linkedPlayerInfo;
+	protected CM claimsManager;
 	
 	@SuppressWarnings("unchecked")
 	public PlayerClaimInfoManager(Map<UUID, PCI> storage, LinkedChain<PCI> linkedPlayerInfo) {
@@ -44,6 +48,12 @@ public abstract class PlayerClaimInfoManager
 		this.linkedPlayerInfo = linkedPlayerInfo;
 		this.self = (M) this;
 		this.storage = storage;
+	}
+
+	public void setClaimsManager(CM claimsManager) {
+		if(this.claimsManager != null)
+			throw new IllegalStateException();
+		this.claimsManager = claimsManager;
 	}
 	
 	protected abstract PCI create(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims);
@@ -95,6 +105,10 @@ public abstract class PlayerClaimInfoManager
 	
 	protected void onRemove(PCI playerInfo){
 		linkedPlayerInfo.remove(playerInfo);
+	}
+
+	public CM getClaimsManager() {
+		return claimsManager;
 	}
 
 	public abstract boolean usingPartyOwnedClaims();
