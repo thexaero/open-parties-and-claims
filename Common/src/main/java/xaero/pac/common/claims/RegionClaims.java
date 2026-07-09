@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public abstract class RegionClaims
 <
-	M extends PlayerClaimInfoManager<?, M>,
+	M extends PlayerClaimInfoManager<?, M, ?>,
 	WRC extends RegionClaims<M, WRC>
 > implements IRegionClaims, ILinkedChainNode<WRC> {//reflects what's in PlayerClaimInfoManager
 	
@@ -149,7 +149,7 @@ public abstract class RegionClaims
 
 	public static abstract class Builder
 	<
-		M extends PlayerClaimInfoManager<?, M>,
+		M extends PlayerClaimInfoManager<?, M, ?>,
 		WRC extends RegionClaims<M, WRC>,
 		B extends Builder<M, WRC, B>
 	> {

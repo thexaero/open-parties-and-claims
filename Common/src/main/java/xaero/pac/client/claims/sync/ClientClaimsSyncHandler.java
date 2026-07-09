@@ -53,11 +53,11 @@ public class ClientClaimsSyncHandler {
 	}
 	
 	public void onPlayerInfo(UUID playerId, String username, Component partyName, boolean partyOwned) {
-		claimsManager.getPlayerClaimInfoManager().updatePlayerInfo(playerId, username, partyName, partyOwned, claimsManager);
+		claimsManager.getPlayerClaimInfoManager().updatePlayerInfo(playerId, username, partyName, partyOwned);
 	}
 
 	public void onSubClaimInfo(UUID playerId, int subConfigIndex, String claimsName, Integer claimsColor) {
-		claimsManager.getPlayerClaimInfoManager().updateSubClaimInfo(playerId, subConfigIndex, claimsName, claimsColor, claimsManager);
+		claimsManager.getPlayerClaimInfoManager().updateSubClaimInfo(playerId, subConfigIndex, claimsName, claimsColor);
 	}
 	
 	public void onClaimState(PlayerChunkClaim claim) {
