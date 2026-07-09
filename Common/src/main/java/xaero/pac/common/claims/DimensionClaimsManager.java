@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 public abstract class DimensionClaimsManager
 <
-	M extends PlayerClaimInfoManager<?, M>,
+	M extends PlayerClaimInfoManager<?, M, ?>,
 	WRC extends RegionClaims<M, WRC>
 > implements IDimensionClaimsManager<WRC> {
 	

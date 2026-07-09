@@ -36,7 +36,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 
 //only used by ClientClaimsManager
-public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager> {
+public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientClaimsManager> {
 
 	private boolean partyOwnedClaims;
 
@@ -49,17 +49,21 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 			Map<Identifier, PlayerDimensionClaims> claims) {
 		return new ClientPlayerClaimInfo(username, playerId, claims, this, new Int2ObjectOpenHashMap<>());
 	}
-	
-	public void updatePlayerInfo(UUID playerId, String username, Component partyName, boolean partyOwned, ClientClaimsManager claimsManager) {
+
+	@Override
+	protected void onAdd(ClientPlayerClaimInfo playerInfo) {
+		super.onAdd(playerInfo);
+		updateSubClaimInfo(playerInfo.getPlayerId(), -1, "", 0);//ensuring something is always there for the main sub
+	}
+
+	public void updatePlayerInfo(UUID playerId, String username, Component partyName, boolean partyOwned) {
 		ClientPlayerClaimInfo playerInfo = getInfo(playerId);
 		playerInfo.setPlayerUsername(username);
 		playerInfo.setPartyName(partyName);
 		playerInfo.setPartyOwned(partyOwned);
-		if(playerInfo.getClaimsColor(-1) == null)
-			updateSubClaimInfo(playerId, -1, "", 0, claimsManager);//ensuring something is always there for the main sub
 	}
 
-	public void updateSubClaimInfo(UUID playerId, int subConfigIndex, String claimsName, Integer claimsColor, ClientClaimsManager claimsManager) {
+	public void updateSubClaimInfo(UUID playerId, int subConfigIndex, String claimsName, Integer claimsColor) {
 		ClientPlayerClaimInfo playerInfo = getInfo(playerId);
 		playerInfo.ensureSubClaim(subConfigIndex);
 		playerInfo.setClaimsName(subConfigIndex, claimsName);
