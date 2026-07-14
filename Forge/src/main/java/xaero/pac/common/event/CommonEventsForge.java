@@ -215,11 +215,6 @@ public class CommonEventsForge extends CommonEvents {
 	}
 
 	@SubscribeEvent(priority = Priority.HIGHEST)
-	public boolean onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-		return super.onEntityInteract(event.getEntity(), event.getTarget(), event.getHand());
-	}
-
-	@SubscribeEvent(priority = Priority.HIGHEST)
 	public boolean onInteractEntitySpecific(PlayerInteractEvent.EntityInteractSpecific event) {
 		return super.onInteractEntitySpecific(event.getEntity(), event.getTarget(), event.getHand());
 	}
@@ -272,7 +267,7 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent(priority = Priority.HIGHEST)
 	public boolean onMobCheckSpawn(MobSpawnEvent.FinalizeSpawn event){
-		if(event.getEntity().isAddedToWorld())
+		if(event.getEntity().isAddedToLevel())
 			return false;
 		if(super.onMobSpawn(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getSpawnReason())) {
 			event.setSpawnCancelled(true);//won't be spawned
