@@ -27,7 +27,7 @@ public class PlatformMixinHelperForge implements IPlatformMixinHelper<ModFileInf
 
 	@Override
 	public ModFileInfo getLoadingModInfo(String modId) {
-		return LoadingModList.get().getModFileById(modId);
+		return LoadingModList.getModFileById(modId);
 	}
 
 	@Override
