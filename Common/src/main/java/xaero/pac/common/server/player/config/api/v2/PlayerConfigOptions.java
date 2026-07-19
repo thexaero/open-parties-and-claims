@@ -321,6 +321,12 @@ public class PlayerConfigOptions {
 	public static final IPlayerConfigOptionSpecAPI<Boolean> OFFLINE_FORCELOAD;
 
 	/**
+	 * Whether every player in the primary party owned by this player can claim/unclaim as the party,
+	 * without any rank or permission requirement.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> WHOLE_PARTY_CAN_CLAIM;
+
+	/**
 	 * Whether the player shares their in-game location with their party.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> SHARE_LOCATION_WITH_PARTY;
@@ -1054,6 +1060,18 @@ public class PlayerConfigOptions {
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setOverridable(false)
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleForceloading)
+				.build(allOptions);
+
+		WHOLE_PARTY_CAN_CLAIM = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.wholePartyCanClaim")
+				.setDefaultValue(false)
+				.setComment(
+						"""
+						When enabled, if you own a primary party and party-owned claims are enabled, every single player in your party will be able to claim/unclaim as the party (as you), without checking party ranks like normally.
+						This option is almost exclusively meant for servers that don't care about claim protection."""
+				)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
 				.build(allOptions);
 
 		OPTIONS = Collections.unmodifiableMap(allOptions);

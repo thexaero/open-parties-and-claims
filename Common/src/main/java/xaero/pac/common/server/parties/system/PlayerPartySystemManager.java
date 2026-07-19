@@ -23,8 +23,10 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.misc.MapFactory;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import java.util.Map;
 import java.util.UUID;
@@ -198,8 +200,12 @@ public final class PlayerPartySystemManager implements IPlayerPartySystemManager
 
 	@Override
 	public boolean canPartyClaim(UUID playerId) {
-		if(getPrimaryPartyOwnerByMember(playerId) == null)//called to absolutely ensure the backdoor fix (not necessary here atm)
+		UUID primaryPartyOwner = getPrimaryPartyOwnerByMember(playerId);
+		if(primaryPartyOwner == null)
 			return false;
+		IPlayerConfig partyOwnerConfig = configManager.getLoadedConfig(primaryPartyOwner);
+		if(partyOwnerConfig.getEffective(PlayerConfigOptions.WHOLE_PARTY_CAN_CLAIM))
+			return true;
 		return getPrimarySystem().isPermittedToPartyClaim(playerId);
 	}
 

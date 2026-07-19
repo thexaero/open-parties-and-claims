@@ -431,6 +431,8 @@
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.forceload.enabled" : "default",
 	"gui.xaero_pac_player_config_playerConfig.claims.forceload.offlineForceload" : "Forceload While Offline",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.forceload.offlineForceload" : "default",
+	"gui.xaero_pac_player_config_playerConfig.claims.wholePartyCanClaim" : "Whole Party Can Claim",
+	"gui.xaero_pac_player_config_tooltip_playerConfig.claims.wholePartyCanClaim" : "default",
 	"gui.xaero_pac_player_config_playerConfig.parties.shareLocationWithParty" : "Share Position With Party",
 	"gui.xaero_pac_player_config_tooltip_playerConfig.parties.shareLocationWithParty" : "default",
 	"gui.xaero_pac_player_config_playerConfig.parties.shareLocationWithMutualAllyParties" : "Share Position With Mutual Allies",
