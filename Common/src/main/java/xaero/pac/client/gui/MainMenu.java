@@ -55,6 +55,7 @@ import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.platform.Services;
+import xaero.pac.common.server.claims.command.ClaimingModeCommand;
 import xaero.pac.common.server.claims.command.ClaimsCommandRegister;
 import xaero.pac.common.server.parties.command.PartyCommandRegister;
 
@@ -141,6 +142,7 @@ public class MainMenu extends XPACScreen {
 	private Button forceloadButton;
 	private List<ClaimingMode> claimModeOptions;
 	private IClaimingModeAPI selectedClaimingMode;
+	private IClaimingModeAPI selectedEffectiveClaimingMode;
 	private DropDownWidget claimingModeMenu;
 	private long lastClaimingModeChangeTime;
 	public static boolean TEST_TOGGLE;
@@ -214,8 +216,11 @@ public class MainMenu extends XPACScreen {
 			claimModeOptions.add((ClaimingMode) claimingMode);
 		}
 		claimModeOptions.sort(Comparator.comparing(IClaimingModeAPI::getId));
-		selectedClaimingMode = claimsManager.getClaimingMode();
-		int selectedClaimMode = claimModeOptions.indexOf(selectedClaimingMode);
+		claimModeOptions.add(0, null);//default mode
+		selectedClaimingMode = claimsManager.getRawClaimingMode();
+		selectedEffectiveClaimingMode = claimsManager.getEffectiveClaimingMode(selectedClaimingMode);
+		ClaimingMode effectiveDefaultMode = (ClaimingMode) claimsManager.getEffectiveClaimingMode(null);
+		int selectedClaimMode = selectedClaimingMode == null ? 0 : claimModeOptions.indexOf(selectedClaimingMode);
 		return DropDownWidget.Builder.begin()
 				.setCallback(this::onClaimMode)
 				.setContainer(this)
@@ -224,7 +229,11 @@ public class MainMenu extends XPACScreen {
 				.setW(200)
 				.setOptions(
 						claimModeOptions.stream()
-								.map(ClaimingMode::getActiveLabel)
+								.map(mode -> mode == null ?
+										new TranslatableComponent(
+												"gui.xaero_pac_claiming_as_default", effectiveDefaultMode.getActiveLabel()
+										) : mode.getActiveLabel()
+								)
 								.map(Component::getString)
 								.toList()
 								.toArray(new String[0])
@@ -237,8 +246,10 @@ public class MainMenu extends XPACScreen {
 	private boolean onClaimMode(DropDownWidget dropDownWidget, int index) {
 		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		claimsManager.setClaimingMode(selectedClaimingMode = claimModeOptions.get(index));
+		selectedEffectiveClaimingMode = claimsManager.getEffectiveClaimingMode(selectedClaimingMode);
 
-		sendMessage("/" + ClaimsCommandRegister.COMMAND_PREFIX + " " + selectedClaimingMode.getId() + "-claim-mode");
+		String modePrefix = selectedClaimingMode == null ? ClaimingModeCommand.DEFAULT_MODE_PREFIX : selectedClaimingMode.getId();
+		sendMessage("/" + ClaimsCommandRegister.COMMAND_PREFIX + " " + modePrefix + "-claim-mode");
 		lastClaimingModeChangeTime = System.currentTimeMillis();
 		updateWidgets();
 		return true;
@@ -256,7 +267,8 @@ public class MainMenu extends XPACScreen {
 		if(serverHasMod && !claimsManager.isLoading()) {
 			IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 			boolean adminMode = claimsManager.isAdminMode();
-			ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(selectedClaimingMode);
+			IClaimingModeAPI effectiveClaimingMode = selectedEffectiveClaimingMode;
+			ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(effectiveClaimingMode);
 			UUID claimTargetUUID = claimingModeHandler.getClaimReflectionOwnerGetter().apply(claimsManager);
 			claimButton.active = adminMode || currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID);
 			claimButton.setMessage(wouldClaim(currentClaim) ? CLAIM : UNCLAIM);
@@ -271,7 +283,7 @@ public class MainMenu extends XPACScreen {
 	private void updateClaimingModeDropdown(IClientClaimsManager<?, ?, ?> claimsManager){
 		if(System.currentTimeMillis() - lastClaimingModeChangeTime < 1000)
 			return;
-		if(claimsManager.getClaimingMode() == selectedClaimingMode)
+		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode)
 			return;
 		replaceRenderableWidget(claimingModeMenu, claimingModeMenu = setupClaimModeDropdown());
 	}
@@ -335,7 +347,7 @@ public class MainMenu extends XPACScreen {
 	private void drawClaimsInfo(PoseStack poseStack, int mouseX, int mouseY, float partial){
 		IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 				claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
-		IClaimingModeAPI claimingModeAPI = selectedClaimingMode;
+		IClaimingModeAPI claimingModeAPI = selectedEffectiveClaimingMode;
 		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(claimingModeAPI);
 		UUID claimingAsUUID = claimingModeHandler.getClaimReflectionOwnerGetter().apply(claimsManager);
 		if(claimingAsUUID == null)

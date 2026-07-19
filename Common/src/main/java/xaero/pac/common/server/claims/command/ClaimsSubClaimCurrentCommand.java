@@ -41,6 +41,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
@@ -56,11 +57,13 @@ public class ClaimsSubClaimCurrentCommand extends ClaimAbstractSubClaimCommand {
 	}
 
 	private static Command<CommandSourceStack> getExecutor(ClaimingMode mode){
-		IPlayerConfigOptionSpecAPI<String> option = mode.getSubClaimOption();
-		if(option == null)
-			throw new IllegalArgumentException();
 		return context -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			ServerPlayerData sourcePlayerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
+			ClaimingMode effectiveMode = mode == null ? sourcePlayerData.getClaimingMode() : mode;
+			IPlayerConfigOptionSpecAPI<String> option = effectiveMode.getSubClaimOption();
+			if(option == null)
+				throw new IllegalArgumentException();
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
@@ -71,7 +74,7 @@ public class ClaimsSubClaimCurrentCommand extends ClaimAbstractSubClaimCommand {
 				return 0;
 			UUID configPlayerUUID = inputPlayer.getId();
 			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
-			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", playerConfig.getEffective(option)), sourcePlayer.getUUID());
+			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", playerConfig.getEffective(option), effectiveMode.getId()), sourcePlayer.getUUID());
 			return 1;
 		};
 	}

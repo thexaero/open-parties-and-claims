@@ -19,23 +19,37 @@
 package xaero.pac.common.server.player.data;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.PartyMemberDynamicInfoSyncable;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPropertiesSync;
+import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.sync.player.PlayerFullPartySync;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sync.task.PlayerConfigSyncSpreadoutTask;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.data.config.PlayerConfigPermissionUpdateData;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,9 +59,12 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	
 	//internal api
 
+	private final IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+			serverData;
+	private final UUID playerId;
 	private boolean claimsAdminMode;
 	private boolean claimsNonallyMode;
-	private ClaimingMode claimingMode = (ClaimingMode) ClaimingModes.PLAYER;
+	private ClaimingMode claimingMode = null;
 	private IPlayerChunkClaim lastClaimCheck;
 	private Map<IClaimingModeAPI, ClaimingModeLimits> lastLimitsSync;
 	private long lastClaimLimitsCheckTime;
@@ -76,8 +93,14 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private long lastPlayerConfigPermissionUpdate;
 	private boolean syncedConfigAdmin;
 
-	public ServerPlayerData() {
+	public ServerPlayerData(
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData,
+			UUID playerId
+	) {
 		super();
+		this.serverData = serverData;
+		this.playerId = playerId;
 	}
 
 	public void onLogin(
@@ -113,15 +136,27 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return claimsNonallyMode;
 	}
 
+	@Nonnull
 	@Override
 	public ClaimingMode getClaimingMode() {
+		if(claimingMode == null) {
+			if(serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(getPlayer()))
+				return (ClaimingMode) ClaimingModes.PARTY;
+			return (ClaimingMode) ClaimingModes.PLAYER;
+		}
+		return claimingMode;
+	}
+
+	@Nullable
+	@Override
+	public ClaimingMode getRawClaimingMode() {
 		return claimingMode;
 	}
 
 	@Deprecated
 	@Override
 	public boolean isClaimsServerMode() {
-		return claimingMode == ClaimingModes.SERVER;
+		return getClaimingMode() == ClaimingModes.SERVER;
 	}
 
 	public void setOftenSyncedPartyMemberInfo(PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo) {
@@ -336,6 +371,10 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public void setLastPartyOnlineUpdate(long time, UUID partyOwner) {
 		this.lastPartyOnlineUpdateTime = time;
 		this.lastPartyOnlineUpdateOwner = partyOwner;
+	}
+
+	private ServerPlayer getPlayer(){
+		return serverData.getServer().getPlayerList().getPlayer(playerId);
 	}
 
 }

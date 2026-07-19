@@ -32,29 +32,31 @@ import javax.annotation.Nullable;
 public enum PlayerConfigType {
 
 	/** Server claims config */
-	SERVER(new TranslatableComponent("gui.xaero_pac_config_type_server"), PlayerConfigOptions.USED_SERVER_SUBCLAIM),
+	SERVER(new TranslatableComponent("gui.xaero_pac_config_type_server"), PlayerConfigOptions.USED_SERVER_SUBCLAIM, true),
 
 	/** Expired claims config */
-	EXPIRED(new TranslatableComponent("gui.xaero_pac_config_type_expired"), null),
+	EXPIRED(new TranslatableComponent("gui.xaero_pac_config_type_expired"), null, true),
 
 	/** Wilderness config */
-	WILDERNESS(new TranslatableComponent("gui.xaero_pac_config_type_wilderness"), null),
+	WILDERNESS(new TranslatableComponent("gui.xaero_pac_config_type_wilderness"), null, true),
 
 	/** The default player config */
-	DEFAULT_PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_default_player"), null),
+	DEFAULT_PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_default_player"), null, true),
 
 	/** A player config */
-	PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_player"), PlayerConfigOptions.USED_SUBCLAIM),
+	PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_player"), PlayerConfigOptions.USED_SUBCLAIM, false),
 
 	/** Party claims config */
-	PARTY_CLAIMS(new TranslatableComponent("gui.xaero_pac_config_type_party_claims"), PlayerConfigOptions.USED_PARTY_SUBCLAIM);
+	PARTY_CLAIMS(new TranslatableComponent("gui.xaero_pac_config_type_party_claims"), PlayerConfigOptions.USED_PARTY_SUBCLAIM, false);
 
 	private final Component name;
 	private final IPlayerConfigOptionSpecAPI<String> subClaimOption;
+	private final boolean global;
 
-	PlayerConfigType(Component name, IPlayerConfigOptionSpecAPI<String> subClaimOption){
+	PlayerConfigType(Component name, IPlayerConfigOptionSpecAPI<String> subClaimOption, boolean global){
 		this.name = name;
 		this.subClaimOption = subClaimOption;
+		this.global = global;
 	}
 
 	/**
@@ -76,6 +78,15 @@ public enum PlayerConfigType {
 	@Nullable
 	public IPlayerConfigOptionSpecAPI<String> getSubClaimOption() {
 		return subClaimOption;
+	}
+
+	/**
+	 * Gets whether this config type corresponds to a global config, meaning it's the same for every player.
+	 *
+	 * @return true if this is a global config type, otherwise false
+	 */
+	public boolean isGlobal() {
+		return global;
 	}
 
 }

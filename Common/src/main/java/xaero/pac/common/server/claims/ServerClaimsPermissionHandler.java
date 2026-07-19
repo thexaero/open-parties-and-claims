@@ -24,7 +24,6 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.packet.ClientboundModesPacket;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
@@ -48,7 +47,7 @@ public class ServerClaimsPermissionHandler {
 
 	public void resetClaimingMode(ServerPlayer player){
 		ServerPlayerDataAPI playerData = ServerPlayerData.from(player);
-		((ServerPlayerData)playerData).setClaimingMode(ClaimingModes.PLAYER);
+		((ServerPlayerData)playerData).setClaimingMode(null);
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
 		serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 	}

@@ -35,7 +35,7 @@ public class ClaimsForceloadCommand extends AbstractChunkCommand {
 	public ClaimsForceloadCommand(boolean add, ClaimingMode mode) {
 		super(
 				ClaimsCommandRegister.COMMAND_PREFIX, add,
-				mode == ClaimingModes.PLAYER ? null : mode.getId(), "forceload", "unforceload"
+				mode == null ? null : mode.getId(), "forceload", "unforceload"
 		);
 		this.mode = mode;
 	}
@@ -56,7 +56,7 @@ public class ClaimsForceloadCommand extends AbstractChunkCommand {
 
 	@Override
 	protected Predicate<CommandSourceStack> getRequirement() {
-		return mode.getCommandVisibilityRequirement();
+		return mode == null ? s -> true : mode.getCommandVisibilityRequirement();
 	}
 
 }

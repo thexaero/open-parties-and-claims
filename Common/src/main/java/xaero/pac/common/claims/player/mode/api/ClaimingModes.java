@@ -74,7 +74,7 @@ public class ClaimingModes {
 			})
 			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_myself"))
 			.setEnableMessage(new TranslatableComponent("gui.xaero_claims_player_mode_enabled"))
-			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_player_mode_enabled"))//purposely the same
+			.setDisableMessage(new TranslatableComponent("gui.xaero_claims_player_mode_disabled"))
 			.build(ALL);
 
 	/**

@@ -22,6 +22,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -47,7 +49,12 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
+import java.util.function.Predicate;
+
 public class ClaimingModeCommand {
+
+	public static final String DEFAULT_MODE_PREFIX = "default";
+	private final Component DEFAULT_MODE_ENABLED = new TranslatableComponent("gui.xaero_claims_default_mode_enabled");
 
 	private final ClaimingMode mode;
 
@@ -56,9 +63,11 @@ public class ClaimingModeCommand {
 	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
+		String modeId = mode == null ? DEFAULT_MODE_PREFIX : mode.getId();
+		Predicate<CommandSourceStack> requirement = mode == null ? s -> true : mode.getCommandVisibilityRequirement();
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.claimsEnabled.get())
-				.then(Commands.literal(mode.getId() + "-claim-mode")
-				.requires(mode.getCommandVisibilityRequirement())
+				.then(Commands.literal(modeId + "-claim-mode")
+				.requires(requirement)
 				.executes(context -> {
 					ServerPlayer player = context.getSource().getPlayerOrException();
 					MinecraftServer server = player.getServer();
@@ -66,21 +75,20 @@ public class ClaimingModeCommand {
 							serverData = ServerData.from(server);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-					if(mode.getPermissionChecker() != null){
+					if(mode != null && mode.getPermissionChecker() != null){
 						ClaimResult.Type failureType = mode.getPermissionChecker().apply(player, serverData.getServerClaimsManager());
 						if (failureType != null) {
-							if(mode != ClaimingModes.PLAYER)
-								serverData.getServerClaimsManager().getPermissionHandler().resetClaimingMode(player);
+							serverData.getServerClaimsManager().getPermissionHandler().resetClaimingMode(player);
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, failureType.message));
 							return 0;
 						}
 					}
-					boolean enabling = playerData.getClaimingMode() != mode;
-					playerData.setClaimingMode(enabling ? mode : ClaimingModes.PLAYER);
+					boolean enabling = playerData.getRawClaimingMode() != mode;
+					playerData.setClaimingMode(enabling ? mode : null);
 					player.sendMessage(
 							adaptiveLocalizer.getFor(
 									player,
-									enabling ? mode.getEnableMessage() : mode.getDisableMessage()
+									mode == null ? DEFAULT_MODE_ENABLED : enabling ? mode.getEnableMessage() : mode.getDisableMessage()
 							),
 							player.getUUID()
 					);

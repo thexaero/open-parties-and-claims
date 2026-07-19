@@ -30,6 +30,7 @@ import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 public abstract class ClaimAbstractSubClaimCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
+		registerCommands(null, dispatcher);//default mode
 		for (IClaimingModeAPI claimingMode : ClaimingModes.ALL_IMMUTABLE.values())
 			registerCommands(claimingMode, dispatcher);
 	}
@@ -70,10 +71,10 @@ public abstract class ClaimAbstractSubClaimCommand {
 			CommandDispatcher<CommandSourceStack> dispatcher
 	){
 		LiteralArgumentBuilder<CommandSourceStack> prefixedMainPart =
-				mode == ClaimingModes.PLAYER ? mainPart : Commands.literal(mode.getId()).then(mainPart);
+				mode == null ? mainPart : Commands.literal(mode.getId()).then(mainPart);
 		LiteralArgumentBuilder<CommandSourceStack> command =
 				Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX)
-				.then(prefixedMainPart.requires(mode.getCommandVisibilityRequirement()));
+				.then(prefixedMainPart.requires(mode == null ? s -> true : mode.getCommandVisibilityRequirement()));
 		dispatcher.register(command);
 	}
 
