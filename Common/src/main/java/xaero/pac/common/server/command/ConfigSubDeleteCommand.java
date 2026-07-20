@@ -42,6 +42,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
@@ -138,6 +139,13 @@ public class ConfigSubDeleteCommand {
 			if(playerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
 				return 0;
+			}
+			boolean isOP = context.getSource().hasPermission(Commands.LEVEL_GAMEMASTERS);
+			if(ServerConfig.CONFIG.claimsEnabled.get()) {
+				if(!isOP && ServerPlayerConfigUtils.isOverClaimLimit(playerConfig)) {
+					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_claim_count_over_limit"));
+					return 0;
+				}
 			}
 			configPlayerUUID = playerConfig.getPlayerId();
 			PlayerConfig<?> result = playerConfig.getSubConfig(inputSubId);

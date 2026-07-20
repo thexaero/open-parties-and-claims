@@ -40,6 +40,7 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * API for data attached to a server player
@@ -71,13 +72,24 @@ public abstract class ServerPlayerDataAPI {
 	public abstract boolean isClaimsServerMode();
 
 	/**
-	 * Gets the current claiming mode.
+	 * Gets the current effective claiming mode.
 	 * <p>
 	 * All claiming modes can be accessed through {@link xaero.pac.common.claims.player.mode.api.ClaimingModes}
 	 *
 	 * @return the current claiming mode, not null
 	 */
+	@Nonnull
 	public abstract IClaimingModeAPI getClaimingMode();
+
+	/**
+	 * Gets the current claiming mode without automatically determining the effective one if none is set.
+	 * <p>
+	 * All claiming modes can be accessed through {@link xaero.pac.common.claims.player.mode.api.ClaimingModes}
+	 *
+	 * @return the current claiming mode, null if none is set
+	 */
+	@Nullable
+	public abstract IClaimingModeAPI getRawClaimingMode();
 
 	/**
 	 * Gets the player data for a specified logged in player.
@@ -88,8 +100,11 @@ public abstract class ServerPlayerDataAPI {
 	@Nonnull
 	public static ServerPlayerDataAPI from(@Nonnull ServerPlayer player) {
 		ServerPlayerDataAPI result = ((IOpenPACServerPlayer)player).getXaero_OPAC_PlayerData();
-		if(result == null)
-			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData());
+		if(result == null) {
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(player.getServer());
+			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData(serverData, player.getUUID()));
+		}
 		ServerPlayerData data = (ServerPlayerData)result;
 		if(!data.hasHandledLogin() && player.connection != null && ServerCore.getServerGamePacketListenerConnection(player.connection) != null && !ServerCore.getServerGamePacketListenerConnection(player.connection).isConnecting()){//isConnecting() = the channel is null
 			MinecraftServer server = ServerLevelHelper.getServer(player);

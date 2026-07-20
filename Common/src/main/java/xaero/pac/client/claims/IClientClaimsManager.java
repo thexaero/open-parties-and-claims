@@ -64,6 +64,8 @@ public interface IClientClaimsManager
 	public boolean isInParty();
 
 	public void setCurrentPartyOwner(UUID currentPartyOwner);
+
+	public IClaimingModeAPI getEffectiveClaimingMode(IClaimingModeAPI selected);
 	
 	@Nonnull
 	@Override

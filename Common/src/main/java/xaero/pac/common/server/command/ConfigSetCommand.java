@@ -47,6 +47,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -55,6 +56,7 @@ import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI.SetResult;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
@@ -286,6 +288,12 @@ public class ConfigSetCommand {
 				//such options are not redirected to the default config, so they need a separate check
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_op_option"));
 				return 0;
+			}
+			if(ServerConfig.CONFIG.claimsEnabled.get()) {
+				if(!isOP && option != PlayerConfigOptions.BONUS_CHUNK_CLAIMS && ServerPlayerConfigUtils.isOverClaimLimit(effectivePlayerConfig)) {
+					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_claim_count_over_limit"));
+					return 0;
+				}
 			}
 			SetResult result = tryToSet(context, sourcePlayer, adaptiveLocalizer, effectivePlayerConfig, option, valueInput, reset);
 			if(result == SetResult.INVALID)

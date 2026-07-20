@@ -125,4 +125,6 @@ public class PlayerArgonautsPartySystem implements IPlayerPartySystemAPI<Party> 
 		return (int)Streams.stream(party.members().iterator()).count();
 	}
 
+	//purposely not using party color unlike for guilds because it's always white here
+
 }

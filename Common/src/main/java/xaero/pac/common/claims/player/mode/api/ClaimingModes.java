@@ -63,18 +63,17 @@ public class ClaimingModes {
 			.setLimitsBuilder((player, claimsManager) -> {
 				UUID playerId = player.getUUID();
 				IServerPlayerClaimInfo<?> playerClaims = claimsManager.getPlayerInfo(playerId);
-				IPlayerConfig playerConfig = claimsManager.getConfigManager().getLoadedConfig(playerId);
 				int claimCount = playerClaims.getClaimCount();
 				int forceloadCount = playerClaims.getForceloadCount();
-				int claimLimit = claimsManager.getPlayerBaseClaimLimit(playerId) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
-				int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(playerId) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+				int claimLimit = claimsManager.getPlayerFullClaimLimit(playerId);
+				int forceloadLimit = claimsManager.getPlayerFullForceloadLimit(playerId);
 				return new ClaimingModeLimits(
 						ClaimingModes.PLAYER, claimCount, forceloadCount, claimLimit, forceloadLimit
 				);
 			})
 			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_myself"))
 			.setEnableMessage(Component.translatable("gui.xaero_claims_player_mode_enabled"))
-			.setDisableMessage(Component.translatable("gui.xaero_claims_player_mode_enabled"))//purposely the same
+			.setDisableMessage(Component.translatable("gui.xaero_claims_player_mode_disabled"))
 			.build(ALL);
 
 	/**
@@ -111,11 +110,10 @@ public class ClaimingModes {
 					UUID partyOwner = claimsManager.getPartySystemManager().getPrimaryPartyOwnerByMember(player.getUUID());
 					if(partyOwner != null) {
 						IServerPlayerClaimInfo<?> partyOwnerClaims = claimsManager.getPlayerInfo(partyOwner);
-						IPlayerConfig partyOwnerConfig = claimsManager.getConfigManager().getLoadedConfig(partyOwner);
 						partyClaimCount = partyOwnerClaims.getClaimCount();
 						partyForceloadCount = partyOwnerClaims.getForceloadCount();
-						partyClaimLimit = claimsManager.getPlayerBaseClaimLimit(partyOwner) + partyOwnerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
-						partyForceloadLimit = claimsManager.getPlayerBaseForceloadLimit(partyOwner) + partyOwnerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+						partyClaimLimit = claimsManager.getPlayerFullClaimLimit(partyOwner);
+						partyForceloadLimit = claimsManager.getPlayerFullForceloadLimit(partyOwner);
 					}
 				}
 				return new ClaimingModeLimits(
