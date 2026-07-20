@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -140,7 +139,7 @@ public class ConfigSubDeleteCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
 				return 0;
 			}
-			boolean isOP = context.getSource().hasPermission(Commands.LEVEL_GAMEMASTERS);
+			boolean isOP = Commands.LEVEL_GAMEMASTERS.check(context.getSource().permissions());
 			if(ServerConfig.CONFIG.claimsEnabled.get()) {
 				if(!isOP && ServerPlayerConfigUtils.isOverClaimLimit(playerConfig)) {
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_claim_count_over_limit"));

@@ -2446,7 +2446,7 @@ public class ChunkProtection
 	private boolean shouldBlockClaimAccessForGoingOverLimit(UUID claimOwnerId, Entity accessor){
 		if(!(accessor instanceof ServerPlayer player))
 			return false;
-		if(player.hasPermissions(Commands.LEVEL_GAMEMASTERS))
+		if(Commands.LEVEL_GAMEMASTERS.check(player.permissions()))
 			return false;
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
 		MinecraftServer server = ServerLevelHelper.getServer(player);
