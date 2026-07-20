@@ -102,7 +102,7 @@ public abstract class ServerPlayerDataAPI {
 		ServerPlayerDataAPI result = ((IOpenPACServerPlayer)player).getXaero_OPAC_PlayerData();
 		if(result == null) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(player.getServer());
+					serverData = ServerData.from(ServerLevelHelper.getServer(player));
 			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData(serverData, player.getUUID()));
 		}
 		ServerPlayerData data = (ServerPlayerData)result;

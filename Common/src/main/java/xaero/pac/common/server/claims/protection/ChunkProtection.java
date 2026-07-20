@@ -2449,7 +2449,8 @@ public class ChunkProtection
 		if(player.hasPermissions(Commands.LEVEL_GAMEMASTERS))
 			return false;
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
-		if(player.getServer().getTickCount() == playerData.getAllowedClaimAccessOverLimitTick())//allowing all within the same tick for when an action has many checks
+		MinecraftServer server = ServerLevelHelper.getServer(player);
+		if(server.getTickCount() == playerData.getAllowedClaimAccessOverLimitTick())//allowing all within the same tick for when an action has many checks
 			return false;
 		if(claimsManager.getPermissionHandler().playerHasAdminModePermission(player))
 			return false;
@@ -2464,7 +2465,7 @@ public class ChunkProtection
 		IServerPlayerClaimInfo<?> accessorClaimInfo = claimsManager.getPlayerInfo(accessor.getUUID());//storing the access time here so it doesn't reset on relog
 		if(time - accessorClaimInfo.getLastAllowedClaimAccessOverLimitTime() > 60000L * accessCooldownMinutes) {
 			accessorClaimInfo.setLastAllowedClaimAccessOverLimitTime(time);
-			playerData.setAllowedClaimAccessOverLimitTick(player.getServer().getTickCount());
+			playerData.setAllowedClaimAccessOverLimitTick(server.getTickCount());
 			return false;
 		}
 		if(time - playerData.getLastClaimsOverLimitMessageTime() > 5000) {
