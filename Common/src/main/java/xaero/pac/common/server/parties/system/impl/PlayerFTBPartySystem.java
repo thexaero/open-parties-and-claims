@@ -113,4 +113,9 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 		return party.getMembers().size();
 	}
 
+	@Override
+	public int getColor(@Nonnull Team party) {
+		return party.getColor() & 0xFFFFFF;
+	}
+
 }

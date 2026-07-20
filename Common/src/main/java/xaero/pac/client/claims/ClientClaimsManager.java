@@ -261,7 +261,23 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Nonnull
 	@Override
 	public IClaimingModeAPI getClaimingMode() {
+		return getEffectiveClaimingMode(claimingMode);
+	}
+
+	@Nullable
+	@Override
+	public IClaimingModeAPI getRawClaimingMode() {
 		return claimingMode;
+	}
+
+	@Override
+	public IClaimingModeAPI getEffectiveClaimingMode(IClaimingModeAPI selected) {
+		if(selected == null){
+			if(partyOwnedClaims && clientData.getPlayerConfigStorageManager().getPartyClaimsConfig().getPermissions().canClaimAs())
+				return ClaimingModes.PARTY;
+			return ClaimingModes.PLAYER;
+		}
+		return selected;
 	}
 
 	public void setPartyOwnedClaims(boolean partyOwnedClaims) {
@@ -329,7 +345,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	public void reset(boolean notifyTracker) {
 		super.reset(notifyTracker);
 		adminMode = false;
-		claimingMode = ClaimingModes.PLAYER;
+		claimingMode = null;
 		claimingModeInfoMap.values().forEach(ClientClaimingModeInfo::reset);
 		maxClaimDistance = 0;
 		alwaysUseLoadingValues = false;
@@ -377,11 +393,12 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 
 	@Override
 	public PlayerChunkClaim getPotentialClaimStateReflection(){
-		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(claimingMode);
+		IClaimingModeAPI effectiveClaimingMode = getClaimingMode();
+		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(effectiveClaimingMode);
 		UUID claimReflectionOwner = claimingModeHandler.getClaimReflectionOwnerGetter().apply(this);
 		if(claimReflectionOwner == null)
 			return null;
-		return new PlayerChunkClaim(claimReflectionOwner, getCurrentSubConfigIndex(claimingMode), false, 0);
+		return new PlayerChunkClaim(claimReflectionOwner, getCurrentSubConfigIndex(effectiveClaimingMode), false, 0);
 	}
 
 	@Override

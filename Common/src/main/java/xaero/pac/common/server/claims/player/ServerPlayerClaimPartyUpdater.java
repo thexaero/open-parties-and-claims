@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.util.ClaimsConstants;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -33,6 +34,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import java.util.Objects;
@@ -56,9 +58,10 @@ public class ServerPlayerClaimPartyUpdater {
 			return;
 		IPlayerPartySystemAPI<?> primaryPartySystem = serverData.getPlayerPartySystemManager().getPrimarySystem();
 		if(primaryPartySystem == serverData.getPartyManager().getPartySystem())
-			return;//party configs are already synced when the default party system is used
+			return;//party-related changes are already synced when the default party system is used
 		if(System.currentTimeMillis() - playerData.getLastPartyClaimsSyncTime() < 1000)
 			return;
+		updatePrimaryPartyColor(player, serverData);
 		IPlayerConfig partyConfig = serverData.getPlayerConfigManager().getPartyOwnerConfig(player.getUUID());
 		UUID lastPartyOwner = playerData.getLastPartyClaimsSyncPartyOwner();
 		UUID partyOwner = partyConfig == null ? null : partyConfig.getPlayerId();
@@ -72,6 +75,35 @@ public class ServerPlayerClaimPartyUpdater {
 				(player.getUUID().equals(lastPartyOwner) || player.getUUID().equals(partyOwner)))//don't need a resync in such cases because nothing changes
 			return;
 		serverData.getServerClaimsManager().getClaimsManagerSynchronizer().fullClaimsSync(player, true);
+	}
+
+	public void updatePrimaryPartyColor(
+			ServerPlayer player,
+			IServerData<
+					IServerClaimsManager<
+							IPlayerChunkClaim,
+							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>,
+							IServerDimensionClaimsManager<IServerRegionClaims>
+					>,
+					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
+			> serverData
+	){
+		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+			return;
+		IPlayerConfig partyConfig = serverData.getPlayerConfigManager().getPartyOwnerConfig(player.getUUID());
+		if(partyConfig == null)
+			return;
+		UUID partyOwner = partyConfig.getPlayerId();
+		int currentConfigRawColorValue = partyConfig.getFromEffectiveConfig(PlayerConfigOptions.CLAIMS_COLOR);
+		if(currentConfigRawColorValue != PlayerConfigOptions.CLAIMS_COLOR.getDefaultValue())//only the default value is replaced with a party color
+			return;
+		int cachedDefaultColor = partyConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
+		int cachedPrimaryPartyColor = (cachedDefaultColor & ClaimsConstants.COLOR_IS_PARTY_FLAG) != 0 ?
+				cachedDefaultColor & 0xFFFFFF : -1;
+		int primaryPartyColor = serverData.getPlayerPartySystemManager().getPrimaryPartyColorByOwner(partyOwner);
+		if(primaryPartyColor == cachedPrimaryPartyColor)
+			return;
+		partyConfig.resetAutomaticDefaultValue(PlayerConfigOptions.CLAIMS_COLOR);
 	}
 
 }

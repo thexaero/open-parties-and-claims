@@ -18,6 +18,10 @@
 
 package xaero.pac.common.packet.config;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -32,6 +36,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -40,6 +45,7 @@ import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 
 import java.util.List;
@@ -70,7 +76,22 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 	public static class ServerHandler implements BiConsumer<ServerboundPlayerConfigOptionValuePacket, ServerPlayer> {
 
 		@SuppressWarnings("unchecked")
-		private <T> IPlayerConfigAPI.SetResult setConfigUnchecked(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value) {
+		private <T> IPlayerConfigAPI.SetResult setConfigUnchecked(
+				IPlayerConfig config,
+				IPlayerConfigOptionSpecAPI<T> option,
+				Object value,
+				ServerPlayer serverPlayer
+		) {
+			if(ServerConfig.CONFIG.claimsEnabled.get()) {
+				if(!serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS) &&
+						option != PlayerConfigOptions.BONUS_CHUNK_CLAIMS &&
+						ServerPlayerConfigUtils.isOverClaimLimit(config)) {
+					Component message = new TranslatableComponent("gui.xaero_pac_config_claim_count_over_limit")
+							.withStyle(ChatFormatting.RED);
+					serverPlayer.sendMessage(message, serverPlayer.getUUID());
+					return null;
+				}
+			}
 			return config.tryToSet(option, (T) value);
 		}
 
@@ -130,7 +151,7 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 				value = option.getValueType().getSyncDecoder().apply(optionEntry.getValueTag());
 			} catch(Throwable e){
 			}
-			IPlayerConfigAPI.SetResult result = setConfigUnchecked(config, option, value);
+			IPlayerConfigAPI.SetResult result = setConfigUnchecked(config, option, value, serverPlayer);
 			if (result == IPlayerConfigAPI.SetResult.SUCCESS)
 				return;
 			if (config.getType() != PlayerConfigType.PLAYER || serverPlayer.getUUID().equals(config.getPlayerId()))

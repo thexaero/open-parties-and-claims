@@ -23,6 +23,7 @@ import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -63,6 +64,7 @@ import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.protection.api.IChunkProtectionAPI;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
 import xaero.pac.common.server.config.ServerConfig;
@@ -76,6 +78,7 @@ import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.group.IPlayerConfigGroup;
+import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
@@ -446,6 +449,8 @@ public class ChunkProtection
 		ServerPlayer accessorPlayer = accessor instanceof ServerPlayer player ? player : null;
 		if(accessorPlayer != null && ServerPlayerData.from(accessorPlayer).isClaimsNonallyMode())
 			return false;
+		if(accessorPlayer != null && shouldBlockClaimAccessForGoingOverLimit(claimConfig.getPlayerId(), accessorPlayer))
+			return false;
 		if(accessorId == null){
 			if(accessorPlayer == null)
 				return false;
@@ -554,6 +559,8 @@ public class ChunkProtection
 				accessorId = accessor.getUUID();
 			boolean isAServerPlayer = accessor instanceof ServerPlayer;
 			if (isAServerPlayer && ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsNonallyMode())
+				return false;
+			if(isAServerPlayer && shouldBlockClaimAccessForGoingOverLimit(claimConfig.getPlayerId(), accessor))
 				return false;
 			if (accessorId.equals(claimConfig.getPlayerId()))
 				return true;
@@ -2412,6 +2419,39 @@ public class ChunkProtection
 				if(onCreateMod(serverData, level, chunkX, chunkZ, anchor, true, true, false))
 					return true;
 		return false;
+	}
+
+	private boolean shouldBlockClaimAccessForGoingOverLimit(UUID claimOwnerId, Entity accessor){
+		if(!(accessor instanceof ServerPlayer player))
+			return false;
+		if(player.hasPermissions(Commands.LEVEL_GAMEMASTERS))
+			return false;
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+		if(player.getServer().getTickCount() == playerData.getAllowedClaimAccessOverLimitTick())//allowing all within the same tick for when an action has many checks
+			return false;
+		if(claimsManager.getPermissionHandler().playerHasAdminModePermission(player))
+			return false;
+		IPlayerConfigManager configManager = serverData.getPlayerConfigManager();
+		boolean result = ServerPlayerConfigUtils.isOverClaimLimit(configManager.getLoadedConfig(claimOwnerId));
+		if(!result)
+			result = ServerPlayerConfigUtils.isOverClaimLimit(configManager.getLoadedConfig(accessor.getUUID()));
+		if(!result)
+			return false;
+		long time = System.currentTimeMillis();
+		int accessCooldownMinutes = ServerConfig.CONFIG.overLimitClaimAccessCooldown.get();
+		IServerPlayerClaimInfo<?> accessorClaimInfo = claimsManager.getPlayerInfo(accessor.getUUID());//storing the access time here so it doesn't reset on relog
+		if(time - accessorClaimInfo.getLastAllowedClaimAccessOverLimitTime() > 60000L * accessCooldownMinutes) {
+			accessorClaimInfo.setLastAllowedClaimAccessOverLimitTime(time);
+			playerData.setAllowedClaimAccessOverLimitTick(player.getServer().getTickCount());
+			return false;
+		}
+		if(time - playerData.getLastClaimsOverLimitMessageTime() > 5000) {
+			Component unadaptedMessage = new TranslatableComponent("gui.xaero_pac_blocked_for_going_over_claim_limit", accessCooldownMinutes)
+					.withStyle(ChatFormatting.RED);
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, unadaptedMessage), player.getUUID());
+			playerData.setLastClaimsOverLimitMessageTime(time);
+		}
+		return true;
 	}
 
 	public void updateTagExceptions(MinecraftServer server){
