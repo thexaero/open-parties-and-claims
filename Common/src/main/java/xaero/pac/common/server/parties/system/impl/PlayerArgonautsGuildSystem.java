@@ -25,6 +25,7 @@ import earth.terrarium.argonauts.api.guild.GuildApi;
 import earth.terrarium.argonauts.common.handlers.base.MemberPermissions;
 import earth.terrarium.argonauts.common.handlers.base.members.Member;
 import earth.terrarium.argonauts.common.handlers.guild.members.GuildMember;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
@@ -130,6 +131,15 @@ public class PlayerArgonautsGuildSystem implements IPlayerPartySystemAPI<Guild> 
 	public int getMemberCount(@Nonnull Guild party) {
 		//this sucks but there's no other way to only count actual members...
 		return (int) Streams.stream(party.members().iterator()).count();
+	}
+
+	@Override
+	public int getColor(@Nonnull Guild party) {
+		ChatFormatting formatColor = party.color();
+		if(formatColor == null)
+			return -1;
+		Integer actualColor = formatColor.getColor();
+		return actualColor == null ? -1 : actualColor;
 	}
 
 }

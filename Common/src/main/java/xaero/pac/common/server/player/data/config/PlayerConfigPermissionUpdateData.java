@@ -68,16 +68,16 @@ public class PlayerConfigPermissionUpdateData extends PlayerConfigPermissions {
 		if(type == PlayerConfigType.PLAYER)
 			claimAs = !otherPlayer;
 		else if(type == PlayerConfigType.SERVER)
-			claimAs = serverData.getServerClaimsManager().getPermissionHandler().playerHasServerClaimPermission(player);
-		if(!isAdmin) {
-			if(type == PlayerConfigType.PARTY_CLAIMS) {
-				IPlayerPartySystemManager partySystems = configManager.getPartySystemManager();
+			claimAs = isAdmin || serverData.getServerClaimsManager().getPermissionHandler().playerHasServerClaimPermission(player);
+		else if(type == PlayerConfigType.PARTY_CLAIMS) {
+			IPlayerPartySystemManager partySystems = configManager.getPartySystemManager();
+			if(!isAdmin) {
 				edit = partySystems.canEditPartyConfig(player.getUUID());
 				includePlayersInGroups = partySystems.canIncludePlayersInPartyConfigGroups(player.getUUID());
 				includeGroupsInGroups = partySystems.canIncludeGroupsInPartyConfigGroups(player.getUUID());
 				createGroups = partySystems.canCreatePartyConfigGroups(player.getUUID());
-				claimAs = partySystems.canPartyClaim(player.getUUID());
 			}
+			claimAs = partySystems.canPartyClaim(player.getUUID());
 		}
 		setEdit(edit);
 		setView(view);

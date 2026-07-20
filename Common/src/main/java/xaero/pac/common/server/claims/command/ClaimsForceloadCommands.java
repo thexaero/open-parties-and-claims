@@ -70,11 +70,11 @@ public class ClaimsForceloadCommands {
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 				AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-				ClaimingMode finalMode = mode == ClaimingModes.PLAYER ? playerData.getClaimingMode() : mode;
+				ClaimingMode finalMode = mode == null ? playerData.getClaimingMode() : mode;
 				if(finalMode.getPermissionChecker() != null) {
 					ClaimResult.Type failureType = finalMode.getPermissionChecker().apply(player, serverData.getServerClaimsManager());
 					if(failureType != null) {
-						if(finalMode != ClaimingModes.PLAYER)
+						if(finalMode == playerData.getRawClaimingMode())
 							serverData.getServerClaimsManager().getPermissionHandler().resetClaimingMode(player);
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, failureType.message));
 						return 0;

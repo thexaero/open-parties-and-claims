@@ -137,4 +137,15 @@ public interface IPlayerPartySystemAPI<P> {
 	 */
 	int getMemberCount(@Nonnull P party);
 
+	/**
+	 * Gets the RGB color (no alpha channel) of a specified party, e.g. 0x00FFFFFF for white.
+	 * Party systems that don't support party colors should not override this.
+	 *
+	 * @param party  the party, not null
+	 * @return the color assigned to the party, -1 if this party system doesn't support colors
+	 */
+	default int getColor(@Nonnull P party){
+		return -1;
+	}
+
 }

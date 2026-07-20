@@ -93,8 +93,8 @@ public class ConfigCommandUtil {
 			MinecraftServer server = ServerLevelHelper.getServer(sourcePlayer);
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			UUID configOwnerId = null;
-			if(type == PlayerConfigType.PLAYER) {
+			UUID configOwnerId = sourcePlayer.getUUID();
+			if(!type.isGlobal()) {
 				NameAndId gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
 				if (gameProfile == null)
 					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
@@ -104,7 +104,7 @@ public class ConfigCommandUtil {
 			}
 			String lowerCaseInput = builder.getRemainingLowerCase();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-					configOwnerId, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+					configOwnerId, configOwnerId, type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null)
 				return SharedSuggestionProvider.suggest(Stream.empty(), builder);

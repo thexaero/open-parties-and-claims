@@ -90,7 +90,8 @@ public class ClientboundPlayerConfigPermissionsPacket extends ClientboundPlayerC
 		@Override
 		protected void accept(
 				ClientboundPlayerConfigPermissionsPacket t,
-				IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> playerConfigStorageManager, IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>
+				IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>> playerConfigStorageManager,
+				IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>
 						storage
 		) {
 			if(storage == null)
