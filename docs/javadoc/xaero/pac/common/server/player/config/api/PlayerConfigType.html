@@ -154,14 +154,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the player config option used for storing the sub-config ID currently used for claiming for a config of
  this type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isGlobal()" class="member-name-link">isGlobal</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets whether this config type corresponds to a global config, meaning it's the same for every player.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a>[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </div>
@@ -288,6 +293,17 @@ not permitted.)</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the player config option used for storing the sub-config ID used for claiming, can be null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isGlobal()">
+<h3>isGlobal</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isGlobal</span>()</div>
+<div class="block">Gets whether this config type corresponds to a global config, meaning it's the same for every player.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this is a global config type, otherwise false</dd>
 </dl>
 </section>
 </li>

@@ -154,7 +154,7 @@ public class ClientClaimsSyncHandler {
 		claimsManager.removeSubClaim(playerId, subConfigIndex);
 	}
 
-	public void onClaimGeneral(boolean partyOwnedClaims, UUID partyOwnerId) {
+	public void onPartyGeneral(boolean partyOwnedClaims, UUID partyOwnerId) {
 		claimsManager.setPartyOwnedClaims(partyOwnedClaims);
 		claimsManager.setCurrentPartyOwner(partyOwnerId);
 	}

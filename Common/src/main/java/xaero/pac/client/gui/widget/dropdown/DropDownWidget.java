@@ -18,6 +18,7 @@
 
 package xaero.pac.client.gui.widget.dropdown;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -251,6 +252,8 @@ public final class DropDownWidget extends AbstractWidget
 			mouseScrolledInternal(autoScrolling, mouseX, mouseY, optionLimit);
 		}
 		drawMenu(guiGraphics, closed ? 1 : Math.min(optionLimit, options.length), mouseX, mouseY, scaledHeight, optionLimit);
+		if(isHovered)
+			guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
 	}
 	
 	public boolean isClosed() {

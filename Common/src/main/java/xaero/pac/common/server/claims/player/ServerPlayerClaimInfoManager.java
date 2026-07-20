@@ -136,10 +136,15 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	){
 		if(playerId == null)
 			playerId = player.getUUID();
-		int result = PermissionUtils.getOverriddenServerConfigInt(
-				playerId, server, player, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
-		);
-		if(ServerConfig.CONFIG.partyOwnedClaims.get())
+		int result;
+		boolean partyOwnedClaims = ServerConfig.CONFIG.partyOwnedClaims.get();
+		if(partyOwnedClaims && configManager.getPartySystemManager().isPrimaryPartyOwner(playerId))
+			result = limitConfig.get();//ignoring permission-based claim limit overrides for party-owned claims
+		else
+			result = PermissionUtils.getOverriddenServerConfigInt(
+					playerId, server, player, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
+			);
+		if(partyOwnedClaims)
 			result += getPartyOwnershipBonus(playerId, partyBonusConfig, partyOwnerBonusConfig);
 		return result;
 	}
