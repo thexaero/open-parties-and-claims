@@ -99,6 +99,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue forceloadBonusPerPartyMember;
 	public final ForgeConfigSpec.IntValue claimBonusForPartyOwner;
 	public final ForgeConfigSpec.IntValue forceloadBonusForPartyOwner;
+	public final ForgeConfigSpec.IntValue overLimitClaimAccessCooldown;
 
 	private ServerConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -257,6 +258,14 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_claims_forceload_bonus_for_party_owner")
 			.worldRestart()
 			.defineInRange("forceloadBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
+
+		overLimitClaimAccessCooldown = builder
+			.comment("""
+					How often (in minutes) to allow players to access a claim when their own claim count is over the claim limit or the claim count
+					of the owner of the claim is over the claim limit.""")
+			.translation("gui.xaero_pac_config_claims_over_limit_claim_access_cooldown")
+			.worldRestart()
+			.defineInRange("overLimitClaimAccessCooldown", 5, 0, Integer.MAX_VALUE);
 		
 		playerClaimsExpirationTime = builder
 			.comment("For how long a player/party can stay completely inactive on the server until their claims are expired (in hours). This improves performance for servers running for years.")

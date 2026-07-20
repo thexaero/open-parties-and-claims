@@ -92,6 +92,8 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private Map<PlayerConfigType, PlayerConfigPermissionUpdateData> playerConfigPermissionUpdateData;
 	private long lastPlayerConfigPermissionUpdate;
 	private boolean syncedConfigAdmin;
+	private long allowedClaimAccessOverLimitTick;
+	private long lastClaimsOverLimitMessageTime;
 
 	public ServerPlayerData(
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -371,6 +373,22 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public void setLastPartyOnlineUpdate(long time, UUID partyOwner) {
 		this.lastPartyOnlineUpdateTime = time;
 		this.lastPartyOnlineUpdateOwner = partyOwner;
+	}
+
+	public void setAllowedClaimAccessOverLimitTick(long allowedClaimAccessOverLimitTick) {
+		this.allowedClaimAccessOverLimitTick = allowedClaimAccessOverLimitTick;
+	}
+
+	public long getAllowedClaimAccessOverLimitTick() {
+		return allowedClaimAccessOverLimitTick;
+	}
+
+	public void setLastClaimsOverLimitMessageTime(long lastClaimsOverLimitMessageTime) {
+		this.lastClaimsOverLimitMessageTime = lastClaimsOverLimitMessageTime;
+	}
+
+	public long getLastClaimsOverLimitMessageTime() {
+		return lastClaimsOverLimitMessageTime;
 	}
 
 	private ServerPlayer getPlayer(){

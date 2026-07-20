@@ -83,6 +83,7 @@
 	"gui.xaero_claims_claim_already_claimed" : "The target chunk(s) is/are already claimed!",
 	"gui.xaero_claims_claim_already_claimed_by" : "The target chunk is already claimed by %1$s!",
 	"gui.xaero_claims_claim_limit_reached" : "You have reached your chunk claim limit!",
+	"gui.xaero_claims_over_claim_limit" : "You can only unclaim because you are over your claim limit!",
 	"gui.xaero_claims_claim_dimension_unclaimable" : "This dimension is not claimable as configured by the server config!",
 	"gui.xaero_claims_claim_unclaim_not_yours" : "You can't unclaim a chunk that you haven't claimed!",
 	"gui.xaero_claims_too_many_chunks" : "Too many chunks for a single action!",
@@ -521,5 +522,7 @@
 	"gui.xaero_pac_claiming_as_myself" : "Claiming as Myself",
 	"gui.xaero_pac_claiming_as_party" : "Claiming as Party",
 	"gui.xaero_pac_claiming_as_server" : "Claiming as Server",
-	"gui.xaero_pac_claiming_as_default" : "Default (%1$s)"
+	"gui.xaero_pac_claiming_as_default" : "Default (%1$s)",
+	"gui.xaero_pac_blocked_for_going_over_claim_limit" : "Access to this claim is limited. Either the claim owner or you are over the claim limit. You can only use your full claim access or exceptions once every %1$s minute(s).",
+	"gui.xaero_pac_config_claim_count_over_limit" : "You can't edit this config while its owner's claim count is over the claim limit."
 }

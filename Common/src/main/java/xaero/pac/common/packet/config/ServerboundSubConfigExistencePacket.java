@@ -21,6 +21,7 @@ package xaero.pac.common.packet.config;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,6 +38,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -111,7 +113,18 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 	}
 	
 	public static class ServerHandler implements BiConsumer<ServerboundSubConfigExistencePacket,ServerPlayer> {
-		
+
+		private boolean checkBlockedBecauseOverClaimLimit(IPlayerConfig config, ServerPlayer player){
+			if(!ServerConfig.CONFIG.claimsEnabled.get())
+				return false;
+			if(!ServerPlayerConfigUtils.isOverClaimLimit(config))
+				return false;
+			Component message = new TranslatableComponent("gui.xaero_pac_config_claim_count_over_limit")
+					.withStyle(ChatFormatting.RED);
+			player.sendMessage(message, player.getUUID());
+			return true;
+		}
+
 		@Override
 		public void accept(ServerboundSubConfigExistencePacket t, ServerPlayer serverPlayer) {
 			if(t.type != PlayerConfigType.PLAYER && t.type != PlayerConfigType.SERVER && t.type != PlayerConfigType.PARTY_CLAIMS) {
@@ -151,9 +164,10 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				return;//going too fast
 			playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
 
+			boolean blockedBecauseOverClaimLimit = !isOP && checkBlockedBecauseOverClaimLimit(config, serverPlayer);
 			if(t.create) {
 				boolean reachedLimit = config.getSubCount() >= config.getSubConfigLimit();
-				if (reachedLimit || config.createSubConfig(t.subId) == null || !isServer && !Objects.equals(ownerId, serverPlayer.getUUID())) {
+				if (reachedLimit || blockedBecauseOverClaimLimit || config.createSubConfig(t.subId) == null || !isServer && !Objects.equals(ownerId, serverPlayer.getUUID())) {
 					playerConfigs.getSynchronizer().confirmSubConfigCreationSync(serverPlayer, config);//need to notify the client even when unsuccessful
 					if(reachedLimit) {
 						MutableComponent limitReachedMessage = new TranslatableComponent("gui.xaero_pac_config_create_sub_id_limit_reached", config.getSubConfigLimit());
@@ -162,12 +176,15 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 					}
 				}
 			} else {
-
 				IPlayerConfig subConfig = config.getSubConfig(t.subId);
 				if(subConfig == null)
 					return;
 				if(subConfig == config)
 					return;
+				if(blockedBecauseOverClaimLimit) {
+					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
+					return;
+				}
 				IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(config.getPlayerId());
 				if(playerInfo.hasReplacementTasks()){
 					serverPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_delete_sub_already_replacing"), serverPlayer.getUUID());
