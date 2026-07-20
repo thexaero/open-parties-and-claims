@@ -54,13 +54,13 @@ dependencies {
      implementation "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:21.6.2"//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
      //same as neoforge for the deobfuscated class names in the api
-     compileOnly "curse.maven:ftbranks-314905:6431744"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
-     compileOnly "curse.maven:architectury-419699:5786327"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
-     compileOnly "curse.maven:ftblibrary-404465:7746959"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
+     compileOnly "curse.maven:ftbranks-314905:7686376"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
+     compileOnly "curse.maven:architectury-419699:7339257"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+     compileOnly "curse.maven:ftblibrary-404465:7718926"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
      compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
 
-     compileOnly "curse.maven:ftbteams-404468:7878281"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
+     compileOnly "curse.maven:ftbteams-404468:7700339"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge
 
      compileOnly "earth.terrarium.prometheus:prometheus-neoforge-1.20.4:1.4.2"//source: https://github.com/terrarium-earth/Prometheus
      compileOnly "earth.terrarium.argonauts:argonauts-neoforge-1.20.4:1.2.4"//source: https://modrinth.com/mod/odyssey-allies
