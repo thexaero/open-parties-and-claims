@@ -114,21 +114,26 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="../../../../claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimingMode()" class="member-name-link">getClaimingMode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the current claiming mode.</div>
+<div class="block">Gets the current effective claiming mode.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isClaimsAdminMode()" class="member-name-link">isClaimsAdminMode</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract <a href="../../../../claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRawClaimingMode()" class="member-name-link">getRawClaimingMode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Checks if the player is using the claims admin mode.</div>
+<div class="block">Gets the current claiming mode without automatically determining the effective one if none is set.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isClaimsNonallyMode()" class="member-name-link">isClaimsNonallyMode</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isClaimsAdminMode()" class="member-name-link">isClaimsAdminMode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the player is using the claims admin mode.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isClaimsNonallyMode()" class="member-name-link">isClaimsNonallyMode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks if the player is using the claims non-ally mode.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>abstract boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#isClaimsServerMode()" class="member-name-link">isClaimsServerMode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>abstract boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#isClaimsServerMode()" class="member-name-link">isClaimsServerMode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">Use <a href="#getClaimingMode()"><code>getClaimingMode()</code></a> instead</div>
 </div>
@@ -205,13 +210,28 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getClaimingMode()">
 <h3>getClaimingMode</h3>
-<div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="../../../../claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></span>&nbsp;<span class="element-name">getClaimingMode</span>()</div>
-<div class="block">Gets the current claiming mode.
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="../../../../claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></span>&nbsp;<span class="element-name">getClaimingMode</span>()</div>
+<div class="block">Gets the current effective claiming mode.
  <p>
  All claiming modes can be accessed through <a href="../../../../claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a></div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the current claiming mode, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getRawClaimingMode()">
+<h3>getRawClaimingMode</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public abstract</span>&nbsp;<span class="return-type"><a href="../../../../claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></span>&nbsp;<span class="element-name">getRawClaimingMode</span>()</div>
+<div class="block">Gets the current claiming mode without automatically determining the effective one if none is set.
+ <p>
+ All claiming modes can be accessed through <a href="../../../../claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the current claiming mode, null if none is set</dd>
 </dl>
 </section>
 </li>
