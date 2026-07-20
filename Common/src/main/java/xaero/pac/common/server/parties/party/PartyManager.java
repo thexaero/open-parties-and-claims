@@ -269,7 +269,10 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	}
 
 	public void onOwnerChange(PartyMember oldOwner, PartyMember newOwner) {
-		partiesByOwner.put(newOwner.getUUID(), partiesByOwner.remove(oldOwner.getUUID()));
+		ServerParty party = partiesByOwner.remove(oldOwner.getUUID());
+		partiesByOwner.put(newOwner.getUUID(), party);
+		if (loaded)
+			playerPartyOnlineCounterUpdater.onDefaultPartyOwnerChange(this, party, oldOwner.getUUID(), newOwner.getUUID());
 	}
 
 	@Override
