@@ -61,6 +61,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private Component lastPartyNameSynced;
 	private boolean lastPartyOwnedSynced;
 	private long partyNameSyncedTime;
+	private long lastAllowedClaimAccessOverLimitTime;
 
 	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
 								 ServerPlayerClaimInfoManager manager, Deque<PlayerClaimReplaceSpreadoutTask> replaceSpreadoutTasks) {
@@ -294,6 +295,16 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 		if(playerConfig.getType() != PlayerConfigType.PLAYER || !ServerConfig.CONFIG.partyOwnedClaims.get())
 			return false;
 		return manager.getClaimsManager().getPartySystemManager().isPrimaryPartyOwner(playerId);
+	}
+
+	@Override
+	public void setLastAllowedClaimAccessOverLimitTime(long lastAllowedClaimAccessOverLimitTime) {
+		this.lastAllowedClaimAccessOverLimitTime = lastAllowedClaimAccessOverLimitTime;
+	}
+
+	@Override
+	public long getLastAllowedClaimAccessOverLimitTime() {
+		return lastAllowedClaimAccessOverLimitTime;
 	}
 
 }

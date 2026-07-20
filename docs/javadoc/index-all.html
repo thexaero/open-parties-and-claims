@@ -810,11 +810,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimingMode()" class="member-name-link">getClaimingMode()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
-<div class="block">Gets the currently enabled claiming mode.</div>
+<div class="block">Gets the currently enabled effective claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html#getClaimingMode()" class="member-name-link">getClaimingMode()</a> - Method in class xaero.pac.common.server.player.data.api.<a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html" title="class in xaero.pac.common.server.player.data.api">ServerPlayerDataAPI</a></dt>
 <dd>
-<div class="block">Gets the current claiming mode.</div>
+<div class="block">Gets the current effective claiming mode.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getClaimLimit()" class="member-name-link">getClaimLimit()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>
@@ -902,6 +902,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/world/capability/api/ClientWorldMainCapabilityAPI.html#getClientWorldData()" class="member-name-link">getClientWorldData()</a> - Method in class xaero.pac.client.world.capability.api.<a href="xaero/pac/client/world/capability/api/ClientWorldMainCapabilityAPI.html" title="class in xaero.pac.client.world.capability.api">ClientWorldMainCapabilityAPI</a></dt>
 <dd>
 <div class="block">Gets the client world/level data API.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html#getColor(P)" class="member-name-link">getColor(P)</a> - Method in interface xaero.pac.common.server.parties.system.api.v2.<a href="xaero/pac/common/server/parties/system/api/v2/IPlayerPartySystemAPI.html" title="interface in xaero.pac.common.server.parties.system.api.v2">IPlayerPartySystemAPI</a></dt>
+<dd>
+<div class="block">Gets the RGB color (no alpha channel) of a specified party, e.g.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html#getCommandInputParser()" class="member-name-link">getCommandInputParser()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>
@@ -1725,6 +1729,22 @@ loadScripts(document, 'script');</script>
  Gets the API for the server-side player config manager.</div>
 </div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullClaimLimit(java.util.UUID)" class="member-name-link">getPlayerFullClaimLimit(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full maximum claim number (with the bonus) for a player UUID.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullClaimLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullClaimLimit(ServerPlayer)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full maximum claim number (with the bonus) for a logged in player.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullForceloadLimit(java.util.UUID)" class="member-name-link">getPlayerFullForceloadLimit(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full maximum forceload number (with the bonus) for a player UUID.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullForceloadLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullForceloadLimit(ServerPlayer)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full maximum forceload number (with the bonus) for a logged in player.</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#getPlayerGroups()" class="member-name-link">getPlayerGroups()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
 <dd>
 <div class="block">Gets the API for this config's player groups.</div>
@@ -1803,6 +1823,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html#getRaw(xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI)" class="member-name-link">getRaw(IPlayerConfigOptionSpecAPI&lt;T&gt;)</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="block">Gets the raw config value from this config, which can be null in the case of sub-configs.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getRawClaimingMode()" class="member-name-link">getRawClaimingMode()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the currently enabled claiming mode without automatically determining the effective one if none is set.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html#getRawClaimingMode()" class="member-name-link">getRawClaimingMode()</a> - Method in class xaero.pac.common.server.player.data.api.<a href="xaero/pac/common/server/player/data/api/ServerPlayerDataAPI.html" title="class in xaero.pac.common.server.player.data.api">ServerPlayerDataAPI</a></dt>
+<dd>
+<div class="block">Gets the current claiming mode without automatically determining the effective one if none is set.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientDimensionClaimsManagerAPI.html#getRegion(int,int)" class="member-name-link">getRegion(int, int)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientDimensionClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientDimensionClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -2813,6 +2841,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks whether this claim is marked for forceloading.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#isGlobal()" class="member-name-link">isGlobal()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets whether this config type corresponds to a global config, meaning it's the same for every player.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#isInGroup(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">isInGroup(IPlayerConfigAPI, UUID)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
 <dd>
 <div class="block">Checks whether the player with a specified UUID is in this group in a specified context.</div>
@@ -3125,6 +3157,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html#OUT_OF_SPACE" class="member-name-link">OUT_OF_SPACE</a> - Enum constant in enum class xaero.pac.common.player.config.group.api.<a href="xaero/pac/common/player/config/group/api/PlayerConfigGroupActionError.html" title="enum class in xaero.pac.common.player.config.group.api">PlayerConfigGroupActionError</a></dt>
 <dd>
 <div class="block">Error returned when trying to include something in a group but the group space has been exhausted for the config.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#OVER_CLAIM_LIMIT" class="member-name-link">OVER_CLAIM_LIMIT</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The player's claim count is even higher than their limit</div>
 </dd>
 </dl>
 <h2 class="title" id="I:P">P</h2>
@@ -4052,6 +4088,11 @@ the order they are declared.</div>
 </dl>
 <h2 class="title" id="I:W">W</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html#WHOLE_PARTY_CAN_CLAIM" class="member-name-link">WHOLE_PARTY_CAN_CLAIM</a> - Static variable in class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api.v2">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether every player in the primary party owned by this player can claim/unclaim as the party,
+ without any rank or permission requirement.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#WILDERNESS" class="member-name-link">WILDERNESS</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
 <dd>
 <div class="block">Wilderness config</div>
