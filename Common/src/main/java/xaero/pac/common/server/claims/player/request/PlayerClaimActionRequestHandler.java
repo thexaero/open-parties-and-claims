@@ -74,7 +74,7 @@ public class PlayerClaimActionRequestHandler {
 		if(claimType.getPermissionChecker() != null){
 			ClaimResult.Type failureType = claimType.getPermissionChecker().apply(player, manager);
 			if(failureType != null) {
-				if(claimType != ClaimingModes.PLAYER)
+				if(claimType == playerData.getRawClaimingMode())
 					manager.getPermissionHandler().resetClaimingMode(player);
 				manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
 						new AreaClaimResult(Set.of(failureType), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),

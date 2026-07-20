@@ -305,4 +305,48 @@ public interface IServerClaimsManagerAPI
 	 */
 	public int getPlayerBaseForceloadLimit(@Nonnull ServerPlayer player);
 
+	/**
+	 * Gets the full maximum claim number (with the bonus) for a player UUID.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseClaimLimit(UUID)} with the bonus claims
+	 * added to it.
+	 *
+	 * @param playerId  the player UUID, not null
+	 * @return the full maximum claim number
+	 */
+	public int getPlayerFullClaimLimit(@Nonnull  UUID playerId);
+
+	/**
+	 * Gets the full maximum claim number (with the bonus) for a logged in player.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseClaimLimit(ServerPlayer)} with the bonus claims
+	 * added to it.
+	 *
+	 * @param player  the player, not null
+	 * @return the full maximum claim number
+	 */
+	public int getPlayerFullClaimLimit(@Nonnull  ServerPlayer player);
+
+	/**
+	 * Gets the full maximum forceload number (with the bonus) for a player UUID.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseForceloadLimit(UUID)} with the bonus forceloads
+	 * added to it.
+	 *
+	 * @param playerId  the player UUID, not null
+	 * @return the full maximum forceload number
+	 */
+	public int getPlayerFullForceloadLimit(@Nonnull UUID playerId);
+
+	/**
+	 * Gets the full maximum forceload number (with the bonus) for a logged in player.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseForceloadLimit(ServerPlayer)} with the bonus forceloads
+	 * added to it.
+	 *
+	 * @param player  the player, not null
+	 * @return the full maximum forceload number
+	 */
+	public int getPlayerFullForceloadLimit(@Nonnull ServerPlayer player);
+
 }

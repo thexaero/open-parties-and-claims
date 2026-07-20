@@ -126,7 +126,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimingMode()" class="member-name-link">getClaimingMode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the currently enabled claiming mode.</div>
+<div class="block">Gets the currently enabled effective claiming mode.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getClaimLimit()" class="member-name-link">getClaimLimit</a>()</code></div>
@@ -233,143 +233,148 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <div class="block">Gets a claim state of the same type (see <a href="../../../common/claims/player/api/IPlayerChunkClaimAPI.html#isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)"><code>IPlayerChunkClaimAPI.isSameClaimType(IPlayerChunkClaimAPI)</code></a>) as
  would be placed in the world when the player requests a new claim.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRawClaimingMode()" class="member-name-link">getRawClaimingMode</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the currently enabled claiming mode without automatically determining the effective one if none is set.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim change tracker that lets you register claim change listeners.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a player has claim info.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isAdminMode()" class="member-name-link">isAdminMode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isAdminMode()" class="member-name-link">isAdminMode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether the local client player is in admin mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isLoading()" class="member-name-link">isLoading</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isLoading()" class="member-name-link">isLoading</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether the initial server chunk claim sync is in progress.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#isServerMode()" class="member-name-link">isServerMode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#isServerMode()" class="member-name-link">isServerMode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">Use <a href="#getClaimingMode()"><code>getClaimingMode()</code></a> instead</div>
 </div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaClaim(int,int,int,int,boolean)" class="member-name-link">requestAreaClaim</a><wbr>(int&nbsp;left,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaClaim(int,int,int,int,boolean)" class="member-name-link">requestAreaClaim</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;byServer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">switch to <a href="#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaClaim(int, int, int, int, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaClaim</a><wbr>(int&nbsp;left,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaClaim</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests new chunks claims over a specified area by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaForceload(int,int,int,int,boolean,boolean)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaForceload(int,int,int,int,boolean,boolean)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;enable,
  boolean&nbsp;byServer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">switch to <a href="#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaForceload(int, int, int, int, boolean, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;enable,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests chunk (un)forceloads over a specified area by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaUnclaim(int,int,int,int,boolean)" class="member-name-link">requestAreaUnclaim</a><wbr>(int&nbsp;left,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaUnclaim(int,int,int,int,boolean)" class="member-name-link">requestAreaUnclaim</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;byServer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">switch to <a href="#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaUnclaim(int, int, int, int, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaUnclaim</a><wbr>(int&nbsp;left,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaUnclaim</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestClaim(int,int,boolean)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestClaim(int,int,boolean)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;byServer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">switch to <a href="#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestClaim(int, int, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests a new chunk claim by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestForceload(int,int,boolean,boolean)" class="member-name-link">requestForceload</a><wbr>(int&nbsp;x,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestForceload(int,int,boolean,boolean)" class="member-name-link">requestForceload</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;enable,
  boolean&nbsp;byServer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">switch to <a href="#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestForceload(int, int, boolean, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestForceload</a><wbr>(int&nbsp;x,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestForceload</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;enable,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests a chunk (un)forceload by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestUnclaim(int,int,boolean)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestUnclaim(int,int,boolean)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;byServer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">switch to <a href="#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestUnclaim(int, int, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests a chunk unclaim by the local client player using a specified claiming mode.</div>
 </div>
 </div>
@@ -711,10 +716,22 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <h3>getClaimingMode</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
 </span><span class="return-type"><a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></span>&nbsp;<span class="element-name">getClaimingMode</span>()</div>
-<div class="block">Gets the currently enabled claiming mode.</div>
+<div class="block">Gets the currently enabled effective claiming mode.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the current claiming mode, not null</dd>
+<dd>the current effective claiming mode, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getRawClaimingMode()">
+<h3>getRawClaimingMode</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="return-type"><a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></span>&nbsp;<span class="element-name">getRawClaimingMode</span>()</div>
+<div class="block">Gets the currently enabled claiming mode without automatically determining the effective one if none is set.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the current claiming mode, null if none is set</dd>
 </dl>
 </section>
 </li>

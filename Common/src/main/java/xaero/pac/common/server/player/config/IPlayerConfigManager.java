@@ -19,6 +19,7 @@
 package xaero.pac.common.server.player.config;
 
 import net.minecraft.server.MinecraftServer;
+import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigManagerAPI;
@@ -53,5 +54,6 @@ public interface IPlayerConfigManager extends IPlayerConfigManagerAPI {
 	MinecraftServer getServer();
 	public IPlayerPartySystemManager getPartySystemManager();
 	public ForceLoadTicketManager getForceLoadTicketManager();
+	public IServerClaimsManager<?, ?, ?> getClaimsManager();
 	
 }

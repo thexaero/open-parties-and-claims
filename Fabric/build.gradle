@@ -31,7 +31,7 @@ dependencies {
     implementation("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:26.2.0")//source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
     compileOnly "curse.maven:ftbranks-472659:7921451"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-fabric
-    compileOnly "curse.maven:architectury-419699:4581904"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+    compileOnly "curse.maven:architectury-419699:8429874"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
     compileOnly "curse.maven:ftblibrary-438495:7921510"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-fabric
 
     compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
