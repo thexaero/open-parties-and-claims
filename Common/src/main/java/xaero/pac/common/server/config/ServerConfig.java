@@ -217,9 +217,11 @@ public class ServerConfig {
 					Whether parties from the primary party system (option "primaryPartySystem") should act as owners of claims.
 					The technical owner of a party's claims is still a player: the party owner.
 					Party members who are at least the rank equivalent of Claimer can claim and unclaim as the party (owner).
+					If "Whole Party Can Claim" is enabled in the party owner's config (or enforced by the default player config), then every player in the party can claim/unclaim.
 					Party members who are at least the rank equivalent of Moderator can also include and exclude players
 					to/from the player groups of the party's claim config.
 					Party members who are at least the rank equivalent of Admin can also fully edit the party's claim config.
+					If the primary party system supports party colors (e.g. FTB Teams), then the default color of the party's claims is the party color.
 					Changing this option does not automatically reassign claims based on party relations or actual chunk claimers,
 					so it is recommended to only set this option once based on the server's intended gameplay style.
 					Other important options related to this feature are "claimBonusPerPartyMember", "forceloadBonusPerPartyMember",
