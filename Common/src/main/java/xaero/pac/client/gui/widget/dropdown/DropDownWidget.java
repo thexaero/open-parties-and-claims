@@ -358,6 +358,10 @@ public final class DropDownWidget extends AbstractWidget
 		return false;
 	}
 
+	public boolean isHovered() {
+		return isHovered;
+	}
+
 	public static final class Builder {
 
 		private String[] options;

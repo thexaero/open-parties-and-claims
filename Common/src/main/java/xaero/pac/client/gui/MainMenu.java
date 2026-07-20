@@ -170,6 +170,8 @@ public class MainMenu extends XPACScreen {
 		
 		claimButton = new Button(width / 2 - 100, height / 8 + 124, 70, 20, CLAIM, this::onClaimButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
+				if(openDropdown != null)
+					return;
 				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND, p_170021_, p_170022_);
 			}
 
@@ -180,6 +182,8 @@ public class MainMenu extends XPACScreen {
 		
 		forceloadButton = new Button(width / 2 - 100, height / 8 + 148, 70, 20, FORCELOAD, this::onForceloadButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
+				if(openDropdown != null)
+					return;
 				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND, p_170021_, p_170022_);
 			}
 
