@@ -163,7 +163,7 @@ public final class ForceLoadTicketManager {
 		boolean isServer = PlayerConfig.SERVER_CLAIM_UUID.equals(id);
 		boolean shouldBeEnabled = ticketsShouldBeEnabled(ownerConfig, loggedOut);
 		OpenPartiesAndClaims.LOGGER.info("Updating all forceload tickets for " + id);
-		int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);//for when the bonus forceload count is changed without a restart
+		int forceloadLimit = claimsManager.getPlayerFullForceloadLimit(id);//for when the bonus forceload count is changed without a restart
 		int enableSuccessCount = 0;
 		boolean withinLimit = true;
 		for(ClaimTicket ticket : playerTickets.values()) {
@@ -184,7 +184,7 @@ public final class ForceLoadTicketManager {
 		boolean shouldBeEnabled = ticketsShouldBeEnabled(ownerConfig, false);
 		if(shouldBeEnabled) {
 			boolean isServer = PlayerConfig.SERVER_CLAIM_UUID.equals(id);
-			int forceloadLimit = isServer ? 0 : claimsManager.getPlayerBaseForceloadLimit(id) + playerConfigManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+			int forceloadLimit = isServer ? 0 : claimsManager.getPlayerFullForceloadLimit(id);
 			if(isServer || playerTickets.getCount() <= forceloadLimit)
 				updateTicket(true, ticket);
 		}

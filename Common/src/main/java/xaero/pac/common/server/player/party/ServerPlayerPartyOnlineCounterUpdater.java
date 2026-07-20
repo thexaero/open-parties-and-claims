@@ -32,6 +32,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.parties.party.PartyManager;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 
@@ -103,6 +104,19 @@ public class ServerPlayerPartyOnlineCounterUpdater {
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
 		playerData.setLastPartyOnlineUpdate(System.currentTimeMillis(), null);
 		primaryPartyOnlineCounter.unregisterOnlinePartyMember(party.getOwner().getUUID());
+	}
+
+	public void onDefaultPartyOwnerChange(PartyManager partyManager, IServerParty<?, ?, ?> party, UUID oldOwner, UUID newOwner) {
+		IPlayerPartySystemAPI<?> primaryPartySystem = partyManager.getPlayerConfigs().getPartySystemManager()
+				.getPrimarySystem();
+		if(primaryPartySystem != partyManager.getPartySystem())
+			return;
+		party.getOnlineMemberStream().map(player -> (ServerPlayerData) ServerPlayerData.from(player))
+				.forEach(playerData -> {
+					primaryPartyOnlineCounter.unregisterOnlinePartyMember(oldOwner);
+					primaryPartyOnlineCounter.registerOnlinePartyMember(newOwner);
+					playerData.setLastPartyOnlineUpdate(System.currentTimeMillis(), newOwner);
+				});
 	}
 
 }

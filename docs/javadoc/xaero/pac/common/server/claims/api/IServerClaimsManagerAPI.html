@@ -153,6 +153,26 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the base maximum forceload number (without the bonus) for a logged in player.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullClaimLimit(java.util.UUID)" class="member-name-link">getPlayerFullClaimLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full maximum claim number (with the bonus) for a player UUID.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullClaimLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullClaimLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full maximum claim number (with the bonus) for a logged in player.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullForceloadLimit(java.util.UUID)" class="member-name-link">getPlayerFullForceloadLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full maximum forceload number (with the bonus) for a player UUID.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullForceloadLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullForceloadLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full maximum forceload number (with the bonus) for a logged in player.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -792,6 +812,74 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <dd><code>player</code> - the player, not null</dd>
 <dt>Returns:</dt>
 <dd>the base maximum forceload number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullClaimLimit(java.util.UUID)">
+<h3>getPlayerFullClaimLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullClaimLimit</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Gets the full maximum claim number (with the bonus) for a player UUID.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseClaimLimit(java.util.UUID)"><code>getPlayerBaseClaimLimit(UUID)</code></a> with the bonus claims
+ added to it.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the player UUID, not null</dd>
+<dt>Returns:</dt>
+<dd>the full maximum claim number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullClaimLimit(net.minecraft.server.level.ServerPlayer)">
+<h3>getPlayerFullClaimLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullClaimLimit</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Gets the full maximum claim number (with the bonus) for a logged in player.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseClaimLimit(net.minecraft.server.level.ServerPlayer)"><code>getPlayerBaseClaimLimit(ServerPlayer)</code></a> with the bonus claims
+ added to it.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - the player, not null</dd>
+<dt>Returns:</dt>
+<dd>the full maximum claim number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullForceloadLimit(java.util.UUID)">
+<h3>getPlayerFullForceloadLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullForceloadLimit</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Gets the full maximum forceload number (with the bonus) for a player UUID.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseForceloadLimit(java.util.UUID)"><code>getPlayerBaseForceloadLimit(UUID)</code></a> with the bonus forceloads
+ added to it.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the player UUID, not null</dd>
+<dt>Returns:</dt>
+<dd>the full maximum forceload number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullForceloadLimit(net.minecraft.server.level.ServerPlayer)">
+<h3>getPlayerFullForceloadLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullForceloadLimit</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Gets the full maximum forceload number (with the bonus) for a logged in player.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseForceloadLimit(net.minecraft.server.level.ServerPlayer)"><code>getPlayerBaseForceloadLimit(ServerPlayer)</code></a> with the bonus forceloads
+ added to it.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - the player, not null</dd>
+<dt>Returns:</dt>
+<dd>the full maximum forceload number</dd>
 </dl>
 </section>
 </li>

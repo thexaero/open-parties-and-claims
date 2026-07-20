@@ -94,8 +94,8 @@ public class ClaimsAboutCommand {
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>
 				playerInfo = claimsManager.getPlayerInfo(profile.getId());
 
-			int claimLimit = claimsManager.getPlayerBaseClaimLimit(profile.getId()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
-			int forceloadLimit = claimsManager.getPlayerBaseForceloadLimit(profile.getId()) + playerConfig.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+			int claimLimit = claimsManager.getPlayerFullClaimLimit(profile.getId());
+			int forceloadLimit = claimsManager.getPlayerFullForceloadLimit(profile.getId());
 			Component claimCountNumbers = Component.literal(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
 			String claimName = usedSubConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
 			if(claimName.isEmpty())
