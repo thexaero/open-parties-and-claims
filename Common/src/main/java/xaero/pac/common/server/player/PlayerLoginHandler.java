@@ -94,6 +94,7 @@ public class PlayerLoginHandler {
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		UUID primaryPartyOwner = serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(player.getUUID());
 		playerData.setLastPartyClaimsSync(System.currentTimeMillis(), primaryPartyOwner);
+		serverData.getPlayerClaimPartyUpdater().updatePrimaryPartyColor(player, serverData);
 		serverData.getPlayerConfigPermissionUpdater().update(playerData, player, serverData, false, false);
 		serverData.getPlayerConfigManager().getSynchronizer().syncOnLogin(player);
 		

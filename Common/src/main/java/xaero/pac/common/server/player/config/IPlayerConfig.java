@@ -111,6 +111,8 @@ public interface IPlayerConfig extends IPlayerConfigAPI {
 
 	boolean isOptionDefaulted(IPlayerConfigOptionSpecAPI<?> option);
 
+	<T> void resetAutomaticDefaultValue(@Nonnull IPlayerConfigOptionSpecAPI<T> o);
+
 	IPlayerConfig getMain();
 
 }
