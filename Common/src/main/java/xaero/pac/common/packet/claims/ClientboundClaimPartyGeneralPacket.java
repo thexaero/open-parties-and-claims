@@ -80,7 +80,7 @@ public class ClientboundClaimPartyGeneralPacket extends LazyPacket<ClientboundCl
 		@Override
 		public void handle(ClientboundClaimPartyGeneralPacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler()
-					.onClaimGeneral(t.partyOwnedClaims, t.partyOwnerId);
+					.onPartyGeneral(t.partyOwnedClaims, t.partyOwnerId);
 		}
 		
 	}

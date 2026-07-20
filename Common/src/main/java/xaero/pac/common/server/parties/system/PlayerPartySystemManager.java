@@ -219,11 +219,23 @@ public final class PlayerPartySystemManager implements IPlayerPartySystemManager
 		return getPrimaryMemberCountHelper(getPrimarySystem(), ownerId);
 	}
 
-	public <P> int getPrimaryMemberCountHelper(IPlayerPartySystemAPI<P> primarySystem, UUID ownerId) {
+	private <P> int getPrimaryMemberCountHelper(IPlayerPartySystemAPI<P> primarySystem, UUID ownerId) {
 		P party = primarySystem.getPartyByOwner(ownerId);
 		if(party == null)
 			return 0;
 		return primarySystem.getMemberCount(party);
+	}
+
+	@Override
+	public int getPrimaryPartyColorByOwner(UUID ownerId) {
+		return getPrimaryPartyColorByOwnerHelper(getPrimarySystem(), ownerId);
+	}
+
+	private <P> int getPrimaryPartyColorByOwnerHelper(IPlayerPartySystemAPI<P> primarySystem, UUID ownerId) {
+		P party = primarySystem.getPartyByOwner(ownerId);
+		if(party == null)
+			return -1;
+		return primarySystem.getColor(party);
 	}
 
 	public static final class Builder {

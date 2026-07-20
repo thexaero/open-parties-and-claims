@@ -21,7 +21,9 @@ package xaero.pac.common.server.player.config.api.v2;
 import com.google.common.collect.Lists;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
+import xaero.pac.common.claims.util.ClaimsConstants;
 import xaero.pac.common.player.config.PlayerConfigConstants;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.config.*;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.PlayerConfigCommonChangeHandlers;
@@ -414,6 +416,12 @@ public class PlayerConfigOptions {
 				.setDefaultReplacer((config, value) -> {
 					if(config.getPlayerId() == null || Objects.equals(config.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) || Objects.equals(config.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID))
 						return 0xAA0000;
+					if(ServerConfig.CONFIG.partyOwnedClaims.get()) {
+						//the cached automatic default value gets reset when the primary party color changes, so this code gets recalled
+						int primaryPartyColor = config.getManager().getPartySystemManager().getPrimaryPartyColorByOwner(config.getPlayerId());
+						if (primaryPartyColor != -1)
+							return ClaimsConstants.COLOR_IS_PARTY_FLAG | (primaryPartyColor & 0xFFFFFF);
+					}
 					int playerIdHash = config.getPlayerId().hashCode();
 					int red = (playerIdHash >> 16) & 255;
 					int green = (playerIdHash >> 8) & 255;
@@ -426,7 +434,7 @@ public class PlayerConfigOptions {
 					}
 					int autoColor = (red << 16) | (green << 8) | blue;
 					if(autoColor == 0)
-						autoColor = 0xFF000000;
+						autoColor = 0x010101;
 					return autoColor;
 				})
 				.setComment("Used as the color for your claims. Set to 0 to use the default automatic color.")

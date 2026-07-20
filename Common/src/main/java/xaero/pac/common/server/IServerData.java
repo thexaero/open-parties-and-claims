@@ -22,6 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
+import xaero.pac.common.server.claims.player.ServerPlayerClaimPartyUpdater;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.expiration.task.ObjectExpirationCheckSpreadoutTask;
@@ -97,5 +98,6 @@ extends IServerDataAPI {
 	public void onStop();
 	public void onServerResourcesReload(ResourceManager resourceManager);
 	public PrimaryPartyOnlineCounter getPrimaryPartyOnlineCounter();
+	public ServerPlayerClaimPartyUpdater getPlayerClaimPartyUpdater();
 
 }

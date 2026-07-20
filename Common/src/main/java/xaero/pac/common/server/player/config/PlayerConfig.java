@@ -148,8 +148,10 @@ public class PlayerConfig
 			getStorage().remove(option.getPath());
 		else
 			getStorage().set(option.getPath(), value);
-		if(manager.isLoaded())
+		if(manager.isLoaded()) {
+			resetAutomaticDefaultValue(option);//so people can manually clear cache by changing the option value
 			setDirty(true);
+		}
 	}
 
 	private <T> T get(PlayerConfigOptionSpec<T> option) {
@@ -490,6 +492,20 @@ public class PlayerConfig
 	public void setBeingDeleted() {
 		this.beingDeleted = true;
 		manager.getSynchronizer().syncGeneralState(null, this);
+	}
+
+	@Override
+	public <T> void resetAutomaticDefaultValue(@Nonnull IPlayerConfigOptionSpecAPI<T> o){
+		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
+		T valueBefore = getEffective(o);
+		if(automaticDefaultValues.remove(option) == null)
+			return;
+		T valueAfter = getEffective(o);
+		if(Objects.equals(valueAfter, valueBefore))
+			return;
+		IPlayerConfigChangeHandler<T> changeHandler = option.getServerChangeHandler();
+		if(changeHandler != null && option.getCategory().requiredFeaturesAreEnabled())
+			changeHandler.handle(manager, this, option, valueBefore, valueAfter);
 	}
 
 	@Override
