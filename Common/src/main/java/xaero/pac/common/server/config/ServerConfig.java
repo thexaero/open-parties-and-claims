@@ -99,6 +99,7 @@ public class ServerConfig {
 	public final ModConfigSpec.IntValue forceloadBonusPerPartyMember;
 	public final ModConfigSpec.IntValue claimBonusForPartyOwner;
 	public final ModConfigSpec.IntValue forceloadBonusForPartyOwner;
+	public final ModConfigSpec.IntValue overLimitClaimAccessCooldown;
 
 	private ServerConfig(ModConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -216,9 +217,11 @@ public class ServerConfig {
 					Whether parties from the primary party system (option "primaryPartySystem") should act as owners of claims.
 					The technical owner of a party's claims is still a player: the party owner.
 					Party members who are at least the rank equivalent of Claimer can claim and unclaim as the party (owner).
+					If "Whole Party Can Claim" is enabled in the party owner's config (or enforced by the default player config), then every player in the party can claim/unclaim.
 					Party members who are at least the rank equivalent of Moderator can also include and exclude players
 					to/from the player groups of the party's claim config.
 					Party members who are at least the rank equivalent of Admin can also fully edit the party's claim config.
+					If the primary party system supports party colors (e.g. FTB Teams), then the default color of the party's claims is the party color.
 					Changing this option does not automatically reassign claims based on party relations or actual chunk claimers,
 					so it is recommended to only set this option once based on the server's intended gameplay style.
 					Other important options related to this feature are "claimBonusPerPartyMember", "forceloadBonusPerPartyMember",
@@ -257,6 +260,14 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_claims_forceload_bonus_for_party_owner")
 			.worldRestart()
 			.defineInRange("forceloadBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
+
+		overLimitClaimAccessCooldown = builder
+			.comment("""
+					How often (in minutes) to allow players to access a claim when their own claim count is over the claim limit or the claim count
+					of the owner of the claim is over the claim limit.""")
+			.translation("gui.xaero_pac_config_claims_over_limit_claim_access_cooldown")
+			.worldRestart()
+			.defineInRange("overLimitClaimAccessCooldown", 5, 0, Integer.MAX_VALUE);
 		
 		playerClaimsExpirationTime = builder
 			.comment("For how long a player/party can stay completely inactive on the server until their claims are expired (in hours). This improves performance for servers running for years.")
@@ -293,7 +304,11 @@ public class ServerConfig {
 			.defineInRange("maxPlayerClaimForceloads", 10, 0, Integer.MAX_VALUE);
 
 		maxPlayerClaimsPermission = builder
-			.comment("The permission that should override the default \"maxPlayerClaims\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+			.comment("""
+					The permission that should override the default "maxPlayerClaims" value. Set it to an empty string to never check permissions.
+					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
+					the player to be online, which doesn't work well with party-owned claims.
+					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
 			.define("maxPlayerClaimsPermission", UsedPermissionNodes.MAX_PLAYER_CLAIMS.getDefaultNodeString());
@@ -301,6 +316,8 @@ public class ServerConfig {
 		maxPlayerClaimForceloadsPermission = builder
 			.comment("""
 					The permission that should override the default "maxPlayerClaimForceloads" value. Set it to an empty string to never check permissions.
+					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
+					the player to be online, which doesn't work well with party-owned claims.
 					The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than "maxPlayerClaimForceloads".
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_forceloads_permission")

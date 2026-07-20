@@ -100,6 +100,9 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		/** The maximum number of claims was reached */
 		CLAIM_LIMIT_REACHED(Component.translatable("gui.xaero_claims_claim_limit_reached").withStyle(ChatFormatting.RED), false, true),
 
+		/** The player's claim count is even higher than their limit */
+		OVER_CLAIM_LIMIT(Component.translatable("gui.xaero_claims_over_claim_limit").withStyle(ChatFormatting.RED), false, true),
+
 		/** The chunk was beyond the maximum distance */
 		TOO_FAR(Component.translatable("gui.xaero_claims_claim_not_within_distance").withStyle(ChatFormatting.RED), false, true),
 

@@ -43,18 +43,18 @@ public class PlayerTickHandler {
 
 	private final ServerPlayerClaimWelcomer claimWelcomer;
 	private final ServerPlayerClaimPartyNameUpdater claimPartyNameUpdater;
-	private final ServerPlayerClaimPartyUpdater claimPartyConfigUpdater;
+	private final ServerPlayerClaimPartyUpdater claimPartyUpdater;
 	private final ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater;
 
 	private PlayerTickHandler(
 			ServerPlayerClaimWelcomer claimWelcomer,
 			ServerPlayerClaimPartyNameUpdater claimPartyNameUpdater,
-			ServerPlayerClaimPartyUpdater claimPartyConfigUpdater,
+			ServerPlayerClaimPartyUpdater claimPartyUpdater,
 			ServerPlayerPartyOnlineCounterUpdater playerPartyOnlineCounterUpdater
 	) {
 		this.claimWelcomer = claimWelcomer;
 		this.claimPartyNameUpdater = claimPartyNameUpdater;
-		this.claimPartyConfigUpdater = claimPartyConfigUpdater;
+		this.claimPartyUpdater = claimPartyUpdater;
 		this.playerPartyOnlineCounterUpdater = playerPartyOnlineCounterUpdater;
 	}
 
@@ -81,7 +81,7 @@ public class PlayerTickHandler {
 		if(ServerConfig.CONFIG.claimsEnabled.get()) {
 			claimWelcomer.onPlayerTick(playerData, player, serverData);
 			claimPartyNameUpdater.onPlayerTick(playerData, player, serverData);
-			claimPartyConfigUpdater.onPlayerTick(playerData, player, serverData);
+			claimPartyUpdater.onPlayerTick(playerData, player, serverData);
 			IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
 			claimsManager.getClaimsManagerSynchronizer().updateClaimLimitsSyncOnTick(playerData, player);
 		}
@@ -93,11 +93,13 @@ public class PlayerTickHandler {
 	public static final class Builder {
 
 		private ServerPlayerPartyOnlineCounterUpdater playerClaimPartyForceloadUpdater;
+		private ServerPlayerClaimPartyUpdater playerClaimPartyUpdater;
 
 		private Builder(){}
 
 		public Builder setDefault(){
 			setPlayerClaimPartyForceloadUpdater(null);
+			setPlayerClaimPartyUpdater(null);
 			return this;
 		}
 
@@ -106,12 +108,17 @@ public class PlayerTickHandler {
 			return this;
 		}
 
+		public Builder setPlayerClaimPartyUpdater(ServerPlayerClaimPartyUpdater playerClaimPartyUpdater) {
+			this.playerClaimPartyUpdater = playerClaimPartyUpdater;
+			return this;
+		}
+
 		public PlayerTickHandler build(){
 			if(playerClaimPartyForceloadUpdater == null)
 				throw new IllegalStateException();
 			return new PlayerTickHandler(
 					new ServerPlayerClaimWelcomer(), new ServerPlayerClaimPartyNameUpdater(),
-					new ServerPlayerClaimPartyUpdater(), playerClaimPartyForceloadUpdater
+					playerClaimPartyUpdater, playerClaimPartyForceloadUpdater
 			);
 		}
 

@@ -185,12 +185,20 @@ public interface IClientClaimsManagerAPI
 	public boolean isServerMode();
 
 	/**
-	 * Gets the currently enabled claiming mode.
+	 * Gets the currently enabled effective claiming mode.
 	 *
-	 * @return the current claiming mode, not null
+	 * @return the current effective claiming mode, not null
 	 */
 	@Nonnull
 	public IClaimingModeAPI getClaimingMode();
+
+	/**
+	 * Gets the currently enabled claiming mode without automatically determining the effective one if none is set.
+	 *
+	 * @return the current claiming mode, null if none is set
+	 */
+	@Nullable
+	public IClaimingModeAPI getRawClaimingMode();
 
 	/**
 	 * Gets the claim action result tracker that lets you register claim action result listeners.
