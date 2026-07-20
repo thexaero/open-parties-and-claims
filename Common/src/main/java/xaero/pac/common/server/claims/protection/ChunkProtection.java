@@ -2446,9 +2446,9 @@ public class ChunkProtection
 			return false;
 		}
 		if(time - playerData.getLastClaimsOverLimitMessageTime() > 5000) {
-			Component unadaptedMessage = new TranslatableComponent("gui.xaero_pac_blocked_for_going_over_claim_limit", accessCooldownMinutes)
+			Component unadaptedMessage = Component.translatable("gui.xaero_pac_blocked_for_going_over_claim_limit", accessCooldownMinutes)
 					.withStyle(ChatFormatting.RED);
-			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, unadaptedMessage), player.getUUID());
+			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, unadaptedMessage));
 			playerData.setLastClaimsOverLimitMessageTime(time);
 		}
 		return true;

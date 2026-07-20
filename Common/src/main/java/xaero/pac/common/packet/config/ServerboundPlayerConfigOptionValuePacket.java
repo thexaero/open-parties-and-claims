@@ -21,7 +21,6 @@ package xaero.pac.common.packet.config;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -86,9 +85,9 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 				if(!serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS) &&
 						option != PlayerConfigOptions.BONUS_CHUNK_CLAIMS &&
 						ServerPlayerConfigUtils.isOverClaimLimit(config)) {
-					Component message = new TranslatableComponent("gui.xaero_pac_config_claim_count_over_limit")
+					Component message = Component.translatable("gui.xaero_pac_config_claim_count_over_limit")
 							.withStyle(ChatFormatting.RED);
-					serverPlayer.sendMessage(message, serverPlayer.getUUID());
+					serverPlayer.sendSystemMessage(message);
 					return null;
 				}
 			}

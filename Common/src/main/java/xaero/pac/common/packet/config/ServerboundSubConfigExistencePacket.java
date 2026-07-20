@@ -118,9 +118,9 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				return false;
 			if(!ServerPlayerConfigUtils.isOverClaimLimit(config))
 				return false;
-			Component message = new TranslatableComponent("gui.xaero_pac_config_claim_count_over_limit")
+			Component message = Component.translatable("gui.xaero_pac_config_claim_count_over_limit")
 					.withStyle(ChatFormatting.RED);
-			player.sendMessage(message, player.getUUID());
+			player.sendSystemMessage(message);
 			return true;
 		}
 
