@@ -302,7 +302,11 @@ public class ServerConfig {
 			.defineInRange("maxPlayerClaimForceloads", 10, 0, Integer.MAX_VALUE);
 
 		maxPlayerClaimsPermission = builder
-			.comment("The permission that should override the default \"maxPlayerClaims\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+			.comment("""
+					The permission that should override the default "maxPlayerClaims" value. Set it to an empty string to never check permissions.
+					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
+					the player to be online, which doesn't work well with party-owned claims.
+					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
 			.define("maxPlayerClaimsPermission", UsedPermissionNodes.MAX_PLAYER_CLAIMS.getDefaultNodeString());
@@ -310,6 +314,8 @@ public class ServerConfig {
 		maxPlayerClaimForceloadsPermission = builder
 			.comment("""
 					The permission that should override the default "maxPlayerClaimForceloads" value. Set it to an empty string to never check permissions.
+					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
+					the player to be online, which doesn't work well with party-owned claims.
 					The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than "maxPlayerClaimForceloads".
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_forceloads_permission")
