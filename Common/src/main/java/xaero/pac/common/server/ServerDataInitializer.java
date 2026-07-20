@@ -28,6 +28,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.ServerClaimsPermissionHandler;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
+import xaero.pac.common.server.claims.player.ServerPlayerClaimPartyUpdater;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.io.serialization.nbt.PlayerClaimInfoNbtSerializer;
@@ -171,8 +172,10 @@ public class ServerDataInitializer {
 			
 			PlayerLogInPartyAssigner playerPartyAssigner = new PlayerLogInPartyAssigner();
 			PlayerConfigPermissionUpdater playerConfigPermissionUpdater = new PlayerConfigPermissionUpdater();
+			ServerPlayerClaimPartyUpdater playerClaimPartyUpdater = new ServerPlayerClaimPartyUpdater();
 			PlayerTickHandler playerTickHandler = PlayerTickHandler.Builder.begin()
 					.setPlayerClaimPartyForceloadUpdater(playerPartyOnlineCounterUpdater)
+					.setPlayerClaimPartyUpdater(playerClaimPartyUpdater)
 					.build();
 			PlayerLoginHandler playerLoginHandler = new PlayerLoginHandler();
 			PlayerLogoutHandler playerLogoutHandler = new PlayerLogoutHandler();
@@ -289,7 +292,7 @@ public class ServerDataInitializer {
 					partyExpirationHandler, serverTickHandler, playerTickHandler, playerLoginHandler, playerLogoutHandler, playerPermissionChangeHandler, partyLiveSaver,
 					ioThreadWorker, playerConfigs, playerConfigsIO, playerConfigLiveSaver, playerConfigPermissionUpdater, playerClaimInfoManagerIO, playerClaimInfoLiveSaver,
 					serverClaimsManager, chunkProtection, serverLoadCallback, forceLoadManager, primaryPartyOnlineCounter, playerWorldJoinHandler, serverInfo, serverInfoIO,
-					claimsExpirationHandler, objectExpirationCheckTaskHandler, playerPermissionSystemManager, playerPartySystemManager);
+					claimsExpirationHandler, objectExpirationCheckTaskHandler, playerPermissionSystemManager, playerPartySystemManager, playerClaimPartyUpdater);
 			partyManager.getPartySynchronizer().setServerData(serverData);
 			claimsSynchronizer.setServerData(serverData);
 			serverData.onServerResourcesReload(server.getResourceManager());

@@ -150,7 +150,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			claimsManagerTracker.onChunkChange(dimension, x, z, null);
 	}
 
-	private ClaimResult<PlayerChunkClaim> tryToClaimHelper(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean replace, boolean isServer) {
+	private ClaimResult<PlayerChunkClaim> tryToClaimHelper(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean replace, boolean isServer, int claimLimit) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		boolean claimCountUnaffected = false;
 		if(currentClaim != null) {
@@ -161,8 +161,13 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(!replace && playerClaimInfo.isReplacementInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
-		boolean withinLimit = claimCountUnaffected || isServer ||
-				playerClaimInfo.getClaimCount() < getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+		int claimCount = 0;
+		if(!isServer){
+			claimCount = playerClaimInfo.getClaimCount();
+			if(!replace && claimCount > claimLimit)
+				return new ClaimResult<>(currentClaim, ClaimResult.Type.OVER_CLAIM_LIMIT);
+		}
+		boolean withinLimit = claimCountUnaffected || isServer || claimCount < claimLimit;
 		if(withinLimit) {
 			PlayerChunkClaim claim = new PlayerChunkClaim(playerId, subConfigIndex, forceLoaded, 0);
 			if(Objects.equals(claim, currentClaim))
@@ -184,7 +189,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
-		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer);
+		int claimLimit = getPlayerFullClaimLimit(playerId);
+		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer, claimLimit);
 	}
 	
 	private ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
@@ -206,18 +212,18 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return tryToUnclaimHelper(dimension, id, fromX, fromZ, x, z, replace);
 	}
 	
-	private ClaimResult<PlayerChunkClaim> tryToForceloadHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean replace, boolean isServer) {
+	private ClaimResult<PlayerChunkClaim> tryToForceloadHelper(ResourceLocation dimension, UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean replace, boolean isServer, int claimLimit, int forceloadLimit) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		if(currentClaim != null && (replace || Objects.equals(currentClaim.getPlayerId(), id))) {
 			if(currentClaim.isForceloadable() == enable)
 				return new ClaimResult<>(currentClaim, enable ? ClaimResult.Type.ALREADY_FORCELOADABLE : ClaimResult.Type.ALREADY_UNFORCELOADED);
 			ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
 			boolean withinLimit = isServer || !enable ||
-					playerClaimInfo.getForceloadCount() < getPlayerBaseForceloadLimit(id) + configManager.getLoadedConfig(id).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+					playerClaimInfo.getForceloadCount() < forceloadLimit;
 			if(!withinLimit)
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.FORCELOAD_LIMIT_REACHED);
 
-			ClaimResult<PlayerChunkClaim> result = tryToClaimHelper(dimension, currentClaim.getPlayerId(), currentClaim.getSubConfigIndex(), fromX, fromZ, x, z, enable, true, isServer);
+			ClaimResult<PlayerChunkClaim> result = tryToClaimHelper(dimension, currentClaim.getPlayerId(), currentClaim.getSubConfigIndex(), fromX, fromZ, x, z, enable, replace, isServer, claimLimit);
 			if(result.getResultType() == ClaimResult.Type.SUCCESSFUL_CLAIM)
 				return new ClaimResult<>(result.getClaimResult(), enable ? ClaimResult.Type.SUCCESSFUL_FORCELOAD : ClaimResult.Type.SUCCESSFUL_UNFORCELOAD);
 //			else if(result.getResultType() == ClaimResult.Type.CLAIM_LIMIT_REACHED)
@@ -238,7 +244,9 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
-		return tryToForceloadHelper(dimension, id, fromX, fromZ, x, z, enable, replace, isServer);
+		int claimLimit = getPlayerFullClaimLimit(id);
+		int forceloadLimit = getPlayerFullForceloadLimit(id);
+		return tryToForceloadHelper(dimension, id, fromX, fromZ, x, z, enable, replace, isServer, claimLimit, forceloadLimit);
 	}
 	
 	public AreaClaimResult tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, Action action, boolean replace) {
@@ -291,18 +299,20 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		int toAffect = total;
 		if(total > MAX_REQUEST_SIZE)
 			toAffect = MAX_REQUEST_SIZE;
+		int claimLimit = getPlayerFullClaimLimit(playerId);
+		int forceloadLimit = getPlayerFullForceloadLimit(playerId);
 		outer:
 		for(int x = effectiveLeft; x <= effectiveRight; x++)
 			for(int z = effectiveTop; z <= effectiveBottom; z++) {
 				ClaimResult<PlayerChunkClaim> result = null;
 				if(action == Action.CLAIM)
-					result = tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer);
+					result = tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer, claimLimit);
 				else if(action == Action.UNCLAIM)
 					result = tryToUnclaimHelper(dimension, playerId, fromX, fromZ, x, z, replace);
 				else if(action == Action.FORCELOAD)
-					result = tryToForceloadHelper(dimension, playerId, fromX, fromZ, x, z, true, replace, isServer);
+					result = tryToForceloadHelper(dimension, playerId, fromX, fromZ, x, z, true, replace, isServer, claimLimit, forceloadLimit);
 				else if(action == Action.UNFORCELOAD)
-					result = tryToForceloadHelper(dimension, playerId, fromX, fromZ, x, z, false, replace, isServer);
+					result = tryToForceloadHelper(dimension, playerId, fromX, fromZ, x, z, false, replace, isServer, claimLimit, forceloadLimit);
 				else
 					break outer;
 				resultTypes.add(result.getResultType());
@@ -314,6 +324,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 						toAffect--;
 				}
 				if(result.getResultType() == ClaimResult.Type.CLAIM_LIMIT_REACHED ||
+						result.getResultType() == ClaimResult.Type.OVER_CLAIM_LIMIT ||
 						result.getResultType() == ClaimResult.Type.FORCELOAD_LIMIT_REACHED ||
 						result.getResultType() == ClaimResult.Type.REPLACEMENT_IN_PROGRESS
 				)
@@ -385,6 +396,26 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.forceloadBonusPerPartyMember,
 				ServerConfig.CONFIG.forceloadBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_FORCELOADS
 		);
+	}
+
+	@Override
+	public int getPlayerFullClaimLimit(@Nonnull UUID playerId) {
+		return getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+	}
+
+	@Override
+	public int getPlayerFullClaimLimit(@Nonnull ServerPlayer player) {
+		return getPlayerBaseClaimLimit(player) + configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+	}
+
+	@Override
+	public int getPlayerFullForceloadLimit(@Nonnull UUID playerId) {
+		return getPlayerBaseForceloadLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+	}
+
+	@Override
+	public int getPlayerFullForceloadLimit(@Nonnull ServerPlayer player) {
+		return getPlayerBaseForceloadLimit(player) + configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
 	}
 
 	public Iterator<ServerClaimStateHolder> getClaimStateHolderIterator(){

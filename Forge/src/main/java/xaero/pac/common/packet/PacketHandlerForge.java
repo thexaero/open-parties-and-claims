@@ -29,7 +29,7 @@ import java.util.function.Function;
 
 public class PacketHandlerForge implements IPacketHandler {
 
-	private static final int PROTOCOL_VERSION = 1006000;
+	private static final int PROTOCOL_VERSION = 1007000;
 	public static final SimpleChannel NETWORK = ChannelBuilder.named(OpenPartiesAndClaims.MAIN_CHANNEL_LOCATION).networkProtocolVersion(PROTOCOL_VERSION).optional().simpleChannel();
 
 	@Override
