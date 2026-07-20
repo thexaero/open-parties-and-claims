@@ -251,6 +251,11 @@ public class MainMenu extends XPACScreen {
 			forceloadButton.setMessage(wouldForceload ? FORCELOAD : UNFORCELOAD);
 			forceloadButton.setTooltip(Tooltip.create(wouldForceload ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND));
 
+			if(openDropdown != null && openDropdown.isHovered()) {
+				claimButton.setTooltip(null);
+				forceloadButton.setTooltip(null);
+			}
+
 			updateClaimingModeDropdown(claimsManager);
 		}
 	}
