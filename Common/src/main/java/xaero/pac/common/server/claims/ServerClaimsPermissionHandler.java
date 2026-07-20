@@ -24,10 +24,10 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.packet.ClientboundModesPacket;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
@@ -48,12 +48,14 @@ public class ServerClaimsPermissionHandler {
 
 	public void resetClaimingMode(ServerPlayer player){
 		ServerPlayerDataAPI playerData = ServerPlayerData.from(player);
-		((ServerPlayerData)playerData).setClaimingMode(ClaimingModes.PLAYER);
+		((ServerPlayerData)playerData).setClaimingMode(null);
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
 		serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 	}
 
 	public boolean playerHasPartyClaimPermission(ServerPlayer player){
+		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+			return false;
 		if(!serverData.getPlayerPartySystemManager().isInAPrimaryParty(player.getUUID()))
 			return false;
 		if(player.hasPermissions(Commands.LEVEL_GAMEMASTERS))

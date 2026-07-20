@@ -19,6 +19,7 @@
 package xaero.pac.common.packet;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
@@ -51,10 +52,9 @@ public class ClientboundModesPacket {
 				if(tag == null)
 					return null;
 				boolean adminMode = tag.getBoolean("am");
-				String claimingModeId = tag.getString("cm");
-				ClaimingMode claimingMode = (ClaimingMode) ClaimingModes.get(claimingModeId);
-				if(claimingMode == null)
-					return null;
+				ClaimingMode claimingMode = null;
+				if(tag.contains("cm", Tag.TAG_STRING))
+					claimingMode = (ClaimingMode) ClaimingModes.get(tag.getString("cm"));
 				return new ClientboundModesPacket(adminMode, claimingMode);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);
@@ -66,7 +66,8 @@ public class ClientboundModesPacket {
 		public void accept(ClientboundModesPacket t, FriendlyByteBuf u) {
 			CompoundTag tag = new CompoundTag();
 			tag.putBoolean("am", t.adminMode);
-			tag.putString("cm", t.claimingMode.getId());
+			if(t.claimingMode != null)
+				tag.putString("cm", t.claimingMode.getId());
 			u.writeNbt(tag);
 		}
 
@@ -82,7 +83,7 @@ public class ClientboundModesPacket {
 	}
 
 	public static ClientboundModesPacket get(ServerPlayerDataAPI playerData){
-		return new ClientboundModesPacket(playerData.isClaimsAdminMode(), (ClaimingMode) playerData.getClaimingMode());
+		return new ClientboundModesPacket(playerData.isClaimsAdminMode(), (ClaimingMode) playerData.getRawClaimingMode());
 	}
 	
 }

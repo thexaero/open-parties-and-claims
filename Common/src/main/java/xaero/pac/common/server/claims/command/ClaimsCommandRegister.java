@@ -34,15 +34,24 @@ public class ClaimsCommandRegister {
 		new ClaimsAboutCommand().register(dispatcher, environment);
 		new ClaimsSubClaimCurrentCommand().register(dispatcher, environment);
 		new ClaimsSubClaimUseCommand().register(dispatcher, environment);
+		registerForClaimingMode(null, dispatcher, environment);//default mode
 		for (IClaimingModeAPI claimingModeAPI : ClaimingModes.ALL_IMMUTABLE.values()) {
 			ClaimingMode claimingMode = (ClaimingMode) claimingModeAPI;
-			new ClaimsClaimCommand(true, claimingMode).register(dispatcher, environment);
-			new ClaimsClaimCommand(false, claimingMode).register(dispatcher, environment);
-			new ClaimsForceloadCommand(true, claimingMode).register(dispatcher, environment);
-			new ClaimsForceloadCommand(false, claimingMode).register(dispatcher, environment);
-			new ClaimingModeCommand(claimingMode).register(dispatcher, environment);
+			registerForClaimingMode(claimingMode, dispatcher, environment);
 		}
 		new ClaimsAdminModeCommand().register(dispatcher, environment);
+	}
+
+	private void registerForClaimingMode(
+			ClaimingMode claimingMode,
+			CommandDispatcher<CommandSourceStack> dispatcher,
+			Commands.CommandSelection environment
+	){
+		new ClaimsClaimCommand(true, claimingMode).register(dispatcher, environment);
+		new ClaimsClaimCommand(false, claimingMode).register(dispatcher, environment);
+		new ClaimsForceloadCommand(true, claimingMode).register(dispatcher, environment);
+		new ClaimsForceloadCommand(false, claimingMode).register(dispatcher, environment);
+		new ClaimingModeCommand(claimingMode).register(dispatcher, environment);
 	}
 
 }

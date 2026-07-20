@@ -34,6 +34,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.claims.player.ServerPlayerClaimPartyUpdater;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
@@ -97,6 +98,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	private final ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler;
 	private final PlayerPermissionSystemManager playerPermissionSystemManager;
 	private final PlayerPartySystemManager playerPartySystemManager;
+	private final ServerPlayerClaimPartyUpdater playerClaimPartyUpdater;
 	private AdaptiveLocalizer adaptiveLocalizer;
 	private final OpenPACServerAPI api;
 
@@ -106,13 +108,23 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	public ServerData(MinecraftServer server, PartyManager partyManager, PartyManagerIO<?> partyManagerIO,
 	                  PlayerLogInPartyAssigner playerPartyAssigner, PartyPlayerInfoUpdater partyMemberInfoUpdater,
 	                  PartyExpirationHandler partyExpirationHandler, ServerTickHandler serverTickHandler,
-	                  PlayerTickHandler playerTickHandler, PlayerLoginHandler playerLoginHandler, PlayerLogoutHandler playerLogoutHandler, PlayerPermissionChangeHandler playerPermissionChangeHandler, ObjectManagerLiveSaver partyLiveSaver, IOThreadWorker ioThreadWorker,
-	                  PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs, PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO,
-	                  ObjectManagerLiveSaver playerConfigLiveSaver, PlayerConfigPermissionUpdater playerConfigPermissionUpdater, PlayerClaimInfoManagerIO<?> playerClaimInfoManagerIO,
+	                  PlayerTickHandler playerTickHandler, PlayerLoginHandler playerLoginHandler,
+					  PlayerLogoutHandler playerLogoutHandler, PlayerPermissionChangeHandler playerPermissionChangeHandler,
+					  ObjectManagerLiveSaver partyLiveSaver, IOThreadWorker ioThreadWorker,
+	                  PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs,
+					  PlayerConfigIO<ServerParty, ServerClaimsManager> playerConfigsIO,
+	                  ObjectManagerLiveSaver playerConfigLiveSaver, PlayerConfigPermissionUpdater playerConfigPermissionUpdater,
+					  PlayerClaimInfoManagerIO<?> playerClaimInfoManagerIO,
 	                  ObjectManagerLiveSaver playerClaimInfoLiveSaver, ServerClaimsManager serverClaimsManager,
 	                  ChunkProtection<ServerClaimsManager> chunkProtection, ServerStartingCallback serverLoadCallback,
-	                  ForceLoadTicketManager forceLoadManager, PrimaryPartyOnlineCounter primaryPartyOnlineCounter, PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
-	                  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler, ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler, PlayerPermissionSystemManager playerPermissionSystemManager, PlayerPartySystemManager playerPartySystemManager) {
+	                  ForceLoadTicketManager forceLoadManager, PrimaryPartyOnlineCounter primaryPartyOnlineCounter,
+					  PlayerWorldJoinHandler playerWorldJoinHandler, ServerInfo serverInfo,
+	                  ServerInfoHolderIO serverInfoIO, ServerPlayerClaimsExpirationHandler serverPlayerClaimsExpirationHandler,
+					  ServerSpreadoutQueuedTaskHandler<ObjectExpirationCheckSpreadoutTask<?>> objectExpirationCheckTaskHandler,
+					  PlayerPermissionSystemManager playerPermissionSystemManager,
+					  PlayerPartySystemManager playerPartySystemManager,
+					  ServerPlayerClaimPartyUpdater playerClaimPartyUpdater
+	) {
 		super();
 		this.server = server;
 		this.partyManager = partyManager;
@@ -145,6 +157,7 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		this.objectExpirationCheckTaskHandler = objectExpirationCheckTaskHandler;
 		this.playerPermissionSystemManager = playerPermissionSystemManager;
 		this.playerPartySystemManager = playerPartySystemManager;
+		this.playerClaimPartyUpdater = playerClaimPartyUpdater;
 		api = new OpenPACServerAPI(this);
 
 		compatPlayerConfigs = new CompatPlayerConfigManager(playerConfigs);
@@ -335,8 +348,14 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		return compatPlayerConfigs;
 	}
 
+	@Override
 	public PrimaryPartyOnlineCounter getPrimaryPartyOnlineCounter() {
 		return primaryPartyOnlineCounter;
+	}
+
+	@Override
+	public ServerPlayerClaimPartyUpdater getPlayerClaimPartyUpdater() {
+		return playerClaimPartyUpdater;
 	}
 
 }

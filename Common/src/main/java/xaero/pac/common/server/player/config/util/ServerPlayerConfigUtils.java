@@ -21,6 +21,7 @@ package xaero.pac.common.server.player.config.util;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import java.util.UUID;
 
@@ -46,6 +47,16 @@ public class ServerPlayerConfigUtils {
 			return null;
 		UUID effectiveOwnerId = ownerId == null ? callerId : ownerId;
 		return playerConfigs.getLoadedConfig(effectiveOwnerId);
+	}
+
+	public static boolean isOverClaimLimit(IPlayerConfig config){
+		if(config.getType().isGlobal())
+			return false;
+		IPlayerConfigManager manager = config.getManager();
+		UUID playerId = config.getPlayerId();
+		int claimCount = manager.getClaimsManager().getPlayerInfo(playerId).getClaimCount();
+		int claimLimit = manager.getClaimsManager().getPlayerFullClaimLimit(playerId);
+		return claimCount > claimLimit;
 	}
 
 }

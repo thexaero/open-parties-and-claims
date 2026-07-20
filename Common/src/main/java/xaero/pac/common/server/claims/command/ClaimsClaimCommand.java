@@ -35,7 +35,7 @@ public class ClaimsClaimCommand extends AbstractChunkCommand {
 	public ClaimsClaimCommand(boolean add, ClaimingMode mode) {
 		super(
 				ClaimsCommandRegister.COMMAND_PREFIX, add,
-				mode == ClaimingModes.PLAYER ? null : mode.getId(),
+				mode == null ? null : mode.getId(),
 				"claim", "unclaim"
 		);
 		this.mode = mode;
@@ -57,7 +57,7 @@ public class ClaimsClaimCommand extends AbstractChunkCommand {
 
 	@Override
 	protected Predicate<CommandSourceStack> getRequirement() {
-		return mode.getCommandVisibilityRequirement();
+		return mode == null ? s -> true : mode.getCommandVisibilityRequirement();
 	}
 
 }

@@ -198,7 +198,8 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	public IPartyManager<P> getPartyManager() {
 		return partyManager;
 	}
-	
+
+	@Override
 	public CM getClaimsManager() {
 		return claimsManager;
 	}
