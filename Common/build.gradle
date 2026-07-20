@@ -55,7 +55,7 @@ dependencies {
 
      //same as neoforge for the deobfuscated class names in the api
      compileOnly "curse.maven:ftbranks-314905:7921450"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-ranks-forge
-     compileOnly "curse.maven:architectury-419699:8429876"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
+     compileOnly "curse.maven:architectury-419699:8431688"//home: https://www.curseforge.com/minecraft/mc-mods/architectury-api
      compileOnly "curse.maven:ftblibrary-404465:7971743"//home: https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge
 
      compileOnly "net.luckperms:api:5.4"//source: https://github.com/LuckPerms/LuckPerms
