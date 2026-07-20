@@ -18,9 +18,11 @@
 
 package xaero.pac.common.server.parties.system.impl;
 
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftbteams.api.FTBTeamsAPI;
 import dev.ftb.mods.ftbteams.api.Team;
 import dev.ftb.mods.ftbteams.api.TeamRank;
+import dev.ftb.mods.ftbteams.api.property.ColorProperty;
 import dev.ftb.mods.ftbteams.api.property.TeamProperties;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
@@ -116,7 +118,10 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 
 	@Override
 	public int getColor(@Nonnull Team party) {
-		return party.getColor() & 0xFFFFFF;
+		Color4I colorProperty = party.getProperty(TeamProperties.COLOR);
+		if(colorProperty == null)
+			return -1;
+		return colorProperty.rgb() & 0xFFFFFF;
 	}
 
 }
