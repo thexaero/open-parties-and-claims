@@ -292,46 +292,33 @@ public class ChunkProtection
 	}
 
 	private InteractionTargetResult entityAccessCheck(IPlayerConfigManager playerConfigs, IPlayerConfig claimConfig, Entity e, Entity from, Entity accessor, UUID accessorId, boolean attack, boolean emptyHand, boolean exceptions) {
-		return entityAccessCheck(playerConfigs, claimConfig, e, from, accessor, accessorId, attack, emptyHand, exceptions, false);
+		InteractionTargetResult result = entityAccessCheck(claimConfig, e, from, accessor, accessorId, attack, emptyHand, exceptions);
+		if(result != InteractionTargetResult.PROTECT && e != accessor && e instanceof Player && accessor instanceof Player) {
+			InteractionTargetResult resultTheOtherWay = entityAccessCheck(getClaimConfig(playerConfigs, claimsManager.get(accessor.getLevel().dimension().location(), accessor.chunkPosition())), accessor, accessor == from ? e : from, e, null, attack, emptyHand, exceptions);
+			if(resultTheOtherWay != InteractionTargetResult.ALLOW)
+				return resultTheOtherWay;//returning the strongest protection out of the 2, so ALLOW can only happen when both are ALLOW
+		}
+		return result;
 	}
 
-	private InteractionTargetResult entityAccessCheck(IPlayerConfigManager playerConfigs, IPlayerConfig claimConfig, Entity e, Entity from, Entity accessor, UUID accessorId, boolean attack, boolean emptyHand, boolean exceptions, boolean checkingInverted) {
-		if(e instanceof Player && e != accessor) {
-			boolean chunkProtected = claimConfig.getEffective(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS);
-			InteractionTargetResult result = InteractionTargetResult.ALLOW;
-			if (chunkProtected) {
-				Entity usedOptionBase = claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_REDIRECT) ? accessor : from;
-				if (usedOptionBase == null) {
-					if (hasADisabledOption(claimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_MOBS, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_OTHER))
-						return InteractionTargetResult.PROTECT;
-				} else {
-					IPlayerConfigOptionSpecAPI<Boolean> option =
-							usedOptionBase instanceof Player ?
-								PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS :
-							usedOptionBase instanceof LivingEntity ?
-								PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_MOBS :
-								PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_OTHER;
-					if (!claimConfig.getEffective(option))
-						return InteractionTargetResult.PROTECT;
-				}
-				result = InteractionTargetResult.PASS;
-			}
-			if(accessor instanceof Player && !checkingInverted) {
-				//gotta check whether the attacked player can attack back the same way (melee/ranged)
-				return entityAccessCheck(playerConfigs, getClaimConfig(playerConfigs, claimsManager.get(accessor.getLevel().dimension().location(), accessor.chunkPosition())), accessor, accessor == from ? e : from, e, null, attack, emptyHand, exceptions, true);
-			}
-			return result;
-		}
-		if(hasChunkAccess(claimConfig, accessor, accessorId))
+	private InteractionTargetResult entityAccessCheck(IPlayerConfig claimConfig, Entity e, Entity from, Entity accessor, UUID accessorId, boolean attack, boolean emptyHand, boolean exceptions) {
+		boolean targetIsPlayer = e instanceof Player;
+		if((!targetIsPlayer || !attack) && hasChunkAccess(claimConfig, accessor, accessorId))
 			return InteractionTargetResult.ALLOW;
-		boolean isProtectable = !exceptions || isProtectable(e);
+		boolean isProtectable = !exceptions || targetIsPlayer || isProtectable(e);
 		if(isProtectable){
 			if(accessor instanceof Raider raider && raider.canJoinRaid() && !claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_RAIDS))//based on the accessor on purpose;
 				return InteractionTargetResult.PROTECT;
 		} else if(attack || emptyHand)
 			return InteractionTargetResult.ALLOW;
-		IPlayerConfigOptionSpecAPI<String> option = getUsedEntityExceptionOption(claimConfig, from, accessor);
-		boolean optionProtects = !checkPlayerGroupExceptionOption(option, claimConfig, accessor, accessorId);
+		boolean optionProtects;
+		if(targetIsPlayer){
+			IPlayerConfigOptionSpecAPI<Boolean> option = getUsedPlayerExceptionOption(claimConfig, from, accessor);
+			optionProtects = !claimConfig.getEffective(option);
+		} else {
+			IPlayerConfigOptionSpecAPI<String> option = getUsedEntityExceptionOption(claimConfig, from, accessor);
+			optionProtects = !checkPlayerGroupExceptionOption(option, claimConfig, accessor, accessorId);
+		}
 		if(!optionProtects && (attack || emptyHand || checkPlayerGroupExceptionOption(PlayerConfigOptions.CLAIM_EXCEPTION_ITEM_USE, claimConfig, accessor, accessorId)))
 			return InteractionTargetResult.ALLOW;
 		if(!exceptions)
@@ -362,6 +349,17 @@ public class ChunkProtection
 		if(!attack && forcedInteractionExceptionEntities.contains(entityType) && (emptyHand || !requiresEmptyHandEntities.contains(entityType)))
 			return InteractionTargetResult.PASS;
 		return InteractionTargetResult.PROTECT;
+	}
+
+	private IPlayerConfigOptionSpecAPI<Boolean> getUsedPlayerExceptionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
+		Entity usedOptionBase = !(entity instanceof Player) && claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_REDIRECT) ? accessor : entity;
+		if(usedOptionBase == null)
+			return getToughestExceptionOption(claimConfig, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_MOBS, PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_OTHER);
+		return usedOptionBase instanceof Player ?
+				PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS :
+				usedOptionBase instanceof LivingEntity ?
+				PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_MOBS :
+				PlayerConfigOptions.CLAIM_EXCEPTION_PLAYERS_BY_OTHER;
 	}
 
 	private IPlayerConfigOptionSpecAPI<String> getUsedEntityExceptionOption(IPlayerConfig claimConfig, Entity entity, Entity accessor){
@@ -1935,6 +1933,14 @@ public class ChunkProtection
 		return !config.getEffective(option1) || !config.getEffective(option2) || !config.getEffective(option3);
 	}
 
+	private IPlayerConfigOptionSpecAPI<Boolean> getToughestExceptionOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<Boolean> playerOption, IPlayerConfigOptionSpecAPI<Boolean> mobOption, IPlayerConfigOptionSpecAPI<Boolean> otherOption){
+		if(!config.getEffective(playerOption))
+			return playerOption;
+		if(!config.getEffective(mobOption))
+			return mobOption;
+		return otherOption;
+	}
+
 	private IPlayerConfigOptionSpecAPI<String> getToughestPlayerGroupExceptionOption(IPlayerConfig config, IPlayerConfigOptionSpecAPI<String> playerOption, IPlayerConfigOptionSpecAPI<String> mobOption, IPlayerConfigOptionSpecAPI<String> otherOption){
 		//The used option base is null, so offline; or possibly in another dimension, if it's not a player.
 		//Assume the worst and use the toughest protection.
@@ -2463,8 +2469,10 @@ public class ChunkProtection
 	private Component getInteractEntityMessage(InteractionHand hand, EntityType<?> entityType){
 		return getInteractMessage(
 				hand, Registry.ENTITY_TYPE_REGISTRY, entityType,
-				"gui.xaero_claims_protection_interact_entity",
-				"gui.xaero_claims_protection_interact_entity_any"
+				entityType == EntityType.PLAYER ?
+						"gui.xaero_claims_protection_interact_player" : "gui.xaero_claims_protection_interact_entity",
+				entityType == EntityType.PLAYER ?
+						"gui.xaero_claims_protection_interact_player_any" : "gui.xaero_claims_protection_interact_entity_any"
 		);
 	}
 

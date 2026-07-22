@@ -539,7 +539,8 @@ public class ServerConfig {
 							"Traders{minecraft:villager, minecraft:wandering_trader}",
 							"hand$Item_Frames{minecraft:item_frame}",
 							"break$Livestock{minecraft:cow, minecraft:mooshroom, minecraft:sheep, minecraft:chicken, minecraft:pig, minecraft:rabbit, minecraft:goat}",
-							"Armor_Stands{minecraft:armor_stand}"
+							"Armor_Stands{minecraft:armor_stand}",
+							"Players{minecraft:player}"
 					), s -> s instanceof String);
 
 		forcedEntityClaimBarrierList = builder
@@ -894,6 +895,7 @@ public class ServerConfig {
 							"claims.protection.exceptions.groups.entity.interact.Traders",
 							"claims.protection.exceptions.groups.entity.handInteract.Item_Frames",
 							"claims.protection.exceptions.groups.entity.interact.Armor_Stands",
+							"claims.protection.exceptions.groups.entity.interact.Players",
 							"claims.protection.exceptions.groups.entity.break.Livestock",
 							"claims.protection.exceptions.groups.entity.blockAccess.Villagers",
 							"claims.protection.exceptions.groups.entity.entityAccess.Zombies",

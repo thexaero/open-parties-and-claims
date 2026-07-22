@@ -22,7 +22,7 @@ import xaero.pac.common.server.io.ObjectManagerIOObject;
 
 public final class ServerInfo implements ObjectManagerIOObject {
 
-	public static final int CURRENT_VERSION = 2;
+	public static final int CURRENT_VERSION = 3;
 	private long totalUseTime;
 	private boolean dirty;
 	private final int loadedVersion;

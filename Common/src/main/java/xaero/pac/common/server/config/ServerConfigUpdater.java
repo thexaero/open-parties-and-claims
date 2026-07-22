@@ -56,6 +56,11 @@ public class ServerConfigUpdater {
 			updatedEntitiesAllowedToGriefEntities.add("interact$minecraft:egg");
 			ServerConfig.CONFIG.entitiesAllowedToGriefEntities.set(updatedEntitiesAllowedToGriefEntities);
 		}
+		if(serverInfo.getLoadedVersion() < 3) {
+			List<String> updatedEntityProtectionOptionalExceptionGroups = new ArrayList<>(ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups.get());
+			updatedEntityProtectionOptionalExceptionGroups.add("Players{minecraft:player}");
+			ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups.set(updatedEntityProtectionOptionalExceptionGroups);
+		}
 		updatePlayerConfigurablePlayerConfigOptions(serverInfo);
 		if(serverInfo.getLoadedVersion() < ServerInfo.CURRENT_VERSION)
 			serverInfo.setDirty(true);
