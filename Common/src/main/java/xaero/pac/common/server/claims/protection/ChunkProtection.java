@@ -2540,7 +2540,11 @@ public class ChunkProtection
 		if(hand == null || messageKey == null)
 			result = new TranslatableComponent(messageAnyKey, objectKey);
 		else
-			result = new TranslatableComponent(messageKey, hand, objectKey);
+			result = new TranslatableComponent(
+					messageKey,
+					hand == InteractionHand.MAIN_HAND ? MAIN_HAND : OFF_HAND,
+					objectKey
+			);
 		result = result.withStyle(s -> s.withColor(ChatFormatting.RED));
 		return result;
 	}
