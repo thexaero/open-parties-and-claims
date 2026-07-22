@@ -29,7 +29,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -112,31 +114,10 @@ public class ChunkProtection
 
 	private final Component MAIN_HAND = new TranslatableComponent("gui.xaero_claims_protection_main_hand");
 	private final Component OFF_HAND = new TranslatableComponent("gui.xaero_claims_protection_off_hand");
-	private final Component CANT_INTERACT_BLOCK = new TranslatableComponent("gui.xaero_claims_protection_interact_block_any").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_INTERACT_BLOCK_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component BLOCK_DISABLED = new TranslatableComponent("gui.xaero_claims_protection_block_disabled").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component PROJECTILE_HIT_BLOCK = new TranslatableComponent("gui.xaero_claims_protection_projectile_hit_block").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component USE_ITEM_ANY = new TranslatableComponent("gui.xaero_claims_protection_use_item_any").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component USE_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_use_item", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_INTERACT_ENTITY = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_any").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_INTERACT_ENTITY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ENTITY_DISABLED = new TranslatableComponent("gui.xaero_claims_protection_entity_disabled").withStyle(s -> s.withColor(ChatFormatting.RED));
-	public final Component PROJECTILE_HIT_ENTITY = new TranslatableComponent("gui.xaero_claims_protection_projectile_hit_entity").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_APPLY_ITEM_ANY = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_any").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_APPLY_ITEM_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_APPLY_ITEM_THIS_CLOSE_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_too_close", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ITEM_DISABLED_ANY = new TranslatableComponent("gui.xaero_claims_protection_item_disabled_any").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ITEM_DISABLED_MAIN = new TranslatableComponent("gui.xaero_claims_protection_item_disabled", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
-	private final Component CANT_INTERACT_BLOCK_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component BLOCK_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component USE_ITEM_OFF = new TranslatableComponent("gui.xaero_claims_protection_use_item", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_APPLY_ITEM_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_APPLY_ITEM_THIS_CLOSE_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_item_apply_too_close", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ITEM_DISABLED_OFF = new TranslatableComponent("gui.xaero_claims_protection_item_disabled", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_INTERACT_ENTITY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 	private final Component ENTITY_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final Component CANT_CHORUS = new TranslatableComponent("gui.xaero_claims_protection_chorus").withStyle(s -> s.withColor(ChatFormatting.RED));
@@ -753,7 +734,7 @@ public class ChunkProtection
 		InteractionTargetResult result = blockAccessCheck(block, config, entity, accessor, accessorId, emptyHand, leftClick, false);
 		if(result == InteractionTargetResult.PROTECT) {
 			if(messageReceiver instanceof ServerPlayer player) {
-				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == null ? CANT_INTERACT_BLOCK : hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_BLOCK_MAIN : CANT_INTERACT_BLOCK_OFF), player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getInteractBlockMessage(hand, block)), player.getUUID());
 				if (message != null)
 					player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, message), player.getUUID());
 			}
@@ -779,7 +760,7 @@ public class ChunkProtection
 		Entity messageReceiver = !messages ? null : accessor == null ? entity : accessor;
 		if(completelyDisabledBlocks.contains(block)){
 			if(messageReceiver instanceof ServerPlayer player)
-				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, BLOCK_DISABLED), player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getDisabledBlockMessage(block)), player.getUUID());
 			return true;
 		}
 		if(entity != null && hasActiveFullPass(entity))//uses custom protection
@@ -918,7 +899,7 @@ public class ChunkProtection
 		Item item = itemStack.getItem();
 		if(completelyDisabledItems.contains(item)) {
 			if(messages && entity instanceof ServerPlayer serverPlayer)
-				entity.sendMessage(serverData.getAdaptiveLocalizer().getFor(serverPlayer, hand == null ? ITEM_DISABLED_ANY : hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF), serverPlayer.getUUID());
+				entity.sendMessage(serverData.getAdaptiveLocalizer().getFor(serverPlayer, getDisabledItemMessage(hand, item)), serverPlayer.getUUID());
 			return true;
 		}
 		if(hasActiveFullPass(entity))
@@ -957,7 +938,7 @@ public class ChunkProtection
 				}
 		}
 		if(messages && shouldProtect && entity instanceof ServerPlayer)
-			entity.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, hand == null ? USE_ITEM_ANY : hand == InteractionHand.MAIN_HAND ? USE_ITEM_MAIN : USE_ITEM_OFF), entity.getUUID());
+			entity.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) entity, getUseItemMessage(hand, item)), entity.getUUID());
 		return shouldProtect;
 	}
 
@@ -1003,7 +984,7 @@ public class ChunkProtection
 		Entity messageReceiver = !messages ? null : (interactingEntityIndirect == null ? interactingEntity : interactingEntityIndirect);
 		if (!attack && completelyDisabledEntities.contains(target.getType())) {
 			if (hand != InteractionHand.OFF_HAND && messageReceiver instanceof ServerPlayer player)
-				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, ENTITY_DISABLED), player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getDisabledEntityMessage(target.getType())), player.getUUID());
 			return true;
 		}
 		if (interactingEntity != null && hasActiveFullPass(interactingEntity))//uses custom protection
@@ -1038,7 +1019,7 @@ public class ChunkProtection
 			//checking checkEntityExceptions before shouldProtectEntity so that ALLOW isn't overridden with PASS
 			if (targetResult == InteractionTargetResult.PROTECT) {
 				if (messageReceiver instanceof ServerPlayer player) {
-					messageReceiver.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == null ? CANT_INTERACT_ENTITY : hand == InteractionHand.MAIN_HAND ? CANT_INTERACT_ENTITY_MAIN : CANT_INTERACT_ENTITY_OFF), player.getUUID());
+					messageReceiver.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getInteractEntityMessage(hand, target.getType())), player.getUUID());
 					if (needsItemCheck) {
 						Component message = hand == InteractionHand.MAIN_HAND ? ENTITY_TRY_EMPTY_MAIN : ENTITY_TRY_EMPTY_OFF;
 						messageReceiver.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, message), player.getUUID());
@@ -1374,7 +1355,7 @@ public class ChunkProtection
 			return false;
 		if(completelyDisabledItems.contains(itemStack.getItem())) {
 			if(messages && entity instanceof ServerPlayer player)
-				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == InteractionHand.MAIN_HAND ? ITEM_DISABLED_MAIN : ITEM_DISABLED_OFF), player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getDisabledItemMessage(hand, itemStack.getItem())), player.getUUID());
 			return true;
 		}
 		if(entity != null && hasActiveFullPass(entity))//uses custom protection
@@ -1388,7 +1369,7 @@ public class ChunkProtection
 			if (additionalBannedItems.contains(itemStack.getItem()) &&
 					onItemRightClick(serverData, hand, itemStack, pos, living, false)) {//only configured items on purpose
 				if(messages && living instanceof ServerPlayer)
-					living.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) living, hand == null ? CANT_APPLY_ITEM_ANY : hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_THIS_CLOSE_MAIN : CANT_APPLY_ITEM_THIS_CLOSE_OFF), living.getUUID());
+					living.sendMessage(serverData.getAdaptiveLocalizer().getFor((ServerPlayer) living, getApplyItemCloseMessage(hand, itemStack.getItem())), living.getUUID());
 				return true;
 			}
 		}
@@ -1405,7 +1386,7 @@ public class ChunkProtection
 			|| !itemUseAtOffsetAllowed && pos2 != null && !(chunkPos2 = new ChunkPos(pos2)).equals(chunkPos) && applyItemAccessCheck(serverData, chunkPos2, entity, world, itemStack)
 				){
 			if(messages && entity instanceof ServerPlayer player)
-				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, hand == null ? CANT_APPLY_ITEM_ANY : hand == InteractionHand.MAIN_HAND ? CANT_APPLY_ITEM_MAIN : CANT_APPLY_ITEM_OFF), player.getUUID());
+				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getApplyItemMessage(hand, itemStack.getItem())), player.getUUID());
 			return true;
 		}
 		return false;
@@ -2185,7 +2166,7 @@ public class ChunkProtection
 	public boolean onProjectileEntityImpact(IServerData<CM, ?> serverData, Projectile projectile, EntityHitResult hitResult){
 		boolean shouldProtect = onEntityInteraction(serverData, projectile.getOwner(), projectile, hitResult.getEntity(), null, null, false, false, false);
 		if(shouldProtect && projectile.getOwner() instanceof ServerPlayer player)
-			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, serverData.getChunkProtection().PROJECTILE_HIT_ENTITY), player.getUUID());
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getProjectileEntityImpactMessage(projectile.getType())), player.getUUID());
 		return shouldProtect;
 	}
 
@@ -2200,7 +2181,7 @@ public class ChunkProtection
 			shouldProtect = onBlockInteraction(serverData, null, projectile, null, null, world, offPos, null, false, false);
 		}
 		if(shouldProtect && projectile.getOwner() instanceof ServerPlayer player)
-			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, PROJECTILE_HIT_BLOCK), player.getUUID());
+			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getProjectileBlockImpactMessage(projectile.getType())), player.getUUID());
 		return shouldProtect;
 	}
 
@@ -2453,6 +2434,111 @@ public class ChunkProtection
 			playerData.setLastClaimsOverLimitMessageTime(time);
 		}
 		return true;
+	}
+
+	private Component getUseItemMessage(InteractionHand hand, Item item){
+		return getInteractMessage(
+				hand, Registry.ITEM_REGISTRY, item,
+				"gui.xaero_claims_protection_use_item",
+				"gui.xaero_claims_protection_use_item_any"
+		);
+	}
+
+	private Component getApplyItemMessage(InteractionHand hand, Item item){
+		return getInteractMessage(
+				hand, Registry.ITEM_REGISTRY, item,
+				"gui.xaero_claims_protection_interact_item_apply",
+				"gui.xaero_claims_protection_interact_item_apply_any"
+		);
+	}
+
+	private Component getApplyItemCloseMessage(InteractionHand hand, Item item){
+		return getInteractMessage(
+				hand, Registry.ITEM_REGISTRY, item,
+				"gui.xaero_claims_protection_interact_item_apply_too_close",
+				"gui.xaero_claims_protection_interact_item_apply_any"//not an accident that it's the same as for getApplyItemMessage
+		);
+	}
+
+	private Component getInteractEntityMessage(InteractionHand hand, EntityType<?> entityType){
+		return getInteractMessage(
+				hand, Registry.ENTITY_TYPE_REGISTRY, entityType,
+				"gui.xaero_claims_protection_interact_entity",
+				"gui.xaero_claims_protection_interact_entity_any"
+		);
+	}
+
+	private Component getDisabledEntityMessage(EntityType<?> entityType){
+		return getInteractMessage(
+				null, Registry.ENTITY_TYPE_REGISTRY, entityType,
+				null,
+				"gui.xaero_claims_protection_entity_disabled"
+		);
+	}
+
+	private Component getDisabledItemMessage(InteractionHand hand, Item item){
+		return getInteractMessage(
+				hand, Registry.ITEM_REGISTRY, item,
+				"gui.xaero_claims_protection_item_disabled",
+				"gui.xaero_claims_protection_item_disabled_any"
+		);
+	}
+
+	private Component getInteractBlockMessage(InteractionHand hand, BlockState blockState){
+		return getInteractBlockMessage(hand, blockState.getBlock());
+	}
+
+	private Component getInteractBlockMessage(InteractionHand hand, Block block){
+		return getInteractMessage(
+				hand, Registry.BLOCK_REGISTRY, block,
+				"gui.xaero_claims_protection_interact_block",
+				"gui.xaero_claims_protection_interact_block_any"
+		);
+	}
+
+	private Component getDisabledBlockMessage(Block block){
+		return getInteractMessage(
+				null, Registry.BLOCK_REGISTRY, block,
+				null,
+				"gui.xaero_claims_protection_block_disabled"
+		);
+	}
+
+	private Component getProjectileBlockImpactMessage(EntityType<?> entityType){
+		return getInteractMessage(
+				null, Registry.ENTITY_TYPE_REGISTRY, entityType,
+				null,
+				"gui.xaero_claims_protection_projectile_hit_block"
+		);
+	}
+
+	private Component getProjectileEntityImpactMessage(EntityType<?> entityType){
+		return getInteractMessage(
+				null, Registry.ENTITY_TYPE_REGISTRY, entityType,
+				null,
+				"gui.xaero_claims_protection_projectile_hit_entity"
+		);
+	}
+
+	private <T> Component getInteractMessage(
+			InteractionHand hand,
+			ResourceKey<? extends Registry<? extends T>> registryKey,
+			T object,
+			String messageKey,
+			String messageAnyKey
+	){
+		ResourceLocation objectKey = getRegistry(registryKey).getKey(object);
+		MutableComponent result;
+		if(hand == null || messageKey == null)
+			result = new TranslatableComponent(messageAnyKey, objectKey);
+		else
+			result = new TranslatableComponent(messageKey, hand, objectKey);
+		result = result.withStyle(s -> s.withColor(ChatFormatting.RED));
+		return result;
+	}
+
+	private <T> Registry<T> getRegistry(ResourceKey<? extends Registry<? extends T>> registryKey){
+		return serverData.getServer().registryAccess().registryOrThrow(registryKey);
 	}
 
 	public void updateTagExceptions(MinecraftServer server){
