@@ -35,6 +35,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue playerSubConfigLimit;
 	public final ForgeConfigSpec.IntValue partyExpirationTime;
 	public final ForgeConfigSpec.IntValue partyExpirationCheckInterval;
+	public final ForgeConfigSpec.BooleanValue partyChatLogging;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
@@ -200,6 +201,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_party_expiration_check_interval")
 			.worldRestart()
 			.defineInRange("partyExpirationCheckInterval", 6 * 60, 10, Integer.MAX_VALUE);
+
+		partyChatLogging = builder
+			.comment("Whether all party chat messages should be added to the server logs like with other types of messages. The messages are not encrypted/private either way.")
+			.translation("gui.xaero_pac_config_party_chat_logging")
+			.worldRestart()
+			.define("partyChatLogging", true);
 		
 		builder.pop();
 		

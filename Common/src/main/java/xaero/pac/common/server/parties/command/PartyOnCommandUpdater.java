@@ -23,10 +23,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
@@ -55,6 +57,10 @@ public class PartyOnCommandUpdater {
 				)
 		);
 
+		if(ServerConfig.CONFIG.partyChatLogging.get()) {
+			String logMessage = partyNameComponent.getString() + massMessageContent.getString();
+			OpenPartiesAndClaims.LOGGER.info(logMessage);
+		}
 		MinecraftServer server = serverData.getServer();
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 		party.getOnlineMemberStream().forEach(memberPlayer -> {
