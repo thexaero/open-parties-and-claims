@@ -982,7 +982,7 @@ public class ChunkProtection
 		if (!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		Entity messageReceiver = !messages ? null : (interactingEntityIndirect == null ? interactingEntity : interactingEntityIndirect);
-		if (!attack && completelyDisabledEntities.contains(target.getType())) {
+		if (targetExceptions && !attack && completelyDisabledEntities.contains(target.getType())) {
 			if (hand != InteractionHand.OFF_HAND && messageReceiver instanceof ServerPlayer player)
 				player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, getDisabledEntityMessage(target.getType())), player.getUUID());
 			return true;
