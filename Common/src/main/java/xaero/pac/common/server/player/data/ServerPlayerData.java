@@ -94,6 +94,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private boolean syncedConfigAdmin;
 	private long allowedClaimAccessOverLimitTick;
 	private long lastClaimsOverLimitMessageTime;
+	private boolean partiesAdminMode;
 
 	public ServerPlayerData(
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -389,6 +390,14 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public long getLastClaimsOverLimitMessageTime() {
 		return lastClaimsOverLimitMessageTime;
+	}
+
+	public boolean isPartiesAdminMode() {
+		return partiesAdminMode;
+	}
+
+	public void setPartiesAdminMode(boolean partiesAdminMode) {
+		this.partiesAdminMode = partiesAdminMode;
 	}
 
 	private ServerPlayer getPlayer(){

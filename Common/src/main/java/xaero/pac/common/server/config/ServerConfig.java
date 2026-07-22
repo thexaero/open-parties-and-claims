@@ -36,6 +36,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue partyExpirationTime;
 	public final ForgeConfigSpec.IntValue partyExpirationCheckInterval;
 	public final ForgeConfigSpec.BooleanValue partyChatLogging;
+	public final ForgeConfigSpec.ConfigValue<String> partiesAdminModePermission;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
@@ -92,7 +93,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
 	public final ForgeConfigSpec.ConfigValue<String> serverClaimPermission;
-	public final ForgeConfigSpec.ConfigValue<String> adminModePermission;
+	public final ForgeConfigSpec.ConfigValue<String> claimsAdminModePermission;
 	public final ForgeConfigSpec.ConfigValue<String> permissionSystem;
 	public final ForgeConfigSpec.ConfigValue<String> primaryPartySystem;
 	public final ForgeConfigSpec.BooleanValue partyOwnedClaims;
@@ -207,6 +208,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_party_chat_logging")
 			.worldRestart()
 			.define("partyChatLogging", true);
+
+		partiesAdminModePermission = builder
+			.comment("The permission that gives non-OP players the ability to enable party admin mode. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_parties_admin_mode_permission")
+			.worldRestart()
+			.define("adminModePermission", UsedPermissionNodes.PARTIES_ADMIN_MODE.getDefaultNodeString());
 		
 		builder.pop();
 		
@@ -337,11 +344,11 @@ public class ServerConfig {
 			.worldRestart()
 			.define("serverClaimPermission", UsedPermissionNodes.SERVER_CLAIMS.getDefaultNodeString());
 
-		adminModePermission = builder
+		claimsAdminModePermission = builder
 			.comment("The permission that gives non-OP players the ability to enable claim admin mode. The used permission system can be configured with \"permissionSystem\".")
-			.translation("gui.xaero_pac_config_admin_mode_permission")
+			.translation("gui.xaero_pac_config_claims_admin_mode_permission")
 			.worldRestart()
-			.define("adminModePermission", UsedPermissionNodes.ADMIN_MODE.getDefaultNodeString());
+			.define("adminModePermission", UsedPermissionNodes.CLAIMS_ADMIN_MODE.getDefaultNodeString());
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")

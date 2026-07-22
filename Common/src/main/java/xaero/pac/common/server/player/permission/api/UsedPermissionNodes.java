@@ -67,14 +67,14 @@ public class UsedPermissionNodes {
 			ALL_BUILDER);
 
 	/**
-	 * The permission to enter admin mode.
+	 * The permission to enter admin mode for claims.
 	 */
-	public static final IPermissionNodeAPI<Boolean> ADMIN_MODE = new PermissionNode<>(
-			"xaero.pac_admin_mode",
+	public static final IPermissionNodeAPI<Boolean> CLAIMS_ADMIN_MODE = new PermissionNode<>(
+			"xaero.pac_claims_admin_mode",
 			Boolean.class,
-			() -> ServerConfig.CONFIG.adminModePermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_admin_mode"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_admin_mode"),
+			() -> ServerConfig.CONFIG.claimsAdminModePermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_claims_admin_mode"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_admin_mode"),
 			ALL_BUILDER);
 
 	/**
@@ -97,6 +97,17 @@ public class UsedPermissionNodes {
 			() -> ServerConfig.CONFIG.playerGroupSpacePermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_player_group_space"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_player_group_space"),
+			ALL_BUILDER);
+
+	/**
+	 * The permission to enter admin mode for parties.
+	 */
+	public static final IPermissionNodeAPI<Boolean> PARTIES_ADMIN_MODE = new PermissionNode<>(
+			"xaero.pac_parties_admin_mode",
+			Boolean.class,
+			() -> ServerConfig.CONFIG.partiesAdminModePermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_parties_admin_mode"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_parties_admin_mode"),
 			ALL_BUILDER);
 
 	/**

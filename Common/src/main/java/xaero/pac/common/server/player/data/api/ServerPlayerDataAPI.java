@@ -89,6 +89,13 @@ public abstract class ServerPlayerDataAPI {
 	public abstract IClaimingModeAPI getRawClaimingMode();
 
 	/**
+	 * Checks if this player is using the parties admin mode.
+	 *
+	 * @return true if the player is in parties admin mode, otherwise false
+	 */
+	public abstract boolean isPartiesAdminMode();
+
+	/**
 	 * Gets the player data for a specified logged in player.
 	 *
 	 * @param player  the player, not null

@@ -40,6 +40,7 @@ public class PartyCommandRegister {
 		new RankPartyCommand().register(dispatcher, environment, commandRequirementProvider);
 		new MessagePartyCommand().register(dispatcher, environment, commandRequirementProvider);
 		new TransferPartyCommand().register(dispatcher, environment, commandRequirementProvider);
+		new PartyAdminModeCommand().register(dispatcher, environment, commandRequirementProvider);
 	}
 
 }
