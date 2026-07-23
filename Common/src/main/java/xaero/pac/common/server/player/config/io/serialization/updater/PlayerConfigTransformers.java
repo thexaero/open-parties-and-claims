@@ -250,6 +250,16 @@ public class PlayerConfigTransformers {
 		transformers.add(//13
 				new PlayerConfigConfigurableAdder(ImmutableList.of("claims.protection.exceptions.groups.entity.playerAccess.Zombies"))
 		);
+
+		transformers.add(//14
+				new PlayerConfigOptionRenamer(
+						o -> o.startsWith("playerConfig.claims.protection.exceptions.groups.entity.entityKillAccess."),
+						oldPath -> {
+							String optionName = oldPath.substring(oldPath.lastIndexOf('.') + 1);
+							return "playerConfig.claims.protection.exceptions.groups.entity.entityAttackAccess." + optionName;
+						}
+				)
+		);
 	}
 
 }

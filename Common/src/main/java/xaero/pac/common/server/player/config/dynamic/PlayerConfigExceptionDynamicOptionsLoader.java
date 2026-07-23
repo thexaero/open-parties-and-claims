@@ -43,7 +43,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 	public static final String BLOCK_BREAK_ACCESS = "blockBreakAccess";
 	public static final String BLOCK_INTERACT_ACCESS = "blockInteractAccess";
 	public static final String ENTITY_ACCESS = "entityAccess";
-	public static final String ENTITY_BREAK_ACCESS = "entityKillAccess";
+	public static final String ENTITY_BREAK_ACCESS = "entityAttackAccess";
 	public static final String ENTITY_INTERACT_ACCESS = "entityInteractAccess";
 	public static final String PLAYER_ACCESS = "playerAccess";
 	public static final String PLAYER_BREAK_ACCESS = "playerAttackAccess";
@@ -120,7 +120,7 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 						ENTITY_BREAK_ACCESS;
 				accessName = group.getSubjectType() == Block.class ? "block breaking" :
 						group.getSubjectType() == Player.class ? "player attacking" :
-						"entity killing";
+						"entity attacking";
 			} else {
 				accessType = group.getSubjectType() == Block.class ? BLOCK_INTERACT_ACCESS :
 						group.getSubjectType() == Player.class ? PLAYER_INTERACT_ACCESS :
