@@ -70,6 +70,10 @@ public class ServerConfigUpdater {
 			updatedEntitiesAllowedToGriefEntities.add("interact$minecraft:shulker_bullet");
 			ServerConfig.CONFIG.entitiesAllowedToGriefEntities.set(updatedEntitiesAllowedToGriefEntities);
 		}
+		if(serverInfo.getLoadedVersion() < 5) {
+			List<String> entitiesAllowedToGriefEntitiesCopy = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGriefEntities.get());
+			ServerConfig.CONFIG.entitiesAllowedToAccessPlayers.set(entitiesAllowedToGriefEntitiesCopy);
+		}
 		updatePlayerConfigurablePlayerConfigOptions(serverInfo);
 		if(serverInfo.getLoadedVersion() < ServerInfo.CURRENT_VERSION)
 			serverInfo.setDirty(true);

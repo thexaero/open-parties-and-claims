@@ -246,6 +246,10 @@ public class PlayerConfigTransformers {
 		transformers.add(//12
 				new PlayerConfigConfigurableAdder(ImmutableList.of("claims.protection.exceptions.groups.entity.interact.Players"))
 		);
+
+		transformers.add(//13
+				new PlayerConfigConfigurableAdder(ImmutableList.of("claims.protection.exceptions.groups.entity.playerAccess.Zombies"))
+		);
 	}
 
 }

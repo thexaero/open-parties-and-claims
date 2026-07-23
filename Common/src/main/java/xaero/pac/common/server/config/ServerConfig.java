@@ -54,12 +54,15 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierOptionalGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefEntities;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToAccessPlayers;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefDroppedItems;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> nonBlockGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityGriefingMobs;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> playerGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemGriefingMobs;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockAccessEntityGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityAccessEntityGroups;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> playerAccessEntityGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> droppedItemAccessEntityGroups;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayers;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> staticFakePlayerClassExceptions;
@@ -570,7 +573,7 @@ public class ServerConfig {
 
 		entitiesAllowedToGrief = builder
 			.comment("""
-					Entities that can bypass all block protection. Supports entity type tags.
+					Entities that can bypass block protection. Supports entity type tags.
 					Prefixing an entity id/tag with "interact$" creates an exception which tries to exclude block breaking.
 					Prefixing an entity id/tag with "break$" creates an exception that only includes block breaking.
 					Leaving an entity id/tag without a prefix creates an exception that includes all block interactions.
@@ -584,7 +587,7 @@ public class ServerConfig {
 			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:sheep", "interact$minecraft:potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
 		entitiesAllowedToGriefEntities = builder
 			.comment("""
-					Entities that can bypass all protection of other entities. Supports entity type tags.
+					Entities that can bypass protection of other entities. Supports entity type tags.
 					Prefixing an entity id/tag with "interact$" creates an exception which tries to exclude attacks.
 					Prefixing an entity id/tag with "break$" creates an exception that only includes attacks.
 					Leaving an entity id/tag without a prefix creates an exception that includes all entity interactions.
@@ -596,6 +599,20 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief_entities")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), () -> Lists.newArrayList("interact$minecraft:potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
+		entitiesAllowedToAccessPlayers = builder
+			.comment("""
+					Entities that can bypass protection of players. Supports entity type tags.
+					Prefixing an entity id/tag with "interact$" creates an exception which tries to exclude attacks.
+					Prefixing an entity id/tag with "break$" creates an exception that only includes attacks.
+					Leaving an entity id/tag without a prefix creates an exception that includes all interactions with players.
+					Projectiles landing on players is considered a non-attack interaction first, even if it can result in an attack,
+					which is protected separately afterwards.
+					Projectile landing on players requires non-attack entity access through this option or playerAccessEntityGroups.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
+			.translation("gui.xaero_pac_config_entities_allowed_to_grief_players")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToAccessPlayers"), () -> Lists.newArrayList("interact$minecraft:potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
 		entitiesAllowedToGriefDroppedItems = builder
 			.comment("""
 					Entities that can bypass all dropped item protection. Supports entity type tags.
@@ -629,6 +646,18 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_entity_griefers")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entityGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
+		playerGriefingMobs = builder
+			.comment(
+					"""
+					(Forge-only option) Mobs that can grief players in ways other than attacking them. This list is used when overriding the vanilla "mob griefing" game rule value.
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the player protection option to be checked as well when the rule is checked.
+					Check out the "nonBlockGriefingMobs" option if you want to also remove the default block protection check for the mob.
+					Supports entity type tags. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]"""
+			)
+			.translation("gui.xaero_pac_config_player_griefers")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("playerGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
 		droppedItemGriefingMobs = builder
 			.comment(
 					"""
@@ -682,6 +711,27 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_entity_access_entity_groups")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entityAccessEntityGroups"),
+					() -> Lists.newArrayList(
+							"Zombies{minecraft:zombie, minecraft:zombie_villager, minecraft:husk, minecraft:drowned}"
+					), s -> s instanceof String);
+		playerAccessEntityGroups = builder
+			.comment("""
+					Custom groups of entities that a player/claim config should be able to make player access exceptions for (e.g. letting zombies kill players).
+					Each group can consist of multiple entities and entity tags. The format for an entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{minecraft:pig, minecraft:c(ow|at), #minecraft:beehive_inhabitors}".
+					The group can be prefixed with "interact$" to create an exception that tries to exclude attacks.
+					The group can be prefixed with "break$" to create an exception that only includes attacks.
+					The group can be left without a prefix to create an exception that includes all interactions with players.
+					Projectiles landing on players is considered a non-attack interaction first, even if it can result in an attack,
+					which is protected separately afterwards.
+					Projectile landing on players requires non-attack player access through this option or entitiesAllowedToAccessPlayers.
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
+			)
+			.translation("gui.xaero_pac_config_player_access_entity_groups")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("playerAccessEntityGroups"),
 					() -> Lists.newArrayList(
 							"Zombies{minecraft:zombie, minecraft:zombie_villager, minecraft:husk, minecraft:drowned}"
 					), s -> s instanceof String);
@@ -899,6 +949,7 @@ public class ServerConfig {
 							"claims.protection.exceptions.groups.entity.break.Livestock",
 							"claims.protection.exceptions.groups.entity.blockAccess.Villagers",
 							"claims.protection.exceptions.groups.entity.entityAccess.Zombies",
+							"claims.protection.exceptions.groups.entity.playerAccess.Zombies",
 							"claims.protection.exceptions.groups.entity.droppedItemAccess.Villagers",
 							"claims.protection.exceptions.groups.entity.droppedItemAccess.Piglins",
 							"claims.protection.exceptions.groups.entity.droppedItemAccess.Foxes",

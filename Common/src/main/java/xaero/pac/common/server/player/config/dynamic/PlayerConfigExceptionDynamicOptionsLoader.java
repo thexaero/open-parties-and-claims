@@ -19,6 +19,7 @@
 package xaero.pac.common.server.player.config.dynamic;
 
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.player.config.PlayerConfigConstants;
@@ -44,6 +45,9 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 	public static final String ENTITY_ACCESS = "entityAccess";
 	public static final String ENTITY_BREAK_ACCESS = "entityKillAccess";
 	public static final String ENTITY_INTERACT_ACCESS = "entityInteractAccess";
+	public static final String PLAYER_ACCESS = "playerAccess";
+	public static final String PLAYER_BREAK_ACCESS = "playerAttackAccess";
+	public static final String PLAYER_INTERACT_ACCESS = "playerInteractAccess";
 	public static final String DROPPED_ITEM_ACCESS = "droppedItemAccess";
 
 	<T> void handleGroup(ChunkProtectionExceptionGroup<T> group, PlayerConfigDynamicOptions.Builder builder, String category, String categoryPlural){
@@ -93,10 +97,12 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 			String accessType =
 					group.getSubjectType() == Block.class ? BLOCK_ACCESS :
 					group.getSubjectType() == EntityType.class ? ENTITY_ACCESS :
+					group.getSubjectType() == Player.class ? PLAYER_ACCESS :
 							DROPPED_ITEM_ACCESS;
 			String accessName =
 					group.getSubjectType() == Block.class ? "block" :
 					group.getSubjectType() == EntityType.class ? "entity" :
+					group.getSubjectType() == Player.class ? "player" :
 							"dropped item";
 			optionId = OPTION_ROOT + category + "." + accessType;
 			comment = "When a player group is chosen, claimed chunk protection makes an exception for unlimited " + accessName +
@@ -110,14 +116,18 @@ public class PlayerConfigExceptionDynamicOptionsLoader {
 			String accessName;
 			if(group.getType() == ChunkProtectionExceptionType.BREAK) {
 				accessType = group.getSubjectType() == Block.class ? BLOCK_BREAK_ACCESS :
-								ENTITY_BREAK_ACCESS;
+						group.getSubjectType() == Player.class ? PLAYER_BREAK_ACCESS :
+						ENTITY_BREAK_ACCESS;
 				accessName = group.getSubjectType() == Block.class ? "block breaking" :
-								"entity killing";
+						group.getSubjectType() == Player.class ? "player attacking" :
+						"entity killing";
 			} else {
 				accessType = group.getSubjectType() == Block.class ? BLOCK_INTERACT_ACCESS :
-								ENTITY_INTERACT_ACCESS;
+						group.getSubjectType() == Player.class ? PLAYER_INTERACT_ACCESS :
+						ENTITY_INTERACT_ACCESS;
 				accessName = group.getSubjectType() == Block.class ? "block interaction" :
-								"entity interaction";
+						group.getSubjectType() == Player.class ? "player interaction" :
+						"entity interaction";
 			}
 			optionId = OPTION_ROOT + category + "." + accessType;
 			comment = "When a player group is chosen, claimed chunk protection makes an exception for " + accessName +
