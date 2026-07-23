@@ -2612,6 +2612,10 @@ public class ChunkProtection
 		entityExceptionGroups.values().forEach(g -> g.updateTagExceptions(server));
 		itemExceptionGroups.values().forEach(g -> g.updateTagExceptions(server));
 		entityBarrierGroups.values().forEach(g -> g.updateTagExceptions(server));
+		blockAccessEntityGroups.values().forEach(g -> g.updateTagExceptions(server));
+		entityAccessEntityGroups.values().forEach(g -> g.updateTagExceptions(server));
+		playerAccessEntityGroups.values().forEach(g -> g.updateTagExceptions(server));
+		droppedItemAccessEntityGroups.values().forEach(g -> g.updateTagExceptions(server));
 	}
 
 	public void onServerTick(){
