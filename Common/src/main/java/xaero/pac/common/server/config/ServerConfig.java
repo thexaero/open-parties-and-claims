@@ -581,7 +581,7 @@ public class ServerConfig {
 					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:sheep", "interact$minecraft:potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:sheep", "interact$minecraft:potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
 		entitiesAllowedToGriefEntities = builder
 			.comment("""
 					Entities that can bypass all protection of other entities. Supports entity type tags.
@@ -595,7 +595,7 @@ public class ServerConfig {
 					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief_entities")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), () -> Lists.newArrayList("interact$minecraft:potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), () -> Lists.newArrayList("interact$minecraft:potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
 		entitiesAllowedToGriefDroppedItems = builder
 			.comment("""
 					Entities that can bypass all dropped item protection. Supports entity type tags.

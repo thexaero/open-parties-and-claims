@@ -61,6 +61,15 @@ public class ServerConfigUpdater {
 			updatedEntityProtectionOptionalExceptionGroups.add("Players{minecraft:player}");
 			ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups.set(updatedEntityProtectionOptionalExceptionGroups);
 		}
+		if(serverInfo.getLoadedVersion() < 4) {
+			List<String> updatedEntitiesAllowedToGrief = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGrief.get());
+			updatedEntitiesAllowedToGrief.add("interact$minecraft:shulker_bullet");
+			ServerConfig.CONFIG.entitiesAllowedToGrief.set(updatedEntitiesAllowedToGrief);
+
+			List<String> updatedEntitiesAllowedToGriefEntities = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGriefEntities.get());
+			updatedEntitiesAllowedToGriefEntities.add("interact$minecraft:shulker_bullet");
+			ServerConfig.CONFIG.entitiesAllowedToGriefEntities.set(updatedEntitiesAllowedToGriefEntities);
+		}
 		updatePlayerConfigurablePlayerConfigOptions(serverInfo);
 		if(serverInfo.getLoadedVersion() < ServerInfo.CURRENT_VERSION)
 			serverInfo.setDirty(true);
