@@ -69,7 +69,7 @@ public class ServerClaimsPermissionHandler {
 		IPlayerPermissionSystemAPI permissionSystem = getSystem();
 		if(permissionSystem == null)
 			return false;
-		return permissionSystem.getPermission(player, UsedPermissionNodes.ADMIN_MODE);
+		return permissionSystem.getPermission(player, UsedPermissionNodes.CLAIMS_ADMIN_MODE);
 	}
 
 	public void ensureAdminModeStatusPermission(ServerPlayer player, ServerPlayerDataAPI playerData){

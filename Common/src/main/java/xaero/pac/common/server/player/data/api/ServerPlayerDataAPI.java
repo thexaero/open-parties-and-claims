@@ -92,6 +92,13 @@ public abstract class ServerPlayerDataAPI {
 	public abstract IClaimingModeAPI getRawClaimingMode();
 
 	/**
+	 * Checks if this player is using the parties admin mode.
+	 *
+	 * @return true if the player is in parties admin mode, otherwise false
+	 */
+	public abstract boolean isPartiesAdminMode();
+
+	/**
 	 * Gets the player data for a specified logged in player.
 	 *
 	 * @param player  the player, not null
@@ -103,7 +110,7 @@ public abstract class ServerPlayerDataAPI {
 		if(result == null) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(ServerLevelHelper.getServer(player));
-			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData(serverData, player.getUUID()));
+			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData(serverData, player));
 		}
 		ServerPlayerData data = (ServerPlayerData)result;
 		if(!data.hasHandledLogin() && player.connection != null && ServerCore.getServerGamePacketListenerConnection(player.connection) != null && !ServerCore.getServerGamePacketListenerConnection(player.connection).isConnecting()){//isConnecting() = the channel is null
