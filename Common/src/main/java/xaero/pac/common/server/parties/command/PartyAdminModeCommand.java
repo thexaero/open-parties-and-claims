@@ -79,7 +79,7 @@ public class PartyAdminModeCommand {
 					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 					playerData.setPartiesAdminMode(!playerData.isPartiesAdminMode());
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-					player.sendMessage(adaptiveLocalizer.getFor(player, playerData.isPartiesAdminMode() ? "gui.xaero_parties_admin_mode_enabled" : "gui.xaero_parties_admin_mode_disabled"), player.getUUID());
+					player.sendSystemMessage(adaptiveLocalizer.getFor(player, playerData.isPartiesAdminMode() ? "gui.xaero_parties_admin_mode_enabled" : "gui.xaero_parties_admin_mode_disabled"));
 					return 1;
 				}));
 		dispatcher.register(command);
