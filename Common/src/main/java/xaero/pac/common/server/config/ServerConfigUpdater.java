@@ -56,6 +56,31 @@ public class ServerConfigUpdater {
 			updatedEntitiesAllowedToGriefEntities.add("interact$minecraft:egg");
 			ServerConfig.CONFIG.entitiesAllowedToGriefEntities.set(updatedEntitiesAllowedToGriefEntities);
 		}
+		if(serverInfo.getLoadedVersion() < 3) {
+			List<String> updatedEntityProtectionOptionalExceptionGroups = new ArrayList<>(ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups.get());
+			updatedEntityProtectionOptionalExceptionGroups.add("Players{minecraft:player}");
+			ServerConfig.CONFIG.entityProtectionOptionalExceptionGroups.set(updatedEntityProtectionOptionalExceptionGroups);
+		}
+		if(serverInfo.getLoadedVersion() < 4) {
+			List<String> updatedEntitiesAllowedToGrief = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGrief.get());
+			updatedEntitiesAllowedToGrief.add("interact$minecraft:shulker_bullet");
+			ServerConfig.CONFIG.entitiesAllowedToGrief.set(updatedEntitiesAllowedToGrief);
+
+			List<String> updatedEntitiesAllowedToGriefEntities = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGriefEntities.get());
+			updatedEntitiesAllowedToGriefEntities.add("interact$minecraft:shulker_bullet");
+			ServerConfig.CONFIG.entitiesAllowedToGriefEntities.set(updatedEntitiesAllowedToGriefEntities);
+		}
+		if(serverInfo.getLoadedVersion() < 5) {
+			List<String> entitiesAllowedToGriefEntitiesCopy = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGriefEntities.get());
+			ServerConfig.CONFIG.entitiesAllowedToAccessPlayers.set(entitiesAllowedToGriefEntitiesCopy);
+		}
+		if(serverInfo.getLoadedVersion() < 6) {
+			List<String> staticFakePlayersCopy = new ArrayList<>(ServerConfig.CONFIG.staticFakePlayers.get());
+			if(!staticFakePlayersCopy.contains("7400926d-1007-4e53-880f-b43e67f2bf29")) {
+				staticFakePlayersCopy.add("7400926d-1007-4e53-880f-b43e67f2bf29");//Ars Nouveau
+				ServerConfig.CONFIG.staticFakePlayers.set(staticFakePlayersCopy);
+			}
+		}
 		updatePlayerConfigurablePlayerConfigOptions(serverInfo);
 		if(serverInfo.getLoadedVersion() < ServerInfo.CURRENT_VERSION)
 			serverInfo.setDirty(true);
