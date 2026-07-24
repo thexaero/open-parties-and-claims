@@ -161,6 +161,8 @@ public class CustomPlayerConfigGroupData implements Comparable<CustomPlayerConfi
 	}
 
 	public boolean updateMemberName(UUID playerId, String name){
+		if(name == null)//some broken fake players have a null name
+			return false;
 		if(!memberById.containsKey(playerId))
 			return false;
 		CustomPlayerGroupMember directMember = memberById.get(playerId);

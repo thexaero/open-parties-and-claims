@@ -2461,6 +2461,8 @@ public class ChunkProtection
 	private boolean shouldBlockClaimAccessForGoingOverLimit(UUID claimOwnerId, Entity accessor){
 		if(!(accessor instanceof ServerPlayer player))
 			return false;
+		if(player.getGameProfile().name() == null)//some broken fake players have a null name (Ars Nouveau 1.19.2 and 1.20.1)
+			return false;
 		if(Commands.LEVEL_GAMEMASTERS.check(player.permissions()))
 			return false;
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
