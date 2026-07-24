@@ -74,13 +74,14 @@ public class ServerConfigUpdater {
 			List<String> entitiesAllowedToGriefEntitiesCopy = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGriefEntities.get());
 			ServerConfig.CONFIG.entitiesAllowedToAccessPlayers.set(entitiesAllowedToGriefEntitiesCopy);
 		}
-		if(serverInfo.getLoadedVersion() < 6) {
-			List<String> staticFakePlayersCopy = new ArrayList<>(ServerConfig.CONFIG.staticFakePlayers.get());
-			if(!staticFakePlayersCopy.contains("7400926d-1007-4e53-880f-b43e67f2bf29")) {
-				staticFakePlayersCopy.add("7400926d-1007-4e53-880f-b43e67f2bf29");//Ars Nouveau
-				ServerConfig.CONFIG.staticFakePlayers.set(staticFakePlayersCopy);
-			}
-		}
+		//Ars Nouveau doesn't qualify for staticFakePlayers on this minecraft version
+//		if(serverInfo.getLoadedVersion() < 6) {
+//			List<String> staticFakePlayersCopy = new ArrayList<>(ServerConfig.CONFIG.staticFakePlayers.get());
+//			if(!staticFakePlayersCopy.contains("7400926d-1007-4e53-880f-b43e67f2bf29")) {
+//				staticFakePlayersCopy.add("7400926d-1007-4e53-880f-b43e67f2bf29");//Ars Nouveau
+//				ServerConfig.CONFIG.staticFakePlayers.set(staticFakePlayersCopy);
+//			}
+//		}
 		updatePlayerConfigurablePlayerConfigOptions(serverInfo);
 		if(serverInfo.getLoadedVersion() < ServerInfo.CURRENT_VERSION)
 			serverInfo.setDirty(true);
