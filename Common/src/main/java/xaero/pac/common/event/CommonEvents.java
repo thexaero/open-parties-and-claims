@@ -75,6 +75,7 @@ import xaero.pac.common.server.parties.command.PartyCommandRegister;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.data.IOpenPACServerPlayer;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
@@ -168,9 +169,11 @@ public abstract class CommonEvents {
 	}
 
 	public void onPlayerClone(Player original, Player player) {
-		if(original instanceof ServerPlayer) {
+		if(original instanceof ServerPlayer && player instanceof ServerPlayer) {
 			//copy player data on respawn/clone
-			((IOpenPACServerPlayer)player).setXaero_OPAC_PlayerData(ServerPlayerDataAPI.from((ServerPlayer)original));
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from((ServerPlayer)original);
+			playerData.setPlayer((ServerPlayer) player);
+			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(playerData);
 		}
 	}
 

@@ -788,7 +788,8 @@ public class PlayerConfigOptions {
 		CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.playersByPlayers")
 				.setDefaultValue(true)
-				.setComment("When enabled, claimed chunk protection makes an exception for player VS player combat.")
+				.setComment("When enabled, claimed chunk protection makes an exception for players interacting with players, including combat. " +
+						"Non-combat interaction can be allowed through an entity exception group (option Interact (Players) by default).")
 				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLAYERS_BY_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
