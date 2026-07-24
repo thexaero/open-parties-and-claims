@@ -35,6 +35,8 @@ public class ServerConfig {
 	public final ModConfigSpec.IntValue playerSubConfigLimit;
 	public final ModConfigSpec.IntValue partyExpirationTime;
 	public final ModConfigSpec.IntValue partyExpirationCheckInterval;
+	public final ModConfigSpec.BooleanValue partyChatLogging;
+	public final ModConfigSpec.ConfigValue<String> partiesAdminModePermission;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
 	public final ModConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
@@ -52,12 +54,15 @@ public class ServerConfig {
 	public final ModConfigSpec.ConfigValue<List<? extends String>> entityClaimBarrierOptionalGroups;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGrief;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefEntities;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToAccessPlayers;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> entitiesAllowedToGriefDroppedItems;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> nonBlockGriefingMobs;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> entityGriefingMobs;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> playerGriefingMobs;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> droppedItemGriefingMobs;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> blockAccessEntityGroups;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> entityAccessEntityGroups;
+	public final ModConfigSpec.ConfigValue<List<? extends String>> playerAccessEntityGroups;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> droppedItemAccessEntityGroups;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> staticFakePlayers;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> staticFakePlayerClassExceptions;
@@ -91,7 +96,7 @@ public class ServerConfig {
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
 	public final ModConfigSpec.ConfigValue<String> serverClaimPermission;
-	public final ModConfigSpec.ConfigValue<String> adminModePermission;
+	public final ModConfigSpec.ConfigValue<String> claimsAdminModePermission;
 	public final ModConfigSpec.ConfigValue<String> permissionSystem;
 	public final ModConfigSpec.ConfigValue<String> primaryPartySystem;
 	public final ModConfigSpec.BooleanValue partyOwnedClaims;
@@ -200,6 +205,18 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_party_expiration_check_interval")
 			.worldRestart()
 			.defineInRange("partyExpirationCheckInterval", 6 * 60, 10, Integer.MAX_VALUE);
+
+		partyChatLogging = builder
+			.comment("Whether all party chat messages should be added to the server logs like with other types of messages. The messages are not encrypted/private either way.")
+			.translation("gui.xaero_pac_config_party_chat_logging")
+			.worldRestart()
+			.define("partyChatLogging", true);
+
+		partiesAdminModePermission = builder
+			.comment("The permission that gives non-OP players the ability to enable party admin mode. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_parties_admin_mode_permission")
+			.worldRestart()
+			.define("adminModePermission", UsedPermissionNodes.PARTIES_ADMIN_MODE.getDefaultNodeString());
 		
 		builder.pop();
 		
@@ -330,11 +347,11 @@ public class ServerConfig {
 			.worldRestart()
 			.define("serverClaimPermission", UsedPermissionNodes.SERVER_CLAIMS.getDefaultNodeString());
 
-		adminModePermission = builder
+		claimsAdminModePermission = builder
 			.comment("The permission that gives non-OP players the ability to enable claim admin mode. The used permission system can be configured with \"permissionSystem\".")
-			.translation("gui.xaero_pac_config_admin_mode_permission")
+			.translation("gui.xaero_pac_config_claims_admin_mode_permission")
 			.worldRestart()
-			.define("adminModePermission", UsedPermissionNodes.ADMIN_MODE.getDefaultNodeString());
+			.define("adminModePermission", UsedPermissionNodes.CLAIMS_ADMIN_MODE.getDefaultNodeString());
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")
@@ -525,7 +542,8 @@ public class ServerConfig {
 							"Traders{minecraft:villager, minecraft:wandering_trader}",
 							"hand$Item_Frames{minecraft:item_frame}",
 							"break$Livestock{minecraft:cow, minecraft:mooshroom, minecraft:sheep, minecraft:chicken, minecraft:pig, minecraft:rabbit, minecraft:goat}",
-							"Armor_Stands{minecraft:armor_stand}"
+							"Armor_Stands{minecraft:armor_stand}",
+							"Players{minecraft:player}"
 					), s -> s instanceof String);
 
 		forcedEntityClaimBarrierList = builder
@@ -555,7 +573,7 @@ public class ServerConfig {
 
 		entitiesAllowedToGrief = builder
 			.comment("""
-					Entities that can bypass all block protection. Supports entity type tags.
+					Entities that can bypass block protection. Supports entity type tags.
 					Prefixing an entity id/tag with "interact$" creates an exception which tries to exclude block breaking.
 					Prefixing an entity id/tag with "break$" creates an exception that only includes block breaking.
 					Leaving an entity id/tag without a prefix creates an exception that includes all block interactions.
@@ -566,10 +584,10 @@ public class ServerConfig {
 					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:sheep", "interact$minecraft:splash_potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGrief"), () -> Lists.newArrayList("minecraft:sheep", "interact$minecraft:splash_potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
 		entitiesAllowedToGriefEntities = builder
 			.comment("""
-					Entities that can bypass all protection of other entities. Supports entity type tags.
+					Entities that can bypass protection of other entities. Supports entity type tags.
 					Prefixing an entity id/tag with "interact$" creates an exception which tries to exclude attacks.
 					Prefixing an entity id/tag with "break$" creates an exception that only includes attacks.
 					Leaving an entity id/tag without a prefix creates an exception that includes all entity interactions.
@@ -580,7 +598,21 @@ public class ServerConfig {
 					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
 			.translation("gui.xaero_pac_config_entities_allowed_to_grief_entities")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), () -> Lists.newArrayList("interact$minecraft:splash_potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToGriefEntities"), () -> Lists.newArrayList("interact$minecraft:splash_potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
+		entitiesAllowedToAccessPlayers = builder
+			.comment("""
+					Entities that can bypass protection of players. Supports entity type tags.
+					Prefixing an entity id/tag with "interact$" creates an exception which tries to exclude attacks.
+					Prefixing an entity id/tag with "break$" creates an exception that only includes attacks.
+					Leaving an entity id/tag without a prefix creates an exception that includes all interactions with players.
+					Projectiles landing on players is considered a non-attack interaction first, even if it can result in an attack,
+					which is protected separately afterwards.
+					Projectile landing on players requires non-attack entity access through this option or playerAccessEntityGroups.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]""")
+			.translation("gui.xaero_pac_config_entities_allowed_to_grief_players")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("entitiesAllowedToAccessPlayers"), () -> Lists.newArrayList("interact$minecraft:splash_potion", "interact$minecraft:trident", "interact$minecraft:(*_|)arrow", "interact$minecraft:ender_pearl", "interact$minecraft:egg", "interact$minecraft:shulker_bullet"), s -> s instanceof String);
 		entitiesAllowedToGriefDroppedItems = builder
 			.comment("""
 					Entities that can bypass all dropped item protection. Supports entity type tags.
@@ -614,6 +646,18 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_entity_griefers")
 			.worldRestart()
 			.defineListAllowEmpty(Lists.newArrayList("entityGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
+		playerGriefingMobs = builder
+			.comment(
+					"""
+					(Forge-only option) Mobs that can grief players in ways other than attacking them. This list is used when overriding the vanilla "mob griefing" game rule value.
+					By default, the mod assumes that any "mob griefing" game rule check is meant for block protection only. Add a mob to this list if you want the player protection option to be checked as well when the rule is checked.
+					Check out the "nonBlockGriefingMobs" option if you want to also remove the default block protection check for the mob.
+					Supports entity type tags. Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR.
+					For example ["minecraft:(v|p)illager", "minecraft:*illager", "#minecraft:raiders"]"""
+			)
+			.translation("gui.xaero_pac_config_player_griefers")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("playerGriefingMobs"), Lists::newArrayList, s -> s instanceof String);
 		droppedItemGriefingMobs = builder
 			.comment(
 					"""
@@ -670,6 +714,27 @@ public class ServerConfig {
 					() -> Lists.newArrayList(
 							"Zombies{minecraft:zombie, minecraft:zombie_villager, minecraft:husk, minecraft:drowned}"
 					), s -> s instanceof String);
+		playerAccessEntityGroups = builder
+			.comment("""
+					Custom groups of entities that a player/claim config should be able to make player access exceptions for (e.g. letting zombies kill players).
+					Each group can consist of multiple entities and entity tags. The format for an entity group is <group ID>{<entities/tags/wildcards separated by ,>}.
+					The group ID should consist of at most 32 characters that are letters A-Z, numbers 0-9 or the - and _ characters, e.g. "ePiC-GUYS98{minecraft:pig, minecraft:c(ow|at), #minecraft:beehive_inhabitors}".
+					The group can be prefixed with "interact$" to create an exception that tries to exclude attacks.
+					The group can be prefixed with "break$" to create an exception that only includes attacks.
+					The group can be left without a prefix to create an exception that includes all interactions with players.
+					Projectiles landing on players is considered a non-attack interaction first, even if it can result in an attack,
+					which is protected separately afterwards.
+					Projectile landing on players requires non-attack player access through this option or entitiesAllowedToAccessPlayers.
+					The player config options created for the groups, like regular options, must be added in the "playerConfigurablePlayerConfigOptions" list for players to have access to them.
+					The exact paths of the added options can be found in the default player config file after you start the server.
+					Supports patterns with special characters *, (, ) and |, where * matches anything, ( ) are used for grouping and | means OR."""
+			)
+			.translation("gui.xaero_pac_config_player_access_entity_groups")
+			.worldRestart()
+			.defineListAllowEmpty(Lists.newArrayList("playerAccessEntityGroups"),
+					() -> Lists.newArrayList(
+							"Zombies{minecraft:zombie, minecraft:zombie_villager, minecraft:husk, minecraft:drowned}"
+					), s -> s instanceof String);
 		droppedItemAccessEntityGroups = builder
 			.comment("""
 					Custom groups of entities that a player/claim config should be able to make dropped item access exceptions for (e.g. letting piglins pick up gold).
@@ -703,7 +768,14 @@ public class ServerConfig {
 					For example ["41C82C87-7AfB-4024-BB57-13D2C99CAE77", "FakePlayerName"]""")
 			.translation("gui.xaero_pac_config_static_fake_players")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("staticFakePlayers"), () -> Lists.newArrayList("[IntegratedTunnels]"), s -> s instanceof String);
+			.defineListAllowEmpty(
+					Lists.newArrayList("staticFakePlayers"),
+					() -> Lists.newArrayList(
+							"[IntegratedTunnels]",
+							"7400926d-1007-4e53-880f-b43e67f2bf29"//Ars Nouveau
+					),
+					s -> s instanceof String
+			);
 		staticFakePlayerClassExceptions = builder
 				.comment("""
 					A list of Java classes of fake players that should be excluded from claim protection exceptions given to fake players with the "staticFakePlayers" option
@@ -881,9 +953,11 @@ public class ServerConfig {
 							"claims.protection.exceptions.groups.entity.interact.Traders",
 							"claims.protection.exceptions.groups.entity.handInteract.Item_Frames",
 							"claims.protection.exceptions.groups.entity.interact.Armor_Stands",
+							"claims.protection.exceptions.groups.entity.interact.Players",
 							"claims.protection.exceptions.groups.entity.break.Livestock",
 							"claims.protection.exceptions.groups.entity.blockAccess.Villagers",
 							"claims.protection.exceptions.groups.entity.entityAccess.Zombies",
+							"claims.protection.exceptions.groups.entity.playerAccess.Zombies",
 							"claims.protection.exceptions.groups.entity.droppedItemAccess.Villagers",
 							"claims.protection.exceptions.groups.entity.droppedItemAccess.Piglins",
 							"claims.protection.exceptions.groups.entity.droppedItemAccess.Foxes",
