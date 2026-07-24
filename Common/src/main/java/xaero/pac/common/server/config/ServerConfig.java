@@ -772,7 +772,7 @@ public class ServerConfig {
 					Lists.newArrayList("staticFakePlayers"),
 					() -> Lists.newArrayList(
 							"[IntegratedTunnels]"
-							//"7400926d-1007-4e53-880f-b43e67f2bf29"//Ars Nouveau doesn't qualify for staticFakePlayers on this minecraft version
+							//"7400926d-1007-4e53-880f-b43e67f2bf29"//Ars Nouveau doesn't qualify for staticFakePlayers on 1.20.1 and doesn't exist on this minecraft version
 					),
 					s -> s instanceof String
 			);

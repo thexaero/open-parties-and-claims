@@ -74,7 +74,7 @@ public class ServerConfigUpdater {
 			List<String> entitiesAllowedToGriefEntitiesCopy = new ArrayList<>(ServerConfig.CONFIG.entitiesAllowedToGriefEntities.get());
 			ServerConfig.CONFIG.entitiesAllowedToAccessPlayers.set(entitiesAllowedToGriefEntitiesCopy);
 		}
-		//Ars Nouveau doesn't qualify for staticFakePlayers on this minecraft version
+		//Ars Nouveau doesn't qualify for staticFakePlayers on 1.20.1 and doesn't exist on this minecraft version
 //		if(serverInfo.getLoadedVersion() < 6) {
 //			List<String> staticFakePlayersCopy = new ArrayList<>(ServerConfig.CONFIG.staticFakePlayers.get());
 //			if(!staticFakePlayersCopy.contains("7400926d-1007-4e53-880f-b43e67f2bf29")) {
