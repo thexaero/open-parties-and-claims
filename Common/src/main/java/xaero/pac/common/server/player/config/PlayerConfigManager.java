@@ -269,6 +269,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups;
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups;
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups;
+		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> playerAccessEntityGroups;
 		private Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups;
 
 		private Builder() {
@@ -278,6 +279,14 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			setServer(null);
 			setPartyManager(null);
 			setPartySystemManager(null);
+			setBlockExceptionGroups(null);
+			setEntityExceptionGroups(null);
+			setItemExceptionGroups(null);
+			setEntityBarrierGroups(null);
+			setBlockAccessEntityGroups(null);
+			setEntityAccessEntityGroups(null);
+			setPlayerAccessEntityGroups(null);
+			setDroppedItemAccessEntityGroups(null);
 			return this;
 		}
 
@@ -326,6 +335,11 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			return this;
 		}
 
+		public Builder<P, CM> setPlayerAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> playerAccessEntityGroups) {
+			this.playerAccessEntityGroups = playerAccessEntityGroups;
+			return this;
+		}
+
 		public Builder<P, CM> setDroppedItemAccessEntityGroups(Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups) {
 			this.droppedItemAccessEntityGroups = droppedItemAccessEntityGroups;
 			return this;
@@ -334,7 +348,8 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		public PlayerConfigManager<P, CM> build() {
 			if (server == null || partyManager == null || blockExceptionGroups == null || entityExceptionGroups == null ||
 					itemExceptionGroups == null || entityBarrierGroups == null || blockAccessEntityGroups == null ||
-					entityAccessEntityGroups == null || droppedItemAccessEntityGroups == null || partySystemManager == null)
+					entityAccessEntityGroups == null || playerAccessEntityGroups == null || droppedItemAccessEntityGroups == null ||
+					partySystemManager == null)
 				throw new IllegalStateException();
 			PlayerConfigSynchronizer playerConfigSynchronizer = new PlayerConfigSynchronizer(server);
 			ForceLoadTicketManager forceLoadTicketManager = ForceLoadTicketManager.Builder.begin()
@@ -343,7 +358,12 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 					.build();
 
 			PlayerConfigDynamicOptions.Builder dynamicOptionsBuilder = PlayerConfigDynamicOptions.Builder.begin();
-			new PlayerConfigDynamicOptionsLoader().load(dynamicOptionsBuilder, blockExceptionGroups, entityExceptionGroups, itemExceptionGroups, entityBarrierGroups, blockAccessEntityGroups, entityAccessEntityGroups, droppedItemAccessEntityGroups);
+			new PlayerConfigDynamicOptionsLoader().load(
+					dynamicOptionsBuilder,
+					blockExceptionGroups, entityExceptionGroups, itemExceptionGroups,
+					entityBarrierGroups, blockAccessEntityGroups, entityAccessEntityGroups,
+					playerAccessEntityGroups, droppedItemAccessEntityGroups
+			);
 			PlayerConfigDynamicOptions dynamicOptions = dynamicOptionsBuilder.build();
 
 			ModConfigSpec.Builder configSpecBuilder = new ModConfigSpec.Builder();

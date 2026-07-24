@@ -61,7 +61,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	private final IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 			serverData;
-	private final UUID playerId;
+	private ServerPlayer player;//this can change!
 	private boolean claimsAdminMode;
 	private boolean claimsNonallyMode;
 	private ClaimingMode claimingMode = null;
@@ -94,15 +94,20 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private boolean syncedConfigAdmin;
 	private long allowedClaimAccessOverLimitTick;
 	private long lastClaimsOverLimitMessageTime;
+	private boolean partiesAdminMode;
 
 	public ServerPlayerData(
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData,
-			UUID playerId
+			ServerPlayer player
 	) {
 		super();
 		this.serverData = serverData;
-		this.playerId = playerId;
+		this.player = player;
+	}
+
+	public void setPlayer(ServerPlayer player) {
+		this.player = player;
 	}
 
 	public void onLogin(
@@ -142,7 +147,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	@Override
 	public ClaimingMode getClaimingMode() {
 		if(claimingMode == null) {
-			if(serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(getPlayer()))
+			if(serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(player))
 				return (ClaimingMode) ClaimingModes.PARTY;
 			return (ClaimingMode) ClaimingModes.PLAYER;
 		}
@@ -391,8 +396,12 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return lastClaimsOverLimitMessageTime;
 	}
 
-	private ServerPlayer getPlayer(){
-		return serverData.getServer().getPlayerList().getPlayer(playerId);
+	public boolean isPartiesAdminMode() {
+		return partiesAdminMode;
+	}
+
+	public void setPartiesAdminMode(boolean partiesAdminMode) {
+		this.partiesAdminMode = partiesAdminMode;
 	}
 
 }
