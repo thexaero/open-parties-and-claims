@@ -55,7 +55,7 @@ public class PartyAdminModeCommand {
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandRequirementProvider commandRequirementProvider) {
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(context -> ServerConfig.CONFIG.partiesEnabled.get()).then(Commands.literal("admin-mode")
 				.requires(CommandRequirementHelper.onServerThread(context -> {
-						if(context.hasPermission(2) )
+						if(Commands.LEVEL_GAMEMASTERS.check(context.permissions()))
 							return true;
 						try {
 							ServerPlayer player = context.getPlayerOrException();
