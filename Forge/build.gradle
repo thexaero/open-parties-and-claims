@@ -85,6 +85,11 @@ repositories {
     maven {
         url "https://chocolateminecraft.com/maven"
     }
+//    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+//    maven {
+//        url = "https://maven.theillusivec4.top/"
+//    }
+//    maven { url 'https://maven.blamejared.com' }
 }
 
 dependencies {
@@ -112,7 +117,11 @@ dependencies {
     compileOnly fg.deobf("earth.terrarium.prometheus:prometheus-forge-$minecraft_version:1.2.5")//source: https://github.com/terrarium-earth/Prometheus
     compileOnly fg.deobf("earth.terrarium.argonauts:argonauts-forge-$minecraft_version:1.0.10")//source: https://modrinth.com/mod/odyssey-allies
 
-
+//    implementation fg.deobf("com.github.llamalad7.mixinextras:mixinextras-forge:0.2.0-beta.8")
+//    implementation fg.deobf("top.theillusivec4.curios:curios-forge:5.3.1+${minecraft_version}")
+//    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:4.2.2")
+//    implementation fg.deobf("vazkii.patchouli:Patchouli:${minecraft_version}-80-FORGE")
+//    implementation fg.deobf("com.hollingsworth.ars_nouveau:ars_nouveau-$minecraft_version:4.12.7.264")
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 }
 
