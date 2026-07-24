@@ -107,7 +107,7 @@ public abstract class ServerPlayerDataAPI {
 		if(result == null) {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(player.getServer());
-			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData(serverData, player.getUUID()));
+			((IOpenPACServerPlayer) player).setXaero_OPAC_PlayerData(result = new ServerPlayerData(serverData, player));
 		}
 		ServerPlayerData data = (ServerPlayerData)result;
 		if(!data.hasHandledLogin() && player.connection != null && player.connection.getConnection() != null && !player.connection.getConnection().isConnecting()){//isConnecting() = the channel is null
