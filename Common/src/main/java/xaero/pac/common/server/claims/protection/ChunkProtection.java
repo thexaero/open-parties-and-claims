@@ -790,7 +790,7 @@ public class ChunkProtection
 		ChunkPos chunkPos = new ChunkPos(pos);
 		IPlayerChunkClaim claim = claimsManager.get(world.dimension().location(), chunkPos);
 		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
-		if(!isPlayer || !isAllowedStaticFakePlayerAction(serverData, (Player)entity, pos)){
+		if(!(accessor instanceof Player) || !isAllowedStaticFakePlayerAction(serverData, (Player)accessor, pos)){
 			IPlayerConfig config = getClaimConfig(playerConfigs, claim);
 			InteractionTargetResult targetResult = onBlockAccess(serverData, block, config, entity, accessor, accessorId, hand, emptyHand, breaking, message, messageReceiver);
 			if(targetResult == InteractionTargetResult.PROTECT)
@@ -865,7 +865,7 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor == null ? null : accessor.getUUID();
 		}
-		if(entity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) entity, pos))
+		if(accessor instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) accessor, pos))
 			return false;
 		return (option == null || !checkPlayerGroupExceptionOption(option, config, accessor, accessorId)) && (entity instanceof Player || !canGrief(entity, config, accessor, accessorId, true, false, false, false))
 				&& blockAccessCheck(null, config, entity, accessor, accessorId, false, false, false) == InteractionTargetResult.PROTECT;
@@ -1005,16 +1005,8 @@ public class ChunkProtection
 		}
 		if (interactingEntity != null && hasActiveFullPass(interactingEntity))//uses custom protection
 			return false;
-		if (interactingEntity instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player)interactingEntity, target.blockPosition()))
-			return false;
-		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
 		Level targetLevel = target.getLevel();
 		ServerLevel targetServerLevel = ServerLevelHelper.getServerLevel(targetLevel);
-		IPlayerChunkClaim claim = claimsManager.get(target.getLevel().dimension().location(), target.chunkPosition());
-		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
-		if(heldItem == null)
-			heldItem = hand != null && interactingEntity instanceof LivingEntity living ? living.getItemInHand(hand) : ItemStack.EMPTY;
-		boolean emptyHand = heldItem.isEmpty();
 		Entity accessor;
 		UUID accessorId;
 		Object accessorInfo = getAccessorInfo(interactingEntityIndirect == null ? interactingEntity : interactingEntityIndirect);//in case the indirect entity has an owner too
@@ -1025,6 +1017,14 @@ public class ChunkProtection
 			accessor = (Entity) accessorInfo;
 			accessorId = accessor == null ? null : accessor.getUUID();
 		}
+		if (accessor instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player)accessor, target.blockPosition()))
+			return false;
+		IPlayerConfigManager playerConfigs = serverData.getPlayerConfigManager();
+		IPlayerChunkClaim claim = claimsManager.get(target.getLevel().dimension().location(), target.chunkPosition());
+		IPlayerConfig config = getClaimConfig(playerConfigs, claim);
+		if(heldItem == null)
+			heldItem = hand != null && interactingEntity instanceof LivingEntity living ? living.getItemInHand(hand) : ItemStack.EMPTY;
+		boolean emptyHand = heldItem.isEmpty();
 		boolean needsItemCheck = !attack && !emptyHand;
 		boolean itemUseAtTargetAllowed = false;
 		ChunkProtectionExceptionSet<EntityType<?>> forcedAllowedToKillSet = entitiesAllowedToKillEntities;
