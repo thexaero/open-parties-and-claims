@@ -768,7 +768,14 @@ public class ServerConfig {
 					For example ["41C82C87-7AfB-4024-BB57-13D2C99CAE77", "FakePlayerName"]""")
 			.translation("gui.xaero_pac_config_static_fake_players")
 			.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("staticFakePlayers"), () -> Lists.newArrayList("[IntegratedTunnels]"), s -> s instanceof String);
+			.defineListAllowEmpty(
+					Lists.newArrayList("staticFakePlayers"),
+					() -> Lists.newArrayList(
+							"[IntegratedTunnels]",
+							"7400926d-1007-4e53-880f-b43e67f2bf29"//Ars Nouveau
+					),
+					s -> s instanceof String
+			);
 		staticFakePlayerClassExceptions = builder
 				.comment("""
 					A list of Java classes of fake players that should be excluded from claim protection exceptions given to fake players with the "staticFakePlayers" option
