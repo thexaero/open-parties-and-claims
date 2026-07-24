@@ -21,6 +21,7 @@ package xaero.pac.common.server.player.config.io.serialization.updater;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import xaero.pac.common.server.player.config.io.serialization.updater.add.PlayerConfigConfigurableAdder;
 import xaero.pac.common.server.player.config.io.serialization.updater.add.PlayerConfigOpConfigurableAdder;
 import xaero.pac.common.server.player.config.io.serialization.updater.rename.PlayerConfigOptionRenamer;
 import xaero.pac.common.server.player.config.io.serialization.updater.value.PlayerConfigValueChanger;
@@ -241,6 +242,24 @@ public class PlayerConfigTransformers {
 				new PlayerConfigValueChanger(
 						o -> o.startsWith(exceptionGroupsPrefix11) && !o.contains(".barrier."),
 						(c, i) -> exceptionToPlayerGroupException.getOrDefault(i, "N")
+				)
+		);
+
+		transformers.add(//12
+				new PlayerConfigConfigurableAdder(ImmutableList.of("claims.protection.exceptions.groups.entity.interact.Players"))
+		);
+
+		transformers.add(//13
+				new PlayerConfigConfigurableAdder(ImmutableList.of("claims.protection.exceptions.groups.entity.playerAccess.Zombies"))
+		);
+
+		transformers.add(//14
+				new PlayerConfigOptionRenamer(
+						o -> o.startsWith("playerConfig.claims.protection.exceptions.groups.entity.entityKillAccess."),
+						oldPath -> {
+							String optionName = oldPath.substring(oldPath.lastIndexOf('.') + 1);
+							return "playerConfig.claims.protection.exceptions.groups.entity.entityAttackAccess." + optionName;
+						}
 				)
 		);
 	}
