@@ -21,6 +21,7 @@ package xaero.pac.common.server;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -191,6 +192,7 @@ public class ServerDataInitializer {
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityBarrierGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> blockAccessEntityGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> entityAccessEntityGroups = new LinkedHashMap<>();
+			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> playerAccessEntityGroups = new LinkedHashMap<>();
 			Map<String, ChunkProtectionExceptionGroup<EntityType<?>>> droppedItemAccessEntityGroups = new LinkedHashMap<>();
 			ChunkProtectionExceptionGroupLoader exceptionGroupLoader = new ChunkProtectionExceptionGroupLoader();
 			ExceptionElementType.updateAllIterables(server);
@@ -200,6 +202,7 @@ public class ServerDataInitializer {
 			exceptionGroupLoader.load(server, ServerConfig.CONFIG.entityClaimBarrierOptionalGroups, ExceptionElementType.ENTITY_TYPE, LevelChunk.class, false, wildcardResolver, entityBarrierGroups, ChunkProtectionExceptionType.BARRIER, t -> t == ChunkProtectionExceptionType.BARRIER, PlayerConfigOptionCategory.MOVEMENT);
 			exceptionGroupLoader.load(server, ServerConfig.CONFIG.blockAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, Block.class, false, wildcardResolver, blockAccessEntityGroups, ChunkProtectionExceptionType.FULL, t -> t != ChunkProtectionExceptionType.BARRIER, PlayerConfigOptionCategory.BLOCK_PROTECTION);
 			exceptionGroupLoader.load(server, ServerConfig.CONFIG.entityAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, EntityType.class, false, wildcardResolver, entityAccessEntityGroups, ChunkProtectionExceptionType.FULL, t -> t != ChunkProtectionExceptionType.BARRIER, PlayerConfigOptionCategory.ENTITY_PROTECTION);
+			exceptionGroupLoader.load(server, ServerConfig.CONFIG.playerAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, Player.class, false, wildcardResolver, playerAccessEntityGroups, ChunkProtectionExceptionType.FULL, t -> t != ChunkProtectionExceptionType.BARRIER, PlayerConfigOptionCategory.PLAYER_PROTECTION);
 			exceptionGroupLoader.load(server, ServerConfig.CONFIG.droppedItemAccessEntityGroups, ExceptionElementType.ENTITY_TYPE, Item.class, false, wildcardResolver, droppedItemAccessEntityGroups, ChunkProtectionExceptionType.FULL, t -> t == ChunkProtectionExceptionType.FULL, PlayerConfigOptionCategory.PICKUP_PROTECTION);
 
 			PlayerConfigManager<ServerParty, ServerClaimsManager> playerConfigs = PlayerConfigManager.Builder.<ServerParty, ServerClaimsManager>begin()
@@ -212,6 +215,7 @@ public class ServerDataInitializer {
 					.setEntityBarrierGroups(entityBarrierGroups)
 					.setBlockAccessEntityGroups(blockAccessEntityGroups)
 					.setEntityAccessEntityGroups(entityAccessEntityGroups)
+					.setPlayerAccessEntityGroups(playerAccessEntityGroups)
 					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
 			playerPartySystemManager.setConfigManager(playerConfigs);
@@ -283,6 +287,7 @@ public class ServerDataInitializer {
 					.setEntityBarrierGroups(entityBarrierGroups)
 					.setBlockAccessEntityGroups(blockAccessEntityGroups)
 					.setEntityAccessEntityGroups(entityAccessEntityGroups)
+					.setPlayerAccessEntityGroups(playerAccessEntityGroups)
 					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
 			chunkProtection.updateTagExceptions(server);

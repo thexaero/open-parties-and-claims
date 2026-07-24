@@ -47,6 +47,7 @@
         "MixinFabricRemoveBlockGoal",
         "MixinFabricServerGamePacketListenerImpl",
         "MixinFabricServerLevel",
+        "MixinFabricShulkerBullet",
         "MixinFabricSilverfishMergeWithStoneGoal",
         "MixinFabricSilverfishWakeUpFriendsGoal",
         "MixinFabricSmallFireball",

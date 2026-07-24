@@ -22,16 +22,21 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class PartyOnCommandUpdater {
@@ -54,17 +59,30 @@ public class PartyOnCommandUpdater {
 				)
 		);
 
+		if(ServerConfig.CONFIG.partyChatLogging.get()) {
+			String logMessage = partyNameComponent.getString() + massMessageContent.getString();
+			OpenPartiesAndClaims.LOGGER.info(logMessage);
+		}
 		MinecraftServer server = serverData.getServer();
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-		party.getOnlineMemberStream().forEach(memberPlayer -> {
-			M memberInfo = party.getMemberInfo(memberPlayer.getUUID());
+		Consumer<ServerPlayer> messageSender = memberPlayer -> {
 			Component memberMessage = Component.literal("");//can't reuse because onlineMember.sendMessage might not encode the message immediately, which can cause a race condition
 			memberMessage.getSiblings().add(partyNameComponent);
 			memberMessage.getSiblings().add(adaptiveLocalizer.getFor(memberPlayer, massMessageContent));
-			if(shouldUpdateCommandsForMember.test(memberInfo))
-				serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(memberPlayer, serverData, false);
 			memberPlayer.sendSystemMessage(memberMessage);
-		});
+		};
+		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+			M memberInfo = party.getMemberInfo(player.getUUID());
+			if(memberInfo != null) {
+				if(shouldUpdateCommandsForMember.test(memberInfo))
+					serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
+				messageSender.accept(player);
+				continue;
+			}
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+			if(playerData.isPartiesAdminMode())
+				messageSender.accept(player);
+		}
 	}
 
 }
