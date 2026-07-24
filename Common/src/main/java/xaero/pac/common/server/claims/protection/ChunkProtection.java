@@ -2519,9 +2519,9 @@ public class ChunkProtection
 	private Component getInteractEntityMessage(InteractionHand hand, EntityType<?> entityType){
 		return getInteractMessage(
 				hand, Registries.ENTITY_TYPE, entityType,
-				entityType == EntityType.PLAYER ?
+				entityType == EntityTypes.PLAYER ?
 						"gui.xaero_claims_protection_interact_player" : "gui.xaero_claims_protection_interact_entity",
-				entityType == EntityType.PLAYER ?
+				entityType == EntityTypes.PLAYER ?
 						"gui.xaero_claims_protection_interact_player_any" : "gui.xaero_claims_protection_interact_entity_any"
 		);
 	}
