@@ -48,6 +48,7 @@ import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 public class PartyAdminModeCommand {
 
@@ -58,7 +59,7 @@ public class PartyAdminModeCommand {
 							return true;
 						try {
 							ServerPlayer player = context.getPlayerOrException();
-							MinecraftServer server = player.getServer();
+							MinecraftServer server = ServerLevelHelper.getServer(player);
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 									serverData = ServerData.from(server);
 							if(ServerPlayerDataAPI.from(player).isPartiesAdminMode())//lets you turn off admin mode even if you're not op
@@ -73,7 +74,7 @@ public class PartyAdminModeCommand {
 					}))
 				.executes(context -> {
 					ServerPlayer player = context.getSource().getPlayerOrException();
-					MinecraftServer server = player.getServer();
+					MinecraftServer server = ServerLevelHelper.getServer(player);
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 							serverData = ServerData.from(server);
 					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
