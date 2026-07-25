@@ -2587,14 +2587,15 @@ public class ChunkProtection
 			String messageAnyKey
 	){
 		ResourceLocation objectKey = getRegistry(registryKey).getKey(object);
+		String objectKeyString = objectKey == null ? "null" : objectKey.toString();
 		MutableComponent result;
 		if(hand == null || messageKey == null)
-			result = Component.translatable(messageAnyKey, objectKey);
+			result = Component.translatable(messageAnyKey, objectKeyString);
 		else
 			result = Component.translatable(
 					messageKey,
 					hand == InteractionHand.MAIN_HAND ? MAIN_HAND : OFF_HAND,
-					objectKey
+					objectKeyString
 			);
 		result = result.withStyle(s -> s.withColor(ChatFormatting.RED));
 		return result;
