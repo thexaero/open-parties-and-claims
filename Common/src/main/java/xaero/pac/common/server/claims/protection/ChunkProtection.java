@@ -439,10 +439,20 @@ public class ChunkProtection
 		if(NO_EXCEPTION_ID.equals(groupId))
 			return false;
 		ServerPlayer accessorPlayer = accessor instanceof ServerPlayer player ? player : null;
-		if(accessorPlayer != null && ServerPlayerData.from(accessorPlayer).isClaimsNonallyMode())
-			return false;
-		if(accessorPlayer != null && shouldBlockClaimAccessForGoingOverLimit(claimConfig.getPlayerId(), accessorPlayer))
-			return false;
+		if(accessorPlayer != null){
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(accessorPlayer);
+			if(playerData.isClaimsNonallyMode())
+				return false;
+			if(shouldBlockClaimAccessForGoingOverLimit(claimConfig.getPlayerId(), accessorPlayer))
+				return false;
+			//not calling ensureImpersonationPermission here because having it in hasChunkAccess should be enough
+			UUID impersonatedId = playerData.getClaimsImpersonationInfo().getPlayerId();
+			if(impersonatedId != null){
+				accessorId = impersonatedId;
+				accessor = serverData.getServer().getPlayerList().getPlayer(accessorId);
+				accessorPlayer = (ServerPlayer) accessor;
+			}
+		}
 		if(accessorId == null){
 			if(accessorPlayer == null)
 				return false;
@@ -555,14 +565,18 @@ public class ChunkProtection
 			if(accessorId == null)
 				accessorId = accessor.getUUID();
 			boolean isAServerPlayer = accessor instanceof ServerPlayer;
-			if (isAServerPlayer && ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsNonallyMode())
+			if(isAServerPlayer && ServerPlayerDataAPI.from((ServerPlayer) accessor).isClaimsNonallyMode())
 				return false;
 			if(isAServerPlayer && shouldBlockClaimAccessForGoingOverLimit(claimConfig.getPlayerId(), accessor))
 				return false;
-			if (accessorId.equals(claimConfig.getPlayerId()))
+			if(accessorId.equals(claimConfig.getPlayerId()))
 				return true;
-			if (isAServerPlayer){
+			if(isAServerPlayer){
 				ServerPlayerDataAPI playerData = ServerPlayerDataAPI.from((ServerPlayer) accessor);
+				claimsManager.getPermissionHandler().ensureImpersonationPermission((ServerPlayer) accessor, playerData);
+				if(claimConfig.getPlayerId() != null &&
+						claimConfig.getPlayerId().equals(playerData.getClaimsImpersonationInfo().getPlayerId()))
+					return true;
 				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission((ServerPlayer) accessor, playerData);
 				if (
 						playerData.isClaimsAdminMode() ||

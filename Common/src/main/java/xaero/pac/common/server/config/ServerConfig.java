@@ -97,6 +97,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
 	public final ForgeConfigSpec.ConfigValue<String> serverClaimPermission;
 	public final ForgeConfigSpec.ConfigValue<String> claimsAdminModePermission;
+	public final ForgeConfigSpec.ConfigValue<String> claimsImpersonationPermission;
 	public final ForgeConfigSpec.ConfigValue<String> permissionSystem;
 	public final ForgeConfigSpec.ConfigValue<String> primaryPartySystem;
 	public final ForgeConfigSpec.BooleanValue partyOwnedClaims;
@@ -352,6 +353,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_claims_admin_mode_permission")
 			.worldRestart()
 			.define("adminModePermission", UsedPermissionNodes.CLAIMS_ADMIN_MODE.getDefaultNodeString());
+
+		claimsImpersonationPermission = builder
+			.comment("The permission that gives non-OP players the ability to impersonate other players in regards to claims. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_claims_impersonation_permission")
+			.worldRestart()
+			.define("claimsImpersonationPermission", UsedPermissionNodes.CLAIMS_IMPERSONATION.getDefaultNodeString());
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")

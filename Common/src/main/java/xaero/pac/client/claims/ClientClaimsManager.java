@@ -47,6 +47,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.impersonation.SimplePlayerClaimImpersonationInfo;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
@@ -96,6 +97,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private IClaimingModeAPI claimingMode;
 	private boolean partyOwnedClaims;
 	private UUID currentPartyOwner;
+	private SimplePlayerClaimImpersonationInfo playerImpersonationInfo;
 
 	private ClientClaimsManager(
 			ClientPlayerClaimInfoManager playerClaimInfoManager,
@@ -106,12 +108,14 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 			ClaimsManagerTracker claimsManagerTracker,
 			ClaimsManagerClaimResultTracker claimResultTracker,
 			Map<IClaimingModeAPI, ClientClaimingModeInfo> claimingModeInfoMap,
-			IClaimingModeAPI claimingMode
+			IClaimingModeAPI claimingMode,
+			SimplePlayerClaimImpersonationInfo playerImpersonationInfo
 	) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimResultTracker = claimResultTracker;
 		this.claimingModeInfoMap = claimingModeInfoMap;
 		this.claimingMode = claimingMode;
+		this.playerImpersonationInfo = playerImpersonationInfo;
 	}
 
 	public void setClientData(
@@ -274,7 +278,8 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	public IClaimingModeAPI getEffectiveClaimingMode(IClaimingModeAPI selected) {
 		if(selected == null){
-			if(partyOwnedClaims && clientData.getPlayerConfigStorageManager().getPartyClaimsConfig().getPermissions().canClaimAs())
+			if(playerImpersonationInfo.getPlayerId() == null && partyOwnedClaims &&
+					clientData.getPlayerConfigStorageManager().getPartyClaimsConfig().getPermissions().canClaimAs())
 				return ClaimingModes.PARTY;
 			return ClaimingModes.PLAYER;
 		}
@@ -352,6 +357,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		alwaysUseLoadingValues = false;
 		setPartyOwnedClaims(false);
 		setCurrentPartyOwner(null);
+		playerImpersonationInfo.reset();
 	}
 
 	@Override
@@ -396,10 +402,20 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	public PlayerChunkClaim getPotentialClaimStateReflection(){
 		IClaimingModeAPI effectiveClaimingMode = getClaimingMode();
 		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(effectiveClaimingMode);
-		UUID claimReflectionOwner = claimingModeHandler.getClaimReflectionOwnerGetter().apply(this);
+		boolean impersonating = effectiveClaimingMode.canBeImpersonated() && playerImpersonationInfo.getPlayerId() != null;
+		UUID claimReflectionOwner;
+		if(impersonating)
+			claimReflectionOwner = playerImpersonationInfo.getClaimPlayerId(effectiveClaimingMode);
+		else
+			claimReflectionOwner = claimingModeHandler.getClaimReflectionOwnerGetter().apply(this);
 		if(claimReflectionOwner == null)
 			return null;
-		return new PlayerChunkClaim(claimReflectionOwner, getCurrentSubConfigIndex(effectiveClaimingMode), false, 0);
+		int subIndex;
+		if(impersonating)
+			subIndex = playerImpersonationInfo.getSubIndex(effectiveClaimingMode);
+		else
+			subIndex = getCurrentSubConfigIndex(effectiveClaimingMode);
+		return new PlayerChunkClaim(claimReflectionOwner, subIndex, false, 0);
 	}
 
 	@Override
@@ -474,6 +490,16 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		return currentPartyOwner;
 	}
 
+	public void setPlayerImpersonationInfo(SimplePlayerClaimImpersonationInfo playerImpersonationInfo) {
+		this.playerImpersonationInfo = playerImpersonationInfo;
+	}
+
+	@Nonnull
+	@Override
+	public SimplePlayerClaimImpersonationInfo getPlayerImpersonationInfo() {
+		return playerImpersonationInfo;
+	}
+
 	public final static class Builder extends ClaimsManager.Builder<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientRegionClaims, ClientDimensionClaimsManager, ClaimStateHolder, Builder>{
 		
 		public static Builder begin() {
@@ -494,11 +520,13 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 				claimingModeInfo.reset();
 				claimingModeInfoMap.put(claimingMode, claimingModeInfo);
 			}
+			SimplePlayerClaimImpersonationInfo defaultClaimImpersonationInfo =
+					new SimplePlayerClaimImpersonationInfo(null);
 			ClientClaimsManager result = new ClientClaimsManager(
 					playerClaimInfoManager, null, dimensions,
 					indexToClaimState, claimStates, claimsManagerTracker,
 					ClaimsManagerClaimResultTracker.Builder.begin().build(),
-					claimingModeInfoMap, ClaimingModes.PLAYER
+					claimingModeInfoMap, ClaimingModes.PLAYER, defaultClaimImpersonationInfo
 			);
 			playerClaimInfoManager.setClaimsManager(result);
 			return result;

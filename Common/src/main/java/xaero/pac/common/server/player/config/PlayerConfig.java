@@ -426,7 +426,8 @@ public class PlayerConfig
 	@Nonnull
 	@Override
 	public IPlayerConfig getUsedSubConfig(@Nonnull IClaimingModeAPI claimingMode) {
-		return ((ClaimingMode)claimingMode).getSubConfigGetter().apply(this);
+		IPlayerConfigOptionSpecAPI<String> option = ((ClaimingMode) claimingMode).getSubClaimOption();
+		return ((ClaimingMode)claimingMode).getClaimConfigGetter().apply(this).getEffectiveSubConfig(getEffective(option));
 	}
 
 	@Nullable

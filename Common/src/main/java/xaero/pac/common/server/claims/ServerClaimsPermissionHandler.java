@@ -24,7 +24,8 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.packet.ClientboundModesPacket;
+import xaero.pac.common.claims.player.impersonation.PlayerClaimImpersonationInfo;
+import xaero.pac.common.packet.claims.ClientboundClaimModesPacket;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
@@ -32,6 +33,8 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
+
+import java.util.UUID;
 
 public class ServerClaimsPermissionHandler {
 
@@ -49,18 +52,22 @@ public class ServerClaimsPermissionHandler {
 	public void resetClaimingMode(ServerPlayer player){
 		ServerPlayerDataAPI playerData = ServerPlayerData.from(player);
 		((ServerPlayerData)playerData).setClaimingMode(null);
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
 		serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 	}
 
 	public boolean playerHasPartyClaimPermission(ServerPlayer player){
+		return playerHasPartyClaimPermission(player, player.getUUID());
+	}
+
+	public boolean playerHasPartyClaimPermission(ServerPlayer player, UUID playerId){
 		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
 			return false;
-		if(!serverData.getPlayerPartySystemManager().isInAPrimaryParty(player.getUUID()))
+		if(!serverData.getPlayerPartySystemManager().isInAPrimaryParty(playerId))
 			return false;
-		if(player.hasPermissions(Commands.LEVEL_GAMEMASTERS))
+		if(player != null && player.hasPermissions(Commands.LEVEL_GAMEMASTERS))
 			return true;
-		return serverData.getPlayerPartySystemManager().canPartyClaim(player.getUUID());
+		return serverData.getPlayerPartySystemManager().canPartyClaim(playerId);
 	}
 
 	public boolean playerHasAdminModePermission(ServerPlayer player){
@@ -75,7 +82,23 @@ public class ServerClaimsPermissionHandler {
 	public void ensureAdminModeStatusPermission(ServerPlayer player, ServerPlayerDataAPI playerData){
 		if(playerData.isClaimsAdminMode() && !playerHasAdminModePermission(player)) {
 			((ServerPlayerData)playerData).setClaimsAdminMode(false);
-			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
+			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
+		}
+	}
+
+	public boolean playerHasImpersonationPermission(ServerPlayer player){
+		if(player.hasPermissions(2))
+			return true;
+		IPlayerPermissionSystemAPI permissionSystem = getSystem();
+		if(permissionSystem == null)
+			return false;
+		return permissionSystem.getPermission(player, UsedPermissionNodes.CLAIMS_IMPERSONATION);
+	}
+
+	public void ensureImpersonationPermission(ServerPlayer player, ServerPlayerDataAPI playerData){
+		if(playerData.getClaimsImpersonationInfo().getPlayerId() != null && !playerHasImpersonationPermission(player)) {
+			((PlayerClaimImpersonationInfo)playerData.getClaimsImpersonationInfo()).reset();
+			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
 		}
 	}
 

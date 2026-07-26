@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.impersonation.api.IPlayerClaimImpersonationInfoAPI;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -94,6 +95,14 @@ public abstract class ServerPlayerDataAPI {
 	 * @return true if the player is in parties admin mode, otherwise false
 	 */
 	public abstract boolean isPartiesAdminMode();
+
+	/**
+	 * Gets the API for the player claim impersonation info for this player.
+	 *
+	 * @return API for getting info about player claim impersonation by this player, not null
+	 */
+	@Nonnull
+	public abstract IPlayerClaimImpersonationInfoAPI getClaimsImpersonationInfo();
 
 	/**
 	 * Gets the player data for a specified logged in player.

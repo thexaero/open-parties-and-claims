@@ -67,15 +67,7 @@ public class ClaimsAboutCommand {
 				else
 					targetProfile = null;
 			} catch(IllegalArgumentException iae) {
-				/*try {
-					ServerPlayer inputPlayer = EntityArgument.getPlayer(context, "player");
-					if(inputPlayer != null)
-						targetProfile = inputPlayer.getGameProfile();
-					else
-						targetProfile = null;
-				} catch(IllegalArgumentException iae2) {*/
-					targetProfile = casterPlayer.getGameProfile();
-				//}
+				targetProfile = casterPlayer.getGameProfile();
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(casterPlayer.getServer());

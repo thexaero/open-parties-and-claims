@@ -50,6 +50,7 @@ import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -65,8 +66,14 @@ public class ConfigCommandUtil {
 		return effectivePlayerConfig;
 	}
 
-	public static GameProfile getConfigInputPlayer(CommandContext<CommandSourceStack> context, ServerPlayer sourcePlayer, String tooManyTargetMessage, String invalidTargetMessage, AdaptiveLocalizer adaptiveLocalizer) throws CommandSyntaxException {
-		GameProfile inputPlayer;
+	public static GameProfile getConfigInputPlayer(
+			CommandContext<CommandSourceStack> context,
+			ServerPlayer sourcePlayer,
+			String tooManyTargetMessage,
+			String invalidTargetMessage,
+			AdaptiveLocalizer adaptiveLocalizer
+	) throws CommandSyntaxException {
+		GameProfile inputPlayer = null;
 		try {
 			Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "player");
 			if(profiles.size() > 1) {
@@ -85,7 +92,7 @@ public class ConfigCommandUtil {
 		return inputPlayer;
 	}
 
-	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type){
+	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type, BiFunction<CommandContext<CommandSourceStack>, IServerData<?,?>, UUID> inputPlayerSupplier){
 		return (context, builder) -> {
 			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
 			MinecraftServer server = sourcePlayer.getServer();
@@ -93,10 +100,14 @@ public class ConfigCommandUtil {
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			UUID configOwnerId = sourcePlayer.getUUID();
 			if(!type.isGlobal()) {
-				GameProfile gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
-				if (gameProfile == null)
-					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
-				configOwnerId = gameProfile.getId();
+				if(inputPlayerSupplier != null)
+					configOwnerId = inputPlayerSupplier.apply(context, serverData);
+				else {
+					GameProfile gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
+					if (gameProfile == null)
+						return SharedSuggestionProvider.suggest(Stream.empty(), builder);
+					configOwnerId = gameProfile.getId();
+				}
 				if (configOwnerId == null)
 					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 			}
@@ -112,6 +123,10 @@ public class ConfigCommandUtil {
 				baseStream = baseStream.filter(s -> s.toLowerCase().startsWith(lowerCaseInput));
 			return SharedSuggestionProvider.suggest(baseStream.limit(64), builder);
 		};
+	}
+
+	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type){
+		return getSubConfigSuggestionProvider(type, null);
 	}
 
 	public static Predicate<CommandSourceStack> getPartyClaimsRequirement(boolean edit){

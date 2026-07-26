@@ -27,6 +27,7 @@ import net.minecraft.util.BitStorage;
 import xaero.pac.client.claims.ClientClaimsManager;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.impersonation.SimplePlayerClaimImpersonationInfo;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
@@ -139,9 +140,14 @@ public class ClientClaimsSyncHandler {
 		claimsManager.getClaimResultTracker().onClaimResult(result);
 	}
 
-	public void onClaimModes(boolean adminMode, ClaimingMode claimingMode) {
+	public void onClaimModes(
+			boolean adminMode,
+			ClaimingMode claimingMode,
+			SimplePlayerClaimImpersonationInfo playerImpersonation
+	) {
 		claimsManager.setAdminMode(adminMode);
 		claimsManager.setClaimingMode(claimingMode);
+		claimsManager.setPlayerImpersonationInfo(playerImpersonation);
 	}
 
 	public void onClaimStateRemoved(int syncIndex) {

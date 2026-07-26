@@ -40,6 +40,7 @@ public class ClaimsCommandRegister {
 			registerForClaimingMode(claimingMode, dispatcher, environment);
 		}
 		new ClaimsAdminModeCommand().register(dispatcher, environment);
+		new ClaimsImpersonateCommand().register(dispatcher, environment);
 	}
 
 	private void registerForClaimingMode(

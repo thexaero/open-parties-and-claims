@@ -25,6 +25,7 @@ import xaero.pac.client.claims.player.api.IClientPlayerClaimInfoAPI;
 import xaero.pac.client.claims.tracker.result.api.IClaimsManagerClaimResultTrackerAPI;
 import xaero.pac.common.claims.api.IClaimsManagerAPI;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+import xaero.pac.common.claims.player.impersonation.api.IPlayerClaimImpersonationInfoAPI;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerAPI;
@@ -490,5 +491,13 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Nullable
 	public UUID getCurrentPartyOwner();
+
+	/**
+	 * Gets the API for the player claim impersonation info for the local player.
+	 *
+	 * @return API for getting info about player claim impersonation by the local player, not null
+	 */
+	@Nonnull
+	public IPlayerClaimImpersonationInfoAPI getPlayerImpersonationInfo();
 	
 }

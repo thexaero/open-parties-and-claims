@@ -36,6 +36,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.claims.player.impersonation.ServerPlayerClaimImpersonationInfo;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
@@ -95,6 +96,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private long allowedClaimAccessOverLimitTick;
 	private long lastClaimsOverLimitMessageTime;
 	private boolean partiesAdminMode;
+	private final ServerPlayerClaimImpersonationInfo claimsImpersonationInfo;
 
 	public ServerPlayerData(
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -104,6 +106,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		super();
 		this.serverData = serverData;
 		this.player = player;
+		this.claimsImpersonationInfo = new ServerPlayerClaimImpersonationInfo(null, serverData);
 	}
 
 	public void setPlayer(ServerPlayer player) {
@@ -147,7 +150,8 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	@Override
 	public ClaimingMode getClaimingMode() {
 		if(claimingMode == null) {
-			if(serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(player))
+			if(claimsImpersonationInfo.getPlayerId() == null &&
+					serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(player))
 				return (ClaimingMode) ClaimingModes.PARTY;
 			return (ClaimingMode) ClaimingModes.PLAYER;
 		}
@@ -402,6 +406,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public void setPartiesAdminMode(boolean partiesAdminMode) {
 		this.partiesAdminMode = partiesAdminMode;
+	}
+
+	@Nonnull
+	public ServerPlayerClaimImpersonationInfo getClaimsImpersonationInfo() {
+		return claimsImpersonationInfo;
 	}
 
 }

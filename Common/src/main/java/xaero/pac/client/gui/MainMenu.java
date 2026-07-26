@@ -271,9 +271,8 @@ public class MainMenu extends XPACScreen {
 		if(serverHasMod && !claimsManager.isLoading()) {
 			IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 			boolean adminMode = claimsManager.isAdminMode();
-			IClaimingModeAPI effectiveClaimingMode = selectedEffectiveClaimingMode;
-			ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(effectiveClaimingMode);
-			UUID claimTargetUUID = claimingModeHandler.getClaimReflectionOwnerGetter().apply(claimsManager);
+			IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
+			UUID claimTargetUUID = potentialClaimReflection == null ? null : potentialClaimReflection.getPlayerId();
 			claimButton.active = adminMode || currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID);
 			claimButton.setMessage(wouldClaim(currentClaim) ? CLAIM : UNCLAIM);
 			
@@ -287,7 +286,7 @@ public class MainMenu extends XPACScreen {
 	private void updateClaimingModeDropdown(IClientClaimsManager<?, ?, ?> claimsManager){
 		if(System.currentTimeMillis() - lastClaimingModeChangeTime < 1000)
 			return;
-		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode)
+		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode && claimsManager.getRawClaimingMode() == selectedClaimingMode)
 			return;
 		replaceRenderableWidget(claimingModeMenu, claimingModeMenu = setupClaimModeDropdown());
 	}
@@ -352,8 +351,8 @@ public class MainMenu extends XPACScreen {
 		IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 				claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		IClaimingModeAPI claimingModeAPI = selectedEffectiveClaimingMode;
-		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(claimingModeAPI);
-		UUID claimingAsUUID = claimingModeHandler.getClaimReflectionOwnerGetter().apply(claimsManager);
+		IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
+		UUID claimingAsUUID = potentialClaimReflection == null ? null : potentialClaimReflection.getPlayerId();
 		if(claimingAsUUID == null)
 			return;
 		IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo =

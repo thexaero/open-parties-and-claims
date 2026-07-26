@@ -30,7 +30,6 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -71,8 +70,13 @@ public class ClaimsForceloadCommands {
 				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 				AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 				ClaimingMode finalMode = mode == null ? playerData.getClaimingMode() : mode;
+				UUID contextPlayerId = player.getUUID();
+				serverData.getServerClaimsManager().getPermissionHandler().ensureImpersonationPermission(player, playerData);
+				boolean impersonating = finalMode.canBeImpersonated() && playerData.getClaimsImpersonationInfo().getPlayerId() != null;
+				if(impersonating)
+					contextPlayerId = playerData.getClaimsImpersonationInfo().getPlayerId();
 				if(finalMode.getPermissionChecker() != null) {
-					ClaimResult.Type failureType = finalMode.getPermissionChecker().apply(player, serverData.getServerClaimsManager());
+					ClaimResult.Type failureType = finalMode.getPermissionChecker().apply(contextPlayerId, serverData.getServerClaimsManager());
 					if(failureType != null) {
 						if(finalMode == playerData.getRawClaimingMode())
 							serverData.getServerClaimsManager().getPermissionHandler().resetClaimingMode(player);
@@ -80,10 +84,10 @@ public class ClaimsForceloadCommands {
 						return 0;
 					}
 				}
-				UUID playerId = player.getUUID();
+				UUID claimPlayerId = contextPlayerId;
 				if(finalMode.getForcedUUIDGetter() != null)
-					playerId = finalMode.getForcedUUIDGetter().apply(playerId, serverData.getServerClaimsManager());
-				if(playerId == null) {
+					claimPlayerId = finalMode.getForcedUUIDGetter().apply(claimPlayerId, serverData.getServerClaimsManager());
+				if(claimPlayerId == null) {
 					//shouldn't actually happen, so no failure is sent,
 					// but won't hurt to catch this anyway
 					return 0;
@@ -98,7 +102,7 @@ public class ClaimsForceloadCommands {
 				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 				boolean shouldReplace = opReplaceCurrent || playerData.isClaimsAdminMode();
 
-			 	ClaimResult<?> result = claimsManager.tryToForceloadTyped(world.dimension().location(), playerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);
+			 	ClaimResult<?> result = claimsManager.tryToForceloadTyped(world.dimension().location(), claimPlayerId, player.chunkPosition().x, player.chunkPosition().z, chunkX, chunkZ, enable, shouldReplace);
 			 	
 			 	try {
 				 	if(!result.getResultType().success) {

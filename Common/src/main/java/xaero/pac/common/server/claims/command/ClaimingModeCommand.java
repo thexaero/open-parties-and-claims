@@ -31,9 +31,8 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.result.api.ClaimResult;
-import xaero.pac.common.packet.ClientboundModesPacket;
+import xaero.pac.common.packet.claims.ClientboundClaimModesPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -49,6 +48,7 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class ClaimingModeCommand {
@@ -76,7 +76,13 @@ public class ClaimingModeCommand {
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 					if(mode != null && mode.getPermissionChecker() != null){
-						ClaimResult.Type failureType = mode.getPermissionChecker().apply(player, serverData.getServerClaimsManager());
+						UUID permissionCheckPlayerId = player.getUUID();
+						if(mode.canBeImpersonated()) {
+							serverData.getServerClaimsManager().getPermissionHandler().ensureImpersonationPermission(player, playerData);
+							if (playerData.getClaimsImpersonationInfo().getPlayerId() != null)
+								permissionCheckPlayerId = playerData.getClaimsImpersonationInfo().getPlayerId();
+						}
+						ClaimResult.Type failureType = mode.getPermissionChecker().apply(permissionCheckPlayerId, serverData.getServerClaimsManager());
 						if (failureType != null) {
 							serverData.getServerClaimsManager().getPermissionHandler().resetClaimingMode(player);
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, failureType.message));
@@ -92,7 +98,7 @@ public class ClaimingModeCommand {
 							),
 							player.getUUID()
 					);
-					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
+					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
 					return 1;
 				}));
 		dispatcher.register(command);
