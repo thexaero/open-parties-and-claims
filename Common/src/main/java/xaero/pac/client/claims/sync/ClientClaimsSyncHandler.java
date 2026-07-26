@@ -141,10 +141,12 @@ public class ClientClaimsSyncHandler {
 	}
 
 	public void onClaimModes(
+			boolean moderatorMode,
 			boolean adminMode,
 			ClaimingMode claimingMode,
 			SimplePlayerClaimImpersonationInfo playerImpersonation
 	) {
+		claimsManager.setModeratorMode(moderatorMode);
 		claimsManager.setAdminMode(adminMode);
 		claimsManager.setClaimingMode(claimingMode);
 		claimsManager.setPlayerImpersonationInfo(playerImpersonation);

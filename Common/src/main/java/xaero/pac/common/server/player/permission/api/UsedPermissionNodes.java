@@ -67,6 +67,17 @@ public class UsedPermissionNodes {
 			ALL_BUILDER);
 
 	/**
+	 * The permission to enter moderator mode for claims.
+	 */
+	public static final IPermissionNodeAPI<Boolean> CLAIMS_MODERATOR_MODE = new PermissionNode<>(
+			"xaero.pac_claims_moderator_mode",
+			Boolean.class,
+			() -> ServerConfig.CONFIG.claimsModeratorModePermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_claims_moderator_mode"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_moderator_mode"),
+			ALL_BUILDER);
+
+	/**
 	 * The permission to enter admin mode for claims.
 	 */
 	public static final IPermissionNodeAPI<Boolean> CLAIMS_ADMIN_MODE = new PermissionNode<>(

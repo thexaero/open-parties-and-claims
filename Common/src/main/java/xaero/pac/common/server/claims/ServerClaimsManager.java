@@ -461,12 +461,12 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Override
-	protected MutableComponent constructPlayerClaimName(ServerPlayerClaimInfo playerClaimInfo, Component forceloadedComponent) {
-		if(ServerConfig.CONFIG.partyOwnedClaims.get()) {
+	protected MutableComponent constructPlayerClaimName(ServerPlayerClaimInfo playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames) {
+		if(allowPartyNames && ServerConfig.CONFIG.partyOwnedClaims.get()) {
 			Component partyName = playerClaimInfo.fetchPartyName();
 			if(partyName == null) {
 				if(!playerClaimInfo.isPartyOwned())
-					return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+					return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent, allowPartyNames);
 				partyName = playerClaimInfo.getDefaultPartyName();
 			}
 			return new TranslatableComponent(
@@ -474,7 +474,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 					partyName, forceloadedComponent
 			);
 		}
-		return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+		return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent, allowPartyNames);
 	}
 
 	public IPlayerConfigManager getConfigManager(){

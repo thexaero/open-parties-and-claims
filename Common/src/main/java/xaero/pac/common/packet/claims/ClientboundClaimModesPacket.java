@@ -38,12 +38,14 @@ import java.util.function.Function;
 
 public class ClientboundClaimModesPacket {
 
+	private final boolean moderatorMode;
 	private final boolean adminMode;
 	private final ClaimingMode claimingMode;
 	private final SimplePlayerClaimImpersonationInfo claimsImpersonationInfo;
 
-	public ClientboundClaimModesPacket(boolean adminMode, ClaimingMode claimingMode, SimplePlayerClaimImpersonationInfo claimsImpersonationInfo) {
+	public ClientboundClaimModesPacket(boolean moderatorMode, boolean adminMode, ClaimingMode claimingMode, SimplePlayerClaimImpersonationInfo claimsImpersonationInfo) {
 		super();
+		this.moderatorMode = moderatorMode;
 		this.adminMode = adminMode;
 		this.claimingMode = claimingMode;
 		this.claimsImpersonationInfo = claimsImpersonationInfo;
@@ -59,6 +61,7 @@ public class ClientboundClaimModesPacket {
 				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
 					return null;
+				boolean moderatorMode = tag.getBoolean("mm");
 				boolean adminMode = tag.getBoolean("am");
 				ClaimingMode claimingMode = null;
 				if(tag.contains("cm", Tag.TAG_STRING))
@@ -86,7 +89,7 @@ public class ClientboundClaimModesPacket {
 					}
 				} else
 					claimsImpersonationInfo = new SimplePlayerClaimImpersonationInfo(null);
-				return new ClientboundClaimModesPacket(adminMode, claimingMode, claimsImpersonationInfo);
+				return new ClientboundClaimModesPacket(moderatorMode, adminMode, claimingMode, claimsImpersonationInfo);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);
 				return null;
@@ -96,6 +99,7 @@ public class ClientboundClaimModesPacket {
 		@Override
 		public void accept(ClientboundClaimModesPacket t, FriendlyByteBuf u) {
 			CompoundTag tag = new CompoundTag();
+			tag.putBoolean("mm", t.moderatorMode);
 			tag.putBoolean("am", t.adminMode);
 			if(t.claimingMode != null)
 				tag.putString("cm", t.claimingMode.getId());
@@ -122,7 +126,7 @@ public class ClientboundClaimModesPacket {
 		
 		@Override
 		public void accept(ClientboundClaimModesPacket t) {
-			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimModes(t.adminMode, t.claimingMode, t.claimsImpersonationInfo);
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimModes(t.moderatorMode, t.adminMode, t.claimingMode, t.claimsImpersonationInfo);
 		}
 		
 	}
@@ -132,10 +136,10 @@ public class ClientboundClaimModesPacket {
 		PlayerClaimImpersonationInfo serverClaimImpersonationInfo = serverPlayerData.getClaimsImpersonationInfo();
 		SimplePlayerClaimImpersonationInfo packetPlayerClaimImpersonationInfo = serverClaimImpersonationInfo.createSnapshot();
 		return new ClientboundClaimModesPacket(
+				serverPlayerData.isClaimsModeratorMode(),
 				serverPlayerData.isClaimsAdminMode(),
 				(ClaimingMode) playerData.getRawClaimingMode(),
-				packetPlayerClaimImpersonationInfo
-		);
+				packetPlayerClaimImpersonationInfo);
 	}
 	
 }

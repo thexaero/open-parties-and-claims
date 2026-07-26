@@ -93,6 +93,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private final Map<IClaimingModeAPI, ClientClaimingModeInfo> claimingModeInfoMap;
 	private boolean alwaysUseLoadingValues;
 	private int maxClaimDistance;
+	private boolean moderatorMode;
 	private boolean adminMode;
 	private IClaimingModeAPI claimingMode;
 	private boolean partyOwnedClaims;
@@ -248,6 +249,15 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		return maxClaimDistance;
 	}
 
+	public void setModeratorMode(boolean moderatorMode) {
+		this.moderatorMode = moderatorMode;
+	}
+
+	@Override
+	public boolean isModeratorMode() {
+		return moderatorMode || isAdminMode();
+	}
+
 	@Override
 	public boolean isAdminMode() {
 		return adminMode;
@@ -350,6 +360,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	public void reset(boolean notifyTracker) {
 		super.reset(notifyTracker);
+		moderatorMode = false;
 		adminMode = false;
 		claimingMode = null;
 		claimingModeInfoMap.values().forEach(ClientClaimingModeInfo::reset);
@@ -471,13 +482,13 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	protected MutableComponent constructPlayerClaimName(ClientPlayerClaimInfo playerClaimInfo, Component forceloadedComponent) {
-		if(partyOwnedClaims && playerClaimInfo.isPartyOwned() && playerClaimInfo.getPartyName() != null)
+	protected MutableComponent constructPlayerClaimName(ClientPlayerClaimInfo playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames) {
+		if(allowPartyNames && partyOwnedClaims && playerClaimInfo.isPartyOwned() && playerClaimInfo.getPartyName() != null)
 			return new TranslatableComponent(
 					"gui.xaero_pac_title_party_claim",
 					playerClaimInfo.getPartyName(), forceloadedComponent
 			);
-		return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+		return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent, allowPartyNames);
 	}
 
 	@Override

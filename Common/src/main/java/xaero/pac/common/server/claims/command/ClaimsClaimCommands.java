@@ -125,7 +125,9 @@ public class ClaimsClaimCommands {
 						
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IPlayerChunkClaimAPI currentClaim = claimsManager.get(world.dimension().location(), player.chunkPosition().x, player.chunkPosition().z);
-							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_claims_claim_already_claimed_by", claimsManager.getDefaultName(currentClaim)));
+							claimsManager.getPermissionHandler().ensureModeratorModeStatusPermission(player, playerData);
+							boolean moderatorMode = playerData.isClaimsModeratorMode();
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_claims_claim_already_claimed_by", claimsManager.getDefaultName(currentClaim, !moderatorMode)));
 							return 0;
 						}
 					} else {

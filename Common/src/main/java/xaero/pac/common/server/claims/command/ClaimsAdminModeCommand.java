@@ -71,8 +71,9 @@ public class ClaimsAdminModeCommand {
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 							serverData = ServerData.from(server);
 					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-					playerData.setClaimsAdminMode(!playerData.isClaimsAdminMode());
+					playerData.setClaimsModeratorMode(false);
 					playerData.setClaimsNonallyMode(false);
+					playerData.setClaimsAdminMode(!playerData.isClaimsAdminMode());
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 					player.sendMessage(adaptiveLocalizer.getFor(player, playerData.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"), player.getUUID());
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));

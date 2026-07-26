@@ -207,6 +207,12 @@ public abstract class ClaimsManager
 	@Nonnull
 	@Override
 	public Component getDefaultName(IPlayerChunkClaimAPI claimState) {
+		return getDefaultName(claimState, true);
+	}
+
+	@Nonnull
+	@Override
+	public Component getDefaultName(IPlayerChunkClaimAPI claimState, boolean allowPartyNames) {
 		if(claimState == null)
 			return new TranslatableComponent("gui.xaero_pac_title_wilderness");
 		MutableComponent result;
@@ -219,7 +225,7 @@ public abstract class ClaimsManager
 			result = new TranslatableComponent("gui.xaero_pac_title_expired_claim", forceloadedComponent);
 		else {
 			PCI playerClaimInfo = getPlayerInfo(claimId);
-			result = constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+			result = constructPlayerClaimName(playerClaimInfo, forceloadedComponent, allowPartyNames);
 		}
 		return result;
 	}
@@ -227,13 +233,19 @@ public abstract class ClaimsManager
 	@Nonnull
 	@Override
 	public Component getFullName(IPlayerChunkClaimAPI claimState) {
+		return getFullName(claimState, true);
+	}
+
+	@Nonnull
+	@Override
+	public Component getFullName(IPlayerChunkClaimAPI claimState, boolean allowPartyNames) {
 		String customName = claimState == null ?
 				getWildernessName() :
 				getPlayerInfo(claimState.getPlayerId()).getClaimsName(claimState.getSubConfigIndex());
 		boolean hasCustom = customName != null && !customName.isEmpty();
 		if(claimState == null && hasCustom)
 			return new TextComponent(customName);
-		Component defaultName = getDefaultName(claimState);
+		Component defaultName = getDefaultName(claimState, allowPartyNames);
 		if(!hasCustom)
 			return defaultName;
 		return new TranslatableComponent("gui.xaero_pac_full_title_format", customName, defaultName);
@@ -242,7 +254,7 @@ public abstract class ClaimsManager
 	@Nullable
 	public abstract String getWildernessName();
 
-	protected MutableComponent constructPlayerClaimName(PCI playerClaimInfo, Component forceloadedComponent){
+	protected MutableComponent constructPlayerClaimName(PCI playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames){
 		//overridden to apply party name instead if necessary
 		return new TranslatableComponent(
 				"gui.xaero_pac_title_player_claim",

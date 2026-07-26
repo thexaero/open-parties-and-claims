@@ -96,6 +96,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
 	public final ForgeConfigSpec.ConfigValue<String> serverClaimPermission;
+	public final ForgeConfigSpec.ConfigValue<String> claimsModeratorModePermission;
 	public final ForgeConfigSpec.ConfigValue<String> claimsAdminModePermission;
 	public final ForgeConfigSpec.ConfigValue<String> claimsImpersonationPermission;
 	public final ForgeConfigSpec.ConfigValue<String> permissionSystem;
@@ -348,8 +349,14 @@ public class ServerConfig {
 			.worldRestart()
 			.define("serverClaimPermission", UsedPermissionNodes.SERVER_CLAIMS.getDefaultNodeString());
 
+		claimsModeratorModePermission = builder
+			.comment("The permission that gives non-OP players the ability to enable claim moderator mode. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_claims_moderator_mode_permission")
+			.worldRestart()
+			.define("moderatorModePermission", UsedPermissionNodes.CLAIMS_MODERATOR_MODE.getDefaultNodeString());
+
 		claimsAdminModePermission = builder
-			.comment("The permission that gives non-OP players the ability to enable claim admin mode. The used permission system can be configured with \"permissionSystem\".")
+			.comment("The permission that gives non-OP players the ability to enable claim admin mode and claim moderator mode. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_claims_admin_mode_permission")
 			.worldRestart()
 			.define("adminModePermission", UsedPermissionNodes.CLAIMS_ADMIN_MODE.getDefaultNodeString());

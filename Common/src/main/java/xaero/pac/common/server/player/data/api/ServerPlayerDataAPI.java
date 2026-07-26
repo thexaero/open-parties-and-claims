@@ -46,6 +46,13 @@ import javax.annotation.Nullable;
 public abstract class ServerPlayerDataAPI {
 
 	/**
+	 * Checks if the player is using either the claims moderator mode or claims admin mode.
+	 *
+	 * @return true if the player is effectively in the claims moderator mode, otherwise false
+	 */
+	public abstract boolean isClaimsModeratorMode();
+
+	/**
 	 * Checks if the player is using the claims admin mode.
 	 *
 	 * @return true if the player is in the claims admin mode, otherwise false

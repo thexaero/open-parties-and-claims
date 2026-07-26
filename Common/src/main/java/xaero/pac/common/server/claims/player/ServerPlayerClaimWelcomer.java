@@ -62,7 +62,9 @@ public class ServerPlayerClaimWelcomer {
 
 		IPlayerConfig claimConfig = serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigManager(), currentClaim);
 		int claimColor = claimConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
-		MutableComponent subTitleText = adaptiveLocalizer.getFor(player, claimsManager.getFullName(currentClaim)).copy();
+		claimsManager.getPermissionHandler().ensureModeratorModeStatusPermission(player, playerData);
+		boolean moderatorMode = playerData.isClaimsModeratorMode();
+		MutableComponent subTitleText = adaptiveLocalizer.getFor(player, claimsManager.getFullName(currentClaim, !moderatorMode)).copy();
 		subTitleText = subTitleText.withStyle(s -> s.withColor(isOwner ? ChatFormatting.DARK_GREEN : hasAccess ? ChatFormatting.GOLD : ChatFormatting.DARK_RED));
 
 		MutableComponent subTitle = new TextComponent("□ ").withStyle(s -> s.withColor(claimColor));

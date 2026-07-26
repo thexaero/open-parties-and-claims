@@ -70,6 +70,22 @@ public class ServerClaimsPermissionHandler {
 		return serverData.getPlayerPartySystemManager().canPartyClaim(playerId);
 	}
 
+	public boolean playerHasModeratorModePermission(ServerPlayer player){
+		if(playerHasAdminModePermission(player))
+			return true;
+		IPlayerPermissionSystemAPI permissionSystem = getSystem();
+		if(permissionSystem == null)
+			return false;
+		return permissionSystem.getPermission(player, UsedPermissionNodes.CLAIMS_MODERATOR_MODE);
+	}
+
+	public void ensureModeratorModeStatusPermission(ServerPlayer player, ServerPlayerDataAPI playerData){
+		if(playerData.isClaimsModeratorMode() && !playerHasModeratorModePermission(player)) {
+			((ServerPlayerData)playerData).setClaimsModeratorMode(false);
+			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
+		}
+	}
+
 	public boolean playerHasAdminModePermission(ServerPlayer player){
 		if(player.hasPermissions(2))
 			return true;

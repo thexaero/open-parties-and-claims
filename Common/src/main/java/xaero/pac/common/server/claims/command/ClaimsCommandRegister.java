@@ -39,6 +39,7 @@ public class ClaimsCommandRegister {
 			ClaimingMode claimingMode = (ClaimingMode) claimingModeAPI;
 			registerForClaimingMode(claimingMode, dispatcher, environment);
 		}
+		new ClaimsModeratorModeCommand().register(dispatcher, environment);
 		new ClaimsAdminModeCommand().register(dispatcher, environment);
 		new ClaimsImpersonateCommand().register(dispatcher, environment);
 	}

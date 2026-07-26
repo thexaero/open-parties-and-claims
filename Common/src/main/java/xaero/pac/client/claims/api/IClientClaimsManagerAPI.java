@@ -169,6 +169,13 @@ public interface IClientClaimsManagerAPI
 	public int getMaxClaimDistance();
 
 	/**
+	 * Checks whether the local client player is in moderator or admin mode.
+	 *
+	 * @return true if the player is effectively in moderator mode, otherwise false
+	 */
+	public boolean isModeratorMode();
+
+	/**
 	 * Checks whether the local client player is in admin mode.
 	 *
 	 * @return true if the player is in admin mode, otherwise false

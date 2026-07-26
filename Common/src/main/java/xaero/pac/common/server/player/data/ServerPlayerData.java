@@ -63,6 +63,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private final IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 			serverData;
 	private ServerPlayer player;//this can change!
+	private boolean claimsModeratorMode;
 	private boolean claimsAdminMode;
 	private boolean claimsNonallyMode;
 	private ClaimingMode claimingMode = null;
@@ -137,6 +138,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	}
 
 	@Override
+	public boolean isClaimsModeratorMode() {
+		return claimsModeratorMode || isClaimsAdminMode();
+	}
+
+	@Override
 	public boolean isClaimsAdminMode() {
 		return claimsAdminMode;
 	}
@@ -173,7 +179,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public void setOftenSyncedPartyMemberInfo(PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo) {
 		this.oftenSyncedPartyMemberInfo = oftenSyncedPartyMemberInfo;
 	}
-	
+
+	public void setClaimsModeratorMode(boolean claimsModeratorMode) {
+		this.claimsModeratorMode = claimsModeratorMode;
+	}
+
 	public void setClaimsAdminMode(boolean claimsAdminMode) {
 		this.claimsAdminMode = claimsAdminMode;
 	}
