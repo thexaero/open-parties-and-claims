@@ -84,6 +84,7 @@ import xaero.pac.common.server.player.config.group.IPlayerConfigGroup;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.server.player.util.ServerPlayerUtils;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
 import javax.annotation.Nonnull;
@@ -1211,14 +1212,7 @@ public class ChunkProtection
 			double fixedX = goodXInt + 0.5;
 			double fixedZ = goodZInt + 0.5;
 			if(entity instanceof ServerPlayer player) {
-				MinecraftServer server = player.getServer();
-				server.execute(() -> {
-					ServerPlayer upToDatePlayer = server.getPlayerList().getPlayer(player.getUUID());
-					if(upToDatePlayer != player)
-						return;
-					player.stopRiding();
-					player.connection.teleport(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());
-				});
+				ServerPlayerUtils.teleport(player, fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());
 			} else {
 				entity.stopRiding();
 				entity.moveTo(fixedX, entity.getY(), fixedZ, entity.getYRot(), entity.getXRot());//including the rotation is necessary to prevent errors when teleporting players

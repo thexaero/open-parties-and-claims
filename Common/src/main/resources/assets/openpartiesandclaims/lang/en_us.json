@@ -178,6 +178,8 @@
 	"gui.xaero_pac_permission_comment_claims_admin_mode" : "Player can enter admin mode for claims.",
 	"gui.xaero_pac_permission_comment_claims_impersonation" : "Player can impersonate other players in regards to claims.",
 	"gui.xaero_pac_permission_comment_parties_admin_mode" : "Player can enter admin mode for parties.",
+	"gui.xaero_pac_permission_claims_teleport" : "Player Claim Teleport",
+	"gui.xaero_pac_permission_comment_claims_teleport" : "Player can teleport to any player's claims.",
 	"gui.xaero_pac_permission_max_player_groups" : "Max Player Groups",
 	"gui.xaero_pac_permission_comment_max_player_groups" : "The maximum number of player groups that the player can create in their config.",
 	"gui.xaero_pac_permission_player_group_space" : "Player Group Space",
@@ -549,5 +551,9 @@
 	"gui.xaero_claims_impersonate_unknown_player" : "Unknown target player!",
 	"gui.xaero_claims_impersonate_too_many_players" : "You can only impersonate exactly 1 player at a time!",
 	"gui.xaero_claims_impersonate_disabled" : "You are no longer impersonating anyone!",
-	"gui.xaero_claims_impersonate_enabled" : "You are now impersonating %1$s! You can now claim/unclaim on their behalf and access claims with protection exceptions normally granted to them."
+	"gui.xaero_claims_impersonate_enabled" : "You are now impersonating %1$s! You can now claim/unclaim on their behalf and access claims with protection exceptions normally granted to them.",
+	"gui.xaero_claims_teleport_success" : "Successfully teleported to a chunk claimed by %1$s!",
+	"gui.xaero_claims_teleport_invalid_player" : "Invalid target player!",
+	"gui.xaero_claims_teleport_vulnerable" : "You can only teleport to claims in creative mode or if you're invulnerable.",
+	"gui.xaero_claims_teleport_no_claims" : "The input player doesn't have any chunks claimed! Try the party owner?"
 }

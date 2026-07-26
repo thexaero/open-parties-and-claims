@@ -19,6 +19,7 @@
 package xaero.pac.common.server.claims.player;
 
 import net.minecraft.resources.ResourceLocation;
+import xaero.pac.common.claims.ClaimLocation;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimInfo;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -95,5 +96,7 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	void setLastAllowedClaimAccessOverLimitTime(long lastAllowedClaimAccessOverLimitTime);
 
 	long getLastAllowedClaimAccessOverLimitTime();
+
+	ClaimLocation getRandomClaimPos(boolean firstPosIfTooMany);
 
 }

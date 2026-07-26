@@ -118,6 +118,15 @@ public class ServerClaimsPermissionHandler {
 		}
 	}
 
+	public boolean playerHasTeleportPermission(ServerPlayer player) {
+		if(player.hasPermissions(2))
+			return true;
+		IPlayerPermissionSystemAPI permissionSystem = getSystem();
+		if(permissionSystem == null)
+			return false;
+		return permissionSystem.getPermission(player, UsedPermissionNodes.CLAIMS_TELEPORTATION);
+	}
+
 	public IPlayerPermissionSystemAPI getSystem() {
 		return serverData.getPlayerPermissionSystemManager().getUsedSystem();
 	}

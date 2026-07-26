@@ -99,6 +99,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<String> claimsModeratorModePermission;
 	public final ForgeConfigSpec.ConfigValue<String> claimsAdminModePermission;
 	public final ForgeConfigSpec.ConfigValue<String> claimsImpersonationPermission;
+	public final ForgeConfigSpec.ConfigValue<String> claimsTeleportationPermission;
 	public final ForgeConfigSpec.ConfigValue<String> permissionSystem;
 	public final ForgeConfigSpec.ConfigValue<String> primaryPartySystem;
 	public final ForgeConfigSpec.BooleanValue partyOwnedClaims;
@@ -365,7 +366,13 @@ public class ServerConfig {
 			.comment("The permission that gives non-OP players the ability to impersonate other players in regards to claims. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_claims_impersonation_permission")
 			.worldRestart()
-			.define("claimsImpersonationPermission", UsedPermissionNodes.CLAIMS_IMPERSONATION.getDefaultNodeString());
+			.define("impersonationPermission", UsedPermissionNodes.CLAIMS_IMPERSONATION.getDefaultNodeString());
+
+		claimsTeleportationPermission = builder
+			.comment("The permission that gives non-OP players the ability to teleport to any player's claims. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_claims_teleportation_permission")
+			.worldRestart()
+			.define("teleportationPermission", UsedPermissionNodes.CLAIMS_TELEPORTATION.getDefaultNodeString());
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")

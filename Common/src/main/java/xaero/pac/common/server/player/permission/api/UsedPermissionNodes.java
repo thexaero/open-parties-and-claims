@@ -133,6 +133,17 @@ public class UsedPermissionNodes {
 			ALL_BUILDER);
 
 	/**
+	 * The permission to teleport to any player's claims.
+	 */
+	public static final IPermissionNodeAPI<Boolean> CLAIMS_TELEPORTATION = new PermissionNode<>(
+			"xaero.pac_claims_teleport",
+			Boolean.class,
+			() -> ServerConfig.CONFIG.claimsTeleportationPermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_claims_teleport"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_teleport"),
+			ALL_BUILDER);
+
+	/**
 	 * A (default node string)->(node instance) map of all player permission nodes.
 	 */
 	public static final ImmutableMap<String, IPermissionNodeAPI<?>> ALL = ImmutableMap.copyOf(ALL_BUILDER);

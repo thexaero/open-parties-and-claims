@@ -42,6 +42,7 @@ public class ClaimsCommandRegister {
 		new ClaimsModeratorModeCommand().register(dispatcher, environment);
 		new ClaimsAdminModeCommand().register(dispatcher, environment);
 		new ClaimsImpersonateCommand().register(dispatcher, environment);
+		new ClaimsTeleportCommand().register(dispatcher, environment);
 	}
 
 	private void registerForClaimingMode(

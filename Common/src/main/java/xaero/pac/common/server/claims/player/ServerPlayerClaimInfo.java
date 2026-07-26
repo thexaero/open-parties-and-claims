@@ -20,6 +20,7 @@ package xaero.pac.common.server.claims.player;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import xaero.pac.common.claims.ClaimLocation;
 import xaero.pac.common.claims.player.*;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -42,11 +43,8 @@ import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Deque;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> implements IServerPlayerClaimInfo<PlayerDimensionClaims>, ObjectManagerIOExpirableObject {
@@ -305,6 +303,25 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public long getLastAllowedClaimAccessOverLimitTime() {
 		return lastAllowedClaimAccessOverLimitTime;
+	}
+
+	@Override
+	public ClaimLocation getRandomClaimPos(boolean firstPosIfTooMany) {
+		int totalCount = getClaimCount();
+		if(totalCount == 0)
+			return null;
+		int randomClaimIndex = (int) (Math.random() * totalCount);
+		int offset = 0;
+		List<Entry<ResourceLocation, PlayerDimensionClaims>> dimensions = getTypedStream().toList();
+		for (Entry<ResourceLocation, PlayerDimensionClaims> entry : dimensions) {
+			PlayerDimensionClaims dimension = entry.getValue();
+			if(randomClaimIndex >= offset + dimension.getCount()){
+				offset += dimension.getCount();
+				continue;
+			}
+			return dimension.getRandomClaimPos(firstPosIfTooMany);
+		}
+		return null;
 	}
 
 }
