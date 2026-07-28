@@ -1,0 +1,173 @@
+/*
+ * Open Parties and Claims - adds chunk claims and player parties to Minecraft
+ * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of version 3 of the GNU Lesser General Public License
+ * (LGPL-3.0-only) as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received copies of the GNU Lesser General Public License
+ * and the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package xaero.pac.common.server.claims.command;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.ServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
+import xaero.pac.common.server.claims.IServerRegionClaims;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.claims.player.task.PlayerClaimClearSpreadoutTask;
+import xaero.pac.common.server.command.CommandRequirementHelper;
+import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
+import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+
+import java.util.Collection;
+import java.util.function.Predicate;
+
+public class ClaimsClearCommand {
+
+	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
+		Predicate<CommandSourceStack> targetRequirement = CommandRequirementHelper.onServerThread(context -> {
+			if(context.hasPermission(2) )
+				return true;
+			try {
+				ServerPlayer player = context.getPlayerOrException();
+				MinecraftServer server = player.getServer();
+				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+						serverData = ServerData.from(server);
+				return serverData.getServerClaimsManager().getPermissionHandler().playerHasAdminModePermission(player);
+			} catch (CommandSyntaxException e) {
+				return false;
+			}
+		});
+		SuggestionProvider<CommandSourceStack> targetSuggestions = (context, builder) -> {
+			PlayerList playerlist = context.getSource().getServer().getPlayerList();
+			return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream()
+					.map(targetPlayer -> targetPlayer.getGameProfile().getName()), builder);
+		};
+		
+		LiteralArgumentBuilder<CommandSourceStack> selfNoConfirmCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
+				.then(Commands.literal("clear")
+				.executes(getExecutor(false, true)));
+		dispatcher.register(selfNoConfirmCommand);
+		LiteralArgumentBuilder<CommandSourceStack> selfCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
+				.then(Commands.literal("clear")
+				.then(Commands.literal("confirm")
+				.executes(getExecutor(true, true))));
+		dispatcher.register(selfCommand);
+
+		LiteralArgumentBuilder<CommandSourceStack> targetNoConfirmCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
+				.then(Commands.literal("clear")
+				.then(Commands.argument("profile", GameProfileArgument.gameProfile())
+				.requires(targetRequirement)
+				.suggests(targetSuggestions)
+				.executes(getExecutor(false, false))));
+		dispatcher.register(targetNoConfirmCommand);
+		LiteralArgumentBuilder<CommandSourceStack> targetCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
+				.then(Commands.literal("clear")
+				.then(Commands.argument("profile", GameProfileArgument.gameProfile())
+				.requires(targetRequirement)
+				.suggests(targetSuggestions)
+				.then(Commands.literal("confirm")
+				.executes(getExecutor(true, false)))));
+		dispatcher.register(targetCommand);
+	}
+
+	private Command<CommandSourceStack> getExecutor(boolean confirmed, boolean self){
+		return context -> {
+			ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
+			GameProfile targetProfile = null;
+			if(self)
+				targetProfile = casterPlayer.getGameProfile();
+			else try {
+				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
+				if(profiles.size() == 1)
+					targetProfile = profiles.iterator().next();
+			} catch(IllegalArgumentException iae) {
+			}
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData = ServerData.from(casterPlayer.getServer());
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+			if(targetProfile == null) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_clear_invalid_player"));
+				return 0;
+			}
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(casterPlayer);
+			if(!self && targetProfile != casterPlayer.getGameProfile() && !playerData.isClaimsAdminMode()) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_clear_not_admin_mode"));
+				return 0;
+			}
+			if(!confirmed){
+				Component message;
+				String primaryPartySystem = serverData.getPlayerPartySystemManager().getPrimarySystemName();
+				Component primaryPartyName = !ServerConfig.CONFIG.partyOwnedClaims.get() ? null :
+						serverData.getPlayerPartySystemManager().getPrimaryPartyNameByOwner(targetProfile.getId());
+				if(primaryPartyName == null)
+					primaryPartyName = new TranslatableComponent(self ?
+							"gui.xaero_claims_clear_needs_confirmation_self_no_party_owned" :
+							"gui.xaero_claims_clear_needs_confirmation_other_no_party_owned"
+					);
+				if(self)
+					message = new TranslatableComponent("gui.xaero_claims_clear_needs_confirmation_self", primaryPartySystem, primaryPartyName);
+				else
+					message = new TranslatableComponent("gui.xaero_claims_clear_needs_confirmation_other", targetProfile.getName(), primaryPartySystem, primaryPartyName);
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, message));
+				return 0;
+			}
+			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
+					claimsManager = serverData.getServerClaimsManager();
+			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo =
+					claimsManager.getPlayerInfo(targetProfile.getId());
+			if(playerInfo.getClaimCount() == 0){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						casterPlayer, self ?
+								"gui.xaero_claims_clear_no_claims_self" :
+								"gui.xaero_claims_clear_no_claims"
+				));
+				return 0;
+			}
+			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_clear_start", targetProfile.getName()), casterPlayer.getUUID());
+			playerInfo.addReplacementTask(
+					PlayerClaimClearSpreadoutTask.Builder.begin()
+							.setCallerUUID(casterPlayer.getUUID())
+							.setServer(serverData.getServer())
+							.setTargetPlayerProfile(targetProfile)
+							.build(),
+					serverData
+			);
+			return 1;
+		};
+	}
+
+}

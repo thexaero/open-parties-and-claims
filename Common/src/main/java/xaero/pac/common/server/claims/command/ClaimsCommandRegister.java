@@ -43,6 +43,7 @@ public class ClaimsCommandRegister {
 		new ClaimsAdminModeCommand().register(dispatcher, environment);
 		new ClaimsImpersonateCommand().register(dispatcher, environment);
 		new ClaimsTeleportCommand().register(dispatcher, environment);
+		new ClaimsClearCommand().register(dispatcher, environment);
 	}
 
 	private void registerForClaimingMode(

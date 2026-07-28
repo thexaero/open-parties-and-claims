@@ -555,5 +555,15 @@
 	"gui.xaero_claims_teleport_success" : "Successfully teleported to a chunk claimed by %1$s!",
 	"gui.xaero_claims_teleport_invalid_player" : "Invalid target player!",
 	"gui.xaero_claims_teleport_vulnerable" : "You can only teleport to claims in creative mode or if you're invulnerable.",
-	"gui.xaero_claims_teleport_no_claims" : "The input player doesn't have any chunks claimed! Try the party owner?"
+	"gui.xaero_claims_teleport_no_claims" : "The input player doesn't own any chunk claims! Try the party owner?",
+	"gui.xaero_claims_clear_not_admin_mode" : "You need to enable admin mode to be able to clear/delete all claims of another player.",
+	"gui.xaero_claims_clear_invalid_player" : "Invalid target player!",
+	"gui.xaero_claims_clear_no_claims" : "The input player doesn't own any chunk claims!",
+	"gui.xaero_claims_clear_no_claims_self" : "You don't own any chunk claims!",
+	"gui.xaero_claims_clear_needs_confirmation_self" : "Please also add the keyword \"confirm\" after the command to confirm that you wish to delete all claims that you own, including all party-owned claims owned by the %1$s party that you own (%2$s).",
+	"gui.xaero_claims_clear_needs_confirmation_self_no_party_owned" : "you don't own any party-owned claims",
+	"gui.xaero_claims_clear_needs_confirmation_other" : "Please also add the keyword \"confirm\" after the command to confirm that you wish to delete all claims owned by %1$s, including all party-owned claims owned by the %2$s party that they own (%3$s).",
+	"gui.xaero_claims_clear_needs_confirmation_other_no_party_owned" : "they don't own any party-owned claims",
+	"gui.xaero_claims_clear_start" : "Began deleting all claims owned by %1$s...",
+	"gui.xaero_claims_clear_complete" : "Successfully deleted all claims owned by %1$s!"
 }
