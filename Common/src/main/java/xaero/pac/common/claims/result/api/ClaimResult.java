@@ -72,43 +72,46 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 	public static enum Type {
 
 		/** A chunk was already forceloadable */
-		ALREADY_FORCELOADABLE(new TranslatableComponent("gui.xaero_claims_forceload_already"), false, false),
+		ALREADY_FORCELOADABLE(new TranslatableComponent("gui.xaero_claims_forceload_already"), false, false, false),
 
 		/** A chunk was already not forceloadable */
-		ALREADY_UNFORCELOADED(new TranslatableComponent("gui.xaero_claims_unforceload_already"), false, false),
+		ALREADY_UNFORCELOADED(new TranslatableComponent("gui.xaero_claims_unforceload_already"), false, false, false),
 
 		/** The claims feature is disabled */
-		CLAIMS_ARE_DISABLED(new TranslatableComponent("gui.xaero_claims_are_disabled").withStyle(ChatFormatting.RED), false, true),
+		CLAIMS_ARE_DISABLED(new TranslatableComponent("gui.xaero_claims_are_disabled").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** The area for a claim action was too big */
-		TOO_MANY_CHUNKS(new TranslatableComponent("gui.xaero_claims_too_many_chunks").withStyle(ChatFormatting.RED), false, true),
+		TOO_MANY_CHUNKS(new TranslatableComponent("gui.xaero_claims_too_many_chunks").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** The dimension is unclaimable */
-		UNCLAIMABLE_DIMENSION(new TranslatableComponent("gui.xaero_claims_claim_dimension_unclaimable").withStyle(ChatFormatting.RED), false, true),
+		UNCLAIMABLE_DIMENSION(new TranslatableComponent("gui.xaero_claims_claim_dimension_unclaimable").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** The chunk isn't claimed by who is trying to (un)forceload it */
-		NOT_CLAIMED_BY_USER_FORCELOAD(new TranslatableComponent("gui.xaero_claims_forceload_not_yours").withStyle(ChatFormatting.RED), false, true),
+		NOT_CLAIMED_BY_USER_FORCELOAD(new TranslatableComponent("gui.xaero_claims_forceload_not_yours").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** The chunk isn't claimed by who is trying to unclaim it */
-		NOT_CLAIMED_BY_USER(new TranslatableComponent("gui.xaero_claims_claim_unclaim_not_yours").withStyle(ChatFormatting.RED), false, true),
+		NOT_CLAIMED_BY_USER(new TranslatableComponent("gui.xaero_claims_claim_unclaim_not_yours").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** The chunk is already claimed */
-		ALREADY_CLAIMED(new TranslatableComponent("gui.xaero_claims_claim_already_claimed").withStyle(ChatFormatting.RED), false, true),
+		ALREADY_CLAIMED(new TranslatableComponent("gui.xaero_claims_claim_already_claimed").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** The maximum number of forceloadable claims was reached */
-		FORCELOAD_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_forceload_limit_reached").withStyle(ChatFormatting.RED), false, true),
+		FORCELOAD_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_forceload_limit_reached").withStyle(ChatFormatting.RED), false, true, true),
 
 		/** The maximum number of claims was reached */
-		CLAIM_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_claim_limit_reached").withStyle(ChatFormatting.RED), false, true),
+		CLAIM_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_claim_limit_reached").withStyle(ChatFormatting.RED), false, true, true),
 
 		/** The player's claim count is even higher than their limit */
-		OVER_CLAIM_LIMIT(new TranslatableComponent("gui.xaero_claims_over_claim_limit").withStyle(ChatFormatting.RED), false, true),
+		OVER_CLAIM_LIMIT(new TranslatableComponent("gui.xaero_claims_over_claim_limit").withStyle(ChatFormatting.RED), false, true, true),
 
 		/** The chunk was beyond the maximum distance */
-		TOO_FAR(new TranslatableComponent("gui.xaero_claims_claim_not_within_distance").withStyle(ChatFormatting.RED), false, true),
+		TOO_FAR(new TranslatableComponent("gui.xaero_claims_claim_not_within_distance").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** There is a claim replacement currently in progress in the background */
-		REPLACEMENT_IN_PROGRESS(new TranslatableComponent("gui.xaero_claims_replacement_in_progress").withStyle(ChatFormatting.RED), false, true),
+		REPLACEMENT_IN_PROGRESS(new TranslatableComponent("gui.xaero_claims_replacement_in_progress").withStyle(ChatFormatting.RED), false, true, true),
+
+		/** There is a claim transfer currently in progress in the background */
+		TRANSFER_IN_PROGRESS(new TranslatableComponent("gui.xaero_claims_transfer_in_progress").withStyle(ChatFormatting.RED), false, true, true),
 
 		/**
 		 * The user doesn't have permission to make server claims
@@ -116,7 +119,7 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		 * This result type is only used for server claim requests made by online players.
 		 * Permissions for server claims are not checked by the try methods in the server claims manager.
 		 */
-		NO_SERVER_PERMISSION(new TranslatableComponent("gui.xaero_claims_claim_no_server_permission").withStyle(ChatFormatting.RED), false, true),
+		NO_SERVER_PERMISSION(new TranslatableComponent("gui.xaero_claims_claim_no_server_permission").withStyle(ChatFormatting.RED), false, true, false),
 
 		/**
 		 * The user doesn't have permission to make party claims
@@ -124,7 +127,7 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		 * This result type is only used for party claim requests made by online players.
 		 * Permissions for party claims are not checked by the try methods in the server claims manager.
 		 */
-		NO_PARTY_PERMISSION(new TranslatableComponent("gui.xaero_claims_claim_no_party_permission").withStyle(ChatFormatting.RED), false, true),
+		NO_PARTY_PERMISSION(new TranslatableComponent("gui.xaero_claims_claim_no_party_permission").withStyle(ChatFormatting.RED), false, true, false),
 
 		/**
 		 * The user doesn't have permission to make party claims
@@ -132,19 +135,19 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		 * This result type is only used for party claim requests made by online players.
 		 * Permissions for party claims are not checked by the try methods in the server claims manager.
 		 */
-		NOT_IN_PARTY(new TranslatableComponent("gui.xaero_claims_claim_not_in_party").withStyle(ChatFormatting.RED), false, true),
+		NOT_IN_PARTY(new TranslatableComponent("gui.xaero_claims_claim_not_in_party").withStyle(ChatFormatting.RED), false, true, false),
 
 		/** Successfully unforceloaded a chunk */
-		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false),
+		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false, false),
 
 		/** Successfully unclaimed a chunk */
-		SUCCESSFUL_UNCLAIM(new TranslatableComponent("gui.xaero_claims_unclaimed"), true, false),
+		SUCCESSFUL_UNCLAIM(new TranslatableComponent("gui.xaero_claims_unclaimed"), true, false, false),
 
 		/** Successfully forceloaded a chunk */
-		SUCCESSFUL_FORCELOAD(new TranslatableComponent("gui.xaero_claims_forceloaded"), true, false),
+		SUCCESSFUL_FORCELOAD(new TranslatableComponent("gui.xaero_claims_forceloaded"), true, false, false),
 
 		/** Successfully claimed a chunk */
-		SUCCESSFUL_CLAIM(new TranslatableComponent("gui.xaero_claims_claimed"), true, false);
+		SUCCESSFUL_CLAIM(new TranslatableComponent("gui.xaero_claims_claimed"), true, false, false);
 
 		/**
 		 * A message describing the result
@@ -161,11 +164,17 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		 * Whether the result can be considered a failure
 		 */
 		public final boolean fail;
+
+		/**
+		 * Whether this result should stop an area claim action from continuing
+		 */
+		public final boolean interruptsAreaAction;
 		
-		private Type(Component message, boolean success, boolean fail) {
+		private Type(Component message, boolean success, boolean fail, boolean interruptsAreaAction) {
 			this.message = message;
 			this.success = success;
 			this.fail = fail;
+			this.interruptsAreaAction = interruptsAreaAction;
 		}
 		
 	}

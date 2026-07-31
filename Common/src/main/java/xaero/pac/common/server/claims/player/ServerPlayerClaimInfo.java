@@ -21,19 +21,14 @@ package xaero.pac.common.server.claims.player;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.ClaimLocation;
-import xaero.pac.common.claims.player.*;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.PlayerClaimInfo;
+import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.claims.IServerClaimsManager;
-import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
-import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.info.ServerInfo;
-import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemAPI;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -55,6 +50,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private long registeredActivity;
 	private boolean replacementInProgress;
 	private final Deque<PlayerClaimReplaceSpreadoutTask> replaceTaskQueue;
+	private boolean transferInProgress;
 
 	private Component lastPartyNameSynced;
 	private boolean lastPartyOwnedSynced;
@@ -262,7 +258,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 
 	@Override
-	public void addReplacementTask(PlayerClaimReplaceSpreadoutTask task, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
+	public void addReplacementTask(PlayerClaimReplaceSpreadoutTask task, IServerData<?, ?> serverData){
 		if(!replacementInProgress)
 			manager.getClaimsManager().getClaimReplaceTaskHandler().addTask(task, serverData);
 		else
@@ -303,6 +299,16 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public long getLastAllowedClaimAccessOverLimitTime() {
 		return lastAllowedClaimAccessOverLimitTime;
+	}
+
+	@Override
+	public boolean isTransferInProgress() {
+		return transferInProgress;
+	}
+
+	@Override
+	public void setTransferInProgress(boolean transferInProgress) {
+		this.transferInProgress = transferInProgress;
 	}
 
 	@Override

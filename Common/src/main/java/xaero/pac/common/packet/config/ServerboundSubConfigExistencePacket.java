@@ -186,6 +186,11 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 					return;
 				}
 				IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(config.getPlayerId());
+				if(playerInfo.isTransferInProgress()){
+					serverPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_transfer_in_progress"), serverPlayer.getUUID());
+					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
+					return;
+				}
 				if(playerInfo.hasReplacementTasks()){
 					serverPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_delete_sub_already_replacing"), serverPlayer.getUUID());
 					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client

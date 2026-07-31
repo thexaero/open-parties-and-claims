@@ -414,6 +414,17 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		sendToClient(player, packet);
 	}
 
+	@Override
+	public void addConfigToSync(ServerPlayer player, IPlayerConfig config){
+		if(player != null){
+			sendSyncState(player, config, true);
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+			playerData.getConfigSyncSpreadoutTask().addConfigToSync(config, forcedConfigType);
+			return;
+		}
+		forAllRelevantClients(config, p -> addConfigToSync(p, config));
+	}
+
 	private PlayerConfigType getEffectiveType(IPlayerConfig config){
 		if(forcedConfigType != null)
 			return forcedConfigType;

@@ -73,7 +73,7 @@ public class ConfigGroupIncludePlayerCommand extends ConfigGroupCommand {
 		if(customPlayerConfigGroup == null)
 			return Either.right(PlayerConfigGroupActionError.GROUP_TO_EDIT_NOT_FOUND);
 		Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> result =
-				customPlayerConfigGroup.includeMemberLimitedInternal(null, playerName);
+				customPlayerConfigGroup.includeMemberLimitedInternal(null, playerName, true);
 		return result.mapBoth(
 				m -> new TranslatableComponent("gui.xaero_pac_config_include_player", playerName, inputGroupId),
 				e -> e

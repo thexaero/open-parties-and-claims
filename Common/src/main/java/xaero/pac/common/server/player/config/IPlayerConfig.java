@@ -69,6 +69,9 @@ public interface IPlayerConfig extends IPlayerConfigAPI {
 	public IPlayerConfig createSubConfig(@Nonnull String id);
 
 	@Nullable
+	public IPlayerConfig createSubConfig(@Nonnull String id, boolean initStorage);
+
+	@Nullable
 	@Override
 	public String getSubId();
 

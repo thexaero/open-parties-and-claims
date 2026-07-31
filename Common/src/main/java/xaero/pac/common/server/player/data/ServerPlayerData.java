@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.player.data;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -98,6 +99,9 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private long lastClaimsOverLimitMessageTime;
 	private boolean partiesAdminMode;
 	private final ServerPlayerClaimImpersonationInfo claimsImpersonationInfo;
+	private GameProfile claimTransferRequestSourcePlayerProfile;
+	private UUID claimTransferRequestTargetPlayerId;
+	private long claimTransferRequestTime;
 
 	public ServerPlayerData(
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -421,6 +425,30 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	@Nonnull
 	public ServerPlayerClaimImpersonationInfo getClaimsImpersonationInfo() {
 		return claimsImpersonationInfo;
+	}
+
+	public GameProfile getClaimTransferRequestSourcePlayerProfile() {
+		return claimTransferRequestSourcePlayerProfile;
+	}
+
+	public void setClaimTransferRequestSourcePlayerProfile(GameProfile claimTransferRequestSourcePlayerProfile) {
+		this.claimTransferRequestSourcePlayerProfile = claimTransferRequestSourcePlayerProfile;
+	}
+
+	public UUID getClaimTransferRequestTargetPlayerId() {
+		return claimTransferRequestTargetPlayerId;
+	}
+
+	public void setClaimTransferRequestTargetPlayerId(UUID claimTransferRequestTargetPlayerId) {
+		this.claimTransferRequestTargetPlayerId = claimTransferRequestTargetPlayerId;
+	}
+
+	public long getClaimTransferRequestTime() {
+		return claimTransferRequestTime;
+	}
+
+	public void setClaimTransferRequestTime(long claimTransferRequestTime) {
+		this.claimTransferRequestTime = claimTransferRequestTime;
 	}
 
 }

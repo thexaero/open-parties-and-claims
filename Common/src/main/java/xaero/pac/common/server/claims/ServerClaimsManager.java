@@ -160,6 +160,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
+		if(!replace && playerClaimInfo.isTransferInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.TRANSFER_IN_PROGRESS);
 		if(!replace && playerClaimInfo.isReplacementInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
 		int claimCount = 0;
@@ -198,6 +200,11 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		if(currentClaim == null || !replace && !Objects.equals(id, currentClaim.getPlayerId()))
 			return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
+		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
+		if(!replace && playerClaimInfo.isTransferInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.TRANSFER_IN_PROGRESS);
+		if(!replace && playerClaimInfo.isReplacementInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
 	 	unclaim(dimension, x, z);
 	 	return new ClaimResult<>(null, ClaimResult.Type.SUCCESSFUL_UNCLAIM);
 	}
@@ -324,11 +331,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 					} else
 						toAffect--;
 				}
-				if(result.getResultType() == ClaimResult.Type.CLAIM_LIMIT_REACHED ||
-						result.getResultType() == ClaimResult.Type.OVER_CLAIM_LIMIT ||
-						result.getResultType() == ClaimResult.Type.FORCELOAD_LIMIT_REACHED ||
-						result.getResultType() == ClaimResult.Type.REPLACEMENT_IN_PROGRESS
-				)
+				if(result.getResultType().interruptsAreaAction)
 					break outer;
 			}
 		return new AreaClaimResult(resultTypes, left, top, right, bottom);

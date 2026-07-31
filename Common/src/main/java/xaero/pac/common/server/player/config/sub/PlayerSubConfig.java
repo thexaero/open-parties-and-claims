@@ -27,8 +27,8 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.util.linked.ILinkedChainNode;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -170,7 +170,7 @@ public class PlayerSubConfig
 	}
 
 	@Override
-	public PlayerSubConfig<P> createSubConfig(String id, int index) {
+	public PlayerSubConfig<P> createSubConfig(String id, int index, boolean initStorage) {
 		throw new RuntimeException(new IllegalAccessException());
 	}
 

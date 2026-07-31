@@ -157,6 +157,10 @@ public class ConfigSubDeleteCommand {
 				return 0;
 			}
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(configPlayerUUID);
+			if(playerInfo.isTransferInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_transfer_in_progress"));
+				return 0;
+			}
 			if(playerInfo.hasReplacementTasks()){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_already_replacing"));
 				return 0;

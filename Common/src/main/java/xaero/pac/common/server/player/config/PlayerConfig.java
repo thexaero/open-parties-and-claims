@@ -53,7 +53,8 @@ public class PlayerConfig
 > implements IPlayerConfig, ObjectManagerIOObject {
 
 	public final static int MAX_SUB_ID_LENGTH = 16;
-	public final static String SUB_ID_REGEX = "[a-zA-Z\\d\\-_]+";
+	public final static String SUB_ID_REGEX_PARAMS = "a-zA-Z\\d\\-_";
+	public final static String SUB_ID_REGEX = "[" + SUB_ID_REGEX_PARAMS + "]+";
 	public final static UUID SERVER_CLAIM_UUID = new UUID(0, 0);
 	public final static UUID EXPIRED_CLAIM_UUID = new UUID(0, 1);
 	public final static String MAIN_SUB_ID = "main";
@@ -304,6 +305,15 @@ public class PlayerConfig
 		return !id.isEmpty() && id.length() <= MAX_SUB_ID_LENGTH && id.matches(PlayerConfig.SUB_ID_REGEX);
 	}
 
+	public static String makeSubIdValid(String id){
+		String result = id.replaceAll("[^" + SUB_ID_REGEX_PARAMS + "]", "");
+		if(result.isEmpty())
+			return "sub";
+		if(result.length() > MAX_SUB_ID_LENGTH)
+			return result.substring(result.length() - MAX_SUB_ID_LENGTH);
+		return result;
+	}
+
 	private boolean isFreeSubIndex(int index){
 		return index != -1 && !subIndexToID.containsKey(index);
 	}
@@ -316,11 +326,16 @@ public class PlayerConfig
 
 	@Nullable
 	public PlayerSubConfig<P> createSubConfig(@Nonnull String id){
-		int freeSubIndex = getFreeSubConfigIndex();
-		return createSubConfig(id, freeSubIndex);
+		return createSubConfig(id, true);
 	}
 
-	public PlayerSubConfig<P> createSubConfig(String id, int index){
+	@Override
+	public PlayerSubConfig<P> createSubConfig(@Nonnull String id, boolean initStorage){
+		int freeSubIndex = getFreeSubConfigIndex();
+		return createSubConfig(id, freeSubIndex, initStorage);
+	}
+
+	public PlayerSubConfig<P> createSubConfig(String id, int index, boolean initStorage){
 		if(subConfigIds.contains(id) || !isFreeSubIndex(index) || !isValidSubId(id))
 			return null;
 		if(index > lastCreatedSubIndex || index < 0 && lastCreatedSubIndex >= 0)
@@ -337,7 +352,7 @@ public class PlayerConfig
 		subIndexToID.put(index, id);
 		linkedSubConfigs.add(subConfig);
 		addToSubConfigIds(id);
-		if(manager.isLoaded()) {
+		if(manager.isLoaded() && initStorage) {
 			subConfig.getStorage();//creates the storage here to avoid concur modif exception when saving
 			manager.getSynchronizer().syncSubExistence(null, subConfig, true);
 		}
