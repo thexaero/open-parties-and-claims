@@ -20,7 +20,9 @@ package xaero.pac.client.player.config;
 
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
+import xaero.pac.client.player.config.sub.PlayerSubConfigClientStorage;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,21 +31,23 @@ import java.util.function.BiPredicate;
 public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionClientStorage<T> {
 	
 	protected final PlayerConfigOptionSpec<T> option;
+	protected final PlayerConfigClientStorage config;
 	private T value;
-	private boolean playerMutable;
-	private boolean adminMutable;
+	private Boolean cachedPlayerConfigurable;
+	private Boolean cachedOpConfigurable;
 	
-	public PlayerConfigOptionClientStorage(PlayerConfigOptionSpec<T> option, T value) {
+	public PlayerConfigOptionClientStorage(PlayerConfigOptionSpec<T> option, PlayerConfigClientStorage config, T value) {
 		super();
 		if(option == null)
 			throw new IllegalArgumentException();
+		this.config = config;
 		this.option = option;
 		this.value = value;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends Comparable<T>> PlayerConfigOptionClientStorage<T> createCast(PlayerConfigOptionSpec<T> option, Object value){
-		return new PlayerConfigOptionClientStorage<>(option, (T)value);
+	public static <T extends Comparable<T>> PlayerConfigOptionClientStorage<T> createCast(PlayerConfigOptionSpec<T> option, PlayerConfigClientStorage config, Object value){
+		return new PlayerConfigOptionClientStorage<>(option, config, (T)value);
 	}
 	
 	@Nonnull
@@ -127,7 +131,7 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 
 	@Override
 	public boolean isDefaulted() {
-		return !playerMutable && !adminMutable;
+		return !isPlayerMutable() && !isAdminMutable();
 	}
 
 	@Override
@@ -141,22 +145,34 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 
 	@Override
 	public boolean isPlayerMutable() {
-		return playerMutable;
+		if(config.getType() != PlayerConfigType.PLAYER && config.getType() != PlayerConfigType.PARTY_CLAIMS)
+			return false;
+		if(!option.isOverridable() && config instanceof PlayerSubConfigClientStorage)
+			return false;
+		if(isAdminMutable())
+			return false;
+		return getCachedPlayerConfigurable();
 	}
 
 	@Override
 	public boolean isAdminMutable() {
-		return adminMutable;
+		if(config.getType() != PlayerConfigType.PLAYER && config.getType() != PlayerConfigType.PARTY_CLAIMS)
+			return true;
+		return getCachedOpConfigurable();
 	}
 
-	@Override
-	public void setPlayerMutable(boolean playerMutable) {
-		this.playerMutable = playerMutable;
+	private boolean getCachedPlayerConfigurable(){
+		if(cachedPlayerConfigurable != null)
+			return cachedPlayerConfigurable;
+		cachedPlayerConfigurable = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().isOptionPlayerConfigurable(option);
+		return cachedPlayerConfigurable;
 	}
 
-	@Override
-	public void setAdminMutable(boolean adminMutable) {
-		this.adminMutable = adminMutable;
+	private boolean getCachedOpConfigurable(){
+		if(cachedOpConfigurable != null)
+			return cachedOpConfigurable;
+		cachedOpConfigurable = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().isOptionOpConfigurable(option);
+		return cachedOpConfigurable;
 	}
 
 	public boolean isDynamic() {

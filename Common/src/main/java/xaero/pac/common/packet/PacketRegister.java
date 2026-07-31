@@ -189,6 +189,11 @@ public class PacketRegister {
 				null, new ClientboundClaimsResetPacket.ClientHandler()
 		);
 
+		ClientboundPlayerConfigConfigurableOptionsPacket.Codec configurableOptionsCodec = new ClientboundPlayerConfigConfigurableOptionsPacket.Codec();
+		packetHandler.register(49, ClientboundPlayerConfigConfigurableOptionsPacket.class,
+				configurableOptionsCodec, configurableOptionsCodec,
+				null, new ClientboundPlayerConfigConfigurableOptionsPacket.ClientHandler()
+		);
 	}
 
 }
