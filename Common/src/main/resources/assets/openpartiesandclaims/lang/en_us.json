@@ -556,7 +556,7 @@
 	"gui.xaero_claims_teleport_invalid_player" : "Invalid target player!",
 	"gui.xaero_claims_teleport_vulnerable" : "You can only teleport to claims in creative mode or if you're invulnerable.",
 	"gui.xaero_claims_teleport_no_claims" : "The input player doesn't own any chunk claims! Try the party owner?",
-	"gui.xaero_claims_clear_not_admin_mode" : "You need to enable admin mode to be able to clear/delete all claims of another player.",
+	"gui.xaero_claims_clear_not_admin_mode" : "You need to enable admin mode to be able to clear/delete all claims of another player (%1$s).",
 	"gui.xaero_claims_clear_invalid_player" : "Invalid target player!",
 	"gui.xaero_claims_clear_invalid_impersonated_player" : "The game profile of the impersonated player that you're trying to clear the claims of is no longer cached. Try toggling the impersonation off/on.",
 	"gui.xaero_claims_clear_no_claims" : "The input player doesn't own any chunk claims!",
