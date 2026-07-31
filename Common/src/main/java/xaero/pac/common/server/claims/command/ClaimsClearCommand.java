@@ -91,18 +91,20 @@ public class ClaimsClearCommand {
 
 		LiteralArgumentBuilder<CommandSourceStack> targetNoConfirmCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
 				.then(Commands.literal("clear")
+				.then(Commands.literal("for")
 				.then(Commands.argument("profile", GameProfileArgument.gameProfile())
 				.requires(targetRequirement)
 				.suggests(targetSuggestions)
-				.executes(getExecutor(false, false))));
+				.executes(getExecutor(false, false)))));
 		dispatcher.register(targetNoConfirmCommand);
 		LiteralArgumentBuilder<CommandSourceStack> targetCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
 				.then(Commands.literal("clear")
+				.then(Commands.literal("for")
 				.then(Commands.argument("profile", GameProfileArgument.gameProfile())
 				.requires(targetRequirement)
 				.suggests(targetSuggestions)
 				.then(Commands.literal("confirm")
-				.executes(getExecutor(true, false)))));
+				.executes(getExecutor(true, false))))));
 		dispatcher.register(targetCommand);
 	}
 
