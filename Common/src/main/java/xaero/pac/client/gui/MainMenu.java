@@ -117,14 +117,14 @@ public class MainMenu extends XPACScreen {
 	private static final CachedComponentSupplier claimCountSupplier = new CachedComponentSupplier(args -> {
 		int currentClaimCount = (Integer) args[0];
 		int currentClaimLimit = (Integer) args[1];
-		String claimLimitString = currentClaimLimit == -1 ? "∞" : "" + currentClaimLimit;
+		String claimLimitString = currentClaimLimit == Integer.MAX_VALUE ? "∞" : "" + currentClaimLimit;
 		Component numbers = new TextComponent(currentClaimCount + " / " + claimLimitString).withStyle(s -> s.withColor(0xFFAAAAAA));
 		return new TranslatableComponent("gui.xaero_pac_ui_claim_count", numbers);
 	});
 	private static final CachedComponentSupplier forceloadCountSupplier = new CachedComponentSupplier(args -> {
 		int currentForceloadCount = (Integer) args[0];
 		int currentForceloadLimit = (Integer) args[1];
-		String forceloadLimitString = currentForceloadLimit == -1 ? "∞" : "" + currentForceloadLimit;
+		String forceloadLimitString = currentForceloadLimit == Integer.MAX_VALUE ? "∞" : "" + currentForceloadLimit;
 		return new TranslatableComponent("gui.xaero_pac_ui_forceload_count", new TextComponent(currentForceloadCount + " / " + forceloadLimitString).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 	private static final CachedComponentSupplier claimsColorSupplier = new CachedComponentSupplier(args -> {

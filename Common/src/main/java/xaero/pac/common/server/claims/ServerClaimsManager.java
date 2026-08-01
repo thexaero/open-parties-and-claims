@@ -41,6 +41,7 @@ import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTas
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.system.PlayerPartySystemManager;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
@@ -404,22 +405,34 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	public int getPlayerFullClaimLimit(@Nonnull UUID playerId) {
-		return getPlayerBaseClaimLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+		IPlayerConfig config = configManager.getLoadedConfig(playerId);
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		return getPlayerBaseClaimLimit(playerId) + config.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
 	}
 
 	@Override
 	public int getPlayerFullClaimLimit(@Nonnull ServerPlayer player) {
-		return getPlayerBaseClaimLimit(player) + configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
+		IPlayerConfig config = configManager.getLoadedConfig(player.getUUID());
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		return getPlayerBaseClaimLimit(player) + config.getEffective(PlayerConfigOptions.BONUS_CHUNK_CLAIMS);
 	}
 
 	@Override
 	public int getPlayerFullForceloadLimit(@Nonnull UUID playerId) {
-		return getPlayerBaseForceloadLimit(playerId) + configManager.getLoadedConfig(playerId).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+		IPlayerConfig config = configManager.getLoadedConfig(playerId);
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		return getPlayerBaseForceloadLimit(playerId) + config.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
 	}
 
 	@Override
 	public int getPlayerFullForceloadLimit(@Nonnull ServerPlayer player) {
-		return getPlayerBaseForceloadLimit(player) + configManager.getLoadedConfig(player.getUUID()).getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+		IPlayerConfig config = configManager.getLoadedConfig(player.getUUID());
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		return getPlayerBaseForceloadLimit(player) + config.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
 	}
 
 	public Iterator<ServerClaimStateHolder> getClaimStateHolderIterator(){

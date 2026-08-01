@@ -159,7 +159,7 @@ public class ClaimingModes {
 					serverForceloadCount = serverClaims.getForceloadCount();
 				}
 				return new ClaimingModeLimits(
-						ClaimingModes.SERVER, serverClaimCount, serverForceloadCount, -1, -1
+						ClaimingModes.SERVER, serverClaimCount, serverForceloadCount, Integer.MAX_VALUE, Integer.MAX_VALUE
 				);
 			})
 			.setActiveLabel(new TranslatableComponent("gui.xaero_pac_claiming_as_server"))
