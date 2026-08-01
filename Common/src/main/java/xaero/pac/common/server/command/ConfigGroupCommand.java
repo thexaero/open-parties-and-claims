@@ -154,12 +154,8 @@ public abstract class ConfigGroupCommand {
 				UUID configPlayerUUID = null;
 				if (type == PlayerConfigType.PLAYER) {
 					configPlayerUUID = getConfigPlayerUUID(context, sourcePlayer, null);
-					if(configPlayerUUID == null) {
-						if(sourcePlayer == null)
-							configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
-						else
-							return SharedSuggestionProvider.suggest(Stream.empty(), builder);
-					}
+					if(configPlayerUUID == null)
+						return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 				}
 				IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
 						configPlayerUUID, callerId,
@@ -218,12 +214,8 @@ public abstract class ConfigGroupCommand {
 			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
 				configPlayerUUID = getConfigPlayerUUID(context, sourcePlayer, adaptiveLocalizer);
-				if(configPlayerUUID == null) {
-					if(sourcePlayer == null)
-						configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
-					else
-						return 0;
-				}
+				if(configPlayerUUID == null)
+					return 0;
 			}
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
 					configPlayerUUID, callerId,
@@ -259,12 +251,8 @@ public abstract class ConfigGroupCommand {
 			UUID configPlayerUUID = null;
 			if (type == PlayerConfigType.PLAYER) {
 				configPlayerUUID = getConfigPlayerUUID(context, sourcePlayer, null);
-				if(configPlayerUUID == null) {
-					if(sourcePlayer == null)
-						configPlayerUUID = PlayerConfig.SERVER_CLAIM_UUID;
-					else
-						return SharedSuggestionProvider.suggest(Stream.empty(), builder);
-				}
+				if(configPlayerUUID == null)
+					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 			}
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
 					configPlayerUUID, callerId,

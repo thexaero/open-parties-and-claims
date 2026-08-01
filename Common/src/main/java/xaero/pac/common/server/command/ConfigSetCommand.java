@@ -266,12 +266,8 @@ public class ConfigSetCommand {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_option_set_too_many_targets",
 						"gui.xaero_pac_config_option_set_invalid_target", adaptiveLocalizer);
-				if(inputPlayer == null) {
-					if(sourcePlayer == null)
-						inputPlayer = PlayerConfig.SERVER_CLAIM_PROFILE;
-					else
-						return 0;
-				}
+				if(inputPlayer == null)
+					return 0;
 				configPlayerUUID = inputPlayer.getId();
 			}
 

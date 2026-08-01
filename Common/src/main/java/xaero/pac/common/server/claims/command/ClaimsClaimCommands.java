@@ -198,7 +198,7 @@ public class ClaimsClaimCommands {
 			return inputPlayer.getId();
 		}
 		if(sourcePlayer == null)
-			return null;
+			return PlayerConfig.SERVER_CLAIM_UUID;
 		if(claimingModeAPI.canBeImpersonated()) {
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			serverData.getServerClaimsManager().getPermissionHandler().ensureImpersonationPermission(sourcePlayer, playerData);

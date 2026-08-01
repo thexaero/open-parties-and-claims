@@ -90,7 +90,7 @@ public class ConfigCommandUtil {
 			inputPlayer = profiles.iterator().next();
 		} catch(IllegalArgumentException e) {
 			if(sourcePlayer == null)
-				return null;
+				return PlayerConfig.SERVER_CLAIM_PROFILE;
 			inputPlayer = sourcePlayer.getGameProfile();
 		}
 		return inputPlayer;
@@ -114,12 +114,8 @@ public class ConfigCommandUtil {
 					GameProfile gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
 					configOwnerId = gameProfile != null ? gameProfile.getId() : null;
 				}
-				if(configOwnerId == null) {
-					if(sourcePlayer == null)
-						configOwnerId = PlayerConfig.SERVER_CLAIM_UUID;
-					else
-						return SharedSuggestionProvider.suggest(Stream.empty(), builder);
-				}
+				if(configOwnerId == null)
+					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 			}
 			String lowerCaseInput = builder.getRemainingLowerCase();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
