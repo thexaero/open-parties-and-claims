@@ -196,7 +196,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
 					return;
 				}
-				new PlayerSubConfigDeletionStarter().start(serverPlayer, playerInfo, subConfig, serverData);
+				new PlayerSubConfigDeletionStarter().start(serverPlayer, playerInfo, subConfig, serverData, true);
 			}
 		}
 		

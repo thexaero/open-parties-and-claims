@@ -25,6 +25,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -236,8 +237,11 @@ public class ConfigSetCommand {
 	
 	public Command<CommandSourceStack> getExecutor(PlayerConfigType type, boolean reset){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-			
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -262,15 +266,20 @@ public class ConfigSetCommand {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_option_set_too_many_targets",
 						"gui.xaero_pac_config_option_set_invalid_target", adaptiveLocalizer);
-				if(inputPlayer == null)
-					return 0;
+				if(inputPlayer == null) {
+					if(sourcePlayer == null)
+						inputPlayer = PlayerConfig.SERVER_CLAIM_PROFILE;
+					else
+						return 0;
+				}
 				configPlayerUUID = inputPlayer.getId();
 			}
 
 			String valueInput = reset ? null : StringArgumentType.getString(context, "value");
-			
+
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+					configPlayerUUID, callerId, type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
@@ -308,12 +317,12 @@ public class ConfigSetCommand {
 
 			Component wantedValueName = option.getValueDisplayName(wantedValue);
 			if (type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName), sourcePlayer.getUUID());
+				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName), true);
 			else
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName), sourcePlayer.getUUID());
+				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName), true);
 			if (result == SetResult.DEFAULTED && wantedValue != null && wantedValue != actualValue) {
 				Component actualValueName = option.getValueDisplayName(actualValue);
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), sourcePlayer.getUUID());
+				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), true);
 			}
 			return 1;
 		};
@@ -324,11 +333,20 @@ public class ConfigSetCommand {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(context.getSource().getServer());
 			IPlayerConfigManager configs = serverData.getPlayerConfigManager();
-			String optionKey = context.getArgument("key", String.class);
+			String optionKey;
+			try {
+				optionKey = context.getArgument("key", String.class);
+			} catch (IllegalArgumentException iae){
+				return SharedSuggestionProvider.suggest(Stream.empty(), builder);
+			}
 			IPlayerConfigOptionSpecAPI<?> option = configs.getOptionForId(optionKey);
 			if (option == null)
 				return SharedSuggestionProvider.suggest(Stream.empty(), builder);
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
 			UUID configPlayerUUID = type == PlayerConfigType.SERVER ? PlayerConfig.SERVER_CLAIM_UUID : null;
 			if (type == PlayerConfigType.PLAYER) {
 				GameProfile inputPlayer = getConfigInputPlayer(
@@ -338,8 +356,9 @@ public class ConfigSetCommand {
 					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 				configPlayerUUID = inputPlayer.getId();
 			}
+			UUID callerId = sourcePlayer == null ? configPlayerUUID : sourcePlayer.getUUID();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(), type, configs
+					configPlayerUUID, callerId, type, configs
 			);
 			if (playerConfig == null)
 				return SharedSuggestionProvider.suggest(Stream.empty(), builder);

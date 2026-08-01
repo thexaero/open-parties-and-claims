@@ -63,8 +63,7 @@ public class ConfigGroupIncludePlayerCommand extends ConfigGroupCommand {
 			String inputGroupId,
 			String playerName
 	) throws CommandSyntaxException {
-		ServerPlayer caller = context.getSource().getPlayerOrException();
-		boolean isOp = caller.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+		boolean isOp = context.getSource().hasPermission(Commands.LEVEL_GAMEMASTERS);
 		if(!isOp && !ServerPlayerUtils.playerNameIsKnown(context.getSource().getServer(), playerName)){
 			//only ops are allowed to add previously unknown players
 			return Either.right(PlayerConfigGroupActionError.UNKNOWN_PLAYER);

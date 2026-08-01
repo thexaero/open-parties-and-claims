@@ -28,6 +28,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -43,6 +44,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
@@ -87,6 +89,8 @@ public class ConfigCommandUtil {
 			}
 			inputPlayer = profiles.iterator().next();
 		} catch(IllegalArgumentException e) {
+			if(sourcePlayer == null)
+				return null;
 			inputPlayer = sourcePlayer.getGameProfile();
 		}
 		return inputPlayer;
@@ -94,22 +98,28 @@ public class ConfigCommandUtil {
 
 	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type, BiFunction<CommandContext<CommandSourceStack>, IServerData<?,?>, UUID> inputPlayerSupplier){
 		return (context, builder) -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-			MinecraftServer server = sourcePlayer.getServer();
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch (CommandSyntaxException e) {
+			}
+			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			UUID configOwnerId = sourcePlayer.getUUID();
+			UUID configOwnerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			if(!type.isGlobal()) {
 				if(inputPlayerSupplier != null)
 					configOwnerId = inputPlayerSupplier.apply(context, serverData);
 				else {
 					GameProfile gameProfile = getConfigInputPlayer(context, sourcePlayer, null, null, adaptiveLocalizer);
-					if (gameProfile == null)
-						return SharedSuggestionProvider.suggest(Stream.empty(), builder);
-					configOwnerId = gameProfile.getId();
+					configOwnerId = gameProfile != null ? gameProfile.getId() : null;
 				}
-				if (configOwnerId == null)
-					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
+				if(configOwnerId == null) {
+					if(sourcePlayer == null)
+						configOwnerId = PlayerConfig.SERVER_CLAIM_UUID;
+					else
+						return SharedSuggestionProvider.suggest(Stream.empty(), builder);
+				}
 			}
 			String lowerCaseInput = builder.getRemainingLowerCase();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
@@ -135,12 +145,12 @@ public class ConfigCommandUtil {
 				return false;
 			if(!ServerConfig.CONFIG.partyOwnedClaims.get())
 				return false;
-			ServerPlayer sourcePlayer;
+			ServerPlayer sourcePlayer = null;
 			try {
 				sourcePlayer = sourceStack.getPlayerOrException();
 			} catch (CommandSyntaxException e) {
-				return false;
 			}
+			UUID sourcePlayerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			MinecraftServer server = sourceStack.getServer();
 			IServerData<
 					IServerClaimsManager<
@@ -150,16 +160,16 @@ public class ConfigCommandUtil {
 							>,
 					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
 					> serverData = ServerData.from(server);
-			UUID partyConfigOwner = serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(sourcePlayer.getUUID());
+			UUID partyConfigOwner = serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(sourcePlayerId);
 			if(partyConfigOwner == null)//not in a party
 				return false;
 			if(!edit)
 				return true;
 			if(sourceStack.hasPermission(2))
 				return true;
-			if(sourcePlayer.getUUID().equals(partyConfigOwner))
+			if(sourcePlayerId.equals(partyConfigOwner))
 				return true;
-			return serverData.getPlayerPartySystemManager().canEditPartyConfig(sourcePlayer.getUUID());
+			return serverData.getPlayerPartySystemManager().canEditPartyConfig(sourcePlayerId);
 		});
 	}
 

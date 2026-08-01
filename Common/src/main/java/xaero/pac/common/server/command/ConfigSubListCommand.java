@@ -23,6 +23,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
@@ -98,7 +99,11 @@ public class ConfigSubListCommand {
 
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
@@ -109,13 +114,18 @@ public class ConfigSubListCommand {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_sub_list_too_many_targets",
 						"gui.xaero_pac_config_sub_list_invalid_target", adaptiveLocalizer);
-				if(inputPlayer == null)
-					return 0;
+				if(inputPlayer == null) {
+					if(sourcePlayer == null)
+						inputPlayer = PlayerConfig.SERVER_CLAIM_PROFILE;
+					else
+						return 0;
+				}
 				configPlayerUUID = inputPlayer.getId();
 			}
 
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			PlayerConfig<?> playerConfig = (PlayerConfig<?>) ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+					configPlayerUUID, callerId, type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
@@ -140,7 +150,7 @@ public class ConfigSubListCommand {
 			}
 			if(endAt < subConfigIds.size())
 				listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_there_is_more"));
-			sourcePlayer.sendMessage(listMessage, sourcePlayer.getUUID());
+			context.getSource().sendSuccess(listMessage, true);
 			return 1;
 		};
 	}

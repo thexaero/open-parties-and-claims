@@ -23,6 +23,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -50,6 +51,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
@@ -213,8 +215,12 @@ public class ConfigGetOrHelpCommand {
 	
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type, boolean help){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-			
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
+
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
@@ -228,19 +234,24 @@ public class ConfigGetOrHelpCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, PlayerConfigConstants.OPTION_NOT_DIRECTLY_CONFIGURABLE));
 				return 0;
 			}
-			
+
 			GameProfile inputPlayer = null;
 			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
 				inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_option_get_too_many_targets",
 						"gui.xaero_pac_config_option_get_invalid_target", adaptiveLocalizer);
-				if(inputPlayer == null)
-					return 0;
+				if(inputPlayer == null) {
+					if(sourcePlayer == null)
+						inputPlayer = PlayerConfig.SERVER_CLAIM_PROFILE;
+					else
+						return 0;
+				}
 				configPlayerUUID = inputPlayer.getId();
 			}
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+					configPlayerUUID, callerId, type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
@@ -253,15 +264,15 @@ public class ConfigGetOrHelpCommand {
 				return 0;
 			}
 			if(help){
-				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
-				if(playerData.hasMod())
+				ServerPlayerData playerData = sourcePlayer == null ? null : (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
+				if(playerData != null && playerData.hasMod())
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(sourcePlayer, new ClientboundPlayerConfigHelpPacket(option.getId()));
 				else {
 					String translatedComment = serverData.getAdaptiveLocalizer().getDefaultTranslation(option.getCommentTranslation());
 					if(translatedComment.equals("default"))
 						translatedComment = option.getComment();
-					sourcePlayer.sendMessage(new TextComponent(""), sourcePlayer.getUUID());
-					sourcePlayer.sendMessage(new TranslatableComponent(translatedComment, (Object[])option.getCommentTranslationArgs()), sourcePlayer.getUUID());
+					context.getSource().sendSuccess(new TextComponent(""), false);
+					context.getSource().sendSuccess(new TranslatableComponent(translatedComment, (Object[])option.getCommentTranslationArgs()), false);
 				}
 				return 1;
 			}
@@ -274,9 +285,9 @@ public class ConfigGetOrHelpCommand {
 				optionValue = null;
 			Component optionValueName = option.getValueDisplayName(optionValue);
 			if(type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), false);
 			else
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), false);
 			return 1;
 		};
 	}

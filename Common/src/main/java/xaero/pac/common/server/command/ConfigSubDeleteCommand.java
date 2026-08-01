@@ -23,6 +23,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -110,7 +111,11 @@ public class ConfigSubDeleteCommand {
 
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(server);
@@ -122,18 +127,25 @@ public class ConfigSubDeleteCommand {
 				GameProfile inputPlayer = getConfigInputPlayer(context, sourcePlayer,
 						"gui.xaero_pac_config_delete_sub_too_many_targets",
 						"gui.xaero_pac_config_delete_sub_invalid_target", adaptiveLocalizer);
-				if(inputPlayer == null)
-					return 0;
+				if(inputPlayer == null) {
+					if(sourcePlayer == null)
+						inputPlayer = PlayerConfig.SERVER_CLAIM_PROFILE;
+					else
+						return 0;
+				}
 				configPlayerUUID = inputPlayer.getId();
 			}
 
-			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
-			if(serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
-				return 0;//going too fast
-			playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
+			if(sourcePlayer != null) {
+				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
+				if (serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
+					return 0;//going too fast
+				playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
+			}
 
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			PlayerConfig<?> playerConfig = (PlayerConfig<?>) ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+					configPlayerUUID, callerId, type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
@@ -165,7 +177,8 @@ public class ConfigSubDeleteCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_already_replacing"));
 				return 0;
 			}
-			new PlayerSubConfigDeletionStarter().start(sourcePlayer, playerInfo, result, serverData);
+			context.getSource().sendSuccess(serverData.getAdaptiveLocalizer().getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_started", result.getSubId()), true);
+			new PlayerSubConfigDeletionStarter().start(sourcePlayer, playerInfo, result, serverData, false);
 			return 1;
 		};
 	}

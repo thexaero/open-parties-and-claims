@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.config;
 
 import com.electronwill.nightconfig.core.Config;
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,6 +57,7 @@ public class PlayerConfig
 	public final static String SUB_ID_REGEX_PARAMS = "a-zA-Z\\d\\-_";
 	public final static String SUB_ID_REGEX = "[" + SUB_ID_REGEX_PARAMS + "]+";
 	public final static UUID SERVER_CLAIM_UUID = new UUID(0, 0);
+	public final static GameProfile SERVER_CLAIM_PROFILE = new GameProfile(SERVER_CLAIM_UUID, "[Server]");
 	public final static UUID EXPIRED_CLAIM_UUID = new UUID(0, 1);
 	public final static String MAIN_SUB_ID = "main";
 	public final static String PLAYER_CONFIG_ROOT = "playerConfig";

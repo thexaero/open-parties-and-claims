@@ -53,6 +53,7 @@ import xaero.pac.common.server.command.ConfigCommandUtil;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
@@ -196,6 +197,8 @@ public class ClaimsClaimCommands {
 				return null;
 			return inputPlayer.getId();
 		}
+		if(sourcePlayer == null)
+			return null;
 		if(claimingModeAPI.canBeImpersonated()) {
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			serverData.getServerClaimsManager().getPermissionHandler().ensureImpersonationPermission(sourcePlayer, playerData);
@@ -211,7 +214,11 @@ public class ClaimsClaimCommands {
 				(context, serverData) ->
 				{
 					try {
-						ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+						ServerPlayer sourcePlayer = null;
+						try {
+							sourcePlayer = context.getSource().getPlayerOrException();
+						} catch (CommandSyntaxException e) {
+						}
 						return getClaimInputPlayerId(
 								context, sourcePlayer, null, null,
 								serverData, another, mode
