@@ -21,6 +21,7 @@ package xaero.pac.common.server.claims.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
@@ -30,6 +31,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
+import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.packet.claims.ClientboundClaimModesPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -42,6 +44,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
@@ -67,22 +70,33 @@ public class ClaimsSubClaimUseCommand extends ClaimAbstractSubClaimCommand {
 
 	private static Command<CommandSourceStack> getExecutor(ClaimingMode mode, boolean another){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-			ServerPlayerData sourcePlayerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
-			ClaimingMode effectiveMode = mode == null ? sourcePlayerData.getClaimingMode() : mode;
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
+			ServerPlayerData sourcePlayerData = sourcePlayer == null ? null : (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
+			ClaimingMode effectiveMode = mode == null ?
+					(sourcePlayer == null ? (ClaimingMode) ClaimingModes.PLAYER : sourcePlayerData.getClaimingMode()) :
+					mode;
 			IPlayerConfigOptionSpecAPI<String> option = effectiveMode.getSubClaimOption();
 			if(option == null)
 				throw new IllegalArgumentException();
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+			if(!another && sourcePlayer == null){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(null, "gui.xaero_claims_sub_not_a_player"));
+				return 0;
+			}
 			String inputSubId = StringArgumentType.getString(context, "sub-id");
 			UUID configPlayerUUID = ClaimsClaimCommands.getClaimInputPlayerId(context, sourcePlayer,
 					"gui.xaero_claims_sub_use_too_many_targets",
 					"gui.xaero_claims_sub_use_invalid_target", serverData, another, effectiveMode);
 			if(configPlayerUUID == null)
 				return 0;
-			boolean impersonating = !another && !configPlayerUUID.equals(sourcePlayer.getUUID());
+			UUID sourcePlayerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
+			boolean impersonating = !another && !configPlayerUUID.equals(sourcePlayerId);
 			IPlayerConfig rootConfig = ServerPlayerConfigUtils.getTargetConfig(configPlayerUUID, configPlayerUUID, effectiveMode.getConfigType(), serverData.getPlayerConfigManager());
 			IPlayerConfig subConfig = rootConfig == null ? null : rootConfig.getSubConfig(inputSubId);
 			if(subConfig == null){
@@ -100,7 +114,7 @@ public class ClaimsSubClaimUseCommand extends ClaimAbstractSubClaimCommand {
 					return 0;
 				}
 			}
-			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_use", inputSubId, effectiveMode.getId()), sourcePlayer.getUUID());
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_use", inputSubId, effectiveMode.getId()), true);
 			return 1;
 		};
 	}

@@ -22,6 +22,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -59,7 +60,11 @@ public class ClaimsAboutCommand {
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		Command<CommandSourceStack> action = context -> {
 			GameProfile targetProfile;
-			ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
+			ServerPlayer casterPlayer = null;
+			try {
+				casterPlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
 			try {
 				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 				if(profiles.size() == 1)
@@ -67,10 +72,10 @@ public class ClaimsAboutCommand {
 				else
 					targetProfile = null;
 			} catch(IllegalArgumentException iae) {
-				targetProfile = casterPlayer.getGameProfile();
+				targetProfile = casterPlayer == null ? PlayerConfig.SERVER_CLAIM_PROFILE : casterPlayer.getGameProfile();
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(casterPlayer.getServer());
+					serverData = ServerData.from(context.getSource().getServer());
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if(targetProfile == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_about_invalid_player"));
@@ -89,7 +94,9 @@ public class ClaimsAboutCommand {
 
 			int claimLimit = claimsManager.getPlayerFullClaimLimit(profile.getId());
 			int forceloadLimit = claimsManager.getPlayerFullForceloadLimit(profile.getId());
-			Component claimCountNumbers = new TextComponent(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
+			String claimLimitString = claimLimit == Integer.MAX_VALUE ? "∞" : "" + claimLimit;
+			String forceloadLimitString = forceloadLimit == Integer.MAX_VALUE ? "∞" : "" + forceloadLimit;
+			Component claimCountNumbers = new TextComponent(playerInfo.getClaimCount() + " / " + claimLimitString).withStyle(s -> s.withColor(0xFFAAAAAA));
 			String claimName = usedSubConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
 			if(claimName.isEmpty())
 				claimName = "N/A";
@@ -98,16 +105,16 @@ public class ClaimsAboutCommand {
 				subId = PlayerConfig.MAIN_SUB_ID;
 			claimName += " (" + subId + ")";
 			Component claimNameComponent = new TextComponent(claimName).withStyle(s -> s.withColor(0xFFAAAAAA));
-			Component forceloadCountNumbers = new TextComponent(playerInfo.getForceloadCount() + " / " + forceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
-			casterPlayer.sendMessage(new TextComponent(""), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TextComponent("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
-			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claim_count", claimCountNumbers), casterPlayer.getUUID());
-			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_forceload_count", forceloadCountNumbers), casterPlayer.getUUID());
-			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_name", claimNameComponent), casterPlayer.getUUID());
+			Component forceloadCountNumbers = new TextComponent(playerInfo.getForceloadCount() + " / " + forceloadLimitString).withStyle(s -> s.withColor(0xFFAAAAAA));
+			context.getSource().sendSuccess(new TextComponent(""), true);
+			context.getSource().sendSuccess(new TextComponent("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claim_count", claimCountNumbers), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_forceload_count", forceloadCountNumbers), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_name", claimNameComponent), true);
 			int claimColor = usedSubConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
 			Component colorComponent = new TextComponent(Integer.toUnsignedString(claimColor, 16).toUpperCase()).withStyle(s -> s.withColor(claimColor));
-			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_color", colorComponent), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TextComponent("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_color", colorComponent), true);
+			context.getSource().sendSuccess(new TextComponent("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), true);
 			return 1;
 		};
 		

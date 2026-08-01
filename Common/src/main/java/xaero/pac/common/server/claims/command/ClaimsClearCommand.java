@@ -50,6 +50,7 @@ import xaero.pac.common.server.claims.player.task.PlayerClaimClearSpreadoutTask;
 import xaero.pac.common.server.command.CommandRequirementHelper;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
@@ -110,17 +111,22 @@ public class ClaimsClearCommand {
 
 	private Command<CommandSourceStack> getExecutor(boolean confirmed, boolean self){
 		return context -> {
-			ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
-			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(casterPlayer);
+			ServerPlayer casterPlayer = null;
+			try {
+				casterPlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
+			ServerPlayerData playerData = casterPlayer == null ? null : (ServerPlayerData) ServerPlayerData.from(casterPlayer);
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(casterPlayer.getServer());
+					serverData = ServerData.from(context.getSource().getServer());
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			GameProfile targetProfile = null;
+			GameProfile casterPlayerProfile = casterPlayer == null ? PlayerConfig.SERVER_CLAIM_PROFILE : casterPlayer.getGameProfile();
 			if(self) {
 				ServerClaimsPermissionHandler permissionHandler = serverData.getServerClaimsManager().getPermissionHandler();
-				if(!confirmed)//don't want to switch off impersonation when using the confirm command
+				if(!confirmed && casterPlayer != null)//don't want to switch off impersonation when using the confirm command
 					permissionHandler.ensureImpersonationPermission(casterPlayer, playerData);
-				UUID impersonatedId = playerData.getClaimsImpersonationInfo().getPlayerId();
+				UUID impersonatedId = casterPlayer == null ? null : playerData.getClaimsImpersonationInfo().getPlayerId();
 				if(impersonatedId != null) {
 					if(confirmed && !permissionHandler.playerHasImpersonationPermission(casterPlayer)){
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_no_impersonation_permission"));
@@ -132,7 +138,7 @@ public class ClaimsClearCommand {
 						return 0;
 					}
 				} else
-					targetProfile = casterPlayer.getGameProfile();
+					targetProfile = casterPlayerProfile;
 			} else try {
 				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 				if(profiles.size() == 1)
@@ -143,8 +149,8 @@ public class ClaimsClearCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_clear_invalid_player"));
 				return 0;
 			}
-			boolean effectivelySelf = targetProfile.equals(casterPlayer.getGameProfile());
-			if(!effectivelySelf && !playerData.isClaimsAdminMode()) {
+			boolean effectivelySelf = targetProfile.equals(casterPlayerProfile);
+			if(!effectivelySelf && casterPlayer != null && !playerData.isClaimsAdminMode()) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_clear_not_admin_mode", targetProfile.getName()));
 				return 0;
 			}
@@ -177,10 +183,10 @@ public class ClaimsClearCommand {
 				));
 				return 0;
 			}
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_clear_start", targetProfile.getName()), casterPlayer.getUUID());
+			context.getSource().sendSuccess(new TranslatableComponent("gui.xaero_claims_clear_start", targetProfile.getName()), true);
 			playerInfo.addReplacementTask(
 					PlayerClaimClearSpreadoutTask.Builder.begin()
-							.setCallerUUID(casterPlayer.getUUID())
+							.setCallerUUID(casterPlayerProfile.getId())
 							.setServer(serverData.getServer())
 							.setTargetPlayerProfile(targetProfile)
 							.build(),

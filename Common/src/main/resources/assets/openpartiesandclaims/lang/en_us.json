@@ -595,5 +595,6 @@
 	"gui.xaero_claims_transfer_accepted_invalid_player_id" : "The input player UUID is not valid!",
 	"gui.xaero_claims_transfer_accepted_online_player_not_found" : "The player who made the request for the claim transfer is no longer online.",
 	"gui.xaero_claims_transfer_accepted_too_quickly" : "You tried to accept the claim transfer request too quickly! Make sure you're clicking the right thing.",
-	"gui.xaero_claims_transfer_accepted_expired" : "This claim transfer request has expired. Please ask the other player to resend it."
+	"gui.xaero_claims_transfer_accepted_expired" : "This claim transfer request has expired. Please ask the other player to resend it.",
+	"gui.xaero_claims_sub_not_a_player" : "Storing the current sub-claim requires a player! To sub-claim without a source player, you must specify the used server sub-claim in the claim command itself."
 }
