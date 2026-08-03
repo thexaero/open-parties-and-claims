@@ -185,12 +185,14 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace) {
+	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && !isClaimable(dimension))
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
+		if(!replace && !fromDimension.equals(dimension))
+			return new ClaimResult<>(null, ClaimResult.Type.ANOTHER_DIMENSION);
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		int claimLimit = getPlayerFullClaimLimit(playerId);
@@ -212,10 +214,12 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
+	public ClaimResult<PlayerChunkClaim> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		//boolean isServer = Objects.equals(id, PlayerConfig.SERVER_CLAIM_UUID);
+		if(!replace && !fromDimension.equals(dimension))
+			return new ClaimResult<>(null, ClaimResult.Type.ANOTHER_DIMENSION);
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		return tryToUnclaimHelper(dimension, id, fromX, fromZ, x, z, replace);
@@ -245,12 +249,14 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean replace) {
+	public ClaimResult<PlayerChunkClaim> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		boolean isServer = Objects.equals(id, PlayerConfig.SERVER_CLAIM_UUID);
 		if(enable && !isServer && !isClaimable(dimension))
 			return new ClaimResult<>(null, ClaimResult.Type.UNCLAIMABLE_DIMENSION);
+		if(!replace && !fromDimension.equals(dimension))
+			return new ClaimResult<>(null, ClaimResult.Type.ANOTHER_DIMENSION);
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		int claimLimit = getPlayerFullClaimLimit(id);
@@ -258,13 +264,17 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return tryToForceloadHelper(dimension, id, fromX, fromZ, x, z, enable, replace, isServer, claimLimit, forceloadLimit);
 	}
 	
-	public AreaClaimResult tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, Action action, boolean replace) {
+	public AreaClaimResult tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, Action action, boolean replace) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), left, top, right, bottom);
 		Set<ClaimResult.Type> resultTypes = new HashSet<>();
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && (action == Action.CLAIM || action == Action.FORCELOAD) && !isClaimable(dimension)) {
 			resultTypes.add(ClaimResult.Type.UNCLAIMABLE_DIMENSION);
+			return new AreaClaimResult(resultTypes, left, top, right, bottom);
+		}
+		if(!replace && !fromDimension.equals(dimension)) {
+			resultTypes.add(ClaimResult.Type.ANOTHER_DIMENSION);
 			return new AreaClaimResult(resultTypes, left, top, right, bottom);
 		}
 		int effectiveLeft = left;
@@ -340,20 +350,20 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
-		return tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromX, fromZ, left, top, right, bottom, Action.CLAIM, replace);
+	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
+		return tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, Action.CLAIM, replace);
 	}
 
 	@Nonnull
 	@Override
-	public AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
-		return tryClaimActionOverArea(dimension, id, -1, fromX, fromZ, left, top, right, bottom, Action.UNCLAIM, replace);
+	public AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace) {
+		return tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, Action.UNCLAIM, replace);
 	}
 
 	@Nonnull
 	@Override
-	public AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace) {
-		return tryClaimActionOverArea(dimension, id, -1, fromX, fromZ, left, top, right, bottom, enable ? Action.FORCELOAD : Action.UNFORCELOAD, replace);
+	public AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace) {
+		return tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, enable ? Action.FORCELOAD : Action.UNFORCELOAD, replace);
 	}
 
 	@Nullable

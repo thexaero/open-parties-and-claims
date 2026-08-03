@@ -372,33 +372,33 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public void requestClaim(int x, int z, @Nullable IClaimingModeAPI claimingModeAPI) {
-		requestAreaClaim(x, z, x, z, claimingModeAPI);
+	public void requestClaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI) {
+		requestAreaClaim(dimension, x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestUnclaim(int x, int z, @Nullable IClaimingModeAPI claimingModeAPI){
-		requestAreaUnclaim(x, z, x, z, claimingModeAPI);
+	public void requestUnclaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI){
+		requestAreaUnclaim(dimension, x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestForceload(int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
-		requestAreaForceload(x, z, x, z, enable, claimingModeAPI);
+	public void requestForceload(@Nonnull ResourceLocation dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
+		requestAreaForceload(dimension, x, z, x, z, enable, claimingModeAPI);
 	}
 
 	@Override
-	public void requestAreaClaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.CLAIM, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+	public void requestAreaClaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.CLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaUnclaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.UNCLAIM, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+	public void requestAreaUnclaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.UNCLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? Action.FORCELOAD : Action.UNFORCELOAD, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+	public void requestAreaForceload(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? Action.FORCELOAD : Action.UNFORCELOAD, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override

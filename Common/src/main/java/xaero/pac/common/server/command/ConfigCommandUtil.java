@@ -75,7 +75,7 @@ public class ConfigCommandUtil {
 			String invalidTargetMessage,
 			AdaptiveLocalizer adaptiveLocalizer
 	) throws CommandSyntaxException {
-		GameProfile inputPlayer = null;
+		GameProfile inputPlayer;
 		try {
 			Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "player");
 			if(profiles.size() > 1) {

@@ -67,7 +67,7 @@ public class ClaimsSubClaimCurrentCommand extends ClaimAbstractSubClaimCommand {
 			}
 			ServerPlayerData sourcePlayerData = sourcePlayer == null ? null : (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			ClaimingMode effectiveMode = mode == null ?
-					(sourcePlayer == null ? (ClaimingMode) ClaimingModes.PLAYER : sourcePlayerData.getClaimingMode()) :
+					(another || sourcePlayer == null ? (ClaimingMode) ClaimingModes.PLAYER : sourcePlayerData.getClaimingMode()) :
 					mode;
 			IPlayerConfigOptionSpecAPI<String> option = effectiveMode.getSubClaimOption();
 			if(option == null)

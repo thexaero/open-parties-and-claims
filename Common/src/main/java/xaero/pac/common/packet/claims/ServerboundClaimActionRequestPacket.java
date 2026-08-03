@@ -21,6 +21,7 @@ package xaero.pac.common.packet.claims;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
@@ -46,7 +47,7 @@ public class ServerboundClaimActionRequestPacket {
 		@Override
 		public ServerboundClaimActionRequestPacket apply(FriendlyByteBuf input) {
 			try {
-				if(input.readableBytes() > 1024)
+				if(input.readableBytes() > 2048)
 					return null;
 				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
@@ -58,6 +59,7 @@ public class ServerboundClaimActionRequestPacket {
 				} catch(ArrayIndexOutOfBoundsException aioobe) {
 					return null;
 				}
+				ResourceLocation dimension = new ResourceLocation(tag.getString("d"));
 				int left = tag.getInt("l");
 				int top = tag.getInt("t");
 				int right = tag.getInt("r");
@@ -67,7 +69,7 @@ public class ServerboundClaimActionRequestPacket {
 				ClaimingMode claimingMode = null;
 				if(tag.contains("m", Tag.TAG_STRING))
 					claimingMode = (ClaimingMode) ClaimingModes.get(tag.getString("m"));
-				return new ServerboundClaimActionRequestPacket(new ClaimActionRequest(action, left, top, right, bottom, claimingMode));
+				return new ServerboundClaimActionRequestPacket(new ClaimActionRequest(action, dimension, left, top, right, bottom, claimingMode));
 			} catch(Throwable t) {
 				return null;
 			}
@@ -77,6 +79,7 @@ public class ServerboundClaimActionRequestPacket {
 		public void accept(ServerboundClaimActionRequestPacket t, FriendlyByteBuf u) {
 			CompoundTag tag = new CompoundTag();
 			tag.putByte("a", (byte) t.request.getAction().ordinal());
+			tag.putString("d", t.request.getDimension().toString());
 			tag.putInt("l", t.request.getLeft());
 			tag.putInt("t", t.request.getTop());
 			tag.putInt("r", t.request.getRight());

@@ -59,12 +59,7 @@ public class ClaimsSubClaimUseCommand extends ClaimAbstractSubClaimCommand {
 	protected LiteralArgumentBuilder<CommandSourceStack> getExecutivePart(ClaimingMode mode, boolean another){
 		return Commands.literal("use")
 				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests((context, builder) -> {
-					ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-					ServerPlayerData sourcePlayerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
-					ClaimingMode effectiveMode = mode == null ? sourcePlayerData.getClaimingMode() : mode;
-					return ClaimsClaimCommands.getSubClaimSuggestionProvider(effectiveMode, another).getSuggestions(context, builder);
-				})
+				.suggests(ClaimsClaimCommands.getSubClaimSuggestionProvider(mode, another))
 				.executes(getExecutor(mode, another)));
 	}
 
@@ -77,7 +72,7 @@ public class ClaimsSubClaimUseCommand extends ClaimAbstractSubClaimCommand {
 			}
 			ServerPlayerData sourcePlayerData = sourcePlayer == null ? null : (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
 			ClaimingMode effectiveMode = mode == null ?
-					(sourcePlayer == null ? (ClaimingMode) ClaimingModes.PLAYER : sourcePlayerData.getClaimingMode()) :
+					(another || sourcePlayer == null ? (ClaimingMode) ClaimingModes.PLAYER : sourcePlayerData.getClaimingMode()) :
 					mode;
 			IPlayerConfigOptionSpecAPI<String> option = effectiveMode.getSubClaimOption();
 			if(option == null)

@@ -66,33 +66,33 @@ public interface IServerClaimsManager
 	}
 
 	@Nonnull
-	public ClaimResult<C> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<C> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace);
 
 	@Nonnull
-	public ClaimResult<C> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<C> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace);
 
 	@Nonnull
-	public ClaimResult<C> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean enable, boolean replace);
+	public ClaimResult<C> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean replace);
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, replace);
+	default ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, x, z, replace);
 	}
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToUnclaimTyped(dimension, playerId, fromX, fromZ, x, z, replace);
+	default ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToUnclaimTyped(dimension, playerId, fromDimension, fromX, fromZ, x, z, replace);
 	}
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean enable, boolean replace) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToForceloadTyped(dimension, playerId, fromX, fromZ, x, z, enable, replace);
+	default ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean replace) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToForceloadTyped(dimension, playerId, fromDimension, fromX, fromZ, x, z, enable, replace);
 	}
 
 }

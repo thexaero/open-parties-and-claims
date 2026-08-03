@@ -18,12 +18,14 @@
 
 package xaero.pac.common.claims.player.request;
 
+import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 
 public class ClaimActionRequest {
 	
 	private final ClaimsManager.Action action;
+	private final ResourceLocation dimension;
 	private final int left;
 	private final int top;
 	private final int right;
@@ -31,9 +33,10 @@ public class ClaimActionRequest {
 	private final ClaimingMode mode;
 	private final int totalChunks;
 	
-	public ClaimActionRequest(ClaimsManager.Action action, int left, int top, int right, int bottom, ClaimingMode mode) {
+	public ClaimActionRequest(ClaimsManager.Action action, ResourceLocation dimension, int left, int top, int right, int bottom, ClaimingMode mode) {
 		super();
 		this.action = action;
+		this.dimension = dimension;
 		this.left = left;
 		this.top = top;
 		this.right = right;
@@ -44,6 +47,10 @@ public class ClaimActionRequest {
 
 	public ClaimsManager.Action getAction() {
 		return action;
+	}
+
+	public ResourceLocation getDimension() {
+		return dimension;
 	}
 
 	public int getLeft() {

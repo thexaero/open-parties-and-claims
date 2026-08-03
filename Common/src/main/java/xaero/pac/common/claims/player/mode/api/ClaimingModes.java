@@ -142,6 +142,8 @@ public class ClaimingModes {
 			)
 			.setClientCountsSourceId(PlayerConfig.SERVER_CLAIM_UUID)
 			.setPermissionChecker((playerId, claimsManager) -> {
+				if(PlayerConfig.SERVER_CLAIM_UUID.equals(playerId))
+					return null;
 				ServerPlayer player = claimsManager.getConfigManager().getServer().getPlayerList().getPlayer(playerId);
 				if(player == null)
 					return ClaimResult.Type.NO_SERVER_PERMISSION;

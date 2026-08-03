@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.player.request;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -93,10 +94,11 @@ public class PlayerClaimActionRequestHandler {
 				claimConfig.getEffectiveSubConfig(playerData.getClaimsImpersonationInfo().getSubIndex(claimType)) :
 				claimConfig.getEffectiveSubConfig(playerConfig.getEffective(claimType.getSubClaimOption()));
 		int subConfigIndex = usedSubConfig.getSubIndex();
+		ResourceLocation fromDimension = player.level.dimension().location();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
-		AreaClaimResult result = manager.tryClaimActionOverArea(player.level.dimension().location(), claimPlayerId, subConfigIndex,
-				fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
+		AreaClaimResult result = manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
+				fromDimension, fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
 				request.getAction(), playerData.isClaimsAdminMode());
 		manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player);
 		lastRequestTickCounter = serverTickHandler.getTickCounter();
