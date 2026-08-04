@@ -25,6 +25,7 @@ import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
@@ -49,8 +50,10 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	protected boolean beenUsed;
 	private long registeredActivity;
 	private boolean replacementInProgress;
+	private final Deque<PlayerAreaClaimActionSpreadoutTask> areaClaimActionTaskQueue;
 	private final Deque<PlayerClaimReplaceSpreadoutTask> replaceTaskQueue;
 	private boolean transferInProgress;
+	private boolean areaClaimInProgress;
 
 	private Component lastPartyNameSynced;
 	private boolean lastPartyOwnedSynced;
@@ -58,9 +61,12 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private long lastAllowedClaimAccessOverLimitTime;
 
 	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
-								 ServerPlayerClaimInfoManager manager, Deque<PlayerClaimReplaceSpreadoutTask> replaceSpreadoutTasks) {
+	                             ServerPlayerClaimInfoManager manager, Deque<PlayerAreaClaimActionSpreadoutTask> areaClaimActionTaskQueue,
+								 Deque<PlayerClaimReplaceSpreadoutTask> replaceSpreadoutTasks
+	) {
 		super(username, playerId, claims, manager);
 		this.playerConfig = playerConfig;
+		this.areaClaimActionTaskQueue = areaClaimActionTaskQueue;
 		this.replaceTaskQueue = replaceSpreadoutTasks;
 		if(manager.getExpirationHandler() != null)
 			this.registeredActivity = manager.getExpirationHandler().getServerInfo().getTotalUseTime();
@@ -271,6 +277,24 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 
 	@Override
+	public boolean hasAreaClaimActionTasks() {
+		return areaClaimInProgress || !areaClaimActionTaskQueue.isEmpty();
+	}
+
+	@Override
+	public void addAreaClaimActionTask(PlayerAreaClaimActionSpreadoutTask task, IServerData<?, ?> serverData) {
+		if(!areaClaimInProgress)
+			manager.getClaimsManager().getAreaClaimActionTaskHandler().addTask(task, serverData);
+		else
+			areaClaimActionTaskQueue.add(task);
+	}
+
+	@Override
+	public PlayerAreaClaimActionSpreadoutTask removeNextAreaClaimActionTask() {
+		return areaClaimActionTaskQueue.removeFirst();
+	}
+
+	@Override
 	public IPlayerConfig getConfig() {
 		return playerConfig;
 	}
@@ -309,6 +333,16 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public void setTransferInProgress(boolean transferInProgress) {
 		this.transferInProgress = transferInProgress;
+	}
+
+	@Override
+	public boolean isAreaClaimInProgress() {
+		return areaClaimInProgress;
+	}
+
+	@Override
+	public void setAreaClaimInProgress(boolean areaClaimInProgress) {
+		this.areaClaimInProgress = areaClaimInProgress;
 	}
 
 	@Override

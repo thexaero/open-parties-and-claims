@@ -95,6 +95,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue claimWelcomeMessages;
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
 	public final ForgeConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
+	public final ForgeConfigSpec.IntValue maxSingleClaimActionSize;
 	public final ForgeConfigSpec.ConfigValue<String> serverClaimPermission;
 	public final ForgeConfigSpec.ConfigValue<String> claimsModeratorModePermission;
 	public final ForgeConfigSpec.ConfigValue<String> claimsAdminModePermission;
@@ -343,6 +344,15 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_max_forceloads_permission")
 			.worldRestart()
 			.define("maxPlayerClaimForceloadsPermission", UsedPermissionNodes.MAX_PLAYER_FORCELOADS.getDefaultNodeString());
+
+		maxSingleClaimActionSize = builder
+			.comment("""
+					The maximum size (in chunks) of a single claim action, whether it's claiming, unclaiming or forceloading.
+					The size limit can be circumvented using the claims admin mode.
+					Very big claim actions should not affect your server's performance much, this is mostly a balancing option.""")
+			.translation("gui.xaero_pac_config_max_single_claim_action_size")
+			.worldRestart()
+			.defineInRange("maxSingleClaimActionSize", 121, 0, Integer.MAX_VALUE);
 
 		serverClaimPermission = builder
 			.comment("The permission that gives non-OP players the ability to make server claims and enable server claim mode. The used permission system can be configured with \"permissionSystem\".")

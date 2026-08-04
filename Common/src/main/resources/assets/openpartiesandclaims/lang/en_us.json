@@ -605,4 +605,6 @@
 	"gui.xaero.claims_forceload_command_unknown_dimension" : "Unknown chunk dimension! You must either specify the dimension or execute the command as a source player!",
 	"gui.xaero.claims_forceload_command_unknown_pos" : "Unknown chunk position! You must either specify the position or execute the command as a source player!",
 	"gui.xaero_claims_forceload_command_too_many_targets" : "Only one target player is allowed!",
-	"gui.xaero_claims_forceload_command_invalid_target" : "Invalid target player!"}
+	"gui.xaero_claims_forceload_command_invalid_target" : "Invalid target player!",
+	"gui.xaero_claims_area_action_task_in_progress" : "You have an over-area claim action task currently in progress! Please wait for it to finish."
+}

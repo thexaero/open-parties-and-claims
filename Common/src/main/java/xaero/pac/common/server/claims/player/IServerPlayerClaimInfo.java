@@ -25,6 +25,7 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
+import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObject;
 import xaero.pac.common.server.player.config.IPlayerConfig;
@@ -93,5 +94,15 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	void setTransferInProgress(boolean transferInProgress);
 
 	ClaimLocation getRandomClaimPos(boolean firstPosIfTooMany);
+
+	boolean isAreaClaimInProgress();
+
+	void setAreaClaimInProgress(boolean areaClaimInProgress);
+
+	public boolean hasAreaClaimActionTasks();
+
+	public void addAreaClaimActionTask(PlayerAreaClaimActionSpreadoutTask task, IServerData<?, ?> serverData);
+
+	public PlayerAreaClaimActionSpreadoutTask removeNextAreaClaimActionTask();
 
 }

@@ -97,10 +97,10 @@ public class PlayerClaimActionRequestHandler {
 		ResourceLocation fromDimension = player.level.dimension().location();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
-		AreaClaimResult result = manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
+		manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
 				fromDimension, fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
-				request.getAction(), playerData.isClaimsAdminMode());
-		manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player);
+				request.getAction(), playerData.isClaimsAdminMode(),
+				result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
 		lastRequestTickCounter = serverTickHandler.getTickCounter();
 	}
 

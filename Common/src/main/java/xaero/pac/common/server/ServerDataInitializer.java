@@ -33,6 +33,7 @@ import xaero.pac.common.server.claims.player.ServerPlayerClaimPartyUpdater;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.io.serialization.nbt.PlayerClaimInfoNbtSerializer;
+import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
 import xaero.pac.common.server.claims.protection.ChunkProtectionExceptionType;
@@ -112,6 +113,13 @@ public class ServerDataInitializer {
 
 			ServerTickHandler serverTickHandler = ServerTickHandler.Builder.begin().setServer(server).build();
 
+			ServerSpreadoutQueuedTaskHandler<PlayerAreaClaimActionSpreadoutTask> areaClaimActionTaskHandler =
+					ServerSpreadoutQueuedTaskHandler.Builder
+					.<PlayerAreaClaimActionSpreadoutTask>begin()
+					.setPerTickLimit(512)
+					.setPerTickPerTaskLimit(64)
+					.build();
+			serverTickHandler.registerSpreadoutTaskHandler(areaClaimActionTaskHandler);
 			ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> claimReplaceTaskHandler =
 					ServerSpreadoutQueuedTaskHandler.Builder
 					.<PlayerClaimReplaceSpreadoutTask>begin()
@@ -248,6 +256,7 @@ public class ServerDataInitializer {
 					.setTicketManager(forceLoadManager)
 					.setConfigManager(playerConfigs)
 					.setClaimsManagerSynchronizer(claimsSynchronizer)
+					.setAreaClaimActionTaskHandler(areaClaimActionTaskHandler)
 					.setClaimReplaceTaskHandler(claimReplaceTaskHandler)
 					.setPermissionHandler(serverClaimsPermissionHandler)
 					.setPartySystemManager(playerPartySystemManager)

@@ -22,16 +22,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
+import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.api.IClaimsManagerAPI;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerAPI;
+import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -205,7 +208,7 @@ public interface IServerClaimsManagerAPI
 	}
 
 	/**
-	 * @deprecated Use {@link #tryToClaimArea(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, int, int, boolean)} instead
+	 * @deprecated Use {@link #tryToClaimArea(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, int, int, boolean, Consumer)} instead
 	 * Tries to claim chunks over a specified area by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
@@ -228,11 +231,11 @@ public interface IServerClaimsManagerAPI
 	@Deprecated
 	@Nonnull
 	default AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace){
-		return tryToClaimArea(dimension, playerId, subConfigIndex, dimension, fromX, fromZ, left, top, right, bottom, replace);
+		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, subConfigIndex, fromX, fromZ, left, top, right, bottom, ClaimsManager.Action.CLAIM, replace);
 	}
 
 	/**
-	 * @deprecated Use {@link #tryToUnclaimArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean)} instead
+	 * @deprecated Use {@link #tryToUnclaimArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, Consumer)} instead
 	 * Tries to unclaim chunks over a specified area by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
@@ -254,11 +257,11 @@ public interface IServerClaimsManagerAPI
 	@Deprecated
 	@Nonnull
 	default AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace){
-		return tryToUnclaimArea(dimension, playerId, dimension, fromX, fromZ, left, top, right, bottom, replace);
+		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, -1, fromX, fromZ, left, top, right, bottom, ClaimsManager.Action.UNCLAIM, replace);
 	}
 
 	/**
-	 * @deprecated Use {@link #tryToForceloadArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, boolean)} instead
+	 * @deprecated Use {@link #tryToForceloadArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, boolean, Consumer)} instead
 	 * Tries to (un)mark chunks for forceloading over a specified area by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
@@ -281,7 +284,7 @@ public interface IServerClaimsManagerAPI
 	@Deprecated
 	@Nonnull
 	default AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace){
-		return tryToForceloadArea(dimension, playerId, dimension, fromX, fromZ, left, top, right, bottom, enable, replace);
+		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, -1, fromX, fromZ, left, top, right, bottom, enable ? ClaimsManager.Action.FORCELOAD : ClaimsManager.Action.UNFORCELOAD, replace);
 	}
 
 	/**
@@ -353,11 +356,15 @@ public interface IServerClaimsManagerAPI
 	public ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean replace);
 
 	/**
-	 * Tries to claim chunks over a specified area by a specified player.
+	 * Tries to claim chunks over a specified area as a specified player.
+	 * <p>
+	 * The effect of calling this method is not immediate, and it may take many server ticks before the result is passed
+	 * to a provided listener.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
 	 * <p>
-	 * You get a {@link AreaClaimResult} containing all unique result types, which contain messages describing the results.
+	 * When the claiming process is complete, an {@link AreaClaimResult} is passed to the provided listener containing all
+	 * unique result types, which contain messages describing the results.
 	 *
 	 * @param dimension  the dimension ID of the chunks to claim, not null
 	 * @param playerId  the claiming player's UUID, not null
@@ -371,17 +378,19 @@ public interface IServerClaimsManagerAPI
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param replace  whether to ignore some limitations,
 	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
-	 * @return the area result, not null
 	 */
-	@Nonnull
-	public AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
+	public void tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace, Consumer<AreaClaimResult> listener);
 
 	/**
 	 * Tries to unclaim chunks over a specified area by a specified player.
 	 * <p>
+	 * The effect of calling this method is not immediate, and it may take many server ticks before the result is passed
+	 * to a provided listener.
+	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
 	 * <p>
-	 * You get a {@link AreaClaimResult} containing all unique result types, which contain messages describing the results.
+	 * When the unclaiming process is complete, an {@link AreaClaimResult} is passed to the provided listener containing all
+	 * unique result types, which contain messages describing the results.
 	 *
 	 * @param dimension  the dimension ID of the chunks to unclaim, not null
 	 * @param playerId  the unclaiming player's UUID, not null
@@ -394,17 +403,19 @@ public interface IServerClaimsManagerAPI
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param replace  whether to ignore some limitations,
 	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
-	 * @return the area result, not null
 	 */
-	@Nonnull
-	public AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace);
+	public void tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace, Consumer<AreaClaimResult> listener);
 
 	/**
 	 * Tries to (un)mark chunks for forceloading over a specified area by a specified player.
 	 * <p>
+	 * The effect of calling this method is not immediate, and it may take many server ticks before the result is passed
+	 * to a provided listener.
+	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
 	 * <p>
-	 * You get a {@link AreaClaimResult} containing all unique result types, which contain messages describing the results.
+	 * When the forceload (un)marking process is complete, an {@link AreaClaimResult} is passed to the provided listener containing all
+	 * unique result types, which contain messages describing the results.
 	 *
 	 * @param dimension  the dimension ID of the chunks to forceload, not null
 	 * @param playerId  the forceloading player's UUID, not null
@@ -418,10 +429,8 @@ public interface IServerClaimsManagerAPI
 	 * @param enable  true to mark for forceloading, false to unmark
 	 * @param replace  whether to ignore some limitations,
 	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
-	 * @return the area result, not null
 	 */
-	@Nonnull
-	public AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace);
+	public void tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace, Consumer<AreaClaimResult> listener);
 
 	/**
 	 * Gets the base maximum claim number (without the bonus) for a player UUID.

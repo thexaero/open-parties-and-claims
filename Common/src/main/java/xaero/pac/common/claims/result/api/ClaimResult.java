@@ -116,6 +116,9 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		/** There is a claim transfer currently in progress in the background */
 		TRANSFER_IN_PROGRESS(new TranslatableComponent("gui.xaero_claims_transfer_in_progress").withStyle(ChatFormatting.RED), false, true, true),
 
+		/** There is an area claim action task in progress in the background */
+		AREA_ACTION_IN_PROGRESS(new TranslatableComponent("gui.xaero_claims_area_action_task_in_progress").withStyle(ChatFormatting.RED), false, true, true),
+
 		/**
 		 * The user doesn't have permission to make server claims
 		 * <p>
