@@ -36,7 +36,8 @@ public class ClaimsForceloadCommand extends AbstractChunkCommand {
 				ClaimsCommandRegister.COMMAND_PREFIX, add,
 				mode == null || mode.canBeImpersonated(),
 				mode == null ? null : mode.getId(), "forceload", "unforceload",
-				null, null
+				null, null,
+				true
 		);
 		this.mode = mode;
 	}

@@ -234,7 +234,9 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	@Override
 	public ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean replace) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
-		if(currentClaim == null || !replace && !Objects.equals(id, currentClaim.getPlayerId()))
+		if(currentClaim == null)
+			return new ClaimResult<>(null, ClaimResult.Type.NOT_CLAIMED);
+		if(!replace && !Objects.equals(id, currentClaim.getPlayerId()))
 			return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
 		if(!replace && playerClaimInfo.isTransferInProgress())

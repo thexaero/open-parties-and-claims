@@ -92,6 +92,7 @@
 	"gui.xaero_claims_over_claim_limit" : "You can only unclaim because you are over your claim limit!",
 	"gui.xaero_claims_claim_dimension_unclaimable" : "This dimension is not claimable as configured by the server config!",
 	"gui.xaero_claims_claim_unclaim_not_yours" : "You can't unclaim a chunk that has a different owner than what you're currently claiming as!",
+	"gui.xaero_claims_claim_unclaim_not_claimed" : "You can't unclaim a chunk that isn't claimed!",
 	"gui.xaero_claims_too_many_chunks" : "Too many chunks for a single action!",
 	"gui.xaero_claims_are_disabled" : "The chunk claims feature is disabled!",
 	"gui.xaero_claims_claim_no_server_permission" : "You don't have permission to make server claims!",
@@ -606,5 +607,13 @@
 	"gui.xaero.claims_forceload_command_unknown_pos" : "Unknown chunk position! You must either specify the position or execute the command as a source player!",
 	"gui.xaero_claims_forceload_command_too_many_targets" : "Only one target player is allowed!",
 	"gui.xaero_claims_forceload_command_invalid_target" : "Invalid target player!",
-	"gui.xaero_claims_area_action_task_in_progress" : "You have an over-area claim action task currently in progress! Please wait for it to finish."
+	"gui.xaero_claims_area_action_task_in_progress" : "You have an over-area claim action task currently in progress! Please wait for it to finish.",
+	"gui.xaero_claims_claim_command_area_start" : "Began claiming the chunks from %1$s %2$s to %3$s %4$s as %5$s with sub-claim %6$s. This can take a while...",
+	"gui.xaero_claims_unclaim_command_area_start" : "Began unclaiming the chunks from %1$s %2$s to %3$s %4$s as %5$s. This can take a while...",
+	"gui.xaero_claims_forceload_command_area_start" : "Began marking chunks for forceloading from %1$s %2$s to %3$s %4$s as %5$s. This can take a while...",
+	"gui.xaero_claims_unforceload_command_area_start" : "Began unmarking chunks for forceloading from %1$s %2$s to %3$s %4$s as %5$s. This can take a while...",
+	"gui.xaero_claims_claim_command_area_end" : "Finished claiming the chunks from %1$s %2$s to %3$s %4$s as %5$s with sub-claim %6$s. Here are the results:",
+	"gui.xaero_claims_unclaim_command_area_end" : "Finished unclaiming the chunks from %1$s %2$s to %3$s %4$s as %5$s. Here are the results:",
+	"gui.xaero_claims_forceload_command_area_end" : "Finished marking chunks for forceloading the chunks from %1$s %2$s to %3$s %4$s as %5$s. Here are the results:",
+	"gui.xaero_claims_unforceload_command_area_end" : "Finished unmarking chunks for forceloading the chunks from %1$s %2$s to %3$s %4$s as %5$s. Here are the results:"
 }

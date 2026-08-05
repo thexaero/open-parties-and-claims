@@ -92,6 +92,9 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		/** The chunk isn't claimed by who is trying to unclaim it */
 		NOT_CLAIMED_BY_USER(new TranslatableComponent("gui.xaero_claims_claim_unclaim_not_yours").withStyle(ChatFormatting.RED), false, true, false),
 
+		/** The chunk is not claimed */
+		NOT_CLAIMED(new TranslatableComponent("gui.xaero_claims_claim_unclaim_not_claimed").withStyle(ChatFormatting.RED), false, true, false),
+
 		/** The chunk is already claimed */
 		ALREADY_CLAIMED(new TranslatableComponent("gui.xaero_claims_claim_already_claimed").withStyle(ChatFormatting.RED), false, true, false),
 

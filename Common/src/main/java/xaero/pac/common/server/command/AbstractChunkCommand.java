@@ -44,6 +44,7 @@ public abstract class AbstractChunkCommand {
 	private final String unapplyLiteral;
 	private final String subArgumentLiteral;
 	private final String subArgumentName;
+	private final boolean areaSelection;
 
 	protected AbstractChunkCommand(
 			String featureLiteral,
@@ -53,7 +54,8 @@ public abstract class AbstractChunkCommand {
 			String applyLiteral,
 			String unapplyLiteral,
 			String subArgumentLiteral,
-			String subArgumentName
+			String subArgumentName,
+			boolean areaSelection
 	) {
 		this.featureLiteral = featureLiteral;
 		this.apply = apply;
@@ -63,6 +65,7 @@ public abstract class AbstractChunkCommand {
 		this.unapplyLiteral = unapplyLiteral;
 		this.subArgumentLiteral = subArgumentLiteral;
 		this.subArgumentName = subArgumentName;
+		this.areaSelection = areaSelection;
 	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
@@ -85,10 +88,12 @@ public abstract class AbstractChunkCommand {
 				false);
 		registerCommand(dispatcher, actionLiteral, null, defaultExecutor, requirement, another, subArgument);
 
-		ArgumentBuilder<CommandSourceStack, ?> mainPart = Commands.argument("block-pos", ColumnPosArgument.columnPos())
+		ArgumentBuilder<CommandSourceStack, ?> mainPart = Commands.argument(areaSelection ? "to-block-pos" : "block-pos", ColumnPosArgument.columnPos())
 				.executes(createChunkCommand(
 						apply, another,
 						false));
+		if(areaSelection)
+			mainPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(mainPart);
 		registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
 
 		mainPart = Commands.literal("anyway").requires(source -> source.hasPermission(2))
@@ -97,30 +102,38 @@ public abstract class AbstractChunkCommand {
 						true));
 		registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
 
-		mainPart = Commands.argument("block-pos", ColumnPosArgument.columnPos())
+		mainPart = Commands.argument(areaSelection ? "to-block-pos" : "block-pos", ColumnPosArgument.columnPos())
 				.then(Commands.literal("anyway").requires(source -> source.hasPermission(2))
 				.executes(createChunkCommand(
 						apply, another,
 						true))
 		);
+		if(areaSelection)
+			mainPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(mainPart);
 		registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
 
+		ArgumentBuilder<CommandSourceStack, ?> blockPosPart = Commands.argument(areaSelection ? "to-block-pos" : "block-pos", ColumnPosArgument.columnPos())
+				.executes(createChunkCommand(
+						apply, another,
+						false));
+		if(areaSelection)
+			blockPosPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(blockPosPart);
 		mainPart = Commands.literal("in")
 				.then(Commands.argument("dimension", DimensionArgument.dimension())
-				.then(Commands.argument("block-pos", ColumnPosArgument.columnPos())
-						.executes(createChunkCommand(
-						apply, another,
-						false)))
+				.then(blockPosPart)
 		);
 		registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
 
+		blockPosPart = Commands.argument(areaSelection ? "to-block-pos" : "block-pos", ColumnPosArgument.columnPos())
+				.then(Commands.literal("anyway").requires(source -> source.hasPermission(2))
+				.executes(createChunkCommand(
+						apply, another,
+						true)));
+		if(areaSelection)
+			blockPosPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(blockPosPart);
 		mainPart = Commands.literal("in")
 				.then(Commands.argument("dimension", DimensionArgument.dimension())
-				.then(Commands.argument("block-pos", ColumnPosArgument.columnPos())
-				.then(Commands.literal("anyway").requires(source -> source.hasPermission(2))
-						.executes(createChunkCommand(
-						apply, another,
-						true))))
+				.then(blockPosPart)
 		);
 		registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
 	}

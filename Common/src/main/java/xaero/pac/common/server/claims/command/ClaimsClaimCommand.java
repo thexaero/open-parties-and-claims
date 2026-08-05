@@ -38,7 +38,8 @@ public class ClaimsClaimCommand extends AbstractChunkCommand {
 				mode == null || mode.canBeImpersonated(),
 				mode == null ? null : mode.getId(),
 				"claim", "unclaim",
-				add ? "with" : null, "sub-id"
+				add ? "with" : null, "sub-id",
+				true
 		);
 		this.mode = mode;
 	}
