@@ -272,11 +272,14 @@ public class ClaimsTransferCommand {
 				startTransfer(transferFrom, transferTo, fromConfig, toConfig, originalRequesterId, serverData);
 				return 1;
 			}
-			callerPlayer.sendMessage(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_request_sent", transferFrom.getName(), transferTo.getName()), callerPlayer.getUUID());
+			Component callerName = new TextComponent(callerPlayer.getGameProfile().getName()).withStyle(ChatFormatting.GREEN);
+			Component transferFromName = new TextComponent(transferFrom.getName()).withStyle(ChatFormatting.GREEN);
+			Component transferToName = new TextComponent(transferTo.getName()).withStyle(ChatFormatting.GREEN);
+			callerPlayer.sendMessage(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_request_sent", transferFromName, transferToName), callerPlayer.getUUID());
 			playerData.setClaimTransferRequestSourcePlayerProfile(transferFrom);
 			playerData.setClaimTransferRequestTargetPlayerId(transferTo.getId());
 			playerData.setClaimTransferRequestTime(System.currentTimeMillis());
-			Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message", callerPlayer.getGameProfile().getName(), transferFrom.getName(), transferTo.getName());
+			Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message", callerName, transferFromName, transferToName);
 			acceptComponent.getSiblings().add(new TextComponent(" "));
 			acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message_accept")
 					.withStyle(s -> s.withColor(ChatFormatting.GREEN)
@@ -428,9 +431,11 @@ public class ClaimsTransferCommand {
 		if(onlinePlayer == null)
 			return;
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+		Component fromPlayerName = new TextComponent(fromPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
+		Component toPlayerName = new TextComponent(toPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
 		onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer,
 				isTarget ? "gui.xaero_claims_transfer_start_to" : "gui.xaero_claims_transfer_start_from",
-				fromPlayerInfo.getPlayerUsername(), toPlayerInfo.getPlayerUsername()
+				fromPlayerName, toPlayerName
 		), onlinePlayer.getUUID());
 	}
 

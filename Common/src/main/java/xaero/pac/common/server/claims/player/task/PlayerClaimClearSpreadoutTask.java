@@ -19,6 +19,9 @@
 package xaero.pac.common.server.claims.player.task;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -110,8 +113,10 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 			ServerPlayer onlinePlayer = callerUUID == null ? null : server.getPlayerList().getPlayer(callerUUID);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if (resultType.isSuccess()) {
-				if (onlinePlayer != null)
-					onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, "gui.xaero_claims_clear_complete", targetPlayerProfile.getName()), onlinePlayer.getUUID());
+				if (onlinePlayer != null) {
+					Component targetName = new TextComponent(targetPlayerProfile.getName()).withStyle(ChatFormatting.GREEN);
+					onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, "gui.xaero_claims_clear_complete", targetName), onlinePlayer.getUUID());
+				}
 				return;
 			}
 			if (onlinePlayer != null)

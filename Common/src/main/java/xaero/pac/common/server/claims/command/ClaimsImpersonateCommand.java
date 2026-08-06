@@ -23,9 +23,12 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,7 +36,6 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.packet.claims.ClientboundClaimModesPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -119,10 +121,11 @@ public class ClaimsImpersonateCommand {
 					serverData.getServerClaimsManager().getPlayerInfo(idToImpersonate);
 			((ServerPlayerClaimInfo)(Object)impersonatedPlayerClaimInfo).setPlayerUsername(toImpersonate.getName());
 		}
+		Component impersonatedName = disable ? null : new TextComponent(toImpersonate.getName()).withStyle(ChatFormatting.GREEN);
 		player.sendMessage(
 				adaptiveLocalizer.getFor(player,
 						disable ? new TranslatableComponent("gui.xaero_claims_impersonate_disabled") :
-								new TranslatableComponent("gui.xaero_claims_impersonate_enabled", toImpersonate.getName())
+								new TranslatableComponent("gui.xaero_claims_impersonate_enabled", impersonatedName)
 				), player.getUUID()
 		);
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));

@@ -24,10 +24,13 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -101,7 +104,8 @@ public class ClaimsTeleportCommand {
 				return 0;
 			}
 			ServerPlayerUtils.teleport(casterPlayer, randomClaimPos.getDimId(), (randomClaimPos.getChunkX() << 4) + 8, casterPlayer.getY(), (randomClaimPos.getChunkZ() << 4) + 8, casterPlayer.getYRot(), casterPlayer.getXRot());
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_teleport_success", profile.getName()), casterPlayer.getUUID());
+			Component targetName = new TextComponent(profile.getName()).withStyle(ChatFormatting.GREEN);
+			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_teleport_success", targetName), casterPlayer.getUUID());
 			return 1;
 		};
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {
