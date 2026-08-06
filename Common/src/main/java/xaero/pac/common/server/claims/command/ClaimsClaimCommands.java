@@ -283,13 +283,17 @@ public class ClaimsClaimCommands {
 		}
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 		sourceStack.sendSuccess(endMessage, true);
-		result.getResultTypesStream().forEach(type -> {
+		int resultNumber = 0;
+		for (ClaimResult.Type type : result.getResultTypesIterable()) {
+			resultNumber++;
+			Component resultMessage = new TextComponent(resultNumber + ") ");
+			resultMessage.getSiblings().add(adaptiveLocalizer.getFor(player, type.message));
 			if(type.fail) {
-				sourceStack.sendFailure(adaptiveLocalizer.getFor(player, type.message));
-				return;
+				sourceStack.sendFailure(resultMessage);
+				continue;
 			}
-			sourceStack.sendSuccess(adaptiveLocalizer.getFor(player, type.message), true);
-		});
+			sourceStack.sendSuccess(resultMessage, true);
+		}
 	}
 
 	public static Predicate<CommandSourceStack> getServerClaimCommandRequirement(){
