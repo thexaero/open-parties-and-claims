@@ -55,12 +55,12 @@ public class ServerPlayerUtils {
 				targetDimension = player.getServer().getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
 				if(targetDimension == null)
 					return;
-				if(targetDimension != player.getLevel())
-					player.changeDimension(targetDimension);
 			}
 			player.stopRiding();
-			if(targetDimension != null && targetDimension != player.getLevel())
-				player.changeDimension(targetDimension);
+			if(targetDimension != null && targetDimension != player.getLevel()) {
+				player.teleportTo(targetDimension, x, y, z, yRot, xRot);
+				return;
+			}
 			player.connection.teleport(x, y, z, yRot, xRot);
 		});
 	}
