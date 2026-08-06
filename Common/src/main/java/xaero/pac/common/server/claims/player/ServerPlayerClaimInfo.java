@@ -53,7 +53,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private final Deque<PlayerAreaClaimActionSpreadoutTask> areaClaimActionTaskQueue;
 	private final Deque<PlayerClaimReplaceSpreadoutTask> replaceTaskQueue;
 	private boolean transferInProgress;
-	private boolean areaClaimInProgress;
+	private PlayerAreaClaimActionSpreadoutTask areaClaimTaskInProgress;
 
 	private Component lastPartyNameSynced;
 	private boolean lastPartyOwnedSynced;
@@ -278,12 +278,12 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 
 	@Override
 	public boolean hasAreaClaimActionTasks() {
-		return areaClaimInProgress || !areaClaimActionTaskQueue.isEmpty();
+		return areaClaimTaskInProgress != null || !areaClaimActionTaskQueue.isEmpty();
 	}
 
 	@Override
 	public void addAreaClaimActionTask(PlayerAreaClaimActionSpreadoutTask task, IServerData<?, ?> serverData) {
-		if(!areaClaimInProgress)
+		if(areaClaimTaskInProgress == null)
 			manager.getClaimsManager().getAreaClaimActionTaskHandler().addTask(task, serverData);
 		else
 			areaClaimActionTaskQueue.add(task);
@@ -292,6 +292,14 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public PlayerAreaClaimActionSpreadoutTask removeNextAreaClaimActionTask() {
 		return areaClaimActionTaskQueue.removeFirst();
+	}
+
+	@Override
+	public void stopAllAreaClaimActionTasks(IServerData<?, ?> serverData) {
+		if(areaClaimTaskInProgress != null)
+			areaClaimTaskInProgress.interrupt(serverData);
+		areaClaimActionTaskQueue.forEach(task -> task.interrupt(serverData));
+		areaClaimActionTaskQueue.clear();
 	}
 
 	@Override
@@ -336,13 +344,13 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 
 	@Override
-	public boolean isAreaClaimInProgress() {
-		return areaClaimInProgress;
+	public boolean isAreaClaimTaskInProgress() {
+		return areaClaimTaskInProgress != null;
 	}
 
 	@Override
-	public void setAreaClaimInProgress(boolean areaClaimInProgress) {
-		this.areaClaimInProgress = areaClaimInProgress;
+	public void setAreaClaimTaskInProgress(PlayerAreaClaimActionSpreadoutTask task) {
+		this.areaClaimTaskInProgress = task;
 	}
 
 	@Override

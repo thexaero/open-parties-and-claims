@@ -41,7 +41,6 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
@@ -189,19 +188,18 @@ public class ClaimsClaimCommands {
 						String subConfigId = usedSubConfig.getSubId() == null ? PlayerConfig.MAIN_SUB_ID : usedSubConfig.getSubId();
 						int subConfigIndex = usedSubConfig.getSubIndex();
 						if(middleX != areaLeft || middleZ != areaTop){//is more than 1 chunk
-							IPlayerChunkClaimAPI assumedClaimState = new PlayerChunkClaim(claimPlayerId, subConfigIndex, false, 0);
-							Component assumedClaimStateName = claimsManager.getDefaultName(assumedClaimState, true).copy().withStyle(ChatFormatting.GREEN);
+							Component defaultClaimName = claimsManager.getDefaultName(claimPlayerId, false, true).copy().withStyle(ChatFormatting.GREEN);
 							Component subIdComponent = new TextComponent(subConfigId).withStyle(ChatFormatting.GREEN);
 							context.getSource().sendSuccess(
 									adaptiveLocalizer.getFor(
 											player, "gui.xaero_claims_claim_command_area_start",
-											areaLeft, areaTop, areaRight, areaBottom, assumedClaimStateName, subIdComponent
+											areaLeft, areaTop, areaRight, areaBottom, defaultClaimName, subIdComponent
 									),
 									true
 							);
 							Component endMessage = adaptiveLocalizer.getFor(
 									player, "gui.xaero_claims_claim_command_area_end",
-									areaLeft, areaTop, areaRight, areaBottom, assumedClaimStateName, subIdComponent
+									areaLeft, areaTop, areaRight, areaBottom, defaultClaimName, subIdComponent
 							);
 							claimsManager.tryToClaimArea(
 									world.dimension().location(), claimPlayerId, subConfigIndex,
@@ -232,18 +230,17 @@ public class ClaimsClaimCommands {
 						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_claimed_at", middleX, middleZ, world.dimension().location()), true);
 					} else {
 						if(middleX != areaLeft || middleZ != areaTop){//is more than 1 chunk
-							IPlayerChunkClaimAPI assumedClaimState = new PlayerChunkClaim(claimPlayerId, -1, false, 0);
-							Component assumedClaimStateName = claimsManager.getDefaultName(assumedClaimState, true).copy().withStyle(ChatFormatting.GREEN);
+							Component defaultClaimName = claimsManager.getDefaultName(claimPlayerId, false, true).copy().withStyle(ChatFormatting.GREEN);
 							context.getSource().sendSuccess(
 									adaptiveLocalizer.getFor(
 											player, "gui.xaero_claims_unclaim_command_area_start",
-											areaLeft, areaTop, areaRight, areaBottom, assumedClaimStateName
+											areaLeft, areaTop, areaRight, areaBottom, defaultClaimName
 									),
 									true
 							);
 							Component endMessage = adaptiveLocalizer.getFor(
 									player, "gui.xaero_claims_unclaim_command_area_end",
-									areaLeft, areaTop, areaRight, areaBottom, assumedClaimStateName
+									areaLeft, areaTop, areaRight, areaBottom, defaultClaimName
 							);
 							claimsManager.tryToUnclaimArea(
 									world.dimension().location(), claimPlayerId,

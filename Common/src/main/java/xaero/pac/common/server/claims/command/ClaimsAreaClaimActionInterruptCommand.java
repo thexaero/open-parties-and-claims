@@ -18,54 +18,49 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.IServerClaimsManager;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.PlayerConfig;
-import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 
-public class ClaimsSubClaimCurrentCommand extends AbstractClaimSubClaimCommand {
+public class ClaimsAreaClaimActionInterruptCommand extends AbstractClaimModeContextCommand {
 
-	@Override
-	protected LiteralArgumentBuilder<CommandSourceStack> getExecutivePart(ClaimingMode mode, boolean another){
-		return Commands.literal("current")
-				.executes(getExecutor(mode, another));
+	protected ClaimsAreaClaimActionInterruptCommand() {
+		super("interrupt", "gui.xaero_claims_area_action_interrupt_too_many_targets", "gui.xaero_claims_area_action_interrupt_invalid_target");
 	}
 
 	@Override
 	protected int execute(
-			IPlayerConfigOptionSpecAPI<String> option,
 			IPlayerConfig claimConfig,
 			UUID contextPlayerId,
 			UUID sourcePlayerId,
 			ServerPlayer sourcePlayer,
 			ServerPlayerData sourcePlayerData,
 			boolean impersonating,
+			boolean another,
 			ClaimingMode effectiveMode,
 			IServerData<?, ?> serverData,
 			CommandContext<CommandSourceStack> context
 	) {
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-		String currentSub;
-		if (impersonating) {
-			int impersonatedSubIndex = sourcePlayerData.getClaimsImpersonationInfo().getSubIndex(effectiveMode);
-			currentSub = claimConfig.getEffectiveSubConfig(impersonatedSubIndex).getSubId();
-			if(currentSub == null)
-				currentSub = PlayerConfig.MAIN_SUB_ID;
-		} else {
-			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(contextPlayerId);
-			currentSub = playerConfig.getEffective(option);
-		}
-		context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", currentSub, effectiveMode.getId()), true);
+		UUID targetClaimId = claimConfig.getPlayerId();
+		if(targetClaimId == null)//shouldn't actually happen as of writing
+			throw new IllegalArgumentException();
+		IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
+		IServerPlayerClaimInfo<?> playerInfo = claimsManager.getPlayerInfo(targetClaimId);
+		playerInfo.stopAllAreaClaimActionTasks(serverData);
+		Component defaultClaimName = claimsManager.getDefaultName(targetClaimId, false, true).copy().withStyle(ChatFormatting.GREEN);
+		context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_area_action_interrupt_success", defaultClaimName), true);
 		return 1;
 	}
 

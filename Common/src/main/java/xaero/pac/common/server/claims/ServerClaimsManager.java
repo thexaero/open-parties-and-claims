@@ -224,7 +224,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
-		if(playerClaimInfo.isAreaClaimInProgress())
+		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
 		int claimLimit = getPlayerFullClaimLimit(playerId);
 		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, replace, isServer, claimLimit);
@@ -258,7 +258,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
-		if(playerClaimInfo.isAreaClaimInProgress())
+		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
 		return tryToUnclaimHelper(dimension, id, fromX, fromZ, x, z, replace);
 	}
@@ -300,7 +300,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(!replace && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
-		if(playerClaimInfo.isAreaClaimInProgress())
+		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
 		int claimLimit = getPlayerFullClaimLimit(id);
 		int forceloadLimit = getPlayerFullForceloadLimit(id);
@@ -318,7 +318,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return new AreaClaimResult(resultTypes, left, top, right, bottom);
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
-		if(playerClaimInfo.isAreaClaimInProgress()) {
+		if(playerClaimInfo.isAreaClaimTaskInProgress()) {
 			resultTypes.add(ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
 			return new AreaClaimResult(resultTypes, left, top, right, bottom);
 		}
@@ -368,7 +368,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return;
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
-		if(playerClaimInfo.isAreaClaimInProgress()) {
+		if(playerClaimInfo.isAreaClaimTaskInProgress()) {
 			resultTypes.add(ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
 			listener.accept(new AreaClaimResult(resultTypes, left, top, right, bottom));
 			return;

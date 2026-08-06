@@ -91,7 +91,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 	public void onQueued(IServerData<?, ?> serverData) {
 		IServerClaimsManager<?, ?, ?> claimManager = serverData.getServerClaimsManager();
 		IServerPlayerClaimInfo<?> playerInfo = claimManager.getPlayerInfo(playerId);
-		playerInfo.setAreaClaimInProgress(true);
+		playerInfo.setAreaClaimTaskInProgress(this);
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		finished = true;
 		IServerClaimsManager<?, ?, ?> claimManager = serverData.getServerClaimsManager();
 		IServerPlayerClaimInfo<?> playerInfo = claimManager.getPlayerInfo(playerId);
-		playerInfo.setAreaClaimInProgress(false);
+		playerInfo.setAreaClaimTaskInProgress(null);
 		int left = actionRequest.getLeft();
 		int top = actionRequest.getTop();
 		int right = actionRequest.getRight();
@@ -206,8 +206,13 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		AreaClaimResult result = new AreaClaimResult(resultTypes, left, top, right, bottom);
 		resultListener.accept(result);
 		//queueing the next task
-		if(playerInfo.hasAreaClaimActionTasks())
+		if(tasksToAdd != null && playerInfo.hasAreaClaimActionTasks())
 			tasksToAdd.add(playerInfo.removeNextAreaClaimActionTask());
+	}
+
+	public void interrupt(IServerData<?, ?> serverData){
+		resultTypes.add(ClaimResult.Type.INTERRUPTED);
+		finish(serverData, null);
 	}
 
 }

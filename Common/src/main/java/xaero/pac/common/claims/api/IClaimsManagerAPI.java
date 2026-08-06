@@ -128,6 +128,33 @@ public interface IClaimsManagerAPI {
 	public Component getDefaultName(@Nullable IPlayerChunkClaimAPI claimState, boolean allowPartyNames);
 
 	/**
+	 * Gets the default display name that would be used for a provided claim UUID.
+	 * <p>
+	 * Calling this method is the equivalent of calling {@link #getDefaultName(UUID, boolean, boolean)} with
+	 * allowPartyNames as true.
+	 *
+	 * @param claimId  the UUID of the claimer owner, null for wilderness
+	 * @param forceloadable  whether to get the default name for a forceloaded claim
+	 * @return the default display name, not null
+	 */
+	@Nonnull
+	public Component getDefaultName(@Nullable UUID claimId, boolean forceloadable);
+
+	/**
+	 * Gets the default display name that would be used for a provided claim UUID.
+	 * <p>
+	 * With this method you can specify whether you want party names applied to party-owned claims or to always
+	 * use player names.
+	 *
+	 * @param claimId  the UUID of the claimer owner, null for wilderness
+	 * @param forceloadable  whether to get the default name for a forceloaded claim
+	 * @param allowPartyNames  whether to apply party names to party-owned claims
+	 * @return the default display name, not null
+	 */
+	@Nonnull
+	public Component getDefaultName(@Nullable UUID claimId, boolean forceloadable, boolean allowPartyNames);
+
+	/**
 	 * Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.
 	 * <p>
 	 * Calling this method is the equivalent of calling {@link #getFullName(IPlayerChunkClaimAPI, boolean)} with

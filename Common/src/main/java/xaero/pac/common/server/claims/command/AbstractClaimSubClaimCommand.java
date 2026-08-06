@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -18,31 +18,53 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 
-public class ClaimsSubClaimCurrentCommand extends AbstractClaimSubClaimCommand {
+public abstract class AbstractClaimSubClaimCommand extends AbstractClaimModeContextCommand {
 
-	@Override
-	protected LiteralArgumentBuilder<CommandSourceStack> getExecutivePart(ClaimingMode mode, boolean another){
-		return Commands.literal("current")
-				.executes(getExecutor(mode, another));
+	protected AbstractClaimSubClaimCommand() {
+		super("sub-claim", "gui.xaero_claims_sub_use_too_many_targets", "gui.xaero_claims_sub_use_invalid_target");
 	}
 
 	@Override
-	protected int execute(
+	protected final int execute(
+			IPlayerConfig claimConfig,
+			UUID contextPlayerId,
+			UUID sourcePlayerId,
+			ServerPlayer sourcePlayer,
+			ServerPlayerData sourcePlayerData,
+			boolean impersonating,
+			boolean another, ClaimingMode effectiveMode,
+			IServerData<?, ?> serverData,
+			CommandContext<CommandSourceStack> context
+	) {
+		IPlayerConfigOptionSpecAPI<String> option = effectiveMode.getSubClaimOption();
+		if(option == null)
+			throw new IllegalArgumentException();
+		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+		if(!another && sourcePlayer == null){
+			context.getSource().sendFailure(adaptiveLocalizer.getFor(null, "gui.xaero_claims_sub_not_a_player"));
+			return 0;
+		}
+		return execute(
+				option, claimConfig,
+				contextPlayerId, sourcePlayerId, sourcePlayer,
+				sourcePlayerData, impersonating, effectiveMode,
+				serverData, context
+		);
+	}
+
+	protected abstract int execute(
 			IPlayerConfigOptionSpecAPI<String> option,
 			IPlayerConfig claimConfig,
 			UUID contextPlayerId,
@@ -53,20 +75,6 @@ public class ClaimsSubClaimCurrentCommand extends AbstractClaimSubClaimCommand {
 			ClaimingMode effectiveMode,
 			IServerData<?, ?> serverData,
 			CommandContext<CommandSourceStack> context
-	) {
-		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-		String currentSub;
-		if (impersonating) {
-			int impersonatedSubIndex = sourcePlayerData.getClaimsImpersonationInfo().getSubIndex(effectiveMode);
-			currentSub = claimConfig.getEffectiveSubConfig(impersonatedSubIndex).getSubId();
-			if(currentSub == null)
-				currentSub = PlayerConfig.MAIN_SUB_ID;
-		} else {
-			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(contextPlayerId);
-			currentSub = playerConfig.getEffective(option);
-		}
-		context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", currentSub, effectiveMode.getId()), true);
-		return 1;
-	}
+	);
 
 }

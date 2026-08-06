@@ -95,9 +95,9 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 
 	ClaimLocation getRandomClaimPos(boolean firstPosIfTooMany);
 
-	boolean isAreaClaimInProgress();
+	boolean isAreaClaimTaskInProgress();
 
-	void setAreaClaimInProgress(boolean areaClaimInProgress);
+	void setAreaClaimTaskInProgress(PlayerAreaClaimActionSpreadoutTask areaClaimInProgress);
 
 	public boolean hasAreaClaimActionTasks();
 
@@ -105,4 +105,5 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 
 	public PlayerAreaClaimActionSpreadoutTask removeNextAreaClaimActionTask();
 
+	void stopAllAreaClaimActionTasks(IServerData<?, ?> serverData);
 }

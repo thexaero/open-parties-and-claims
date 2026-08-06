@@ -213,11 +213,26 @@ public abstract class ClaimsManager
 	@Nonnull
 	@Override
 	public Component getDefaultName(IPlayerChunkClaimAPI claimState, boolean allowPartyNames) {
-		if(claimState == null)
+		return getDefaultName(
+				claimState == null ? null : claimState.getPlayerId(),
+				claimState != null && claimState.isForceloadable(),
+				allowPartyNames
+		);
+	}
+
+	@Nonnull
+	@Override
+	public Component getDefaultName(@Nullable UUID claimId, boolean forceloadable) {
+		return getDefaultName(claimId, forceloadable, true);
+	}
+
+	@Nonnull
+	@Override
+	public Component getDefaultName(UUID claimId, boolean forceloadable, boolean allowPartyNames) {
+		if(claimId == null)
 			return new TranslatableComponent("gui.xaero_pac_title_wilderness");
 		MutableComponent result;
-		UUID claimId = claimState.getPlayerId();
-		Component forceloadedComponent = claimState.isForceloadable() ?
+		Component forceloadedComponent = forceloadable ?
 				new TranslatableComponent("gui.xaero_pac_marked_for_forceload") : new TextComponent("");
 		if (Objects.equals(claimId, PlayerConfig.SERVER_CLAIM_UUID))
 			result = new TranslatableComponent("gui.xaero_pac_title_server_claim", forceloadedComponent);

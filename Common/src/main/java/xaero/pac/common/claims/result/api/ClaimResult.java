@@ -146,6 +146,9 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		 */
 		NOT_IN_PARTY(new TranslatableComponent("gui.xaero_claims_claim_not_in_party").withStyle(ChatFormatting.RED), false, true, false),
 
+		/** The claiming action was interrupted from the outside */
+		INTERRUPTED(new TranslatableComponent("gui.xaero_claims_area_claim_action_interrupted").withStyle(ChatFormatting.RED), false, true, true),
+
 		/** Successfully unforceloaded a chunk */
 		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false, false),
 

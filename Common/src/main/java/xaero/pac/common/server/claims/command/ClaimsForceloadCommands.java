@@ -35,8 +35,6 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
@@ -159,18 +157,17 @@ public class ClaimsForceloadCommands {
 				ClaimResult<?> result = null;
 			 	try {
 					if(middleX != areaLeft || middleZ != areaTop){//is more than 1 chunk
-						IPlayerChunkClaimAPI assumedClaimState = new PlayerChunkClaim(claimPlayerId, -1, false, 0);
-						Component assumedClaimStateName = claimsManager.getDefaultName(assumedClaimState, true).copy().withStyle(ChatFormatting.GREEN);
+						Component defaultClaimName = claimsManager.getDefaultName(claimPlayerId, false, true).copy().withStyle(ChatFormatting.GREEN);
 						context.getSource().sendSuccess(
 								adaptiveLocalizer.getFor(
 										player, enable ? "gui.xaero_claims_forceload_command_area_start" : "gui.xaero_claims_unforceload_command_area_start",
-										areaLeft, areaTop, areaRight, areaBottom, assumedClaimStateName
+										areaLeft, areaTop, areaRight, areaBottom, defaultClaimName
 								),
 								true
 						);
 						Component endMessage = adaptiveLocalizer.getFor(
 								player, enable ? "gui.xaero_claims_forceload_command_area_end" : "gui.xaero_claims_unforceload_command_area_end",
-								areaLeft, areaTop, areaRight, areaBottom, assumedClaimStateName
+								areaLeft, areaTop, areaRight, areaBottom, defaultClaimName
 						);
 						claimsManager.tryToForceloadArea(
 								world.dimension().location(), claimPlayerId,
