@@ -95,7 +95,7 @@ public class InvitePartyCommand {
 							
 							Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
 							acceptComponent.getSiblings().add(new TextComponent(" "));
-							acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/openpac-parties join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept_tooltip")))));
+							acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + PartyCommandRegister.COMMAND_PREFIX + " join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept_tooltip")))));
 							targetPlayer.sendMessage(acceptComponent, playerId);
 							Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer).putUUID("xaero_OPAC_LastInviteId", playerParty.getId());
 
