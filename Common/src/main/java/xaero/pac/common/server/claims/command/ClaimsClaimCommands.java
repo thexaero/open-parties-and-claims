@@ -30,14 +30,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -189,11 +188,14 @@ public class ClaimsClaimCommands {
 						int subConfigIndex = usedSubConfig.getSubIndex();
 						if(middleX != areaLeft || middleZ != areaTop){//is more than 1 chunk
 							Component defaultClaimName = claimsManager.getDefaultName(claimPlayerId, false, true).copy().withStyle(ChatFormatting.GREEN);
+							Component interruptButton = constructInterruptButton(mode, another, context);
+							if(interruptButton == null)
+								return 0;
 							Component subIdComponent = new TextComponent(subConfigId).withStyle(ChatFormatting.GREEN);
 							context.getSource().sendSuccess(
 									adaptiveLocalizer.getFor(
 											player, "gui.xaero_claims_claim_command_area_start",
-											areaLeft, areaTop, areaRight, areaBottom, defaultClaimName, subIdComponent
+											areaLeft, areaTop, areaRight, areaBottom, defaultClaimName, subIdComponent, interruptButton
 									),
 									true
 							);
@@ -231,10 +233,13 @@ public class ClaimsClaimCommands {
 					} else {
 						if(middleX != areaLeft || middleZ != areaTop){//is more than 1 chunk
 							Component defaultClaimName = claimsManager.getDefaultName(claimPlayerId, false, true).copy().withStyle(ChatFormatting.GREEN);
+							Component interruptButton = constructInterruptButton(mode, another, context);
+							if(interruptButton == null)
+								return 0;
 							context.getSource().sendSuccess(
 									adaptiveLocalizer.getFor(
 											player, "gui.xaero_claims_unclaim_command_area_start",
-											areaLeft, areaTop, areaRight, areaBottom, defaultClaimName
+											areaLeft, areaTop, areaRight, areaBottom, defaultClaimName, interruptButton
 									),
 									true
 							);
@@ -286,7 +291,7 @@ public class ClaimsClaimCommands {
 		int resultNumber = 0;
 		for (ClaimResult.Type type : result.getResultTypesIterable()) {
 			resultNumber++;
-			Component resultMessage = new TextComponent(resultNumber + ") ");
+			Component resultMessage = new TextComponent(resultNumber + ") ").withStyle(ChatFormatting.WHITE);
 			resultMessage.getSiblings().add(adaptiveLocalizer.getFor(player, type.message));
 			if(type.fail) {
 				sourceStack.sendFailure(resultMessage);
@@ -294,6 +299,44 @@ public class ClaimsClaimCommands {
 			}
 			sourceStack.sendSuccess(resultMessage, true);
 		}
+	}
+
+	public static String constructClaimInterruptCommand(ClaimingMode mode, boolean another, CommandContext<CommandSourceStack> context){
+		String interruptCommand = "/" + ClaimsCommandRegister.COMMAND_PREFIX;
+		if(mode != null)
+			interruptCommand += " " + mode.getId();
+		interruptCommand += " interrupt";
+		if(another) {
+			String fullCommandInput = context.getInput();
+			String[] fullCommandArgs = fullCommandInput.split(" ");
+			String typedPlayerName = null;
+			boolean nextArgIsPlayer = false;
+			for (String arg : fullCommandArgs) {
+				if(nextArgIsPlayer) {
+					typedPlayerName = arg;
+					break;
+				}
+				if(arg.equals("as"))
+					nextArgIsPlayer = true;
+			}
+			if(typedPlayerName == null){
+				OpenPartiesAndClaims.LOGGER.error("Somehow failed to determine the player name in the claim command input for the interrupt button!");
+				return null;
+			}
+			interruptCommand += " for " + typedPlayerName;
+		}
+		return interruptCommand;
+	}
+
+	public static Component constructInterruptButton(ClaimingMode mode, boolean another, CommandContext<CommandSourceStack> context){
+		String interruptCommand = constructClaimInterruptCommand(mode, another, context);
+		if(interruptCommand == null)
+			return null;
+		MutableComponent interruptButton = new TranslatableComponent("gui.xaero_claims_claim_command_area_interrupt_button");
+		interruptButton.setStyle(interruptButton.getStyle().withColor(ChatFormatting.RED)
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(interruptCommand)))
+				.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, interruptCommand)));
+		return interruptButton;
 	}
 
 	public static Predicate<CommandSourceStack> getServerClaimCommandRequirement(){

@@ -158,10 +158,13 @@ public class ClaimsForceloadCommands {
 			 	try {
 					if(middleX != areaLeft || middleZ != areaTop){//is more than 1 chunk
 						Component defaultClaimName = claimsManager.getDefaultName(claimPlayerId, false, true).copy().withStyle(ChatFormatting.GREEN);
+						Component interruptButton = ClaimsClaimCommands.constructInterruptButton(mode, another, context);
+						if(interruptButton == null)
+							return 0;
 						context.getSource().sendSuccess(
 								adaptiveLocalizer.getFor(
 										player, enable ? "gui.xaero_claims_forceload_command_area_start" : "gui.xaero_claims_unforceload_command_area_start",
-										areaLeft, areaTop, areaRight, areaBottom, defaultClaimName
+										areaLeft, areaTop, areaRight, areaBottom, defaultClaimName, interruptButton
 								),
 								true
 						);
