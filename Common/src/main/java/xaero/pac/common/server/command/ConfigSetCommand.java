@@ -34,6 +34,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import org.apache.commons.lang3.function.TriFunction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -62,29 +63,76 @@ import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.*;
 
 public class ConfigSetCommand {
 	
-	private <T> SetResult tryToSet(CommandContext<CommandSourceStack> context, ServerPlayer player, AdaptiveLocalizer adaptiveLocalizer, IPlayerConfig playerConfig, PlayerConfigOptionSpec<T> option, String valueInput, boolean reset) {
+	private <T> SetResult tryAction(
+			CommandContext<CommandSourceStack> context,
+			ServerPlayer player,
+			AdaptiveLocalizer adaptiveLocalizer,
+			IPlayerConfig effectivePlayerConfig,
+			PlayerConfigOptionSpec<T> option,
+			T value,
+			Type commandType
+	) {
 		SetResult result;
-		if(reset) {
-			result = playerConfig.tryToReset(option);
-		} else {
-			T value;
-			try {
-				value = option.getCommandInputParser().apply(valueInput);
-			} catch (Throwable t) {
-				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_pac_config_option_set_invalid_value_format"));
-				return SetResult.INVALID;
-			}
-			result = playerConfig.tryToSet(option, value);
-		}
+		result = commandType.action.apply(effectivePlayerConfig, option, value);
 		if(result == SetResult.INVALID)
 			context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_pac_config_option_set_invalid_value"));
 		return result;
+	}
+
+	private <T> int executorHelper(
+			CommandContext<CommandSourceStack> context,
+			ServerPlayer sourcePlayer,
+			GameProfile inputPlayer,
+			AdaptiveLocalizer adaptiveLocalizer,
+			IPlayerConfig effectivePlayerConfig,
+			PlayerConfigOptionSpec<T> option,
+			String valueInput,
+			Type commandType,
+			PlayerConfigType configType
+	) {
+		if(!commandType.supportsOption.test(option)){
+			context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_unsupported_action"));
+			return 0;
+		}
+		T parsedValue = null;
+		if(commandType.hasArgument){
+			try {
+				parsedValue = option.getCommandInputParser().apply(valueInput);
+			} catch (Throwable t) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_invalid_value_format"));
+				return 0;
+			}
+		}
+		@SuppressWarnings("unchecked")
+		T wantedValue = (T) commandType.resultingValueGetter.apply(effectivePlayerConfig, option, parsedValue);
+		SetResult result = tryAction(context, sourcePlayer, adaptiveLocalizer, effectivePlayerConfig, option, wantedValue, commandType);
+		if(result == SetResult.INVALID)
+			return 0;
+		if(result == SetResult.ILLEGAL_OPTION){
+			context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_illegal_option"));
+			return 0;
+		}
+		Object actualValue = effectivePlayerConfig.getFromEffectiveConfig(option);
+		if(effectivePlayerConfig instanceof PlayerSubConfig<?> subConfig && subConfig.isInherited(option))
+			actualValue = null;
+		Component wantedValueName = option.getValueDisplayName(wantedValue);
+		if (configType == PlayerConfigType.PLAYER)
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), option.getId(), wantedValueName), true);
+		else
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", configType.getName(), option.getId(), wantedValueName), true);
+		if (result == SetResult.DEFAULTED && wantedValue != null && wantedValue != actualValue) {
+			Component actualValueName = option.getValueDisplayName(actualValue);
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), true);
+		}
+		return 1;
 	}
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
@@ -92,29 +140,27 @@ public class ConfigSetCommand {
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
 		SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PARTY_CLAIMS);
-
-		registerSetCommands("set", dispatcher, optionSuggestor, playerSubConfigSuggestionProvider,
-				serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider, false);
-
-		registerSetCommands("reset", dispatcher, optionSuggestor, playerSubConfigSuggestionProvider,
-				serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider, true);
+		for (Type commandType : Type.values()) {
+			registerSetCommands(commandType, dispatcher, optionSuggestor, playerSubConfigSuggestionProvider,
+					serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider);
+		}
 	}
 
 	private void registerSetCommands(
-			String literalPrefix,
+			Type commandType,
 			CommandDispatcher<CommandSourceStack> dispatcher,
 			SuggestionProvider<CommandSourceStack> optionSuggestor,
 			SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider,
 			SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider,
-			SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider,
-			boolean reset
+			SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider
 	){
-		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER, reset);
-		Command<CommandSourceStack> defaultExecutor = getExecutor(PlayerConfigType.DEFAULT_PLAYER, reset);
-		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER, reset);
-		Command<CommandSourceStack> expiredExecutor = getExecutor(PlayerConfigType.EXPIRED, reset);
-		Command<CommandSourceStack> wildernessExecutor = getExecutor(PlayerConfigType.WILDERNESS, reset);
-		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS, reset);
+		String literalPrefix = commandType.literal;
+		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER, commandType);
+		Command<CommandSourceStack> defaultExecutor = getExecutor(PlayerConfigType.DEFAULT_PLAYER, commandType);
+		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER, commandType);
+		Command<CommandSourceStack> expiredExecutor = getExecutor(PlayerConfigType.EXPIRED, commandType);
+		Command<CommandSourceStack> wildernessExecutor = getExecutor(PlayerConfigType.WILDERNESS, commandType);
+		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS, commandType);
 		SuggestionProvider<CommandSourceStack> regularValueSuggestor = getValueSuggestor(PlayerConfigType.PLAYER);
 		SuggestionProvider<CommandSourceStack> defaultValueSuggestor = getValueSuggestor(PlayerConfigType.DEFAULT_PLAYER);
 		SuggestionProvider<CommandSourceStack> serverValueSuggestor = getValueSuggestor(PlayerConfigType.SERVER);
@@ -125,7 +171,7 @@ public class ConfigSetCommand {
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
 				.then(Commands.literal(literalPrefix)
 				.requires(sourceStack -> true)
-				.then(addValueArgumentIfNeeded(reset, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
 		dispatcher.register(command);
 
@@ -136,7 +182,7 @@ public class ConfigSetCommand {
 				.requires(sourceStack -> true)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
 				.suggests(playerSubConfigSuggestionProvider)
-				.then(addValueArgumentIfNeeded(reset, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))))));
 		dispatcher.register(command);
 
@@ -145,7 +191,7 @@ public class ConfigSetCommand {
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(reset, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))))));
 		dispatcher.register(command);
 
@@ -158,21 +204,21 @@ public class ConfigSetCommand {
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
 				.suggests(playerSubConfigSuggestionProvider)
-				.then(addValueArgumentIfNeeded(reset, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))))))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(reset, defaultExecutor, defaultValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, defaultExecutor, defaultValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor))))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(reset, serverExecutor, serverValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, serverExecutor, serverValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
 		dispatcher.register(command);
 
@@ -183,28 +229,28 @@ public class ConfigSetCommand {
 				.then(Commands.literal(literalPrefix)
 				.then(Commands.argument("sub-id", StringArgumentType.word())
 				.suggests(serverSubConfigSuggestionProvider)
-				.then(addValueArgumentIfNeeded(reset, serverExecutor, serverValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, serverExecutor, serverValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(reset, expiredExecutor, expiredValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, expiredExecutor, expiredValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(reset, wildernessExecutor, wildernessValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, wildernessExecutor, wildernessValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
 		dispatcher.register(command);
 
 		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
 				.requires(getPartyClaimsRequirement(false))
 				.then(Commands.literal(literalPrefix).requires(getPartyClaimsRequirement(true))
-				.then(addValueArgumentIfNeeded(reset, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))));
 		dispatcher.register(command);
 
@@ -215,18 +261,18 @@ public class ConfigSetCommand {
 				.then(Commands.literal(literalPrefix).requires(getPartyClaimsRequirement(true))
 				.then(Commands.argument("sub-id", StringArgumentType.word())
 				.suggests(partySubConfigSuggestionProvider)
-				.then(addValueArgumentIfNeeded(reset, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
+				.then(addValueArgumentIfNeeded(commandType, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))))));
 		dispatcher.register(command);
 	}
 
 	private <T extends ArgumentBuilder<CommandSourceStack, T>> T addValueArgumentIfNeeded(
-			boolean reset,
+			Type commandType,
 			Command<CommandSourceStack> executor,
 			SuggestionProvider<CommandSourceStack> suggestor,
 			T builder
 	){
-		if(reset)
+		if(!commandType.hasArgument)
 			return builder.executes(executor);
 		else {
 			return builder.then(Commands.argument("value", StringArgumentType.string())
@@ -235,7 +281,7 @@ public class ConfigSetCommand {
 		}
 	}
 	
-	public Command<CommandSourceStack> getExecutor(PlayerConfigType type, boolean reset){
+	public Command<CommandSourceStack> getExecutor(PlayerConfigType type, Type commandType){
 		return context -> {
 			ServerPlayer sourcePlayer = null;
 			try {
@@ -271,7 +317,7 @@ public class ConfigSetCommand {
 				configPlayerUUID = inputPlayer.getId();
 			}
 
-			String valueInput = reset ? null : StringArgumentType.getString(context, "value");
+			String valueInput = !commandType.hasArgument ? null : StringArgumentType.getString(context, "value");
 
 			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
@@ -299,28 +345,7 @@ public class ConfigSetCommand {
 					return 0;
 				}
 			}
-			SetResult result = tryToSet(context, sourcePlayer, adaptiveLocalizer, effectivePlayerConfig, option, valueInput, reset);
-			if(result == SetResult.INVALID)
-				return 0;
-			if(result == SetResult.ILLEGAL_OPTION){
-				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_illegal_option"));
-				return 0;
-			}
-			Object wantedValue = reset ? effectivePlayerConfig.getDefaultRawValue(option) : option.getCommandInputParser().apply(valueInput);
-			Object actualValue = effectivePlayerConfig.getFromEffectiveConfig(option);
-			if(effectivePlayerConfig instanceof PlayerSubConfig<?> subConfig && subConfig.isInherited(option))
-				actualValue = null;
-
-			Component wantedValueName = option.getValueDisplayName(wantedValue);
-			if (type == PlayerConfigType.PLAYER)
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), targetConfigOptionId, wantedValueName), true);
-			else
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", type.getName(), targetConfigOptionId, wantedValueName), true);
-			if (result == SetResult.DEFAULTED && wantedValue != null && wantedValue != actualValue) {
-				Component actualValueName = option.getValueDisplayName(actualValue);
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), true);
-			}
-			return 1;
+			return executorHelper(context, sourcePlayer, inputPlayer, adaptiveLocalizer, effectivePlayerConfig, option, valueInput, commandType, type);
 		};
 	}
 
@@ -364,6 +389,60 @@ public class ConfigSetCommand {
 				return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 			return SharedSuggestionProvider.suggest(suggestionStream, builder);
 		};
+	}
+
+	public enum Type {
+		SET("set", true, (c, o, v) -> v, Type::setNormally, o -> true),
+		RESET("reset", false, (c, o, v) -> c.getDefaultRawValue(o), (c, o, v) -> c.tryToReset(o), o -> true),
+		APPEND("append", true, Type::addValueGetter, Type::setNormally, o -> ((PlayerConfigOptionSpec<?>) o).getValueType().getAdder() != null),
+		DEDUCT("deduct", true, Type::subtractValueGetter, Type::setNormally, o -> ((PlayerConfigOptionSpec<?>) o).getValueType().getSubtracter() != null);
+
+		private final String literal;
+		private final boolean hasArgument;
+		private final TriFunction<IPlayerConfig, IPlayerConfigOptionSpecAPI<?>, Object, Object> resultingValueGetter;
+		private final TriFunction<IPlayerConfig, IPlayerConfigOptionSpecAPI<?>, Object, SetResult> action;
+		private final Predicate<IPlayerConfigOptionSpecAPI<?>> supportsOption;
+
+		Type(
+				String literal,
+				boolean hasArgument,
+				TriFunction<IPlayerConfig, IPlayerConfigOptionSpecAPI<?>, Object, Object> resultingValueGetter,
+				TriFunction<IPlayerConfig, IPlayerConfigOptionSpecAPI<?>, Object, SetResult> action,
+				Predicate<IPlayerConfigOptionSpecAPI<?>> supportsOption
+		) {
+			this.literal = literal;
+			this.hasArgument = hasArgument;
+			this.resultingValueGetter = resultingValueGetter;
+			this.action = action;
+			this.supportsOption = supportsOption;
+		}
+
+		@SuppressWarnings("unchecked")
+		private static <T> SetResult setNormally(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value){
+			T valueCast = (T) value;
+			return config.tryToSet(option, valueCast);
+		}
+
+		@SuppressWarnings("unchecked")
+		private static <T> T addValueGetter(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value){
+			T current = config.getEffective(option);
+			BiFunction<T, T, T> adder = ((PlayerConfigOptionSpec<T>) option).getValueType().getAdder();
+			if(adder == null || value == null)
+				return current;
+			T valueCast = (T) value;
+			return adder.apply(current, valueCast);
+		}
+
+		@SuppressWarnings("unchecked")
+		private static <T> T subtractValueGetter(IPlayerConfig config, IPlayerConfigOptionSpecAPI<T> option, Object value){
+			T current = config.getEffective(option);
+			BiFunction<T, T, T> subtracter = ((PlayerConfigOptionSpec<T>) option).getValueType().getSubtracter();
+			if(subtracter == null || value == null)
+				return current;
+			T valueCast = (T) value;
+			return subtracter.apply(current, valueCast);
+		}
+
 	}
 
 }
