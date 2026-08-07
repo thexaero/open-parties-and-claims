@@ -64,6 +64,11 @@
 
 	"gui.xaero_parties_admin_mode_enabled" : "Parties admin mode enabled! You can now see chat messages for all parties.",
 	"gui.xaero_parties_admin_mode_disabled" : "Parties admin mode disabled!",
+
+	"gui.xaero_parties_impersonate_invalid_player" : "Invalid target player!",
+	"gui.xaero_parties_impersonate_too_many_targets" : "Only one target player is allowed!",
+	"gui.xaero_parties_impersonate_disabled" : "You are no longer impersonating anyone in regards to the built-in OPAC party commands!",
+	"gui.xaero_parties_impersonate_enabled" : "You are now impersonating %1$s in regards to the built-in OPAC party commands! You can now do anything they can with the party they are in except use their name.",
 	
 	"gui.xaero_claims_about_invalid_player" : "Invalid target player!",
 	"gui.xaero_claims_moderator_mode_enabled" : "Claims moderator mode enabled! Displaying party owner names on party-owned claims instead of party names.",
@@ -173,6 +178,7 @@
 	"gui.xaero_pac_permission_claims_admin_mode" : "Claims Admin Mode",
 	"gui.xaero_pac_permission_claims_impersonation" : "Player Claim Impersonation",
 	"gui.xaero_pac_permission_parties_admin_mode" : "Parties Admin Mode",
+	"gui.xaero_pac_permission_parties_impersonation" : "Party Impersonation",
 	"gui.xaero_pac_permission_comment_max_claims" : "The maximum number of claims that the player can own.",
 	"gui.xaero_pac_permission_comment_max_forceloads" : "The maximum number of chunks that the player can forceload.",
 	"gui.xaero_pac_permission_comment_server_claims" : "Player can add/remove server claims and enter server claim mode.",
@@ -180,6 +186,7 @@
 	"gui.xaero_pac_permission_comment_claims_admin_mode" : "Player can enter admin mode for claims.",
 	"gui.xaero_pac_permission_comment_claims_impersonation" : "Player can impersonate other players in regards to claims.",
 	"gui.xaero_pac_permission_comment_parties_admin_mode" : "Player can enter admin mode for parties.",
+	"gui.xaero_pac_permission_comment_parties_impersonation" : "Player can impersonate other players in regards to built-in parties.",
 	"gui.xaero_pac_permission_claims_teleport" : "Player Claim Teleport",
 	"gui.xaero_pac_permission_comment_claims_teleport" : "Player can teleport to any player's claims.",
 	"gui.xaero_pac_permission_max_player_groups" : "Max Player Groups",
@@ -552,7 +559,7 @@
 
 	"gui.xaero_claims_impersonate_unknown_player" : "Unknown target player!",
 	"gui.xaero_claims_impersonate_too_many_players" : "You can only impersonate exactly 1 player at a time!",
-	"gui.xaero_claims_impersonate_disabled" : "You are no longer impersonating anyone!",
+	"gui.xaero_claims_impersonate_disabled" : "You are no longer impersonating anyone in regards to claims!",
 	"gui.xaero_claims_impersonate_enabled" : "You are now impersonating %1$s! You can now claim/unclaim on their behalf and access claims with protection exceptions normally granted to them.",
 	"gui.xaero_claims_teleport_success" : "Successfully teleported to a chunk claimed by %1$s!",
 	"gui.xaero_claims_teleport_invalid_player" : "Invalid target player!",

@@ -36,14 +36,13 @@ import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class PartyOnCommandUpdater {
 	
 	public <M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly> void update(
-			UUID commandCasterId,
+			ServerPlayer commandCaller,
 			IServerData<?,?> serverData,
 			IServerParty<M, I, A> party,
 			IPlayerConfigManager configs,
@@ -70,12 +69,12 @@ public class PartyOnCommandUpdater {
 			Component memberMessage = new TextComponent("");//can't reuse because onlineMember.sendMessage might not encode the message immediately, which can cause a race condition
 			memberMessage.getSiblings().add(partyNameComponent);
 			memberMessage.getSiblings().add(adaptiveLocalizer.getFor(memberPlayer, massMessageContent));
-			memberPlayer.sendMessage(memberMessage, commandCasterId);
+			memberPlayer.sendMessage(memberMessage, commandCaller.getUUID());
 		};
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			M memberInfo = party.getMemberInfo(player.getUUID());
-			if(memberInfo != null) {
-				if(shouldUpdateCommandsForMember.test(memberInfo))
+			if(memberInfo != null || player == commandCaller) {
+				if(player == commandCaller || shouldUpdateCommandsForMember.test(memberInfo))
 					serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 				messageSender.accept(player);
 				continue;

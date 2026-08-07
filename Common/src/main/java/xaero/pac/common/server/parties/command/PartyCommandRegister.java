@@ -41,6 +41,7 @@ public class PartyCommandRegister {
 		new MessagePartyCommand().register(dispatcher, environment, commandRequirementProvider);
 		new TransferPartyCommand().register(dispatcher, environment, commandRequirementProvider);
 		new PartyAdminModeCommand().register(dispatcher, environment, commandRequirementProvider);
+		new ImpersonatePartyCommand().register(dispatcher, environment, commandRequirementProvider);
 	}
 
 }

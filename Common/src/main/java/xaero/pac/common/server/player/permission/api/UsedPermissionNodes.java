@@ -133,6 +133,17 @@ public class UsedPermissionNodes {
 			ALL_BUILDER);
 
 	/**
+	 * The permission to impersonate another player regarding built in party commands.
+	 */
+	public static final IPermissionNodeAPI<Boolean> PARTIES_IMPERSONATION = new PermissionNode<>(
+			"xaero.pac_parties_impersonation",
+			Boolean.class,
+			() -> ServerConfig.CONFIG.partiesImpersonationPermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_parties_impersonation"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_parties_impersonation"),
+			ALL_BUILDER);
+
+	/**
 	 * The permission to teleport to any player's claims.
 	 */
 	public static final IPermissionNodeAPI<Boolean> CLAIMS_TELEPORTATION = new PermissionNode<>(

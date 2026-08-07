@@ -98,6 +98,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private long allowedClaimAccessOverLimitTick;
 	private long lastClaimsOverLimitMessageTime;
 	private boolean partiesAdminMode;
+	private GameProfile partiesImpersonatedPlayerProfile;
 	private final ServerPlayerClaimImpersonationInfo claimsImpersonationInfo;
 	private GameProfile claimTransferRequestSourcePlayerProfile;
 	private UUID claimTransferRequestTargetPlayerId;
@@ -449,6 +450,18 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public void setClaimTransferRequestTime(long claimTransferRequestTime) {
 		this.claimTransferRequestTime = claimTransferRequestTime;
+	}
+
+	public void setPartiesImpersonatedPlayerProfile(GameProfile partiesImpersonatedPlayerProfile) {
+		this.partiesImpersonatedPlayerProfile = partiesImpersonatedPlayerProfile;
+	}
+
+	public GameProfile getPartiesImpersonatedPlayerProfile() {
+		return partiesImpersonatedPlayerProfile;
+	}
+
+	public UUID getPartiesImpersonatedPlayerId() {
+		return partiesImpersonatedPlayerProfile == null ? null : partiesImpersonatedPlayerProfile.getId();
 	}
 
 }

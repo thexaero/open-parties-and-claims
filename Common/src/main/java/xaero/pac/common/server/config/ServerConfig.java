@@ -37,6 +37,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue partyExpirationCheckInterval;
 	public final ForgeConfigSpec.BooleanValue partyChatLogging;
 	public final ForgeConfigSpec.ConfigValue<String> partiesAdminModePermission;
+	public final ForgeConfigSpec.ConfigValue<String> partiesImpersonationPermission;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
 	public final ForgeConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
@@ -221,6 +222,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_parties_admin_mode_permission")
 			.worldRestart()
 			.define("adminModePermission", UsedPermissionNodes.PARTIES_ADMIN_MODE.getDefaultNodeString());
+
+		partiesImpersonationPermission = builder
+			.comment("The permission that gives non-OP players the ability to impersonate other players in regards to built-in party commands. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_parties_impersonation_permission")
+			.worldRestart()
+			.define("impersonationPermission", UsedPermissionNodes.PARTIES_IMPERSONATION.getDefaultNodeString());
 		
 		builder.pop();
 		
