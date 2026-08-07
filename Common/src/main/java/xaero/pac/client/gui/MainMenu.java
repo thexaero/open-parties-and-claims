@@ -351,8 +351,8 @@ public class MainMenu extends XPACScreen {
 		IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 				claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		IClaimingModeAPI claimingModeAPI = selectedEffectiveClaimingMode;
-		IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
-		UUID claimingAsUUID = potentialClaimReflection == null ? null : potentialClaimReflection.getPlayerId();
+		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(claimingModeAPI);
+		UUID claimingAsUUID = claimingModeHandler.getClaimReflectionOwnerGetter().apply(claimsManager);
 		if(claimingAsUUID == null)
 			return;
 		IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo =
