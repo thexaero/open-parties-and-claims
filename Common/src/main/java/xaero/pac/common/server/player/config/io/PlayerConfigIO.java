@@ -34,17 +34,20 @@ import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
-import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigDeserializationInfo;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigSerializationHandler;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
+import xaero.pac.common.server.player.permission.PermissionNode;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
+import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
+import xaero.pac.common.server.player.permission.value.type.PermissionValueType;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -160,6 +163,7 @@ public final class PlayerConfigIO
 	protected void saveFile(PlayerConfig<P> object, Path filePath) {
 		if(!(object instanceof PlayerSubConfig) && object.getPlayerGroups().isSaveNeeded())
 			object.getPlayerGroups().getIo().saveToConfig();
+		trySavingLastPermissionValues(object);
 		super.saveFile(object, filePath);
 	}
 
@@ -206,11 +210,58 @@ public final class PlayerConfigIO
 	@Override
 	protected void onObjectLoad(PlayerConfig<P> loadedObject) {
 		tryLoadingCustomGroups(loadedObject);
+		tryLoadingLastPermissionValues(loadedObject);
 	}
 
 	private void tryLoadingCustomGroups(PlayerConfig<P> config){
 		if(config.getPlayerGroups() != null)
 			config.getPlayerGroups().getIo().loadFromConfig();
+	}
+
+	private void trySavingLastPermissionValues(PlayerConfig<P> config){
+		Map<IPermissionNodeAPI<?>, Object> lastPermissionValues = config.getLastPermissionValues();
+		if(lastPermissionValues == null)
+			return;
+		List<String> data = new ArrayList<>();
+		config.getLastPermissionValues().forEach((k, v) ->
+				saveLastPermissionValue(data, k, v)
+		);
+		config.forceSet((PlayerConfigOptionSpec<List<String>>)PlayerConfigOptions.LAST_PERMISSION_VALUES, data);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> void saveLastPermissionValue(List<String> data, IPermissionNodeAPI<T> node, Object value){
+		T valueCast = (T) value;
+		PermissionValueType<T> valueType = ((PermissionNode<T>) node).getValueType();
+		data.add(node.getDefaultNodeString() + "=" + valueType.getStringEncoder().apply(valueCast));
+	}
+
+	private void tryLoadingLastPermissionValues(PlayerConfig<P> config){
+		if(config.getLastPermissionValues() == null)
+			return;
+		List<String> savedData = config.getRaw(PlayerConfigOptions.LAST_PERMISSION_VALUES);
+		if(savedData == null)
+			return;
+		savedData.forEach(entry -> {
+			int separatorIndex = entry.indexOf("=");
+			String nodeId = entry.substring(0, separatorIndex);
+			IPermissionNodeAPI<?> node = UsedPermissionNodes.ALL.get(nodeId);
+			if(node == null)
+				return;
+			String valueString = entry.substring(separatorIndex + 1);
+			loadLastPermissionValue(config, node, valueString);
+		});
+	}
+
+	private <T> void loadLastPermissionValue(PlayerConfig<P> config, IPermissionNodeAPI<T> node, String valueString){
+		PermissionValueType<T> valueType = ((PermissionNode<T>) node).getValueType();
+		T value;
+		try {
+			value = valueType.getStringDecoder().apply(valueString);
+		} catch(Throwable t){
+			return;
+		}
+		config.setLastPermissionValue(node, value);
 	}
 	
 	public static final class Builder

@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.permission.PermissionNode;
+import xaero.pac.common.server.player.permission.value.type.PermissionValueTypes;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Integer> MAX_PLAYER_CLAIMS = new PermissionNode<>(
 			"xaero.pac_max_claims",
-			Integer.class,
+			PermissionValueTypes.INTEGER,
 			() -> ServerConfig.CONFIG.maxPlayerClaimsPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_max_claims"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_max_claims"),
@@ -49,7 +50,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Integer> MAX_PLAYER_FORCELOADS = new PermissionNode<>(
 			"xaero.pac_max_forceloads",
-			Integer.class,
+			PermissionValueTypes.INTEGER,
 			() -> ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_max_forceloads"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_max_forceloads"),
@@ -60,7 +61,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Boolean> SERVER_CLAIMS = new PermissionNode<>(
 			"xaero.pac_server_claims",
-			Boolean.class,
+			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.serverClaimPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_server_claims"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_server_claims"),
@@ -71,7 +72,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Boolean> CLAIMS_MODERATOR_MODE = new PermissionNode<>(
 			"xaero.pac_claims_moderator_mode",
-			Boolean.class,
+			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimsModeratorModePermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_claims_moderator_mode"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_moderator_mode"),
@@ -82,7 +83,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Boolean> CLAIMS_ADMIN_MODE = new PermissionNode<>(
 			"xaero.pac_claims_admin_mode",
-			Boolean.class,
+			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimsAdminModePermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_claims_admin_mode"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_admin_mode"),
@@ -93,7 +94,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final PermissionNode<Integer> MAX_PLAYER_GROUPS = new PermissionNode<>(
 			"xaero.pac_max_player_groups",
-			Integer.class,
+			PermissionValueTypes.INTEGER,
 			() -> ServerConfig.CONFIG.maxPlayerGroupsPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_max_player_groups"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_max_player_groups"),
@@ -104,7 +105,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final PermissionNode<Integer> PLAYER_GROUP_SPACE = new PermissionNode<>(
 			"xaero.pac_player_group_space",
-			Integer.class,
+			PermissionValueTypes.INTEGER,
 			() -> ServerConfig.CONFIG.playerGroupSpacePermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_player_group_space"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_player_group_space"),
@@ -115,7 +116,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Boolean> PARTIES_ADMIN_MODE = new PermissionNode<>(
 			"xaero.pac_parties_admin_mode",
-			Boolean.class,
+			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.partiesAdminModePermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_parties_admin_mode"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_parties_admin_mode"),
@@ -126,7 +127,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Boolean> CLAIMS_IMPERSONATION = new PermissionNode<>(
 			"xaero.pac_claims_impersonation",
-			Boolean.class,
+			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimsImpersonationPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_claims_impersonation"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_impersonation"),
@@ -137,7 +138,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Boolean> PARTIES_IMPERSONATION = new PermissionNode<>(
 			"xaero.pac_parties_impersonation",
-			Boolean.class,
+			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.partiesImpersonationPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_parties_impersonation"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_parties_impersonation"),
@@ -148,7 +149,7 @@ public class UsedPermissionNodes {
 	 */
 	public static final IPermissionNodeAPI<Boolean> CLAIMS_TELEPORTATION = new PermissionNode<>(
 			"xaero.pac_claims_teleport",
-			Boolean.class,
+			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimsTeleportationPermission.get(),
 			new TranslatableComponent("gui.xaero_pac_permission_claims_teleport"),
 			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_teleport"),

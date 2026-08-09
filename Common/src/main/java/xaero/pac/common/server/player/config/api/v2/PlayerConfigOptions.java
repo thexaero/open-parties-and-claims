@@ -87,6 +87,11 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> BONUS_PLAYER_GROUP_SPACE;
 	/**
+	 * The option used to store permission node values used for offline players.
+	 * Can't be used directly, isn't up-to-date with effective permission node values used for offline players.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<List<String>> LAST_PERMISSION_VALUES;
+	/**
 	 * Whether the player's claimed chunks are protected at all.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS;
@@ -540,6 +545,17 @@ public class PlayerConfigOptions {
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setOverridable(false)
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleBonusForceloads)
+				.build(allOptions);
+		LAST_PERMISSION_VALUES = PlayerConfigOptionSpec.FinalBuilder
+				.begin(PlayerConfigOptionValueTypes.getListType(PlayerConfigOptionValueTypes.STRING))
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "lastPermissionValues")
+				.setDefaultValue(Lists.newArrayList())
+				.setComment(".")
+				.setCategory(PlayerConfigOptionCategory.GENERAL)
+				.setOverridable(false)
+				.setForcedPlayerConfigurable(true)
+				.setDirectlyConfigurable(false)
+				.setSyncable(false)//irrelevant on the client side
 				.build(allOptions);
 		FULL_ACCESS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.fullAccess")

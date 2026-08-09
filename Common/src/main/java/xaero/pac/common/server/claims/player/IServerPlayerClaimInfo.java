@@ -106,4 +106,5 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 	public PlayerAreaClaimActionSpreadoutTask removeNextAreaClaimActionTask();
 
 	void stopAllAreaClaimActionTasks(IServerData<?, ?> serverData);
+
 }

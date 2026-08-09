@@ -40,6 +40,7 @@ import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -106,8 +107,20 @@ public class PlayerConfig
 	private final SortedValueList<String> subConfigIds;
 	private final List<String> subConfigIdsUnmodifiable;
 	private boolean beingDeleted;
+	private final Map<IPermissionNodeAPI<?>, Object> lastPermissionValues;
 	
-	protected PlayerConfig(PlayerConfigType type, UUID playerId, PlayerConfigManager<P, ?> manager, Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues, LinkedChain<PlayerSubConfig<P>> linkedSubConfigs, Map<String, PlayerSubConfig<P>> subByID, Int2ObjectMap<String> subIndexToID, SortedValueList<String> subConfigIds, List<String> subConfigIdsUnmodifiable) {
+	protected PlayerConfig(
+			PlayerConfigType type,
+			UUID playerId,
+			PlayerConfigManager<P, ?> manager,
+			Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues,
+			LinkedChain<PlayerSubConfig<P>> linkedSubConfigs,
+			Map<String, PlayerSubConfig<P>> subByID,
+			Int2ObjectMap<String> subIndexToID,
+			SortedValueList<String> subConfigIds,
+			List<String> subConfigIdsUnmodifiable,
+			Map<IPermissionNodeAPI<?>, Object> lastPermissionValues
+	) {
 		this.type = type;
 		this.playerId = playerId;
 		this.manager = manager;
@@ -117,6 +130,7 @@ public class PlayerConfig
 		this.subIndexToID = subIndexToID;
 		this.subConfigIds = subConfigIds;
 		this.subConfigIdsUnmodifiable = subConfigIdsUnmodifiable;
+		this.lastPermissionValues = lastPermissionValues;
 	}
 	
 	public Config getStorage() {
@@ -531,6 +545,31 @@ public class PlayerConfig
 		return this;
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getLastPermissionValue(IPermissionNodeAPI<T> node) {
+		if(lastPermissionValues == null)
+			throw new UnsupportedOperationException();
+		return (T) lastPermissionValues.get(node);
+	}
+
+	@Override
+	public <T> void setLastPermissionValue(IPermissionNodeAPI<T> node, T value){
+		if(lastPermissionValues == null)
+			throw new UnsupportedOperationException();
+		Object previousValue;
+		if(value != null)
+			previousValue = lastPermissionValues.put(node, value);
+		else
+			previousValue = lastPermissionValues.remove(node);
+		if(!Objects.equals(previousValue, value))
+			setDirty(true);
+	}
+
+	public Map<IPermissionNodeAPI<?>, Object> getLastPermissionValues() {
+		return lastPermissionValues;
+	}
+
 	public static abstract class Builder
 	<
 		P extends IServerParty<?, ?, ?>,
@@ -598,7 +637,11 @@ public class PlayerConfig
 			List<String> subConfigIdStorage = Lists.newArrayList(PlayerConfig.MAIN_SUB_ID);
 			SortedValueList<String> subConfigIds = SortedValueList.Builder.<String>begin().setContent(subConfigIdStorage).build();
 			List<String> subConfigIdsUnmodifiable = Collections.unmodifiableList(subConfigIdStorage);
-			PlayerConfig<P> result = new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
+			PlayerConfig<P> result = new PlayerConfig<>(
+					type, playerId, manager, automaticDefaultValues,
+					new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(),
+					subConfigIds, subConfigIdsUnmodifiable, new HashMap<>()
+			);
 			result.setPlayerGroups(ServerPlayerConfigGroupManager.Builder.begin().setConfig(result).build());
 			return result;
 		}

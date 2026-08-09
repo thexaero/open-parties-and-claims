@@ -291,12 +291,14 @@ public class ServerPlayerConfigGroupManager extends CustomPlayerConfigGroupDataM
 	}
 
 	private int getBaseLimit(ForgeConfigSpec.IntValue serverConfigOption, PermissionNode<Integer> permission){
+		if(config.getPlayerId() == null)//never happens as of writing
+			return serverConfigOption.get();
 		MinecraftServer server = config.getManager().getServer();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
 		return PermissionUtils.getOverriddenServerConfigInt(
-				config.getPlayerId(), server, null, serverConfigOption,
-				permission, serverData.getPlayerPermissionSystemManager().getUsedSystem()
+				config.getPlayerId(), server, null, config,
+				serverConfigOption, permission, serverData.getPlayerPermissionSystemManager().getUsedSystem()
 		);
 	}
 

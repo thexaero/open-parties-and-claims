@@ -22,6 +22,7 @@ import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -117,5 +118,9 @@ public interface IPlayerConfig extends IPlayerConfigAPI {
 	<T> void resetAutomaticDefaultValue(@Nonnull IPlayerConfigOptionSpecAPI<T> o);
 
 	IPlayerConfig getMain();
+
+	public <T> T getLastPermissionValue(IPermissionNodeAPI<T> node);
+
+	public <T> void setLastPermissionValue(IPermissionNodeAPI<T> node, T value);
 
 }

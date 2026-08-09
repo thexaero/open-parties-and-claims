@@ -162,13 +162,25 @@ public class ServerConfig {
 				.defineInRange("playerGroupSpace", 256, 0, 1024);
 
 		maxPlayerGroupsPermission = builder
-				.comment("The permission that should override the default \"maxPlayerGroups\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+				.comment("""
+					The permission that should override the default "maxPlayerGroups" value.
+					Set it to an empty string to never check permissions.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
+					The used permission system can be configured with "permissionSystem".""")
 				.translation("gui.xaero_pac_config_max_player_groups_permission")
 				.worldRestart()
 				.define("maxPlayerGroupsPermission", UsedPermissionNodes.MAX_PLAYER_GROUPS.getDefaultNodeString());
 
 		playerGroupSpacePermission = builder
-				.comment("The permission that should override the default \"playerGroupSpace\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+				.comment("""
+					The permission that should override the default "playerGroupSpace" value.
+					Set it to an empty string to never check permissions.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
+					The used permission system can be configured with "permissionSystem".""")
 				.translation("gui.xaero_pac_config_player_group_space_permission")
 				.worldRestart()
 				.define("playerGroupSpacePermission", UsedPermissionNodes.PLAYER_GROUP_SPACE.getDefaultNodeString());
@@ -334,8 +346,9 @@ public class ServerConfig {
 		maxPlayerClaimsPermission = builder
 			.comment("""
 					The permission that should override the default "maxPlayerClaims" value. Set it to an empty string to never check permissions.
-					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
-					the player to be online, which doesn't work well with party-owned claims.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
@@ -344,9 +357,9 @@ public class ServerConfig {
 		maxPlayerClaimForceloadsPermission = builder
 			.comment("""
 					The permission that should override the default "maxPlayerClaimForceloads" value. Set it to an empty string to never check permissions.
-					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
-					the player to be online, which doesn't work well with party-owned claims.
-					The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than "maxPlayerClaimForceloads".
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_forceloads_permission")
 			.worldRestart()
