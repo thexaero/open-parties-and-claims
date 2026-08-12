@@ -22,6 +22,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -48,7 +49,8 @@ public class ServerPlayerClaimWelcomer {
 	public void onPlayerTick(ServerPlayerData playerData, ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
 		IPlayerChunkClaim lastClaimCheck = playerData.getLastClaimCheck();
 		IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
-		IPlayerChunkClaim currentClaim = claimsManager.get(player.getLevel().dimension().location(), player.chunkPosition());
+		ResourceLocation playerDim = player.getLevel().dimension().location();
+		IPlayerChunkClaim currentClaim = claimsManager.get(playerDim, player.chunkPosition());
 		if (Objects.equals(lastClaimCheck, currentClaim))
 			return;
 		if(!ServerConfig.CONFIG.claimWelcomeMessages.get()){
@@ -58,7 +60,11 @@ public class ServerPlayerClaimWelcomer {
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 		UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();
 		boolean isOwner = !playerData.isClaimsNonallyMode() && currentClaim != null && Objects.equals(currentClaimId, player.getUUID());
-		boolean hasAccess = isOwner || serverData.getChunkProtection().hasChunkAccess(serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigManager(), currentClaim), player, null);
+		boolean hasAccess = isOwner ||
+				serverData.getChunkProtection().hasChunkAccess(
+						serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigManager(), currentClaim),
+						player, null, playerDim, player.chunkPosition().x, player.chunkPosition().z
+				);
 
 		IPlayerConfig claimConfig = serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigManager(), currentClaim);
 		int claimColor = claimConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);

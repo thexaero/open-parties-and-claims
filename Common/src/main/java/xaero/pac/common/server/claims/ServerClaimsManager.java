@@ -29,11 +29,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.action.api.ClaimingAction;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
@@ -42,10 +42,10 @@ import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.ServerData;
-import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.action.listener.ClaimActionListenerManager;
 import xaero.pac.common.server.claims.action.listener.override.api.ClaimActionPermissionOverride;
 import xaero.pac.common.server.claims.action.listener.override.api.ClaimActionPermissionOverrideType;
+import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
@@ -53,7 +53,7 @@ import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpira
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
-import xaero.pac.common.server.claims.protection.override.ChunkProtectionOverriderManager;
+import xaero.pac.common.server.claims.protection.override.ChunkAccessOverriderManager;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
@@ -82,7 +82,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	private final PlayerPartySystemManager partySystemManager;
 	private final LinkedChain<ServerClaimStateHolder> linkedClaimStates;
 	private final ClaimActionListenerManager actionListenerManager;
-	private final ChunkProtectionOverriderManager chunkProtectionOverriderManager;
+	private final ChunkAccessOverriderManager chunkAccessOverriderManager;
 	private boolean loaded;
 
 	protected ServerClaimsManager(
@@ -100,7 +100,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			PlayerPartySystemManager partySystemManager,
 			LinkedChain<ServerClaimStateHolder> linkedClaimStates,
 			ClaimActionListenerManager actionListenerManager,
-			ChunkProtectionOverriderManager chunkProtectionOverriderManager
+			ChunkAccessOverriderManager chunkAccessOverriderManager
 	) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.server = server;
@@ -111,7 +111,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		this.partySystemManager = partySystemManager;
 		this.linkedClaimStates = linkedClaimStates;
 		this.actionListenerManager = actionListenerManager;
-		this.chunkProtectionOverriderManager = chunkProtectionOverriderManager;
+		this.chunkAccessOverriderManager = chunkAccessOverriderManager;
 	}
 	
 	public void setIo(PlayerClaimInfoManagerIO<?> io) {
@@ -598,8 +598,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ChunkProtectionOverriderManager getChunkProtectionOverriderManager() {
-		return chunkProtectionOverriderManager;
+	public ChunkAccessOverriderManager getChunkAccessOverriderManager() {
+		return chunkAccessOverriderManager;
 	}
 
 	public final static class Builder extends ClaimsManager.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder, Builder>{
@@ -695,12 +695,12 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			LinkedChain<ServerClaimStateHolder> linkedClaimStates = new LinkedChain<>();
 			claimStates.values().forEach(linkedClaimStates::add);
 			ClaimActionListenerManager actionListenerManager = ClaimActionListenerManager.Builder.begin().build();
-			ChunkProtectionOverriderManager chunkProtectionOverriderManager = ChunkProtectionOverriderManager.Builder.begin().build();
+			ChunkAccessOverriderManager chunkAccessOverriderManager = ChunkAccessOverriderManager.Builder.begin().build();
 			return new ServerClaimsManager(
 					server, playerClaimInfoManager, configManager, dimensions,
 					claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker,
 					areaClaimActionTaskHandler, claimReplaceTaskHandler, permissionHandler, partySystemManager,
-					linkedClaimStates, actionListenerManager, chunkProtectionOverriderManager
+					linkedClaimStates, actionListenerManager, chunkAccessOverriderManager
 			);
 		}
 		

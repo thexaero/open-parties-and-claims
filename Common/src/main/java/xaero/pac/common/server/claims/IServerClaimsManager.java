@@ -25,13 +25,14 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.result.api.ClaimResult;
+import xaero.pac.common.server.claims.action.listener.ClaimActionListenerManager;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.api.IServerDimensionClaimsManagerAPI;
-import xaero.pac.common.server.claims.action.listener.ClaimActionListenerManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
+import xaero.pac.common.server.claims.protection.override.ChunkAccessOverriderManager;
 import xaero.pac.common.server.claims.sync.IClaimsManagerSynchronizer;
 import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -112,5 +113,9 @@ public interface IServerClaimsManager
 	@Nonnull
 	@Override
 	public ClaimActionListenerManager getActionListenerManager();
+
+	@Nonnull
+	@Override
+	ChunkAccessOverriderManager getChunkAccessOverriderManager();
 
 }

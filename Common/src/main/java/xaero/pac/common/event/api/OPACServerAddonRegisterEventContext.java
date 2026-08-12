@@ -21,6 +21,7 @@ package xaero.pac.common.event.api;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.server.claims.action.listener.api.IClaimActionListenerManagerAPI;
+import xaero.pac.common.server.claims.protection.override.api.IChunkAccessOverriderManagerAPI;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
@@ -36,6 +37,7 @@ public class OPACServerAddonRegisterEventContext {
 	private final IPlayerPartySystemRegisterAPI partySystemManagerAPI;
 	private final IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI;
 	private final IClaimActionListenerManagerAPI claimActionListenerManagerAPI;
+	private final IChunkAccessOverriderManagerAPI chunkAccessOverriderManagerAPI;
 
 	/**
 	 * The constructor for internal use.
@@ -45,25 +47,28 @@ public class OPACServerAddonRegisterEventContext {
 	 * @param partySystemManagerAPI  the party system manager API, not null
 	 * @param claimsManagerTrackerAPI  the claims manager tracker API, not null
 	 * @param claimActionListenerManagerAPI  the claim action listener manager API, not null
+	 * @param chunkAccessOverriderManagerAPI  the chunk access overrider manager API, not null
 	 */
 	public OPACServerAddonRegisterEventContext(
 			@Nonnull MinecraftServer server,
 			@Nonnull IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI,
 			@Nonnull IPlayerPartySystemRegisterAPI partySystemManagerAPI,
 			@Nonnull IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI,
-			@Nonnull IClaimActionListenerManagerAPI claimActionListenerManagerAPI
+			@Nonnull IClaimActionListenerManagerAPI claimActionListenerManagerAPI,
+			@Nonnull IChunkAccessOverriderManagerAPI chunkAccessOverriderManagerAPI
 	) {
 		this.server = server;
 		this.permissionSystemManagerAPI = permissionSystemManagerAPI;
 		this.partySystemManagerAPI = partySystemManagerAPI;
 		this.claimsManagerTrackerAPI = claimsManagerTrackerAPI;
 		this.claimActionListenerManagerAPI = claimActionListenerManagerAPI;
+		this.chunkAccessOverriderManagerAPI = chunkAccessOverriderManagerAPI;
 	}
 
 	/**
 	 * Gets the Minecraft server.
 	 *
-	 * @return the server.
+	 * @return the server, not null
 	 */
 	@Nonnull
 	public MinecraftServer getServer() {
@@ -73,7 +78,7 @@ public class OPACServerAddonRegisterEventContext {
 	/**
 	 * Gets the permission system manager API.
 	 *
-	 * @return the permission system manager API
+	 * @return the permission system manager API, not null
 	 */
 	@Nonnull
 	public IPlayerPermissionSystemRegisterAPI getPermissionSystemManagerAPI() {
@@ -83,7 +88,7 @@ public class OPACServerAddonRegisterEventContext {
 	/**
 	 * Gets the party system manager API.
 	 *
-	 * @return the party system manager API
+	 * @return the party system manager API, not null
 	 */
 	@Nonnull
 	public IPlayerPartySystemRegisterAPI getPartySystemManagerAPI() {
@@ -93,7 +98,7 @@ public class OPACServerAddonRegisterEventContext {
 	/**
 	 * Gets the claims manager tracker API.
 	 *
-	 * @return the claims manager tracker API
+	 * @return the claims manager tracker API, not null
 	 */
 	@Nonnull
 	public IClaimsManagerTrackerRegisterAPI getClaimsManagerTrackerAPI() {
@@ -103,11 +108,21 @@ public class OPACServerAddonRegisterEventContext {
 	/**
 	 * Gets the claim action listener manager API.
 	 *
-	 * @return the claim action listener manager API
+	 * @return the claim action listener manager API, not null
 	 */
 	@Nonnull
 	public IClaimActionListenerManagerAPI getClaimActionListenerManagerAPI() {
 		return claimActionListenerManagerAPI;
+	}
+
+	/**
+	 * Gets the chunk access overrider manager API.
+	 *
+	 * @return the chunk access overrider manager API, not null
+	 */
+	@Nonnull
+	public IChunkAccessOverriderManagerAPI getChunkAccessOverriderManagerAPI() {
+		return chunkAccessOverriderManagerAPI;
 	}
 
 }

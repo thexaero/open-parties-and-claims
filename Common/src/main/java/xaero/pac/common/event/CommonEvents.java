@@ -405,7 +405,7 @@ public abstract class CommonEvents {
 				if (oldSection.x() != newSection.x() || oldSection.z() != newSection.z()) {
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 							serverData = ServerData.from(entity.getServer());
-					serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, projectile.getOwner().getX(), projectile.getOwner().getZ(), newSection, oldSection);
+					serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, projectile.getOwner().getX(), projectile.getOwner().getZ(), newSection.chunk(), oldSection.chunk());
 				}
 				return false;
 			} else if (!fromDisk && !isMobLoot && entity instanceof ItemEntity itemEntity) {
@@ -449,7 +449,7 @@ public abstract class CommonEvents {
 			if(serverData == null)
 				return;
 			if(entity.getLevel().dimension().equals(EntityData.from(entity).getLastChunkEntryDimension()))
-				serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, entity.xOld, entity.zOld, newSection, oldSection);
+				serverData.getChunkProtection().onEntityEnterChunk(serverData, entity, entity.xOld, entity.zOld, newSection.chunk(), oldSection.chunk());
 			EntityData.from(entity).setLastChunkEntryDimension(entity.getLevel().dimension());
 			EntityData.from(entity).setShouldCheckItemUseTick(true);
 		}

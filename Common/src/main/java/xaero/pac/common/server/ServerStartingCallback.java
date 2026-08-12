@@ -62,7 +62,8 @@ public class ServerStartingCallback {
 			OPACServerAddonRegisterEventContext serverAddonEventContext = new OPACServerAddonRegisterEventContext(
 					serverData.getServer(), serverData.getPlayerPermissionSystemManager(),
 					serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker(),
-					serverData.getServerClaimsManager().getActionListenerManager()
+					serverData.getServerClaimsManager().getActionListenerManager(),
+					serverData.getServerClaimsManager().getChunkAccessOverriderManager()
 			);
 			OpenPartiesAndClaims.INSTANCE.getCommonEvents().fireAddonRegisterEvent(serverAddonEventContext, serverData);
 		} finally {

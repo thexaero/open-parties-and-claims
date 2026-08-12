@@ -31,6 +31,7 @@ import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerAPI;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.action.listener.api.IClaimActionListenerManagerAPI;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
+import xaero.pac.common.server.claims.protection.override.api.IChunkAccessOverriderManagerAPI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -570,5 +571,14 @@ public interface IServerClaimsManagerAPI
 	 */
 	@Nonnull
 	public IClaimActionListenerManagerAPI getActionListenerManager();
+
+	/**
+	 * Gets the API for the chunk access overrider manager for this claims manager where you can register your chunk access
+	 * overriders.
+	 *
+	 * @return the API for the chunk access overrider manager, not null
+	 */
+	@Nonnull
+	public IChunkAccessOverriderManagerAPI getChunkAccessOverriderManager();
 
 }
