@@ -41,6 +41,7 @@ import xaero.pac.client.parties.party.IClientPartyStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.ClaimStateHolder;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -53,7 +54,7 @@ import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
-import xaero.pac.common.claims.player.request.ClaimActionRequest;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
 import xaero.pac.common.packet.claims.ServerboundClaimActionRequestPacket;
@@ -388,17 +389,17 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 
 	@Override
 	public void requestAreaClaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.CLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.CLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
 	public void requestAreaUnclaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.UNCLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.UNCLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
 	public void requestAreaForceload(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? Action.FORCELOAD : Action.UNFORCELOAD, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override

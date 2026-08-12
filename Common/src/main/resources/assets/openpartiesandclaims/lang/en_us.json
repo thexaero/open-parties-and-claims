@@ -628,5 +628,10 @@
 	"gui.xaero_claims_area_action_interrupt_invalid_target" : "Invalid target player!",
 	"gui.xaero_claims_area_claim_action_interrupted" : "The area claim action process was interrupted! It is most likely that somebody used the \"interrupt\" command.",
 	"gui.xaero_claims_area_action_interrupt_success" : "Successfully interrupted all running over-area claim action tasks for %1$s!",
-	"gui.xaero_pac_config_option_set_unsupported_action" : "This config option doesn't support the requested action!"
+	"gui.xaero_pac_config_option_set_unsupported_action" : "This config option doesn't support the requested action!",
+	"gui.xaero_claims_claim_action_forbidden_by_addon" : "The requested claiming action was prevented for (a) chunk(s) by an addon.",
+	"gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon" : "The requested claiming action was interrupted by an addon.",
+	"gui.xaero_claims_claim_action_forbidden_by_addon_reason" : "The requested claiming action was prevented for (a) chunk(s) by an addon. Reason: %1$s",
+	"gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon_reason" : "The requested claiming action was interrupted by an addon. Reason: %1$s",
+	"gui.xaero_claims_claim_action_forbidden_by_addon_reasons" : "Reasons provided by the addon(s):"
 }

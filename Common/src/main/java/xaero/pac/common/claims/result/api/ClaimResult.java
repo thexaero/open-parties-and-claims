@@ -33,6 +33,7 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 	
 	private final C claimResult;
 	private final Type resultType;
+	private final Component customReason;
 
 	/**
 	 * A constructor for internal usage
@@ -41,9 +42,21 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 	 * @param resultType  the result type
 	 */
 	public ClaimResult(@Nullable C claimResult, @Nonnull Type resultType) {
+		this(claimResult, resultType, null);
+	}
+
+	/**
+	 * A constructor for internal usage
+	 *
+	 * @param claimResult  the claim state where relevant
+	 * @param resultType  the result type
+	 * @param customReason  the custom reason given by an addon for this result, can be null
+	 */
+	public ClaimResult(@Nullable C claimResult, @Nonnull Type resultType, @Nullable Component customReason) {
 		super();
 		this.claimResult = claimResult;
 		this.resultType = resultType;
+		this.customReason = customReason;
 	}
 
 	/**
@@ -64,6 +77,30 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 	@Nonnull
 	public Type getResultType() {
 		return resultType;
+	}
+
+	/**
+	 * Gets the text Component with the custom reason given by an addon for this result.
+	 *
+	 * @return the custom reason Component, null if there isn't one
+	 */
+	@Nullable
+	public Component getCustomReason() {
+		return customReason;
+	}
+
+	/**
+	 * Gets the display message for this result, applying the custom reason given by an addon when it exists.
+	 *
+	 * @return the display message for this result
+	 */
+	@Nonnull
+	public Component getMessage(){
+		if(customReason == null)
+			return resultType.message;
+		if(resultType.interruptsAreaAction)
+			return new TranslatableComponent("gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon_reason", customReason);
+		return new TranslatableComponent("gui.xaero_claims_claim_action_forbidden_by_addon_reason", customReason);
 	}
 
 	/**
@@ -148,6 +185,12 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 
 		/** The claiming action was interrupted from the outside */
 		INTERRUPTED(new TranslatableComponent("gui.xaero_claims_area_claim_action_interrupted").withStyle(ChatFormatting.RED), false, true, true),
+
+		/** The claiming action was forbidden by an addon */
+		ADDON_FORBIDS(new TranslatableComponent("gui.xaero_claims_claim_action_forbidden_by_addon").withStyle(ChatFormatting.RED), false, true, false),
+
+		/** The claiming action was interruptingly forbidden by an addon */
+		ADDON_INTERRUPTS(new TranslatableComponent("gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon").withStyle(ChatFormatting.RED), false, true, true),
 
 		/** Successfully unforceloaded a chunk */
 		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false, false),

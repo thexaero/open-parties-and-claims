@@ -23,6 +23,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEventContext;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -58,7 +59,12 @@ public class ServerStartingCallback {
 			serverData.getPlayerPartySystemManager().preRegister();
 			DefaultPlayerPartySystem defaultPartySystem = serverData.getPartyManager().getPartySystem();
 			serverData.getPlayerPartySystemManager().register("default", defaultPartySystem);
-			OpenPartiesAndClaims.INSTANCE.getCommonEvents().fireAddonRegisterEvent(serverData);
+			OPACServerAddonRegisterEventContext serverAddonEventContext = new OPACServerAddonRegisterEventContext(
+					serverData.getServer(), serverData.getPlayerPermissionSystemManager(),
+					serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker(),
+					serverData.getServerClaimsManager().getActionListenerManager()
+			);
+			OpenPartiesAndClaims.INSTANCE.getCommonEvents().fireAddonRegisterEvent(serverAddonEventContext, serverData);
 		} finally {
 			serverData.getPlayerPermissionSystemManager().postRegister();
 			serverData.getPlayerPartySystemManager().postRegister();

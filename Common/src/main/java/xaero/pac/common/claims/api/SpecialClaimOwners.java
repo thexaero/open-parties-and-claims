@@ -16,15 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet.util;
+package xaero.pac.common.claims.api;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import xaero.pac.common.server.player.config.PlayerConfig;
 
-public class PacketConstants {
+import java.util.UUID;
 
-	public static final int NETWORK_VERSION = 5;
-	public static final Component NETWORK_VERSION_MISMATCH =
-			new TextComponent("Open Parties and Claims versions between server and client aren't compatible!");
+/**
+ * Access point for all special claim owners that can exist in the base OPAC mod.
+ */
+public class SpecialClaimOwners {
+
+	/**
+	 * The UUID used for server claims
+	 */
+	public static final UUID SERVER = PlayerConfig.SERVER_CLAIM_UUID;
+	/**
+	 * The UUID used for expired claims
+	 */
+	public static final UUID EXPIRED = PlayerConfig.EXPIRED_CLAIM_UUID;
 
 }

@@ -23,10 +23,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
-import xaero.pac.common.claims.player.request.ClaimActionRequest;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
@@ -53,9 +53,9 @@ public class ServerboundClaimActionRequestPacket {
 				if(tag == null)
 					return null;
 				byte actionByte = tag.getByte("a");
-				ClaimsManager.Action action;
+				ClaimingAction action;
 				try {
-					action = ClaimsManager.Action.values()[actionByte];
+					action = ClaimingAction.values()[actionByte];
 				} catch(ArrayIndexOutOfBoundsException aioobe) {
 					return null;
 				}

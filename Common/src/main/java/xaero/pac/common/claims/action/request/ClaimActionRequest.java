@@ -16,15 +16,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.claims.player.request;
+package xaero.pac.common.claims.action.request;
 
 import net.minecraft.resources.ResourceLocation;
-import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 
 public class ClaimActionRequest {
 	
-	private final ClaimsManager.Action action;
+	private final ClaimingAction action;
 	private final ResourceLocation dimension;
 	private final int left;
 	private final int top;
@@ -33,7 +33,7 @@ public class ClaimActionRequest {
 	private final ClaimingMode mode;
 	private final int totalChunks;
 	
-	public ClaimActionRequest(ClaimsManager.Action action, ResourceLocation dimension, int left, int top, int right, int bottom, ClaimingMode mode) {
+	public ClaimActionRequest(ClaimingAction action, ResourceLocation dimension, int left, int top, int right, int bottom, ClaimingMode mode) {
 		super();
 		this.action = action;
 		this.dimension = dimension;
@@ -45,7 +45,7 @@ public class ClaimActionRequest {
 		this.totalChunks = (1 + right - left) * (1 + top - bottom);
 	}
 
-	public ClaimsManager.Action getAction() {
+	public ClaimingAction getAction() {
 		return action;
 	}
 

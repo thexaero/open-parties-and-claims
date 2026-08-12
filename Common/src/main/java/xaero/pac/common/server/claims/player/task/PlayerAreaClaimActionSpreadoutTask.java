@@ -18,13 +18,14 @@
 
 package xaero.pac.common.server.claims.player.task;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.player.request.ClaimActionRequest;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -53,6 +54,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 	private final int fromX;
 	private final int fromZ;
 	private final Set<ClaimResult.Type> resultTypes = new HashSet<>();
+	private final Set<Component> customReasons;
 	private final Consumer<AreaClaimResult> resultListener;
 	private int chunksToAffect;
 	private boolean finished;
@@ -83,6 +85,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		this.fromDimension = fromDimension;
 		this.fromX = fromX;
 		this.fromZ = fromZ;
+		this.customReasons = new HashSet<>();
 		this.chunksToAffect = chunksToAffect;
 		this.resultListener = resultListener;
 	}
@@ -121,7 +124,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 			List<PlayerAreaClaimActionSpreadoutTask> tasksToAdd
 	) {
 		IServerClaimsManager<?, ?, ?> claimManager = serverData.getServerClaimsManager();
-		ClaimsManager.Action action = actionRequest.getAction();
+		ClaimingAction action = actionRequest.getAction();
 		ResourceLocation dimension = actionRequest.getDimension();
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(currentIndex == 0) {
@@ -164,19 +167,21 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 			int x = effectiveLeft + currentIndex / effectiveHeight;
 			int z = effectiveTop + currentIndex % effectiveHeight;
 			ClaimResult<PlayerChunkClaim> result;
-			if(action == ClaimsManager.Action.CLAIM)
-				result = claimManager.tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit);
-			else if(action == ClaimsManager.Action.UNCLAIM)
+			if(action == ClaimingAction.CLAIM)
+				result = claimManager.tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, action);
+			else if(action == ClaimingAction.UNCLAIM)
 				result = claimManager.tryToUnclaimHelper(dimension, playerId, fromX, fromZ, x, z, force);
-			else if(action == ClaimsManager.Action.FORCELOAD)
+			else if(action == ClaimingAction.FORCELOAD)
 				result = claimManager.tryToForceloadHelper(dimension, playerId, fromX, fromZ, x, z, true, force, isServer, claimLimit, forceloadLimit);
-			else if(action == ClaimsManager.Action.UNFORCELOAD)
+			else if(action == ClaimingAction.UNFORCELOAD)
 				result = claimManager.tryToForceloadHelper(dimension, playerId, fromX, fromZ, x, z, false, force, isServer, claimLimit, forceloadLimit);
 			else {
 				finish(serverData, tasksToAdd);
 				return;
 			}
 			resultTypes.add(result.getResultType());
+			if(result.getCustomReason() != null && customReasons.size() < 4)
+				customReasons.add(result.getCustomReason());
 			if(result.getResultType().success) {
 				chunksToAffect--;
 				if(chunksToAffect <= 0 && currentIndex != effectiveTotal - 1) {
@@ -203,7 +208,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		int top = actionRequest.getTop();
 		int right = actionRequest.getRight();
 		int bottom = actionRequest.getBottom();
-		AreaClaimResult result = new AreaClaimResult(resultTypes, left, top, right, bottom);
+		AreaClaimResult result = new AreaClaimResult(resultTypes, customReasons, left, top, right, bottom);
 		resultListener.accept(result);
 		//queueing the next task
 		if(tasksToAdd != null && playerInfo.hasAreaClaimActionTasks())

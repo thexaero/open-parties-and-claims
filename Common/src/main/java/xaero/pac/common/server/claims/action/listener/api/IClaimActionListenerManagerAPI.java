@@ -16,15 +16,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet.util;
+package xaero.pac.common.server.claims.action.listener.api;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import javax.annotation.Nonnull;
 
-public class PacketConstants {
+/**
+ * API for the claim action listener manager
+ */
+public interface IClaimActionListenerManagerAPI {
 
-	public static final int NETWORK_VERSION = 5;
-	public static final Component NETWORK_VERSION_MISMATCH =
-			new TextComponent("Open Parties and Claims versions between server and client aren't compatible!");
+	/**
+	 * Registers a new claim action listener.
+	 * <p>
+	 * Claim action listeners can be used to override whether a player is allowed to perform specific claiming actions
+	 * and react to successful claiming actions. It is mainly meant for addon mods that implement a cost/payment system
+	 * for claiming but can be used for other things as well.
+	 * <p>
+	 * You can create your own listener by implementing the {@link IClaimActionListenerAPI} interface.
+	 *
+	 * @param listener the listener to register, not null
+	 */
+	void register(@Nonnull IClaimActionListenerAPI listener);
 
 }

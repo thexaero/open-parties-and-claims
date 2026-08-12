@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2023-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,26 +16,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.event.api;
+package xaero.pac.common.event.api.v3;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
-import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEventContext;
+import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
-/**
- * @deprecated Use {@link xaero.pac.common.event.api.v3.OPACServerAddonRegister} instead
- */
-@Deprecated
 public interface OPACServerAddonRegister {
 
-	public static final Event<OPACServerAddonRegister> EVENT = EventFactory.createArrayBacked(OPACServerAddonRegister.class, (callbacks) -> (server, permissionSystemManagerAPI, partySystemManagerAPI, claimsManagerTrackerAPI) -> {
+	public static final Event<OPACServerAddonRegister> EVENT = EventFactory.createArrayBacked(OPACServerAddonRegister.class, (callbacks) -> context -> {
 		for (OPACServerAddonRegister callback : callbacks)
-			callback.registerAddons(server, permissionSystemManagerAPI, partySystemManagerAPI, claimsManagerTrackerAPI);
+			callback.registerAddons(context);
 	});
 
-	void registerAddons(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI);
+	void registerAddons(OPACServerAddonRegisterEventContext context);
 
 }

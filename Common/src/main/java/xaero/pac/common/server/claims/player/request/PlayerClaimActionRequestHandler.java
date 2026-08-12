@@ -24,7 +24,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.player.request.ClaimActionRequest;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -43,6 +43,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -79,7 +80,7 @@ public class PlayerClaimActionRequestHandler {
 				if(claimType == playerData.getRawClaimingMode())
 					manager.getPermissionHandler().resetClaimingMode(player);
 				manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
-						new AreaClaimResult(Set.of(failureType), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
+						new AreaClaimResult(Set.of(failureType), new HashSet<>(), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
 						player);
 				return;
 			}

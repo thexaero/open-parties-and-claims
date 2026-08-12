@@ -22,13 +22,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
-import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.api.IClaimsManagerAPI;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerAPI;
 import xaero.pac.common.server.claims.ServerClaimsManager;
+import xaero.pac.common.server.claims.action.listener.api.IClaimActionListenerManagerAPI;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 
 import javax.annotation.Nonnull;
@@ -38,7 +39,9 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * API for the claims manager on the server side
+ * API for the claims manager on the server side.
+ * <p>
+ * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims.
  */
 public interface IServerClaimsManagerAPI
 		extends IClaimsManagerAPI {
@@ -104,6 +107,9 @@ public interface IServerClaimsManagerAPI
 	 * {@link #tryToForceload(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean, boolean)}
 	 * instead if you want different limitations to be considered,
 	 * e.g. maximum claim distance, maximum claim number, the chunk being already claimed etc.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to claim as them.
 	 *
 	 * @param dimension  the dimension ID of the chunk, not null
 	 * @param id  the claim owner UUID, not null
@@ -136,6 +142,9 @@ public interface IServerClaimsManagerAPI
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
 	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to claim as them.
+	 * <p>
 	 * You get a {@link ClaimResult} containing a claim state where relevant (the new one if it's a success)
 	 * and a message describing the result.
 	 *
@@ -162,6 +171,9 @@ public interface IServerClaimsManagerAPI
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
 	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to unclaim as them.
+	 * <p>
 	 * You get a {@link ClaimResult} containing a claim state where relevant (null if it's a success)
 	 * and a message describing the result.
 	 *
@@ -186,6 +198,9 @@ public interface IServerClaimsManagerAPI
 	 * Tries to (un)mark a chunk for forceloading by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to (un)forceload as them.
 	 * <p>
 	 * You get a {@link ClaimResult} containing a claim state where relevant (the new one if it's a success)
 	 * and a message describing the result.
@@ -213,6 +228,9 @@ public interface IServerClaimsManagerAPI
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
 	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to claim as them.
+	 * <p>
 	 * You get a {@link AreaClaimResult} containing all unique result types, which contain messages describing the results.
 	 *
 	 * @param dimension  the dimension ID of the chunks, not null
@@ -231,7 +249,7 @@ public interface IServerClaimsManagerAPI
 	@Deprecated
 	@Nonnull
 	default AreaClaimResult tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace){
-		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, subConfigIndex, fromX, fromZ, left, top, right, bottom, ClaimsManager.Action.CLAIM, replace);
+		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, subConfigIndex, fromX, fromZ, left, top, right, bottom, ClaimingAction.CLAIM, replace);
 	}
 
 	/**
@@ -239,6 +257,9 @@ public interface IServerClaimsManagerAPI
 	 * Tries to unclaim chunks over a specified area by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to unclaim as them.
 	 * <p>
 	 * You get a {@link AreaClaimResult} containing all unique result types, which contain messages describing the results.
 	 *
@@ -257,7 +278,7 @@ public interface IServerClaimsManagerAPI
 	@Deprecated
 	@Nonnull
 	default AreaClaimResult tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace){
-		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, -1, fromX, fromZ, left, top, right, bottom, ClaimsManager.Action.UNCLAIM, replace);
+		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, -1, fromX, fromZ, left, top, right, bottom, ClaimingAction.UNCLAIM, replace);
 	}
 
 	/**
@@ -265,6 +286,9 @@ public interface IServerClaimsManagerAPI
 	 * Tries to (un)mark chunks for forceloading over a specified area by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to (un)forceload as them.
 	 * <p>
 	 * You get a {@link AreaClaimResult} containing all unique result types, which contain messages describing the results.
 	 *
@@ -284,13 +308,16 @@ public interface IServerClaimsManagerAPI
 	@Deprecated
 	@Nonnull
 	default AreaClaimResult tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace){
-		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, -1, fromX, fromZ, left, top, right, bottom, enable ? ClaimsManager.Action.FORCELOAD : ClaimsManager.Action.UNFORCELOAD, replace);
+		return ((ServerClaimsManager)this).backwardsCompatibleClaimActionOverArea(dimension, playerId, -1, fromX, fromZ, left, top, right, bottom, enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, replace);
 	}
 
 	/**
 	 * Tries to claim a chunk by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to claim as them.
 	 * <p>
 	 * You get a {@link ClaimResult} containing a claim state where relevant (the new one if it's a success)
 	 * and a message describing the result.
@@ -303,17 +330,19 @@ public interface IServerClaimsManagerAPI
 	 * @param fromZ  the Z coordinate of the claiming player's current chunk position
 	 * @param x  the X coordinate of the chunk to claim
 	 * @param z  the Z coordinate of the chunk to claim
-	 * @param replace  whether to ignore some limitations,
-	 *                 mainly the existing claim state at the specified location and the maximum claim distance
+	 * @param force  whether to ignore most limitations
 	 * @return the result, not null
 	 */
 	@Nonnull
-	public ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force);
 
 	/**
 	 * Tries to unclaim a chunk by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to unclaim as them.
 	 * <p>
 	 * You get a {@link ClaimResult} containing a claim state where relevant (null if it's a success)
 	 * and a message describing the result.
@@ -325,17 +354,19 @@ public interface IServerClaimsManagerAPI
 	 * @param fromZ  the Z coordinate of the unclaiming player's current chunk position
 	 * @param x  the X coordinate of the chunk to unclaim
 	 * @param z  the Z coordinate of the chunk to unclaim
-	 * @param replace  whether to ignore some limitations,
-	 *                 mainly the existing claim owner at the specified location and the maximum claim distance
+	 * @param force  whether to ignore most limitations
 	 * @return the result, not null
 	 */
 	@Nonnull
-	public ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force);
 
 	/**
 	 * Tries to (un)mark a chunk for forceloading by a specified player.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to (un)forceload as them.
 	 * <p>
 	 * You get a {@link ClaimResult} containing a claim state where relevant (the new one if it's a success)
 	 * and a message describing the result.
@@ -348,12 +379,11 @@ public interface IServerClaimsManagerAPI
 	 * @param x  the X coordinate of the chunk to (un)mark for forceloading
 	 * @param z  the Z coordinate of the chunk to (un)mark for forceloading
 	 * @param enable  true to mark for forceloading, false to unmark
-	 * @param replace  whether to ignore some limitations,
-	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
+	 * @param force  whether to ignore most limitations
 	 * @return the result, not null
 	 */
 	@Nonnull
-	public ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean replace);
+	public ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean force);
 
 	/**
 	 * Tries to claim chunks over a specified area as a specified player.
@@ -362,6 +392,9 @@ public interface IServerClaimsManagerAPI
 	 * to a provided listener.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to claim as them.
 	 * <p>
 	 * When the claiming process is complete, an {@link AreaClaimResult} is passed to the provided listener containing all
 	 * unique result types, which contain messages describing the results.
@@ -376,10 +409,10 @@ public interface IServerClaimsManagerAPI
 	 * @param top  the lowest Z coordinate of the area
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
-	 * @param replace  whether to ignore some limitations,
-	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
+	 * @param force  whether to ignore most limitations
+	 * @param listener  the claiming result listener, not null
 	 */
-	public void tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace, Consumer<AreaClaimResult> listener);
+	public void tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean force, @Nonnull Consumer<AreaClaimResult> listener);
 
 	/**
 	 * Tries to unclaim chunks over a specified area by a specified player.
@@ -388,6 +421,9 @@ public interface IServerClaimsManagerAPI
 	 * to a provided listener.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to unclaim as them.
 	 * <p>
 	 * When the unclaiming process is complete, an {@link AreaClaimResult} is passed to the provided listener containing all
 	 * unique result types, which contain messages describing the results.
@@ -401,10 +437,10 @@ public interface IServerClaimsManagerAPI
 	 * @param top  the lowest Z coordinate of the area
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
-	 * @param replace  whether to ignore some limitations,
-	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
+	 * @param force  whether to ignore most limitations
+	 * @param listener  the claiming result listener, not null
 	 */
-	public void tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean replace, Consumer<AreaClaimResult> listener);
+	public void tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean force, @Nonnull Consumer<AreaClaimResult> listener);
 
 	/**
 	 * Tries to (un)mark chunks for forceloading over a specified area by a specified player.
@@ -413,6 +449,9 @@ public interface IServerClaimsManagerAPI
 	 * to a provided listener.
 	 * <p>
 	 * Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
+	 * <p>
+	 * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims,
+	 * in case you wish to (un)forceload as them.
 	 * <p>
 	 * When the forceload (un)marking process is complete, an {@link AreaClaimResult} is passed to the provided listener containing all
 	 * unique result types, which contain messages describing the results.
@@ -427,10 +466,10 @@ public interface IServerClaimsManagerAPI
 	 * @param right  the highest X coordinate of the area
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param enable  true to mark for forceloading, false to unmark
-	 * @param replace  whether to ignore some limitations,
-	 *	               mainly the existing claim owner at the specified location and the maximum claim distance
+	 * @param force  whether to ignore most limitations
+	 * @param listener  the claiming result listener, not null
 	 */
-	public void tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean replace, Consumer<AreaClaimResult> listener);
+	public void tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean force, @Nonnull Consumer<AreaClaimResult> listener);
 
 	/**
 	 * Gets the base maximum claim number (without the bonus) for a player UUID.
@@ -523,5 +562,13 @@ public interface IServerClaimsManagerAPI
 	 * @return the full maximum forceload number
 	 */
 	public int getPlayerFullForceloadLimit(@Nonnull ServerPlayer player);
+
+	/**
+	 * Gets the API for the claim action listener manager for this claims manager where you can register claim action listeners.
+	 *
+	 * @return the API for the claim action listener manager, not null
+	 */
+	@Nonnull
+	public IClaimActionListenerManagerAPI getActionListenerManager();
 
 }

@@ -51,8 +51,8 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 import xaero.pac.common.entity.EntityData;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEventContext;
 import xaero.pac.common.mods.create.CreateContraptionHelper;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -114,7 +114,7 @@ public abstract class CommonEvents {
 		serverData.getServerLoadCallback().onLoad(server);
 	}
 
-	public abstract void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData);
+	public abstract void fireAddonRegisterEvent(OPACServerAddonRegisterEventContext context, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData);
 
 	public void onServerStarting(MinecraftServer server) {
 		modMain.startupCrashHandler.check();
@@ -584,7 +584,9 @@ public abstract class CommonEvents {
 		}
 	}
 
-	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI){
+	public void onAddonRegister(OPACServerAddonRegisterEventContext context){
+		IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI = context.getPermissionSystemManagerAPI();
+		IPlayerPartySystemRegisterAPI partySystemManagerAPI = context.getPartySystemManagerAPI();
 		//built-in "addons"
 		if(modMain.getModSupport().LUCK_PERMS)
 			permissionSystemManagerAPI.register("luck_perms", modMain.getModSupport().getLuckPerms().getPermissionSystem());

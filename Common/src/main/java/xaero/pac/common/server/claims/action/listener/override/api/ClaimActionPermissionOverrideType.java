@@ -16,15 +16,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet.util;
+package xaero.pac.common.server.claims.action.listener.override.api;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+/**
+ * All types of overrides that a claim action listener can make
+ */
+public enum ClaimActionPermissionOverrideType {
 
-public class PacketConstants {
-
-	public static final int NETWORK_VERSION = 5;
-	public static final Component NETWORK_VERSION_MISMATCH =
-			new TextComponent("Open Parties and Claims versions between server and client aren't compatible!");
+	/** Allow the action but let OPAC do normal checks afterwards */
+	PASS,
+	/** Allow the action, ignoring normal OPAC checks */
+	ALLOW,
+	/** Forbid the claiming action for a chunk */
+	FORBID,
+	/** Forbid the claiming action for a chunk and interrupt the over-area claiming action */
+	INTERRUPT
 
 }

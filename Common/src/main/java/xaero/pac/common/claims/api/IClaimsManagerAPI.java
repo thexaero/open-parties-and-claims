@@ -31,7 +31,9 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
- * API for a claims manager
+ * API for a claims manager.
+ * <p>
+ * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims.
  */
 public interface IClaimsManagerAPI {
 

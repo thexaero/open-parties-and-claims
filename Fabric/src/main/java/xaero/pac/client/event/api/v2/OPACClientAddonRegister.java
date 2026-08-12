@@ -16,15 +16,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet.util;
+package xaero.pac.client.event.api.v2;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import xaero.pac.client.event.api.OPACClientAddonRegisterEventContext;
 
-public class PacketConstants {
+public interface OPACClientAddonRegister {
 
-	public static final int NETWORK_VERSION = 5;
-	public static final Component NETWORK_VERSION_MISMATCH =
-			new TextComponent("Open Parties and Claims versions between server and client aren't compatible!");
+	public static final Event<OPACClientAddonRegister> EVENT = EventFactory.createArrayBacked(OPACClientAddonRegister.class, (callbacks) -> context -> {
+		for (OPACClientAddonRegister callback : callbacks)
+			callback.registerAddons(context);
+	});
+
+	void registerAddons(OPACClientAddonRegisterEventContext context);
 
 }

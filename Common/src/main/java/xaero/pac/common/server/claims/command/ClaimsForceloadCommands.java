@@ -55,6 +55,8 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class ClaimsForceloadCommands {
@@ -182,10 +184,11 @@ public class ClaimsForceloadCommands {
 					result = claimsManager.tryToForceloadTyped(world.dimension().location(), claimPlayerId, fromDimension, fromX, fromZ, middleX, middleZ, enable, shouldReplace);
 
 					if(!result.getResultType().success) {
+						Component message = adaptiveLocalizer.getFor(player, result.getMessage());
 						if(result.getResultType().fail)
-							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, result.getResultType().message));
+							context.getSource().sendFailure(message);
 						else
-							context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, result.getResultType().message), true);
+							context.getSource().sendSuccess(message, true);
 				 		return 0;
 				 	}
 					
@@ -195,10 +198,14 @@ public class ClaimsForceloadCommands {
 						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unforceloaded_at", middleX, middleZ, world.dimension().location()), true);
 				 	return 1;
 			 	} finally {
-					 if(result != null && player != null)
-						((ClaimsManagerSynchronizer)claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
-								new AreaClaimResult(Sets.newHashSet(result.getResultType()), areaLeft, areaTop, areaRight, areaBottom),
-								player);
+					 if(result != null && player != null) {
+						 Set<Component> customReasons = new HashSet<>();
+						 if(result.getCustomReason() != null)
+							 customReasons.add(result.getCustomReason());
+						 ((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
+								 new AreaClaimResult(Sets.newHashSet(result.getResultType()), customReasons, areaLeft, areaTop, areaRight, areaBottom),
+								 player);
+					 }
 			 	}
 			};
 	}

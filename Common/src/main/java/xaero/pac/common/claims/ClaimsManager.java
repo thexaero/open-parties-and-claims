@@ -332,12 +332,5 @@ public abstract class ClaimsManager
 		protected abstract ClaimsManager<PCI, M, WRC, WCM, CSH> buildInternally(Map<PlayerChunkClaim, CSH> claimStates, ClaimsManagerTracker claimsManagerTracker, Int2ObjectMap<PlayerChunkClaim> indexToClaimState);
 		
 	}
-	
-	public static enum Action {
-		CLAIM,
-		UNCLAIM,
-		FORCELOAD,
-		UNFORCELOAD
-	}
-	
+
 }

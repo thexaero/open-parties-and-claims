@@ -38,7 +38,9 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 /**
- * API for the claims manager on the client side
+ * API for the claims manager on the client side.
+ * <p>
+ * Special claim owners can be found at {@link xaero.pac.common.claims.api.SpecialClaimOwners}, such as for server claims.
  */
 public interface IClientClaimsManagerAPI
 		extends IClaimsManagerAPI {

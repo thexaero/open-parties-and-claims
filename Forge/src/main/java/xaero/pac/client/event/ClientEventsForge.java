@@ -31,6 +31,7 @@ import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
 import xaero.pac.client.event.api.OPACClientAddonRegisterEvent;
+import xaero.pac.client.event.api.OPACClientAddonRegisterEventContext;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.client.parties.party.IClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientPartyMemberDynamicInfoSyncableStorage;
@@ -74,8 +75,8 @@ public final class ClientEventsForge extends ClientEvents {
 	}
 
 	@Override
-	public void fireAddonRegisterEvent() {
-		MinecraftForge.EVENT_BUS.post(new OPACClientAddonRegisterEvent(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker()));
+	public void fireAddonRegisterEvent(OPACClientAddonRegisterEventContext context) {
+		MinecraftForge.EVENT_BUS.post(new OPACClientAddonRegisterEvent(context));
 	}
 
 	public static final class Builder extends ClientEvents.Builder<Builder> {
