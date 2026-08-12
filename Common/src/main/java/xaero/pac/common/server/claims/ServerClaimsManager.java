@@ -53,6 +53,7 @@ import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpira
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
+import xaero.pac.common.server.claims.protection.override.ChunkProtectionOverriderManager;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
@@ -81,6 +82,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	private final PlayerPartySystemManager partySystemManager;
 	private final LinkedChain<ServerClaimStateHolder> linkedClaimStates;
 	private final ClaimActionListenerManager actionListenerManager;
+	private final ChunkProtectionOverriderManager chunkProtectionOverriderManager;
 	private boolean loaded;
 
 	protected ServerClaimsManager(
@@ -97,7 +99,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			ServerClaimsPermissionHandler permissionHandler,
 			PlayerPartySystemManager partySystemManager,
 			LinkedChain<ServerClaimStateHolder> linkedClaimStates,
-			ClaimActionListenerManager actionListenerManager
+			ClaimActionListenerManager actionListenerManager,
+			ChunkProtectionOverriderManager chunkProtectionOverriderManager
 	) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.server = server;
@@ -108,6 +111,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		this.partySystemManager = partySystemManager;
 		this.linkedClaimStates = linkedClaimStates;
 		this.actionListenerManager = actionListenerManager;
+		this.chunkProtectionOverriderManager = chunkProtectionOverriderManager;
 	}
 	
 	public void setIo(PlayerClaimInfoManagerIO<?> io) {
@@ -190,7 +194,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean force, boolean isServer, int claimLimit, ClaimingAction action) {
 		if(!force && action == ClaimingAction.CLAIM) {
 			ClaimActionPermissionOverride permissionOverride =
-					actionListenerManager.overrideClaimingActionPermission(playerId, x, z, ClaimingAction.CLAIM, this, server);
+					actionListenerManager.overrideClaimingActionPermission(playerId, dimension, x, z, ClaimingAction.CLAIM, this, server);
 			if (permissionOverride.getType() != ClaimActionPermissionOverrideType.PASS) {
 				if (permissionOverride.getType() == ClaimActionPermissionOverrideType.ALLOW)
 					force = true;
@@ -224,7 +228,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			if(Objects.equals(claim, currentClaim))
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
 			PlayerChunkClaim actualClaim = claim(dimension, claim.getPlayerId(), subConfigIndex, x, z, claim.isForceloadable());
-			actionListenerManager.handleSuccessfulClaimingAction(playerId, x, z, action, this, server);
+			actionListenerManager.handleSuccessfulClaimingAction(playerId, dimension, x, z, action, this, server);
 			return new ClaimResult<>(actualClaim, action.getSuccessType());
 		} else {
 			return new ClaimResult<>(currentClaim, ClaimResult.Type.CLAIM_LIMIT_REACHED);
@@ -258,7 +262,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return new ClaimResult<>(null, ClaimResult.Type.NOT_CLAIMED);
 		if(!force) {
 			ClaimActionPermissionOverride permissionOverride =
-					actionListenerManager.overrideClaimingActionPermission(id, x, z, ClaimingAction.UNCLAIM, this, server);
+					actionListenerManager.overrideClaimingActionPermission(id, dimension, x, z, ClaimingAction.UNCLAIM, this, server);
 			if (permissionOverride.getType() != ClaimActionPermissionOverrideType.PASS) {
 				if (permissionOverride.getType() == ClaimActionPermissionOverrideType.ALLOW)
 					force = true;
@@ -276,7 +280,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(!force && playerClaimInfo.isReplacementInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
 	 	unclaim(dimension, x, z);
-		actionListenerManager.handleSuccessfulClaimingAction(id, x, z, ClaimingAction.UNCLAIM, this, server);
+		actionListenerManager.handleSuccessfulClaimingAction(id, dimension, x, z, ClaimingAction.UNCLAIM, this, server);
 	 	return new ClaimResult<>(null, ClaimResult.Type.SUCCESSFUL_UNCLAIM);
 	}
 	
@@ -302,7 +306,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		if(!force) {
 			ClaimActionPermissionOverride permissionOverride =
-					actionListenerManager.overrideClaimingActionPermission(id, x, z, enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, this, server);
+					actionListenerManager.overrideClaimingActionPermission(id, dimension, x, z, enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, this, server);
 			if (permissionOverride.getType() != ClaimActionPermissionOverrideType.PASS) {
 				if (permissionOverride.getType() == ClaimActionPermissionOverrideType.ALLOW)
 					force = true;
@@ -592,6 +596,12 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return actionListenerManager;
 	}
 
+	@Nonnull
+	@Override
+	public ChunkProtectionOverriderManager getChunkProtectionOverriderManager() {
+		return chunkProtectionOverriderManager;
+	}
+
 	public final static class Builder extends ClaimsManager.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder, Builder>{
 
 		private MinecraftServer server;
@@ -685,11 +695,12 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			LinkedChain<ServerClaimStateHolder> linkedClaimStates = new LinkedChain<>();
 			claimStates.values().forEach(linkedClaimStates::add);
 			ClaimActionListenerManager actionListenerManager = ClaimActionListenerManager.Builder.begin().build();
+			ChunkProtectionOverriderManager chunkProtectionOverriderManager = ChunkProtectionOverriderManager.Builder.begin().build();
 			return new ServerClaimsManager(
 					server, playerClaimInfoManager, configManager, dimensions,
 					claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker,
 					areaClaimActionTaskHandler, claimReplaceTaskHandler, permissionHandler, partySystemManager,
-					linkedClaimStates, actionListenerManager
+					linkedClaimStates, actionListenerManager, chunkProtectionOverriderManager
 			);
 		}
 		

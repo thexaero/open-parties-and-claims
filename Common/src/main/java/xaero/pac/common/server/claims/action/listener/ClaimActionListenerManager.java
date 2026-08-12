@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.action.listener;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.action.api.ClaimingAction;
@@ -50,6 +51,7 @@ public class ClaimActionListenerManager implements IClaimActionListenerManagerAP
 
 	public ClaimActionPermissionOverride overrideClaimingActionPermission(
 			UUID playerId,
+			ResourceLocation dim,
 			int x,
 			int z,
 			ClaimingAction action,
@@ -59,7 +61,7 @@ public class ClaimActionListenerManager implements IClaimActionListenerManagerAP
 		ClaimActionPermissionOverride current = defaultOverride;
 		for (IClaimActionListenerAPI listener : listeners) {
 			ClaimActionPermissionOverride listenerResult =
-					listener.overrideClaimingActionPermission(playerId, x, z, action, claimsManagerAPI, current, server);
+					listener.overrideClaimingActionPermission(playerId, dim, x, z, action, claimsManagerAPI, current, server);
 			if(listenerResult == current)
 				continue;
 			if(listenerResult.getType() == ClaimActionPermissionOverrideType.INTERRUPT)
@@ -75,6 +77,7 @@ public class ClaimActionListenerManager implements IClaimActionListenerManagerAP
 
 	public void handleSuccessfulClaimingAction(
 			UUID playerId,
+			ResourceLocation dim,
 			int x,
 			int z,
 			ClaimingAction action,
@@ -82,7 +85,7 @@ public class ClaimActionListenerManager implements IClaimActionListenerManagerAP
 			MinecraftServer server
 	){
 		for (IClaimActionListenerAPI listener : listeners)
-			listener.handleSuccessfulClaimingAction(playerId, x, z, action, claimsManagerAPI, server);
+			listener.handleSuccessfulClaimingAction(playerId, dim, x, z, action, claimsManagerAPI, server);
 	}
 
 	public static final class Builder {

@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.action.listener.api;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
@@ -53,6 +54,7 @@ public interface IClaimActionListenerAPI {
 	 * in case you wish to handle such claims differently.
 	 *
 	 * @param playerId  the UUID of the player who the action is being performed as, not null
+	 * @param dim  the dimension ID of the chunk being affected
 	 * @param x  the X chunk coordinate of the chunk being affected
 	 * @param z  the Z chunk coordinate of the chunk being affected
 	 * @param action  the claiming action type, not null
@@ -65,6 +67,8 @@ public interface IClaimActionListenerAPI {
 	ClaimActionPermissionOverride overrideClaimingActionPermission(
 			@Nonnull
 			UUID playerId,
+			@Nonnull
+			ResourceLocation dim,
 			int x,
 			int z,
 			@Nonnull
@@ -74,8 +78,7 @@ public interface IClaimActionListenerAPI {
 			@Nonnull
 			ClaimActionPermissionOverride currentOverride,
 			@Nonnull
-			MinecraftServer server
-	);
+			MinecraftServer server);
 
 	/**
 	 * Can be used to handle successful claiming actions.
@@ -87,6 +90,7 @@ public interface IClaimActionListenerAPI {
 	 * in case you wish to handle such claims differently.
 	 *
 	 * @param playerId  the UUID of the player who the action is being performed as, not null
+	 * @param dim  the dimension ID of the chunk that was affected
 	 * @param x  the X in chunk coordinate space of the chunk that was affected
 	 * @param z  the Z in chunk coordinate space of the chunk that was affected
 	 * @param action  the claiming action type, not null
@@ -96,6 +100,8 @@ public interface IClaimActionListenerAPI {
 	void handleSuccessfulClaimingAction(
 			@Nonnull
 			UUID playerId,
+			@Nonnull
+			ResourceLocation dim,
 			int x,
 			int z,
 			@Nonnull
