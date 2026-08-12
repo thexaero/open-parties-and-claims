@@ -79,7 +79,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IServerClaimsManagerAPI</span><span class="extends-implements">
 extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></span></div>
-<div class="block">API for the claims manager on the server side</div>
+<div class="block">API for the claims manager on the server side.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -88,7 +90,7 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -122,6 +124,17 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  net.minecraft.world.level.ChunkPos&nbsp;chunkPos)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim state for a specified chunk.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../action/listener/api/IClaimActionListenerManagerAPI.html" title="interface in xaero.pac.common.server.claims.action.listener.api">IClaimActionListenerManagerAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getActionListenerManager()" class="member-name-link">getActionListenerManager</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the API for the claim action listener manager for this claims manager where you can register claim action listeners.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../protection/override/api/IChunkAccessOverriderManagerAPI.html" title="interface in xaero.pac.common.server.claims.protection.override.api">IChunkAccessOverriderManagerAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getChunkAccessOverriderManager()" class="member-name-link">getChunkAccessOverriderManager</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the API for the chunk access overrider manager for this claims manager where you can register your chunk access
+ overriders.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IServerDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerDimensionClaimsManagerAPI</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimension(net.minecraft.resources.ResourceLocation)" class="member-name-link">getDimension</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
@@ -198,8 +211,8 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a dimension is claimable.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;subConfigIndex,
  int&nbsp;fromX,
@@ -207,11 +220,27 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;replace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)"><code>tryToClaim(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, boolean)</code></a> instead
+ Tries to claim a chunk by a specified player.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to claim a chunk by a specified player.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,int,boolean)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,int,boolean)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;subConfigIndex,
  int&nbsp;fromX,
@@ -221,11 +250,30 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;replace)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Tries to claim chunks over a specified area by a specified player.</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)"><code>tryToClaimArea(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, int, int, boolean, Consumer)</code></a> instead
+ Tries to claim chunks over a specified area by a specified player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;force,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Tries to claim chunks over a specified area as a specified player.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;fromX,
  int&nbsp;fromZ,
@@ -233,11 +281,27 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;z,
  boolean&nbsp;enable,
  boolean&nbsp;replace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)"><code>tryToForceload(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean, boolean)</code></a> instead
+ Tries to (un)mark a chunk for forceloading by a specified player.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;enable,
+ boolean&nbsp;force)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to (un)mark a chunk for forceloading by a specified player.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceloadArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceloadArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;fromX,
  int&nbsp;fromZ,
@@ -247,22 +311,56 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;bottom,
  boolean&nbsp;enable,
  boolean&nbsp;replace)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,boolean,java.util.function.Consumer)"><code>tryToForceloadArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, boolean, Consumer)</code></a> instead
+ Tries to (un)mark chunks for forceloading over a specified area by a specified player.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,boolean,java.util.function.Consumer)" class="member-name-link">tryToForceloadArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;enable,
+ boolean&nbsp;force,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to (un)mark chunks for forceloading over a specified area by a specified player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)" class="member-name-link">tryToUnclaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)" class="member-name-link">tryToUnclaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;fromX,
  int&nbsp;fromZ,
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;replace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)"><code>tryToUnclaim(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean)</code></a> instead
+ Tries to unclaim a chunk by a specified player.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)" class="member-name-link">tryToUnclaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to unclaim a chunk by a specified player.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToUnclaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean)" class="member-name-link">tryToUnclaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToUnclaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean)" class="member-name-link">tryToUnclaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;fromX,
  int&nbsp;fromZ,
@@ -271,6 +369,24 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;replace)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToUnclaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)"><code>tryToUnclaimArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, Consumer)</code></a> instead
+ Tries to unclaim chunks over a specified area by a specified player.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToUnclaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)" class="member-name-link">tryToUnclaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;force,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to unclaim chunks over a specified area by a specified player.</div>
 </div>
@@ -286,7 +402,7 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-xaero.pac.common.claims.api.IClaimsManagerAPI">Methods inherited from interface&nbsp;xaero.pac.common.claims.api.<a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></h3>
-<code><a href="../../../claims/api/IClaimsManagerAPI.html#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getDefaultName</a>, <a href="../../../claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getFullName</a></code></div>
+<code><a href="../../../claims/api/IClaimsManagerAPI.html#getDefaultName(java.util.UUID,boolean)">getDefaultName</a>, <a href="../../../claims/api/IClaimsManagerAPI.html#getDefaultName(java.util.UUID,boolean,boolean)">getDefaultName</a>, <a href="../../../claims/api/IClaimsManagerAPI.html#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getDefaultName</a>, <a href="../../../claims/api/IClaimsManagerAPI.html#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)">getDefaultName</a>, <a href="../../../claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getFullName</a>, <a href="../../../claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)">getFullName</a></code></div>
 </section>
 </li>
 </ul>
@@ -487,8 +603,13 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Directly replaces the current claim state of a chunk.
  <p>
  It is usually a bad idea to give regular players unfiltered access to this method.
- Use <a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)"><code>tryToClaim(net.minecraft.resources.ResourceLocation, java.util.UUID, int, int, int, int, int, boolean)</code></a> or <a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)"><code>tryToForceload(net.minecraft.resources.ResourceLocation, java.util.UUID, int, int, int, int, boolean, boolean)</code></a> instead if you want different limitations to be considered,
- e.g. maximum claim distance, maximum claim number, the chunk being already claimed etc.</div>
+ Use <a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)"><code>tryToClaim(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, boolean)</code></a> or
+ <a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)"><code>tryToForceload(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean, boolean)</code></a>
+ instead if you want different limitations to be considered,
+ e.g. maximum claim distance, maximum claim number, the chunk being already claimed etc.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to claim as them.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
@@ -512,7 +633,8 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Directly removes the current claim state of a chunk.
  <p>
  It is usually a bad idea to give regular players unfiltered access to this method.
- Use <a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)"><code>tryToUnclaim(net.minecraft.resources.ResourceLocation, java.util.UUID, int, int, int, int, boolean)</code></a> instead if you want different limitations to be considered,
+ Use <a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)"><code>tryToUnclaim(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean)</code></a> instead
+ if you want different limitations to be considered,
  e.g. maximum claim distance, the chunk being claimed by a different player etc.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -525,8 +647,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <li>
 <section class="detail" id="tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)">
 <h3>tryToClaim</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToClaim</span><wbr><span class="parameters">(@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@Nonnull
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToClaim</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
@@ -536,16 +659,22 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;replace)</span></div>
-<div class="block">Tries to claim a chunk by a specified player.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)"><code>tryToClaim(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, boolean)</code></a> instead
+ Tries to claim a chunk by a specified player.
  <p>
  Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
  <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to claim as them.
+ <p>
  You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a claim state where relevant (the new one if it's a success)
  and a message describing the result.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
-<dd><code>playerId</code> - the claiming player UUID, not null</dd>
+<dd><code>playerId</code> - the claiming player's UUID, not null</dd>
 <dd><code>subConfigIndex</code> - the sub-config index to be used by the claim</dd>
 <dd><code>fromX</code> - the X coordinate of the claiming player's current chunk position</dd>
 <dd><code>fromZ</code> - the Z coordinate of the claiming player's current chunk position</dd>
@@ -561,8 +690,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <li>
 <section class="detail" id="tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)">
 <h3>tryToUnclaim</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToUnclaim</span><wbr><span class="parameters">(@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@Nonnull
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToUnclaim</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
@@ -571,16 +701,22 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;replace)</span></div>
-<div class="block">Tries to unclaim a chunk by a specified player.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)"><code>tryToUnclaim(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean)</code></a> instead
+ Tries to unclaim a chunk by a specified player.
  <p>
  Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
  <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to unclaim as them.
+ <p>
  You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a claim state where relevant (null if it's a success)
  and a message describing the result.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
-<dd><code>playerId</code> - the unclaiming player UUID, not null</dd>
+<dd><code>playerId</code> - the unclaiming player's UUID, not null</dd>
 <dd><code>fromX</code> - the X coordinate of the unclaiming player's current chunk position</dd>
 <dd><code>fromZ</code> - the Z coordinate of the unclaiming player's current chunk position</dd>
 <dd><code>x</code> - the X coordinate of the chunk to unclaim</dd>
@@ -595,8 +731,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <li>
 <section class="detail" id="tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)">
 <h3>tryToForceload</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToForceload</span><wbr><span class="parameters">(@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@Nonnull
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToForceload</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
@@ -606,18 +743,24 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;z,
  boolean&nbsp;enable,
  boolean&nbsp;replace)</span></div>
-<div class="block">Tries to (un)mark a chunk for forceloading by a specified player.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)"><code>tryToForceload(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean, boolean)</code></a> instead
+ Tries to (un)mark a chunk for forceloading by a specified player.
  <p>
  Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
  <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to (un)forceload as them.
+ <p>
  You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a claim state where relevant (the new one if it's a success)
  and a message describing the result.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
-<dd><code>playerId</code> - the claiming player UUID, not null</dd>
-<dd><code>fromX</code> - the X coordinate of the claiming player's current chunk position</dd>
-<dd><code>fromZ</code> - the Z coordinate of the claiming player's current chunk position</dd>
+<dd><code>playerId</code> - the forceloading player's UUID, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the forceloading player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the forceloading player's current chunk position</dd>
 <dd><code>x</code> - the X coordinate of the chunk to (un)mark for forceloading</dd>
 <dd><code>z</code> - the Z coordinate of the chunk to (un)mark for forceloading</dd>
 <dd><code>enable</code> - true to mark for forceloading, false to unmark</dd>
@@ -631,8 +774,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <li>
 <section class="detail" id="tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,int,boolean)">
 <h3>tryToClaimArea</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></span>&nbsp;<span class="element-name">tryToClaimArea</span><wbr><span class="parameters">(@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@Nonnull
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></span>&nbsp;<span class="element-name">tryToClaimArea</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
@@ -644,15 +788,21 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;replace)</span></div>
-<div class="block">Tries to claim chunks over a specified area by a specified player.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)"><code>tryToClaimArea(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, int, int, boolean, Consumer)</code></a> instead
+ Tries to claim chunks over a specified area by a specified player.
  <p>
  Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
  <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to claim as them.
+ <p>
  You get a <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>AreaClaimResult</code></a> containing all unique result types, which contain messages describing the results.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunks, not null</dd>
-<dd><code>playerId</code> - the claiming player UUID, not null</dd>
+<dd><code>playerId</code> - the claiming player's UUID, not null</dd>
 <dd><code>subConfigIndex</code> - the sub-config index to be used by the claims</dd>
 <dd><code>fromX</code> - the X coordinate of the claiming player's current chunk position</dd>
 <dd><code>fromZ</code> - the Z coordinate of the claiming player's current chunk position</dd>
@@ -670,8 +820,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <li>
 <section class="detail" id="tryToUnclaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean)">
 <h3>tryToUnclaimArea</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></span>&nbsp;<span class="element-name">tryToUnclaimArea</span><wbr><span class="parameters">(@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@Nonnull
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></span>&nbsp;<span class="element-name">tryToUnclaimArea</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
@@ -682,15 +833,21 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;replace)</span></div>
-<div class="block">Tries to unclaim chunks over a specified area by a specified player.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToUnclaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)"><code>tryToUnclaimArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, Consumer)</code></a> instead
+ Tries to unclaim chunks over a specified area by a specified player.
  <p>
  Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
  <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to unclaim as them.
+ <p>
  You get a <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>AreaClaimResult</code></a> containing all unique result types, which contain messages describing the results.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunks, not null</dd>
-<dd><code>playerId</code> - the claiming player UUID, not null</dd>
+<dd><code>playerId</code> - the unclaiming player's UUID, not null</dd>
 <dd><code>fromX</code> - the X coordinate of the unclaiming player's current chunk position</dd>
 <dd><code>fromZ</code> - the Z coordinate of the unclaiming player's current chunk position</dd>
 <dd><code>left</code> - the lowest X coordinate of the area</dd>
@@ -707,8 +864,9 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <li>
 <section class="detail" id="tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean,boolean)">
 <h3>tryToForceloadArea</h3>
-<div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type"><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></span>&nbsp;<span class="element-name">tryToForceloadArea</span><wbr><span class="parameters">(@Nonnull
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+@Nonnull
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></span>&nbsp;<span class="element-name">tryToForceloadArea</span><wbr><span class="parameters">(@Nonnull
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
@@ -720,17 +878,23 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;bottom,
  boolean&nbsp;enable,
  boolean&nbsp;replace)</span></div>
-<div class="block">Tries to (un)mark chunks for forceloading over a specified area by a specified player.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,boolean,java.util.function.Consumer)"><code>tryToForceloadArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, boolean, Consumer)</code></a> instead
+ Tries to (un)mark chunks for forceloading over a specified area by a specified player.
  <p>
  Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
  <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to (un)forceload as them.
+ <p>
  You get a <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>AreaClaimResult</code></a> containing all unique result types, which contain messages describing the results.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dimension</code> - the dimension ID of the chunks, not null</dd>
-<dd><code>playerId</code> - the claiming player UUID, not null</dd>
-<dd><code>fromX</code> - the X coordinate of the unclaiming player's current chunk position</dd>
-<dd><code>fromZ</code> - the Z coordinate of the unclaiming player's current chunk position</dd>
+<dd><code>playerId</code> - the forceloading player's UUID, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the forceloading player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the forceloading player's current chunk position</dd>
 <dd><code>left</code> - the lowest X coordinate of the area</dd>
 <dd><code>top</code> - the lowest Z coordinate of the area</dd>
 <dd><code>right</code> - the highest X coordinate of the area</dd>
@@ -740,6 +904,269 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
                        mainly the existing claim owner at the specified location and the maximum claim distance</dd>
 <dt>Returns:</dt>
 <dd>the area result, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)">
+<h3>tryToClaim</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToClaim</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force)</span></div>
+<div class="block">Tries to claim a chunk by a specified player.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to claim as them.
+ <p>
+ You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a claim state where relevant (the new one if it's a success)
+ and a message describing the result.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>playerId</code> - the claiming player's UUID, not null</dd>
+<dd><code>subConfigIndex</code> - the sub-config index to be used by the claim</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the claiming player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the claiming player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the claiming player's current chunk position</dd>
+<dd><code>x</code> - the X coordinate of the chunk to claim</dd>
+<dd><code>z</code> - the Z coordinate of the chunk to claim</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dt>Returns:</dt>
+<dd>the result, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)">
+<h3>tryToUnclaim</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToUnclaim</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force)</span></div>
+<div class="block">Tries to unclaim a chunk by a specified player.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to unclaim as them.
+ <p>
+ You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a claim state where relevant (null if it's a success)
+ and a message describing the result.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>playerId</code> - the unclaiming player's UUID, not null</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the unclaiming player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the unclaiming player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the unclaiming player's current chunk position</dd>
+<dd><code>x</code> - the X coordinate of the chunk to unclaim</dd>
+<dd><code>z</code> - the Z coordinate of the chunk to unclaim</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dt>Returns:</dt>
+<dd>the result, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)">
+<h3>tryToForceload</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToForceload</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;enable,
+ boolean&nbsp;force)</span></div>
+<div class="block">Tries to (un)mark a chunk for forceloading by a specified player.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to (un)forceload as them.
+ <p>
+ You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a claim state where relevant (the new one if it's a success)
+ and a message describing the result.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>playerId</code> - the forceloading player's UUID, not null</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the forceloading player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the forceloading player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the forceloading player's current chunk position</dd>
+<dd><code>x</code> - the X coordinate of the chunk to (un)mark for forceloading</dd>
+<dd><code>z</code> - the Z coordinate of the chunk to (un)mark for forceloading</dd>
+<dd><code>enable</code> - true to mark for forceloading, false to unmark</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dt>Returns:</dt>
+<dd>the result, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)">
+<h3>tryToClaimArea</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">tryToClaimArea</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ int&nbsp;subConfigIndex,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;force,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Tries to claim chunks over a specified area as a specified player.
+ <p>
+ The effect of calling this method is not immediate, and it may take many server ticks before the result is passed
+ to a provided listener.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum claim number, maximum claim distance, existing claims.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to claim as them.
+ <p>
+ When the claiming process is complete, an <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>AreaClaimResult</code></a> is passed to the provided listener containing all
+ unique result types, which contain messages describing the results.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunks to claim, not null</dd>
+<dd><code>playerId</code> - the claiming player's UUID, not null</dd>
+<dd><code>subConfigIndex</code> - the sub-config index to be used by the claims</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the claiming player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the claiming player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the claiming player's current chunk position</dd>
+<dd><code>left</code> - the lowest X coordinate of the area</dd>
+<dd><code>top</code> - the lowest Z coordinate of the area</dd>
+<dd><code>right</code> - the highest X coordinate of the area</dd>
+<dd><code>bottom</code> - the highest Z coordinate of the area</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dd><code>listener</code> - the claiming result listener, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryToUnclaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)">
+<h3>tryToUnclaimArea</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">tryToUnclaimArea</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;force,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Tries to unclaim chunks over a specified area by a specified player.
+ <p>
+ The effect of calling this method is not immediate, and it may take many server ticks before the result is passed
+ to a provided listener.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum claim distance, existing claims.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to unclaim as them.
+ <p>
+ When the unclaiming process is complete, an <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>AreaClaimResult</code></a> is passed to the provided listener containing all
+ unique result types, which contain messages describing the results.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunks to unclaim, not null</dd>
+<dd><code>playerId</code> - the unclaiming player's UUID, not null</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the unclaiming player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the unclaiming player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the unclaiming player's current chunk position</dd>
+<dd><code>left</code> - the lowest X coordinate of the area</dd>
+<dd><code>top</code> - the lowest Z coordinate of the area</dd>
+<dd><code>right</code> - the highest X coordinate of the area</dd>
+<dd><code>bottom</code> - the highest Z coordinate of the area</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dd><code>listener</code> - the claiming result listener, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,boolean,java.util.function.Consumer)">
+<h3>tryToForceloadArea</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">tryToForceloadArea</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;enable,
+ boolean&nbsp;force,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Tries to (un)mark chunks for forceloading over a specified area by a specified player.
+ <p>
+ The effect of calling this method is not immediate, and it may take many server ticks before the result is passed
+ to a provided listener.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum forceload number, maximum claim distance, existing claims.
+ <p>
+ Special claim owners can be found at <a href="../../../claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims,
+ in case you wish to (un)forceload as them.
+ <p>
+ When the forceload (un)marking process is complete, an <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>AreaClaimResult</code></a> is passed to the provided listener containing all
+ unique result types, which contain messages describing the results.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunks to forceload, not null</dd>
+<dd><code>playerId</code> - the forceloading player's UUID, not null</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the forceloading player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the forceloading player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the forceloading player's current chunk position</dd>
+<dd><code>left</code> - the lowest X coordinate of the area</dd>
+<dd><code>top</code> - the lowest Z coordinate of the area</dd>
+<dd><code>right</code> - the highest X coordinate of the area</dd>
+<dd><code>bottom</code> - the highest Z coordinate of the area</dd>
+<dd><code>enable</code> - true to mark for forceloading, false to unmark</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dd><code>listener</code> - the claiming result listener, not null</dd>
 </dl>
 </section>
 </li>
@@ -880,6 +1307,31 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <dd><code>player</code> - the player, not null</dd>
 <dt>Returns:</dt>
 <dd>the full maximum forceload number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getActionListenerManager()">
+<h3>getActionListenerManager</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../action/listener/api/IClaimActionListenerManagerAPI.html" title="interface in xaero.pac.common.server.claims.action.listener.api">IClaimActionListenerManagerAPI</a></span>&nbsp;<span class="element-name">getActionListenerManager</span>()</div>
+<div class="block">Gets the API for the claim action listener manager for this claims manager where you can register claim action listeners.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the API for the claim action listener manager, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getChunkAccessOverriderManager()">
+<h3>getChunkAccessOverriderManager</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../protection/override/api/IChunkAccessOverriderManagerAPI.html" title="interface in xaero.pac.common.server.claims.protection.override.api">IChunkAccessOverriderManagerAPI</a></span>&nbsp;<span class="element-name">getChunkAccessOverriderManager</span>()</div>
+<div class="block">Gets the API for the chunk access overrider manager for this claims manager where you can register your chunk access
+ overriders.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the API for the chunk access overrider manager, not null</dd>
 </dl>
 </section>
 </li>

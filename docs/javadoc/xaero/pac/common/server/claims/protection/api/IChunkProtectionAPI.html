@@ -172,16 +172,52 @@ loadScripts(document, 'script');</script>
  except when the methods of this API are used, e.g.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasChunkAccess(java.util.UUID,net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">hasChunkAccess</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;accessorId,
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Directly checks whether the entity with a specified UUID has full access to a claim at specified coordinates.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasChunkAccess(net.minecraft.world.entity.Entity,net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">hasChunkAccess</a><wbr>(net.minecraft.world.entity.Entity&nbsp;accessor,
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Directly checks whether a specified entity has full access to a claim at specified coordinates.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,java.util.UUID)" class="member-name-link">hasChunkAccess</a><wbr>(<a href="../../../player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a>&nbsp;claimConfig,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;accessorId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Directly checks whether the entity with a specified UUID has full access to a claim with the specified config.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,net.minecraft.world.entity.Entity)" class="member-name-link">hasChunkAccess</a><wbr>(<a href="../../../player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a>&nbsp;claimConfig,
- net.minecraft.world.entity.Entity&nbsp;accessor)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">hasChunkAccess</a><wbr>(<a href="../../../player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a>&nbsp;claimConfig,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;accessorId,
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Directly checks whether the entity with a specified UUID has full access to a claim with the specified config at
+ specified coordinates.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,net.minecraft.world.entity.Entity)" class="member-name-link">hasChunkAccess</a><wbr>(<a href="../../../player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a>&nbsp;claimConfig,
+ net.minecraft.world.entity.Entity&nbsp;accessor)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Directly checks whether a specified entity has full access to a claim with the specified config.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,net.minecraft.world.entity.Entity,net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">hasChunkAccess</a><wbr>(<a href="../../../player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a>&nbsp;claimConfig,
+ net.minecraft.world.entity.Entity&nbsp;accessor,
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Directly checks whether a specified entity has full access to a claim with the specified config at
+ specified coordinates.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#onBlockInteraction(net.minecraft.world.entity.Entity,net.minecraft.world.InteractionHand,net.minecraft.world.item.ItemStack,net.minecraft.server.level.ServerLevel,net.minecraft.core.BlockPos,net.minecraft.core.Direction,boolean,boolean)" class="member-name-link">onBlockInteraction</a><wbr>(net.minecraft.world.entity.Entity&nbsp;entity,
@@ -599,7 +635,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Directly checks whether a specified entity has full access to a claim with the specified config.
  <p>
  You most likely don't have to use this method at all. The action-specific protection check methods already do it.
- This is meant for things that are not covered by the rest of the API.</div>
+ This is meant for things that are not covered by the rest of the API.
+ <p>
+ This method ignores addon-applied access overrides if they are based on chunk coordinates. If this is a problem,
+ please use <a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,net.minecraft.world.entity.Entity,net.minecraft.resources.ResourceLocation,int,int)"><code>hasChunkAccess(IPlayerConfigAPI, Entity, ResourceLocation, int, int)</code></a> instead.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>claimConfig</code> - the claim config to check access for, not null</dd>
@@ -622,11 +661,124 @@ loadScripts(document, 'script');</script>
  entity reference.
  <p>
  You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+ This is meant for things that are not covered by the rest of the API.
+ <p>
+ This method ignores addon-applied access overrides if they are based on chunk coordinates. If this is a problem,
+ please use <a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int)"><code>hasChunkAccess(IPlayerConfigAPI, UUID, ResourceLocation, int, int)</code></a> instead.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimConfig</code> - the claim config to check access for, not null</dd>
+<dd><code>accessorId</code> - the entity UUID to check access for, not null</dd>
+<dt>Returns:</dt>
+<dd>true if accessor has full access to the claim, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,net.minecraft.world.entity.Entity,net.minecraft.resources.ResourceLocation,int,int)">
+<h3>hasChunkAccess</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">hasChunkAccess</span><wbr><span class="parameters">(@Nonnull
+ <a href="../../../player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a>&nbsp;claimConfig,
+ @Nonnull
+ net.minecraft.world.entity.Entity&nbsp;accessor,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</span></div>
+<div class="block">Directly checks whether a specified entity has full access to a claim with the specified config at
+ specified coordinates.
+ <p>
+ You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+ This is meant for things that are not covered by the rest of the API.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimConfig</code> - the claim config to check access for, not null</dd>
+<dd><code>accessor</code> - the entity to check access for, not null</dd>
+<dd><code>dim</code> - the dimension ID of the claim, not null</dd>
+<dd><code>chunkX</code> - the X chunk coordinate of the claim</dd>
+<dd><code>chunkZ</code> - the X chunk coordinate of the claim</dd>
+<dt>Returns:</dt>
+<dd>true if accessor has full access to the claim, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int)">
+<h3>hasChunkAccess</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">hasChunkAccess</span><wbr><span class="parameters">(@Nonnull
+ <a href="../../../player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a>&nbsp;claimConfig,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;accessorId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</span></div>
+<div class="block">Directly checks whether the entity with a specified UUID has full access to a claim with the specified config at
+ specified coordinates.
+ <p>
+ Please use <a href="#hasChunkAccess(xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI,net.minecraft.world.entity.Entity)"><code>hasChunkAccess(IPlayerConfigAPI, Entity)</code></a> when you have an actual
+ entity reference.
+ <p>
+ You most likely don't have to use this method at all. The action-specific protection check methods already do it.
  This is meant for things that are not covered by the rest of the API.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>claimConfig</code> - the claim config to check access for, not null</dd>
 <dd><code>accessorId</code> - the entity UUID to check access for, not null</dd>
+<dd><code>dim</code> - the dimension ID of the claim, not null</dd>
+<dd><code>chunkX</code> - the X chunk coordinate of the claim</dd>
+<dd><code>chunkZ</code> - the X chunk coordinate of the claim</dd>
+<dt>Returns:</dt>
+<dd>true if accessor has full access to the claim, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hasChunkAccess(net.minecraft.world.entity.Entity,net.minecraft.resources.ResourceLocation,int,int)">
+<h3>hasChunkAccess</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">hasChunkAccess</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.world.entity.Entity&nbsp;accessor,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</span></div>
+<div class="block">Directly checks whether a specified entity has full access to a claim at specified coordinates.
+ <p>
+ You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+ This is meant for things that are not covered by the rest of the API.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>accessor</code> - the entity to check access for, not null</dd>
+<dd><code>dim</code> - the dimension ID of the claim, not null</dd>
+<dd><code>chunkX</code> - the X chunk coordinate of the claim</dd>
+<dd><code>chunkZ</code> - the X chunk coordinate of the claim</dd>
+<dt>Returns:</dt>
+<dd>true if accessor has full access to the claim, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hasChunkAccess(java.util.UUID,net.minecraft.resources.ResourceLocation,int,int)">
+<h3>hasChunkAccess</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">hasChunkAccess</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;accessorId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dim,
+ int&nbsp;chunkX,
+ int&nbsp;chunkZ)</span></div>
+<div class="block">Directly checks whether the entity with a specified UUID has full access to a claim at specified coordinates.
+ <p>
+ Please use <a href="#hasChunkAccess(net.minecraft.world.entity.Entity,net.minecraft.resources.ResourceLocation,int,int)"><code>hasChunkAccess(Entity, ResourceLocation, int, int)</code></a> when you have an actual
+ entity reference.
+ <p>
+ You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+ This is meant for things that are not covered by the rest of the API.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>accessorId</code> - the entity UUID to check access for, not null</dd>
+<dd><code>dim</code> - the dimension ID of the claim, not null</dd>
+<dd><code>chunkX</code> - the X chunk coordinate of the claim</dd>
+<dd><code>chunkZ</code> - the X chunk coordinate of the claim</dd>
 <dt>Returns:</dt>
 <dd>true if accessor has full access to the claim, otherwise false</dd>
 </dl>
