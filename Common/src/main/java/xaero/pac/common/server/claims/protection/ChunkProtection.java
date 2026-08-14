@@ -320,11 +320,13 @@ public class ChunkProtection
 
 	private InteractionTargetResult entityAccessCheck(IPlayerConfig claimConfig, Entity e, Entity from, Entity accessor, UUID accessorId, boolean attack, boolean emptyHand, boolean exceptions) {
 		boolean targetIsPlayer = e instanceof Player;
-		if((!targetIsPlayer || !attack) && hasChunkAccess(claimConfig, accessor, accessorId, e.level.dimension(), e.chunkPosition().x, e.chunkPosition().z))
+		boolean accessorIsPlayer = accessor instanceof Player;
+		if((!targetIsPlayer || !accessorIsPlayer || !attack) && hasChunkAccess(claimConfig, accessor, accessorId, e.level.dimension(), e.chunkPosition().x, e.chunkPosition().z))
 			return InteractionTargetResult.ALLOW;
 		boolean isProtectable = !exceptions || targetIsPlayer || isProtectable(e);
 		if(isProtectable){
-			if(accessor instanceof Raider raider && raider.canJoinRaid() && !claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_RAIDS))//based on the accessor on purpose;
+			if(!targetIsPlayer && accessor instanceof Raider raider && raider.canJoinRaid() &&
+					!claimConfig.getEffective(PlayerConfigOptions.CLAIM_EXCEPTION_RAIDS))//based on the accessor on purpose;
 				return InteractionTargetResult.PROTECT;
 		} else if(attack || emptyHand)
 			return InteractionTargetResult.ALLOW;
