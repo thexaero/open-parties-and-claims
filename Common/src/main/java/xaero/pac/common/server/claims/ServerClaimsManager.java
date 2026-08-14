@@ -34,6 +34,7 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
@@ -565,8 +566,16 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Override
-	public String getWildernessName() {
-		return configManager.getWildernessConfig().getEffective(PlayerConfigOptions.CLAIMS_NAME);
+	public boolean claimUsesDimensionSubConfigs(IPlayerChunkClaimAPI claimState) {
+		return configManager.getLoadedConfig(claimState == null ? null : claimState.getPlayerId()).getType().hasDimensionSubConfigs();
+	}
+
+	@Override
+	public String getDimensionName(IPlayerChunkClaimAPI claimState, ResourceLocation dimension) {
+		IPlayerConfig effectiveConfig = configManager.getLoadedConfig(claimState == null ? null : claimState.getPlayerId());
+		if(dimension != null)
+			effectiveConfig = effectiveConfig.getEffectiveSubConfig(dimension.toString());
+		return effectiveConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
 	}
 
 	@Override

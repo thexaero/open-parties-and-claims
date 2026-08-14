@@ -41,20 +41,21 @@ import xaero.pac.client.parties.party.IClientPartyStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
-import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.ClaimStateHolder;
 import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.action.api.ClaimingAction;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.player.impersonation.SimplePlayerClaimImpersonationInfo;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
-import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
 import xaero.pac.common.packet.claims.ServerboundClaimActionRequestPacket;
@@ -477,9 +478,21 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public String getWildernessName() {
-		return clientData.getPlayerConfigStorageManager().getWildernessConfig()
-				.getOption(PlayerConfigOptions.CLAIMS_NAME).getValue();
+	public boolean claimUsesDimensionSubConfigs(IPlayerChunkClaimAPI claimState) {
+		IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> config =
+				clientData.getPlayerConfigStorageManager().getGlobalConfigForClaimOwner(
+						claimState == null ? null : claimState.getPlayerId()
+				);
+		return config != null && config.getType().hasDimensionSubConfigs();
+	}
+
+	@Override
+	public String getDimensionName(IPlayerChunkClaimAPI claimState, ResourceLocation dimension) {
+		IPlayerConfigClientStorage<?> effectiveConfig = clientData.getPlayerConfigStorageManager()
+				.getGlobalConfigForClaimOwner(claimState == null ? null : claimState.getPlayerId());
+		if(dimension != null)
+			effectiveConfig = effectiveConfig.getEffectiveSubConfig(dimension.toString());
+		return effectiveConfig.getOption(PlayerConfigOptions.CLAIMS_NAME).getValue();
 	}
 
 	@Override

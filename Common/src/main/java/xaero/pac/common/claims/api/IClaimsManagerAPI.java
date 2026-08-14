@@ -173,6 +173,9 @@ public interface IClaimsManagerAPI {
 	 * <p>
 	 * With this method you can specify whether you want party names applied to party-owned claims or to always
 	 * use player names.
+	 * <p>
+	 * This method does not apply dimension-specific names to wilderness or expired claims. Use {@link #getFullName(IPlayerChunkClaimAPI, ResourceLocation, boolean)}
+	 * instead for that.
 	 *
 	 * @param claimState  the claim state, can be null for wilderness
 	 * @param allowPartyNames  whether to apply party names to party-owned claims
@@ -180,5 +183,21 @@ public interface IClaimsManagerAPI {
 	 */
 	@Nonnull
 	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, boolean allowPartyNames);
+
+	/**
+	 * Gets the full display name, with sub-claim names applied, that would be used for a provided claim state and dimension.
+	 * <p>
+	 * The dimension argument only matters when claimState is null (wilderness) or an expired claim.
+	 * <p>
+	 * With this method you can specify whether you want party names applied to party-owned claims or to always
+	 * use player names.
+	 *
+	 * @param claimState  the claim state, can be null for wilderness
+	 * @param dimension  the dimension the claim is in, null when doesn't matter
+	 * @param allowPartyNames  whether to apply party names to party-owned claims
+	 * @return the full display name, not null
+	 */
+	@Nonnull
+	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension, boolean allowPartyNames);
 	
 }

@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
@@ -57,6 +58,7 @@ public class PlayerConfig
 	public final static int MAX_SUB_ID_LENGTH = 16;
 	public final static String SUB_ID_REGEX_PARAMS = "a-zA-Z\\d\\-_";
 	public final static String SUB_ID_REGEX = "[" + SUB_ID_REGEX_PARAMS + "]+";
+	public final static String WILDERNESS_PLAYER_ID_STRING = "wilderness";
 	public final static UUID SERVER_CLAIM_UUID = new UUID(0, 0);
 	public final static GameProfile SERVER_CLAIM_PROFILE = new GameProfile(SERVER_CLAIM_UUID, "[Server]");
 	public final static UUID EXPIRED_CLAIM_UUID = new UUID(0, 1);
@@ -293,15 +295,18 @@ public class PlayerConfig
 
 	@Override
 	public void setDirty(boolean dirty) {
-		if(playerId != null && !this.dirty && dirty)
+		if(!this.dirty && dirty)
 			manager.addToSave(this);
 		this.dirty = dirty;
 	}
 
 	@Override
 	public String getFileName() {
-		if(playerId == null)
+		if(playerId == null) {
+			if(type == PlayerConfigType.WILDERNESS)
+				return WILDERNESS_PLAYER_ID_STRING;
 			return "null";
+		}
 		return playerId.toString();
 	}
 
@@ -317,8 +322,18 @@ public class PlayerConfig
 		return type;
 	}
 
+	public static boolean isValidDimensionSubId(String id){
+		return !id.isEmpty() && id.contains(":") && ResourceLocation.isValidResourceLocation(id);//: check makes sure the id is full
+	}
+
 	public static boolean isValidSubId(String id){
 		return !id.isEmpty() && id.length() <= MAX_SUB_ID_LENGTH && id.matches(PlayerConfig.SUB_ID_REGEX);
+	}
+
+	public boolean checkSubIdValidity(String id){
+		if(type.hasDimensionSubConfigs())
+			return isValidDimensionSubId(id);
+		return isValidSubId(id);
 	}
 
 	public static String makeSubIdValid(String id){
@@ -331,10 +346,14 @@ public class PlayerConfig
 	}
 
 	private boolean isFreeSubIndex(int index){
+		if(type.hasDimensionSubConfigs())
+			return true;
 		return index != -1 && !subIndexToID.containsKey(index);
 	}
 
 	private int getFreeSubConfigIndex(){
+		if(type.hasDimensionSubConfigs())
+			return 0;
 		int result = lastCreatedSubIndex;
 		while(!isFreeSubIndex(++result));
 		return result;
@@ -352,7 +371,7 @@ public class PlayerConfig
 	}
 
 	public PlayerSubConfig<P> createSubConfig(String id, int index, boolean initStorage){
-		if(subConfigIds.contains(id) || !isFreeSubIndex(index) || !isValidSubId(id))
+		if(subConfigIds.contains(id) || !isFreeSubIndex(index) || !checkSubIdValidity(id))
 			return null;
 		if(index > lastCreatedSubIndex || index < 0 && lastCreatedSubIndex >= 0)
 			lastCreatedSubIndex = index;
@@ -365,7 +384,8 @@ public class PlayerConfig
 				.setSubIndex(index)
 				.build();
 		subByID.put(id, subConfig);
-		subIndexToID.put(index, id);
+		if(!type.hasDimensionSubConfigs())
+			subIndexToID.put(index, id);
 		linkedSubConfigs.add(subConfig);
 		addToSubConfigIds(id);
 		if(manager.isLoaded() && initStorage) {
@@ -515,7 +535,7 @@ public class PlayerConfig
 
 	@Override
 	public int getSubConfigLimit() {
-		if(type == PlayerConfigType.SERVER)
+		if(type.isGlobal())
 			return Integer.MAX_VALUE;
 		return ServerConfig.CONFIG.playerSubConfigLimit.get();
 	}

@@ -28,7 +28,6 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -96,7 +95,7 @@ public class ConfigCommandUtil {
 		return inputPlayer;
 	}
 
-	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type, BiFunction<CommandContext<CommandSourceStack>, IServerData<?,?>, UUID> inputPlayerSupplier){
+	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type, BiFunction<CommandContext<CommandSourceStack>, IServerData<?,?>, UUID> inputPlayerSupplier, boolean wordSubId){
 		return (context, builder) -> {
 			ServerPlayer sourcePlayer = null;
 			try {
@@ -125,6 +124,8 @@ public class ConfigCommandUtil {
 				return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 			List<String> subConfigIds = playerConfig.getSubConfigIds();
 			Stream<String> baseStream = subConfigIds.stream();
+			if(!wordSubId)
+				baseStream = baseStream.map(s -> "\"" + s + "\"");
 			if(!lowerCaseInput.isEmpty())
 				baseStream = baseStream.filter(s -> s.toLowerCase().startsWith(lowerCaseInput));
 			return SharedSuggestionProvider.suggest(baseStream.limit(64), builder);
@@ -132,7 +133,7 @@ public class ConfigCommandUtil {
 	}
 
 	public static SuggestionProvider<CommandSourceStack> getSubConfigSuggestionProvider(PlayerConfigType type){
-		return getSubConfigSuggestionProvider(type, null);
+		return getSubConfigSuggestionProvider(type, null, !type.hasDimensionSubConfigs());
 	}
 
 	public static Predicate<CommandSourceStack> getPartyClaimsRequirement(boolean edit){

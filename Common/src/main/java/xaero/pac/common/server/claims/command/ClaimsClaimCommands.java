@@ -434,7 +434,7 @@ public class ClaimsClaimCommands {
 						} catch (CommandSyntaxException e) {
 							return null;
 						}
-					}
+					}, true
 			).getSuggestions(context, builder);
 		};
 	}

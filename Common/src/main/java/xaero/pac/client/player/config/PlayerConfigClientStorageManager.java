@@ -70,6 +70,17 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		this.partyClaimsConfig = partyClaimsConfig;
 	}
 
+	@Override
+	public PlayerConfigClientStorage getGlobalConfigForClaimOwner(UUID claimOwnerId){
+		if(claimOwnerId == null)
+			return getWildernessConfig();
+		if(PlayerConfig.SERVER_CLAIM_UUID.equals(claimOwnerId))
+			return getServerClaimsConfig();
+		if(PlayerConfig.EXPIRED_CLAIM_UUID.equals(claimOwnerId))
+			return getExpiredClaimsConfig();
+		return null;
+	}
+
 	@Nonnull
 	@Override
 	public PlayerConfigClientStorage getServerClaimsConfig() {

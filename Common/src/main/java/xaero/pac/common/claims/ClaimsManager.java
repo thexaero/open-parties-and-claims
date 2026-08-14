@@ -254,8 +254,14 @@ public abstract class ClaimsManager
 	@Nonnull
 	@Override
 	public Component getFullName(IPlayerChunkClaimAPI claimState, boolean allowPartyNames) {
-		String customName = claimState == null ?
-				getWildernessName() :
+		return getFullName(claimState, null, allowPartyNames);
+	}
+
+	@Nonnull
+	@Override
+	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension, boolean allowPartyNames) {
+		String customName = claimUsesDimensionSubConfigs(claimState) ?
+				getDimensionName(claimState, dimension) :
 				getPlayerInfo(claimState.getPlayerId()).getClaimsName(claimState.getSubConfigIndex());
 		boolean hasCustom = customName != null && !customName.isEmpty();
 		if(claimState == null && hasCustom)
@@ -266,8 +272,10 @@ public abstract class ClaimsManager
 		return new TranslatableComponent("gui.xaero_pac_full_title_format", customName, defaultName);
 	}
 
+	public abstract boolean claimUsesDimensionSubConfigs(IPlayerChunkClaimAPI claimState);
+
 	@Nullable
-	public abstract String getWildernessName();
+	public abstract String getDimensionName(IPlayerChunkClaimAPI claimState, ResourceLocation dimension);
 
 	protected MutableComponent constructPlayerClaimName(PCI playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames){
 		//overridden to apply party name instead if necessary

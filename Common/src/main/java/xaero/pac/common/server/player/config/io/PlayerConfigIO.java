@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.config.io;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
@@ -50,6 +51,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import static xaero.pac.common.server.player.config.PlayerConfig.WILDERNESS_PLAYER_ID_STRING;
 
 public final class PlayerConfigIO
 <
@@ -152,7 +155,7 @@ public final class PlayerConfigIO
 			saveFile(manager.getWildernessConfig(), wildernessConfigPathConfig.getPath());
 		if(manager.getServerClaimConfig().isDirty())
 			saveFile(manager.getServerClaimConfig(), serverClaimConfigPathConfig.getPath());
-		saveGlobalConfigSubConfigs(manager.getServerClaimConfig());
+		saveGlobalConfigSubConfigs(manager.getServerClaimConfig());//no idea why this is here but will keep it just in case
 		if(manager.getExpiredClaimConfig().isDirty())
 			saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPathConfig.getPath());
 		return super.save();
@@ -188,11 +191,25 @@ public final class PlayerConfigIO
 		boolean isSub = filePathConfig.getPath() == configSubConfigPath;
 		if(!isSub)
 			return new PlayerConfigDeserializationInfo(UUID.fromString(fileNameNoExtension), PlayerConfigType.PLAYER, null, -1);
-		UUID playerId = UUID.fromString(file.getParent().getFileName().toString());
-		String[] fileNameArgs = fileNameNoExtension.split("\\$");
-		String subId = fileNameArgs[0];
-		String subIndexString = fileNameArgs[1];
-		int subIndex = Integer.parseInt(subIndexString);
+		String playerIdString = file.getParent().getFileName().toString();
+		UUID playerId = playerIdString.equals(WILDERNESS_PLAYER_ID_STRING) ? null : UUID.fromString(playerIdString);
+		PlayerConfig<?> mainConfig = manager.getConfig(playerId); //should be loaded by now because sub-configs are loaded last
+		if(!mainConfig.getType().supportsSubConfigs())
+			throw new IllegalArgumentException("A player/claims config that doesn't support sub-configs has sub-configs in the data!");
+		String subId;
+		int subIndex;
+		if(!mainConfig.getType().hasDimensionSubConfigs()) {
+			String[] fileNameArgs = fileNameNoExtension.split("\\$");
+			subId = fileNameArgs[0];
+			String subIndexString = fileNameArgs[1];
+			subIndex = Integer.parseInt(subIndexString);
+		} else {
+			ResourceLocation subConfigDim = fileIOHelper.convertFileNameToDimension(fileNameNoExtension, false);
+			if(subConfigDim == null)
+				throw new IllegalArgumentException("The " + mainConfig.getType() + " config has a sub-config with an ID that is not properly formatted: " + fileNameNoExtension);
+			subId = subConfigDim.toString();
+			subIndex = 0;
+		}
 		if(Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID))
 			return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.SERVER, subId, subIndex);
 		return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.PLAYER, subId, subIndex);
@@ -202,7 +219,12 @@ public final class PlayerConfigIO
 	protected Path getFilePath(PlayerConfig<P> object, String fileName) {
 		if(object instanceof PlayerSubConfig subConfig) {
 			Path folder = configSubConfigPath.resolve(fileName);
-			return folder.resolve(subConfig.getSubId() + "$" + subConfig.getSubIndex() + this.fileExtension);
+			String subIdBasedFileName;
+			if(object.getType().hasDimensionSubConfigs())
+				subIdBasedFileName = fileIOHelper.convertDimensionToFileName(new ResourceLocation(subConfig.getSubId()), false);
+			else
+				subIdBasedFileName = subConfig.getSubId() + "$" + subConfig.getSubIndex();
+			return folder.resolve(subIdBasedFileName + this.fileExtension);
 		}
 		return configsPath.resolve(fileName + this.fileExtension);
 	}

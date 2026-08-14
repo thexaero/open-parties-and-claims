@@ -19,8 +19,10 @@
 package xaero.pac.common.server.player.data;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -69,6 +71,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private boolean claimsNonallyMode;
 	private ClaimingMode claimingMode = null;
 	private IPlayerChunkClaim lastClaimCheck;
+	private ResourceKey<Level> lastClaimCheckDim;
 	private Map<IClaimingModeAPI, ClaimingModeLimits> lastLimitsSync;
 	private long lastClaimLimitsCheckTime;
 	private boolean shouldResyncPlayerConfigs;
@@ -462,6 +465,14 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public UUID getPartiesImpersonatedPlayerId() {
 		return partiesImpersonatedPlayerProfile == null ? null : partiesImpersonatedPlayerProfile.getId();
+	}
+
+	public void setLastClaimCheckDim(ResourceKey<Level> lastClaimCheckDim) {
+		this.lastClaimCheckDim = lastClaimCheckDim;
+	}
+
+	public ResourceKey<Level> getLastClaimCheckDim() {
+		return lastClaimCheckDim;
 	}
 
 }

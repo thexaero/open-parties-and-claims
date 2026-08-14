@@ -88,43 +88,30 @@ public abstract class ConfigGroupCommand {
 	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
+		for (PlayerConfigType configType : PlayerConfigType.values()) {
+			Predicate<CommandSourceStack> prefixRequirement = configType.getWriteCommandRequirement();
+			Predicate<CommandSourceStack> mainRequirement = s -> true;
+			if(configType.readAndWriteReqsDiffer()) {
+				prefixRequirement = configType.getReadCommandRequirement();
+				mainRequirement = configType.getWriteCommandRequirement();
+			}
+
+			LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(prefixRequirement).then(Commands.literal("player-groups")
+					.requires(mainRequirement)
+					.then(getMainCommandPart(configType))));
+			dispatcher.register(command);
+		}
+
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
 
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
-				.then(Commands.literal("player-config").then(Commands.literal("player-groups")
-						.then(getMainCommandPart(regularExecutor, PlayerConfigType.PLAYER))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
 				.then(Commands.literal("for")
-						.requires(sourceStack -> sourceStack.hasPermission(2))
-						.then(Commands.argument("player", GameProfileArgument.gameProfile()).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(regularExecutor, PlayerConfigType.PLAYER))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.DEFAULT_PLAYER)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.SERVER))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.EXPIRED))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2)).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.WILDERNESS))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(getPartyClaimsRequirement(false)).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.PARTY_CLAIMS).requires(getPartyClaimsRequirement(true)))));
+				.requires(sourceStack -> sourceStack.hasPermission(2))
+				.then(Commands.argument("player", GameProfileArgument.gameProfile()).then(Commands.literal("player-groups")
+				.then(getMainCommandPart(regularExecutor, PlayerConfigType.PLAYER))))));
 		dispatcher.register(command);
 	}
 

@@ -42,7 +42,6 @@ import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
-import xaero.pac.common.server.claims.command.ClaimsClaimCommands;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
@@ -55,38 +54,29 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
-import static xaero.pac.common.server.command.ConfigCommandUtil.getPartyClaimsRequirement;
 
 public class ConfigSubListCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
+		for (PlayerConfigType configType : PlayerConfigType.values()) {
+			if(!configType.supportsSubConfigs())
+				continue;
+			Predicate<CommandSourceStack> requirement = configType.getReadCommandRequirement();
+			Command<CommandSourceStack> executor = getExecutor(configType);
+			LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(requirement)
+					.then(getMainCommandPart(executor)));
+			dispatcher.register(command);
+		}
+
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
-		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER);
-		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS);
-
-		Predicate<CommandSourceStack> serverRequirement = ClaimsClaimCommands.getServerClaimCommandRequirement();
-		Predicate<CommandSourceStack> partyRequirement = getPartyClaimsRequirement(false);
-
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
-				.then(Commands.literal("player-config")
-				.then(getMainCommandPart(regularExecutor)));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
 				.then(Commands.literal("for")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(getMainCommandPart(regularExecutor)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(serverRequirement)
-				.then(getMainCommandPart(serverExecutor)));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(partyRequirement)
-				.then(getMainCommandPart(partyExecutor)));
 		dispatcher.register(command);
 	}
 

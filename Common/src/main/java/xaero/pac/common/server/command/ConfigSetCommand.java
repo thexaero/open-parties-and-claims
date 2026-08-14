@@ -138,11 +138,8 @@ public class ConfigSetCommand {
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		SuggestionProvider<CommandSourceStack> optionSuggestor = ConfigGetOrHelpCommand.getOptionSuggestor();
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
-		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
-		SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PARTY_CLAIMS);
 		for (Type commandType : Type.values()) {
-			registerSetCommands(commandType, dispatcher, optionSuggestor, playerSubConfigSuggestionProvider,
-					serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider);
+			registerSetCommands(commandType, dispatcher, optionSuggestor, playerSubConfigSuggestionProvider);
 		}
 	}
 
@@ -150,43 +147,49 @@ public class ConfigSetCommand {
 			Type commandType,
 			CommandDispatcher<CommandSourceStack> dispatcher,
 			SuggestionProvider<CommandSourceStack> optionSuggestor,
-			SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider,
-			SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider,
-			SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider
+			SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider
 	){
 		String literalPrefix = commandType.literal;
+
+		for (PlayerConfigType configType : PlayerConfigType.values()) {
+			Command<CommandSourceStack> executor = getExecutor(configType, commandType);
+			SuggestionProvider<CommandSourceStack> valueSuggestor = getValueSuggestor(configType);
+			Predicate<CommandSourceStack> prefixRequirement = configType.getWriteCommandRequirement();
+			Predicate<CommandSourceStack> mainRequirement = s -> true;
+			if(configType.readAndWriteReqsDiffer()) {
+				prefixRequirement = configType.getReadCommandRequirement();
+				mainRequirement = configType.getWriteCommandRequirement();
+			}
+
+			LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(prefixRequirement)
+					.then(Commands.literal(literalPrefix).requires(mainRequirement)
+					.then(addValueArgumentIfNeeded(commandType, executor, valueSuggestor, Commands.argument("key", StringArgumentType.word())
+					.suggests(optionSuggestor)))));
+			dispatcher.register(command);
+
+			if(!configType.supportsSubConfigs())
+				continue;
+			SuggestionProvider<CommandSourceStack> subConfigSuggestionProvider = getSubConfigSuggestionProvider(configType);
+			//sub version of this ^
+			command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(prefixRequirement)
+					.then(Commands.literal("sub")
+					.then(Commands.literal(literalPrefix).requires(mainRequirement)
+					.then(Commands.argument("sub-id", configType.hasDimensionSubConfigs() ? StringArgumentType.string() : StringArgumentType.word())
+					.suggests(subConfigSuggestionProvider)
+					.then(addValueArgumentIfNeeded(commandType, executor, valueSuggestor, Commands.argument("key", StringArgumentType.word())
+					.suggests(optionSuggestor)))))));
+			dispatcher.register(command);
+		}
+
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER, commandType);
-		Command<CommandSourceStack> defaultExecutor = getExecutor(PlayerConfigType.DEFAULT_PLAYER, commandType);
-		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER, commandType);
-		Command<CommandSourceStack> expiredExecutor = getExecutor(PlayerConfigType.EXPIRED, commandType);
-		Command<CommandSourceStack> wildernessExecutor = getExecutor(PlayerConfigType.WILDERNESS, commandType);
-		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS, commandType);
 		SuggestionProvider<CommandSourceStack> regularValueSuggestor = getValueSuggestor(PlayerConfigType.PLAYER);
-		SuggestionProvider<CommandSourceStack> defaultValueSuggestor = getValueSuggestor(PlayerConfigType.DEFAULT_PLAYER);
-		SuggestionProvider<CommandSourceStack> serverValueSuggestor = getValueSuggestor(PlayerConfigType.SERVER);
-		SuggestionProvider<CommandSourceStack> expiredValueSuggestor = getValueSuggestor(PlayerConfigType.EXPIRED);
-		SuggestionProvider<CommandSourceStack> wildernessValueSuggestor = getValueSuggestor(PlayerConfigType.WILDERNESS);
-		SuggestionProvider<CommandSourceStack> partyValueSuggestor = getValueSuggestor(PlayerConfigType.PARTY_CLAIMS);
 
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
-				.then(Commands.literal(literalPrefix)
-				.requires(sourceStack -> true)
-				.then(addValueArgumentIfNeeded(commandType, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))));
-		dispatcher.register(command);
-
-		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
-				.then(Commands.literal("sub")
-				.then(Commands.literal(literalPrefix)
-				.requires(sourceStack -> true)
-				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests(playerSubConfigSuggestionProvider)
-				.then(addValueArgumentIfNeeded(commandType, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
+		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
 				.then(Commands.literal("for")
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.requires(sourceStack -> sourceStack.hasPermission(2))
@@ -196,7 +199,8 @@ public class ConfigSetCommand {
 		dispatcher.register(command);
 
 		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
 				.then(Commands.literal("for")
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.requires(sourceStack -> sourceStack.hasPermission(2))
@@ -206,63 +210,6 @@ public class ConfigSetCommand {
 				.suggests(playerSubConfigSuggestionProvider)
 				.then(addValueArgumentIfNeeded(commandType, regularExecutor, regularValueSuggestor, Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)))))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(commandType, defaultExecutor, defaultValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(commandType, serverExecutor, serverValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))));
-		dispatcher.register(command);
-
-		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal("sub")
-				.then(Commands.literal(literalPrefix)
-				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests(serverSubConfigSuggestionProvider)
-				.then(addValueArgumentIfNeeded(commandType, serverExecutor, serverValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(commandType, expiredExecutor, expiredValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix)
-				.then(addValueArgumentIfNeeded(commandType, wildernessExecutor, wildernessValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(getPartyClaimsRequirement(false))
-				.then(Commands.literal(literalPrefix).requires(getPartyClaimsRequirement(true))
-				.then(addValueArgumentIfNeeded(commandType, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))));
-		dispatcher.register(command);
-
-		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(getPartyClaimsRequirement(false))
-				.then(Commands.literal("sub")
-				.then(Commands.literal(literalPrefix).requires(getPartyClaimsRequirement(true))
-				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests(partySubConfigSuggestionProvider)
-				.then(addValueArgumentIfNeeded(commandType, partyExecutor, partyValueSuggestor, Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)))))));
 		dispatcher.register(command);
 	}
 

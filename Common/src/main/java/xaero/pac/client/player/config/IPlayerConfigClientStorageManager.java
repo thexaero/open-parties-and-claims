@@ -25,6 +25,7 @@ import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.UUID;
 
 public interface IPlayerConfigClientStorageManager<CS extends IPlayerConfigClientStorage<?>> extends IPlayerConfigClientStorageManagerAPI {
 
@@ -63,4 +64,5 @@ public interface IPlayerConfigClientStorageManager<CS extends IPlayerConfigClien
 	void setConfigurableOptions(List<String> playerConfigurableOptions, List<String> opConfigurableOptions);
 	boolean isOptionPlayerConfigurable(IPlayerConfigOptionSpecAPI<?> option);
 	boolean isOptionOpConfigurable(IPlayerConfigOptionSpecAPI<?> option);
+	public CS getGlobalConfigForClaimOwner(UUID claimOwnerId);
 }

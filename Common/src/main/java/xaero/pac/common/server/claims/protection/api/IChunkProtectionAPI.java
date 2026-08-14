@@ -215,6 +215,9 @@ public interface IChunkProtectionAPI {
 	/**
 	 * Gets the player/claim config used for a specified claim state.
 	 * <p>
+	 * This method does not return dimension-based wilderness/expired sub-configs. Use {@link #getConfig(IPlayerChunkClaimAPI, ResourceLocation)}
+	 * instead for that.
+	 * <p>
 	 * You can fetch claim states of chunks from the {@link xaero.pac.common.server.claims.api.IServerClaimsManagerAPI}.
 	 *
 	 * @param claim  the claim state to get the used config of, null for wilderness
@@ -222,6 +225,20 @@ public interface IChunkProtectionAPI {
 	 */
 	@Nonnull
 	IPlayerConfigAPI getConfig(@Nullable IPlayerChunkClaimAPI claim);
+
+	/**
+	 * Gets the player/claim config used for a specified claim state and dimension.
+	 * <p>
+	 * The dimension only matters if claim is null (wilderness) or an expired claim.
+	 * <p>
+	 * You can fetch claim states of chunks from the {@link xaero.pac.common.server.claims.api.IServerClaimsManagerAPI}.
+	 *
+	 * @param claim  the claim state to get the used config of, null for wilderness
+	 * @param dimension  the dimension the claim is in, null if it doesn't matter
+	 * @return the player config used by the claim
+	 */
+	@Nonnull
+	IPlayerConfigAPI getConfig(@Nullable IPlayerChunkClaimAPI claim, @Nullable ResourceLocation dimension);
 
 	/**
 	 * Directly checks whether a specified entity has full access to a claim with the specified config.

@@ -374,6 +374,8 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 			syncSubExistence(player, (PlayerSubConfig<?>) subConfig, create, packetOtherPlayer, packetNotOtherPlayer, packetPartyClaims);
 		else
 			forAllRelevantClients(subConfig, p -> syncSubExistence(p, (PlayerSubConfig<?>) subConfig, create, packetOtherPlayer, packetNotOtherPlayer, packetPartyClaims));
+		if(subConfig.getPlayerId() == null || subConfig.getType().hasDimensionSubConfigs())
+			return;
 		if(create)
 			configManager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(subConfig);
 		else
