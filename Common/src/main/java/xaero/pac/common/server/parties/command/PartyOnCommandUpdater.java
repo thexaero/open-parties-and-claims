@@ -36,6 +36,7 @@ import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -72,14 +73,16 @@ public class PartyOnCommandUpdater {
 			memberPlayer.sendMessage(memberMessage, commandCaller.getUUID());
 		};
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-			M memberInfo = party.getMemberInfo(player.getUUID());
-			if(memberInfo != null || player == commandCaller) {
-				if(player == commandCaller || shouldUpdateCommandsForMember.test(memberInfo))
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+			UUID effectivePlayerId = playerData.getPartiesImpersonatedPlayerId() != null ?
+					playerData.getPartiesImpersonatedPlayerId() : player.getUUID();
+			M memberInfo = party.getMemberInfo(effectivePlayerId);
+			if(memberInfo != null) {
+				if(shouldUpdateCommandsForMember.test(memberInfo))
 					serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 				messageSender.accept(player);
 				continue;
 			}
-			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
 			if(playerData.isPartiesAdminMode())
 				messageSender.accept(player);
 		}
