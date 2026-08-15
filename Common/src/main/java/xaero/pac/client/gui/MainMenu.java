@@ -266,14 +266,13 @@ public class MainMenu extends XPACScreen {
 		serverHasPartiesEnabled = mainCap.getClientWorldData().serverHasPartiesEnabled();
 		aboutPartyButton.active = serverHasMod && OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null;
 		
-		claimButton.active = forceloadButton.active = false;
+		forceloadButton.active = false;
 		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		if(serverHasMod && !claimsManager.isLoading()) {
 			IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 			boolean adminMode = claimsManager.isAdminMode();
 			IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
 			UUID claimTargetUUID = potentialClaimReflection == null ? null : potentialClaimReflection.getPlayerId();
-			claimButton.active = adminMode || currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID);
 			claimButton.setMessage(wouldClaim(currentClaim) ? CLAIM : UNCLAIM);
 			
 			forceloadButton.active = currentClaim != null && (adminMode || currentClaim.getPlayerId().equals(claimTargetUUID));
