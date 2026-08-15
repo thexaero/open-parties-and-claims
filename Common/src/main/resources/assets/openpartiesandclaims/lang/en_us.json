@@ -638,5 +638,6 @@
 	"gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon" : "The requested claiming action was interrupted by an addon.",
 	"gui.xaero_claims_claim_action_forbidden_by_addon_reason" : "The requested claiming action was prevented for (a) chunk(s) by an addon. Reason: %1$s",
 	"gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon_reason" : "The requested claiming action was interrupted by an addon. Reason: %1$s",
-	"gui.xaero_claims_claim_action_forbidden_by_addon_reasons" : "Reasons provided by the addon(s):"
+	"gui.xaero_claims_claim_action_forbidden_by_addon_reasons" : "Reasons provided by the addon(s):",
+	"gui.xaero_claims_claim_cant_touch_other_claims" : "Claims with different owners are not allowed to touch as configured by the server config!"
 }

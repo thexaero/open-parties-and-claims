@@ -195,6 +195,9 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		/** The claiming action was interruptingly forbidden by an addon */
 		ADDON_INTERRUPTS(new TranslatableComponent("gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon").withStyle(ChatFormatting.RED), false, true, true),
 
+		/** The claiming action was interruptingly forbidden by an addon */
+		CANT_TOUCH_OTHER(new TranslatableComponent("gui.xaero_claims_claim_cant_touch_other_claims").withStyle(ChatFormatting.RED), false, true, false),
+
 		/** Successfully unforceloaded a chunk */
 		SUCCESSFUL_UNFORCELOAD(new TranslatableComponent("gui.xaero_claims_unforceloaded"), true, false, false),
 

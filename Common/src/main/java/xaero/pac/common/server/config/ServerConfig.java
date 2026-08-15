@@ -110,6 +110,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue claimBonusForPartyOwner;
 	public final ForgeConfigSpec.IntValue forceloadBonusForPartyOwner;
 	public final ForgeConfigSpec.IntValue overLimitClaimAccessCooldown;
+	public final ForgeConfigSpec.BooleanValue allowTouchingClaims;
 
 	private ServerConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -300,6 +301,17 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_claims_forceload_bonus_for_party_owner")
 			.worldRestart()
 			.defineInRange("forceloadBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
+
+		allowTouchingClaims = builder
+			.comment(
+					"""
+					Whether players should be able to claim chunks that are directly next to claimed chunks owned by another player/party.
+					Disallowing it can prevent players from doing so without realizing that chunks next to claims can also be partially protected,
+					e.g. from item use and mob griefing, making them not ideal for some purposes."""
+			)
+			.translation("gui.xaero_pac_config_allow_touching_claims")
+			.worldRestart()
+			.define("allowTouchingClaims", true);
 
 		overLimitClaimAccessCooldown = builder
 			.comment("""

@@ -245,6 +245,16 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			PlayerChunkClaim claim = new PlayerChunkClaim(playerId, subConfigIndex, forceLoaded, 0);
 			if(Objects.equals(claim, currentClaim))
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
+			if(!force && !isServer && !ServerConfig.CONFIG.allowTouchingClaims.get())
+				for (int i = -1; i < 2; i++) {
+					for (int j = -1; j < 2; j++) {
+						if(i == 0 && j == 0)
+							continue;
+						PlayerChunkClaim neighborClaim = get(dimension, x + i, z + j);
+						if(neighborClaim != null && !neighborClaim.getPlayerId().equals(playerId))
+							return new ClaimResult<>(currentClaim, ClaimResult.Type.CANT_TOUCH_OTHER);
+					}
+				}
 			PlayerChunkClaim actualClaim = claim(dimension, claim.getPlayerId(), subConfigIndex, x, z, claim.isForceloadable());
 			actionListenerManager.handleSuccessfulClaimingAction(playerId, dimension, x, z, action, this, server);
 			return new ClaimResult<>(actualClaim, action.getSuccessType());
