@@ -307,7 +307,8 @@ public class ServerConfig {
 					"""
 					Whether players should be able to claim chunks that are directly next to claimed chunks owned by another player/party.
 					Disallowing it can prevent players from doing so without realizing that chunks next to claims can also be partially protected,
-					e.g. from item use and mob griefing, making them not ideal for some purposes."""
+					e.g. from item use and mob griefing, making them not ideal for some purposes.
+					Only affects claiming wilderness, so reclaimable claims can still work."""
 			)
 			.translation("gui.xaero_pac_config_allow_touching_claims")
 			.worldRestart()
