@@ -223,16 +223,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		}
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		boolean claimCountUnaffected = false;
-		if(currentClaim != null) {
+		if(currentClaim != null)
 			claimCountUnaffected = Objects.equals(currentClaim.getPlayerId(), playerId);
-			if(!force && !claimCountUnaffected) {
-				if(!canReclaim(currentClaim, playerId, dimension))
-					return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
-			}
-		} else {
-			if(!canReclaim(null, playerId, dimension))
-				return new ClaimResult<>(null, ClaimResult.Type.DIMENSION_NOT_RECLAIMABLE);
-		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(!force && playerClaimInfo.isTransferInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.TRANSFER_IN_PROGRESS);
@@ -246,6 +238,10 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		}
 		boolean withinLimit = force || claimCountUnaffected || isServer || claimCount < claimLimit;
 		if(withinLimit) {
+			if(!claimCountUnaffected && !force && !canReclaim(currentClaim, playerId, dimension)){
+				return new ClaimResult<>(currentClaim, currentClaim == null ?
+						ClaimResult.Type.DIMENSION_NOT_RECLAIMABLE : ClaimResult.Type.ALREADY_CLAIMED);
+			}
 			PlayerChunkClaim claim = new PlayerChunkClaim(playerId, subConfigIndex, forceLoaded, 0);
 			if(Objects.equals(claim, currentClaim))
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
