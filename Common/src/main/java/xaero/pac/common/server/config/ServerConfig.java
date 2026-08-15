@@ -974,6 +974,7 @@ public class ServerConfig {
 							"claims.protection.exceptions.spawnersFriendly",
 							"claims.protection.exceptions.projectileHitHostileSpawn",
 							"claims.protection.exceptions.projectileHitFriendlySpawn",
+							"claims.protection.exceptions.reclaimable",
 							"parties.name",
 							"parties.shareLocationWithParty",
 							"parties.shareLocationWithMutualAllyParties",

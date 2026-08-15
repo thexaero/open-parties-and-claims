@@ -25,6 +25,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.platform.Services;
+import xaero.pac.common.player.config.PlayerConfigConstants;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.io.FileIOHelper;
 import xaero.pac.common.server.io.FilePathConfig;
@@ -137,8 +138,10 @@ public final class PlayerConfigIO
 			CommentedConfig storage = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
 			manager.getPlayerConfigSpec().correct(storage);
 			config.setStorage(storage);
-			if(filePathConfig == wildernessConfigPathConfig)
+			if(filePathConfig == wildernessConfigPathConfig) {
 				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
+				config.tryToSet(PlayerConfigOptions.CLAIM_EXCEPTION_RECLAIMABLE, PlayerConfigConstants.EVERYONE_EXCEPTION_ID);
+			}
 			tryLoadingCustomGroups(config);
 			resultConsumer.accept(config);
 		}

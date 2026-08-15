@@ -54,6 +54,8 @@ import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpira
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
+import xaero.pac.common.server.claims.protection.ChunkProtection;
+import xaero.pac.common.server.claims.protection.cache.TickCachedPlayerGroupCheck;
 import xaero.pac.common.server.claims.protection.override.ChunkAccessOverriderManager;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.config.ServerConfig;
@@ -84,6 +86,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	private final LinkedChain<ServerClaimStateHolder> linkedClaimStates;
 	private final ClaimActionListenerManager actionListenerManager;
 	private final ChunkAccessOverriderManager chunkAccessOverriderManager;
+	private final TickCachedPlayerGroupCheck tickCachedReclaimabilityCheck;
+	private ChunkProtection<ServerClaimsManager> chunkProtection;
 	private boolean loaded;
 
 	protected ServerClaimsManager(
@@ -101,7 +105,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			PlayerPartySystemManager partySystemManager,
 			LinkedChain<ServerClaimStateHolder> linkedClaimStates,
 			ClaimActionListenerManager actionListenerManager,
-			ChunkAccessOverriderManager chunkAccessOverriderManager
+			ChunkAccessOverriderManager chunkAccessOverriderManager,
+			TickCachedPlayerGroupCheck tickCachedReclaimabilityCheck
 	) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.server = server;
@@ -113,6 +118,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		this.linkedClaimStates = linkedClaimStates;
 		this.actionListenerManager = actionListenerManager;
 		this.chunkAccessOverriderManager = chunkAccessOverriderManager;
+		this.tickCachedReclaimabilityCheck = tickCachedReclaimabilityCheck;
 	}
 	
 	public void setIo(PlayerClaimInfoManagerIO<?> io) {
@@ -122,7 +128,13 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public void setExpirationHandler(ServerPlayerClaimsExpirationHandler expirationHandler) {
 		this.playerClaimInfoManager.setExpirationHandler(expirationHandler);
 	}
-	
+
+	public void setChunkProtection(ChunkProtection<ServerClaimsManager> chunkProtection) {
+		if(this.chunkProtection != null)
+			throw new IllegalStateException();
+		this.chunkProtection = chunkProtection;
+	}
+
 	public ServerPlayerClaimsExpirationHandler.Builder beginExpirationHandlerBuilder() {
 		return ServerPlayerClaimsExpirationHandler.Builder.begin().setManager(playerClaimInfoManager).setClaimsManager(this);
 	}
@@ -190,6 +202,10 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			claimsManagerTracker.onChunkChange(dimension, x, z, null);
 	}
 
+	private boolean canReclaim(PlayerChunkClaim currentClaim, UUID playerId, ResourceLocation dimension) {
+		return tickCachedReclaimabilityCheck.checkGroup(configManager, chunkProtection, null, playerId, currentClaim, dimension);
+	}
+
 	@Nonnull
 	@Override
 	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean force, boolean isServer, int claimLimit, ClaimingAction action) {
@@ -209,8 +225,13 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		boolean claimCountUnaffected = false;
 		if(currentClaim != null) {
 			claimCountUnaffected = Objects.equals(currentClaim.getPlayerId(), playerId);
-			if(!force && !claimCountUnaffected)
-				return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
+			if(!force && !claimCountUnaffected) {
+				if(!canReclaim(currentClaim, playerId, dimension))
+					return new ClaimResult<>(currentClaim, ClaimResult.Type.ALREADY_CLAIMED);
+			}
+		} else {
+			if(!canReclaim(null, playerId, dimension))
+				return new ClaimResult<>(null, ClaimResult.Type.DIMENSION_NOT_RECLAIMABLE);
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(!force && playerClaimInfo.isTransferInProgress())
@@ -611,6 +632,11 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return chunkAccessOverriderManager;
 	}
 
+	@Override
+	public void onServerTick(){
+		tickCachedReclaimabilityCheck.onServerTick();
+	}
+
 	public final static class Builder extends ClaimsManager.Builder<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder, Builder>{
 
 		private MinecraftServer server;
@@ -705,11 +731,14 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			claimStates.values().forEach(linkedClaimStates::add);
 			ClaimActionListenerManager actionListenerManager = ClaimActionListenerManager.Builder.begin().build();
 			ChunkAccessOverriderManager chunkAccessOverriderManager = ChunkAccessOverriderManager.Builder.begin().build();
+			TickCachedPlayerGroupCheck tickCachedReclaimabilityCheck = TickCachedPlayerGroupCheck.Builder.begin()
+					.setOption(PlayerConfigOptions.CLAIM_EXCEPTION_RECLAIMABLE)
+					.build();
 			return new ServerClaimsManager(
 					server, playerClaimInfoManager, configManager, dimensions,
 					claimsManagerSynchronizer, indexToClaimState, claimStates, claimsManagerTracker,
 					areaClaimActionTaskHandler, claimReplaceTaskHandler, permissionHandler, partySystemManager,
-					linkedClaimStates, actionListenerManager, chunkAccessOverriderManager
+					linkedClaimStates, actionListenerManager, chunkAccessOverriderManager, tickCachedReclaimabilityCheck
 			);
 		}
 		

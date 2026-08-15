@@ -300,6 +300,7 @@ public class ServerDataInitializer {
 					.setDroppedItemAccessEntityGroups(droppedItemAccessEntityGroups)
 					.build();
 			chunkProtection.updateTagExceptions(server);
+			serverClaimsManager.setChunkProtection(chunkProtection);
 			ServerStartingCallback serverLoadCallback = new ServerStartingCallback(playerClaimInfoManagerIO);
 
 			ServerData serverData = new ServerData(server, partyManager, partyManagerIO, playerPartyAssigner, partyMemberInfoUpdater, 

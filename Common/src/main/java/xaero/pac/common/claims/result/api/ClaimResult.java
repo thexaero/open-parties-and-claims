@@ -123,6 +123,9 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		/** The dimension is unclaimable */
 		UNCLAIMABLE_DIMENSION(new TranslatableComponent("gui.xaero_claims_claim_dimension_unclaimable").withStyle(ChatFormatting.RED), false, true, false),
 
+		/** The claiming player is not part of the player group that the Wilderness "Reclaimable By" option is set to */
+		DIMENSION_NOT_RECLAIMABLE(new TranslatableComponent("gui.xaero_claims_claim_dimension_not_reclaimable").withStyle(ChatFormatting.RED), false, true, false),
+
 		/** The chunk isn't claimed by who is trying to (un)forceload it */
 		NOT_CLAIMED_BY_USER_FORCELOAD(new TranslatableComponent("gui.xaero_claims_forceload_not_yours").withStyle(ChatFormatting.RED), false, true, false),
 

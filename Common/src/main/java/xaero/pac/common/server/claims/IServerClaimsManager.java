@@ -118,4 +118,6 @@ public interface IServerClaimsManager
 	@Override
 	ChunkAccessOverriderManager getChunkAccessOverriderManager();
 
+	void onServerTick();
+
 }
