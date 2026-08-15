@@ -24,7 +24,7 @@ import net.minecraft.commands.Commands;
 
 public class PartyCommandRegister {
 	
-	public static final String COMMAND_PREFIX = "openpac-parties";
+	public static final String COMMAND_PREFIX = "oparties";
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		CommandRequirementProvider commandRequirementProvider = new CommandRequirementProvider();
