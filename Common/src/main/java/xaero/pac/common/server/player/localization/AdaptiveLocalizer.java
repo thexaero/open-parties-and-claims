@@ -21,6 +21,7 @@ package xaero.pac.common.server.player.localization;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
@@ -65,9 +66,12 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 	}
 
 	private MutableComponent getServerLocalizedComponent(String key, Object... args){
-		for(int i = 0; i < args.length; i++)
-			if(args[i] instanceof TranslatableComponent translatableComponent)
+		for(int i = 0; i < args.length; i++) {
+			if (args[i] instanceof ResourceLocation)
+				throw new IllegalArgumentException("ResourceLocation in translation arguments will cause problems!");
+			if (args[i] instanceof TranslatableComponent translatableComponent)
 				args[i] = getServerLocalizedComponent(translatableComponent.getKey(), translatableComponent.getArgs());
+		}
 		return Component.translatable(defaultTranslations.getOrDefault(key, key), args);
 	}
 
