@@ -611,7 +611,7 @@ public abstract class CommonEvents {
 			partySystemManagerAPI.register("ftb_teams", modMain.getModSupport().getFTBTeamsSupport().getPartySystem());
 		if(modMain.getModSupport().ARGONAUTS) {
 			partySystemManagerAPI.register("argonauts", modMain.getModSupport().getArgonautsSupport().getPartySystem());
-			partySystemManagerAPI.register("argonauts_guilds", modMain.getModSupport().getArgonautsSupport().createGuildSystem(server));
+			partySystemManagerAPI.register("argonauts_guilds", modMain.getModSupport().getArgonautsSupport().createGuildSystem(context.getServer()));
 		}
 	}
 

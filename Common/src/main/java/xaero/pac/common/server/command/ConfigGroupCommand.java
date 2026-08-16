@@ -213,7 +213,7 @@ public abstract class ConfigGroupCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, result.right().get().getCommandMessage()));
 				return 0;
 			}
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, result.left().get()), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, result.left().get()), true);
 			return 1;
 		};
 	}

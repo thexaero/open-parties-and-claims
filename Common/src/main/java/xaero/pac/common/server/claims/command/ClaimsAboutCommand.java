@@ -105,15 +105,15 @@ public class ClaimsAboutCommand {
 			claimName += " (" + subId + ")";
 			Component claimNameComponent = Component.literal(claimName).withStyle(s -> s.withColor(0xFFAAAAAA));
 			Component forceloadCountNumbers = Component.literal(playerInfo.getForceloadCount() + " / " + forceloadLimitString).withStyle(s -> s.withColor(0xFFAAAAAA));
-			context.getSource().sendSuccess(Component.literal(""), true);
-			context.getSource().sendSuccess(Component.literal("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), true);
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claim_count", claimCountNumbers), true);
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_forceload_count", forceloadCountNumbers), true);
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_name", claimNameComponent), true);
+			context.getSource().sendSuccess(() -> Component.literal(""), true);
+			context.getSource().sendSuccess(() -> Component.literal("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_pac_ui_claim_count", claimCountNumbers), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_pac_ui_forceload_count", forceloadCountNumbers), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_pac_ui_claims_name", claimNameComponent), true);
 			int claimColor = usedSubConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
 			Component colorComponent = Component.literal(Integer.toUnsignedString(claimColor, 16).toUpperCase()).withStyle(s -> s.withColor(claimColor));
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_color", colorComponent), true);
-			context.getSource().sendSuccess(Component.literal("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_pac_ui_claims_color", colorComponent), true);
+			context.getSource().sendSuccess(() -> Component.literal("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), true);
 			return 1;
 		};
 		

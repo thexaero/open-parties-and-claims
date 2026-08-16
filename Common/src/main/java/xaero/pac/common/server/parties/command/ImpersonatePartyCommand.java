@@ -88,10 +88,10 @@ public class ImpersonatePartyCommand {
 			}
 			casterPlayerData.setPartiesImpersonatedPlayerProfile(disabling ? null : targetProfile);
 			if(disabling)
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_impersonate_disabled"), true);
+				context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_parties_impersonate_disabled"), true);
 			else {
 				Component targetName = Component.literal(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_impersonate_enabled", targetName), true);
+				context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_parties_impersonate_enabled", targetName), true);
 			}
 			serverData.getServer().getCommands().sendCommands(casterPlayer);
 			return 1;

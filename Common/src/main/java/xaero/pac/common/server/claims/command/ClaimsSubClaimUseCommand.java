@@ -66,7 +66,7 @@ public class ClaimsSubClaimUseCommand extends AbstractClaimSubClaimCommand {
 				return 0;
 			}
 		}
-		context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_use", inputSubId, effectiveMode.getId()), true);
+		context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_claims_sub_use", inputSubId, effectiveMode.getId()), true);
 		return 1;
 	}
 

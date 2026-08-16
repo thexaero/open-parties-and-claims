@@ -60,7 +60,7 @@ public class ClaimsAreaClaimActionInterruptCommand extends AbstractClaimModeCont
 		IServerPlayerClaimInfo<?> playerInfo = claimsManager.getPlayerInfo(targetClaimId);
 		playerInfo.stopAllAreaClaimActionTasks(serverData);
 		Component defaultClaimName = claimsManager.getDefaultName(targetClaimId, false, true).copy().withStyle(ChatFormatting.GREEN);
-		context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_area_action_interrupt_success", defaultClaimName), true);
+		context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_claims_area_action_interrupt_success", defaultClaimName), true);
 		return 1;
 	}
 

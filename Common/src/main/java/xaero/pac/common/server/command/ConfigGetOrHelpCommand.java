@@ -212,8 +212,9 @@ public class ConfigGetOrHelpCommand {
 					String translatedComment = serverData.getAdaptiveLocalizer().getDefaultTranslation(option.getCommentTranslation());
 					if(translatedComment.equals("default"))
 						translatedComment = option.getComment();
-					context.getSource().sendSuccess(Component.literal(""), false);
-					context.getSource().sendSuccess(Component.translatable(translatedComment, (Object[])option.getCommentTranslationArgs()), false);
+					final String finalTranslatedComment = translatedComment;
+					context.getSource().sendSuccess(() -> Component.literal(""), false);
+					context.getSource().sendSuccess(() -> Component.translatable(finalTranslatedComment, (Object[])option.getCommentTranslationArgs()), false);
 				}
 				return 1;
 			}
@@ -226,9 +227,9 @@ public class ConfigGetOrHelpCommand {
 				optionValue = null;
 			Component optionValueName = option.getValueDisplayName(optionValue);
 			if(type == PlayerConfigType.PLAYER)
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), false);
+				context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), false);
 			else
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), false);
+				context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), false);
 			return 1;
 		};
 	}

@@ -125,12 +125,12 @@ public class ConfigSetCommand {
 			actualValue = null;
 		Component wantedValueName = option.getValueDisplayName(wantedValue);
 		if (configType == PlayerConfigType.PLAYER)
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), option.getId(), wantedValueName), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_pac_config_option_set", inputPlayer.getName(), option.getId(), wantedValueName), true);
 		else
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set", configType.getName(), option.getId(), wantedValueName), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_pac_config_option_set", configType.getName(), option.getId(), wantedValueName), true);
 		if (result == SetResult.DEFAULTED && wantedValue != null && wantedValue != actualValue) {
 			Component actualValueName = option.getValueDisplayName(actualValue);
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_pac_config_option_set_server_force", actualValueName), true);
 		}
 		return 1;
 	}

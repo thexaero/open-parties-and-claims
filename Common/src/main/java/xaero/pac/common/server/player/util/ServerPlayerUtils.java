@@ -19,12 +19,15 @@
 package xaero.pac.common.server.player.util;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.core.accessor.IGameProfileCache;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Locale;
 
@@ -52,12 +55,12 @@ public class ServerPlayerUtils {
 				return;
 			ServerLevel targetDimension = null;
 			if(dimension != null) {
-				targetDimension = player.getServer().getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
+				targetDimension = player.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, dimension));
 				if(targetDimension == null)
 					return;
 			}
 			player.stopRiding();
-			if(targetDimension != null && targetDimension != player.getLevel()) {
+			if(targetDimension != null && targetDimension != ServerLevelHelper.getServerLevel(player.level())) {
 				player.teleportTo(targetDimension, x, y, z, yRot, xRot);
 				return;
 			}

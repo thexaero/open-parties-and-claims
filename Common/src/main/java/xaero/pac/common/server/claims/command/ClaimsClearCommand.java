@@ -184,7 +184,7 @@ public class ClaimsClearCommand {
 				return 0;
 			}
 			Component targetName = Component.literal(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
-			context.getSource().sendSuccess(Component.translatable("gui.xaero_claims_clear_start", targetName), true);
+			context.getSource().sendSuccess(() -> Component.translatable("gui.xaero_claims_clear_start", targetName), true);
 			playerInfo.addReplacementTask(
 					PlayerClaimClearSpreadoutTask.Builder.begin()
 							.setCallerUUID(casterPlayerProfile.getId())

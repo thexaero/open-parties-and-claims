@@ -65,7 +65,7 @@ public class ClaimsSubClaimCurrentCommand extends AbstractClaimSubClaimCommand {
 			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(contextPlayerId);
 			currentSub = playerConfig.getEffective(option);
 		}
-		context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", currentSub, effectiveMode.getId()), true);
+		context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_claims_sub_current", currentSub, effectiveMode.getId()), true);
 		return 1;
 	}
 

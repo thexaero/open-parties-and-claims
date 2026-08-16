@@ -136,7 +136,7 @@ public class ConfigSubListCommand {
 			}
 			if(endAt < subConfigIds.size())
 				listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_there_is_more"));
-			context.getSource().sendSuccess(listMessage, true);
+			context.getSource().sendSuccess(() -> listMessage, true);
 			return 1;
 		};
 	}

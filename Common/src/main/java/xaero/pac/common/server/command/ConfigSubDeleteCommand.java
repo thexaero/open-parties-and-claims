@@ -169,7 +169,7 @@ public class ConfigSubDeleteCommand {
 			}
 			if(configPlayerUUID == null || type.hasDimensionSubConfigs()){//doesn't have individual claims tied to sub-configs
 				PlayerSubConfig<?> removedSub = playerConfig.removeSubConfig(inputSubId);
-				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()), true);
+				context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_complete", removedSub.getSubId()), true);
 				return 1;
 			}
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(configPlayerUUID);
@@ -181,7 +181,7 @@ public class ConfigSubDeleteCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_already_replacing"));
 				return 0;
 			}
-			context.getSource().sendSuccess(serverData.getAdaptiveLocalizer().getFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_started", result.getSubId()), true);
+			context.getSource().sendSuccess(serverData.getAdaptiveLocalizer().supplierFor(sourcePlayer, "gui.xaero_pac_config_delete_sub_started", result.getSubId()), true);
 			new PlayerSubConfigDeletionStarter().start(sourcePlayer, playerInfo, result, serverData, false);
 			return 1;
 		};

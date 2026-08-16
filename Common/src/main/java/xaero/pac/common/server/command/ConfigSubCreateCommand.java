@@ -167,7 +167,7 @@ public class ConfigSubCreateCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, subIdRulesComponent));
 				return 0;
 			}
-			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub"), true);
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_pac_config_create_sub"), true);
 			return 1;
 		};
 	}

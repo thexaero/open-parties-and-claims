@@ -354,7 +354,7 @@ public interface IClientClaimsManagerAPI
 	@Deprecated
 	default void requestClaim(int x, int z, @Nullable IClaimingModeAPI claimingMode){
 		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level.dimension().location();
+				Minecraft.getInstance().player.level().dimension().location();
 		requestClaim(dimension, x, z, claimingMode);
 	}
 
@@ -373,7 +373,7 @@ public interface IClientClaimsManagerAPI
 	@Deprecated
 	default void requestUnclaim(int x, int z, @Nullable IClaimingModeAPI claimingMode){
 		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level.dimension().location();
+				Minecraft.getInstance().player.level().dimension().location();
 		requestUnclaim(dimension, x, z, claimingMode);
 	}
 
@@ -393,7 +393,7 @@ public interface IClientClaimsManagerAPI
 	@Deprecated
 	default void requestForceload(int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingMode){
 		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level.dimension().location();
+				Minecraft.getInstance().player.level().dimension().location();
 		requestForceload(dimension, x, z, enable, claimingMode);
 	}
 
@@ -414,7 +414,7 @@ public interface IClientClaimsManagerAPI
 	@Deprecated
 	default void requestAreaClaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode){
 		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level.dimension().location();
+				Minecraft.getInstance().player.level().dimension().location();
 		requestAreaClaim(dimension, left, top, right, bottom, claimingMode);
 	}
 
@@ -435,7 +435,7 @@ public interface IClientClaimsManagerAPI
 	@Deprecated
 	default void requestAreaUnclaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode){
 		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level.dimension().location();
+				Minecraft.getInstance().player.level().dimension().location();
 		requestAreaUnclaim(dimension, left, top, right, bottom, claimingMode);
 	}
 
@@ -457,7 +457,7 @@ public interface IClientClaimsManagerAPI
 	@Deprecated
 	default void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingMode){
 		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level.dimension().location();
+				Minecraft.getInstance().player.level().dimension().location();
 		requestAreaForceload(dimension, left, top, right, bottom, enable, claimingMode);
 	}
 

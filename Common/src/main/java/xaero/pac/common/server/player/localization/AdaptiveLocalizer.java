@@ -28,6 +28,7 @@ import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 
@@ -62,6 +63,16 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 		if(component.getSiblings() != null)
 			result.getSiblings().addAll(component.getSiblings());
 		return result;
+	}
+
+	@Nonnull
+	public Supplier<Component> supplierFor(@Nullable ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
+		return () -> getFor(player, key, args);
+	}
+
+	@Nonnull
+	public Supplier<Component> supplierFor(@Nullable ServerPlayer player, @Nonnull Component component){
+		return () -> getFor(player, component);
 	}
 
 	private MutableComponent getServerLocalizedComponent(String key, Object... args){
