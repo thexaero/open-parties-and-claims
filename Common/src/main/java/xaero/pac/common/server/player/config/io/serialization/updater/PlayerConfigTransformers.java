@@ -260,6 +260,10 @@ public class PlayerConfigTransformers {
 						}
 				)
 		);
+
+		transformers.add(//15
+				new PlayerConfigConfigurableAdder(ImmutableList.of("claims.protection.exceptions.reclaimable"))
+		);
 	}
 
 }
