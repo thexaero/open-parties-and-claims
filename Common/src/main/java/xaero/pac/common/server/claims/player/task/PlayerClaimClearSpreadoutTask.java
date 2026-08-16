@@ -114,7 +114,7 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if (resultType.isSuccess()) {
 				if (onlinePlayer != null) {
-					Component targetName = new TextComponent(targetPlayerProfile.getName()).withStyle(ChatFormatting.GREEN);
+					Component targetName = Component.literal(targetPlayerProfile.getName()).withStyle(ChatFormatting.GREEN);
 					onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, "gui.xaero_claims_clear_complete", targetName), onlinePlayer.getUUID());
 				}
 				return;

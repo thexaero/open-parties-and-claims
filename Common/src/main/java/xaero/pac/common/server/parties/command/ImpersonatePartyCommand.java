@@ -91,7 +91,7 @@ public class ImpersonatePartyCommand {
 			if(disabling)
 				context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_impersonate_disabled"), true);
 			else {
-				Component targetName = new TextComponent(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
+				Component targetName = Component.literal(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
 				context.getSource().sendSuccess(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_impersonate_enabled", targetName), true);
 			}
 			serverData.getServer().getCommands().sendCommands(casterPlayer);

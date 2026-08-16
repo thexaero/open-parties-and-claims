@@ -66,7 +66,7 @@ public class AboutPartyCommand {
 	private static final int MAX_ALLY_COUNT = 32;
 	private static final int MAX_INVITES_COUNT = 16;
 	
-	private static <T> int createLimitedList(TextComponent listComponent, int maxCount, Iterator<T> iterator, Consumer<T> adder) {
+	private static <T> int createLimitedList(Component listComponent, int maxCount, Iterator<T> iterator, Consumer<T> adder) {
 		int count = 0;
 		while(iterator.hasNext()) {
 			adder.accept(iterator.next());
@@ -132,7 +132,7 @@ public class AboutPartyCommand {
 			casterPlayer.sendMessage(Component.literal(partyName).withStyle(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(tooltipPrefix + playerParty.getId().toString())))), casterPlayerId);
 			
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_party_members", playerParty.getMemberCount() + "/" + ServerConfig.CONFIG.maxPartyMembers.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
-			TextComponent partyMembersComponent = Component.literal("");
+			Component partyMembersComponent = Component.literal("");
 			
 			Consumer<IPartyMember> partyMemberConsumer = mi -> {
 				if(!partyMembersComponent.getSiblings().isEmpty())
@@ -149,7 +149,7 @@ public class AboutPartyCommand {
 			casterPlayer.sendMessage(partyMembersComponent, casterPlayerId);
 			
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_party_allies", playerParty.getAllyCount() + "/" + ServerConfig.CONFIG.maxPartyAllies.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
-			TextComponent partyAlliesComponent = Component.literal("");
+			Component partyAlliesComponent = Component.literal("");
 			createLimitedList(partyAlliesComponent, MAX_ALLY_COUNT, playerParty.getTypedAllyPartiesStream().iterator(), ally -> {
 				IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> allyParty = partyManager.getPartyById(ally.getPartyId());
 				if(allyParty != null) {
@@ -168,7 +168,7 @@ public class AboutPartyCommand {
 				casterPlayer.sendMessage(partyAlliesComponent, casterPlayerId);
 			
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_parties_party_invited", playerParty.getInviteCount() + "/" + ServerConfig.CONFIG.maxPartyInvites.get()).withStyle(s -> s.withColor(ChatFormatting.GOLD)), casterPlayerId);
-			TextComponent invitedComponent = Component.literal("");
+			Component invitedComponent = Component.literal("");
 			
 			createLimitedList(invitedComponent, MAX_INVITES_COUNT, playerParty.getTypedInvitedPlayersStream().iterator(), pi -> {
 				if(!invitedComponent.getSiblings().isEmpty())

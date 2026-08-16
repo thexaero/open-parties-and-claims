@@ -74,8 +74,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_claims_moderator_mode",
 			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimsModeratorModePermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_claims_moderator_mode"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_moderator_mode"),
+			Component.translatable("gui.xaero_pac_permission_claims_moderator_mode"),
+			Component.translatable("gui.xaero_pac_permission_comment_claims_moderator_mode"),
 			ALL_BUILDER);
 
 	/**
@@ -129,8 +129,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_claims_impersonation",
 			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimsImpersonationPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_claims_impersonation"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_impersonation"),
+			Component.translatable("gui.xaero_pac_permission_claims_impersonation"),
+			Component.translatable("gui.xaero_pac_permission_comment_claims_impersonation"),
 			ALL_BUILDER);
 
 	/**
@@ -140,8 +140,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_parties_impersonation",
 			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.partiesImpersonationPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_parties_impersonation"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_parties_impersonation"),
+			Component.translatable("gui.xaero_pac_permission_parties_impersonation"),
+			Component.translatable("gui.xaero_pac_permission_comment_parties_impersonation"),
 			ALL_BUILDER);
 
 	/**
@@ -151,8 +151,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_claims_teleport",
 			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimsTeleportationPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_claims_teleport"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_teleport"),
+			Component.translatable("gui.xaero_pac_permission_claims_teleport"),
+			Component.translatable("gui.xaero_pac_permission_comment_claims_teleport"),
 			ALL_BUILDER);
 
 	/**

@@ -78,7 +78,7 @@ public class ClaimsForceloadCommands {
 					world = DimensionArgument.getDimension(context, "dimension");
 				} catch(IllegalArgumentException iae) {
 					if(player == null){
-						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, new TranslatableComponent("gui.xaero.claims_forceload_command_unknown_dimension")));
+						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_forceload_command_unknown_dimension")));
 						return 0;
 					}
 					world = player.getLevel();
@@ -100,7 +100,7 @@ public class ClaimsForceloadCommands {
 					areaBottom = Math.max(fromChunkZ, toChunkZ);
 				} catch(IllegalArgumentException iae) {
 					if(player == null){
-						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, new TranslatableComponent("gui.xaero.claims_forceload_command_unknown_pos")));
+						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_forceload_command_unknown_pos")));
 						return 0;
 					}
 					int chunkX = player.chunkPosition().x;

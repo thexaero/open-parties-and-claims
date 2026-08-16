@@ -161,11 +161,11 @@ public class ClaimsClearCommand {
 				Component primaryPartyName = !ServerConfig.CONFIG.partyOwnedClaims.get() ? null :
 						serverData.getPlayerPartySystemManager().getPrimaryPartyNameByOwner(targetProfile.getId());
 				if(primaryPartyName == null)
-					primaryPartyName = new TranslatableComponent(effectivelySelf ?
+					primaryPartyName = Component.translatable(effectivelySelf ?
 							"gui.xaero_claims_clear_needs_confirmation_self_no_party_owned" :
 							"gui.xaero_claims_clear_needs_confirmation_other_no_party_owned"
 					);
-				Component message = new TranslatableComponent(
+				Component message = Component.translatable(
 						effectivelySelf ? "gui.xaero_claims_clear_needs_confirmation_self" :
 								"gui.xaero_claims_clear_needs_confirmation_other",
 						targetProfile.getName(), primaryPartySystem, primaryPartyName
@@ -185,8 +185,8 @@ public class ClaimsClearCommand {
 				));
 				return 0;
 			}
-			Component targetName = new TextComponent(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
-			context.getSource().sendSuccess(new TranslatableComponent("gui.xaero_claims_clear_start", targetName), true);
+			Component targetName = Component.literal(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
+			context.getSource().sendSuccess(Component.translatable("gui.xaero_claims_clear_start", targetName), true);
 			playerInfo.addReplacementTask(
 					PlayerClaimClearSpreadoutTask.Builder.begin()
 							.setCallerUUID(casterPlayerProfile.getId())

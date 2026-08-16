@@ -104,8 +104,8 @@ public class ClaimsTeleportCommand {
 				return 0;
 			}
 			ServerPlayerUtils.teleport(casterPlayer, randomClaimPos.getDimId(), (randomClaimPos.getChunkX() << 4) + 8, casterPlayer.getY(), (randomClaimPos.getChunkZ() << 4) + 8, casterPlayer.getYRot(), casterPlayer.getXRot());
-			Component targetName = new TextComponent(profile.getName()).withStyle(ChatFormatting.GREEN);
-			casterPlayer.sendMessage(new TranslatableComponent("gui.xaero_claims_teleport_success", targetName), casterPlayer.getUUID());
+			Component targetName = Component.literal(profile.getName()).withStyle(ChatFormatting.GREEN);
+			casterPlayer.sendMessage(Component.translatable("gui.xaero_claims_teleport_success", targetName), casterPlayer.getUUID());
 			return 1;
 		};
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {

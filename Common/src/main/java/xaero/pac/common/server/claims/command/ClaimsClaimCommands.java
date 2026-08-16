@@ -91,7 +91,7 @@ public class ClaimsClaimCommands {
 					world = DimensionArgument.getDimension(context, "dimension");
 				} catch(IllegalArgumentException iae) {
 					if(player == null){
-						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, new TranslatableComponent("gui.xaero.claims_claim_command_unknown_dimension")));
+						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_claim_command_unknown_dimension")));
 						return 0;
 					}
 					world = player.getLevel();
@@ -113,7 +113,7 @@ public class ClaimsClaimCommands {
 					areaBottom = Math.max(fromChunkZ, toChunkZ);
 				} catch(IllegalArgumentException iae) {
 					if(player == null){
-						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, new TranslatableComponent("gui.xaero.claims_claim_command_unknown_pos")));
+						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_claim_command_unknown_pos")));
 						return 0;
 					}
 					int chunkX = player.chunkPosition().x;
@@ -202,7 +202,7 @@ public class ClaimsClaimCommands {
 							Component interruptButton = constructInterruptButton(mode, another, context);
 							if(interruptButton == null)
 								return 0;
-							Component subIdComponent = new TextComponent(subConfigId).withStyle(ChatFormatting.GREEN);
+							Component subIdComponent = Component.literal(subConfigId).withStyle(ChatFormatting.GREEN);
 							context.getSource().sendSuccess(
 									adaptiveLocalizer.getFor(
 											player, "gui.xaero_claims_claim_command_area_start",
@@ -308,7 +308,7 @@ public class ClaimsClaimCommands {
 		int resultNumber = 0;
 		for (ClaimResult.Type type : result.getResultTypesIterable()) {
 			resultNumber++;
-			Component resultMessage = new TextComponent(resultNumber + ") ").withStyle(ChatFormatting.WHITE);
+			Component resultMessage = Component.literal(resultNumber + ") ").withStyle(ChatFormatting.WHITE);
 			resultMessage.getSiblings().add(adaptiveLocalizer.getFor(player, type.message));
 			if(type.fail) {
 				sourceStack.sendFailure(resultMessage);
@@ -323,7 +323,7 @@ public class ClaimsClaimCommands {
 		while(customReasons.hasNext()){
 			reasonNumber++;
 			Component customReason = customReasons.next().copy().withStyle(ChatFormatting.RED);
-			Component reasonMessage = new TextComponent(reasonNumber + ") ").withStyle(ChatFormatting.WHITE);
+			Component reasonMessage = Component.literal(reasonNumber + ") ").withStyle(ChatFormatting.WHITE);
 			reasonMessage.getSiblings().add(adaptiveLocalizer.getFor(player, customReason));
 			sourceStack.sendSuccess(reasonMessage, true);
 		}
@@ -360,9 +360,9 @@ public class ClaimsClaimCommands {
 		String interruptCommand = constructClaimInterruptCommand(mode, another, context);
 		if(interruptCommand == null)
 			return null;
-		MutableComponent interruptButton = new TranslatableComponent("gui.xaero_claims_claim_command_area_interrupt_button");
+		MutableComponent interruptButton = Component.translatable("gui.xaero_claims_claim_command_area_interrupt_button");
 		interruptButton.setStyle(interruptButton.getStyle().withColor(ChatFormatting.RED)
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(interruptCommand)))
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(interruptCommand)))
 				.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, interruptCommand)));
 		return interruptButton;
 	}

@@ -216,7 +216,7 @@ public class ClaimsTransferCommand {
 			}
 			if(!confirmed){
 				Component message;
-				message = new TranslatableComponent("gui.xaero_claims_transfer_needs_confirmation", transferFrom.getName(), transferTo.getName());
+				message = Component.translatable("gui.xaero_claims_transfer_needs_confirmation", transferFrom.getName(), transferTo.getName());
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, message));
 				return 0;
 			}
@@ -279,15 +279,15 @@ public class ClaimsTransferCommand {
 				startTransfer(transferFrom, transferTo, fromConfig, toConfig, originalRequesterId, serverData);
 				return 1;
 			}
-			Component callerName = new TextComponent(callerPlayer.getGameProfile().getName()).withStyle(ChatFormatting.GREEN);
-			Component transferFromName = new TextComponent(transferFrom.getName()).withStyle(ChatFormatting.GREEN);
-			Component transferToName = new TextComponent(transferTo.getName()).withStyle(ChatFormatting.GREEN);
+			Component callerName = Component.literal(callerPlayer.getGameProfile().getName()).withStyle(ChatFormatting.GREEN);
+			Component transferFromName = Component.literal(transferFrom.getName()).withStyle(ChatFormatting.GREEN);
+			Component transferToName = Component.literal(transferTo.getName()).withStyle(ChatFormatting.GREEN);
 			callerPlayer.sendMessage(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_request_sent", transferFromName, transferToName), callerPlayer.getUUID());
 			playerData.setClaimTransferRequestSourcePlayerProfile(transferFrom);
 			playerData.setClaimTransferRequestTargetPlayerId(transferTo.getId());
 			playerData.setClaimTransferRequestTime(System.currentTimeMillis());
 			Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message", callerName, transferFromName, transferToName);
-			acceptComponent.getSiblings().add(new TextComponent(" "));
+			acceptComponent.getSiblings().add(Component.literal(" "));
 			acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message_accept")
 					.withStyle(s -> s.withColor(ChatFormatting.GREEN)
 							.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + ClaimsCommandRegister.COMMAND_PREFIX + " transfer-accept " + callerPlayer.getUUID()))
@@ -438,8 +438,8 @@ public class ClaimsTransferCommand {
 		if(onlinePlayer == null)
 			return;
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-		Component fromPlayerName = new TextComponent(fromPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
-		Component toPlayerName = new TextComponent(toPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
+		Component fromPlayerName = Component.literal(fromPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
+		Component toPlayerName = Component.literal(toPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
 		onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer,
 				isTarget ? "gui.xaero_claims_transfer_start_to" : "gui.xaero_claims_transfer_start_from",
 				fromPlayerName, toPlayerName

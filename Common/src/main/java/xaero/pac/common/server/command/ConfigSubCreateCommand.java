@@ -156,15 +156,15 @@ public class ConfigSubCreateCommand {
 			}
 			if(playerConfig.getType().hasDimensionSubConfigs() && playerConfig.subConfigExists(inputSubId)){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer,
-						new TranslatableComponent("gui.xaero_pac_config_create_sub_id_dimension_already_exists")
+						Component.translatable("gui.xaero_pac_config_create_sub_id_dimension_already_exists")
 				));
 				return 0;
 			}
 			PlayerSubConfig<?> result = playerConfig.createSubConfig(inputSubId);
 			if(result == null){
 				Component subIdRulesComponent = playerConfig.getType() == PlayerConfigType.WILDERNESS ?
-						new TranslatableComponent("gui.xaero_pac_config_create_sub_id_dimension_rules") :
-						new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH);
+						Component.translatable("gui.xaero_pac_config_create_sub_id_dimension_rules") :
+						Component.translatable("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH);
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, subIdRulesComponent));
 				return 0;
 			}

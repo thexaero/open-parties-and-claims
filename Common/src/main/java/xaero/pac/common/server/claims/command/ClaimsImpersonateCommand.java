@@ -121,11 +121,11 @@ public class ClaimsImpersonateCommand {
 					serverData.getServerClaimsManager().getPlayerInfo(idToImpersonate);
 			((ServerPlayerClaimInfo)(Object)impersonatedPlayerClaimInfo).setPlayerUsername(toImpersonate.getName());
 		}
-		Component impersonatedName = disable ? null : new TextComponent(toImpersonate.getName()).withStyle(ChatFormatting.GREEN);
+		Component impersonatedName = disable ? null : Component.literal(toImpersonate.getName()).withStyle(ChatFormatting.GREEN);
 		player.sendMessage(
 				adaptiveLocalizer.getFor(player,
-						disable ? new TranslatableComponent("gui.xaero_claims_impersonate_disabled") :
-								new TranslatableComponent("gui.xaero_claims_impersonate_enabled", impersonatedName)
+						disable ? Component.translatable("gui.xaero_claims_impersonate_disabled") :
+								Component.translatable("gui.xaero_claims_impersonate_enabled", impersonatedName)
 				), player.getUUID()
 		);
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
