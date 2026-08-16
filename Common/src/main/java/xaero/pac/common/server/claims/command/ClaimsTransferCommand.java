@@ -54,7 +54,6 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.ServerClaimsPermissionHandler;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.task.PlayerSubClaimTransferSpreadoutTask;
 import xaero.pac.common.server.command.CommandRequirementHelper;
 import xaero.pac.common.server.config.ServerConfig;
@@ -228,12 +227,6 @@ public class ClaimsTransferCommand {
 					claimsManager = serverData.getServerClaimsManager();
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> fromPlayerInfo =
 					claimsManager.getPlayerInfo(transferFrom.getId());
-			if(!serverData.getServerClaimsManager().hasPlayerInfo(transferTo.getId())) {
-				//updating the username for previously unknown players
-				IServerPlayerClaimInfo<?> toPlayerInfo =
-						serverData.getServerClaimsManager().getPlayerInfo(transferTo.getId());
-				((ServerPlayerClaimInfo)toPlayerInfo).setPlayerUsername(transferTo.getName());
-			}
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> toPlayerInfo =
 					claimsManager.getPlayerInfo(transferTo.getId());
 			if(fromPlayerInfo.getClaimCount() == 0){
