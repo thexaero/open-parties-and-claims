@@ -18,13 +18,13 @@
 
 package xaero.pac.common.server.claims.player.request;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
-import xaero.pac.common.claims.player.request.ClaimActionRequest;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -43,6 +43,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -68,30 +69,39 @@ public class PlayerClaimActionRequestHandler {
 			claimType = playerData.getClaimingMode();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(player.getServer());
+		UUID contextPlayerId = player.getUUID();
+		serverData.getServerClaimsManager().getPermissionHandler().ensureImpersonationPermission(player, playerData);
+		boolean impersonating = claimType.canBeImpersonated() && playerData.getClaimsImpersonationInfo().getPlayerId() != null;
+		if(impersonating)
+			contextPlayerId = playerData.getClaimsImpersonationInfo().getPlayerId();
 		if(claimType.getPermissionChecker() != null){
-			ClaimResult.Type failureType = claimType.getPermissionChecker().apply(player, manager);
+			ClaimResult.Type failureType = claimType.getPermissionChecker().apply(contextPlayerId, manager);
 			if(failureType != null) {
 				if(claimType == playerData.getRawClaimingMode())
 					manager.getPermissionHandler().resetClaimingMode(player);
 				manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
-						new AreaClaimResult(Set.of(failureType), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
+						new AreaClaimResult(Set.of(failureType), new HashSet<>(), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
 						player);
 				return;
 			}
 		}
-		UUID playerId = player.getUUID();
+		UUID claimPlayerId = contextPlayerId;
 		manager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 		if(claimType.getForcedUUIDGetter() != null)
-			playerId = claimType.getForcedUUIDGetter().apply(playerId, manager);
-		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
-		IPlayerConfig usedSubConfig = claimType.getSubConfigGetter().apply(playerConfig);
+			claimPlayerId = claimType.getForcedUUIDGetter().apply(claimPlayerId, manager);
+		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(contextPlayerId);
+		IPlayerConfig claimConfig = claimType.getClaimConfigGetter().apply(playerConfig);
+		IPlayerConfig usedSubConfig = impersonating ?
+				claimConfig.getEffectiveSubConfig(playerData.getClaimsImpersonationInfo().getSubIndex(claimType)) :
+				claimConfig.getEffectiveSubConfig(playerConfig.getEffective(claimType.getSubClaimOption()));
 		int subConfigIndex = usedSubConfig.getSubIndex();
+		ResourceLocation fromDimension = player.level().dimension().location();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
-		AreaClaimResult result = manager.tryClaimActionOverArea(player.level().dimension().location(), playerId, subConfigIndex,
-				fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
-				request.getAction(), playerData.isClaimsAdminMode());
-		manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player);
+		manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
+				fromDimension, fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
+				request.getAction(), playerData.isClaimsAdminMode(),
+				result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
 		lastRequestTickCounter = serverTickHandler.getTickCounter();
 	}
 

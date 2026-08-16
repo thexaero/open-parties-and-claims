@@ -20,12 +20,14 @@ package xaero.pac.common.server.claims.protection.api;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.state.BlockState;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
@@ -94,6 +96,9 @@ public interface IChunkProtectionAPI {
 	/**
 	 * Checks whether a specified block placement should be protected against.
 	 * <p>
+	 * This version of the method is the equivalent of calling {@link #onEntityPlaceBlock(BlockState, Entity, ServerLevel, BlockPos)}
+	 * with null as the block state.
+	 * <p>
 	 * Whenever possible, use the built-in block placement event provided by Forge instead of this method,
 	 * unless it isn't specific enough, you're on Fabric, or the entity has a full protection pass
 	 * ({@link #giveFullPass(UUID)}).
@@ -104,6 +109,23 @@ public interface IChunkProtectionAPI {
 	 * @return true if the block placement should be protected against, otherwise false
 	 */
 	boolean onEntityPlaceBlock(@Nullable Entity entity, @Nonnull ServerLevel world, @Nonnull BlockPos pos);
+
+	/**
+	 * Checks whether a specified block placement should be protected against
+	 * <p>
+	 * This version of the method lets you specify the block state being placed.
+	 * <p>
+	 * Whenever possible, use the built-in block placement event provided by Forge instead of this method,
+	 * unless it isn't specific enough, you're on Fabric, or the entity has a full protection pass
+	 * ({@link #giveFullPass(UUID)}).
+	 *
+	 * @param blockState  the block state being placed, can be null to ignore block-state-specific behavior
+	 * @param entity  the entity to place the block, can be null
+	 * @param world  the world to place the block in, not null
+	 * @param pos  the block position to place the block at, not null
+	 * @return true if the block placement should be protected against, otherwise false
+	 */
+	boolean onEntityPlaceBlock(@Nullable BlockState blockState, @Nullable Entity entity, @Nonnull ServerLevel world, @Nonnull BlockPos pos);
 
 	/**
 	 * @deprecated Use {@link #onEntityInteraction(Entity, Entity, Entity, ItemStack, InteractionHand, boolean, boolean, boolean)} instead.
@@ -214,6 +236,9 @@ public interface IChunkProtectionAPI {
 	/**
 	 * Gets the player/claim config used for a specified claim state.
 	 * <p>
+	 * This method does not return dimension-based wilderness/expired sub-configs. Use {@link #getConfig(IPlayerChunkClaimAPI, ResourceLocation)}
+	 * instead for that.
+	 * <p>
 	 * You can fetch claim states of chunks from the {@link xaero.pac.common.server.claims.api.IServerClaimsManagerAPI}.
 	 *
 	 * @param claim  the claim state to get the used config of, null for wilderness
@@ -223,10 +248,27 @@ public interface IChunkProtectionAPI {
 	IPlayerConfigAPI getConfig(@Nullable IPlayerChunkClaimAPI claim);
 
 	/**
+	 * Gets the player/claim config used for a specified claim state and dimension.
+	 * <p>
+	 * The dimension only matters if claim is null (wilderness) or an expired claim.
+	 * <p>
+	 * You can fetch claim states of chunks from the {@link xaero.pac.common.server.claims.api.IServerClaimsManagerAPI}.
+	 *
+	 * @param claim  the claim state to get the used config of, null for wilderness
+	 * @param dimension  the dimension the claim is in, null if it doesn't matter
+	 * @return the player config used by the claim
+	 */
+	@Nonnull
+	IPlayerConfigAPI getConfig(@Nullable IPlayerChunkClaimAPI claim, @Nullable ResourceLocation dimension);
+
+	/**
 	 * Directly checks whether a specified entity has full access to a claim with the specified config.
 	 * <p>
 	 * You most likely don't have to use this method at all. The action-specific protection check methods already do it.
 	 * This is meant for things that are not covered by the rest of the API.
+	 * <p>
+	 * This method ignores addon-applied access overrides if they are based on chunk coordinates. If this is a problem,
+	 * please use {@link #hasChunkAccess(IPlayerConfigAPI, Entity, ResourceLocation, int, int)} instead.
 	 *
 	 * @param claimConfig  the claim config to check access for, not null
 	 * @param accessor  the entity to check access for, not null
@@ -242,12 +284,81 @@ public interface IChunkProtectionAPI {
 	 * <p>
 	 * You most likely don't have to use this method at all. The action-specific protection check methods already do it.
 	 * This is meant for things that are not covered by the rest of the API.
+	 * <p>
+	 * This method ignores addon-applied access overrides if they are based on chunk coordinates. If this is a problem,
+	 * please use {@link #hasChunkAccess(IPlayerConfigAPI, UUID, ResourceLocation, int, int)} instead.
 	 *
 	 * @param claimConfig  the claim config to check access for, not null
 	 * @param accessorId  the entity UUID to check access for, not null
 	 * @return true if accessor has full access to the claim, otherwise false
 	 */
 	boolean hasChunkAccess(@Nonnull IPlayerConfigAPI claimConfig, @Nonnull UUID accessorId);
+
+	/**
+	 * Directly checks whether a specified entity has full access to a claim with the specified config at
+	 * specified coordinates.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param claimConfig the claim config to check access for, not null
+	 * @param accessor  the entity to check access for, not null
+	 * @param dim  the dimension ID of the claim, not null
+	 * @param chunkX  the X chunk coordinate of the claim
+	 * @param chunkZ  the X chunk coordinate of the claim
+	 * @return true if accessor has full access to the claim, otherwise false
+	 */
+	boolean hasChunkAccess(@Nonnull IPlayerConfigAPI claimConfig, @Nonnull Entity accessor, @Nonnull ResourceLocation dim, int chunkX, int chunkZ);
+
+	/**
+	 * Directly checks whether the entity with a specified UUID has full access to a claim with the specified config at
+	 * specified coordinates.
+	 * <p>
+	 * Please use {@link #hasChunkAccess(IPlayerConfigAPI, Entity)} when you have an actual
+	 * entity reference.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param claimConfig  the claim config to check access for, not null
+	 * @param accessorId  the entity UUID to check access for, not null
+	 * @param dim  the dimension ID of the claim, not null
+	 * @param chunkX  the X chunk coordinate of the claim
+	 * @param chunkZ  the X chunk coordinate of the claim
+	 * @return true if accessor has full access to the claim, otherwise false
+	 */
+	boolean hasChunkAccess(@Nonnull IPlayerConfigAPI claimConfig, @Nonnull UUID accessorId, @Nonnull ResourceLocation dim, int chunkX, int chunkZ);
+
+	/**
+	 * Directly checks whether a specified entity has full access to a claim at specified coordinates.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param accessor  the entity to check access for, not null
+	 * @param dim  the dimension ID of the claim, not null
+	 * @param chunkX  the X chunk coordinate of the claim
+	 * @param chunkZ  the X chunk coordinate of the claim
+	 * @return true if accessor has full access to the claim, otherwise false
+	 */
+	boolean hasChunkAccess(@Nonnull Entity accessor, @Nonnull ResourceLocation dim, int chunkX, int chunkZ);
+
+	/**
+	 * Directly checks whether the entity with a specified UUID has full access to a claim at specified coordinates.
+	 * <p>
+	 * Please use {@link #hasChunkAccess(Entity, ResourceLocation, int, int)} when you have an actual
+	 * entity reference.
+	 * <p>
+	 * You most likely don't have to use this method at all. The action-specific protection check methods already do it.
+	 * This is meant for things that are not covered by the rest of the API.
+	 *
+	 * @param accessorId  the entity UUID to check access for, not null
+	 * @param dim  the dimension ID of the claim, not null
+	 * @param chunkX  the X chunk coordinate of the claim
+	 * @param chunkZ  the X chunk coordinate of the claim
+	 * @return true if accessor has full access to the claim, otherwise false
+	 */
+	boolean hasChunkAccess(@Nonnull UUID accessorId, @Nonnull ResourceLocation dim, int chunkX, int chunkZ);
 
 	/**
 	 * Checks whether the group that a player group exception option is set to includes a specified player/entity.

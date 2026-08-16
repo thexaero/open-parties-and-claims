@@ -21,9 +21,11 @@ package xaero.pac.common.server.player.permission.util;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
+import java.util.OptionalInt;
 import java.util.UUID;
 
 public class PermissionUtils {
@@ -32,6 +34,7 @@ public class PermissionUtils {
 			UUID playerId,
 			MinecraftServer server,
 			ServerPlayer player,
+			IPlayerConfig playerConfig,
 			ModConfigSpec.IntValue serverConfigOption,
 			IPermissionNodeAPI<Integer> permissionNode,
 			IPlayerPermissionSystemAPI permissionSystem
@@ -43,9 +46,18 @@ public class PermissionUtils {
 			return defaultLimit;
 		if(player == null)
 			player = server.getPlayerList().getPlayer(playerId);
-		if(player == null)
+		if(player == null) {
+			Integer lastPermissionValue = playerConfig.getLastPermissionValue(permissionNode);
+			if(lastPermissionValue == null)
+				return defaultLimit;
+			return lastPermissionValue;
+		}
+		OptionalInt optionalValue = permissionSystem.getIntPermission(player, permissionNode);
+		Integer permissionValue = optionalValue.isPresent() ? optionalValue.getAsInt() : null;
+		playerConfig.setLastPermissionValue(permissionNode, permissionValue);
+		if(permissionValue == null)
 			return defaultLimit;
-		return permissionSystem.getIntPermission(player, permissionNode).orElse(defaultLimit);
+		return permissionValue;
 	}
 
 }

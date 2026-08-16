@@ -24,7 +24,7 @@ import net.minecraft.commands.Commands;
 
 public class CommonCommandRegister {
 
-	public static final String COMMAND_PREFIX = "openpac";
+	public static final String COMMAND_PREFIX = "opac";
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		new ConfigGetOrHelpCommand().register(dispatcher, environment);

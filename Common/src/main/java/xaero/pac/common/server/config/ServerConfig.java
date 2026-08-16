@@ -37,6 +37,7 @@ public class ServerConfig {
 	public final ModConfigSpec.IntValue partyExpirationCheckInterval;
 	public final ModConfigSpec.BooleanValue partyChatLogging;
 	public final ModConfigSpec.ConfigValue<String> partiesAdminModePermission;
+	public final ModConfigSpec.ConfigValue<String> partiesImpersonationPermission;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> opConfigurablePlayerConfigOptions;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> playerConfigurablePlayerConfigOptions;
 	public final ModConfigSpec.EnumValue<ConfigListType> friendlyChunkProtectedEntityListType;
@@ -95,8 +96,12 @@ public class ServerConfig {
 	public final ModConfigSpec.BooleanValue claimWelcomeMessages;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
+	public final ModConfigSpec.IntValue maxSingleClaimActionSize;
 	public final ModConfigSpec.ConfigValue<String> serverClaimPermission;
+	public final ModConfigSpec.ConfigValue<String> claimsModeratorModePermission;
 	public final ModConfigSpec.ConfigValue<String> claimsAdminModePermission;
+	public final ModConfigSpec.ConfigValue<String> claimsImpersonationPermission;
+	public final ModConfigSpec.ConfigValue<String> claimsTeleportationPermission;
 	public final ModConfigSpec.ConfigValue<String> permissionSystem;
 	public final ModConfigSpec.ConfigValue<String> primaryPartySystem;
 	public final ModConfigSpec.BooleanValue partyOwnedClaims;
@@ -105,6 +110,7 @@ public class ServerConfig {
 	public final ModConfigSpec.IntValue claimBonusForPartyOwner;
 	public final ModConfigSpec.IntValue forceloadBonusForPartyOwner;
 	public final ModConfigSpec.IntValue overLimitClaimAccessCooldown;
+	public final ModConfigSpec.BooleanValue allowTouchingClaims;
 
 	private ServerConfig(ModConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -157,13 +163,25 @@ public class ServerConfig {
 				.defineInRange("playerGroupSpace", 256, 0, 1024);
 
 		maxPlayerGroupsPermission = builder
-				.comment("The permission that should override the default \"maxPlayerGroups\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+				.comment("""
+					The permission that should override the default "maxPlayerGroups" value.
+					Set it to an empty string to never check permissions.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
+					The used permission system can be configured with "permissionSystem".""")
 				.translation("gui.xaero_pac_config_max_player_groups_permission")
 				.worldRestart()
 				.define("maxPlayerGroupsPermission", UsedPermissionNodes.MAX_PLAYER_GROUPS.getDefaultNodeString());
 
 		playerGroupSpacePermission = builder
-				.comment("The permission that should override the default \"playerGroupSpace\" value. Set it to an empty string to never check permissions. The used permission system can be configured with \"permissionSystem\".")
+				.comment("""
+					The permission that should override the default "playerGroupSpace" value.
+					Set it to an empty string to never check permissions.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
+					The used permission system can be configured with "permissionSystem".""")
 				.translation("gui.xaero_pac_config_player_group_space_permission")
 				.worldRestart()
 				.define("playerGroupSpacePermission", UsedPermissionNodes.PLAYER_GROUP_SPACE.getDefaultNodeString());
@@ -217,6 +235,12 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_parties_admin_mode_permission")
 			.worldRestart()
 			.define("adminModePermission", UsedPermissionNodes.PARTIES_ADMIN_MODE.getDefaultNodeString());
+
+		partiesImpersonationPermission = builder
+			.comment("The permission that gives non-OP players the ability to impersonate other players in regards to built-in party commands. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_parties_impersonation_permission")
+			.worldRestart()
+			.define("impersonationPermission", UsedPermissionNodes.PARTIES_IMPERSONATION.getDefaultNodeString());
 		
 		builder.pop();
 		
@@ -278,6 +302,18 @@ public class ServerConfig {
 			.worldRestart()
 			.defineInRange("forceloadBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
 
+		allowTouchingClaims = builder
+			.comment(
+					"""
+					Whether players should be able to claim chunks that are directly next to claimed chunks owned by another player/party.
+					Disallowing it can prevent players from doing so without realizing that chunks next to claims can also be partially protected,
+					e.g. from item use and mob griefing, making them not ideal for some purposes.
+					Only affects claiming wilderness, so reclaimable claims can still work."""
+			)
+			.translation("gui.xaero_pac_config_allow_touching_claims")
+			.worldRestart()
+			.define("allowTouchingClaims", true);
+
 		overLimitClaimAccessCooldown = builder
 			.comment("""
 					How often (in minutes) to allow players to access a claim when their own claim count is over the claim limit or the claim count
@@ -323,8 +359,9 @@ public class ServerConfig {
 		maxPlayerClaimsPermission = builder
 			.comment("""
 					The permission that should override the default "maxPlayerClaims" value. Set it to an empty string to never check permissions.
-					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
-					the player to be online, which doesn't work well with party-owned claims.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_claims_permission")
 			.worldRestart()
@@ -333,13 +370,22 @@ public class ServerConfig {
 		maxPlayerClaimForceloadsPermission = builder
 			.comment("""
 					The permission that should override the default "maxPlayerClaimForceloads" value. Set it to an empty string to never check permissions.
-					The value of this permission is ignored for primary party owners when partyOwnedClaims are enabled because checking permissions requires
-					the player to be online, which doesn't work well with party-owned claims.
-					The permission override only takes effect after the player logs in at least once after a server (re)launch, so it is recommended to keep all permission-based forceload limits equal to or greater than "maxPlayerClaimForceloads".
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
 					The used permission system can be configured with "permissionSystem".""")
 			.translation("gui.xaero_pac_config_max_forceloads_permission")
 			.worldRestart()
 			.define("maxPlayerClaimForceloadsPermission", UsedPermissionNodes.MAX_PLAYER_FORCELOADS.getDefaultNodeString());
+
+		maxSingleClaimActionSize = builder
+			.comment("""
+					The maximum size (in chunks) of a single claim action, whether it's claiming, unclaiming or forceloading.
+					The size limit can be circumvented using the claims admin mode.
+					Very big claim actions should not affect your server's performance much, this is mostly a balancing option.""")
+			.translation("gui.xaero_pac_config_max_single_claim_action_size")
+			.worldRestart()
+			.defineInRange("maxSingleClaimActionSize", 121, 0, Integer.MAX_VALUE);
 
 		serverClaimPermission = builder
 			.comment("The permission that gives non-OP players the ability to make server claims and enable server claim mode. The used permission system can be configured with \"permissionSystem\".")
@@ -347,11 +393,29 @@ public class ServerConfig {
 			.worldRestart()
 			.define("serverClaimPermission", UsedPermissionNodes.SERVER_CLAIMS.getDefaultNodeString());
 
+		claimsModeratorModePermission = builder
+			.comment("The permission that gives non-OP players the ability to enable claim moderator mode. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_claims_moderator_mode_permission")
+			.worldRestart()
+			.define("moderatorModePermission", UsedPermissionNodes.CLAIMS_MODERATOR_MODE.getDefaultNodeString());
+
 		claimsAdminModePermission = builder
-			.comment("The permission that gives non-OP players the ability to enable claim admin mode. The used permission system can be configured with \"permissionSystem\".")
+			.comment("The permission that gives non-OP players the ability to enable claim admin mode and claim moderator mode. The used permission system can be configured with \"permissionSystem\".")
 			.translation("gui.xaero_pac_config_claims_admin_mode_permission")
 			.worldRestart()
 			.define("adminModePermission", UsedPermissionNodes.CLAIMS_ADMIN_MODE.getDefaultNodeString());
+
+		claimsImpersonationPermission = builder
+			.comment("The permission that gives non-OP players the ability to impersonate other players in regards to claims. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_claims_impersonation_permission")
+			.worldRestart()
+			.define("impersonationPermission", UsedPermissionNodes.CLAIMS_IMPERSONATION.getDefaultNodeString());
+
+		claimsTeleportationPermission = builder
+			.comment("The permission that gives non-OP players the ability to teleport to any player's claims. The used permission system can be configured with \"permissionSystem\".")
+			.translation("gui.xaero_pac_config_claims_teleportation_permission")
+			.worldRestart()
+			.define("teleportationPermission", UsedPermissionNodes.CLAIMS_TELEPORTATION.getDefaultNodeString());
 
 		maxClaimDistance = builder
 			.comment("The maximum distance on the X or Z axis (forming a square) that a chunk can be claimed at by a player.")
@@ -924,6 +988,7 @@ public class ServerConfig {
 							"claims.protection.exceptions.spawnersFriendly",
 							"claims.protection.exceptions.projectileHitHostileSpawn",
 							"claims.protection.exceptions.projectileHitFriendlySpawn",
+							"claims.protection.exceptions.reclaimable",
 							"parties.name",
 							"parties.shareLocationWithParty",
 							"parties.shareLocationWithMutualAllyParties",

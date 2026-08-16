@@ -193,6 +193,14 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
 		playerData.getFullPartyPlayerSync().startPartySync(player, party);
 	}
+
+	@Override
+	public void syncToClientIncludingPrimarySwitch(ServerPlayer player, ServerParty party) {
+		if(party != null)
+			dynamicInfoSync.syncToClientAllDynamicInfoIncludingMutualAllies(player, party);
+		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+		playerData.getFullPartyPlayerSync().startPartySync(player, party);
+	}
 	
 	public void syncToMember(PartyMember member, ServerParty party) {
 		PlayerList playerList = server.getPlayerList();
@@ -200,6 +208,15 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 		if(player == null)
 			return;
 		syncToClient(player, party);
+	}
+
+	public void syncToMemberIncludingPrimarySwitch(PartyMember member, ServerParty party) {
+		PlayerList playerList = server.getPlayerList();
+		ServerPlayer player = playerList.getPlayer(member.getUUID());
+		if(player == null)
+			return;
+		syncToClient(player, party);
+		syncPrimaryPartySwitch(party == null ? null : party.getOwner().getUUID(), player);
 	}
 	
 	private String fetchConfiguredPartyName(ServerParty party) {
@@ -218,13 +235,19 @@ public class PartySynchronizer extends AbstractPartySynchronizer implements IPar
 	}
 
 	public void syncPrimaryPartySwitch(UUID partyOwner, PartyMember member){
-		if(serverData.getPlayerPartySystemManager().getPrimarySystem() != partyManager.getPartySystem())
-			return;
 		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
 			return;
 		PlayerList playerList = server.getPlayerList();
 		ServerPlayer player = playerList.getPlayer(member.getUUID());
 		if(player == null)
+			return;
+		syncPrimaryPartySwitch(partyOwner, player);
+	}
+
+	public void syncPrimaryPartySwitch(UUID partyOwner, ServerPlayer player){
+		if(!ServerConfig.CONFIG.partyOwnedClaims.get())
+			return;
+		if(serverData.getPlayerPartySystemManager().getPrimarySystem() != partyManager.getPartySystem())
 			return;
 		IPlayerConfig partyConfig = partyOwner == null ? null : serverData.getPlayerConfigManager().getLoadedConfig(partyOwner);
 		syncPrimaryPartySwitch(player, partyOwner, partyConfig);
