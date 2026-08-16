@@ -192,9 +192,9 @@ public class ClaimsForceloadCommands {
 				 	}
 					
 				 	if(enable)
-						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_forceloaded_at", middleX, middleZ, world.dimension().location()), true);
+						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_forceloaded_at", middleX, middleZ, world.dimension().location().toString()), true);
 				 	else
-						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unforceloaded_at", middleX, middleZ, world.dimension().location()), true);
+						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unforceloaded_at", middleX, middleZ, world.dimension().location().toString()), true);
 				 	return 1;
 			 	} finally {
 					 if(result != null && player != null) {
