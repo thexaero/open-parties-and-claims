@@ -173,12 +173,12 @@ public class ClaimsClaimCommands {
 					int fromX = player == null ? middleX : player.chunkPosition().x;
 					int fromZ = player == null ? middleZ : player.chunkPosition().z;
 					if(shouldClaim) {
-						if(another && !serverData.getServerClaimsManager().hasPlayerInfo(claimPlayerId)) {
+						if(!claimPlayerId.equals(sourceUUID) && !serverData.getServerClaimsManager().hasPlayerInfo(claimPlayerId)) {
 							//updating the username for previously unknown player
-							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> impersonatedPlayerClaimInfo =
+							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo =
 									serverData.getServerClaimsManager().getPlayerInfo(claimPlayerId);
 							server.getProfileCache().get(claimPlayerId).map(GameProfile::getName)
-									.ifPresent(name -> ((ServerPlayerClaimInfo)(Object)impersonatedPlayerClaimInfo).setPlayerUsername(name));
+									.ifPresent(name -> ((ServerPlayerClaimInfo)(Object)playerClaimInfo).setPlayerUsername(name));
 						}
 						String specifiedSubId = null;
 						try {
