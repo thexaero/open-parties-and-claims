@@ -19,7 +19,11 @@
 package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
@@ -45,7 +49,7 @@ public class ClientboundClaimResultPacket {
 		@Override
 		public ClientboundClaimResultPacket apply(FriendlyByteBuf input) {
 			try {
-				if(input.readableBytes() > 2048)
+				if(input.readableBytes() > 16384)
 					return null;
 				CompoundTag tag = input.readAnySizeNbt();
 				if(tag == null)
@@ -62,11 +66,19 @@ public class ClientboundClaimResultPacket {
 					}
 					resultTypes.add(resultType);
 				}
+				ListTag customReasonListTag = tag.getList("crl", Tag.TAG_STRING);
+				Set<Component> customReasons = new HashSet<>();
+				for (Tag listElementTag : customReasonListTag) {
+					StringTag customReasonJsonTag = (StringTag) listElementTag;
+					String customReasonJson = customReasonJsonTag.getAsString();
+					Component customReason = Component.Serializer.fromJson(customReasonJson);
+					customReasons.add(customReason);
+				}
 				int left = tag.getInt("l");
 				int top = tag.getInt("t");
 				int right = tag.getInt("r");
 				int bottom = tag.getInt("b");
-				return new ClientboundClaimResultPacket(new AreaClaimResult(resultTypes, left, top, right, bottom));
+				return new ClientboundClaimResultPacket(new AreaClaimResult(resultTypes, customReasons, left, top, right, bottom));
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
 				return null;
@@ -76,14 +88,20 @@ public class ClientboundClaimResultPacket {
 		@Override
 		public void accept(ClientboundClaimResultPacket t, FriendlyByteBuf u) {
 			CompoundTag tag = new CompoundTag();
-			Iterator<ClaimResult.Type> iterator = t.result.getResultTypesIterable().iterator();
+			Iterator<ClaimResult.Type> typeIterator = t.result.getResultTypesIterable().iterator();
 			byte[] resultTypes = new byte[t.result.getSize()];
 			int index = 0;
-			while (iterator.hasNext()) {
-				resultTypes[index] = (byte) iterator.next().ordinal();
+			while (typeIterator.hasNext()) {
+				resultTypes[index] = (byte) typeIterator.next().ordinal();
 				index++;
 			}
+			ListTag customReasonListTag = new ListTag();
+			for (Component customReason : t.result.getCustomReasons()) {
+				String componentJson = Component.Serializer.toJson(customReason);
+				customReasonListTag.add(StringTag.valueOf(componentJson));
+			}
 			tag.putByteArray("ta", resultTypes);
+			tag.put("crl", customReasonListTag);
 			tag.putInt("l", t.result.getLeft());
 			tag.putInt("t", t.result.getTop());
 			tag.putInt("r", t.result.getRight());

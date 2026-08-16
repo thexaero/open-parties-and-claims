@@ -45,6 +45,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
@@ -60,12 +61,15 @@ public class KickPartyCommand {
 						.suggests(PartyCommands.getPartyMemberOrInviteSuggestor())
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
-							UUID playerId = player.getUUID();
+							ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+							UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+							if(contextPlayerId == null)
+								contextPlayerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
 							
 							String targetUsername = StringArgumentType.getString(context, "name");
 							IPartyPlayerInfo targetPlayerInfo = playerParty.getMemberInfo(targetUsername);
@@ -76,9 +80,9 @@ public class KickPartyCommand {
 								return 0;
 							}
 							
-							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
+							IPartyMember contextPlayerInfo = playerParty.getMemberInfo(contextPlayerId);
 							boolean targetIsMember = targetPlayerInfo instanceof IPartyMember;
-							boolean casterIsOwner = playerParty.getOwner() == casterInfo;
+							boolean contextIsOwner = playerParty.getOwner() == contextPlayerInfo;
 							
 							if(targetIsMember) {
 								IPartyMember targetMember = (IPartyMember) targetPlayerInfo;
@@ -86,7 +90,7 @@ public class KickPartyCommand {
 									context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_kick_owner"));
 									return 0;
 								}
-								if(!casterIsOwner && targetMember.getRank().ordinal() > casterInfo.getRank().ordinal()) {
+								if(!contextIsOwner && targetMember.getRank().ordinal() > contextPlayerInfo.getRank().ordinal()) {
 									context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_kick_higher_rank"));
 									return 0;
 								}
@@ -102,15 +106,23 @@ public class KickPartyCommand {
 									serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(kickedPlayer, serverData, false);
 
 									Component acceptComponent = adaptiveLocalizer.getFor(kickedPlayer, "gui.xaero_parties_kick_target_message", playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.RED));
-									kickedPlayer.sendMessage(acceptComponent, playerId);
+									kickedPlayer.sendMessage(acceptComponent, player.getUUID());
 								}
 							}
 							
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_kick_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.RED))));
+							new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, getKickMessage(player, targetPlayerInfo.getUsername()));
 							
 							return 1;
 						}))));
 		dispatcher.register(command);
+	}
+
+	public static Component getKickMessage(ServerPlayer callerPlayer, String targetName){
+		return Component.translatable(
+				"gui.xaero_parties_kick_party_message",
+				Component.literal(callerPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)),
+				Component.literal(targetName).withStyle(s -> s.withColor(ChatFormatting.RED))
+		);
 	}
 
 }

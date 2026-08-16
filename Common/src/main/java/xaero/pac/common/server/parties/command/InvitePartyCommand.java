@@ -46,6 +46,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
@@ -66,12 +67,15 @@ public class InvitePartyCommand {
 						})
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
-							UUID playerId = player.getUUID();
+							ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+							UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+							if(contextPlayerId == null)
+								contextPlayerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
 							
 							ServerPlayer targetPlayer = EntityArgument.getPlayer(context, "player");
 							UUID targetPlayerId = targetPlayer.getUUID();
@@ -91,15 +95,16 @@ public class InvitePartyCommand {
 							
 							playerParty.invitePlayer(targetPlayerId, targetPlayer.getGameProfile().getName());
 
-							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
-							
-							Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message", casterInfo.getUsername(), playerParty.getDefaultName());
+							Component callerName = Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.DARK_GREEN);
+							Component targetName = Component.literal(targetPlayer.getGameProfile().getName()).withStyle(ChatFormatting.YELLOW);
+
+							Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message", callerName, playerParty.getDefaultName());
 							acceptComponent.getSiblings().add(Component.literal(" "));
-							acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/openpac-parties join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept_tooltip")))));
-							targetPlayer.sendMessage(acceptComponent, playerId);
+							acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept").withStyle(s -> s.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + PartyCommandRegister.COMMAND_PREFIX + " join " + playerParty.getId())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_parties_invite_target_message_accept_tooltip")))));
+							targetPlayer.sendMessage(acceptComponent, player.getUUID());
 							Services.PLATFORM.getEntityAccess().getPersistentData(targetPlayer).putUUID("xaero_OPAC_LastInviteId", playerParty.getId());
 
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.GREEN)), Component.literal(targetPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_invite_party_message", callerName, targetName));
 							return 1;
 						}))));
 		dispatcher.register(command);

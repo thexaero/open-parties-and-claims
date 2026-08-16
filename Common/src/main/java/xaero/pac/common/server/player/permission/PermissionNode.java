@@ -20,6 +20,7 @@ package xaero.pac.common.server.player.permission;
 
 import net.minecraft.network.chat.Component;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
+import xaero.pac.common.server.player.permission.value.type.PermissionValueType;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -28,14 +29,16 @@ import java.util.function.Supplier;
 public class PermissionNode<T> implements IPermissionNodeAPI<T> {
 
 	private final String defaultNode;
-	private final Class<T> type;
+	private final PermissionValueType<T> valueType;
 	private final Component name;
 	private final Component comment;
 	private final Supplier<String> nodeStringSupplier;
 
-	public PermissionNode(String defaultNode, Class<T> type, Supplier<String> nodeStringSupplier, Component name, Component comment, Map<String, IPermissionNodeAPI<?>> all) {
+	public PermissionNode(String defaultNode, PermissionValueType<T> valueType, Supplier<String> nodeStringSupplier, Component name, Component comment, Map<String, IPermissionNodeAPI<?>> all) {
+		if(defaultNode.contains("="))
+			throw new IllegalArgumentException("defaultNode can't contain the = character");
 		this.defaultNode = defaultNode;
-		this.type = type;
+		this.valueType = valueType;
 		this.nodeStringSupplier = nodeStringSupplier;
 		this.name = name;
 		this.comment = comment;
@@ -69,7 +72,11 @@ public class PermissionNode<T> implements IPermissionNodeAPI<T> {
 	@Nonnull
 	@Override
 	public Class<T> getType() {
-		return type;
+		return valueType.getjType();
+	}
+
+	public PermissionValueType<T> getValueType() {
+		return valueType;
 	}
 
 }

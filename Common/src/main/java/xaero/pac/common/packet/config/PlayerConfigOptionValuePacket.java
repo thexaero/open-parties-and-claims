@@ -131,9 +131,7 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 							return null;
 						}
 					}
-					boolean playerMutable = entryTag.getBoolean("p");
-					boolean adminMutable = entryTag.getBoolean("a");
-					Entry entry = new Entry(optionId, valueTag, playerMutable, adminMutable);
+					Entry entry = new Entry(optionId, valueTag);
 					entries.add(entry);
 				}
 				return create(type, subID, owner, entries);
@@ -161,8 +159,6 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 				entryTag.putString("i", entry.getId());
 				if(entry.valueTag != null)
 					entryTag.put("v", entry.valueTag);
-				entryTag.putBoolean("p", entry.isPlayerMutable());
-				entryTag.putBoolean("a", entry.isAdminMutable());
 				entryListTag.add(entryTag);
 			}
 			
@@ -176,14 +172,10 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 
 		private final String id;
 		private final Tag valueTag;
-		private final boolean playerMutable;
-		private final boolean adminMutable;
 
-		public Entry(String id, Tag valueTag, boolean playerMutable, boolean adminMutable) {
+		public Entry(String id, Tag valueTag) {
 			this.id = id;
 			this.valueTag = valueTag;
-			this.playerMutable = playerMutable;
-			this.adminMutable = adminMutable;
 		}
 
 		public String getId() {
@@ -194,17 +186,9 @@ public class PlayerConfigOptionValuePacket extends PlayerConfigPacket {
 			return valueTag;
 		}
 
-		public boolean isPlayerMutable() {
-			return playerMutable;
-		}
-
-		public boolean isAdminMutable() {
-			return adminMutable;
-		}
-
-		public static <T> Entry of(PlayerConfigOptionSpec<T> option, T value, boolean playerMutable, boolean adminMutable){
+		public static <T> Entry of(PlayerConfigOptionSpec<T> option, T value){
 			Tag valueTag = value == null ? null : option.getValueType().getSyncEncoder().apply(value);
-			return new Entry(option.getId(), valueTag, playerMutable, adminMutable);
+			return new Entry(option.getId(), valueTag);
 		}
 
 	}

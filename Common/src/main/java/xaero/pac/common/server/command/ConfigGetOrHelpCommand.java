@@ -23,6 +23,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -50,6 +51,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
@@ -59,6 +61,7 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.*;
 
@@ -67,16 +70,14 @@ public class ConfigGetOrHelpCommand {
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		SuggestionProvider<CommandSourceStack> optionSuggestor = getOptionSuggestor();
 		SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PLAYER);
-		SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.SERVER);
-		SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider = getSubConfigSuggestionProvider(PlayerConfigType.PARTY_CLAIMS);
 
 		registerGetCommands(
 				false, optionSuggestor, playerSubConfigSuggestionProvider,
-				serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider, dispatcher
+				dispatcher
 		);
 		registerGetCommands(
 				true, optionSuggestor, playerSubConfigSuggestionProvider,
-				serverSubConfigSuggestionProvider, partySubConfigSuggestionProvider, dispatcher
+				dispatcher
 		);
 	}
 
@@ -84,34 +85,45 @@ public class ConfigGetOrHelpCommand {
 			boolean help,
 			SuggestionProvider<CommandSourceStack> optionSuggestor,
 			SuggestionProvider<CommandSourceStack> playerSubConfigSuggestionProvider,
-			SuggestionProvider<CommandSourceStack> serverSubConfigSuggestionProvider,
-			SuggestionProvider<CommandSourceStack> partySubConfigSuggestionProvider,
 			CommandDispatcher<CommandSourceStack> dispatcher
 	){
 		String literalPrefix = help ? "help" : "get";
+
+		for (PlayerConfigType configType : PlayerConfigType.values()) {
+			Command<CommandSourceStack> executor = getExecutor(configType, help);
+			Predicate<CommandSourceStack> requirement = configType.getReadCommandRequirement();
+
+			LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(requirement)
+					.then(Commands.literal(literalPrefix)
+					.then(Commands.argument("key", StringArgumentType.word())
+					.suggests(optionSuggestor)
+					.executes(executor))));
+			dispatcher.register(command);
+
+			if(!configType.supportsSubConfigs())
+				continue;
+			SuggestionProvider<CommandSourceStack> subConfigSuggestionProvider = getSubConfigSuggestionProvider(configType);
+			//sub version of this ^
+			command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(requirement)
+					.then(Commands.literal("sub")
+					.then(Commands.literal(literalPrefix)
+					.then(Commands.argument("sub-id", StringArgumentType.word())
+					.suggests(subConfigSuggestionProvider)
+					.then(Commands.argument("key", StringArgumentType.word())
+					.suggests(optionSuggestor)
+					.executes(executor))))));
+			dispatcher.register(command);
+		}
+
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER, help);
 
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
-				.then(Commands.literal(literalPrefix)
-				.requires(sourceStack -> true)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(regularExecutor))));
-		dispatcher.register(command);
-
-		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
-				.then(Commands.literal("sub")
-				.then(Commands.literal(literalPrefix)
-				.requires(sourceStack -> true)
-				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests(playerSubConfigSuggestionProvider)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(regularExecutor))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("for")
+		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
+				.then(Commands.literal("for")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(Commands.literal(literalPrefix).then(Commands.argument("key", StringArgumentType.word())
@@ -120,7 +132,9 @@ public class ConfigGetOrHelpCommand {
 		dispatcher.register(command);
 
 		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("for")
+		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
+				.then(Commands.literal("for")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(Commands.literal("sub")
@@ -130,71 +144,6 @@ public class ConfigGetOrHelpCommand {
 				.then(Commands.argument("key", StringArgumentType.word())
 				.suggests(optionSuggestor)
 				.executes(regularExecutor))))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix).then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(getExecutor(PlayerConfigType.DEFAULT_PLAYER, help))))));
-		dispatcher.register(command);
-
-		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER, help);
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(serverExecutor))));
-		dispatcher.register(command);
-
-		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal("sub")
-				.then(Commands.literal(literalPrefix)
-				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests(serverSubConfigSuggestionProvider)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(serverExecutor))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(getExecutor(PlayerConfigType.EXPIRED, help)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(Commands.literal(literalPrefix)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(getExecutor(PlayerConfigType.WILDERNESS, help)))));
-		dispatcher.register(command);
-
-		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS, help);
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(getPartyClaimsRequirement(false))
-				.then(Commands.literal(literalPrefix)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(partyExecutor))));
-		dispatcher.register(command);
-
-		//sub version of this ^
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(getPartyClaimsRequirement(false))
-				.then(Commands.literal("sub")
-				.then(Commands.literal(literalPrefix)
-				.then(Commands.argument("sub-id", StringArgumentType.word())
-				.suggests(partySubConfigSuggestionProvider)
-				.then(Commands.argument("key", StringArgumentType.word())
-				.suggests(optionSuggestor)
-				.executes(partyExecutor))))));
 		dispatcher.register(command);
 	}
 
@@ -213,8 +162,12 @@ public class ConfigGetOrHelpCommand {
 	
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type, boolean help){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-			
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
+
 			String targetConfigOptionId = StringArgumentType.getString(context, "key");
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
@@ -228,7 +181,7 @@ public class ConfigGetOrHelpCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, PlayerConfigConstants.OPTION_NOT_DIRECTLY_CONFIGURABLE));
 				return 0;
 			}
-			
+
 			GameProfile inputPlayer = null;
 			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
@@ -239,8 +192,9 @@ public class ConfigGetOrHelpCommand {
 					return 0;
 				configPlayerUUID = inputPlayer.getId();
 			}
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+					configPlayerUUID, callerId, type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
@@ -253,15 +207,15 @@ public class ConfigGetOrHelpCommand {
 				return 0;
 			}
 			if(help){
-				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
-				if(playerData.hasMod())
+				ServerPlayerData playerData = sourcePlayer == null ? null : (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
+				if(playerData != null && playerData.hasMod())
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(sourcePlayer, new ClientboundPlayerConfigHelpPacket(option.getId()));
 				else {
 					String translatedComment = serverData.getAdaptiveLocalizer().getDefaultTranslation(option.getCommentTranslation());
 					if(translatedComment.equals("default"))
 						translatedComment = option.getComment();
-					sourcePlayer.sendMessage(Component.literal(""), sourcePlayer.getUUID());
-					sourcePlayer.sendMessage(Component.translatable(translatedComment, (Object[])option.getCommentTranslationArgs()), sourcePlayer.getUUID());
+					context.getSource().sendSuccess(Component.literal(""), false);
+					context.getSource().sendSuccess(Component.translatable(translatedComment, (Object[])option.getCommentTranslationArgs()), false);
 				}
 				return 1;
 			}
@@ -274,9 +228,9 @@ public class ConfigGetOrHelpCommand {
 				optionValue = null;
 			Component optionValueName = option.getValueDisplayName(optionValue);
 			if(type == PlayerConfigType.PLAYER)
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", inputPlayer.getName(), targetConfigOptionId, optionValueName), false);
 			else
-				sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), sourcePlayer.getUUID());
+				context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_get", type.getName(), targetConfigOptionId, optionValueName), false);
 			return 1;
 		};
 	}

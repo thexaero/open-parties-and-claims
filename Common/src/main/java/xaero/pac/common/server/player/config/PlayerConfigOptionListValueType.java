@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOptionValueType<List<T>>{
@@ -45,13 +46,15 @@ public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOption
 			Function<List<T>, Component> componentWriter,
 			List<String> defaultCommandSuggestions,
 			boolean shouldDisplayInQuotes,
+			BiFunction<List<T>, List<T>, List<T>> adder,
+			BiFunction<List<T>, List<T>, List<T>> subtracter,
 			BiConsumer<ForgeConfigSpec.Builder, PlayerConfigOptionSpec<List<T>>> defaultSpecDefiner
 	) {
 		super(
 				(Class<List<T>>)(Object)List.class, id, syncEncoder, syncDecoder,
 				stringParser, stringWriter, componentWriter, defaultCommandSuggestions,
-				shouldDisplayInQuotes, defaultSpecDefiner
-		);
+				shouldDisplayInQuotes, adder, subtracter,
+				defaultSpecDefiner);
 	}
 
 	public static final class Builder<T> extends PlayerConfigOptionValueType.Builder<List<T>, Builder<T>> {
@@ -68,6 +71,16 @@ public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOption
 			super.setDefault();
 			setElementType(null);
 			setDefaultSpecDefiner(null);//so we can detect whether a custom one is provided
+			setAdder((list1, list2) -> {
+				List<T> combinedList = new ArrayList<>(list1);
+				combinedList.addAll(list2);
+				return combinedList;
+			});
+			setSubtracter((list1, list2) -> {
+				List<T> resultList = new ArrayList<>(list1);
+				resultList.removeAll(list2);
+				return resultList;
+			});
 			return self;
 		}
 
@@ -224,7 +237,7 @@ public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOption
 			return new PlayerConfigOptionListValueType<>(
 					id, syncEncoder, syncDecoder, stringParser,
 					stringWriter, componentWriter, defaultCommandSuggestions,
-					shouldDisplayInQuotes, defaultSpecDefiner
+					shouldDisplayInQuotes, adder, subtracter, defaultSpecDefiner
 			);
 		}
 

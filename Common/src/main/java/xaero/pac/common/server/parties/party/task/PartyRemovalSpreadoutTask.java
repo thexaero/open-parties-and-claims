@@ -53,7 +53,7 @@ public class PartyRemovalSpreadoutTask implements IServerSpreadoutQueuedTask<Par
 	}
 
 	@Override
-	public void onQueued(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+	public void onQueued(IServerData<?, ?> serverData) {
 		memberIterator = party.getPartyMemberIterator();
 		allyIterator = party.getAllyPartiesIterator();
 	}

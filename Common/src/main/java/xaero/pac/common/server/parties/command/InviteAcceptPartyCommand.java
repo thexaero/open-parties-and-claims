@@ -55,7 +55,7 @@ import java.util.stream.Stream;
 public class InviteAcceptPartyCommand {
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandRequirementProvider commandRequirementProvider) {
-		Predicate<CommandSourceStack> requirement = commandRequirementProvider.getNonMemberRequirement(p -> true);
+		Predicate<CommandSourceStack> requirement = commandRequirementProvider.getNonMemberRequirement(p -> true, true);
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get()).then(Commands.literal("join")
 				.requires(requirement)
 				.then(Commands.argument("id", StringArgumentType.word())
@@ -103,7 +103,7 @@ public class InviteAcceptPartyCommand {
 								return 0;
 							player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_success", targetParty.getDefaultName()), player.getUUID());
 							
-							new PartyOnCommandUpdater().update(playerId, serverData, targetParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_join_success_info", Component.literal(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
+							new PartyOnCommandUpdater().update(player, serverData, targetParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_join_success_info", Component.literal(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
 							serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 							return 1;
 						})));

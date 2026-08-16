@@ -127,7 +127,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 
 		@Override
 		public void accept(ServerboundSubConfigExistencePacket t, ServerPlayer serverPlayer) {
-			if(t.type != PlayerConfigType.PLAYER && t.type != PlayerConfigType.SERVER && t.type != PlayerConfigType.PARTY_CLAIMS) {
+			if(!t.type.supportsSubConfigs()) {
 				OpenPartiesAndClaims.LOGGER.info("Someone is trying to create/delete a sub-config for an invalid config type! Name: " + serverPlayer.getGameProfile().getName());
 				return;
 			}
@@ -137,9 +137,11 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 			}
 			boolean isOP = serverPlayer.hasPermissions(2);
 			boolean isServer = t.type == PlayerConfigType.SERVER;
-			UUID ownerId = isServer ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
+			boolean isDimensionBased = t.type.hasDimensionSubConfigs();
+			boolean isGlobal = t.type.isGlobal();
+			UUID ownerId = isServer || isDimensionBased ? null : t.owner == null ? serverPlayer.getUUID() : t.owner;
 			if(!isOP) {
-				if(isServer) {
+				if(isGlobal) {
 					OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to create/delete a sub-config without required permissions! Name: " + serverPlayer.getGameProfile().getName());
 					return;
 				}
@@ -167,7 +169,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 			boolean blockedBecauseOverClaimLimit = !isOP && checkBlockedBecauseOverClaimLimit(config, serverPlayer);
 			if(t.create) {
 				boolean reachedLimit = config.getSubCount() >= config.getSubConfigLimit();
-				if (reachedLimit || blockedBecauseOverClaimLimit || config.createSubConfig(t.subId) == null || !isServer && !Objects.equals(ownerId, serverPlayer.getUUID())) {
+				if (reachedLimit || blockedBecauseOverClaimLimit || config.createSubConfig(t.subId) == null || !isGlobal && !Objects.equals(ownerId, serverPlayer.getUUID())) {
 					playerConfigs.getSynchronizer().confirmSubConfigCreationSync(serverPlayer, config);//need to notify the client even when unsuccessful
 					if(reachedLimit) {
 						MutableComponent limitReachedMessage = Component.translatable("gui.xaero_pac_config_create_sub_id_limit_reached", config.getSubConfigLimit());
@@ -181,17 +183,26 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 					return;
 				if(subConfig == config)
 					return;
+				if(config.getPlayerId() == null || config.getType().hasDimensionSubConfigs()){//doesn't have individual claims tied to sub-configs
+					config.removeSubConfig(t.subId);
+					return;
+				}
 				if(blockedBecauseOverClaimLimit) {
 					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
 					return;
 				}
 				IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(config.getPlayerId());
+				if(playerInfo.isTransferInProgress()){
+					serverPlayer.sendMessage(new TranslatableComponent("gui.xaero_pac_config_transfer_in_progress"), serverPlayer.getUUID());
+					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
+					return;
+				}
 				if(playerInfo.hasReplacementTasks()){
 					serverPlayer.sendMessage(Component.translatable("gui.xaero_pac_config_delete_sub_already_replacing"), serverPlayer.getUUID());
 					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
 					return;
 				}
-				new PlayerSubConfigDeletionStarter().start(serverPlayer, playerInfo, subConfig, serverData);
+				new PlayerSubConfigDeletionStarter().start(serverPlayer, playerInfo, subConfig, serverData, true);
 			}
 		}
 		

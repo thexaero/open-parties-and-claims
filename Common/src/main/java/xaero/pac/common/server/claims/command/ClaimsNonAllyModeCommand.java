@@ -54,6 +54,7 @@ public class ClaimsNonAllyModeCommand {
 					ServerPlayerData mainCapability = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 					mainCapability.setClaimsNonallyMode(!mainCapability.isClaimsNonallyMode());
 					mainCapability.setClaimsAdminMode(false);
+					mainCapability.setClaimsModeratorMode(false);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 					player.sendMessage(adaptiveLocalizer.getFor(player, mainCapability.isClaimsNonallyMode() ? "gui.xaero_claims_nonally_mode_enabled" : "gui.xaero_claims_nonally_mode_disabled"), player.getUUID());
 					return 1;

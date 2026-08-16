@@ -169,7 +169,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		List<ClaimingModeSubInfo> subInfoCollection = new ArrayList<>();
 		for (IClaimingModeAPI claimingModeAPI : ClaimingModes.ALL_IMMUTABLE.values()) {
 			ClaimingMode claimingMode = (ClaimingMode) claimingModeAPI;
-			IPlayerConfig usedSubConfig = claimingMode.getSubConfigGetter().apply(config);
+			IPlayerConfig usedSubConfig = config.getUsedSubConfig(claimingModeAPI);
 			int currentSubConfigIndex = usedSubConfig.getSubIndex();
 			String currentSubConfigId = usedSubConfig.getSubId();
 			if(currentSubConfigId == null)

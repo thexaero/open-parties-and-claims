@@ -23,9 +23,12 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -53,57 +56,62 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
-import static xaero.pac.common.server.command.ConfigCommandUtil.getPartyClaimsRequirement;
 
 public class ConfigSubCreateCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
+		for (PlayerConfigType configType : PlayerConfigType.values()) {
+			if(!configType.supportsSubConfigs())
+				continue;
+			Predicate<CommandSourceStack> prefixRequirement = configType.getWriteCommandRequirement();
+			Predicate<CommandSourceStack> mainRequirement = s -> true;
+			if(configType.readAndWriteReqsDiffer()) {
+				prefixRequirement = configType.getReadCommandRequirement();
+				mainRequirement = configType.getWriteCommandRequirement();
+			}
+			Command<CommandSourceStack> executor = getExecutor(configType);
+
+			LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(prefixRequirement)
+					.then(getMainCommandPart(executor, mainRequirement, !configType.hasDimensionSubConfigs())));
+			dispatcher.register(command);
+		}
+
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
-		Command<CommandSourceStack> serverExecutor = getExecutor(PlayerConfigType.SERVER);
-		Command<CommandSourceStack> partyExecutor = getExecutor(PlayerConfigType.PARTY_CLAIMS);
-
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
-				.then(Commands.literal("player-config")
-				.then(getMainCommandPart(regularExecutor)));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
 				.then(Commands.literal("for")
 				.requires(sourceStack -> sourceStack.hasPermission(2))
 				.then(Commands.argument("player", GameProfileArgument.gameProfile())
 				.then(getMainCommandPart(regularExecutor)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> sourceStack.hasPermission(2))
-				.then(getMainCommandPart(serverExecutor)));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(getPartyClaimsRequirement(false))
-				.then(getMainCommandPart(partyExecutor, getPartyClaimsRequirement(true))));
 		dispatcher.register(command);
 	}
 
 	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(
 			Command<CommandSourceStack> executor
 	){
-		return getMainCommandPart(executor, s -> true);
+		return getMainCommandPart(executor, s -> true, true);
 	}
 
 	private LiteralArgumentBuilder<CommandSourceStack> getMainCommandPart(
 			Command<CommandSourceStack> executor,
-			Predicate<CommandSourceStack> requirement
+			Predicate<CommandSourceStack> requirement,
+			boolean wordSubId
 	){
 		return Commands.literal("sub")
 				.then(Commands.literal("create").requires(requirement)
-				.then(Commands.argument("sub-id", StringArgumentType.word())
+				.then(Commands.argument("sub-id", wordSubId ? StringArgumentType.word() : StringArgumentType.string())
 				.executes(executor)));
 	}
 
 	private static Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch(CommandSyntaxException cse){
+			}
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
@@ -119,13 +127,16 @@ public class ConfigSubCreateCommand {
 				configPlayerUUID = inputPlayer.getId();
 			}
 
-			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
-			if(serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
-				return 0;//going too fast
-			playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
+			if(sourcePlayer != null) {
+				ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
+				if (serverData.getServerTickHandler().getTickCounter() == playerData.getLastSubConfigCreationTick())
+					return 0;//going too fast
+				playerData.setLastSubConfigCreationTick(serverData.getServerTickHandler().getTickCounter());
+			}
 
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			PlayerConfig<?> playerConfig = (PlayerConfig<?>) ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(), type, serverData.getPlayerConfigManager()
+					configPlayerUUID, callerId, type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_option_invalid_config"));
@@ -143,12 +154,21 @@ public class ConfigSubCreateCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub_id_limit_reached", playerConfig.getSubConfigLimit()));
 				return 0;
 			}
-			PlayerSubConfig<?> result = playerConfig.createSubConfig(inputSubId);
-			if(result == null){
-				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH));
+			if(playerConfig.getType().hasDimensionSubConfigs() && playerConfig.subConfigExists(inputSubId)){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer,
+						new TranslatableComponent("gui.xaero_pac_config_create_sub_id_dimension_already_exists")
+				));
 				return 0;
 			}
-			sourcePlayer.sendMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub"), sourcePlayer.getUUID());
+			PlayerSubConfig<?> result = playerConfig.createSubConfig(inputSubId);
+			if(result == null){
+				Component subIdRulesComponent = playerConfig.getType() == PlayerConfigType.WILDERNESS ?
+						new TranslatableComponent("gui.xaero_pac_config_create_sub_id_dimension_rules") :
+						new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH);
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, subIdRulesComponent));
+				return 0;
+			}
+			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub"), true);
 			return 1;
 		};
 	}

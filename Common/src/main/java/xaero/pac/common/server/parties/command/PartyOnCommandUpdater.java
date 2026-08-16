@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 public class PartyOnCommandUpdater {
 	
 	public <M extends IPartyMember, I extends IPartyPlayerInfo, A extends IPartyAlly> void update(
-			UUID commandCasterId,
+			ServerPlayer commandCaller,
 			IServerData<?,?> serverData,
 			IServerParty<M, I, A> party,
 			IPlayerConfigManager configs,
@@ -70,17 +70,19 @@ public class PartyOnCommandUpdater {
 			Component memberMessage = Component.literal("");//can't reuse because onlineMember.sendMessage might not encode the message immediately, which can cause a race condition
 			memberMessage.getSiblings().add(partyNameComponent);
 			memberMessage.getSiblings().add(adaptiveLocalizer.getFor(memberPlayer, massMessageContent));
-			memberPlayer.sendMessage(memberMessage, commandCasterId);
+			memberPlayer.sendMessage(memberMessage, commandCaller.getUUID());
 		};
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-			M memberInfo = party.getMemberInfo(player.getUUID());
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+			UUID effectivePlayerId = playerData.getPartiesImpersonatedPlayerId() != null ?
+					playerData.getPartiesImpersonatedPlayerId() : player.getUUID();
+			M memberInfo = party.getMemberInfo(effectivePlayerId);
 			if(memberInfo != null) {
 				if(shouldUpdateCommandsForMember.test(memberInfo))
 					serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 				messageSender.accept(player);
 				continue;
 			}
-			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
 			if(playerData.isPartiesAdminMode())
 				messageSender.accept(player);
 		}

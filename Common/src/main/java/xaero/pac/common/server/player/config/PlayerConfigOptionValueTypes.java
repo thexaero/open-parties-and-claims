@@ -46,6 +46,8 @@ public class PlayerConfigOptionValueTypes {
 			.setComponentWriter(b -> b ? PlayerConfigConstants.ON_COMPONENT : PlayerConfigConstants.OFF_COMPONENT)
 			.setStringParser(str -> str.equals("true") || str.equals("on") || str.equals("1") || str.equals("+"))
 			.setDefaultCommandSuggestions(Lists.newArrayList("false", "true", "off", "on", "0", "1", "-", "+"))
+			.setAdder((b1, b2) -> b1 != b2)//makes it usable for toggling
+			.setSubtracter((b1, b2) -> b1 != b2)//makes it usable for toggling
 			.build(BASIC_TYPES);
 
 	public static final PlayerConfigOptionValueType<Integer> INTEGER = PlayerConfigOptionValueType.FinalBuilder
@@ -59,6 +61,8 @@ public class PlayerConfigOptionValueTypes {
 			})
 			.setStringWriter(i -> "" + i)
 			.setStringParser(Integer::parseInt)
+			.setAdder(Integer::sum)
+			.setSubtracter((i1, i2) -> i1 - i2)
 			.build(BASIC_TYPES);
 
 	public static final PlayerConfigOptionValueType<Integer> HEX_INTEGER = PlayerConfigOptionValueType.FinalBuilder
@@ -72,6 +76,8 @@ public class PlayerConfigOptionValueTypes {
 			})
 			.setStringWriter(i -> Integer.toUnsignedString(i, 16).toUpperCase())
 			.setStringParser(s -> Integer.parseUnsignedInt(s, 16))
+			.setAdder(Integer::sum)
+			.setSubtracter((i1, i2) -> i1 - i2)
 			.build(BASIC_TYPES);
 
 	public static final PlayerConfigOptionValueType<Double> DOUBLE = PlayerConfigOptionValueType.FinalBuilder
@@ -85,6 +91,8 @@ public class PlayerConfigOptionValueTypes {
 			})
 			.setStringWriter(d -> "" + d)
 			.setStringParser(Double::parseDouble)
+			.setAdder(Double::sum)
+			.setSubtracter((d1, d2) -> d1 - d2)
 			.build(BASIC_TYPES);
 
 	public static final PlayerConfigOptionValueType<Float> FLOAT = PlayerConfigOptionValueType.FinalBuilder
@@ -98,6 +106,8 @@ public class PlayerConfigOptionValueTypes {
 			})
 			.setStringWriter(f -> "" + f)
 			.setStringParser(Float::parseFloat)
+			.setAdder(Float::sum)
+			.setSubtracter((f1, f2) -> f1 - f2)
 			.build(BASIC_TYPES);
 
 	public static final PlayerConfigOptionValueType<String> STRING = PlayerConfigOptionValueType.FinalBuilder
@@ -112,6 +122,8 @@ public class PlayerConfigOptionValueTypes {
 			.setStringWriter(s -> s)
 			.setStringParser(s -> s)
 			.setShouldDisplayInQuotes(true)
+			.setAdder((s1, s2) -> s1 + s2)
+			.setSubtracter((s1, s2) -> s1.replace(s2, ""))
 			.build(BASIC_TYPES);
 
 	public static final PlayerConfigOptionValueType<String> GROUP_ID = PlayerConfigOptionValueType.FinalBuilder
