@@ -82,8 +82,8 @@ public class PacketRegister {
 		ServerboundClaimActionRequestPacket.Codec claimActionRequestPacketCodec = new ServerboundClaimActionRequestPacket.Codec();
 		packetHandler.register(21, ServerboundClaimActionRequestPacket.class, claimActionRequestPacketCodec, claimActionRequestPacketCodec, new ServerboundClaimActionRequestPacket.ServerHandler(), null);
 
-		ClientboundModesPacket.Codec modesCodec = new ClientboundModesPacket.Codec();
-		packetHandler.register(22, ClientboundModesPacket.class, modesCodec, modesCodec, null, new ClientboundModesPacket.ClientHandler());
+		ClientboundClaimModesPacket.Codec modesCodec = new ClientboundClaimModesPacket.Codec();
+		packetHandler.register(22, ClientboundClaimModesPacket.class, modesCodec, modesCodec, null, new ClientboundClaimModesPacket.ClientHandler());
 
 		ClientboundPlayerConfigSyncStatePacket.Codec playerConfigSyncCodec = new ClientboundPlayerConfigSyncStatePacket.Codec();
 		packetHandler.register(23, ClientboundPlayerConfigSyncStatePacket.class, playerConfigSyncCodec, playerConfigSyncCodec, null, new ClientboundPlayerConfigSyncStatePacket.ClientHandler());
@@ -189,6 +189,11 @@ public class PacketRegister {
 				null, new ClientboundClaimsResetPacket.ClientHandler()
 		);
 
+		ClientboundPlayerConfigConfigurableOptionsPacket.Codec configurableOptionsCodec = new ClientboundPlayerConfigConfigurableOptionsPacket.Codec();
+		packetHandler.register(49, ClientboundPlayerConfigConfigurableOptionsPacket.class,
+				configurableOptionsCodec, configurableOptionsCodec,
+				null, new ClientboundPlayerConfigConfigurableOptionsPacket.ClientHandler()
+		);
 	}
 
 }

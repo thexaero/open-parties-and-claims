@@ -26,14 +26,14 @@ import xaero.pac.client.gui.PlayerConfigScreen;
 import xaero.pac.common.misc.MapFactory;
 import xaero.pac.common.player.config.dynamic.PlayerConfigDynamicOptions;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class PlayerConfigClientStorageManager implements IPlayerConfigClientStorageManager<PlayerConfigClientStorage> {
@@ -48,9 +48,13 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	private boolean waitingForOtherPlayerConfig;
 	private PlayerConfigDynamicOptions dynamicOptions;
 	private boolean admin;
+	private final Set<String> playerConfigurableOptions;
+	private final Set<String> opConfigurableOptions;
 
-	private PlayerConfigClientStorageManager() {
+	private PlayerConfigClientStorageManager(Set<String> playerConfigurableOptions, Set<String> opConfigurableOptions) {
 		super();
+		this.playerConfigurableOptions = playerConfigurableOptions;
+		this.opConfigurableOptions = opConfigurableOptions;
 	}
 
 	private void set(
@@ -64,6 +68,17 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		this.defaultPlayerConfig = defaultPlayerConfig;
 		this.myPlayerConfig = myPlayerConfig;
 		this.partyClaimsConfig = partyClaimsConfig;
+	}
+
+	@Override
+	public PlayerConfigClientStorage getGlobalConfigForClaimOwner(UUID claimOwnerId){
+		if(claimOwnerId == null)
+			return getWildernessConfig();
+		if(PlayerConfig.SERVER_CLAIM_UUID.equals(claimOwnerId))
+			return getServerClaimsConfig();
+		if(PlayerConfig.EXPIRED_CLAIM_UUID.equals(claimOwnerId))
+			return getExpiredClaimsConfig();
+		return null;
 	}
 
 	@Nonnull
@@ -103,6 +118,8 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 	}
 
 	public void reset(){
+		playerConfigurableOptions.clear();
+		opConfigurableOptions.clear();
 		serverClaimsConfig.reset();
 		expiredClaimsConfig.reset();
 		wildernessConfig.reset();
@@ -275,6 +292,27 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		return admin;
 	}
 
+	@Override
+	public void setConfigurableOptions(List<String> playerConfigurableList, List<String> opConfigurableList) {
+		playerConfigurableOptions.clear();
+		playerConfigurableOptions.addAll(playerConfigurableList);
+		opConfigurableOptions.clear();
+		opConfigurableOptions.addAll(opConfigurableList);
+	}
+
+	@Override
+	public boolean isOptionPlayerConfigurable(IPlayerConfigOptionSpecAPI<?> option){
+		return ((PlayerConfigOptionSpec<?>)option).isForcedPlayerConfigurable() ||
+				playerConfigurableOptions.contains(option.getId()) ||
+				playerConfigurableOptions.contains(option.getShortenedId());
+	}
+
+	@Override
+	public boolean isOptionOpConfigurable(IPlayerConfigOptionSpecAPI<?> option){
+		return opConfigurableOptions.contains(option.getId()) ||
+				opConfigurableOptions.contains(option.getShortenedId());
+	}
+
 	public static final class Builder {
 
 		private Builder() {
@@ -285,7 +323,7 @@ public class PlayerConfigClientStorageManager implements IPlayerConfigClientStor
 		}
 
 		public PlayerConfigClientStorageManager build() {
-			PlayerConfigClientStorageManager manager = new PlayerConfigClientStorageManager();
+			PlayerConfigClientStorageManager manager = new PlayerConfigClientStorageManager(new HashSet<>(), new HashSet<>());
 			PlayerConfigClientStorage serverClaimsConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.SERVER).setOwner(PlayerConfig.SERVER_CLAIM_UUID).setManager(manager).build();
 			PlayerConfigClientStorage expiredClaimsConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.EXPIRED).setOwner(PlayerConfig.EXPIRED_CLAIM_UUID).setManager(manager).build();
 			PlayerConfigClientStorage wildernessConfig = PlayerConfigClientStorage.FinalBuilder.begin(LinkedHashMap::new).setType(PlayerConfigType.WILDERNESS).setOwner(null).setManager(manager).build();

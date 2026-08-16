@@ -29,7 +29,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.packet.ClientboundModesPacket;
+import xaero.pac.common.packet.claims.ClientboundClaimModesPacket;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -71,11 +71,12 @@ public class ClaimsAdminModeCommand {
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 							serverData = ServerData.from(server);
 					ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
-					playerData.setClaimsAdminMode(!playerData.isClaimsAdminMode());
+					playerData.setClaimsModeratorMode(false);
 					playerData.setClaimsNonallyMode(false);
+					playerData.setClaimsAdminMode(!playerData.isClaimsAdminMode());
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 					player.sendSystemMessage(adaptiveLocalizer.getFor(player, playerData.isClaimsAdminMode() ? "gui.xaero_claims_admin_mode_enabled" : "gui.xaero_claims_admin_mode_disabled"));
-					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundModesPacket.get(playerData));
+					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
 					return 1;
 				}));
 		dispatcher.register(command);

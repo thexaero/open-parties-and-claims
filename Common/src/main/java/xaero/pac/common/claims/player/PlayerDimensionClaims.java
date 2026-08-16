@@ -19,8 +19,11 @@
 package xaero.pac.common.claims.player;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
+import xaero.pac.common.claims.ClaimLocation;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -115,6 +118,30 @@ public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaim
 	@Override
 	public Stream<PlayerClaimPosList> getTypedStream() {
 		return claimLists.values().stream();
+	}
+
+	public ClaimLocation getRandomClaimPos(boolean firstPosIfTooMany) {
+		int totalCount = getCount();
+		if(totalCount == 0)
+			return null;
+		int randomClaimIndex = (int) (Math.random() * totalCount);
+		int offset = 0;
+		for (PlayerClaimPosList claimList : claimLists.values()) {
+			int claimListCount = claimList.getCount();
+			if(randomClaimIndex >= offset + claimListCount){
+				offset += claimListCount;
+				continue;
+			}
+			ChunkPos pos;
+			if(firstPosIfTooMany && claimListCount > 10000)
+				pos = claimList.getPosSlowly(0);
+			else
+				pos = claimList.getPosSlowly(randomClaimIndex - offset);
+			if(pos == null)
+				return null;
+			return new ClaimLocation(dimension, pos.x, pos.z);
+		}
+		return null;
 	}
 
 }

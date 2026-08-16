@@ -23,6 +23,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import xaero.pac.common.packet.config.ClientboundPlayerConfigConfigurableOptionsPacket;
 import xaero.pac.common.player.config.dynamic.PlayerConfigDynamicOptions;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
@@ -351,7 +352,8 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 					entityAccessEntityGroups == null || playerAccessEntityGroups == null || droppedItemAccessEntityGroups == null ||
 					partySystemManager == null)
 				throw new IllegalStateException();
-			PlayerConfigSynchronizer playerConfigSynchronizer = new PlayerConfigSynchronizer(server);
+			ClientboundPlayerConfigConfigurableOptionsPacket configurableOptionsPacket = ClientboundPlayerConfigConfigurableOptionsPacket.fromServerConfig();
+			PlayerConfigSynchronizer playerConfigSynchronizer = new PlayerConfigSynchronizer(server, configurableOptionsPacket);
 			ForceLoadTicketManager forceLoadTicketManager = ForceLoadTicketManager.Builder.begin()
 					.setServer(server)
 					.setPartySystemManager(partySystemManager)

@@ -89,10 +89,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getId()" class="member-name-link">getId</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#canBeImpersonated()" class="member-name-link">canBeImpersonated</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether this claiming mode can be used when impersonating another player.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getId()" class="member-name-link">getId</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the String ID of the claiming mode.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isGlobal()" class="member-name-link">isGlobal</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether this is a global claiming mode that is exactly the same for every player.</div>
 </div>
 </div>
 </div>
@@ -117,6 +127,32 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the String ID, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isGlobal()">
+<h3>isGlobal</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isGlobal</span>()</div>
+<div class="block">Checks whether this is a global claiming mode that is exactly the same for every player.
+ <p>
+ For example, player and party modes are not global because they depend on the player while server mode is global.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this is a global claiming mode, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="canBeImpersonated()">
+<h3>canBeImpersonated</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">canBeImpersonated</span>()</div>
+<div class="block">Checks whether this claiming mode can be used when impersonating another player.
+ <p>
+ The use of the claiming mode won't be prevented but the impersonation will be ignored if this method returns false.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this claiming mode can be impersonated, otherwise false</dd>
 </dl>
 </section>
 </li>
