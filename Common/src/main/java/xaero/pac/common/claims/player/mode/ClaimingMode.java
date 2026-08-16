@@ -38,10 +38,10 @@ import java.util.function.Predicate;
 public final class ClaimingMode implements IClaimingModeAPI {
 
 	private final String id;
-	private final BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker;
+	private final BiFunction<UUID, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker;
 	private final BiFunction<UUID, IServerClaimsManager<?, ?, ?>, UUID> forcedUUIDGetter;
 	private final UUID clientCountsSourceId;
-	private final Function<IPlayerConfig, IPlayerConfig> subConfigGetter;
+	private final Function<IPlayerConfig, IPlayerConfig> claimConfigGetter;
 	private final Component enableMessage;
 	private final Component disableMessage;
 	private final Predicate<CommandSourceStack> commandVisibilityRequirement;
@@ -49,26 +49,28 @@ public final class ClaimingMode implements IClaimingModeAPI {
 	private final PlayerConfigType configType;
 	private final BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimingModeLimits> limitsBuilder;
 	private final Component activeLabel;
+	private final boolean canBeImpersonated;
 
 	private ClaimingMode(
 			String id,
-			BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker,
+			BiFunction<UUID, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker,
 			BiFunction<UUID, IServerClaimsManager<?, ?, ?>, UUID> forcedUUIDGetter,
 			UUID clientCountsSourceId,
-			Function<IPlayerConfig, IPlayerConfig> subConfigGetter,
+			Function<IPlayerConfig, IPlayerConfig> claimConfigGetter,
 			Component enableMessage,
 			Component disableMessage,
 			Predicate<CommandSourceStack> commandVisibilityRequirement,
 			IPlayerConfigOptionSpecAPI<String> subClaimOption,
 			PlayerConfigType configType,
 			BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimingModeLimits> limitsBuilder,
-			Component activeLabel
+			Component activeLabel,
+			boolean canBeImpersonated
 	) {
 		this.id = id;
 		this.permissionChecker = permissionChecker;
 		this.forcedUUIDGetter = forcedUUIDGetter;
 		this.clientCountsSourceId = clientCountsSourceId;
-		this.subConfigGetter = subConfigGetter;
+		this.claimConfigGetter = claimConfigGetter;
 		this.enableMessage = enableMessage;
 		this.disableMessage = disableMessage;
 		this.commandVisibilityRequirement = commandVisibilityRequirement;
@@ -76,6 +78,7 @@ public final class ClaimingMode implements IClaimingModeAPI {
 		this.configType = configType;
 		this.limitsBuilder = limitsBuilder;
 		this.activeLabel = activeLabel;
+		this.canBeImpersonated = canBeImpersonated;
 	}
 
 	@Override
@@ -88,12 +91,12 @@ public final class ClaimingMode implements IClaimingModeAPI {
 		return forcedUUIDGetter;
 	}
 
-	public BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> getPermissionChecker() {
+	public BiFunction<UUID, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> getPermissionChecker() {
 		return permissionChecker;
 	}
 
-	public Function<IPlayerConfig, IPlayerConfig> getSubConfigGetter() {
-		return subConfigGetter;
+	public Function<IPlayerConfig, IPlayerConfig> getClaimConfigGetter() {
+		return claimConfigGetter;
 	}
 
 	public Component getEnableMessage() {
@@ -128,13 +131,23 @@ public final class ClaimingMode implements IClaimingModeAPI {
 		return activeLabel;
 	}
 
+	@Override
+	public boolean isGlobal(){
+		return configType.isGlobal();
+	}
+
+	@Override
+	public boolean canBeImpersonated() {
+		return canBeImpersonated;
+	}
+
 	public static final class Builder {
 
 		private String id;
-		private BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker;
+		private BiFunction<UUID, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker;
 		private BiFunction<UUID, IServerClaimsManager<?, ?, ?>, UUID> forcedUUIDGetter;
 		private UUID clientCountsSourceId;
-		private Function<IPlayerConfig, IPlayerConfig> subConfigGetter;
+		private Function<IPlayerConfig, IPlayerConfig> claimConfigGetter;
 		private Component enableMessage;
 		private Component disableMessage;
 		private Predicate<CommandSourceStack> commandVisibilityRequirement;
@@ -142,6 +155,7 @@ public final class ClaimingMode implements IClaimingModeAPI {
 		private PlayerConfigType configType;
 		private BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimingModeLimits> limitsBuilder;
 		private Component activeLabel;
+		private boolean canBeImpersonated;
 
 		private Builder(){}
 
@@ -149,7 +163,7 @@ public final class ClaimingMode implements IClaimingModeAPI {
 			setId(null);
 			setPermissionChecker(null);
 			setForcedUUIDGetter(null);
-			setSubConfigGetter(null);
+			setClaimConfigGetter(null);
 			setEnableMessage(null);
 			setDisableMessage(null);
 			setCommandVisibilityRequirement(null);
@@ -157,6 +171,7 @@ public final class ClaimingMode implements IClaimingModeAPI {
 			setClientCountsSourceId(null);
 			setLimitsBuilder(null);
 			setActiveLabel(null);
+			setCanBeImpersonated(false);
 			return this;
 		}
 
@@ -166,7 +181,7 @@ public final class ClaimingMode implements IClaimingModeAPI {
 		}
 
 		public Builder setPermissionChecker(
-				BiFunction<ServerPlayer, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker
+				BiFunction<UUID, IServerClaimsManager<?, ?, ?>, ClaimResult.Type> permissionChecker
 		) {
 			this.permissionChecker = permissionChecker;
 			return this;
@@ -184,8 +199,8 @@ public final class ClaimingMode implements IClaimingModeAPI {
 			return this;
 		}
 
-		public Builder setSubConfigGetter(Function<IPlayerConfig, IPlayerConfig> subConfigGetter) {
-			this.subConfigGetter = subConfigGetter;
+		public Builder setClaimConfigGetter(Function<IPlayerConfig, IPlayerConfig> claimConfigGetter) {
+			this.claimConfigGetter = claimConfigGetter;
 			return this;
 		}
 
@@ -226,18 +241,26 @@ public final class ClaimingMode implements IClaimingModeAPI {
 			return this;
 		}
 
+		public Builder setCanBeImpersonated(boolean canBeImpersonated) {
+			this.canBeImpersonated = canBeImpersonated;
+			return this;
+		}
+
 		public ClaimingMode build(Map<String, IClaimingModeAPI> dest){
-			if(id == null || subConfigGetter == null || enableMessage == null ||
+			if(id == null || claimConfigGetter == null || enableMessage == null ||
 					disableMessage == null || commandVisibilityRequirement == null ||
 					subClaimOption == null || configType == null || limitsBuilder == null ||
 					activeLabel == null
 			)
 				throw new IllegalStateException();
+			if(configType.isGlobal() && canBeImpersonated)
+				throw new IllegalStateException("There is no point in impersonating a global claiming mode!");
 			ClaimingMode result = new ClaimingMode(
 					id, permissionChecker, forcedUUIDGetter, clientCountsSourceId,
-					subConfigGetter, enableMessage,
+					claimConfigGetter, enableMessage,
 					disableMessage, commandVisibilityRequirement, subClaimOption,
-					configType, limitsBuilder, activeLabel);
+					configType, limitsBuilder, activeLabel, canBeImpersonated
+			);
 			if(dest != null)
 				dest.put(id, result);
 			return result;

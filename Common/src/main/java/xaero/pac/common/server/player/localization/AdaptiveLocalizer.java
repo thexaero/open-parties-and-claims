@@ -26,6 +26,7 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
@@ -38,7 +39,9 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 
 	@Override
 	@Nonnull
-	public MutableComponent getFor(@Nonnull ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
+	public MutableComponent getFor(@Nullable ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
+		if(player == null)
+			return getServerLocalizedComponent(key, args);
 		ServerPlayerData playerDataAPI = (ServerPlayerData) ServerPlayerData.from(player);
 		if(playerDataAPI.hasMod())
 			return Component.translatable(key, args);
@@ -47,11 +50,11 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 
 	@Override
 	@Nonnull
-	public Component getFor(@Nonnull ServerPlayer player, @Nonnull Component component){
+	public Component getFor(@Nullable ServerPlayer player, @Nonnull Component component){
 		if(!(component.getContents() instanceof TranslatableContents translatableContents))
 			return component;
-		ServerPlayerData playerDataAPI = (ServerPlayerData) ServerPlayerData.from(player);
-		if(playerDataAPI.hasMod())
+		ServerPlayerData playerDataAPI = player == null ? null : (ServerPlayerData) ServerPlayerData.from(player);
+		if(playerDataAPI != null && playerDataAPI.hasMod())
 			return component;
 		String key = translatableContents.getKey();
 		Object[] args = translatableContents.getArgs();

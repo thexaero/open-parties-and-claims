@@ -87,6 +87,11 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> BONUS_PLAYER_GROUP_SPACE;
 	/**
+	 * The option used to store permission node values used for offline players.
+	 * Can't be used directly, isn't up-to-date with effective permission node values used for offline players.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<List<String>> LAST_PERMISSION_VALUES;
+	/**
 	 * Whether the player's claimed chunks are protected at all.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> PROTECT_CLAIMED_CHUNKS;
@@ -314,6 +319,11 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_PROJECTILE_HIT_FRIENDLY_SPAWN;
 	/**
+	 * Whether the claimed chunk(s) can be reclaimed by another player.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_RECLAIMABLE;
+
+	/**
 	 * Whether the player's forceloadable claims are forceloaded, at least while the player is online.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> FORCELOAD;
@@ -540,6 +550,17 @@ public class PlayerConfigOptions {
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setOverridable(false)
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleBonusForceloads)
+				.build(allOptions);
+		LAST_PERMISSION_VALUES = PlayerConfigOptionSpec.FinalBuilder
+				.begin(PlayerConfigOptionValueTypes.getListType(PlayerConfigOptionValueTypes.STRING))
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "lastPermissionValues")
+				.setDefaultValue(Lists.newArrayList())
+				.setComment(".")
+				.setCategory(PlayerConfigOptionCategory.GENERAL)
+				.setOverridable(false)
+				.setForcedPlayerConfigurable(true)
+				.setDirectlyConfigurable(false)
+				.setSyncable(false)//irrelevant on the client side
 				.build(allOptions);
 		FULL_ACCESS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.fullAccess")
@@ -1050,6 +1071,20 @@ public class PlayerConfigOptions {
 								"(e.g. chicken). Protection might not work with projectiles from mods that don't " +
 								"implement this mod's API.\n"
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PROJECTILE
+				)
+				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
+				.build(allOptions);
+
+		CLAIM_EXCEPTION_RECLAIMABLE = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.reclaimable")
+				.setDefaultValue(PlayerConfigConstants.NO_EXCEPTION_ID)
+				.setComment(
+						"""
+						When a player group is chosen, every player in the group can reclaim the chunk(s)
+						that use this (sub-)config as their own. This is mainly meant for land plots you want other
+						players to be able to take from you.
+						"""
+						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
 				)
 				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
 				.build(allOptions);

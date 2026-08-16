@@ -52,7 +52,7 @@ public final class PlayerConfigSerializationHandler<
 						.build();
 		PlayerConfig<P> targetConfig = config;
 		if(info.getSubId() != null)
-			targetConfig = config.createSubConfig(info.getSubId(), info.getSubIndex());
+			targetConfig = config.createSubConfig(info.getSubId(), info.getSubIndex(), true/*irrelevant*/);
 		if(targetConfig != null)
 			serializer.deserializeInto(targetConfig, serializedData);
 		return targetConfig;

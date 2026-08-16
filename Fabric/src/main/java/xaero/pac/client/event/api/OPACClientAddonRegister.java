@@ -23,6 +23,10 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import xaero.pac.client.claims.tracker.result.api.IClaimsManagerClaimResultTrackerRegisterAPI;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
 
+/**
+ * @deprecated use {@link xaero.pac.client.event.api.v2.OPACClientAddonRegister} instead
+ */
+@Deprecated
 public interface OPACClientAddonRegister {
 
 	public static final Event<OPACClientAddonRegister> EVENT = EventFactory.createArrayBacked(OPACClientAddonRegister.class, (callbacks) -> (claimsManagerTrackerAPI, claimsManagerClaimResultTrackerAPI) -> {

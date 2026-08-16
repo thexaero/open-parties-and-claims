@@ -19,6 +19,7 @@
 package xaero.pac.common.claims.player.mode.api;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.result.api.ClaimResult;
@@ -59,7 +60,7 @@ public class ClaimingModes {
 			.setConfigType(PlayerConfigType.PLAYER)
 			.setSubClaimOption(PlayerConfigOptions.USED_SUBCLAIM)
 			.setCommandVisibilityRequirement(s -> true)
-			.setSubConfigGetter(IPlayerConfig::getUsedSubConfig)
+			.setClaimConfigGetter(playerConfig -> playerConfig)
 			.setLimitsBuilder((player, claimsManager) -> {
 				UUID playerId = player.getUUID();
 				IServerPlayerClaimInfo<?> playerClaims = claimsManager.getPlayerInfo(playerId);
@@ -71,7 +72,8 @@ public class ClaimingModes {
 						ClaimingModes.PLAYER, claimCount, forceloadCount, claimLimit, forceloadLimit
 				);
 			})
-			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_myself"))
+			.setCanBeImpersonated(true)
+			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_player"))
 			.setEnableMessage(Component.translatable("gui.xaero_claims_player_mode_enabled"))
 			.setDisableMessage(Component.translatable("gui.xaero_claims_player_mode_disabled"))
 			.build(ALL);
@@ -87,19 +89,20 @@ public class ClaimingModes {
 			.setForcedUUIDGetter((original, claimsManager) ->
 					claimsManager.getPartySystemManager().getPrimaryPartyOwnerByMember(original)
 			)
-			.setPermissionChecker((player, claimsManager) -> {
-				if(claimsManager.getPermissionHandler().playerHasPartyClaimPermission(player))
+			.setPermissionChecker((playerId, claimsManager) -> {
+				ServerPlayer player = claimsManager.getConfigManager().getServer().getPlayerList().getPlayer(playerId);
+				if(claimsManager.getPermissionHandler().playerHasPartyClaimPermission(player, playerId))
 					return null;
-				if(claimsManager.getPartySystemManager().isInAPrimaryParty(player.getUUID()))
+				if(claimsManager.getPartySystemManager().isInAPrimaryParty(playerId))
 					return ClaimResult.Type.NO_PARTY_PERMISSION;
 				return ClaimResult.Type.NOT_IN_PARTY;
 			})
-			.setSubConfigGetter(config -> {
-				UUID playerId = config.getPlayerId();
-				IPlayerConfig partyOwnerConfig = playerId == null ? config : config.getManager().getPartyOwnerConfig(playerId);
+			.setClaimConfigGetter(playerConfig -> {
+				UUID playerId = playerConfig.getPlayerId();
+				IPlayerConfig partyOwnerConfig = playerId == null ? playerConfig : playerConfig.getManager().getPartyOwnerConfig(playerId);
 				if(partyOwnerConfig == null)
-					partyOwnerConfig = config;
-				return partyOwnerConfig.getEffectiveSubConfig(config.getEffective(PlayerConfigOptions.USED_PARTY_SUBCLAIM));
+					partyOwnerConfig = playerConfig;
+				return partyOwnerConfig;
 			})
 			.setLimitsBuilder((player, claimsManager) -> {
 				int partyClaimCount = 0;
@@ -120,6 +123,7 @@ public class ClaimingModes {
 						ClaimingModes.PARTY, partyClaimCount, partyForceloadCount, partyClaimLimit, partyForceloadLimit
 				);
 			})
+			.setCanBeImpersonated(true)
 			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_party"))
 			.setEnableMessage(Component.translatable("gui.xaero_claims_party_mode_enabled"))
 			.setDisableMessage(Component.translatable("gui.xaero_claims_party_mode_disabled"))
@@ -137,16 +141,17 @@ public class ClaimingModes {
 					PlayerConfig.SERVER_CLAIM_UUID
 			)
 			.setClientCountsSourceId(PlayerConfig.SERVER_CLAIM_UUID)
-			.setPermissionChecker((player, claimsManager) -> {
+			.setPermissionChecker((playerId, claimsManager) -> {
+				if(PlayerConfig.SERVER_CLAIM_UUID.equals(playerId))
+					return null;
+				ServerPlayer player = claimsManager.getConfigManager().getServer().getPlayerList().getPlayer(playerId);
+				if(player == null)
+					return ClaimResult.Type.NO_SERVER_PERMISSION;
 				if(claimsManager.getPermissionHandler().playerHasServerClaimPermission(player))
 					return null;
 				return ClaimResult.Type.NO_SERVER_PERMISSION;
 			})
-			.setSubConfigGetter(config ->
-					config.getManager()
-							.getServerClaimConfig()
-							.getEffectiveSubConfig(config.getEffective(PlayerConfigOptions.USED_SERVER_SUBCLAIM))
-			)
+			.setClaimConfigGetter(playerConfig -> playerConfig.getManager().getServerClaimConfig())
 			.setLimitsBuilder((player, claimsManager) -> {
 				int serverClaimCount = 0;
 				int serverForceloadCount = 0;
@@ -156,7 +161,7 @@ public class ClaimingModes {
 					serverForceloadCount = serverClaims.getForceloadCount();
 				}
 				return new ClaimingModeLimits(
-						ClaimingModes.SERVER, serverClaimCount, serverForceloadCount, -1, -1
+						ClaimingModes.SERVER, serverClaimCount, serverForceloadCount, Integer.MAX_VALUE, Integer.MAX_VALUE
 				);
 			})
 			.setActiveLabel(Component.translatable("gui.xaero_pac_claiming_as_server"))

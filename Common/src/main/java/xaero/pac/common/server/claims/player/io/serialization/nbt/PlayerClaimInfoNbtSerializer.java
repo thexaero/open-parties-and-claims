@@ -56,7 +56,7 @@ public final class PlayerClaimInfoNbtSerializer implements SimpleSerializer<Comp
 		String username = nbt.getString("username");
 		Map<ResourceLocation, PlayerDimensionClaims> claims = new HashMap<>();
 		dimensionsTag.getAllKeys().forEach(key -> claims.put(new ResourceLocation(key), playerDimensionClaimsNbtSerializer.deserialize(id, key, dimensionsTag.getCompound(key))));
-		ServerPlayerClaimInfo result = new ServerPlayerClaimInfo(manager.getConfig(id), username, id, claims, manager, new ArrayDeque<>());
+		ServerPlayerClaimInfo result = new ServerPlayerClaimInfo(manager.getConfig(id), username, id, claims, manager, new ArrayDeque<>(), new ArrayDeque<>());
 		result.setRegisteredActivity(nbt.getLong("confirmedActivity"));
 		return result;
 	}

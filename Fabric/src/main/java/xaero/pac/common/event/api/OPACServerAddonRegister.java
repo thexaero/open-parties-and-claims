@@ -26,7 +26,7 @@ import xaero.pac.common.server.parties.system.api.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
 /**
- * @deprecated Use {@link xaero.pac.common.event.api.v2.OPACServerAddonRegister} instead
+ * @deprecated Use {@link xaero.pac.common.event.api.v3.OPACServerAddonRegister} instead
  */
 @Deprecated
 public interface OPACServerAddonRegister {
