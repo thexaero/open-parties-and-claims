@@ -29,6 +29,7 @@ import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.core.accessor.IGameProfileCache;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
+import java.util.HashSet;
 import java.util.Locale;
 
 public class ServerPlayerUtils {
@@ -61,7 +62,7 @@ public class ServerPlayerUtils {
 			}
 			player.stopRiding();
 			if(targetDimension != null && targetDimension != ServerLevelHelper.getServerLevel(player.level())) {
-				player.teleportTo(targetDimension, x, y, z, yRot, xRot);
+				player.teleportTo(targetDimension, x, y, z, new HashSet<>(), yRot, xRot, true);
 				return;
 			}
 			player.connection.teleport(x, y, z, yRot, xRot);
