@@ -224,7 +224,7 @@ public final class PlayerConfigIO
 			Path folder = configSubConfigPath.resolve(fileName);
 			String subIdBasedFileName;
 			if(object.getType().hasDimensionSubConfigs())
-				subIdBasedFileName = fileIOHelper.convertDimensionToFileName(new ResourceLocation(subConfig.getSubId()), false);
+				subIdBasedFileName = fileIOHelper.convertDimensionToFileName(ResourceLocation.parse(subConfig.getSubId()), false);
 			else
 				subIdBasedFileName = subConfig.getSubId() + "$" + subConfig.getSubIndex();
 			return folder.resolve(subIdBasedFileName + this.fileExtension);

@@ -42,6 +42,7 @@ import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
+import xaero.pac.common.util.IdentifierUtils;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -323,7 +324,7 @@ public class PlayerConfig
 	}
 
 	public static boolean isValidDimensionSubId(String id){
-		return !id.isEmpty() && id.contains(":") && ResourceLocation.isValidResourceLocation(id);//: check makes sure the id is full
+		return !id.isEmpty() && id.contains(":") && IdentifierUtils.isValidIdentifier(id);//: check makes sure the id is full
 	}
 
 	public static boolean isValidSubId(String id){

@@ -60,7 +60,7 @@ public class ServerboundClaimActionRequestPacket {
 				} catch(ArrayIndexOutOfBoundsException aioobe) {
 					return null;
 				}
-				ResourceLocation dimension = new ResourceLocation(tag.getString("d"));
+				ResourceLocation dimension = ResourceLocation.parse(tag.getString("d"));
 				int left = tag.getInt("l");
 				int top = tag.getInt("t");
 				int right = tag.getInt("r");

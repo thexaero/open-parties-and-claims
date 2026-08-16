@@ -88,7 +88,7 @@ public class FileIOHelper {
 		if(restoreTrailingDots)
 			path = path.replace(',', '.');
 		try {
-			return new ResourceLocation(idArgs[0], path);
+			return ResourceLocation.fromNamespaceAndPath(idArgs[0], path);
 		} catch(ResourceLocationException rle){
 			return null;
 		}

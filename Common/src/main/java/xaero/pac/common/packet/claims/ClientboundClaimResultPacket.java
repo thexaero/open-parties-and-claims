@@ -28,6 +28,7 @@ import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
+import xaero.pac.common.util.JsonUtils;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -72,7 +73,9 @@ public class ClientboundClaimResultPacket {
 				for (Tag listElementTag : customReasonListTag) {
 					StringTag customReasonJsonTag = (StringTag) listElementTag;
 					String customReasonJson = customReasonJsonTag.getAsString();
-					Component customReason = Component.Serializer.fromJson(customReasonJson);
+					Component customReason = JsonUtils.fromJson(customReasonJson);
+					if(customReason == null)
+						continue;
 					customReasons.add(customReason);
 				}
 				int left = tag.getInt("l");
@@ -98,7 +101,9 @@ public class ClientboundClaimResultPacket {
 			}
 			ListTag customReasonListTag = new ListTag();
 			for (Component customReason : t.result.getCustomReasons()) {
-				String componentJson = Component.Serializer.toJson(customReason);
+				String componentJson = JsonUtils.toJson(customReason);
+				if(componentJson == null)
+					continue;
 				customReasonListTag.add(StringTag.valueOf(componentJson));
 			}
 			tag.putByteArray("ta", resultTypes);
