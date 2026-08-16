@@ -192,7 +192,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 				}
 				IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = serverData.getServerClaimsManager().getPlayerInfo(config.getPlayerId());
 				if(playerInfo.isTransferInProgress()){
-					serverPlayer.sendMessage(Component.translatable("gui.xaero_pac_config_transfer_in_progress"), serverPlayer.getUUID());
+					serverPlayer.sendSystemMessage(Component.translatable("gui.xaero_pac_config_transfer_in_progress"));
 					playerConfigs.getSynchronizer().syncGeneralState(serverPlayer, subConfig);//notify client
 					return;
 				}

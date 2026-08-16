@@ -75,7 +75,7 @@ public class ClaimsModeratorModeCommand {
 					playerData.setClaimsNonallyMode(false);
 					playerData.setClaimsModeratorMode(!playerData.isClaimsModeratorMode());
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-					player.sendMessage(adaptiveLocalizer.getFor(player, playerData.isClaimsModeratorMode() ? "gui.xaero_claims_moderator_mode_enabled" : "gui.xaero_claims_moderator_mode_disabled"), player.getUUID());
+					player.sendSystemMessage(adaptiveLocalizer.getFor(player, playerData.isClaimsModeratorMode() ? "gui.xaero_claims_moderator_mode_enabled" : "gui.xaero_claims_moderator_mode_disabled"));
 					OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
 					return 1;
 				}));

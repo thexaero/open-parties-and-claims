@@ -30,8 +30,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
@@ -105,7 +103,7 @@ public class ClaimsTeleportCommand {
 			}
 			ServerPlayerUtils.teleport(casterPlayer, randomClaimPos.getDimId(), (randomClaimPos.getChunkX() << 4) + 8, casterPlayer.getY(), (randomClaimPos.getChunkZ() << 4) + 8, casterPlayer.getYRot(), casterPlayer.getXRot());
 			Component targetName = Component.literal(profile.getName()).withStyle(ChatFormatting.GREEN);
-			casterPlayer.sendMessage(Component.translatable("gui.xaero_claims_teleport_success", targetName), casterPlayer.getUUID());
+			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_claims_teleport_success", targetName));
 			return 1;
 		};
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {

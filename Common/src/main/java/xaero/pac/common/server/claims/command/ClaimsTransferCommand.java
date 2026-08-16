@@ -282,7 +282,7 @@ public class ClaimsTransferCommand {
 			Component callerName = Component.literal(callerPlayer.getGameProfile().getName()).withStyle(ChatFormatting.GREEN);
 			Component transferFromName = Component.literal(transferFrom.getName()).withStyle(ChatFormatting.GREEN);
 			Component transferToName = Component.literal(transferTo.getName()).withStyle(ChatFormatting.GREEN);
-			callerPlayer.sendMessage(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_request_sent", transferFromName, transferToName), callerPlayer.getUUID());
+			callerPlayer.sendSystemMessage(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_request_sent", transferFromName, transferToName));
 			playerData.setClaimTransferRequestSourcePlayerProfile(transferFrom);
 			playerData.setClaimTransferRequestTargetPlayerId(transferTo.getId());
 			playerData.setClaimTransferRequestTime(System.currentTimeMillis());
@@ -292,7 +292,7 @@ public class ClaimsTransferCommand {
 					.withStyle(s -> s.withColor(ChatFormatting.GREEN)
 							.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + ClaimsCommandRegister.COMMAND_PREFIX + " transfer-accept " + callerPlayer.getUUID()))
 							.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message_accept_tooltip")))));
-			targetPlayer.sendMessage(acceptComponent, callerPlayer.getUUID());
+			targetPlayer.sendSystemMessage(acceptComponent);
 			return 1;
 		};
 	}
@@ -440,10 +440,10 @@ public class ClaimsTransferCommand {
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 		Component fromPlayerName = Component.literal(fromPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
 		Component toPlayerName = Component.literal(toPlayerInfo.getPlayerUsername()).withStyle(ChatFormatting.GREEN);
-		onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer,
+		onlinePlayer.sendSystemMessage(adaptiveLocalizer.getFor(onlinePlayer,
 				isTarget ? "gui.xaero_claims_transfer_start_to" : "gui.xaero_claims_transfer_start_from",
 				fromPlayerName, toPlayerName
-		), onlinePlayer.getUUID());
+		));
 	}
 
 	private static void remapGroupIdOptions(IPlayerConfig subConfig, Map<String, String> groupIdMap){

@@ -28,8 +28,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
@@ -122,11 +120,11 @@ public class ClaimsImpersonateCommand {
 			((ServerPlayerClaimInfo)(Object)impersonatedPlayerClaimInfo).setPlayerUsername(toImpersonate.getName());
 		}
 		Component impersonatedName = disable ? null : Component.literal(toImpersonate.getName()).withStyle(ChatFormatting.GREEN);
-		player.sendMessage(
+		player.sendSystemMessage(
 				adaptiveLocalizer.getFor(player,
 						disable ? Component.translatable("gui.xaero_claims_impersonate_disabled") :
 								Component.translatable("gui.xaero_claims_impersonate_enabled", impersonatedName)
-				), player.getUUID()
+				)
 		);
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToPlayer(player, ClientboundClaimModesPacket.get(playerData));
 		return 1;

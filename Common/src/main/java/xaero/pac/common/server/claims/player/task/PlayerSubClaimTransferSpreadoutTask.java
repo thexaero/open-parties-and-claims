@@ -176,13 +176,13 @@ public final class PlayerSubClaimTransferSpreadoutTask extends PlayerClaimReplac
 				return;
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if (resultType.isSuccess()) {
-				onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer,
+				onlinePlayer.sendSystemMessage(adaptiveLocalizer.getFor(onlinePlayer,
 						isTarget ? "gui.xaero_claims_transfer_success_to" : "gui.xaero_claims_transfer_success_from",
 						fromPlayerInfo.getPlayerUsername(), toPlayerInfo.getPlayerUsername()
-				), onlinePlayer.getUUID());
+				));
 				return;
 			}
-			onlinePlayer.sendMessage(adaptiveLocalizer.getFor(onlinePlayer, resultType.getMessage()), onlinePlayer.getUUID());
+			onlinePlayer.sendSystemMessage(adaptiveLocalizer.getFor(onlinePlayer, resultType.getMessage()));
 		}
 
 	}
