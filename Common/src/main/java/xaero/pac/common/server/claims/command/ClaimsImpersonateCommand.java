@@ -46,7 +46,6 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.command.CommandRequirementHelper;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
@@ -115,12 +114,6 @@ public class ClaimsImpersonateCommand {
 		playerData.getClaimsImpersonationInfo().reset();
 		playerData.setClaimingMode(null);
 		playerData.getClaimsImpersonationInfo().setPlayerId(idToImpersonate);
-		if(idToImpersonate != null && !serverData.getServerClaimsManager().hasPlayerInfo(idToImpersonate)) {
-			//updating the username for previously unknown players
-			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> impersonatedPlayerClaimInfo =
-					serverData.getServerClaimsManager().getPlayerInfo(idToImpersonate);
-			((ServerPlayerClaimInfo)(Object)impersonatedPlayerClaimInfo).setPlayerUsername(toImpersonate.getName());
-		}
 		Component impersonatedName = disable ? null : new TextComponent(toImpersonate.getName()).withStyle(ChatFormatting.GREEN);
 		player.sendMessage(
 				adaptiveLocalizer.getFor(player,
