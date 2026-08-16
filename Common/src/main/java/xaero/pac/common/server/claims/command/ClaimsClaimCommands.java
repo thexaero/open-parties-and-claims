@@ -55,7 +55,6 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.command.CommandRequirementHelper;
 import xaero.pac.common.server.command.ConfigCommandUtil;
@@ -173,13 +172,6 @@ public class ClaimsClaimCommands {
 					int fromX = player == null ? middleX : player.chunkPosition().x;
 					int fromZ = player == null ? middleZ : player.chunkPosition().z;
 					if(shouldClaim) {
-						if(!claimPlayerId.equals(sourceUUID) && !serverData.getServerClaimsManager().hasPlayerInfo(claimPlayerId)) {
-							//updating the username for previously unknown player
-							IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerClaimInfo =
-									serverData.getServerClaimsManager().getPlayerInfo(claimPlayerId);
-							server.getProfileCache().get(claimPlayerId).map(GameProfile::getName)
-									.ifPresent(name -> ((ServerPlayerClaimInfo)(Object)playerClaimInfo).setPlayerUsername(name));
-						}
 						String specifiedSubId = null;
 						try {
 							specifiedSubId = StringArgumentType.getString(context, "sub-id");
