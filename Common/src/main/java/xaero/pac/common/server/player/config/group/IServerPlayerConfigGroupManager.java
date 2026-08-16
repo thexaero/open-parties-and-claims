@@ -27,6 +27,7 @@ import xaero.pac.common.server.player.config.group.custom.api.ICustomPlayerConfi
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IServerPlayerConfigGroupManager extends IServerPlayerConfigGroupManagerAPI {
 
@@ -51,6 +52,8 @@ public interface IServerPlayerConfigGroupManager extends IServerPlayerConfigGrou
 		return (Either<ICustomPlayerConfigGroupAPI, PlayerConfigGroupActionError>)(Object)addCustomLimitedInternal(id);
 	}
 
+	Either<ICustomPlayerConfigGroup, PlayerConfigGroupActionError> addCustom(String id, boolean sync);
+
 	@Nonnull
 	@Override
 	Optional<PlayerConfigGroupActionError> removeCustom(@Nonnull String id);
@@ -70,5 +73,11 @@ public interface IServerPlayerConfigGroupManager extends IServerPlayerConfigGrou
 	@Nonnull
 	@Override
 	List<String> getAllIdsSorted();
+
+	int getUsedSpace();
+
+	int getCustomGroupCount();
+
+	Set<String> getIds();
 
 }

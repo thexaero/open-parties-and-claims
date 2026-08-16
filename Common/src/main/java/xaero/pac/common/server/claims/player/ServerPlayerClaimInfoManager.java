@@ -109,7 +109,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 
 	@Override
 	protected ServerPlayerClaimInfo create(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims) {
-		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this, new ArrayDeque<>());
+		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this, new ArrayDeque<>(), new ArrayDeque<>());
 	}
 
 	@Override
@@ -136,14 +136,11 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	){
 		if(playerId == null)
 			playerId = player.getUUID();
-		int result;
 		boolean partyOwnedClaims = ServerConfig.CONFIG.partyOwnedClaims.get();
-		if(partyOwnedClaims && configManager.getPartySystemManager().isPrimaryPartyOwner(playerId))
-			result = limitConfig.get();//ignoring permission-based claim limit overrides for party-owned claims
-		else
-			result = PermissionUtils.getOverriddenServerConfigInt(
-					playerId, server, player, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
-			);
+		IPlayerConfig playerConfig = configManager.getLoadedConfig(playerId);
+		int result = PermissionUtils.getOverriddenServerConfigInt(
+				playerId, server, player, playerConfig, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
+		);
 		if(partyOwnedClaims)
 			result += getPartyOwnershipBonus(playerId, partyBonusConfig, partyOwnerBonusConfig);
 		return result;

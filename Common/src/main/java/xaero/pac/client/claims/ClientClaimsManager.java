@@ -42,16 +42,19 @@ import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.client.player.config.IPlayerConfigStringableOptionClientStorage;
 import xaero.pac.common.claims.ClaimStateHolder;
 import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.action.api.ClaimingAction;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+import xaero.pac.common.claims.player.impersonation.SimplePlayerClaimImpersonationInfo;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
-import xaero.pac.common.claims.player.request.ClaimActionRequest;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
 import xaero.pac.common.packet.claims.ServerboundClaimActionRequestPacket;
@@ -91,10 +94,12 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private final Map<IClaimingModeAPI, ClientClaimingModeInfo> claimingModeInfoMap;
 	private boolean alwaysUseLoadingValues;
 	private int maxClaimDistance;
+	private boolean moderatorMode;
 	private boolean adminMode;
 	private IClaimingModeAPI claimingMode;
 	private boolean partyOwnedClaims;
 	private UUID currentPartyOwner;
+	private SimplePlayerClaimImpersonationInfo playerImpersonationInfo;
 
 	private ClientClaimsManager(
 			ClientPlayerClaimInfoManager playerClaimInfoManager,
@@ -105,12 +110,14 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 			ClaimsManagerTracker claimsManagerTracker,
 			ClaimsManagerClaimResultTracker claimResultTracker,
 			Map<IClaimingModeAPI, ClientClaimingModeInfo> claimingModeInfoMap,
-			IClaimingModeAPI claimingMode
+			IClaimingModeAPI claimingMode,
+			SimplePlayerClaimImpersonationInfo playerImpersonationInfo
 	) {
 		super(playerClaimInfoManager, configManager, dimensions, indexToClaimState, claimStates, claimsManagerTracker);
 		this.claimResultTracker = claimResultTracker;
 		this.claimingModeInfoMap = claimingModeInfoMap;
 		this.claimingMode = claimingMode;
+		this.playerImpersonationInfo = playerImpersonationInfo;
 	}
 
 	public void setClientData(
@@ -243,6 +250,15 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		return maxClaimDistance;
 	}
 
+	public void setModeratorMode(boolean moderatorMode) {
+		this.moderatorMode = moderatorMode;
+	}
+
+	@Override
+	public boolean isModeratorMode() {
+		return moderatorMode || isAdminMode();
+	}
+
 	@Override
 	public boolean isAdminMode() {
 		return adminMode;
@@ -273,7 +289,8 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	public IClaimingModeAPI getEffectiveClaimingMode(IClaimingModeAPI selected) {
 		if(selected == null){
-			if(partyOwnedClaims && clientData.getPlayerConfigStorageManager().getPartyClaimsConfig().getPermissions().canClaimAs())
+			if(playerImpersonationInfo.getPlayerId() == null && partyOwnedClaims &&
+					clientData.getPlayerConfigStorageManager().getPartyClaimsConfig().getPermissions().canClaimAs())
 				return ClaimingModes.PARTY;
 			return ClaimingModes.PLAYER;
 		}
@@ -344,6 +361,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	public void reset(boolean notifyTracker) {
 		super.reset(notifyTracker);
+		moderatorMode = false;
 		adminMode = false;
 		claimingMode = null;
 		claimingModeInfoMap.values().forEach(ClientClaimingModeInfo::reset);
@@ -351,36 +369,37 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		alwaysUseLoadingValues = false;
 		setPartyOwnedClaims(false);
 		setCurrentPartyOwner(null);
+		playerImpersonationInfo.reset();
 	}
 
 	@Override
-	public void requestClaim(int x, int z, @Nullable IClaimingModeAPI claimingModeAPI) {
-		requestAreaClaim(x, z, x, z, claimingModeAPI);
+	public void requestClaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI) {
+		requestAreaClaim(dimension, x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestUnclaim(int x, int z, @Nullable IClaimingModeAPI claimingModeAPI){
-		requestAreaUnclaim(x, z, x, z, claimingModeAPI);
+	public void requestUnclaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI){
+		requestAreaUnclaim(dimension, x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestForceload(int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
-		requestAreaForceload(x, z, x, z, enable, claimingModeAPI);
+	public void requestForceload(@Nonnull ResourceLocation dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
+		requestAreaForceload(dimension, x, z, x, z, enable, claimingModeAPI);
 	}
 
 	@Override
-	public void requestAreaClaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.CLAIM, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+	public void requestAreaClaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.CLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaUnclaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(Action.UNCLAIM, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+	public void requestAreaUnclaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.UNCLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
-		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? Action.FORCELOAD : Action.UNFORCELOAD, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
+	public void requestAreaForceload(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
@@ -395,10 +414,20 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	public PlayerChunkClaim getPotentialClaimStateReflection(){
 		IClaimingModeAPI effectiveClaimingMode = getClaimingMode();
 		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(effectiveClaimingMode);
-		UUID claimReflectionOwner = claimingModeHandler.getClaimReflectionOwnerGetter().apply(this);
+		boolean impersonating = effectiveClaimingMode.canBeImpersonated() && playerImpersonationInfo.getPlayerId() != null;
+		UUID claimReflectionOwner;
+		if(impersonating)
+			claimReflectionOwner = playerImpersonationInfo.getClaimPlayerId(effectiveClaimingMode);
+		else
+			claimReflectionOwner = claimingModeHandler.getClaimReflectionOwnerGetter().apply(this);
 		if(claimReflectionOwner == null)
 			return null;
-		return new PlayerChunkClaim(claimReflectionOwner, getCurrentSubConfigIndex(effectiveClaimingMode), false, 0);
+		int subIndex;
+		if(impersonating)
+			subIndex = playerImpersonationInfo.getSubIndex(effectiveClaimingMode);
+		else
+			subIndex = getCurrentSubConfigIndex(effectiveClaimingMode);
+		return new PlayerChunkClaim(claimReflectionOwner, subIndex, false, 0);
 	}
 
 	@Override
@@ -448,19 +477,31 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public String getWildernessName() {
-		return clientData.getPlayerConfigStorageManager().getWildernessConfig()
-				.getOption(PlayerConfigOptions.CLAIMS_NAME).getValue();
+	public boolean claimUsesDimensionSubConfigs(IPlayerChunkClaimAPI claimState) {
+		IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> config =
+				clientData.getPlayerConfigStorageManager().getGlobalConfigForClaimOwner(
+						claimState == null ? null : claimState.getPlayerId()
+				);
+		return config != null && config.getType().hasDimensionSubConfigs();
 	}
 
 	@Override
-	protected MutableComponent constructPlayerClaimName(ClientPlayerClaimInfo playerClaimInfo, Component forceloadedComponent) {
-		if(partyOwnedClaims && playerClaimInfo.isPartyOwned() && playerClaimInfo.getPartyName() != null)
+	public String getDimensionName(IPlayerChunkClaimAPI claimState, ResourceLocation dimension) {
+		IPlayerConfigClientStorage<?> effectiveConfig = clientData.getPlayerConfigStorageManager()
+				.getGlobalConfigForClaimOwner(claimState == null ? null : claimState.getPlayerId());
+		if(dimension != null)
+			effectiveConfig = effectiveConfig.getEffectiveSubConfig(dimension.toString());
+		return effectiveConfig.getOption(PlayerConfigOptions.CLAIMS_NAME).getValue();
+	}
+
+	@Override
+	protected MutableComponent constructPlayerClaimName(ClientPlayerClaimInfo playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames) {
+		if(allowPartyNames && partyOwnedClaims && playerClaimInfo.isPartyOwned() && playerClaimInfo.getPartyName() != null)
 			return Component.translatable(
 					"gui.xaero_pac_title_party_claim",
 					playerClaimInfo.getPartyName(), forceloadedComponent
 			);
-		return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
+		return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent, allowPartyNames);
 	}
 
 	@Override
@@ -471,6 +512,16 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	public UUID getCurrentPartyOwner() {
 		return currentPartyOwner;
+	}
+
+	public void setPlayerImpersonationInfo(SimplePlayerClaimImpersonationInfo playerImpersonationInfo) {
+		this.playerImpersonationInfo = playerImpersonationInfo;
+	}
+
+	@Nonnull
+	@Override
+	public SimplePlayerClaimImpersonationInfo getPlayerImpersonationInfo() {
+		return playerImpersonationInfo;
 	}
 
 	public final static class Builder extends ClaimsManager.Builder<ClientPlayerClaimInfo, ClientPlayerClaimInfoManager, ClientRegionClaims, ClientDimensionClaimsManager, ClaimStateHolder, Builder>{
@@ -493,11 +544,13 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 				claimingModeInfo.reset();
 				claimingModeInfoMap.put(claimingMode, claimingModeInfo);
 			}
+			SimplePlayerClaimImpersonationInfo defaultClaimImpersonationInfo =
+					new SimplePlayerClaimImpersonationInfo(null);
 			ClientClaimsManager result = new ClientClaimsManager(
 					playerClaimInfoManager, null, dimensions,
 					indexToClaimState, claimStates, claimsManagerTracker,
 					ClaimsManagerClaimResultTracker.Builder.begin().build(),
-					claimingModeInfoMap, ClaimingModes.PLAYER
+					claimingModeInfoMap, ClaimingModes.PLAYER, defaultClaimImpersonationInfo
 			);
 			playerClaimInfoManager.setClaimsManager(result);
 			return result;

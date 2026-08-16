@@ -97,7 +97,7 @@ public class PlayerConfigGroupManagerIO {
 				}
 				for (CustomPlayerGroupMember directMember : groupData.getDirectMembersImpl()) {
 					Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> result =
-							createdGroup.includeMemberInternal(directMember.getId(), directMember.getDisplayName());
+							createdGroup.includeMemberInternal(directMember.getId(), directMember.getDisplayName(), true);
 					error = result.right();
 					if(error.isPresent())
 						OpenPartiesAndClaims.LOGGER.warn(

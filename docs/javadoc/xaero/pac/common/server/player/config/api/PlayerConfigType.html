@@ -143,10 +143,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCommandPrefix()" class="member-name-link">getCommandPrefix</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The String literal prefix used for commands relating to this config type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the display name of the config type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;net.minecraft.commands.CommandSourceStack&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getReadCommandRequirement()" class="member-name-link">getReadCommandRequirement</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the requirement for read-type commands related to this config type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="v2/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSubClaimOption()" class="member-name-link">getSubClaimOption</a>()</code></div>
@@ -154,19 +164,44 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the player config option used for storing the sub-config ID currently used for claiming for a config of
  this type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isGlobal()" class="member-name-link">isGlobal</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSubConfigType()" class="member-name-link">getSubConfigType</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the type of sub-configs that this config type uses.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;net.minecraft.commands.CommandSourceStack&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getWriteCommandRequirement()" class="member-name-link">getWriteCommandRequirement</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the requirement for write-type commands related to this config type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasDimensionSubConfigs()" class="member-name-link">hasDimensionSubConfigs</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets whether configs of this type have dimension-based sub-configs, e.g.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isGlobal()" class="member-name-link">isGlobal</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets whether this config type corresponds to a global config, meaning it's the same for every player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#readAndWriteReqsDiffer()" class="member-name-link">readAndWriteReqsDiffer</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets whether the requirements for read and write command are different for this config type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#supportsSubConfigs()" class="member-name-link">supportsSubConfigs</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets whether configs of this type support sub-configs.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </div>
@@ -304,6 +339,86 @@ not permitted.)</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>true if this is a global config type, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSubConfigType()">
+<h3>getSubConfigType</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a></span>&nbsp;<span class="element-name">getSubConfigType</span>()</div>
+<div class="block">Gets the type of sub-configs that this config type uses.
+ <p>
+ All sub-config types can be found in <a href="PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api"><code>PlayerSubConfigType</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the sub-config type, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="supportsSubConfigs()">
+<h3>supportsSubConfigs</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">supportsSubConfigs</span>()</div>
+<div class="block">Gets whether configs of this type support sub-configs.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this config type supports sub-configs, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="hasDimensionSubConfigs()">
+<h3>hasDimensionSubConfigs</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasDimensionSubConfigs</span>()</div>
+<div class="block">Gets whether configs of this type have dimension-based sub-configs, e.g. wilderness.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this config type has dimension sub-configs, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCommandPrefix()">
+<h3>getCommandPrefix</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getCommandPrefix</span>()</div>
+<div class="block">The String literal prefix used for commands relating to this config type.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the command prefix, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getReadCommandRequirement()">
+<h3>getReadCommandRequirement</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;net.minecraft.commands.CommandSourceStack&gt;</span>&nbsp;<span class="element-name">getReadCommandRequirement</span>()</div>
+<div class="block">Gets the requirement for read-type commands related to this config type. Such commands don't modify anything.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the read-type command requirement, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getWriteCommandRequirement()">
+<h3>getWriteCommandRequirement</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;net.minecraft.commands.CommandSourceStack&gt;</span>&nbsp;<span class="element-name">getWriteCommandRequirement</span>()</div>
+<div class="block">Gets the requirement for write-type commands related to this config type. Such commands can modify data.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the write-type command requirement, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="readAndWriteReqsDiffer()">
+<h3>readAndWriteReqsDiffer</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">readAndWriteReqsDiffer</span>()</div>
+<div class="block">Gets whether the requirements for read and write command are different for this config type.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if the read and write requirements are different, otherwise false</dd>
 </dl>
 </section>
 </li>

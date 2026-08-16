@@ -35,7 +35,7 @@ public class MixinFabricSymmetryWandItem {
 
 	@Inject(method = "remove", remap = false, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/equipment/symmetryWand/mirror/SymmetryMirror;process(Ljava/util/Map;)V"))
 	private static void onRemove(Level world, ItemStack wand, Player player, BlockPos pos, BlockState ogBlock, CallbackInfo ci){
-		ServerCore.onCreateModSymmetryProcessed(world, player);
+		ServerCore.onCreateModSymmetryProcessed(world, player, false);
 	}
 
 }

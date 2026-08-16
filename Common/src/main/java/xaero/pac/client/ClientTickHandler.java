@@ -20,6 +20,7 @@ package xaero.pac.client;
 
 import net.minecraft.client.Minecraft;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.client.event.api.OPACClientAddonRegisterEventContext;
 import xaero.pac.client.gui.MainMenu;
 
 public class ClientTickHandler {
@@ -28,7 +29,8 @@ public class ClientTickHandler {
 	
 	public void tick(IClientData<?,?,?> clientData) {
 		if(!firstTickHandled){
-			OpenPartiesAndClaims.INSTANCE.getClientEvents().fireAddonRegisterEvent();
+			OPACClientAddonRegisterEventContext addonRegisterEventContext = new OPACClientAddonRegisterEventContext(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker());
+			OpenPartiesAndClaims.INSTANCE.getClientEvents().fireAddonRegisterEvent(addonRegisterEventContext);
 			firstTickHandled = true;
 		}
 		if(clientData.getKeyBindings().openModMenu.consumeClick())

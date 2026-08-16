@@ -50,9 +50,14 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 	private final MinecraftServer server;
 	private PlayerConfigManager<?, ?> configManager;
 	private PlayerConfigType forcedConfigType;
+	private final ClientboundPlayerConfigConfigurableOptionsPacket configurableOptionsPacket;
 	
-	public PlayerConfigSynchronizer(MinecraftServer server) {
+	public PlayerConfigSynchronizer(
+			MinecraftServer server,
+			ClientboundPlayerConfigConfigurableOptionsPacket configurableOptionsPacket
+	) {
 		this.server = server;
+		this.configurableOptionsPacket = configurableOptionsPacket;
 	}
 
 	public void setConfigManager(PlayerConfigManager<?, ?> configManager) {
@@ -87,7 +92,8 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		boolean opMutable = !canDefault;
 		boolean playerMutable = false;
 		T value = null;
-		if(!(syncedConfig instanceof PlayerSubConfig) || option.isOverridable()) {
+		boolean isSub = syncedConfig instanceof PlayerSubConfig;
+		if(!isSub || option.isOverridable()) {
 			if(!opMutable){
 				opMutable = PlayerConfig.isOptionOPConfigurable(option);
 				playerMutable = !opMutable && PlayerConfig.isPlayerConfigurable(option);
@@ -95,9 +101,15 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 			if(playerMutable || opMutable)
 				value = syncedConfig.getRaw(option);
 		}
-		if(afterReset && !opMutable && !playerMutable)
-			return null;
-		return PlayerConfigOptionValuePacket.Entry.of(option, value, playerMutable, opMutable);
+		if(afterReset){
+			if(!opMutable && !playerMutable)
+				return null;
+			if(isSub && value == null)
+				return null;
+			if(!isSub && option.getDefaultValue().equals(value))
+				return null;
+		}
+		return PlayerConfigOptionValuePacket.Entry.of(option, value);
 	}
 	
 	private void syncOptionsToClient(ServerPlayer player, PlayerConfig<?> config, List<PlayerConfigOptionValuePacket.Entry> entries) {
@@ -148,6 +160,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 
 	@Override
 	public void syncOnLogin(ServerPlayer player) {
+		sendToClient(player, configurableOptionsPacket);
 		List<PlayerConfigOptionSpec<?>> dynamicOptionEntries = new ArrayList<>(configManager.getDynamicOptions().getOptions().size());
 		configManager.getDynamicOptions().getOptions().values().forEach(
 				option -> dynamicOptionEntries.add((PlayerConfigOptionSpec<?>) option));
@@ -361,6 +374,8 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 			syncSubExistence(player, (PlayerSubConfig<?>) subConfig, create, packetOtherPlayer, packetNotOtherPlayer, packetPartyClaims);
 		else
 			forAllRelevantClients(subConfig, p -> syncSubExistence(p, (PlayerSubConfig<?>) subConfig, create, packetOtherPlayer, packetNotOtherPlayer, packetPartyClaims));
+		if(subConfig.getPlayerId() == null || subConfig.getType().hasDimensionSubConfigs())
+			return;
 		if(create)
 			configManager.getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(subConfig);
 		else
@@ -412,6 +427,17 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 	public void syncAdmin(ServerPlayer player, boolean admin) {
 		ClientboundPlayerConfigAdminPacket packet = new ClientboundPlayerConfigAdminPacket(admin);
 		sendToClient(player, packet);
+	}
+
+	@Override
+	public void addConfigToSync(ServerPlayer player, IPlayerConfig config){
+		if(player != null){
+			sendSyncState(player, config, true);
+			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerData.from(player);
+			playerData.getConfigSyncSpreadoutTask().addConfigToSync(config, forcedConfigType);
+			return;
+		}
+		forAllRelevantClients(config, p -> addConfigToSync(p, config));
 	}
 
 	private PlayerConfigType getEffectiveType(IPlayerConfig config){

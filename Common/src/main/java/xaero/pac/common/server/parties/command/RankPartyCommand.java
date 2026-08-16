@@ -44,6 +44,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Arrays;
@@ -63,12 +64,15 @@ public class RankPartyCommand {
 						.suggests(PartyCommands.getPartyMemberSuggestor())
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
-							UUID playerId = player.getUUID();
+							ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+							UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+							if(contextPlayerId == null)
+								contextPlayerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
 
 							String targetUsername = StringArgumentType.getString(context, "name");
 							IPartyPlayerInfo targetPlayerInfo = playerParty.getMemberInfo(targetUsername);
@@ -78,11 +82,11 @@ public class RankPartyCommand {
 								return 0;
 							}
 							
-							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
-							boolean casterIsOwner = playerParty.getOwner() == casterInfo;
+							IPartyMember contextPlayerInfo = playerParty.getMemberInfo(contextPlayerId);
+							boolean contextIsOwner = playerParty.getOwner() == contextPlayerInfo;
 							IPartyMember targetMember = (IPartyMember) targetPlayerInfo;
 							
-							if(!casterIsOwner && targetMember.getRank().ordinal() >= casterInfo.getRank().ordinal() || targetMember == playerParty.getOwner()) {
+							if(!contextIsOwner && targetMember.getRank().ordinal() >= contextPlayerInfo.getRank().ordinal() || targetMember == playerParty.getOwner()) {
 								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_rank_not_lower_rank_player"));
 								return 0;
 							}
@@ -90,7 +94,7 @@ public class RankPartyCommand {
 							String targetRankString = StringArgumentType.getString(context, "rank");
 							PartyMemberRank targetRank = PartyMemberRank.valueOf(targetRankString);
 							
-							if(!casterIsOwner && targetRank.ordinal() >= casterInfo.getRank().ordinal()) {
+							if(!contextIsOwner && targetRank.ordinal() >= contextPlayerInfo.getRank().ordinal()) {
 								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_rank_not_lower_rank"));
 								return 0;
 							}
@@ -102,7 +106,10 @@ public class RankPartyCommand {
 							if(rankedPlayer != null)
 								serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(rankedPlayer, serverData, false);
 
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
+							Component callerName = Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.DARK_GREEN);
+							Component targetName = Component.literal(targetPlayerInfo.getUsername()).withStyle(ChatFormatting.YELLOW);
+
+							new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", callerName, targetName, Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
 							
 							return 1;
 						})))));

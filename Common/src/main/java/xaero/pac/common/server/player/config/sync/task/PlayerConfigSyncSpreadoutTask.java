@@ -45,10 +45,7 @@ import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 import xaero.pac.common.server.player.config.sync.PlayerConfigSynchronizer;
 import xaero.pac.common.server.task.player.ServerPlayerSpreadoutTask;
 
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
 public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTask<PlayerConfigSyncSpreadoutTask> {
 
@@ -101,12 +98,14 @@ public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTa
 			ConfigQueueEntry configEntry = configsToSync.getFirst();
 			PlayerConfig<?> config = (PlayerConfig<?>) configEntry.config;
 			synchronizer.forceConfigType(configEntry.forcedType);
+			boolean isSub = config instanceof PlayerSubConfig<?>;
 			if (currentSubIterator == null) {
 				toSync -= 64;
 				synchronizer.sendSyncState(player, config, true);
-				synchronizer.sendPermissions(player, config.getType());
+				if(!isSub)
+					synchronizer.sendPermissions(player, config.getType());
 				synchronizer.syncToClient(player, config, true);
-				currentSubIterator = config.getSubConfigIterator();
+				currentSubIterator = isSub ? Collections.emptyIterator() : config.getSubConfigIterator();
 			}
 			while (toSync > 0 && currentSubIterator.hasNext()) {
 				toSync -= 64;
@@ -117,7 +116,10 @@ public final class PlayerConfigSyncSpreadoutTask extends ServerPlayerSpreadoutTa
 				synchronizer.sendSyncState(player, config, false);
 				configsToSync.removeFirst();
 				currentSubIterator = null;
-				configsForGroupSync.add(configEntry);
+				if(!isSub)
+					configsForGroupSync.add(configEntry);
+				else
+					synchronizer.sendGroupSyncState(player, config, false);
 			}
 			synchronizer.forceConfigType(null);
 		}

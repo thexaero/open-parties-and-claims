@@ -27,6 +27,7 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 
 import java.util.Map;
 import java.util.UUID;
@@ -236,6 +237,11 @@ public final class PlayerPartySystemManager implements IPlayerPartySystemManager
 		if(party == null)
 			return -1;
 		return primarySystem.getColor(party);
+	}
+
+	@Override
+	public String getPrimarySystemName(){
+		return systemNames.get(primarySystem);
 	}
 
 	public static final class Builder {

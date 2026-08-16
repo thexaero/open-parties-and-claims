@@ -44,6 +44,7 @@ import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
+import xaero.pac.client.event.api.OPACClientAddonRegisterEventContext;
 
 public final class ClientEventsNeoForge extends ClientEvents {
 
@@ -78,8 +79,8 @@ public final class ClientEventsNeoForge extends ClientEvents {
 	}
 
 	@Override
-	public void fireAddonRegisterEvent() {
-		NeoForge.EVENT_BUS.post(new OPACClientAddonRegisterEvent(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker()));
+	public void fireAddonRegisterEvent(OPACClientAddonRegisterEventContext context) {
+		NeoForge.EVENT_BUS.post(new OPACClientAddonRegisterEvent(context));
 	}
 
 	public static final class Builder extends ClientEvents.Builder<Builder> {
