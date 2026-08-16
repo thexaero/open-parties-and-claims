@@ -27,6 +27,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.state.BlockState;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
@@ -95,6 +96,9 @@ public interface IChunkProtectionAPI {
 	/**
 	 * Checks whether a specified block placement should be protected against.
 	 * <p>
+	 * This version of the method is the equivalent of calling {@link #onEntityPlaceBlock(BlockState, Entity, ServerLevel, BlockPos)}
+	 * with null as the block state.
+	 * <p>
 	 * Whenever possible, use the built-in block placement event provided by Forge instead of this method,
 	 * unless it isn't specific enough, you're on Fabric, or the entity has a full protection pass
 	 * ({@link #giveFullPass(UUID)}).
@@ -105,6 +109,23 @@ public interface IChunkProtectionAPI {
 	 * @return true if the block placement should be protected against, otherwise false
 	 */
 	boolean onEntityPlaceBlock(@Nullable Entity entity, @Nonnull ServerLevel world, @Nonnull BlockPos pos);
+
+	/**
+	 * Checks whether a specified block placement should be protected against
+	 * <p>
+	 * This version of the method lets you specify the block state being placed.
+	 * <p>
+	 * Whenever possible, use the built-in block placement event provided by Forge instead of this method,
+	 * unless it isn't specific enough, you're on Fabric, or the entity has a full protection pass
+	 * ({@link #giveFullPass(UUID)}).
+	 *
+	 * @param blockState  the block state being placed, can be null to ignore block-state-specific behavior
+	 * @param entity  the entity to place the block, can be null
+	 * @param world  the world to place the block in, not null
+	 * @param pos  the block position to place the block at, not null
+	 * @return true if the block placement should be protected against, otherwise false
+	 */
+	boolean onEntityPlaceBlock(@Nullable BlockState blockState, @Nullable Entity entity, @Nonnull ServerLevel world, @Nonnull BlockPos pos);
 
 	/**
 	 * @deprecated Use {@link #onEntityInteraction(Entity, Entity, Entity, ItemStack, InteractionHand, boolean, boolean, boolean)} instead.

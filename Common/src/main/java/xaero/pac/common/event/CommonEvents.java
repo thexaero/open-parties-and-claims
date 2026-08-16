@@ -498,7 +498,7 @@ public abstract class CommonEvents {
 			return false;
 		if(replacedBlock != null && !replacedBlock.isAir())//not protecting block replacement (non-air -> non-air) because it prevents certain item-block interactions, e.g. using discs on a jukebox or stripping logs, which can even lead to dupes if there's a block entity
 			return false;
-	 	return serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null);
+	 	return serverData.getChunkProtection().onEntityPlaceBlock(serverData, placedBlock, entity, serverLevel, pos, null);
 	}
 
 	protected boolean onEntityMultiPlaceBlock(LevelAccessor levelAccessor, Stream<Triple<BlockPos, BlockState, BlockState>> blocks, Entity entity) {
@@ -528,7 +528,7 @@ public abstract class CommonEvents {
 				BlockState replacedBlock = blockEntry.getMiddle();
 				if(replacedBlock != null && !replacedBlock.isAir() && serverLevel.getBlockEntity(pos) != null)//not protecting block replacement (non-air -> non-air) over block entity because it can lead to dupes
 					return false;
-				result = result || serverData.getChunkProtection().onEntityPlaceBlock(serverData, entity, serverLevel, pos, null);
+				result = result || serverData.getChunkProtection().onEntityPlaceBlock(serverData, placedBlock, entity, serverLevel, pos, null);
 			}
 		}
 		return result;

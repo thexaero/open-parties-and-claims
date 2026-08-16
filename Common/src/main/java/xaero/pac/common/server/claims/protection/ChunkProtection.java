@@ -913,7 +913,7 @@ public class ChunkProtection
 		return onBlockInteraction(serverData, world.getBlockState(pos), player, null, null, world, pos, Direction.UP, false, true);
 	}
 
-	public boolean onEntityPlaceBlock(IServerData<CM, ?> serverData, Entity entity, ServerLevel world, BlockPos pos, IPlayerConfigOptionSpecAPI<String> option) {
+	public boolean onEntityPlaceBlock(IServerData<CM, ?> serverData, BlockState blockState, Entity entity, ServerLevel world, BlockPos pos, IPlayerConfigOptionSpecAPI<String> option) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return false;
 		//entity can be null!
@@ -936,22 +936,36 @@ public class ChunkProtection
 		}
 		if(accessor instanceof Player && isAllowedStaticFakePlayerAction(serverData, (Player) accessor, pos))
 			return false;
+		if(blockState != null){
+			Block block = blockState.getBlock();
+			Item blockAsItem = block.asItem();
+			//if the item corresponding to the block being placed is allowed to be used at the position,
+			// then it has to mean that the user wants the block to be placeable
+			if(blockAsItem != null && blockAsItem != Items.AIR &&
+					!onUseItemAt(serverData, entity, world, pos, null, new ItemStack(blockAsItem), null, false, false, false))
+				return false;
+		}
 		return (option == null || !checkPlayerGroupExceptionOption(option, config, accessor, accessorId)) && (entity instanceof Player || !canGrief(entity, config, accessor, accessorId, true, false, false, false))
 				&& blockAccessCheck(null, dim, pos, config, entity, accessor, accessorId, false, false, false) == InteractionTargetResult.PROTECT;
 	}
 
 	@Override
-	public boolean onEntityPlaceBlock(@Nullable Entity entity, @Nonnull ServerLevel world, @Nonnull BlockPos pos){
+	public boolean onEntityPlaceBlock(@Nullable Entity entity, @Nonnull ServerLevel world, @Nonnull BlockPos pos) {
+		return onEntityPlaceBlock(null, entity, world, pos);
+	}
+
+	@Override
+	public boolean onEntityPlaceBlock(@Nullable BlockState blockState, @Nullable Entity entity, @Nonnull ServerLevel world, @Nonnull BlockPos pos){
 		try {
 			fullPassesPaused = true;
-			return onEntityPlaceBlock(serverData, entity, world, pos, null);
+			return onEntityPlaceBlock(serverData, blockState, entity, world, pos, null);
 		} finally {
 			fullPassesPaused = false;
 		}
 	}
 
 	public boolean onFrostWalk(IServerData<CM, ?> serverData, LivingEntity living, ServerLevel world, BlockPos pos) {
-		return onEntityPlaceBlock(serverData, living, world, pos, PlayerConfigOptions.CLAIM_EXCEPTION_FROST_WALKING);
+		return onEntityPlaceBlock(serverData, null, living, world, pos, PlayerConfigOptions.CLAIM_EXCEPTION_FROST_WALKING);
 	}
 
 	private boolean isItemUseRestricted(ItemStack itemStack){
