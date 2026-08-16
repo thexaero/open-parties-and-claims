@@ -129,7 +129,7 @@ public class PlayerConfigOptionValueTypes {
 				Component builtInGroupName = BuiltInPlayerConfigGroupNames.get(groupId);
 				if(builtInGroupName != null)
 					return builtInGroupName;
-				return new TextComponent(groupId);
+				return Component.literal(groupId);
 			})
 			.build(BASIC_TYPES);
 

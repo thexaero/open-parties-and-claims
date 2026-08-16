@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class ConfigGroupDeleteCommand extends ConfigGroupCommand {
 
-	private final Component MESSAGE = new TranslatableComponent("gui.xaero_pac_config_delete_group_confirmation_request")
+	private final Component MESSAGE = Component.translatable("gui.xaero_pac_config_delete_group_confirmation_request")
 			.withStyle(s -> s.withColor(ChatFormatting.YELLOW));
 
 	protected ConfigGroupDeleteCommand() {

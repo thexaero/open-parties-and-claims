@@ -97,7 +97,7 @@ public class ClaimsAboutCommand {
 
 			int claimLimit = claimsManager.getPlayerFullClaimLimit(profile.getId());
 			int forceloadLimit = claimsManager.getPlayerFullForceloadLimit(profile.getId());
-			Component claimCountNumbers = new TextComponent(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
+			Component claimCountNumbers = Component.literal(playerInfo.getClaimCount() + " / " + claimLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
 			String claimName = usedSubConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
 			if(claimName.isEmpty())
 				claimName = "N/A";
@@ -105,17 +105,17 @@ public class ClaimsAboutCommand {
 			if(subId == null)
 				subId = PlayerConfig.MAIN_SUB_ID;
 			claimName += " (" + subId + ")";
-			Component claimNameComponent = new TextComponent(claimName).withStyle(s -> s.withColor(0xFFAAAAAA));
-			Component forceloadCountNumbers = new TextComponent(playerInfo.getForceloadCount() + " / " + forceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
-			casterPlayer.sendMessage(new TextComponent(""), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TextComponent("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
+			Component claimNameComponent = Component.literal(claimName).withStyle(s -> s.withColor(0xFFAAAAAA));
+			Component forceloadCountNumbers = Component.literal(playerInfo.getForceloadCount() + " / " + forceloadLimit).withStyle(s -> s.withColor(0xFFAAAAAA));
+			casterPlayer.sendMessage(Component.literal(""), casterPlayer.getUUID());
+			casterPlayer.sendMessage(Component.literal("===== Open Parties and Claims").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claim_count", claimCountNumbers), casterPlayer.getUUID());
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_forceload_count", forceloadCountNumbers), casterPlayer.getUUID());
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_name", claimNameComponent), casterPlayer.getUUID());
 			int claimColor = usedSubConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
-			Component colorComponent = new TextComponent(Integer.toUnsignedString(claimColor, 16).toUpperCase()).withStyle(s -> s.withColor(claimColor));
+			Component colorComponent = Component.literal(Integer.toUnsignedString(claimColor, 16).toUpperCase()).withStyle(s -> s.withColor(claimColor));
 			casterPlayer.sendMessage(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_pac_ui_claims_color", colorComponent), casterPlayer.getUUID());
-			casterPlayer.sendMessage(new TextComponent("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
+			casterPlayer.sendMessage(Component.literal("=====").withStyle(s -> s.withColor(ChatFormatting.GRAY)), casterPlayer.getUUID());
 			return 1;
 		};
 		

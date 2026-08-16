@@ -469,7 +469,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 					return super.constructPlayerClaimName(playerClaimInfo, forceloadedComponent);
 				partyName = playerClaimInfo.getDefaultPartyName();
 			}
-			return new TranslatableComponent(
+			return Component.translatable(
 					"gui.xaero_pac_title_party_claim",
 					partyName, forceloadedComponent
 			);

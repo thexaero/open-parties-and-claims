@@ -54,7 +54,7 @@ import java.util.function.Predicate;
 public class ClaimingModeCommand {
 
 	public static final String DEFAULT_MODE_PREFIX = "default";
-	private final Component DEFAULT_MODE_ENABLED = new TranslatableComponent("gui.xaero_claims_default_mode_enabled");
+	private final Component DEFAULT_MODE_ENABLED = Component.translatable("gui.xaero_claims_default_mode_enabled");
 
 	private final ClaimingMode mode;
 

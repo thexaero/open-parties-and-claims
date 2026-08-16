@@ -139,8 +139,8 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 
 	public enum ResultType {
 
-		SUCCESS(true, false, new TranslatableComponent("gui.xaero_claims_replacement_success")),
-		FAILURE_STATE_MATCHES(false, true, new TranslatableComponent("gui.xaero_claims_replacement_state_matches_matcher"));
+		SUCCESS(true, false, Component.translatable("gui.xaero_claims_replacement_success")),
+		FAILURE_STATE_MATCHES(false, true, Component.translatable("gui.xaero_claims_replacement_state_matches_matcher"));
 
 		private final boolean success;
 		private final boolean failure;

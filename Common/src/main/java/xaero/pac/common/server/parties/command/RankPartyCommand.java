@@ -103,7 +103,7 @@ public class RankPartyCommand {
 							if(rankedPlayer != null)
 								serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(rankedPlayer, serverData, false);
 
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, new TranslatableComponent("gui.xaero_parties_rank_party_message", new TextComponent(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), new TextComponent(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), new TextComponent(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
+							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)), Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));
 							
 							return 1;
 						})))));

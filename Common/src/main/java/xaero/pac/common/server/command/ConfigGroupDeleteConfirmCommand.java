@@ -33,7 +33,7 @@ import java.util.UUID;
 
 public class ConfigGroupDeleteConfirmCommand extends ConfigGroupCommand {
 
-	private static final Component CONFIRMATION_FAIL_MESSAGE = new TranslatableComponent("gui.xaero_pac_config_delete_group_confirmation_fail")
+	private static final Component CONFIRMATION_FAIL_MESSAGE = Component.translatable("gui.xaero_pac_config_delete_group_confirmation_fail")
 			.withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	protected ConfigGroupDeleteConfirmCommand() {
@@ -53,7 +53,7 @@ public class ConfigGroupDeleteConfirmCommand extends ConfigGroupCommand {
 				playerConfig.getPlayerGroups().removeCustom(inputGroupId);
 		return result.<Either<Component, PlayerConfigGroupActionError>>map(Either::right)
 				.orElseGet(() ->
-						Either.left(new TranslatableComponent("gui.xaero_pac_config_delete_group", inputGroupId))
+						Either.left(Component.translatable("gui.xaero_pac_config_delete_group", inputGroupId))
 				);
 	}
 

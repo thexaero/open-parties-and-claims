@@ -457,7 +457,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	@Override
 	protected MutableComponent constructPlayerClaimName(ClientPlayerClaimInfo playerClaimInfo, Component forceloadedComponent) {
 		if(partyOwnedClaims && playerClaimInfo.isPartyOwned() && playerClaimInfo.getPartyName() != null)
-			return new TranslatableComponent(
+			return Component.translatable(
 					"gui.xaero_pac_title_party_claim",
 					playerClaimInfo.getPartyName(), forceloadedComponent
 			);

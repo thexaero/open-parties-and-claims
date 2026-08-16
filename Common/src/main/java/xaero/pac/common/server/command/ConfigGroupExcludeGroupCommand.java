@@ -64,7 +64,7 @@ public class ConfigGroupExcludeGroupCommand extends ConfigGroupCommand {
 		Optional<PlayerConfigGroupActionError> error = customPlayerConfigGroup.excludeGroup(groupIdToExclude);
 		return error.<Either<Component, PlayerConfigGroupActionError>>map(Either::right)
 				.orElseGet(() ->
-						Either.left(new TranslatableComponent("gui.xaero_pac_config_exclude_group", groupIdToExclude, inputGroupId))
+						Either.left(Component.translatable("gui.xaero_pac_config_exclude_group", groupIdToExclude, inputGroupId))
 				);
 	}
 

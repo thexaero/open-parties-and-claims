@@ -46,7 +46,7 @@ public class ConfigGroupCreateCommand extends ConfigGroupCommand {
 		Either<ICustomPlayerConfigGroup, PlayerConfigGroupActionError> result =
 				playerConfig.getPlayerGroups().addCustomLimitedInternal(inputGroupId);
 		return result.mapBoth(
-				l -> new TranslatableComponent("gui.xaero_pac_config_create_group", inputGroupId),
+				l -> Component.translatable("gui.xaero_pac_config_create_group", inputGroupId),
 				e -> e
 		);
 	}

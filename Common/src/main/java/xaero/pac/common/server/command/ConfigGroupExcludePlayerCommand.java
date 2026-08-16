@@ -73,7 +73,7 @@ public class ConfigGroupExcludePlayerCommand extends ConfigGroupCommand {
 			error = customPlayerConfigGroup.excludeMember(null, playerIdentifier);//use as name
 		return error.<Either<Component, PlayerConfigGroupActionError>>map(Either::right)
 				.orElseGet(() ->
-						Either.left(new TranslatableComponent("gui.xaero_pac_config_exclude_player", playerIdentifier, inputGroupId))
+						Either.left(Component.translatable("gui.xaero_pac_config_exclude_player", playerIdentifier, inputGroupId))
 				);
 	}
 

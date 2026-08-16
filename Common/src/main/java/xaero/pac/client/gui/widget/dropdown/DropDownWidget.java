@@ -294,10 +294,10 @@ public final class DropDownWidget extends AbstractWidget
 
 	@Override
 	protected MutableComponent createNarrationMessage() {
-		MutableComponent narrationMessage = new TextComponent("");
+		MutableComponent narrationMessage = Component.literal("");
 		narrationMessage.getSiblings().add(getMessage());
-		narrationMessage.getSiblings().add(new TextComponent(". "));
-		narrationMessage.getSiblings().add(new TranslatableComponent("gui.xaero_dropdown_selected_narration", realOptions[selected]));
+		narrationMessage.getSiblings().add(Component.literal(". "));
+		narrationMessage.getSiblings().add(Component.translatable("gui.xaero_dropdown_selected_narration", realOptions[selected]));
 		return narrationMessage;
 	}
 

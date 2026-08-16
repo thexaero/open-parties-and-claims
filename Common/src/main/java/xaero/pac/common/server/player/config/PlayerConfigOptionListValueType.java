@@ -161,7 +161,7 @@ public final class PlayerConfigOptionListValueType<T> extends PlayerConfigOption
 				return output.toString();
 			});
 			super.setComponentWriter(list -> {
-				MutableComponent output = new TextComponent("[");
+				MutableComponent output = Component.literal("[");
 				boolean first = true;
 				for (T element : list) {
 					if(!first)

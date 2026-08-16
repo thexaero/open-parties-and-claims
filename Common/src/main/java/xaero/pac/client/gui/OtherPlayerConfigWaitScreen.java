@@ -35,15 +35,15 @@ import java.util.ArrayList;
 
 public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	
-	private final TranslatableComponent message;
+	private final Component message;
 	private final String otherPlayerName;
 	private Listener listener;
 	private final boolean autoOpenGroups;
 
 	public OtherPlayerConfigWaitScreen(Screen escape, Screen parent, String otherPlayerName, boolean autoOpenGroups) {
-		super(escape, parent, new TextComponent(""));
+		super(escape, parent, Component.literal(""));
 		this.otherPlayerName = otherPlayerName;
-		message = new TranslatableComponent("gui.xaero_pac_ui_other_player_config_waiting", otherPlayerName);
+		message = Component.translatable("gui.xaero_pac_ui_other_player_config_waiting", otherPlayerName);
 		this.autoOpenGroups = autoOpenGroups;
 	}
 
@@ -54,7 +54,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_waiting_cancel"), this::onCancelButton));
+		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_ui_other_player_config_waiting_cancel"), this::onCancelButton));
 	}
 	
 	protected void onCancelButton(Button b) {
@@ -99,7 +99,7 @@ public class OtherPlayerConfigWaitScreen extends XPACScreen {
 		public void onConfigDataSyncDone(IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> configData) {
 			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
 					manager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
-			Component mainTitle = new TranslatableComponent("gui.xaero_pac_ui_other_player_config", otherPlayerName);
+			Component mainTitle = Component.translatable("gui.xaero_pac_ui_other_player_config", otherPlayerName);
 			PlayerConfigScreen configScreen = PlayerConfigScreen.Builder
 					.begin(ArrayList::new)
 					.setParent(parent)

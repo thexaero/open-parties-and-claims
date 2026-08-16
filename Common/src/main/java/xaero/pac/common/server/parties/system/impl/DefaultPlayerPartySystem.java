@@ -111,7 +111,7 @@ public class DefaultPlayerPartySystem implements IPlayerPartySystemAPI<IServerPa
 		String partyCustomName = ownerConfig.getEffective(PlayerConfigOptions.PARTY_NAME);
 		if(partyCustomName.isEmpty())
 			return null;
-		return new TextComponent(partyCustomName);
+		return Component.literal(partyCustomName);
 	}
 
 	@Override

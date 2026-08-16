@@ -193,7 +193,7 @@ public class PlayerConfigOptionValueType<T> {
 				throw new IllegalStateException();
 			if(componentWriter == null) {
 				final Function<T, String> finalStringWriter = stringWriter;
-				setComponentWriter(v -> new TextComponent(finalStringWriter.apply(v)));
+				setComponentWriter(v -> Component.literal(finalStringWriter.apply(v)));
 			}
 			PlayerConfigOptionValueType<T> result = buildInternally();
 			if(dest != null)

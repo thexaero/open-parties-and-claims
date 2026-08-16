@@ -260,8 +260,8 @@ public class ConfigGetOrHelpCommand {
 					String translatedComment = serverData.getAdaptiveLocalizer().getDefaultTranslation(option.getCommentTranslation());
 					if(translatedComment.equals("default"))
 						translatedComment = option.getComment();
-					sourcePlayer.sendMessage(new TextComponent(""), sourcePlayer.getUUID());
-					sourcePlayer.sendMessage(new TranslatableComponent(translatedComment, (Object[])option.getCommentTranslationArgs()), sourcePlayer.getUUID());
+					sourcePlayer.sendMessage(Component.literal(""), sourcePlayer.getUUID());
+					sourcePlayer.sendMessage(Component.translatable(translatedComment, (Object[])option.getCommentTranslationArgs()), sourcePlayer.getUUID());
 				}
 				return 1;
 			}

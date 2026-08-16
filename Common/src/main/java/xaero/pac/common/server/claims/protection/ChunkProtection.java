@@ -112,18 +112,18 @@ public class ChunkProtection
 	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<String>> usedDroppedItemExceptionOptionGetter = this::getUsedDroppedItemProtectionOption;
 	private final TriFunction<IPlayerConfig, Entity, Entity, IPlayerConfigOptionSpecAPI<String>> usedExperienceOrbExceptionOptionGetter = (c, e, a) -> PlayerConfigOptions.CLAIM_EXCEPTION_XP_PICKUP;
 
-	private final Component MAIN_HAND = new TranslatableComponent("gui.xaero_claims_protection_main_hand");
-	private final Component OFF_HAND = new TranslatableComponent("gui.xaero_claims_protection_off_hand");
-	private final Component BLOCK_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ENTITY_TRY_EMPTY_MAIN = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component MAIN_HAND = Component.translatable("gui.xaero_claims_protection_main_hand");
+	private final Component OFF_HAND = Component.translatable("gui.xaero_claims_protection_off_hand");
+	private final Component BLOCK_TRY_EMPTY_MAIN = Component.translatable("gui.xaero_claims_protection_interact_block_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component ENTITY_TRY_EMPTY_MAIN = Component.translatable("gui.xaero_claims_protection_interact_entity_try_empty", MAIN_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
-	private final Component BLOCK_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_block_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component ENTITY_TRY_EMPTY_OFF = new TranslatableComponent("gui.xaero_claims_protection_interact_entity_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component BLOCK_TRY_EMPTY_OFF = Component.translatable("gui.xaero_claims_protection_interact_block_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component ENTITY_TRY_EMPTY_OFF = Component.translatable("gui.xaero_claims_protection_interact_entity_try_empty", OFF_HAND).withStyle(s -> s.withColor(ChatFormatting.RED));
 
-	private final Component CANT_CHORUS = new TranslatableComponent("gui.xaero_claims_protection_chorus").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_CHORUS = Component.translatable("gui.xaero_claims_protection_chorus").withStyle(s -> s.withColor(ChatFormatting.RED));
 
-	private final Component CANT_USE_SUPER_GLUE = new TranslatableComponent("gui.xaero_claims_protection_create_cant_use_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
-	private final Component CANT_REMOVE_SUPER_GLUE = new TranslatableComponent("gui.xaero_claims_protection_create_cant_remove_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_USE_SUPER_GLUE = Component.translatable("gui.xaero_claims_protection_create_cant_use_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private final Component CANT_REMOVE_SUPER_GLUE = Component.translatable("gui.xaero_claims_protection_create_cant_remove_glue").withStyle(s -> s.withColor(ChatFormatting.RED));
 
 	private final ChunkProtectionEntityHelper entityHelper;
 	private IServerData<CM,?> serverData;
@@ -2462,7 +2462,7 @@ public class ChunkProtection
 			return false;
 		}
 		if(time - playerData.getLastClaimsOverLimitMessageTime() > 5000) {
-			Component unadaptedMessage = new TranslatableComponent("gui.xaero_pac_blocked_for_going_over_claim_limit", accessCooldownMinutes)
+			Component unadaptedMessage = Component.translatable("gui.xaero_pac_blocked_for_going_over_claim_limit", accessCooldownMinutes)
 					.withStyle(ChatFormatting.RED);
 			player.sendMessage(serverData.getAdaptiveLocalizer().getFor(player, unadaptedMessage), player.getUUID());
 			playerData.setLastClaimsOverLimitMessageTime(time);
@@ -2568,9 +2568,9 @@ public class ChunkProtection
 		String objectKeyString = objectKey == null ? "null" : objectKey.toString();
 		MutableComponent result;
 		if(hand == null || messageKey == null)
-			result = new TranslatableComponent(messageAnyKey, objectKeyString);
+			result = Component.translatable(messageAnyKey, objectKeyString);
 		else
-			result = new TranslatableComponent(
+			result = Component.translatable(
 					messageKey,
 					hand == InteractionHand.MAIN_HAND ? MAIN_HAND : OFF_HAND,
 					objectKeyString

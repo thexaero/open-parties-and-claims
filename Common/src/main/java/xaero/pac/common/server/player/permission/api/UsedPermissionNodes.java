@@ -40,8 +40,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_max_claims",
 			Integer.class,
 			() -> ServerConfig.CONFIG.maxPlayerClaimsPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_max_claims"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_max_claims"),
+			Component.translatable("gui.xaero_pac_permission_max_claims"),
+			Component.translatable("gui.xaero_pac_permission_comment_max_claims"),
 			ALL_BUILDER);
 
 	/**
@@ -51,8 +51,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_max_forceloads",
 			Integer.class,
 			() -> ServerConfig.CONFIG.maxPlayerClaimForceloadsPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_max_forceloads"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_max_forceloads"),
+			Component.translatable("gui.xaero_pac_permission_max_forceloads"),
+			Component.translatable("gui.xaero_pac_permission_comment_max_forceloads"),
 			ALL_BUILDER);
 
 	/**
@@ -62,8 +62,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_server_claims",
 			Boolean.class,
 			() -> ServerConfig.CONFIG.serverClaimPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_server_claims"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_server_claims"),
+			Component.translatable("gui.xaero_pac_permission_server_claims"),
+			Component.translatable("gui.xaero_pac_permission_comment_server_claims"),
 			ALL_BUILDER);
 
 	/**
@@ -73,8 +73,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_claims_admin_mode",
 			Boolean.class,
 			() -> ServerConfig.CONFIG.claimsAdminModePermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_claims_admin_mode"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_claims_admin_mode"),
+			Component.translatable("gui.xaero_pac_permission_claims_admin_mode"),
+			Component.translatable("gui.xaero_pac_permission_comment_claims_admin_mode"),
 			ALL_BUILDER);
 
 	/**
@@ -84,8 +84,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_max_player_groups",
 			Integer.class,
 			() -> ServerConfig.CONFIG.maxPlayerGroupsPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_max_player_groups"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_max_player_groups"),
+			Component.translatable("gui.xaero_pac_permission_max_player_groups"),
+			Component.translatable("gui.xaero_pac_permission_comment_max_player_groups"),
 			ALL_BUILDER);
 
 	/**
@@ -95,8 +95,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_player_group_space",
 			Integer.class,
 			() -> ServerConfig.CONFIG.playerGroupSpacePermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_player_group_space"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_player_group_space"),
+			Component.translatable("gui.xaero_pac_permission_player_group_space"),
+			Component.translatable("gui.xaero_pac_permission_comment_player_group_space"),
 			ALL_BUILDER);
 
 	/**
@@ -106,8 +106,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_parties_admin_mode",
 			Boolean.class,
 			() -> ServerConfig.CONFIG.partiesAdminModePermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_parties_admin_mode"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_parties_admin_mode"),
+			Component.translatable("gui.xaero_pac_permission_parties_admin_mode"),
+			Component.translatable("gui.xaero_pac_permission_comment_parties_admin_mode"),
 			ALL_BUILDER);
 
 	/**

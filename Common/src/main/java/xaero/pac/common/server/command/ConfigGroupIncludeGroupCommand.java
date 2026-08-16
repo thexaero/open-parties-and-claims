@@ -64,7 +64,7 @@ public class ConfigGroupIncludeGroupCommand extends ConfigGroupCommand {
 		Optional<PlayerConfigGroupActionError> error = customPlayerConfigGroup.includeGroupLimited(groupIdToInclude);
 		return error.<Either<Component, PlayerConfigGroupActionError>>map(Either::right)
 				.orElseGet(() ->
-						Either.left(new TranslatableComponent("gui.xaero_pac_config_include_group", groupIdToInclude, inputGroupId))
+						Either.left(Component.translatable("gui.xaero_pac_config_include_group", groupIdToInclude, inputGroupId))
 				);
 	}
 

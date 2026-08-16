@@ -32,7 +32,7 @@ import java.util.List;
 
 public class XPACScreen extends Screen implements IDropDownContainer {
 
-	private static final Component XPAC_TITLE = new TranslatableComponent("gui.xaero_pac_ui_parties_and_claims");
+	private static final Component XPAC_TITLE = Component.translatable("gui.xaero_pac_ui_parties_and_claims");
 	protected final Screen escape;
 	protected final Screen parent;
 	protected DropDownWidget openDropdown;

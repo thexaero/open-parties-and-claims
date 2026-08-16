@@ -32,22 +32,22 @@ import javax.annotation.Nullable;
 public enum PlayerConfigType {
 
 	/** Server claims config */
-	SERVER(new TranslatableComponent("gui.xaero_pac_config_type_server"), PlayerConfigOptions.USED_SERVER_SUBCLAIM, true),
+	SERVER(Component.translatable("gui.xaero_pac_config_type_server"), PlayerConfigOptions.USED_SERVER_SUBCLAIM, true),
 
 	/** Expired claims config */
-	EXPIRED(new TranslatableComponent("gui.xaero_pac_config_type_expired"), null, true),
+	EXPIRED(Component.translatable("gui.xaero_pac_config_type_expired"), null, true),
 
 	/** Wilderness config */
-	WILDERNESS(new TranslatableComponent("gui.xaero_pac_config_type_wilderness"), null, true),
+	WILDERNESS(Component.translatable("gui.xaero_pac_config_type_wilderness"), null, true),
 
 	/** The default player config */
-	DEFAULT_PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_default_player"), null, true),
+	DEFAULT_PLAYER(Component.translatable("gui.xaero_pac_config_type_default_player"), null, true),
 
 	/** A player config */
-	PLAYER(new TranslatableComponent("gui.xaero_pac_config_type_player"), PlayerConfigOptions.USED_SUBCLAIM, false),
+	PLAYER(Component.translatable("gui.xaero_pac_config_type_player"), PlayerConfigOptions.USED_SUBCLAIM, false),
 
 	/** Party claims config */
-	PARTY_CLAIMS(new TranslatableComponent("gui.xaero_pac_config_type_party_claims"), PlayerConfigOptions.USED_PARTY_SUBCLAIM, false);
+	PARTY_CLAIMS(Component.translatable("gui.xaero_pac_config_type_party_claims"), PlayerConfigOptions.USED_PARTY_SUBCLAIM, false);
 
 	private final Component name;
 	private final IPlayerConfigOptionSpecAPI<String> subClaimOption;

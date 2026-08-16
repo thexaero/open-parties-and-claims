@@ -102,7 +102,7 @@ import java.util.function.Function;
 
 public class ServerCore {
 
-	private static final Component TRAIN_CONTROLS_MESSAGE = new TranslatableComponent("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
+	private static final Component TRAIN_CONTROLS_MESSAGE = Component.translatable("gui.xaero_claims_protection_create_train_controls_protected").withStyle(s -> s.withColor(ChatFormatting.RED));
 	public static Block CALCULATING_PRESSURE_PLATE_WEIGHT = null;
 	public static BlockPos CALCULATING_PRESSURE_PLATE_WEIGHT_POS = null;
 

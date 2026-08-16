@@ -57,8 +57,8 @@ import java.util.stream.Stream;
 public final class PlayerConfigScreen extends WidgetListScreen {
 
 	private static final Object NULL_PLACEHOLDER = new Object();
-	public static final Component SYNCING_IN_PROGRESS = new TranslatableComponent("gui.xaero_pac_ui_player_config_syncing");
-	public static final Component BEING_DELETED = new TranslatableComponent("gui.xaero_pac_ui_player_config_being_deleted");
+	public static final Component SYNCING_IN_PROGRESS = Component.translatable("gui.xaero_pac_ui_player_config_syncing");
+	public static final Component BEING_DELETED = Component.translatable("gui.xaero_pac_ui_player_config_being_deleted");
 	private final BiConsumer<PlayerConfigScreen, Button> refreshHandler;
 	private Button refreshButton;
 	private Button playerGroupsButton;
@@ -100,7 +100,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		int topButtonsWidth = 84;
 		addRenderableWidget(refreshButton = new Button(
 						xAnchor - 205, 5, topButtonsWidth, 20,
-						new TranslatableComponent("gui.xaero_pac_ui_player_config_refresh"),
+						Component.translatable("gui.xaero_pac_ui_player_config_refresh"),
 						b -> refreshHandler.accept(this, b)
 				)
 		);
@@ -108,7 +108,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			return;
 		addRenderableWidget(playerGroupsButton = new Button(
 						xAnchor + 205 - topButtonsWidth, 5, topButtonsWidth, 20,
-						new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups"),
+						Component.translatable("gui.xaero_pac_ui_player_config_player_groups"),
 						b -> openGroupsScreen()
 				)
 		);
@@ -152,7 +152,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			commentTranslated = option.getComment();
 		if(option.getTooltipPrefix() != null)
 			commentTranslated = option.getTooltipPrefix() + "\n" + commentTranslated;
-		return new TextComponent(commentTranslated);
+		return Component.literal(commentTranslated);
 	}
 
 	public String getOtherPlayerName() {
@@ -268,7 +268,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 							String translationKey = option.getTranslation() + "_" + defaultDisplay.getString();
 							String translatedText = I18n.get(translationKey);
 							if(!translatedText.equals("default") && !translatedText.equals(translationKey))
-								return new TranslatableComponent(translationKey).setStyle(defaultDisplay.getStyle());
+								return Component.translatable(translationKey).setStyle(defaultDisplay.getStyle());
 						}
 						return defaultDisplay;
 					})
@@ -341,7 +341,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 		}
 
 		private WidgetListElement<?> createSubConfigWidgetListElement(int elementWidth, int elementHeight, List<String> subConfigs, int indexOfSelected){
-			List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(new TranslatableComponent("gui.xaero_pac_ui_sub_config_dropdown_tooltip"), 200);
+			List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(Component.translatable("gui.xaero_pac_ui_sub_config_dropdown_tooltip"), 200);
 			return DropdownWidgetListElement.Builder.<String>begin()
 					.setW(elementWidth)
 					.setH(elementHeight)
@@ -349,7 +349,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setMutable(true)
 					.setOptions(subConfigs)
 					.setStartIndex(indexOfSelected)
-					.setTitle(new TranslatableComponent("gui.xaero_pac_ui_sub_config_dropdown"))
+					.setTitle(Component.translatable("gui.xaero_pac_ui_sub_config_dropdown"))
 					.setValueChangeConsumer(v-> {
 						data.setSelectedSubConfig(v);
 						PlayerConfigScreen recreatedScreen = build();
@@ -399,8 +399,8 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setW(elementWidth)
 					.setH(elementHeight)
 					.setMutable(!isCurrentlyUsed && !subData.isBeingDeleted())
-					.setTooltip(minecraft.font.split(new TranslatableComponent(isCurrentlyUsed? "gui.xaero_pac_ui_sub_config_use_button_used_tooltip" : "gui.xaero_pac_ui_sub_config_use_button_tooltip"), 200))
-					.setWidgetSupplier((el, xy) -> new Button(xy.getX(), xy.getY(), elementWidth, elementHeight, isCurrentlyUsed ? new TranslatableComponent("gui.xaero_pac_ui_sub_config_use_button_used") : new TranslatableComponent("gui.xaero_pac_ui_sub_config_use_button", data.getSelectedSubConfig()),
+					.setTooltip(minecraft.font.split(Component.translatable(isCurrentlyUsed? "gui.xaero_pac_ui_sub_config_use_button_used_tooltip" : "gui.xaero_pac_ui_sub_config_use_button_tooltip"), 200))
+					.setWidgetSupplier((el, xy) -> new Button(xy.getX(), xy.getY(), elementWidth, elementHeight, isCurrentlyUsed ? Component.translatable("gui.xaero_pac_ui_sub_config_use_button_used") : Component.translatable("gui.xaero_pac_ui_sub_config_use_button", data.getSelectedSubConfig()),
 							b -> {
 								usedSubConfigOptionStorage.setValue(data.getSelectedSubConfig());
 								OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().syncToServer(usedSubConfigSyncDest, usedSubConfigOptionStorage);
@@ -412,7 +412,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					.setW(elementWidth)
 					.setH(elementHeight)
 					.setMutable(canCreateSubs && data.isSubConfigSelected() && !subData.isBeingDeleted())
-					.setWidgetSupplier((el, xy) -> new Button(xy.getX(), xy.getY(), elementWidth, elementHeight, new TranslatableComponent("gui.xaero_pac_ui_sub_config_delete_button", data.getSelectedSubConfig()),
+					.setWidgetSupplier((el, xy) -> new Button(xy.getX(), xy.getY(), elementWidth, elementHeight, Component.translatable("gui.xaero_pac_ui_sub_config_delete_button", data.getSelectedSubConfig()),
 							b -> {
 								String s = data.getSelectedSubConfig();
 								minecraft.setScreen(new ConfirmScreen(result -> {
@@ -421,16 +421,16 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 										OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().requestDeleteSubConfig(data, s);
 									}
 									minecraft.setScreen(build());
-								}, new TranslatableComponent("gui.xaero_pac_ui_sub_config_delete_button_confirm1", s),
-										new TranslatableComponent("gui.xaero_pac_ui_sub_config_delete_button_confirm2")));
+								}, Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm1", s),
+										Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm2")));
 							})).build();
 			elements.add(deleteSubConfigButtonWidget);
 
 			WidgetListElement<?> createSubConfigWidget = TextWidgetListElement.Builder.begin()
 					.setW(elementWidth)
 					.setH(elementHeight)
-					.setTitle(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget"))
-					.setTooltip(minecraft.font.split(new TranslatableComponent("gui.xaero_pac_ui_sub_config_create_widget_tooltip", new TranslatableComponent("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH)), 200))
+					.setTitle(Component.translatable("gui.xaero_pac_ui_sub_config_create_widget"))
+					.setTooltip(minecraft.font.split(Component.translatable("gui.xaero_pac_ui_sub_config_create_widget_tooltip", Component.translatable("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH)), 200))
 					.setMutable(canCreateSubs && data.getSubCount() < data.getSubConfigLimit())
 					.setStartValue("")
 					.setFilter(Objects::nonNull)
@@ -477,20 +477,20 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 			Component title = null;
 			if(mainTitle == null) {
 				if(data.getType() == PlayerConfigType.PLAYER)
-					mainTitle = new TranslatableComponent("gui.xaero_pac_ui_my_player_config");
+					mainTitle = Component.translatable("gui.xaero_pac_ui_my_player_config");
 				else if(data.getType() == PlayerConfigType.SERVER)
-					mainTitle = new TranslatableComponent("gui.xaero_pac_ui_server_claims_config");
+					mainTitle = Component.translatable("gui.xaero_pac_ui_server_claims_config");
 				else if(data.getType() == PlayerConfigType.PARTY_CLAIMS)
-					mainTitle = new TranslatableComponent("gui.xaero_pac_ui_party_claims_config");
+					mainTitle = Component.translatable("gui.xaero_pac_ui_party_claims_config");
 				else
-					mainTitle = new TranslatableComponent("gui.xaero_pac_ui_player_config");
+					mainTitle = Component.translatable("gui.xaero_pac_ui_player_config");
 			}
 			boolean syncInProgress = data.isSyncInProgress();
 			boolean hasSubConfigs = data.getType() == PlayerConfigType.PLAYER || data.getType() == PlayerConfigType.SERVER ||
 					data.getType() == PlayerConfigType.PARTY_CLAIMS;
 			if(!syncInProgress && hasSubConfigs) {
 				addSubConfigControls(elements, elementWidth, elementHeight);
-				title = new TranslatableComponent(
+				title = Component.translatable(
 						"gui.xaero_pac_ui_player_config_sub",
 						mainTitle,
 						data.getSelectedSubConfig()
@@ -518,7 +518,7 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 					return;
 				final boolean mutable = isMutable(optionValueSourceData, optionStorage);
 				Class<?> type = optionStorage.getType();
-				Component optionTitle = new TranslatableComponent(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
+				Component optionTitle = Component.translatable(optionStorage.getTranslation(), optionStorage.getTranslationArgs());
 				List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(getUICommentForOption(optionStorage.getOption()), 200);
 				if(type == Boolean.class) {
 					@SuppressWarnings("unchecked")

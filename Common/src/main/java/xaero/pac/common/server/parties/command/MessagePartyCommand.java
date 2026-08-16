@@ -63,10 +63,10 @@ public class MessagePartyCommand {
 			
 			String inputMessage = StringArgumentType.getString(context, "message");
 
-			Component rankComponent = new TextComponent((playerParty.getOwner() == casterInfo ? "OWNER" : casterInfo.getRank().toString()) + " ").withStyle(s -> s.withColor(casterInfo.getRank().getColor()));
-			Component nameComponent = new TextComponent("<" + player.getGameProfile().getName() + "> ");
-			Component contentComponent = new TextComponent(inputMessage).withStyle(s -> s.withColor(ChatFormatting.GRAY));
-			Component messageComponent = new TextComponent("");
+			Component rankComponent = Component.literal((playerParty.getOwner() == casterInfo ? "OWNER" : casterInfo.getRank().toString()) + " ").withStyle(s -> s.withColor(casterInfo.getRank().getColor()));
+			Component nameComponent = Component.literal("<" + player.getGameProfile().getName() + "> ");
+			Component contentComponent = Component.literal(inputMessage).withStyle(s -> s.withColor(ChatFormatting.GRAY));
+			Component messageComponent = Component.literal("");
 			messageComponent.getSiblings().add(rankComponent);
 			messageComponent.getSiblings().add(nameComponent);
 			messageComponent.getSiblings().add(contentComponent);

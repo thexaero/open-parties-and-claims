@@ -33,84 +33,84 @@ public enum PlayerConfigGroupActionError {
 	 */
 	GROUP_ALREADY_EXISTS(
 			null,
-			new TranslatableComponent("gui.xaero_pac_command_player_config_player_groups_error_group_already_exists")
+			Component.translatable("gui.xaero_pac_command_player_config_player_groups_error_group_already_exists")
 	),
 	/**
 	 * Error returned when trying to use an invalid group ID.
 	 */
 	INVALID_GROUP_ID(
 			null,
-			new TranslatableComponent("gui.xaero_pac_command_player_config_player_groups_error_invalid_group_id")
+			Component.translatable("gui.xaero_pac_command_player_config_player_groups_error_invalid_group_id")
 	),
 	/**
 	 * Error returned when trying to use a group ID that is longer than 16 characters.
 	 */
 	GROUP_ID_TOO_LONG(
 			null,
-			new TranslatableComponent("gui.xaero_pac_command_player_config_player_groups_error_group_id_too_long")
+			Component.translatable("gui.xaero_pac_command_player_config_player_groups_error_group_id_too_long")
 	),
 	/**
 	 * Error returned when trying to remove a group using a group ID that isn't used.
 	 */
 	GROUP_TO_REMOVE_NOT_FOUND(
 			null,
-			new TranslatableComponent("gui.xaero_pac_command_player_config_player_groups_error_group_does_not_exist")
+			Component.translatable("gui.xaero_pac_command_player_config_player_groups_error_group_does_not_exist")
 	),
 	/**
 	 * Error returned when trying to edit a group using a group ID that isn't used.
 	 */
 	GROUP_TO_EDIT_NOT_FOUND(
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_player_groups_error_group_not_found"),
-			new TranslatableComponent("gui.xaero_pac_command_player_config_player_groups_error_edited_group_does_not_exist")
+			Component.translatable("gui.xaero_pac_ui_player_config_player_groups_error_group_not_found"),
+			Component.translatable("gui.xaero_pac_command_player_config_player_groups_error_edited_group_does_not_exist")
 	),
 	/**
 	 * Error returned when trying to include a player in a group who is already included.
 	 */
 	MEMBER_ALREADY_INCLUDED(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_member_already_added"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_member_already_added")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_member_already_added"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_member_already_added")
 	),
 	/**
 	 * Error returned when trying to affect a group member entry that is not in the group.
 	 */
 	MEMBER_NOT_FOUND(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_member_not_found"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_member_not_found")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_member_not_found"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_member_not_found")
 	),
 	/**
 	 * Error returned when trying to affect a group's group inclusion entry that is not in the group.
 	 */
 	GROUP_INCLUSION_NOT_FOUND(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_inclusion_not_found"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_inclusion_not_found")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_inclusion_not_found"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_inclusion_not_found")
 	),
 	/**
 	 * Error returned when trying to include a group in a group which is already included.
 	 */
 	GROUP_ALREADY_INCLUDED(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_already_included"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_already_included")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_already_included"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_already_included")
 	),
 	/**
 	 * Error returned when an operation didn't necessarily fail but had no effect.
 	 */
 	NO_EFFECT(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_no_effect"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_no_effect")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_no_effect"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_no_effect")
 	),
 	/**
 	 * Error returned when trying to create a new group but the group count limit has been reached.
 	 */
 	GROUP_COUNT_LIMIT(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_count_limit"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_count_limit")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_count_limit"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_count_limit")
 	),
 	/**
 	 * Error returned when trying to include something in a group but the group space has been exhausted for the config.
 	 */
 	OUT_OF_SPACE(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_space_limit"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_group_space_limit")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_space_limit"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_group_space_limit")
 	),
 	/**
 	 * Error returned when a non-op player tries to include a player in a group who the server isn't aware of yet.
@@ -118,15 +118,15 @@ public enum PlayerConfigGroupActionError {
 	 * This usually means that the player has not yet played on the server.
 	 */
 	UNKNOWN_PLAYER(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_unknown_player"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_unknown_player")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_unknown_player"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_unknown_player")
 	),
 	/**
 	 * Error returned when trying to include a player in a group with a name that isn't valid.
 	 */
 	INVALID_PLAYER_NAME(
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_invalid_player_name"),
-			new TranslatableComponent("gui.xaero_pac_player_config_player_groups_error_invalid_player_name")
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_invalid_player_name"),
+			Component.translatable("gui.xaero_pac_player_config_player_groups_error_invalid_player_name")
 	);
 
 	private final Component desyncScreenMessage;

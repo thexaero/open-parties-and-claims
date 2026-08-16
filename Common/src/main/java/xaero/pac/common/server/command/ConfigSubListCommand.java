@@ -136,7 +136,7 @@ public class ConfigSubListCommand {
 			for(int i = startAt; i < endAt; i++) {
 				if(i != startAt)
 					listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_separator"));
-				listMessage.getSiblings().add(new TextComponent(subConfigIds.get(i)));
+				listMessage.getSiblings().add(Component.literal(subConfigIds.get(i)));
 			}
 			if(endAt < subConfigIds.size())
 				listMessage.getSiblings().add(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_sub_list_there_is_more"));

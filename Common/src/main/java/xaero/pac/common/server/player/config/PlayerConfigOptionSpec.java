@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 
 public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> {
 
-	public static final TranslatableComponent INHERITED_TEXT = new TranslatableComponent("gui.xaero_pac_config_option_sub_inherited");
+	public static final Component INHERITED_TEXT = Component.translatable("gui.xaero_pac_config_option_sub_inherited");
 
 	protected final String id;
 	protected final String shortenedId;
@@ -143,9 +143,9 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 	private Component applyValueQuotesIfNeeded(Object value, Component valueString){
 		Component result = valueString;
 		if(value != null && valueType.shouldDisplayInQuotes()) {
-			result = new TextComponent("\"");
+			result = Component.literal("\"");
 			result.getSiblings().add(valueString);
-			result.getSiblings().add(new TextComponent("\""));
+			result.getSiblings().add(Component.literal("\""));
 		}
 		return result;
 	}

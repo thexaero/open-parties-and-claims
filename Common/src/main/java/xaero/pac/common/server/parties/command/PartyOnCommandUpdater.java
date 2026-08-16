@@ -54,9 +54,9 @@ public class PartyOnCommandUpdater {
 		String partyCustomName = configs.getLoadedConfig(party.getOwner().getUUID()).getEffective(PlayerConfigOptions.PARTY_NAME);
 		if(!partyCustomName.isEmpty())
 			partyName = partyCustomName;
-		Component partyNameComponent = new TextComponent("[" + partyName + "] ").withStyle(s ->
+		Component partyNameComponent = Component.literal("[" + partyName + "] ").withStyle(s ->
 				s.withColor(ChatFormatting.GOLD).withHoverEvent(
-						new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(party.getDefaultName()))
+						new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(party.getDefaultName()))
 				)
 		);
 
@@ -67,7 +67,7 @@ public class PartyOnCommandUpdater {
 		MinecraftServer server = serverData.getServer();
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 		Consumer<ServerPlayer> messageSender = memberPlayer -> {
-			Component memberMessage = new TextComponent("");//can't reuse because onlineMember.sendMessage might not encode the message immediately, which can cause a race condition
+			Component memberMessage = Component.literal("");//can't reuse because onlineMember.sendMessage might not encode the message immediately, which can cause a race condition
 			memberMessage.getSiblings().add(partyNameComponent);
 			memberMessage.getSiblings().add(adaptiveLocalizer.getFor(memberPlayer, massMessageContent));
 			memberPlayer.sendMessage(memberMessage, commandCasterId);

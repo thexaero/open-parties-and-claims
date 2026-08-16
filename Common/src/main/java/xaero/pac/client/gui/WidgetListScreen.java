@@ -67,19 +67,19 @@ public abstract class WidgetListScreen extends XPACScreen {
 			int y = yAnchor + (indexOff % 6) * ROW_HEIGHT;
 			elements.get(index).screenInit(x, y, this, tickableBoxes);
 		}
-		addRenderableWidget(new Button(xAnchor - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
+		addRenderableWidget(new Button(xAnchor - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_back"), this::onBackButton));
 
-		prevButton = new Button(this.width / 2 - 205, yAnchor + 144, 75, 20, new TranslatableComponent("gui.xaero_pac_previous", new Object[0]), this::onPrevButton);
-		nextButton = new Button(this.width / 2 + 131, yAnchor + 144, 75, 20, new TranslatableComponent("gui.xaero_pac_next", new Object[0]), this::onNextButton);
+		prevButton = new Button(this.width / 2 - 205, yAnchor + 144, 75, 20, Component.translatable("gui.xaero_pac_previous", new Object[0]), this::onPrevButton);
+		nextButton = new Button(this.width / 2 + 131, yAnchor + 144, 75, 20, Component.translatable("gui.xaero_pac_next", new Object[0]), this::onNextButton);
 		if(pageCount > 1) {
 			this.addRenderableWidget(prevButton);
 			this.addRenderableWidget(nextButton);
 			prevButton.active = page > 0;
 			nextButton.active = page < pageCount - 1;
 		}
-		displayedTitle = new TextComponent("");
+		displayedTitle = Component.literal("");
 		displayedTitle.getSiblings().add(title);
-		displayedTitle.getSiblings().add(new TextComponent(" (" + (page + 1) + "/" + pageCount + ")"));
+		displayedTitle.getSiblings().add(Component.literal(" (" + (page + 1) + "/" + pageCount + ")"));
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 	

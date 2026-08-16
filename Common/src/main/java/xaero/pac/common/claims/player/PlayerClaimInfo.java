@@ -170,7 +170,7 @@ public abstract class PlayerClaimInfo
 
 	public Component getDefaultPartyName() {
 		if(defaultPartyNameCachedFor == null || !Objects.equals(defaultPartyNameCachedFor, getPlayerUsername())){
-			defaultPartyNameCache = new TranslatableComponent("gui.xaero_pac_default_party_name", getPlayerUsername());
+			defaultPartyNameCache = Component.translatable("gui.xaero_pac_default_party_name", getPlayerUsername());
 			defaultPartyNameCachedFor = getPlayerUsername();
 		}
 		return defaultPartyNameCache;

@@ -70,7 +70,7 @@ public class DestroyPartyConfirmCommand {
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
 					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 					partyManager.removeTypedParty(playerParty);
-					new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> true, new TranslatableComponent("gui.xaero_parties_party_destroy_members_info", new TextComponent(playerParty.getOwner().getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+					new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> true, Component.translatable("gui.xaero_parties_party_destroy_members_info", Component.literal(playerParty.getOwner().getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 					return 1;
 				})));
 		dispatcher.register(command);

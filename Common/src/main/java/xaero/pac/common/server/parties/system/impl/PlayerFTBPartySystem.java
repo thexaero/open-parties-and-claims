@@ -106,7 +106,7 @@ public class PlayerFTBPartySystem implements IPlayerPartySystemAPI<Team> {
 	@Nullable
 	@Override
 	public Component getName(@Nonnull Team party) {
-		return new TextComponent(party.getDisplayName());
+		return Component.literal(party.getDisplayName());
 	}
 
 	@Override

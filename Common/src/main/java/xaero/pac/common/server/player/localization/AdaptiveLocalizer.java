@@ -41,7 +41,7 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 	public MutableComponent getFor(@Nonnull ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
 		ServerPlayerData playerDataAPI = (ServerPlayerData) ServerPlayerData.from(player);
 		if(playerDataAPI.hasMod())
-			return new TranslatableComponent(key, args);
+			return Component.translatable(key, args);
 		return getServerLocalizedComponent(key, args);
 	}
 
@@ -65,7 +65,7 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 		for(int i = 0; i < args.length; i++)
 			if(args[i] instanceof TranslatableComponent translatableComponent)
 				args[i] = getServerLocalizedComponent(translatableComponent.getKey(), translatableComponent.getArgs());
-		return new TranslatableComponent(defaultTranslations.getOrDefault(key, key), args);
+		return Component.translatable(defaultTranslations.getOrDefault(key, key), args);
 	}
 
 	public String getDefaultTranslation(String key){
