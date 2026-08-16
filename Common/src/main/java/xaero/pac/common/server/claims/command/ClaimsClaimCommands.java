@@ -241,7 +241,7 @@ public class ClaimsClaimCommands {
 								context.getSource().sendSuccess(message, true);
 							return 0;
 						}
-						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_claimed_at", middleX, middleZ, world.dimension().location()), true);
+						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_claimed_at", middleX, middleZ, world.dimension().location().toString()), true);
 					} else {
 						if(middleX != areaLeft || middleZ != areaTop){//is more than 1 chunk
 							Component defaultClaimName = claimsManager.getDefaultName(claimPlayerId, false, true).copy().withStyle(ChatFormatting.GREEN);
@@ -272,7 +272,7 @@ public class ClaimsClaimCommands {
 							context.getSource().sendFailure(message);
 							return 0;
 						}
-						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unclaimed_at", middleX, middleZ, world.dimension().location()), true);
+						context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_unclaimed_at", middleX, middleZ, world.dimension().location().toString()), true);
 					}
 					return 1;
 				} finally {
