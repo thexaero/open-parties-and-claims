@@ -213,6 +213,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if a player is permitted to include/exclude players in player groups in the
  party's claims config (the party owner's config).</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#CANT_TOUCH_OTHER" class="member-name-link">CANT_TOUCH_OTHER</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The claiming action was interruptingly forbidden by an addon</div>
+</dd>
 <dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canView()" class="member-name-link">canView()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
 <dd>
 <div class="block">Checks whether the player can view the config.</div>
@@ -475,6 +479,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the claimed chunk protection makes an exception for village raids.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html#CLAIM_EXCEPTION_RECLAIMABLE" class="member-name-link">CLAIM_EXCEPTION_RECLAIMABLE</a> - Static variable in class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api.v2">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">Whether the claimed chunk(s) can be reclaimed by another player.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html#CLAIM_EXCEPTION_TARGETS_BY_PROJECTILES" class="member-name-link">CLAIM_EXCEPTION_TARGETS_BY_PROJECTILES</a> - Static variable in class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api.v2">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">Whether the claimed chunk protection makes an exception for target blocks being pressed by projectiles.</div>
@@ -666,6 +674,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.SetResult.html#DEFAULTED" class="member-name-link">DEFAULTED</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI.SetResult</a></dt>
 <dd>
 <div class="block">The option value was reset to the default config's value</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html#DIMENSION" class="member-name-link">DIMENSION</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a></dt>
+<dd>
+<div class="block">The player config has dimension-based sub-configs</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#DIMENSION_NOT_RECLAIMABLE" class="member-name-link">DIMENSION_NOT_RECLAIMABLE</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The claiming player is not part of the player group that the Wilderness "Reclaimable By" option is set to</div>
 </dd>
 </dl>
 <h2 class="title" id="I:E">E</h2>
@@ -1083,6 +1099,10 @@ loadScripts(document, 'script');</script>
  It accepts values of any type but will only work with the right one.</div>
 </div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#getCommandPrefix()" class="member-name-link">getCommandPrefix()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">The String literal prefix used for commands relating to this config type.</div>
+</dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html#getComment()" class="member-name-link">getComment()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigOptionClientStorageAPI</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -1170,6 +1190,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#getConfig(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getConfig(IPlayerChunkClaimAPI)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
 <dd>
 <div class="block">Gets the player/claim config used for a specified claim state.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#getConfig(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation)" class="member-name-link">getConfig(IPlayerChunkClaimAPI, ResourceLocation)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Gets the player/claim config used for a specified claim state and dimension.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html#getConfigTypeFilter()" class="member-name-link">getConfigTypeFilter()</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigOptionSpecAPI</a></dt>
 <dd>
@@ -1500,6 +1524,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)" class="member-name-link">getFullName(IPlayerChunkClaimAPI, boolean)</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">getFullName(IPlayerChunkClaimAPI, ResourceLocation, boolean)</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state and dimension.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html#getGroupSpace()" class="member-name-link">getGroupSpace()</a> - Method in interface xaero.pac.client.player.config.group.api.<a href="xaero/pac/client/player/config/group/api/IClientPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.client.player.config.group.api">IClientPlayerConfigGroupManagerAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -2015,6 +2043,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the current claiming mode without automatically determining the effective one if none is set.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#getReadCommandRequirement()" class="member-name-link">getReadCommandRequirement()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets the requirement for read-type commands related to this config type.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/action/listener/override/api/ClaimActionPermissionOverride.html#getReason()" class="member-name-link">getReason()</a> - Method in class xaero.pac.common.server.claims.action.listener.override.api.<a href="xaero/pac/common/server/claims/action/listener/override/api/ClaimActionPermissionOverride.html" title="class in xaero.pac.common.server.claims.action.listener.override.api">ClaimActionPermissionOverride</a></dt>
 <dd>
 <div class="block">Gets the reason for the override</div>
@@ -2216,6 +2248,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html#getSubConfigLimit()" class="member-name-link">getSubConfigLimit()</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="block">Gets the maximum number of sub-configs that this player config is allowed to have.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#getSubConfigType()" class="member-name-link">getSubConfigType()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets the type of sub-configs that this config type uses.</div>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html#getSubCount()" class="member-name-link">getSubCount()</a> - Method in interface xaero.pac.client.player.config.api.<a href="xaero/pac/client/player/config/api/IPlayerConfigClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api">IPlayerConfigClientStorageAPI</a></dt>
 <dd>
@@ -2515,6 +2551,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the wilderness config instance.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#getWriteCommandRequirement()" class="member-name-link">getWriteCommandRequirement()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets the requirement for write-type commands related to this config type.</div>
+</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientRegionClaimsAPI.html#getX()" class="member-name-link">getX()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientRegionClaimsAPI.html" title="interface in xaero.pac.client.claims.api">IClientRegionClaimsAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/api/IRegionClaimsAPI.html#getX()" class="member-name-link">getX()</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IRegionClaimsAPI.html" title="interface in xaero.pac.common.claims.api">IRegionClaimsAPI</a></dt>
@@ -2614,6 +2654,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Directly checks whether a specified entity has full access to a claim with the specified config at
  specified coordinates.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#hasDimensionSubConfigs()" class="member-name-link">hasDimensionSubConfigs()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets whether configs of this type have dimension-based sub-configs, e.g.</div>
 </dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo(UUID)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
@@ -3274,6 +3318,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The user doesn't have permission to make server claims</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html#NONE" class="member-name-link">NONE</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a></dt>
+<dd>
+<div class="block">The player config can't have sub-configs</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NOT_CLAIMED" class="member-name-link">NOT_CLAIMED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The chunk is not claimed</div>
@@ -3354,6 +3402,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onEntityPlaceBlock(net.minecraft.world.entity.Entity,net.minecraft.server.level.ServerLevel,net.minecraft.core.BlockPos)" class="member-name-link">onEntityPlaceBlock(Entity, ServerLevel, BlockPos)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
 <dd>
 <div class="block">Checks whether a specified block placement should be protected against.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onEntityPlaceBlock(net.minecraft.world.level.block.state.BlockState,net.minecraft.world.entity.Entity,net.minecraft.server.level.ServerLevel,net.minecraft.core.BlockPos)" class="member-name-link">onEntityPlaceBlock(BlockState, Entity, ServerLevel, BlockPos)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
+<dd>
+<div class="block">Checks whether a specified block placement should be protected against</div>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html#onItemPickup(net.minecraft.world.entity.Entity,net.minecraft.world.entity.item.ItemEntity)" class="member-name-link">onItemPickup(Entity, ItemEntity)</a> - Method in interface xaero.pac.common.server.claims.protection.api.<a href="xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html" title="interface in xaero.pac.common.server.claims.protection.api">IChunkProtectionAPI</a></dt>
 <dd>
@@ -3564,6 +3616,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#playerNameIsIncluded(java.lang.String)" class="member-name-link">playerNameIsIncluded(String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html" class="type-name-link" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a> - Enum Class in <a href="xaero/pac/common/server/player/config/api/package-summary.html">xaero.pac.common.server.player.config.api</a></dt>
+<dd>
+<div class="block">All possible player sub-config types</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/protection/override/api/ChunkAccessOverrideType.html#PROTECT" class="member-name-link">PROTECT</a> - Enum constant in enum class xaero.pac.common.server.claims.protection.override.api.<a href="xaero/pac/common/server/claims/protection/override/api/ChunkAccessOverrideType.html" title="enum class in xaero.pac.common.server.claims.protection.override.api">ChunkAccessOverrideType</a></dt>
 <dd>
 <div class="block">Force the access to chunk to be protected, ignoring normal OPAC checks</div>
@@ -3917,6 +3973,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:R">R</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#readAndWriteReqsDiffer()" class="member-name-link">readAndWriteReqsDiffer()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets whether the requirements for read and write command are different for this config type.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#RECEIVE_LOCATIONS_FROM_PARTY" class="member-name-link">RECEIVE_LOCATIONS_FROM_PARTY</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -4271,6 +4331,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/claims/api/SpecialClaimOwners.html#%3Cinit%3E()" class="member-name-link">SpecialClaimOwners()</a> - Constructor for class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api">SpecialClaimOwners</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html#SUBCLAIM" class="member-name-link">SUBCLAIM</a> - Enum constant in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a></dt>
+<dd>
+<div class="block">The player config has regular sub-configs meant for sub-claims</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#subConfigExists(int)" class="member-name-link">subConfigExists(int)</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -4333,6 +4397,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html#supportsConfigType(xaero.pac.common.server.player.config.api.PlayerConfigType)" class="member-name-link">supportsConfigType(PlayerConfigType)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IPlayerConfigGroupAPI</a></dt>
 <dd>
 <div class="block">Checks whether this player group supports a specified player config type.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#supportsSubConfigs()" class="member-name-link">supportsSubConfigs()</a> - Method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Gets whether configs of this type support sub-configs.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:T">T</h2>
@@ -4583,6 +4651,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.SetResult.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigAPI.SetResult.html" title="enum class in xaero.pac.common.server.player.config.api.v2">IPlayerConfigAPI.SetResult</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -4619,6 +4691,11 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html#values()" class="member-name-link">values()</a> - Static method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerConfigType</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html#values()" class="member-name-link">values()</a> - Static method in enum class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerSubConfigType.html" title="enum class in xaero.pac.common.server.player.config.api">PlayerSubConfigType</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>

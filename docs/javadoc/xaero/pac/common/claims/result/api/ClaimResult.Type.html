@@ -137,13 +137,21 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">There is an area claim action task in progress in the background</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#CLAIM_LIMIT_REACHED" class="member-name-link">CLAIM_LIMIT_REACHED</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#CANT_TOUCH_OTHER" class="member-name-link">CANT_TOUCH_OTHER</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">The claiming action was interruptingly forbidden by an addon</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#CLAIM_LIMIT_REACHED" class="member-name-link">CLAIM_LIMIT_REACHED</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The maximum number of claims was reached</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#CLAIMS_ARE_DISABLED" class="member-name-link">CLAIMS_ARE_DISABLED</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#CLAIMS_ARE_DISABLED" class="member-name-link">CLAIMS_ARE_DISABLED</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The claims feature is disabled</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#DIMENSION_NOT_RECLAIMABLE" class="member-name-link">DIMENSION_NOT_RECLAIMABLE</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The claiming player is not part of the player group that the Wilderness "Reclaimable By" option is set to</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#FORCELOAD_LIMIT_REACHED" class="member-name-link">FORCELOAD_LIMIT_REACHED</a></code></div>
 <div class="col-last odd-row-color">
@@ -330,6 +338,13 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="DIMENSION_NOT_RECLAIMABLE">
+<h3>DIMENSION_NOT_RECLAIMABLE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">DIMENSION_NOT_RECLAIMABLE</span></div>
+<div class="block">The claiming player is not part of the player group that the Wilderness "Reclaimable By" option is set to</div>
+</section>
+</li>
+<li>
 <section class="detail" id="NOT_CLAIMED_BY_USER_FORCELOAD">
 <h3>NOT_CLAIMED_BY_USER_FORCELOAD</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NOT_CLAIMED_BY_USER_FORCELOAD</span></div>
@@ -461,6 +476,13 @@ the order they are declared.</div>
 <section class="detail" id="ADDON_INTERRUPTS">
 <h3>ADDON_INTERRUPTS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ADDON_INTERRUPTS</span></div>
+<div class="block">The claiming action was interruptingly forbidden by an addon</div>
+</section>
+</li>
+<li>
+<section class="detail" id="CANT_TOUCH_OTHER">
+<h3>CANT_TOUCH_OTHER</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">CANT_TOUCH_OTHER</span></div>
 <div class="block">The claiming action was interruptingly forbidden by an addon</div>
 </section>
 </li>

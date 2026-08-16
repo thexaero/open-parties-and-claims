@@ -154,19 +154,26 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">getFullName</a><wbr>(<a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ boolean&nbsp;allowPartyNames)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state and dimension.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets or creates the claim info instance for a player UUID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim change tracker that lets you register claim change listeners.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a player has claim info.</div>
 </div>
 </div>
@@ -404,10 +411,38 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.
  <p>
  With this method you can specify whether you want party names applied to party-owned claims or to always
+ use player names.
+ <p>
+ This method does not apply dimension-specific names to wilderness or expired claims. Use <a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation,boolean)"><code>getFullName(IPlayerChunkClaimAPI, ResourceLocation, boolean)</code></a>
+ instead for that.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimState</code> - the claim state, can be null for wilderness</dd>
+<dd><code>allowPartyNames</code> - whether to apply party names to party-owned claims</dd>
+<dt>Returns:</dt>
+<dd>the full display name, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation,boolean)">
+<h3>getFullName</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getFullName</span><wbr><span class="parameters">(@Nullable
+ <a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ @Nullable
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ boolean&nbsp;allowPartyNames)</span></div>
+<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state and dimension.
+ <p>
+ The dimension argument only matters when claimState is null (wilderness) or an expired claim.
+ <p>
+ With this method you can specify whether you want party names applied to party-owned claims or to always
  use player names.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>claimState</code> - the claim state, can be null for wilderness</dd>
+<dd><code>dimension</code> - the dimension the claim is in, null when doesn't matter</dd>
 <dd><code>allowPartyNames</code> - whether to apply party names to party-owned claims</dd>
 <dt>Returns:</dt>
 <dd>the full display name, not null</dd>
