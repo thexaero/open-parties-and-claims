@@ -30,8 +30,8 @@ public final class PlayerConfigStringableOptionClientStorage<T> extends PlayerCo
 	
 	private final BiPredicate<IPlayerConfigClientStorageAPI, String> stringValidator;
 	
-	private PlayerConfigStringableOptionClientStorage(PlayerConfigOptionSpec<T> option, T value, BiPredicate<IPlayerConfigClientStorageAPI, String> stringValidator) {
-		super(option, value);
+	private PlayerConfigStringableOptionClientStorage(PlayerConfigOptionSpec<T> option, PlayerConfigClientStorage config, T value, BiPredicate<IPlayerConfigClientStorageAPI, String> stringValidator) {
+		super(option, config , value);
 		this.stringValidator = stringValidator;
 	}
 	
@@ -60,6 +60,20 @@ public final class PlayerConfigStringableOptionClientStorage<T> extends PlayerCo
 	
 	public static final class Builder<T> extends PlayerConfigOptionClientStorage.Builder<T, Builder<T>> {
 
+		private PlayerConfigClientStorage config;
+
+		@Override
+		public Builder<T> setDefault() {
+			super.setDefault();
+			setConfig(null);
+			return self;
+		}
+
+		public Builder<T> setConfig(PlayerConfigClientStorage config) {
+			this.config = config;
+			return self;
+		}
+
 		@Override
 		protected PlayerConfigOptionClientStorage<T> buildInternally() {
 			BiPredicate<IPlayerConfigClientStorageAPI, String> stringValidatorPredicate = (c, s) -> {
@@ -71,11 +85,13 @@ public final class PlayerConfigStringableOptionClientStorage<T> extends PlayerCo
 				}
 				return option.getClientSideValidator().test(c, parsedValue);
 			};
-			return new PlayerConfigStringableOptionClientStorage<T>(option, value, stringValidatorPredicate);
+			return new PlayerConfigStringableOptionClientStorage<T>(option, config, value, stringValidatorPredicate);
 		}
 		
 		@Override
 		public PlayerConfigStringableOptionClientStorage<T> build() {
+			if(config == null)
+				throw new IllegalStateException();
 			return (PlayerConfigStringableOptionClientStorage<T>) super.build();
 		}
 		

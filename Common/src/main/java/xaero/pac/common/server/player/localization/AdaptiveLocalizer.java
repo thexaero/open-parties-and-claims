@@ -21,12 +21,15 @@ package xaero.pac.common.server.player.localization;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.api.IAdaptiveLocalizerAPI;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 
@@ -38,7 +41,9 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 
 	@Override
 	@Nonnull
-	public MutableComponent getFor(@Nonnull ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
+	public MutableComponent getFor(@Nullable ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
+		if(player == null)
+			return getServerLocalizedComponent(key, args);
 		ServerPlayerData playerDataAPI = (ServerPlayerData) ServerPlayerData.from(player);
 		if(playerDataAPI.hasMod())
 			return Component.translatable(key, args);
@@ -47,11 +52,11 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 
 	@Override
 	@Nonnull
-	public Component getFor(@Nonnull ServerPlayer player, @Nonnull Component component){
+	public Component getFor(@Nullable ServerPlayer player, @Nonnull Component component){
 		if(!(component.getContents() instanceof TranslatableContents translatableContents))
 			return component;
-		ServerPlayerData playerDataAPI = (ServerPlayerData) ServerPlayerData.from(player);
-		if(playerDataAPI.hasMod())
+		ServerPlayerData playerDataAPI = player == null ? null : (ServerPlayerData) ServerPlayerData.from(player);
+		if(playerDataAPI != null && playerDataAPI.hasMod())
 			return component;
 		String key = translatableContents.getKey();
 		Object[] args = translatableContents.getArgs();
@@ -61,10 +66,23 @@ public class AdaptiveLocalizer implements IAdaptiveLocalizerAPI {
 		return result;
 	}
 
+	@Nonnull
+	public Supplier<Component> supplierFor(@Nullable ServerPlayer player, @Nonnull String key, @Nonnull Object... args){
+		return () -> getFor(player, key, args);
+	}
+
+	@Nonnull
+	public Supplier<Component> supplierFor(@Nullable ServerPlayer player, @Nonnull Component component){
+		return () -> getFor(player, component);
+	}
+
 	private MutableComponent getServerLocalizedComponent(String key, Object... args){
-		for(int i = 0; i < args.length; i++)
+		for(int i = 0; i < args.length; i++) {
+			if(args[i] instanceof ResourceLocation)
+				throw new IllegalArgumentException("ResourceLocation in translation arguments will cause problems!");
 			if(args[i] instanceof Component component && component.getContents() instanceof TranslatableContents translatableContents)
 				args[i] = getServerLocalizedComponent(translatableContents.getKey(), translatableContents.getArgs());
+		}
 		return Component.translatable(defaultTranslations.getOrDefault(key, key), args);
 	}
 

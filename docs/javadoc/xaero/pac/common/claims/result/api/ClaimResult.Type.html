@@ -109,6 +109,14 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code><a href="#ADDON_FORBIDS" class="member-name-link">ADDON_FORBIDS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The claiming action was forbidden by an addon</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#ADDON_INTERRUPTS" class="member-name-link">ADDON_INTERRUPTS</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The claiming action was interruptingly forbidden by an addon</div>
+</div>
 <div class="col-first even-row-color"><code><a href="#ALREADY_CLAIMED" class="member-name-link">ALREADY_CLAIMED</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">The chunk is already claimed</div>
@@ -121,25 +129,49 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">A chunk was already not forceloadable</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#CLAIM_LIMIT_REACHED" class="member-name-link">CLAIM_LIMIT_REACHED</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#ANOTHER_DIMENSION" class="member-name-link">ANOTHER_DIMENSION</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">The chunk was beyond the maximum distance</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#AREA_ACTION_IN_PROGRESS" class="member-name-link">AREA_ACTION_IN_PROGRESS</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">There is an area claim action task in progress in the background</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#CANT_TOUCH_OTHER" class="member-name-link">CANT_TOUCH_OTHER</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The claiming action was interruptingly forbidden by an addon</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#CLAIM_LIMIT_REACHED" class="member-name-link">CLAIM_LIMIT_REACHED</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The maximum number of claims was reached</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#CLAIMS_ARE_DISABLED" class="member-name-link">CLAIMS_ARE_DISABLED</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#CLAIMS_ARE_DISABLED" class="member-name-link">CLAIMS_ARE_DISABLED</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The claims feature is disabled</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#DIMENSION_NOT_RECLAIMABLE" class="member-name-link">DIMENSION_NOT_RECLAIMABLE</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The claiming player is not part of the player group that the Wilderness "Reclaimable By" option is set to</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#FORCELOAD_LIMIT_REACHED" class="member-name-link">FORCELOAD_LIMIT_REACHED</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">The maximum number of forceloadable claims was reached</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#NO_PARTY_PERMISSION" class="member-name-link">NO_PARTY_PERMISSION</a></code></div>
+<div class="col-first even-row-color"><code><a href="#INTERRUPTED" class="member-name-link">INTERRUPTED</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">The claiming action was interrupted from the outside</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#NO_PARTY_PERMISSION" class="member-name-link">NO_PARTY_PERMISSION</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The user doesn't have permission to make party claims</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The user doesn't have permission to make server claims</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED" class="member-name-link">NOT_CLAIMED</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The chunk is not claimed</div>
 </div>
 <div class="col-first even-row-color"><code><a href="#NOT_CLAIMED_BY_USER" class="member-name-link">NOT_CLAIMED_BY_USER</a></code></div>
 <div class="col-last even-row-color">
@@ -185,8 +217,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The area for a claim action was too big</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#UNCLAIMABLE_DIMENSION" class="member-name-link">UNCLAIMABLE_DIMENSION</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#TRANSFER_IN_PROGRESS" class="member-name-link">TRANSFER_IN_PROGRESS</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">There is a claim transfer currently in progress in the background</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#UNCLAIMABLE_DIMENSION" class="member-name-link">UNCLAIMABLE_DIMENSION</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The dimension is unclaimable</div>
 </div>
 </div>
@@ -206,14 +242,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Whether the result can be considered a failure</div>
 </div>
-<div class="col-first odd-row-color"><code>final net.minecraft.network.chat.Component</code></div>
-<div class="col-second odd-row-color"><code><a href="#message" class="member-name-link">message</a></code></div>
+<div class="col-first odd-row-color"><code>final boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#interruptsAreaAction" class="member-name-link">interruptsAreaAction</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Whether this result should stop an area claim action from continuing</div>
+</div>
+<div class="col-first even-row-color"><code>final net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color"><code><a href="#message" class="member-name-link">message</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">A message describing the result</div>
 </div>
-<div class="col-first even-row-color"><code>final boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#success" class="member-name-link">success</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>final boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#success" class="member-name-link">success</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Whether the result can be considered a success</div>
 </div>
 </div>
@@ -297,6 +338,13 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="DIMENSION_NOT_RECLAIMABLE">
+<h3>DIMENSION_NOT_RECLAIMABLE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">DIMENSION_NOT_RECLAIMABLE</span></div>
+<div class="block">The claiming player is not part of the player group that the Wilderness "Reclaimable By" option is set to</div>
+</section>
+</li>
+<li>
 <section class="detail" id="NOT_CLAIMED_BY_USER_FORCELOAD">
 <h3>NOT_CLAIMED_BY_USER_FORCELOAD</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NOT_CLAIMED_BY_USER_FORCELOAD</span></div>
@@ -308,6 +356,13 @@ the order they are declared.</div>
 <h3>NOT_CLAIMED_BY_USER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NOT_CLAIMED_BY_USER</span></div>
 <div class="block">The chunk isn't claimed by who is trying to unclaim it</div>
+</section>
+</li>
+<li>
+<section class="detail" id="NOT_CLAIMED">
+<h3>NOT_CLAIMED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NOT_CLAIMED</span></div>
+<div class="block">The chunk is not claimed</div>
 </section>
 </li>
 <li>
@@ -346,10 +401,31 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="ANOTHER_DIMENSION">
+<h3>ANOTHER_DIMENSION</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ANOTHER_DIMENSION</span></div>
+<div class="block">The chunk was beyond the maximum distance</div>
+</section>
+</li>
+<li>
 <section class="detail" id="REPLACEMENT_IN_PROGRESS">
 <h3>REPLACEMENT_IN_PROGRESS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">REPLACEMENT_IN_PROGRESS</span></div>
 <div class="block">There is a claim replacement currently in progress in the background</div>
+</section>
+</li>
+<li>
+<section class="detail" id="TRANSFER_IN_PROGRESS">
+<h3>TRANSFER_IN_PROGRESS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">TRANSFER_IN_PROGRESS</span></div>
+<div class="block">There is a claim transfer currently in progress in the background</div>
+</section>
+</li>
+<li>
+<section class="detail" id="AREA_ACTION_IN_PROGRESS">
+<h3>AREA_ACTION_IN_PROGRESS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">AREA_ACTION_IN_PROGRESS</span></div>
+<div class="block">There is an area claim action task in progress in the background</div>
 </section>
 </li>
 <li>
@@ -380,6 +456,34 @@ the order they are declared.</div>
  <p>
  This result type is only used for party claim requests made by online players.
  Permissions for party claims are not checked by the try methods in the server claims manager.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="INTERRUPTED">
+<h3>INTERRUPTED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">INTERRUPTED</span></div>
+<div class="block">The claiming action was interrupted from the outside</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ADDON_FORBIDS">
+<h3>ADDON_FORBIDS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ADDON_FORBIDS</span></div>
+<div class="block">The claiming action was forbidden by an addon</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ADDON_INTERRUPTS">
+<h3>ADDON_INTERRUPTS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ADDON_INTERRUPTS</span></div>
+<div class="block">The claiming action was interruptingly forbidden by an addon</div>
+</section>
+</li>
+<li>
+<section class="detail" id="CANT_TOUCH_OTHER">
+<h3>CANT_TOUCH_OTHER</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">CANT_TOUCH_OTHER</span></div>
+<div class="block">The claiming action was interruptingly forbidden by an addon</div>
 </section>
 </li>
 <li>
@@ -438,6 +542,13 @@ the order they are declared.</div>
 <h3>fail</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">fail</span></div>
 <div class="block">Whether the result can be considered a failure</div>
+</section>
+</li>
+<li>
+<section class="detail" id="interruptsAreaAction">
+<h3>interruptsAreaAction</h3>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">interruptsAreaAction</span></div>
+<div class="block">Whether this result should stop an area claim action from continuing</div>
 </section>
 </li>
 </ul>

@@ -136,7 +136,7 @@ public class PlayerConfigGroupMemberPacket extends PlayerConfigAbstractGroupPack
 					return;
 				}
 				Optional<PlayerConfigGroupActionError> error =
-						group.includeMemberLimitedInternal(packet.playerId, packet.playerName).right();
+						group.includeMemberLimitedInternal(packet.playerId, packet.playerName, true).right();
 				if(error.isPresent())
 					sendError(serverPlayer, packet, error.get());
 				return;

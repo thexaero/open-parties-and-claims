@@ -20,10 +20,12 @@ package xaero.pac.common.server.player.config.io;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.platform.Services;
+import xaero.pac.common.player.config.PlayerConfigConstants;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.io.FileIOHelper;
 import xaero.pac.common.server.io.FilePathConfig;
@@ -34,19 +36,24 @@ import xaero.pac.common.server.io.serialization.SerializedDataFileIO;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
-import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigDeserializationInfo;
 import xaero.pac.common.server.player.config.io.serialization.PlayerConfigSerializationHandler;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
+import xaero.pac.common.server.player.permission.PermissionNode;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
+import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
+import xaero.pac.common.server.player.permission.value.type.PermissionValueType;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import static xaero.pac.common.server.player.config.PlayerConfig.WILDERNESS_PLAYER_ID_STRING;
 
 public final class PlayerConfigIO
 <
@@ -131,8 +138,10 @@ public final class PlayerConfigIO
 			CommentedConfig storage = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
 			manager.getPlayerConfigSpec().correct(storage);
 			config.setStorage(storage);
-			if(filePathConfig == wildernessConfigPathConfig)
+			if(filePathConfig == wildernessConfigPathConfig) {
 				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
+				config.tryToSet(PlayerConfigOptions.CLAIM_EXCEPTION_RECLAIMABLE, PlayerConfigConstants.EVERYONE_EXCEPTION_ID);
+			}
 			tryLoadingCustomGroups(config);
 			resultConsumer.accept(config);
 		}
@@ -149,7 +158,7 @@ public final class PlayerConfigIO
 			saveFile(manager.getWildernessConfig(), wildernessConfigPathConfig.getPath());
 		if(manager.getServerClaimConfig().isDirty())
 			saveFile(manager.getServerClaimConfig(), serverClaimConfigPathConfig.getPath());
-		saveGlobalConfigSubConfigs(manager.getServerClaimConfig());
+		saveGlobalConfigSubConfigs(manager.getServerClaimConfig());//no idea why this is here but will keep it just in case
 		if(manager.getExpiredClaimConfig().isDirty())
 			saveFile(manager.getExpiredClaimConfig(), expiredClaimConfigPathConfig.getPath());
 		return super.save();
@@ -160,6 +169,7 @@ public final class PlayerConfigIO
 	protected void saveFile(PlayerConfig<P> object, Path filePath) {
 		if(!(object instanceof PlayerSubConfig) && object.getPlayerGroups().isSaveNeeded())
 			object.getPlayerGroups().getIo().saveToConfig();
+		trySavingLastPermissionValues(object);
 		super.saveFile(object, filePath);
 	}
 
@@ -184,11 +194,25 @@ public final class PlayerConfigIO
 		boolean isSub = filePathConfig.getPath() == configSubConfigPath;
 		if(!isSub)
 			return new PlayerConfigDeserializationInfo(UUID.fromString(fileNameNoExtension), PlayerConfigType.PLAYER, null, -1);
-		UUID playerId = UUID.fromString(file.getParent().getFileName().toString());
-		String[] fileNameArgs = fileNameNoExtension.split("\\$");
-		String subId = fileNameArgs[0];
-		String subIndexString = fileNameArgs[1];
-		int subIndex = Integer.parseInt(subIndexString);
+		String playerIdString = file.getParent().getFileName().toString();
+		UUID playerId = playerIdString.equals(WILDERNESS_PLAYER_ID_STRING) ? null : UUID.fromString(playerIdString);
+		PlayerConfig<?> mainConfig = manager.getConfig(playerId); //should be loaded by now because sub-configs are loaded last
+		if(!mainConfig.getType().supportsSubConfigs())
+			throw new IllegalArgumentException("A player/claims config that doesn't support sub-configs has sub-configs in the data!");
+		String subId;
+		int subIndex;
+		if(!mainConfig.getType().hasDimensionSubConfigs()) {
+			String[] fileNameArgs = fileNameNoExtension.split("\\$");
+			subId = fileNameArgs[0];
+			String subIndexString = fileNameArgs[1];
+			subIndex = Integer.parseInt(subIndexString);
+		} else {
+			ResourceLocation subConfigDim = fileIOHelper.convertFileNameToDimension(fileNameNoExtension, false);
+			if(subConfigDim == null)
+				throw new IllegalArgumentException("The " + mainConfig.getType() + " config has a sub-config with an ID that is not properly formatted: " + fileNameNoExtension);
+			subId = subConfigDim.toString();
+			subIndex = 0;
+		}
 		if(Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID))
 			return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.SERVER, subId, subIndex);
 		return new PlayerConfigDeserializationInfo(playerId, PlayerConfigType.PLAYER, subId, subIndex);
@@ -198,7 +222,12 @@ public final class PlayerConfigIO
 	protected Path getFilePath(PlayerConfig<P> object, String fileName) {
 		if(object instanceof PlayerSubConfig subConfig) {
 			Path folder = configSubConfigPath.resolve(fileName);
-			return folder.resolve(subConfig.getSubId() + "$" + subConfig.getSubIndex() + this.fileExtension);
+			String subIdBasedFileName;
+			if(object.getType().hasDimensionSubConfigs())
+				subIdBasedFileName = fileIOHelper.convertDimensionToFileName(ResourceLocation.parse(subConfig.getSubId()), false);
+			else
+				subIdBasedFileName = subConfig.getSubId() + "$" + subConfig.getSubIndex();
+			return folder.resolve(subIdBasedFileName + this.fileExtension);
 		}
 		return configsPath.resolve(fileName + this.fileExtension);
 	}
@@ -206,11 +235,58 @@ public final class PlayerConfigIO
 	@Override
 	protected void onObjectLoad(PlayerConfig<P> loadedObject) {
 		tryLoadingCustomGroups(loadedObject);
+		tryLoadingLastPermissionValues(loadedObject);
 	}
 
 	private void tryLoadingCustomGroups(PlayerConfig<P> config){
 		if(config.getPlayerGroups() != null)
 			config.getPlayerGroups().getIo().loadFromConfig();
+	}
+
+	private void trySavingLastPermissionValues(PlayerConfig<P> config){
+		Map<IPermissionNodeAPI<?>, Object> lastPermissionValues = config.getLastPermissionValues();
+		if(lastPermissionValues == null)
+			return;
+		List<String> data = new ArrayList<>();
+		config.getLastPermissionValues().forEach((k, v) ->
+				saveLastPermissionValue(data, k, v)
+		);
+		config.forceSet((PlayerConfigOptionSpec<List<String>>)PlayerConfigOptions.LAST_PERMISSION_VALUES, data);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> void saveLastPermissionValue(List<String> data, IPermissionNodeAPI<T> node, Object value){
+		T valueCast = (T) value;
+		PermissionValueType<T> valueType = ((PermissionNode<T>) node).getValueType();
+		data.add(node.getDefaultNodeString() + "=" + valueType.getStringEncoder().apply(valueCast));
+	}
+
+	private void tryLoadingLastPermissionValues(PlayerConfig<P> config){
+		if(config.getLastPermissionValues() == null)
+			return;
+		List<String> savedData = config.getRaw(PlayerConfigOptions.LAST_PERMISSION_VALUES);
+		if(savedData == null)
+			return;
+		savedData.forEach(entry -> {
+			int separatorIndex = entry.indexOf("=");
+			String nodeId = entry.substring(0, separatorIndex);
+			IPermissionNodeAPI<?> node = UsedPermissionNodes.ALL.get(nodeId);
+			if(node == null)
+				return;
+			String valueString = entry.substring(separatorIndex + 1);
+			loadLastPermissionValue(config, node, valueString);
+		});
+	}
+
+	private <T> void loadLastPermissionValue(PlayerConfig<P> config, IPermissionNodeAPI<T> node, String valueString){
+		PermissionValueType<T> valueType = ((PermissionNode<T>) node).getValueType();
+		T value;
+		try {
+			value = valueType.getStringDecoder().apply(valueString);
+		} catch(Throwable t){
+			return;
+		}
+		config.setLastPermissionValue(node, value);
 	}
 	
 	public static final class Builder

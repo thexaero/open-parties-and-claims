@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.claims.player;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -109,14 +110,17 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 
 	@Override
 	protected ServerPlayerClaimInfo create(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims) {
-		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this, new ArrayDeque<>());
+		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this, new ArrayDeque<>(), new ArrayDeque<>());
 	}
 
 	@Override
 	protected void onAdd(ServerPlayerClaimInfo playerInfo) {
 		super.onAdd(playerInfo);
-		if(loaded)
-			getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(getConfig(playerInfo.getPlayerId()));
+		server.getProfileCache().get(playerInfo.getPlayerId()).map(GameProfile::getName)
+				.ifPresent(playerInfo::setPlayerUsername);//helps with claim usernames when the claim owner has never been on the server
+		if(!loaded)
+			return;
+		getClaimsManager().getClaimsManagerSynchronizer().syncToPlayersSubClaimPropertiesUpdate(getConfig(playerInfo.getPlayerId()));
 	}
 
 	@Override
@@ -136,14 +140,11 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	){
 		if(playerId == null)
 			playerId = player.getUUID();
-		int result;
 		boolean partyOwnedClaims = ServerConfig.CONFIG.partyOwnedClaims.get();
-		if(partyOwnedClaims && configManager.getPartySystemManager().isPrimaryPartyOwner(playerId))
-			result = limitConfig.get();//ignoring permission-based claim limit overrides for party-owned claims
-		else
-			result = PermissionUtils.getOverriddenServerConfigInt(
-					playerId, server, player, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
-			);
+		IPlayerConfig playerConfig = configManager.getLoadedConfig(playerId);
+		int result = PermissionUtils.getOverriddenServerConfigInt(
+				playerId, server, player, playerConfig, limitConfig, permissionNode, claimsManager.getPermissionHandler().getSystem()
+		);
 		if(partyOwnedClaims)
 			result += getPartyOwnershipBonus(playerId, partyBonusConfig, partyOwnerBonusConfig);
 		return result;

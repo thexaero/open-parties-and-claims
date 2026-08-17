@@ -3,6 +3,7 @@ xaero.pac.client.claims.api
 xaero.pac.client.claims.player.api
 xaero.pac.client.claims.tracker.result.api
 xaero.pac.client.controls.api
+xaero.pac.client.event.api
 xaero.pac.client.parties.party.api
 xaero.pac.client.player.config.api
 xaero.pac.client.player.config.api.v2
@@ -10,11 +11,14 @@ xaero.pac.client.player.config.group.api
 xaero.pac.client.world.api
 xaero.pac.client.world.capability.api
 xaero.pac.common.capability.api
+xaero.pac.common.claims.action.api
 xaero.pac.common.claims.api
 xaero.pac.common.claims.player.api
+xaero.pac.common.claims.player.impersonation.api
 xaero.pac.common.claims.player.mode.api
 xaero.pac.common.claims.result.api
 xaero.pac.common.claims.tracker.api
+xaero.pac.common.event.api
 xaero.pac.common.parties.party.ally.api
 xaero.pac.common.parties.party.api
 xaero.pac.common.parties.party.member.api
@@ -22,9 +26,12 @@ xaero.pac.common.player.config.api
 xaero.pac.common.player.config.group.api
 xaero.pac.common.player.config.group.custom.api
 xaero.pac.common.server.api
+xaero.pac.common.server.claims.action.listener.api
+xaero.pac.common.server.claims.action.listener.override.api
 xaero.pac.common.server.claims.api
 xaero.pac.common.server.claims.player.api
 xaero.pac.common.server.claims.protection.api
+xaero.pac.common.server.claims.protection.override.api
 xaero.pac.common.server.parties.party.api
 xaero.pac.common.server.parties.system.api
 xaero.pac.common.server.parties.system.api.v2

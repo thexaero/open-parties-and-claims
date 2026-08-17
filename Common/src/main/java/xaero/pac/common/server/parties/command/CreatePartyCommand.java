@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.parties.command;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
@@ -41,6 +42,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.function.Predicate;
@@ -48,7 +50,7 @@ import java.util.function.Predicate;
 public class CreatePartyCommand {
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandRequirementProvider commandRequirementProvider) {
-		Predicate<CommandSourceStack> requirement = commandRequirementProvider.getNonMemberRequirement(p -> true);
+		Predicate<CommandSourceStack> requirement = commandRequirementProvider.getNonMemberRequirement(p -> true, false);
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get()).then(Commands.literal("create")
 				.requires(requirement)
 				.executes(context -> {
@@ -56,11 +58,15 @@ public class CreatePartyCommand {
 					if(entity == null || !(entity instanceof Player))
 						return 0;
 					ServerPlayer player = (ServerPlayer) entity;
+					ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+					GameProfile ownerProfile = serverPlayerData.getPartiesImpersonatedPlayerProfile();
+					if(ownerProfile == null)
+						ownerProfile = player.getGameProfile();
 					MinecraftServer server = context.getSource().getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-					partyManager.createPartyForOwner(player);
+					partyManager.createPartyForOwner(ownerProfile);
 					player.sendSystemMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_party_created"));
 					serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 					return 1;
