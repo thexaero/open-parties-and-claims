@@ -68,7 +68,6 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
-import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -97,7 +96,7 @@ public class ClaimsClaimCommands {
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_claim_command_unknown_dimension")));
 						return 0;
 					}
-					world = ServerLevelHelper.getServerLevel(player.level());
+					world = player.serverLevel();
 				}
 				int areaLeft;
 				int areaTop;
