@@ -139,8 +139,8 @@ public final class PlayerConfigIO
 			manager.getPlayerConfigSpec().correct(storage);
 			config.setStorage(storage);
 			if(filePathConfig == wildernessConfigPathConfig) {
-				config.tryToSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
-				config.tryToSet(PlayerConfigOptions.CLAIM_EXCEPTION_RECLAIMABLE, PlayerConfigConstants.EVERYONE_EXCEPTION_ID);
+				config.forceSet(PlayerConfigOptions.PROTECT_CLAIMED_CHUNKS, false);
+				config.forceSet(PlayerConfigOptions.CLAIM_EXCEPTION_RECLAIMABLE, PlayerConfigConstants.EVERYONE_EXCEPTION_ID);
 			}
 			tryLoadingCustomGroups(config);
 			resultConsumer.accept(config);
