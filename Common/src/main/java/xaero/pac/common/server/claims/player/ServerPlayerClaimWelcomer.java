@@ -68,7 +68,7 @@ public class ServerPlayerClaimWelcomer {
 		boolean hasAccess = isOwner ||
 				serverData.getChunkProtection().hasChunkAccess(
 						serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigManager(), currentClaim, playerDim),
-						player, null, playerDim, player.chunkPosition().x, player.chunkPosition().z
+						player, null, playerDim, player.chunkPosition().x(), player.chunkPosition().z()
 				);
 
 		IPlayerConfig claimConfig = serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigManager(), currentClaim, playerDim);

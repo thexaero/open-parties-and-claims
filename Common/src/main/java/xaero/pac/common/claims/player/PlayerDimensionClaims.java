@@ -138,7 +138,7 @@ public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaim
 				pos = claimList.getPosSlowly(randomClaimIndex - offset);
 			if(pos == null)
 				return null;
-			return new ClaimLocation(dimension, pos.x, pos.z);
+			return new ClaimLocation(dimension, pos.x(), pos.z());
 		}
 		return null;
 	}
