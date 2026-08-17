@@ -16,24 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.util;
+package xaero.pac.common.util.json;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 
-public class JsonUtils {
+public class XaeroJsonUtils {
 
-	public static String toJson(Component component) {
+	public static Component fromJson(String jsonString) {
 		try {
-			return Component.Serializer.toJson(component, RegistryAccess.EMPTY);
+			return Component.Serializer.fromJson(jsonString, RegistryAccess.EMPTY);
 		} catch (Throwable t){
 			return null;
 		}
 	}
 
-	public static Component fromJson(String json) {
+	public static String toJson(Component component) {
 		try {
-			return Component.Serializer.fromJson(json, RegistryAccess.EMPTY);
+			return Component.Serializer.toJson(component, RegistryAccess.EMPTY);
 		} catch (Throwable t){
 			return null;
 		}

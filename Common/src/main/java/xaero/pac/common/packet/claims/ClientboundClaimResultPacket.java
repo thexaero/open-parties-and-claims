@@ -18,17 +18,13 @@
 
 package xaero.pac.common.packet.claims;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
-import xaero.pac.common.util.JsonUtils;
+import xaero.pac.common.util.json.XaeroJsonUtils;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,7 +69,7 @@ public class ClientboundClaimResultPacket {
 				for (Tag listElementTag : customReasonListTag) {
 					if(!(listElementTag instanceof StringTag(String customReasonJson)))
 						return null;
-					Component customReason = JsonUtils.fromJson(customReasonJson);
+					Component customReason = XaeroJsonUtils.fromJson(customReasonJson);
 					if(customReason == null)
 						continue;
 					customReasons.add(customReason);
@@ -101,7 +97,7 @@ public class ClientboundClaimResultPacket {
 			}
 			ListTag customReasonListTag = new ListTag();
 			for (Component customReason : t.result.getCustomReasons()) {
-				String componentJson = JsonUtils.toJson(customReason);
+				String componentJson = XaeroJsonUtils.toJson(customReason);
 				if(componentJson == null)
 					continue;
 				customReasonListTag.add(StringTag.valueOf(componentJson));
