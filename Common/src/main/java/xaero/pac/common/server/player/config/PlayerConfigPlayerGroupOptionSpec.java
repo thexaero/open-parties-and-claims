@@ -24,6 +24,7 @@ import xaero.pac.common.player.config.group.custom.CustomPlayerConfigGroupData;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -87,7 +88,8 @@ public final class PlayerConfigPlayerGroupOptionSpec extends PlayerConfigListIte
 
 		@Override
 		public PlayerConfigPlayerGroupOptionSpec build(Map<String, PlayerConfigOptionSpec<?>> dest) {
-			setServerSideListGetter(c -> c.getMain().getPlayerGroups().getAllIdsSorted());
+			setServerSideListGetter(c -> c.getManager().isLoaded() ?
+					c.getMain().getPlayerGroups().getAllIdsSorted() : Collections.emptyList());
 			setClientSideListGetter(c -> c.getMain().getPlayerGroups().getAllIdsSorted());
 			return (PlayerConfigPlayerGroupOptionSpec) super.build(dest);
 		}
