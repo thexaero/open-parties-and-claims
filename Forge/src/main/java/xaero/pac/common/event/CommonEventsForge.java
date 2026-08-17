@@ -51,6 +51,7 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEventContext;
 import xaero.pac.common.event.api.v2.OPACServerAddonRegisterEvent;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -297,9 +298,9 @@ public class CommonEventsForge extends CommonEvents {
 
 	@SubscribeEvent
 	public void onAddonRegister(OPACServerAddonRegisterEvent event){
-		super.onAddonRegister(event.getServer(), event.getPermissionSystemManager(), event.getPartySystemManagerAPI(), event.getClaimsManagerTrackerAPI());
+		super.onAddonRegister(event.getContext());
 
-		event.getPermissionSystemManager().register("permission_api", new ForgePermissionsSystem());
+		event.getContext().getPermissionSystemManagerAPI().register("permission_api", new ForgePermissionsSystem());
 	}
 
 	@SubscribeEvent
@@ -308,8 +309,8 @@ public class CommonEventsForge extends CommonEvents {
 	}
 
 	@Override
-	public void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		MinecraftForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker()));
+	public void fireAddonRegisterEvent(OPACServerAddonRegisterEventContext context, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+		MinecraftForge.EVENT_BUS.post(new OPACServerAddonRegisterEvent(context));
 
 		//TODO remove this when the deprecated event is removed
 		MinecraftForge.EVENT_BUS.post(new xaero.pac.common.event.api.OPACServerAddonRegisterEvent(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker()));

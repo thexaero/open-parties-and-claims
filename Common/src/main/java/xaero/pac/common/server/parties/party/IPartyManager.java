@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.parties.party;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
@@ -50,6 +51,10 @@ public interface IPartyManager<
 	@Nullable
 	@Override
 	P createPartyForOwner(@Nonnull Player owner);
+
+	@Nullable
+	@Override
+	P createPartyForOwner(@Nonnull GameProfile ownerProfile);
 
 	public IPartySynchronizer<P> getPartySynchronizer();
 	public IPlayerConfigManager getPlayerConfigs();

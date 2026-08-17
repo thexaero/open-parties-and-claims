@@ -21,37 +21,61 @@ package xaero.pac.common.event.api.v2;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.eventbus.api.Event;
 import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEventContext;
 import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 
 public class OPACServerAddonRegisterEvent extends Event {
 
-	private final MinecraftServer server;
-	private final IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI;
-	private final IPlayerPartySystemRegisterAPI partySystemManagerAPI;
-	private final IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI;
+	private final OPACServerAddonRegisterEventContext context;
 
-	public OPACServerAddonRegisterEvent(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI) {
-		this.server = server;
-		this.permissionSystemManagerAPI = permissionSystemManagerAPI;
-		this.partySystemManagerAPI = partySystemManagerAPI;
-		this.claimsManagerTrackerAPI = claimsManagerTrackerAPI;
+	public OPACServerAddonRegisterEvent(OPACServerAddonRegisterEventContext context) {
+		this.context = context;
 	}
 
+	/**
+	 * @deprecated Use {@link #getContext()} instead
+	 * @return the minecraft server
+	 */
+	@Deprecated
 	public MinecraftServer getServer() {
-		return server;
+		return context.getServer();
 	}
 
+	/**
+	 * @deprecated Use {@link #getContext()} instead
+	 * @return the permission system manager api
+	 */
+	@Deprecated
 	public IPlayerPermissionSystemRegisterAPI getPermissionSystemManager() {
-		return permissionSystemManagerAPI;
+		return context.getPermissionSystemManagerAPI();
 	}
 
+	/**
+	 * @deprecated Use {@link #getContext()} instead
+	 * @return the party system manager api
+	 */
+	@Deprecated
 	public IPlayerPartySystemRegisterAPI getPartySystemManagerAPI() {
-		return partySystemManagerAPI;
+		return context.getPartySystemManagerAPI();
 	}
 
+	/**
+	 * @deprecated Use {@link #getContext()} instead
+	 * @return the claims manager tracker api
+	 */
+	@Deprecated
 	public IClaimsManagerTrackerRegisterAPI getClaimsManagerTrackerAPI() {
-		return claimsManagerTrackerAPI;
+		return context.getClaimsManagerTrackerAPI();
+	}
+
+	/**
+	 * Gets the event context.
+	 *
+	 * @return the event context
+	 */
+	public OPACServerAddonRegisterEventContext getContext() {
+		return context;
 	}
 
 }

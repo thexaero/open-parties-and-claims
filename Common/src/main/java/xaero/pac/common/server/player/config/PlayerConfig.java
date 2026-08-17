@@ -20,8 +20,10 @@ package xaero.pac.common.server.player.config;
 
 import com.electronwill.nightconfig.core.Config;
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
@@ -39,6 +41,8 @@ import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
+import xaero.pac.common.util.IdentifierUtils;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
@@ -53,8 +57,11 @@ public class PlayerConfig
 > implements IPlayerConfig, ObjectManagerIOObject {
 
 	public final static int MAX_SUB_ID_LENGTH = 16;
-	public final static String SUB_ID_REGEX = "[a-zA-Z\\d\\-_]+";
+	public final static String SUB_ID_REGEX_PARAMS = "a-zA-Z\\d\\-_";
+	public final static String SUB_ID_REGEX = "[" + SUB_ID_REGEX_PARAMS + "]+";
+	public final static String WILDERNESS_PLAYER_ID_STRING = "wilderness";
 	public final static UUID SERVER_CLAIM_UUID = new UUID(0, 0);
+	public final static GameProfile SERVER_CLAIM_PROFILE = new GameProfile(SERVER_CLAIM_UUID, "[Server]");
 	public final static UUID EXPIRED_CLAIM_UUID = new UUID(0, 1);
 	public final static String MAIN_SUB_ID = "main";
 	public final static String PLAYER_CONFIG_ROOT = "playerConfig";
@@ -103,8 +110,20 @@ public class PlayerConfig
 	private final SortedValueList<String> subConfigIds;
 	private final List<String> subConfigIdsUnmodifiable;
 	private boolean beingDeleted;
+	private final Map<IPermissionNodeAPI<?>, Object> lastPermissionValues;
 	
-	protected PlayerConfig(PlayerConfigType type, UUID playerId, PlayerConfigManager<P, ?> manager, Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues, LinkedChain<PlayerSubConfig<P>> linkedSubConfigs, Map<String, PlayerSubConfig<P>> subByID, Int2ObjectMap<String> subIndexToID, SortedValueList<String> subConfigIds, List<String> subConfigIdsUnmodifiable) {
+	protected PlayerConfig(
+			PlayerConfigType type,
+			UUID playerId,
+			PlayerConfigManager<P, ?> manager,
+			Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues,
+			LinkedChain<PlayerSubConfig<P>> linkedSubConfigs,
+			Map<String, PlayerSubConfig<P>> subByID,
+			Int2ObjectMap<String> subIndexToID,
+			SortedValueList<String> subConfigIds,
+			List<String> subConfigIdsUnmodifiable,
+			Map<IPermissionNodeAPI<?>, Object> lastPermissionValues
+	) {
 		this.type = type;
 		this.playerId = playerId;
 		this.manager = manager;
@@ -114,6 +133,7 @@ public class PlayerConfig
 		this.subIndexToID = subIndexToID;
 		this.subConfigIds = subConfigIds;
 		this.subConfigIdsUnmodifiable = subConfigIdsUnmodifiable;
+		this.lastPermissionValues = lastPermissionValues;
 	}
 	
 	public Config getStorage() {
@@ -276,15 +296,18 @@ public class PlayerConfig
 
 	@Override
 	public void setDirty(boolean dirty) {
-		if(playerId != null && !this.dirty && dirty)
+		if(!this.dirty && dirty)
 			manager.addToSave(this);
 		this.dirty = dirty;
 	}
 
 	@Override
 	public String getFileName() {
-		if(playerId == null)
+		if(playerId == null) {
+			if(type == PlayerConfigType.WILDERNESS)
+				return WILDERNESS_PLAYER_ID_STRING;
 			return "null";
+		}
 		return playerId.toString();
 	}
 
@@ -300,15 +323,38 @@ public class PlayerConfig
 		return type;
 	}
 
+	public static boolean isValidDimensionSubId(String id){
+		return !id.isEmpty() && id.contains(":") && IdentifierUtils.isValidIdentifier(id);//: check makes sure the id is full
+	}
+
 	public static boolean isValidSubId(String id){
 		return !id.isEmpty() && id.length() <= MAX_SUB_ID_LENGTH && id.matches(PlayerConfig.SUB_ID_REGEX);
 	}
 
+	public boolean checkSubIdValidity(String id){
+		if(type.hasDimensionSubConfigs())
+			return isValidDimensionSubId(id);
+		return isValidSubId(id);
+	}
+
+	public static String makeSubIdValid(String id){
+		String result = id.replaceAll("[^" + SUB_ID_REGEX_PARAMS + "]", "");
+		if(result.isEmpty())
+			return "sub";
+		if(result.length() > MAX_SUB_ID_LENGTH)
+			return result.substring(result.length() - MAX_SUB_ID_LENGTH);
+		return result;
+	}
+
 	private boolean isFreeSubIndex(int index){
+		if(type.hasDimensionSubConfigs())
+			return true;
 		return index != -1 && !subIndexToID.containsKey(index);
 	}
 
 	private int getFreeSubConfigIndex(){
+		if(type.hasDimensionSubConfigs())
+			return 0;
 		int result = lastCreatedSubIndex;
 		while(!isFreeSubIndex(++result));
 		return result;
@@ -316,12 +362,17 @@ public class PlayerConfig
 
 	@Nullable
 	public PlayerSubConfig<P> createSubConfig(@Nonnull String id){
-		int freeSubIndex = getFreeSubConfigIndex();
-		return createSubConfig(id, freeSubIndex);
+		return createSubConfig(id, true);
 	}
 
-	public PlayerSubConfig<P> createSubConfig(String id, int index){
-		if(subConfigIds.contains(id) || !isFreeSubIndex(index) || !isValidSubId(id))
+	@Override
+	public PlayerSubConfig<P> createSubConfig(@Nonnull String id, boolean initStorage){
+		int freeSubIndex = getFreeSubConfigIndex();
+		return createSubConfig(id, freeSubIndex, initStorage);
+	}
+
+	public PlayerSubConfig<P> createSubConfig(String id, int index, boolean initStorage){
+		if(subConfigIds.contains(id) || !isFreeSubIndex(index) || !checkSubIdValidity(id))
 			return null;
 		if(index > lastCreatedSubIndex || index < 0 && lastCreatedSubIndex >= 0)
 			lastCreatedSubIndex = index;
@@ -334,10 +385,11 @@ public class PlayerConfig
 				.setSubIndex(index)
 				.build();
 		subByID.put(id, subConfig);
-		subIndexToID.put(index, id);
+		if(!type.hasDimensionSubConfigs())
+			subIndexToID.put(index, id);
 		linkedSubConfigs.add(subConfig);
 		addToSubConfigIds(id);
-		if(manager.isLoaded()) {
+		if(manager.isLoaded() && initStorage) {
 			subConfig.getStorage();//creates the storage here to avoid concur modif exception when saving
 			manager.getSynchronizer().syncSubExistence(null, subConfig, true);
 		}
@@ -426,7 +478,8 @@ public class PlayerConfig
 	@Nonnull
 	@Override
 	public IPlayerConfig getUsedSubConfig(@Nonnull IClaimingModeAPI claimingMode) {
-		return ((ClaimingMode)claimingMode).getSubConfigGetter().apply(this);
+		IPlayerConfigOptionSpecAPI<String> option = ((ClaimingMode) claimingMode).getSubClaimOption();
+		return ((ClaimingMode)claimingMode).getClaimConfigGetter().apply(this).getEffectiveSubConfig(getEffective(option));
 	}
 
 	@Nullable
@@ -483,7 +536,7 @@ public class PlayerConfig
 
 	@Override
 	public int getSubConfigLimit() {
-		if(type == PlayerConfigType.SERVER)
+		if(type.isGlobal())
 			return Integer.MAX_VALUE;
 		return ServerConfig.CONFIG.playerSubConfigLimit.get();
 	}
@@ -511,6 +564,31 @@ public class PlayerConfig
 	@Override
 	public PlayerConfig<P> getMain(){
 		return this;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getLastPermissionValue(IPermissionNodeAPI<T> node) {
+		if(lastPermissionValues == null)
+			throw new UnsupportedOperationException();
+		return (T) lastPermissionValues.get(node);
+	}
+
+	@Override
+	public <T> void setLastPermissionValue(IPermissionNodeAPI<T> node, T value){
+		if(lastPermissionValues == null)
+			throw new UnsupportedOperationException();
+		Object previousValue;
+		if(value != null)
+			previousValue = lastPermissionValues.put(node, value);
+		else
+			previousValue = lastPermissionValues.remove(node);
+		if(!Objects.equals(previousValue, value))
+			setDirty(true);
+	}
+
+	public Map<IPermissionNodeAPI<?>, Object> getLastPermissionValues() {
+		return lastPermissionValues;
 	}
 
 	public static abstract class Builder
@@ -580,7 +658,11 @@ public class PlayerConfig
 			List<String> subConfigIdStorage = Lists.newArrayList(PlayerConfig.MAIN_SUB_ID);
 			SortedValueList<String> subConfigIds = SortedValueList.Builder.<String>begin().setContent(subConfigIdStorage).build();
 			List<String> subConfigIdsUnmodifiable = Collections.unmodifiableList(subConfigIdStorage);
-			PlayerConfig<P> result = new PlayerConfig<>(type, playerId, manager, automaticDefaultValues, new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(), subConfigIds, subConfigIdsUnmodifiable);
+			PlayerConfig<P> result = new PlayerConfig<>(
+					type, playerId, manager, automaticDefaultValues,
+					new LinkedChain<>(), new HashMap<>(), new Int2ObjectOpenHashMap<>(),
+					subConfigIds, subConfigIdsUnmodifiable, new HashMap<>()
+			);
 			result.setPlayerGroups(ServerPlayerConfigGroupManager.Builder.begin().setConfig(result).build());
 			return result;
 		}

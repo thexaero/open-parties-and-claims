@@ -43,6 +43,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -53,23 +54,26 @@ public class MessagePartyCommand {
 		Predicate<CommandSourceStack> requirement = commandRequirementProvider.getMemberRequirement((party, mi) -> true);
 		Command<CommandSourceStack> action = context -> {
 			ServerPlayer player = context.getSource().getPlayerOrException();
-			UUID playerId = player.getUUID();
+			ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+			UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+			if(contextPlayerId == null)
+				contextPlayerId = player.getUUID();
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
-			IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
+			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
+			IPartyMember contextPlayerInfo = playerParty.getMemberInfo(contextPlayerId);
 			
 			String inputMessage = StringArgumentType.getString(context, "message");
 
-			Component rankComponent = Component.literal((playerParty.getOwner() == casterInfo ? "OWNER" : casterInfo.getRank().toString()) + " ").withStyle(s -> s.withColor(casterInfo.getRank().getColor()));
+			Component rankComponent = Component.literal((playerParty.getOwner() == contextPlayerInfo ? "OWNER" : contextPlayerInfo.getRank().toString()) + " ").withStyle(s -> s.withColor(contextPlayerInfo.getRank().getColor()));
 			Component nameComponent = Component.literal("<" + player.getGameProfile().getName() + "> ");
 			Component contentComponent = Component.literal(inputMessage).withStyle(s -> s.withColor(ChatFormatting.GRAY));
 			Component messageComponent = Component.literal("");
 			messageComponent.getSiblings().add(rankComponent);
 			messageComponent.getSiblings().add(nameComponent);
 			messageComponent.getSiblings().add(contentComponent);
-			new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, messageComponent);
+			new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, messageComponent);
 			return 1;
 		};
 		

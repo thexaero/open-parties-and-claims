@@ -20,14 +20,19 @@ package xaero.pac.common.server.claims;
 
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.IClaimsManager;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.result.api.ClaimResult;
+import xaero.pac.common.server.claims.action.listener.ClaimActionListenerManager;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.api.IServerDimensionClaimsManagerAPI;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
+import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
+import xaero.pac.common.server.claims.protection.override.ChunkAccessOverriderManager;
 import xaero.pac.common.server.claims.sync.IClaimsManagerSynchronizer;
 import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
@@ -46,6 +51,7 @@ public interface IServerClaimsManager
 	//internal API
 	
 	public IClaimsManagerSynchronizer getClaimsManagerSynchronizer();
+	public ServerSpreadoutQueuedTaskHandler<PlayerAreaClaimActionSpreadoutTask> getAreaClaimActionTaskHandler();
 	public ServerSpreadoutQueuedTaskHandler<PlayerClaimReplaceSpreadoutTask> getClaimReplaceTaskHandler();
 	public ServerClaimsPermissionHandler getPermissionHandler();
 	public IPlayerPartySystemManager getPartySystemManager();
@@ -66,33 +72,52 @@ public interface IServerClaimsManager
 	}
 
 	@Nonnull
-	public ClaimResult<C> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean force, boolean isServer, int claimLimit, ClaimingAction action);
 
 	@Nonnull
-	public ClaimResult<C> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace);
+	public ClaimResult<C> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force);
 
 	@Nonnull
-	public ClaimResult<C> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean enable, boolean replace);
+	public ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean force);
+
+	@Nonnull
+	public ClaimResult<C> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force);
+
+	@Nonnull
+	public ClaimResult<PlayerChunkClaim> tryToForceloadHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean enable, boolean force, boolean isServer, int claimLimit, int forceloadLimit);
+
+	@Nonnull
+	public ClaimResult<C> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean force);
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean replace) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, replace);
+	default ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, x, z, force);
 	}
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean replace) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToUnclaimTyped(dimension, playerId, fromX, fromZ, x, z, replace);
+	default ClaimResult<IPlayerChunkClaimAPI> tryToUnclaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToUnclaimTyped(dimension, playerId, fromDimension, fromX, fromZ, x, z, force);
 	}
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
-	default ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int fromX, int fromZ, int x, int z, boolean enable, boolean replace) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToForceloadTyped(dimension, playerId, fromX, fromZ, x, z, enable, replace);
+	default ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean force) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToForceloadTyped(dimension, playerId, fromDimension, fromX, fromZ, x, z, enable, force);
 	}
+
+	@Nonnull
+	@Override
+	public ClaimActionListenerManager getActionListenerManager();
+
+	@Nonnull
+	@Override
+	ChunkAccessOverriderManager getChunkAccessOverriderManager();
+
+	void onServerTick();
 
 }

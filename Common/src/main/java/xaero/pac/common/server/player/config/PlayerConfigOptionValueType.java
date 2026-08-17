@@ -25,6 +25,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class PlayerConfigOptionValueType<T> {
@@ -38,6 +39,8 @@ public class PlayerConfigOptionValueType<T> {
 	private final Function<T, Component> componentWriter;
 	private final List<String> defaultCommandSuggestions;
 	private final boolean shouldDisplayInQuotes;
+	private final BiFunction<T, T, T> adder;
+	private final BiFunction<T, T, T> subtracter;
 
 	//The default for the value type, but can be customized per option type like in PlayerConfigRangedOptionSpec
 	private final BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
@@ -52,6 +55,8 @@ public class PlayerConfigOptionValueType<T> {
 			Function<T, Component> componentWriter,
 			List<String> defaultCommandSuggestions,
 			boolean shouldDisplayInQuotes,
+			BiFunction<T, T, T> adder,
+			BiFunction<T, T, T> subtracter,
 			BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner
 	) {
 		this.jType = jType;
@@ -63,6 +68,8 @@ public class PlayerConfigOptionValueType<T> {
 		this.componentWriter = componentWriter;
 		this.defaultCommandSuggestions = defaultCommandSuggestions;
 		this.shouldDisplayInQuotes = shouldDisplayInQuotes;
+		this.adder = adder;
+		this.subtracter = subtracter;
 		this.defaultSpecDefiner = defaultSpecDefiner;
 	}
 
@@ -106,6 +113,14 @@ public class PlayerConfigOptionValueType<T> {
 		return shouldDisplayInQuotes;
 	}
 
+	public BiFunction<T, T, T> getAdder() {
+		return adder;
+	}
+
+	public BiFunction<T, T, T> getSubtracter() {
+		return subtracter;
+	}
+
 	public static abstract class Builder<T, B extends Builder<T, B>> {
 
 		protected final B self;
@@ -119,6 +134,8 @@ public class PlayerConfigOptionValueType<T> {
 		protected List<String> defaultCommandSuggestions;
 		protected boolean shouldDisplayInQuotes;
 		protected BiConsumer<ModConfigSpec.Builder, PlayerConfigOptionSpec<T>> defaultSpecDefiner;
+		protected BiFunction<T, T, T> adder;
+		protected BiFunction<T, T, T> subtracter;
 
 		@SuppressWarnings("unchecked")
 		protected Builder(Class<T> jType){
@@ -138,6 +155,8 @@ public class PlayerConfigOptionValueType<T> {
 			);
 			setDefaultCommandSuggestions(null);
 			setShouldDisplayInQuotes(false);
+			setAdder(null);
+			setSubtracter(null);
 			return self;
 		}
 
@@ -186,6 +205,16 @@ public class PlayerConfigOptionValueType<T> {
 			return self;
 		}
 
+		public B setAdder(BiFunction<T, T, T> adder) {
+			this.adder = adder;
+			return self;
+		}
+
+		public B setSubtracter(BiFunction<T, T, T> subtracter) {
+			this.subtracter = subtracter;
+			return self;
+		}
+
 		public PlayerConfigOptionValueType<T> build(Map<String, PlayerConfigOptionValueType<?>> dest){
 			if(id == null || jType == null || syncDecoder == null || syncEncoder == null ||
 					stringParser == null || stringWriter == null || defaultSpecDefiner == null)
@@ -215,7 +244,8 @@ public class PlayerConfigOptionValueType<T> {
 			return new PlayerConfigOptionValueType<>(
 					jType, id, syncEncoder, syncDecoder, stringParser,
 					stringWriter, componentWriter, defaultCommandSuggestions,
-					shouldDisplayInQuotes, defaultSpecDefiner
+					shouldDisplayInQuotes, adder, subtracter,
+					defaultSpecDefiner
 			);
 		}
 

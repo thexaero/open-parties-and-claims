@@ -33,4 +33,22 @@ public interface IClaimingModeAPI {
 	@Nonnull
 	String getId();
 
+	/**
+	 * Checks whether this is a global claiming mode that is exactly the same for every player.
+	 * <p>
+	 * For example, player and party modes are not global because they depend on the player while server mode is global.
+	 *
+	 * @return true if this is a global claiming mode, otherwise false
+	 */
+	boolean isGlobal();
+
+	/**
+	 * Checks whether this claiming mode can be used when impersonating another player.
+	 * <p>
+	 * The use of the claiming mode won't be prevented but the impersonation will be ignored if this method returns false.
+	 *
+	 * @return true if this claiming mode can be impersonated, otherwise false
+	 */
+	boolean canBeImpersonated();
+
 }

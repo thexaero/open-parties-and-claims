@@ -47,5 +47,6 @@ public interface IPlayerPartySystemManager extends IPlayerPartySystemRegisterAPI
 	boolean isPrimaryPartyOwner(UUID playerId);
 	int getPrimaryMemberCount(UUID ownerId);
 	int getPrimaryPartyColorByOwner(UUID playerId);
+	String getPrimarySystemName();
 
 }

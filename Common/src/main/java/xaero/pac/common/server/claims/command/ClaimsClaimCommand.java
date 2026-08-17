@@ -18,11 +18,11 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.server.command.AbstractChunkCommand;
 import xaero.pac.common.server.config.ServerConfig;
 
@@ -35,24 +35,33 @@ public class ClaimsClaimCommand extends AbstractChunkCommand {
 	public ClaimsClaimCommand(boolean add, ClaimingMode mode) {
 		super(
 				ClaimsCommandRegister.COMMAND_PREFIX, add,
+				mode == null || mode.canBeImpersonated(),
 				mode == null ? null : mode.getId(),
-				"claim", "unclaim"
+				"claim", "unclaim",
+				add ? "with" : null, "sub-id",
+				true
 		);
 		this.mode = mode;
 	}
 
 	@Override
-	protected ArgumentBuilder<CommandSourceStack, ?> createChunkCommand(
-			ArgumentBuilder<CommandSourceStack, ?> builder,
-			boolean shouldApply,
-			boolean opForce
-	) {
-		return ClaimsClaimCommands.createClaimCommand(builder, shouldApply, mode, opForce);
+	protected Command<CommandSourceStack> createChunkCommand(boolean shouldApply, boolean another, boolean opForce) {
+		return ClaimsClaimCommands.createClaimCommand(shouldApply, mode, another, opForce);
 	}
 
 	@Override
 	protected ModConfigSpec.BooleanValue getFeatureConfigOption() {
 		return ServerConfig.CONFIG.claimsEnabled;
+	}
+
+	@Override
+	protected Predicate<CommandSourceStack> getImpersonationRequirement() {
+		return ClaimsClaimCommands.getImpersonationRequirement();
+	}
+
+	@Override
+	protected SuggestionProvider<CommandSourceStack> getSubArgumentSuggestions(boolean another) {
+		return ClaimsClaimCommands.getSubClaimSuggestionProvider(mode, another);
 	}
 
 	@Override
