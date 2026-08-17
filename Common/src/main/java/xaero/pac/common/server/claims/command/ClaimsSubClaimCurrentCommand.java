@@ -18,65 +18,55 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.NameAndId;
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.ServerData;
-import xaero.pac.common.server.claims.IServerClaimsManager;
-import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
-import xaero.pac.common.server.claims.IServerRegionClaims;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
 
-import static xaero.pac.common.server.command.ConfigCommandUtil.getConfigInputPlayer;
-
-public class ClaimsSubClaimCurrentCommand extends ClaimAbstractSubClaimCommand {
+public class ClaimsSubClaimCurrentCommand extends AbstractClaimSubClaimCommand {
 
 	@Override
-	protected LiteralArgumentBuilder<CommandSourceStack> getExecutivePart(ClaimingMode mode){
+	protected LiteralArgumentBuilder<CommandSourceStack> getExecutivePart(ClaimingMode mode, boolean another){
 		return Commands.literal("current")
-				.executes(getExecutor(mode));
+				.executes(getExecutor(mode, another));
 	}
 
-	private static Command<CommandSourceStack> getExecutor(ClaimingMode mode){
-		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
-			ServerPlayerData sourcePlayerData = (ServerPlayerData) ServerPlayerData.from(sourcePlayer);
-			ClaimingMode effectiveMode = mode == null ? sourcePlayerData.getClaimingMode() : mode;
-			IPlayerConfigOptionSpecAPI<String> option = effectiveMode.getSubClaimOption();
-			if(option == null)
-				throw new IllegalArgumentException();
-			MinecraftServer server = context.getSource().getServer();
-			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
-			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			NameAndId inputPlayer = getConfigInputPlayer(context, sourcePlayer,
-					"gui.xaero_claims_sub_current_too_many_targets",
-					"gui.xaero_claims_sub_current_invalid_target", adaptiveLocalizer);
-			if(inputPlayer == null)
-				return 0;
-			UUID configPlayerUUID = inputPlayer.id();
-			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(configPlayerUUID);
-			sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_claims_sub_current", playerConfig.getEffective(option), effectiveMode.getId()));
-			return 1;
-		};
+	@Override
+	protected int execute(
+			IPlayerConfigOptionSpecAPI<String> option,
+			IPlayerConfig claimConfig,
+			UUID contextPlayerId,
+			UUID sourcePlayerId,
+			ServerPlayer sourcePlayer,
+			ServerPlayerData sourcePlayerData,
+			boolean impersonating,
+			ClaimingMode effectiveMode,
+			IServerData<?, ?> serverData,
+			CommandContext<CommandSourceStack> context
+	) {
+		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+		String currentSub;
+		if (impersonating) {
+			int impersonatedSubIndex = sourcePlayerData.getClaimsImpersonationInfo().getSubIndex(effectiveMode);
+			currentSub = claimConfig.getEffectiveSubConfig(impersonatedSubIndex).getSubId();
+			if(currentSub == null)
+				currentSub = PlayerConfig.MAIN_SUB_ID;
+		} else {
+			IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(contextPlayerId);
+			currentSub = playerConfig.getEffective(option);
+		}
+		context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, "gui.xaero_claims_sub_current", currentSub, effectiveMode.getId()), true);
+		return 1;
 	}
 
 }

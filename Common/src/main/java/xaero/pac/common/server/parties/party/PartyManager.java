@@ -20,6 +20,7 @@ package xaero.pac.common.server.parties.party;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -165,16 +166,22 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	@Nullable
 	@Override
 	public ServerParty createPartyForOwner(@Nonnull Player owner) {
+		return createPartyForOwner(owner.nameAndId());
+	}
+
+	@Nullable
+	@Override
+	public ServerParty createPartyForOwner(@Nonnull NameAndId ownerProfile) {
 		if(!ServerConfig.CONFIG.partiesEnabled.get())
 			return null;
-		ServerParty existing = getPartyByOwner(owner.getUUID());
+		ServerParty existing = getPartyByOwner(ownerProfile.id());
 		if(existing != null)
 			return null;
 		UUID createdUUID;
 		while(partiesById.containsKey(createdUUID = UUID.randomUUID()));//lol
-		PartyMember ownerMember = new PartyMember(owner.getUUID(), true);
+		PartyMember ownerMember = new PartyMember(ownerProfile.id(), true);
 		ownerMember.setRank(PartyMemberRank.ADMIN);
-		ownerMember.setUsername(owner.getGameProfile().name());
+		ownerMember.setUsername(ownerProfile.name());
 		ServerParty created = ServerParty.Builder.begin().setManagedBy(this).setOwner(ownerMember).setId(createdUUID).build();
 		addParty(created);
 		return created;
@@ -247,8 +254,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	public void onMemberAdded(ServerParty party, PartyMember m) {
 		partiesByMember.put(m.getUUID(), party);
 		if(loaded) {
-			getPartySynchronizer().syncToMember(m, party);
-			getPartySynchronizer().syncPrimaryPartySwitch(party.getOwner().getUUID(), m);
+			getPartySynchronizer().syncToMemberIncludingPrimarySwitch(m, party);
 			ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(m.getUUID());
 			if(onlinePlayer != null)
 				playerPartyOnlineCounterUpdater.onAddedToDefaultParty(onlinePlayer, this, party);
@@ -259,8 +265,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		if(partiesByMember.get(m.getUUID()) == party) {//might not be true when there are inconsistencies in the saved data or during party spreadout removal
 			partiesByMember.remove(m.getUUID());
 			if (loaded) {
-				getPartySynchronizer().syncToMember(m, null);
-				getPartySynchronizer().syncPrimaryPartySwitch(null, m);
+				getPartySynchronizer().syncToMemberIncludingPrimarySwitch(m, null);
 				ServerPlayer onlinePlayer = server.getPlayerList().getPlayer(m.getUUID());
 				if(onlinePlayer != null)
 					playerPartyOnlineCounterUpdater.onRemovedFromDefaultParty(onlinePlayer, this, party);

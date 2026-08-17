@@ -18,18 +18,7 @@
 
 package xaero.pac.common.server.task;
 
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.parties.party.IPartyPlayerInfo;
-import xaero.pac.common.parties.party.ally.IPartyAlly;
-import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
-import xaero.pac.common.server.claims.IServerClaimsManager;
-import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
-import xaero.pac.common.server.claims.IServerRegionClaims;
-import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
-import xaero.pac.common.server.parties.party.IServerParty;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -47,7 +36,7 @@ public final class ServerSpreadoutQueuedTaskHandler<T extends IServerSpreadoutQu
 		this.taskQueue = tasks;
 	}
 
-	public boolean addTask(T task, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
+	public boolean addTask(T task, IServerData<?,?> serverData){
 		if(taskQueue.add(task)) {
 			task.onQueued(serverData);
 			return true;
@@ -61,8 +50,9 @@ public final class ServerSpreadoutQueuedTaskHandler<T extends IServerSpreadoutQu
 	}
 
 	@Override
-	protected void handleTasksToAdd(List<T> tasksToAdd) {
-		taskQueue.addAll(tasksToAdd);
+	protected void handleTasksToAdd(List<T> tasksToAdd, IServerData<?,?> serverData) {
+		for (T task : tasksToAdd)
+			addTask(task, serverData);
 	}
 
 	public static final class Builder<T extends IServerSpreadoutQueuedTask<T>> extends ServerSpreadoutTaskHandler.Builder<T, T, Builder<T>> {

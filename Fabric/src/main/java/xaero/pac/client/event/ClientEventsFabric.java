@@ -27,7 +27,8 @@ import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
-import xaero.pac.client.event.api.OPACClientAddonRegister;
+import xaero.pac.client.event.api.OPACClientAddonRegisterEventContext;
+import xaero.pac.client.event.api.v2.OPACClientAddonRegister;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.client.parties.party.IClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientPartyMemberDynamicInfoSyncableStorage;
@@ -75,8 +76,11 @@ public final class ClientEventsFabric extends ClientEvents {
 	}
 
 	@Override
-	public void fireAddonRegisterEvent() {
-		OPACClientAddonRegister.EVENT.invoker().registerAddons(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker());
+	public void fireAddonRegisterEvent(OPACClientAddonRegisterEventContext context) {
+		OPACClientAddonRegister.EVENT.invoker().registerAddons(context);
+
+		//TODO remove this when the deprecated event is removed
+		xaero.pac.client.event.api.OPACClientAddonRegister.EVENT.invoker().registerAddons(clientData.getClaimsManager().getTracker(), clientData.getClaimsManager().getClaimResultTracker());
 	}
 
 	public static final class Builder extends ClientEvents.Builder<Builder> {

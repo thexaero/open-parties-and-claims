@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.parties.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -52,6 +51,7 @@ import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Collection;
@@ -96,7 +96,10 @@ public class AboutPartyCommand {
 					else
 						targetProfile = null;
 				} catch(IllegalArgumentException iae2) {
-					targetProfile = casterPlayer.nameAndId();
+					ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(casterPlayer);
+					targetProfile = serverPlayerData.getPartiesImpersonatedPlayerProfile();
+					if(targetProfile == null)
+						targetProfile = casterPlayer.nameAndId();
 				}
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());

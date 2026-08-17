@@ -44,6 +44,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.Objects;
@@ -83,12 +84,15 @@ public class UnallyPartyCommand {
 						})
 						.executes(context -> {
 							ServerPlayer player = context.getSource().getPlayerOrException();
-							UUID playerId = player.getUUID();
+							ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+							UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+							if(contextPlayerId == null)
+								contextPlayerId = player.getUUID();
 							MinecraftServer server = context.getSource().getServer();
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
+							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
 							
 							String targetOwnerName = StringArgumentType.getString(context, "owner");
 							IPartyAlly targetAlly = playerParty.getAlly(targetOwnerName);
@@ -100,12 +104,14 @@ public class UnallyPartyCommand {
 							}
 							
 							playerParty.removeAllyParty(targetPlayerParty.getId());
+
+							Component targetName = Component.literal(targetPlayerParty.getDefaultName()).withStyle(ChatFormatting.YELLOW);
 							
-							new PartyOnCommandUpdater().update(playerId, serverData, targetPlayerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_unally_target_party_message", Component.literal(playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerParty.getDefaultName())));
+							new PartyOnCommandUpdater().update(player, serverData, targetPlayerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_unally_target_party_message", Component.literal(playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), targetName));
 
-							IPartyMember casterInfo = playerParty.getMemberInfo(playerId);
-							new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_unally_caster_party_message", Component.literal(casterInfo.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), Component.literal(targetPlayerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+							Component callerName = Component.literal(player.nameAndId().name()).withStyle(ChatFormatting.DARK_GREEN);
 
+							new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_unally_caster_party_message", callerName, targetName));
 							return 1;
 						}))));
 		dispatcher.register(command);

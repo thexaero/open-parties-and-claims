@@ -36,7 +36,9 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class PartyCommands {
@@ -44,9 +46,13 @@ public class PartyCommands {
 	private static SuggestionProvider<CommandSourceStack> getPartyPlayerSuggestor(boolean members, boolean invites){
 		return (context, builder) -> {
 			ServerPlayer commandPlayer = context.getSource().getPlayerOrException();
+			ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(commandPlayer);
+			UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+			if(contextPlayerId == null)
+				contextPlayerId = commandPlayer.getUUID();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
 			IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(commandPlayer.getUUID());
+			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
 			String lowercaseInput = builder.getRemainingLowerCase();
 			Stream<IPartyPlayerInfo> stream;
 			int maxIterationSize = (members ? playerParty.getMemberCount() : 0) + (invites ? playerParty.getInviteCount() : 0);

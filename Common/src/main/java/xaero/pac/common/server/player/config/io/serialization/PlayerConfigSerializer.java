@@ -25,7 +25,10 @@ import com.electronwill.nightconfig.toml.TomlFormat;
 import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import xaero.pac.common.misc.ConfigUtil;
+import xaero.pac.common.player.config.PlayerConfigConstants;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.config.io.serialization.updater.PlayerConfigUpdater;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
 
@@ -57,8 +60,12 @@ public class PlayerConfigSerializer {
 		parser.parse(serializedData, parsedData, ParsingMode.ADD);
 		updater.update(parsedData);
 		parsedData.remove(updater.getVersionPath());
-		if(!(config instanceof PlayerSubConfig))
+		if(!(config instanceof PlayerSubConfig)) {
+			if(config.getType() == PlayerConfigType.WILDERNESS && !parsedData.contains(PlayerConfigOptions.CLAIM_EXCEPTION_RECLAIMABLE.getPath()))
+				parsedData.set(PlayerConfigOptions.CLAIM_EXCEPTION_RECLAIMABLE.getPath(), PlayerConfigConstants.EVERYONE_EXCEPTION_ID);
 			config.getManager().getPlayerConfigSpec().correct(parsedData, (action, path, incorrectValue, correctedValue) -> {}, null);//empty listeners make sure internal code doesn't decide to spam things like happened in 1.20.1
+		}
+
 		Config loadedConfig;
 		if(config.getPlayerId() != null && !Objects.equals(config.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) && !Objects.equals(config.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID)) {
 			loadedConfig = ConfigUtil.deepCopy(parsedData, LinkedHashMap::new);//removes comments

@@ -41,6 +41,7 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
@@ -63,13 +64,16 @@ public class DestroyPartyConfirmCommand {
 				.then(Commands.literal("confirm")
 				.executes(context -> {
 					ServerPlayer player = context.getSource().getPlayerOrException();
-					UUID playerId = player.getUUID();
+					ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+					UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+					if(contextPlayerId == null)
+						contextPlayerId = player.getUUID();
 					MinecraftServer server = context.getSource().getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 					IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
+					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
 					partyManager.removeTypedParty(playerParty);
-					new PartyOnCommandUpdater().update(playerId, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> true, Component.translatable("gui.xaero_parties_party_destroy_members_info", Component.literal(playerParty.getOwner().getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
+					new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> true, Component.translatable("gui.xaero_parties_party_destroy_members_info", Component.literal(player.nameAndId().name()).withStyle(s -> s.withColor(ChatFormatting.YELLOW))));
 					return 1;
 				})));
 		dispatcher.register(command);

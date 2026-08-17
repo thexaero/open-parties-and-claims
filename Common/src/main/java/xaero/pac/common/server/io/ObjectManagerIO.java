@@ -46,7 +46,7 @@ public abstract class ObjectManagerIO
 	private final SerializedDataFileIO<S,I> serializedDataFileIO;
 	private final IOThreadWorker ioThreadWorker;
 	protected final MinecraftServer server;
-	private final FileIOHelper fileIOHelper;
+	protected final FileIOHelper fileIOHelper;
 
 	@SuppressWarnings("unchecked")
 	protected ObjectManagerIO(SerializationHandler<S, I, T, M> serializationHandler, SerializedDataFileIO<S,I> serializedDataFileIO, IOThreadWorker ioThreadWorker, MinecraftServer server, String fileExtension, M manager, FileIOHelper fileIOHelper) {
@@ -105,8 +105,8 @@ public abstract class ObjectManagerIO
 			return null;
 		if(fileName.startsWith("._"))//AppleDouble files
 			return null;
-		I id = getObjectId(fileName.substring(0, fileName.lastIndexOf('.')), file, filePathConfig);
 		try {
+			I id = getObjectId(fileName.substring(0, fileName.lastIndexOf('.')), file, filePathConfig);
 			S serializedData = ioThreadWorker.get(() -> readSerializedData(id, file, serializedDataFileIO, 20));
 			T object = serializationHandler.deserialize(id, manager, serializedData);
 			return object;

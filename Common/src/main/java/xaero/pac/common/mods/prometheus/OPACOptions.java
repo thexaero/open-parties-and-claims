@@ -27,7 +27,7 @@ import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
-import xaero.pac.common.util.json.XaeroJsonUtil;
+import xaero.pac.common.util.json.XaeroJsonUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class OPACOptions {/*implements RoleOption<OPACOptions> {
 		if(type == Short.class) return (ops, o) -> ops.createShort((Short)o);
 		if(type == Byte.class) return (ops, o) -> ops.createByte((Byte)o);
 		if(type == String.class) return (ops, o) -> ops.createString((String)o);
-		if(type == Component.class) return (ops, o) -> ops.createString(XaeroJsonUtil.toJson((Component)o));
+		if(type == Component.class) return (ops, o) -> ops.createString(XaeroJsonUtils.toJson((Component)o));
 		return null;
 	}
 
@@ -94,7 +94,7 @@ public class OPACOptions {/*implements RoleOption<OPACOptions> {
 		if(type == Short.class) return (ops, o) -> (Optional<V>)ops.getNumberValue(o).result().map(Number::shortValue);
 		if(type == Byte.class) return (ops, o) -> (Optional<V>)ops.getNumberValue(o).result().map(Number::byteValue);
 		if(type == String.class) return (ops, o) -> (Optional<V>)ops.getStringValue(o).result();
-		if(type == Component.class) return (ops, o) -> (Optional<V>)ops.getStringValue(o).result().map(XaeroJsonUtil::fromJson);
+		if(type == Component.class) return (ops, o) -> (Optional<V>)ops.getStringValue(o).result().map(XaeroJsonUtils::fromJson);
 		return null;
 	}
 

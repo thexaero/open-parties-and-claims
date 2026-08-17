@@ -33,7 +33,7 @@ import java.util.HashMap;
 
 public class PacketHandlerNeoForge extends PacketHandlerFull {
 
-	private static final String PROTOCOL_VERSION = "1.7.0";
+	private static final String PROTOCOL_VERSION = "1.10.0";
 
 	public PacketHandlerNeoForge() {
 		super(PacketTypeManager.Builder.begin(Int2ObjectOpenHashMap::new, HashMap::new).build());

@@ -18,6 +18,9 @@
 
 package xaero.pac.common.server.io;
 
+import net.minecraft.IdentifierException;
+import net.minecraft.resources.Identifier;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,6 +59,39 @@ public class FileIOHelper {
 		Files.move(fromBackupPath, to);
 		if(backupPath != null)
 			Files.delete(backupPath);
+	}
+
+	public String replaceTrailingDots(String string, char replacement){
+		StringBuilder path = new StringBuilder(string);
+		int dotCount = 0;
+		while(!path.isEmpty() && path.charAt(path.length() - 1) == '.') {
+			path.deleteCharAt(path.length() - 1);
+			dotCount++;
+		}
+		for (int i = 0; i < dotCount; i++)
+			path.append(replacement);
+		return path.toString();
+	}
+
+	public String convertDimensionToFileName(Identifier dim, boolean replaceTrailingDots) {
+		String path = dim.getPath().replace('/', '%');
+		if(replaceTrailingDots)
+			path = replaceTrailingDots(path, ',');//removes trailing dots because it's not supported on windows/other
+		return dim.getNamespace() + "$" + path;
+	}
+
+	public Identifier convertFileNameToDimension(String fileName, boolean restoreTrailingDots) {
+		String[] idArgs = fileName.split("\\$");
+		if(idArgs.length < 2)
+			return null;
+		String path = idArgs[1].replace('%', '/');
+		if(restoreTrailingDots)
+			path = path.replace(',', '.');
+		try {
+			return Identifier.fromNamespaceAndPath(idArgs[0], path);
+		} catch(IdentifierException rle){
+			return null;
+		}
 	}
 
 }
