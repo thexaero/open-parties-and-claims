@@ -30,6 +30,7 @@ import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.Map;
 import java.util.UUID;
@@ -62,31 +63,27 @@ public class ClientboundClaimModesPacket {
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				boolean moderatorMode = tag.getBoolean("mm");
-				boolean adminMode = tag.getBoolean("am");
-				ClaimingMode claimingMode = null;
-				if(tag.contains("cm", Tag.TAG_STRING))
-					claimingMode = (ClaimingMode) ClaimingModes.get(tag.getString("cm"));
+				boolean moderatorMode = tag.getBooleanOr("mm", false);
+				boolean adminMode = tag.getBooleanOr("am", false);
+				ClaimingMode claimingMode = (ClaimingMode) ClaimingModes.get(tag.getStringOr("cm", ""));
 				SimplePlayerClaimImpersonationInfo claimsImpersonationInfo;
-				CompoundTag claimsImpersonationInfoTag = tag.getCompound("cii");
+				CompoundTag claimsImpersonationInfoTag = tag.getCompoundOrEmpty("cii");
 				if(!claimsImpersonationInfoTag.isEmpty()) {
-					UUID claimsImpersonatedPlayerId = null;
-					if (claimsImpersonationInfoTag.contains("pi", Tag.TAG_INT_ARRAY))
-						claimsImpersonatedPlayerId = claimsImpersonationInfoTag.getUUID("pi");
+					UUID claimsImpersonatedPlayerId = XaeroNbtUtil.getUUID(claimsImpersonationInfoTag, "pi").orElse(null);
 					claimsImpersonationInfo = new SimplePlayerClaimImpersonationInfo(claimsImpersonatedPlayerId);
-					CompoundTag claimIdsTag = claimsImpersonationInfoTag.getCompound("ci");
-					for (String claimModeKey : claimIdsTag.getAllKeys()) {
+					CompoundTag claimIdsTag = claimsImpersonationInfoTag.getCompoundOrEmpty("ci");
+					for (String claimModeKey : claimIdsTag.keySet()) {
 						IClaimingModeAPI claimMode = ClaimingModes.get(claimModeKey);
 						if(claimMode == null)
 							continue;
-						claimsImpersonationInfo.setClaimPlayerId(claimMode, claimIdsTag.getUUID(claimModeKey));
+						claimsImpersonationInfo.setClaimPlayerId(claimMode, XaeroNbtUtil.getUUID(claimIdsTag, claimModeKey).get());
 					}
-					CompoundTag subIndicesTag = claimsImpersonationInfoTag.getCompound("si");
-					for (String claimModeKey : subIndicesTag.getAllKeys()) {
+					CompoundTag subIndicesTag = claimsImpersonationInfoTag.getCompoundOrEmpty("si");
+					for (String claimModeKey : subIndicesTag.keySet()) {
 						IClaimingModeAPI claimMode = ClaimingModes.get(claimModeKey);
 						if(claimMode == null)
 							continue;
-						claimsImpersonationInfo.setSubIndex(claimMode, subIndicesTag.getInt(claimModeKey));
+						claimsImpersonationInfo.setSubIndex(claimMode, subIndicesTag.getIntOr(claimModeKey, 0));
 					}
 				} else
 					claimsImpersonationInfo = new SimplePlayerClaimImpersonationInfo(null);
@@ -107,10 +104,10 @@ public class ClientboundClaimModesPacket {
 			if(t.claimsImpersonationInfo != null) {
 				CompoundTag claimsImpersonationInfoTag = new CompoundTag();
 				if(t.claimsImpersonationInfo.getPlayerId() != null)
-					claimsImpersonationInfoTag.putUUID("pi", t.claimsImpersonationInfo.getPlayerId());
+					XaeroNbtUtil.putUUID(claimsImpersonationInfoTag, "pi", t.claimsImpersonationInfo.getPlayerId());
 				CompoundTag claimIdsTag = new CompoundTag();
 				for (Map.Entry<ClaimingMode, UUID> claimIdEntry : t.claimsImpersonationInfo.getClaimPlayerIds().entrySet())
-					claimIdsTag.putUUID(claimIdEntry.getKey().getId(), claimIdEntry.getValue());
+					XaeroNbtUtil.putUUID(claimIdsTag, claimIdEntry.getKey().getId(), claimIdEntry.getValue());
 				claimsImpersonationInfoTag.put("ci", claimIdsTag);
 				CompoundTag subIndicesTag = new CompoundTag();
 				for (Map.Entry<ClaimingMode, Integer> subIndexEntry : t.claimsImpersonationInfo.getSubIndices().entrySet())

@@ -283,8 +283,8 @@ public class ClaimsTransferCommand {
 			acceptComponent.getSiblings().add(Component.literal(" "));
 			acceptComponent.getSiblings().add(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message_accept")
 					.withStyle(s -> s.withColor(ChatFormatting.GREEN)
-							.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + ClaimsCommandRegister.COMMAND_PREFIX + " transfer-accept " + callerPlayer.getUUID()))
-							.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message_accept_tooltip")))));
+							.withClickEvent(new ClickEvent.RunCommand("/" + ClaimsCommandRegister.COMMAND_PREFIX + " transfer-accept " + callerPlayer.getUUID()))
+							.withHoverEvent(new HoverEvent.ShowText(adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message_accept_tooltip")))));
 			targetPlayer.sendSystemMessage(acceptComponent);
 			return 1;
 		};

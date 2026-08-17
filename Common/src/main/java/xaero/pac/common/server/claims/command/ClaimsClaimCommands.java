@@ -358,8 +358,8 @@ public class ClaimsClaimCommands {
 			return null;
 		MutableComponent interruptButton = Component.translatable("gui.xaero_claims_claim_command_area_interrupt_button");
 		interruptButton.setStyle(interruptButton.getStyle().withColor(ChatFormatting.RED)
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(interruptCommand)))
-				.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, interruptCommand)));
+				.withHoverEvent(new HoverEvent.ShowText(Component.literal(interruptCommand)))
+				.withClickEvent(new ClickEvent.SuggestCommand(interruptCommand)));
 		return interruptButton;
 	}
 

@@ -53,19 +53,19 @@ public class ClientboundPlayerConfigConfigurableOptionsPacket {
 				CompoundTag tag = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(tag == null)
 					return null;
-				ListTag playerConfigurableListTag = tag.getList("p", Tag.TAG_STRING);
-				ListTag opConfigurableListTag = tag.getList("o", Tag.TAG_STRING);
+				ListTag playerConfigurableListTag = tag.getListOrEmpty("p");
+				ListTag opConfigurableListTag = tag.getListOrEmpty("o");
 				List<String> playerConfigurableOptions = new ArrayList<>();
 				for (Tag t : playerConfigurableListTag) {
 					if(!(t instanceof StringTag optionTag))
 						return null;
-					playerConfigurableOptions.add(optionTag.getAsString());
+					playerConfigurableOptions.add(optionTag.value());
 				}
 				List<String> opConfigurableOptions = new ArrayList<>();
 				for (Tag t : opConfigurableListTag) {
 					if(!(t instanceof StringTag optionTag))
 						return null;
-					opConfigurableOptions.add(optionTag.getAsString());
+					opConfigurableOptions.add(optionTag.value());
 				}
 				return new ClientboundPlayerConfigConfigurableOptionsPacket(playerConfigurableOptions, opConfigurableOptions);
 			} catch(Throwable t) {
