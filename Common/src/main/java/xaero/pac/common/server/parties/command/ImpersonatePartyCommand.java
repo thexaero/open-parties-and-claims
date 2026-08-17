@@ -120,8 +120,9 @@ public class ImpersonatePartyCommand {
 			}
 		});
 		LiteralArgumentBuilder<CommandSourceStack> opTargetCommand = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get())
-				.then(Commands.literal("impersonate").then(Commands.argument("profile", GameProfileArgument.gameProfile())
+				.then(Commands.literal("impersonate")
 				.requires(requirement)
+				.then(Commands.argument("profile", GameProfileArgument.gameProfile())
 				.suggests(suggestions)
 				.executes(action)));
 		dispatcher.register(opTargetCommand);
