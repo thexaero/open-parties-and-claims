@@ -257,7 +257,7 @@ public abstract class ClaimsManager
 
 	@Nonnull
 	@Override
-	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension, boolean allowPartyNames) {
+	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension, boolean allowPartyNames) {
 		String customName = claimUsesDimensionSubConfigs(claimState) ?
 				getDimensionName(claimState, dimension) :
 				getPlayerInfo(claimState.getPlayerId()).getClaimsName(claimState.getSubConfigIndex());
@@ -273,7 +273,7 @@ public abstract class ClaimsManager
 	public abstract boolean claimUsesDimensionSubConfigs(IPlayerChunkClaimAPI claimState);
 
 	@Nullable
-	public abstract String getDimensionName(IPlayerChunkClaimAPI claimState, ResourceLocation dimension);
+	public abstract String getDimensionName(IPlayerChunkClaimAPI claimState, Identifier dimension);
 
 	protected MutableComponent constructPlayerClaimName(PCI playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames){
 		//overridden to apply party name instead if necessary

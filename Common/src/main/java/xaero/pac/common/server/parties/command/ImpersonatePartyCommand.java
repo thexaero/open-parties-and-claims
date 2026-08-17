@@ -81,7 +81,7 @@ public class ImpersonatePartyCommand {
 			}
 			ServerPlayerData casterPlayerData = (ServerPlayerData) ServerPlayerData.from(casterPlayer);
 			boolean disabling = targetProfile == null || targetProfile.id().equals(casterPlayerData.getPartiesImpersonatedPlayerId());
-			if(!disabling && !casterPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS)){
+			if(!disabling && !Commands.LEVEL_GAMEMASTERS.check(casterPlayer.permissions())){
 				//this check is important for players who are already impersonating someone but have lost the permission
 				IPlayerPermissionSystemAPI usedPermissionSystem = serverData.getPlayerPermissionSystemManager().getUsedSystem();
 				if (usedPermissionSystem == null || !usedPermissionSystem.getPermission(casterPlayer, UsedPermissionNodes.PARTIES_IMPERSONATION))
@@ -103,7 +103,7 @@ public class ImpersonatePartyCommand {
 					.map(targetPlayer -> targetPlayer.getGameProfile().name()), builder);
 		};
 		Predicate<CommandSourceStack> requirement = CommandRequirementHelper.onServerThread(context -> {
-			if(context.hasPermission(Commands.LEVEL_GAMEMASTERS) )
+			if(Commands.LEVEL_GAMEMASTERS.check(context.permissions()))
 				return true;
 			try {
 				ServerPlayer player = context.getPlayerOrException();

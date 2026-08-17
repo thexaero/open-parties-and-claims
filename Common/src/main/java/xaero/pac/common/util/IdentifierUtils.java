@@ -18,18 +18,18 @@
 
 package xaero.pac.common.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class IdentifierUtils {
 
 	public static boolean isValidIdentifier(String string){
 		int separatorIndex = string.indexOf(':');
 		String path = string.substring(separatorIndex + 1);
-		if(!ResourceLocation.isValidPath(path))
+		if(!Identifier.isValidPath(path))
 			return false;
 		if(separatorIndex == -1)
 			return true;
-		return ResourceLocation.isValidNamespace(string.substring(0, separatorIndex));
+		return Identifier.isValidNamespace(string.substring(0, separatorIndex));
 	}
 
 }

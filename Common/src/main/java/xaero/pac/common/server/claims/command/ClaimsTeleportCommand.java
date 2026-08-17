@@ -60,7 +60,7 @@ public class ClaimsTeleportCommand {
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		Predicate<CommandSourceStack> requirement = CommandRequirementHelper.onServerThread(context -> {
-			if(context.hasPermission(2) )
+			if(Commands.LEVEL_GAMEMASTERS.check(context.permissions()))
 				return true;
 			try {
 				ServerPlayer player = context.getPlayerOrException();

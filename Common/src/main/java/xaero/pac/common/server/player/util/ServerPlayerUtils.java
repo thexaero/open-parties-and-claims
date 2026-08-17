@@ -20,7 +20,7 @@ package xaero.pac.common.server.player.util;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,7 +51,7 @@ public class ServerPlayerUtils {
 		teleport(player, null, x, y, z, yRot, xRot);
 	}
 
-	public static void teleport(ServerPlayer player, ResourceLocation dimension, double x, double y, double z, float yRot, float xRot){
+	public static void teleport(ServerPlayer player, Identifier dimension, double x, double y, double z, float yRot, float xRot){
 		MinecraftServer server = ServerLevelHelper.getServer(player);
 		server.schedule(server.wrapRunnable(() -> {
 			ServerPlayer upToDatePlayer = server.getPlayerList().getPlayer(player.getUUID());

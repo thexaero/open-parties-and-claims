@@ -48,7 +48,6 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.util.ServerPlayerConfigUtils;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
-import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 import java.util.List;

@@ -373,32 +373,32 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public void requestClaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI) {
+	public void requestClaim(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI) {
 		requestAreaClaim(dimension, x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestUnclaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI){
+	public void requestUnclaim(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingModeAPI){
 		requestAreaUnclaim(dimension, x, z, x, z, claimingModeAPI);
 	}
 
 	@Override
-	public void requestForceload(@Nonnull ResourceLocation dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
+	public void requestForceload(@Nonnull Identifier dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
 		requestAreaForceload(dimension, x, z, x, z, enable, claimingModeAPI);
 	}
 
 	@Override
-	public void requestAreaClaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
+	public void requestAreaClaim(@Nonnull Identifier dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.CLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaUnclaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
+	public void requestAreaUnclaim(@Nonnull Identifier dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.UNCLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
 	@Override
-	public void requestAreaForceload(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
+	public void requestAreaForceload(@Nonnull Identifier dimension, int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingModeAPI){
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}
 
@@ -486,7 +486,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
-	public String getDimensionName(IPlayerChunkClaimAPI claimState, ResourceLocation dimension) {
+	public String getDimensionName(IPlayerChunkClaimAPI claimState, Identifier dimension) {
 		IPlayerConfigClientStorage<?> effectiveConfig = clientData.getPlayerConfigStorageManager()
 				.getGlobalConfigForClaimOwner(claimState == null ? null : claimState.getPlayerId());
 		if(dimension != null)

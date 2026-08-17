@@ -42,7 +42,7 @@ public enum PlayerConfigType {
 			PlayerSubConfigType.SUBCLAIM,
 			"server-claims-config",
 			sourceStack -> true,
-			sourceStack -> sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS),
+			sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()),
 			true
 	),
 
@@ -53,8 +53,8 @@ public enum PlayerConfigType {
 			true,
 			PlayerSubConfigType.DIMENSION,
 			"expired-claims-config",
-			sourceStack -> sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS),
-			sourceStack -> sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS),
+			sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()),
+			sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()),
 			false
 	),
 
@@ -65,8 +65,8 @@ public enum PlayerConfigType {
 			true,
 			PlayerSubConfigType.DIMENSION,
 			"wilderness-config",
-			sourceStack -> sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS),
-			sourceStack -> sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS),
+			sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()),
+			sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()),
 			false
 	),
 
@@ -77,8 +77,8 @@ public enum PlayerConfigType {
 			true,
 			PlayerSubConfigType.NONE,
 			"default-player-config",
-			sourceStack -> sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS),
-			sourceStack -> sourceStack.hasPermission(Commands.LEVEL_GAMEMASTERS),
+			sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()),
+			sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()),
 			false
 	),
 

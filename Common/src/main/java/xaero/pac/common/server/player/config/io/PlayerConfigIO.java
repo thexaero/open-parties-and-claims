@@ -20,7 +20,7 @@ package xaero.pac.common.server.player.config.io;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import xaero.pac.OpenPartiesAndClaims;
@@ -207,7 +207,7 @@ public final class PlayerConfigIO
 			String subIndexString = fileNameArgs[1];
 			subIndex = Integer.parseInt(subIndexString);
 		} else {
-			ResourceLocation subConfigDim = fileIOHelper.convertFileNameToDimension(fileNameNoExtension, false);
+			Identifier subConfigDim = fileIOHelper.convertFileNameToDimension(fileNameNoExtension, false);
 			if(subConfigDim == null)
 				throw new IllegalArgumentException("The " + mainConfig.getType() + " config has a sub-config with an ID that is not properly formatted: " + fileNameNoExtension);
 			subId = subConfigDim.toString();
@@ -224,7 +224,7 @@ public final class PlayerConfigIO
 			Path folder = configSubConfigPath.resolve(fileName);
 			String subIdBasedFileName;
 			if(object.getType().hasDimensionSubConfigs())
-				subIdBasedFileName = fileIOHelper.convertDimensionToFileName(ResourceLocation.parse(subConfig.getSubId()), false);
+				subIdBasedFileName = fileIOHelper.convertDimensionToFileName(Identifier.parse(subConfig.getSubId()), false);
 			else
 				subIdBasedFileName = subConfig.getSubId() + "$" + subConfig.getSubIndex();
 			return folder.resolve(subIdBasedFileName + this.fileExtension);

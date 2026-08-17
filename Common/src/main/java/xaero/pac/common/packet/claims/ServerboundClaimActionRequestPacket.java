@@ -21,12 +21,12 @@ package xaero.pac.common.packet.claims;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.action.api.ClaimingAction;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
-import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 
@@ -59,7 +59,7 @@ public class ServerboundClaimActionRequestPacket {
 				} catch(ArrayIndexOutOfBoundsException aioobe) {
 					return null;
 				}
-				ResourceLocation dimension = ResourceLocation.parse(tag.getStringOr("d", ""));
+				Identifier dimension = Identifier.parse(tag.getStringOr("d", ""));
 				int left = tag.getIntOr("l", 0);
 				int top = tag.getIntOr("t", 0);
 				int right = tag.getIntOr("r", 0);

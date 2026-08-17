@@ -224,7 +224,7 @@ public interface IClientClaimsManagerAPI
 	public IClaimsManagerClaimResultTrackerAPI getClaimResultTracker();
 
 	/**
-	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestClaim(ResourceLocation, int, int, IClaimingModeAPI)}
+	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestClaim(Identifier, int, int, IClaimingModeAPI)}
 	 * <p>
 	 * Requests a new chunk claim by the local client player, party or by the server.
 	 * <p>
@@ -242,7 +242,7 @@ public interface IClientClaimsManagerAPI
 	}
 
 	/**
-	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestUnclaim(ResourceLocation, int, int, IClaimingModeAPI)}
+	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestUnclaim(Identifier, int, int, IClaimingModeAPI)}
 	 * <p>
 	 * Requests a chunk unclaim by the local client player or by the server.
 	 * <p>
@@ -260,7 +260,7 @@ public interface IClientClaimsManagerAPI
 	}
 
 	/**
-	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestForceload(ResourceLocation, int, int, boolean, IClaimingModeAPI)}
+	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestForceload(Identifier, int, int, boolean, IClaimingModeAPI)}
 	 * <p>
 	 * Requests a chunk (un)forceload by the local client player or by the server.
 	 * <p>
@@ -279,7 +279,7 @@ public interface IClientClaimsManagerAPI
 	}
 
 	/**
-	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestAreaClaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)}
+	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestAreaClaim(Identifier, int, int, int, int, IClaimingModeAPI)}
 	 * <p>
 	 * Requests new chunks claims over a specified area by the local client player or by the server.
 	 * <p>
@@ -299,7 +299,7 @@ public interface IClientClaimsManagerAPI
 	}
 
 	/**
-	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestAreaUnclaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)}
+	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestAreaUnclaim(Identifier, int, int, int, int, IClaimingModeAPI)}
 	 * <p>
 	 * Requests chunk unclaims over a specified area by the local client player or by the server.
 	 * <p>
@@ -319,7 +319,7 @@ public interface IClientClaimsManagerAPI
 	}
 
 	/**
-	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestAreaForceload(ResourceLocation, int, int, int, int, boolean, IClaimingModeAPI)}
+	 * @deprecated switch to {@link IClientClaimsManagerAPI#requestAreaForceload(Identifier, int, int, int, int, boolean, IClaimingModeAPI)}
 	 * <p>
 	 * Requests chunk (un)forceloads over a specified area by the local client player or by the server.
 	 * <p>
@@ -340,7 +340,7 @@ public interface IClientClaimsManagerAPI
 	}
 
 	/**
-	 * @deprecated Use {@link #requestClaim(ResourceLocation, int, int, IClaimingModeAPI)} instead
+	 * @deprecated Use {@link #requestClaim(Identifier, int, int, IClaimingModeAPI)} instead
 	 * Requests a new chunk claim by the local client player using a specified claiming mode.
 	 * <p>
 	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
@@ -353,13 +353,13 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestClaim(int x, int z, @Nullable IClaimingModeAPI claimingMode){
-		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level().dimension().location();
+		Identifier dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.identifier() :
+				Minecraft.getInstance().player.level().dimension().identifier();
 		requestClaim(dimension, x, z, claimingMode);
 	}
 
 	/**
-	 * @deprecated Use {@link #requestUnclaim(ResourceLocation, int, int, IClaimingModeAPI)} instead
+	 * @deprecated Use {@link #requestUnclaim(Identifier, int, int, IClaimingModeAPI)} instead
 	 * Requests a chunk unclaim by the local client player using a specified claiming mode.
 	 * <p>
 	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
@@ -372,13 +372,13 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestUnclaim(int x, int z, @Nullable IClaimingModeAPI claimingMode){
-		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level().dimension().location();
+		Identifier dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.identifier() :
+				Minecraft.getInstance().player.level().dimension().identifier();
 		requestUnclaim(dimension, x, z, claimingMode);
 	}
 
 	/**
-	 * @deprecated Use {@link #requestForceload(ResourceLocation, int, int, boolean, IClaimingModeAPI)} instead
+	 * @deprecated Use {@link #requestForceload(Identifier, int, int, boolean, IClaimingModeAPI)} instead
 	 * Requests a chunk (un)forceload by the local client player using a specified claiming mode.
 	 * <p>
 	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
@@ -392,13 +392,13 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestForceload(int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingMode){
-		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level().dimension().location();
+		Identifier dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.identifier() :
+				Minecraft.getInstance().player.level().dimension().identifier();
 		requestForceload(dimension, x, z, enable, claimingMode);
 	}
 
 	/**
-	 * @deprecated Use {@link #requestAreaClaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)} instead
+	 * @deprecated Use {@link #requestAreaClaim(Identifier, int, int, int, int, IClaimingModeAPI)} instead
 	 * Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
 	 * <p>
 	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
@@ -413,13 +413,13 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestAreaClaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode){
-		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level().dimension().location();
+		Identifier dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.identifier() :
+				Minecraft.getInstance().player.level().dimension().identifier();
 		requestAreaClaim(dimension, left, top, right, bottom, claimingMode);
 	}
 
 	/**
-	 * @deprecated Use {@link #requestAreaUnclaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)} instead
+	 * @deprecated Use {@link #requestAreaUnclaim(Identifier, int, int, int, int, IClaimingModeAPI)} instead
 	 * Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.
 	 * <p>
 	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
@@ -434,13 +434,13 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestAreaUnclaim(int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode){
-		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level().dimension().location();
+		Identifier dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.identifier() :
+				Minecraft.getInstance().player.level().dimension().identifier();
 		requestAreaUnclaim(dimension, left, top, right, bottom, claimingMode);
 	}
 
 	/**
-	 * @deprecated Use {@link #requestAreaForceload(ResourceLocation, int, int, int, int, boolean, IClaimingModeAPI)} instead
+	 * @deprecated Use {@link #requestAreaForceload(Identifier, int, int, int, int, boolean, IClaimingModeAPI)} instead
 	 * Requests chunk (un)forceloads over a specified area by the local client player using a specified claiming mode.
 	 * <p>
 	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
@@ -456,8 +456,8 @@ public interface IClientClaimsManagerAPI
 	 */
 	@Deprecated
 	default void requestAreaForceload(int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingMode){
-		ResourceLocation dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.location() :
-				Minecraft.getInstance().player.level().dimension().location();
+		Identifier dimension =  Minecraft.getInstance().player == null ? Level.OVERWORLD.identifier() :
+				Minecraft.getInstance().player.level().dimension().identifier();
 		requestAreaForceload(dimension, left, top, right, bottom, enable, claimingMode);
 	}
 
@@ -473,7 +473,7 @@ public interface IClientClaimsManagerAPI
 	 * @param z  the Z coordinate of the chunk
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestClaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
+	public void requestClaim(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests a chunk unclaim by the local client player using a specified claiming mode.
@@ -487,7 +487,7 @@ public interface IClientClaimsManagerAPI
 	 * @param z  the Z coordinate of the chunk
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestUnclaim(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
+	public void requestUnclaim(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests a chunk (un)forceload by the local client player using a specified claiming mode.
@@ -502,7 +502,7 @@ public interface IClientClaimsManagerAPI
 	 * @param enable  true to forceload the chunk, false to unforceload
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestForceload(@Nonnull ResourceLocation dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingMode);
+	public void requestForceload(@Nonnull Identifier dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
@@ -518,7 +518,7 @@ public interface IClientClaimsManagerAPI
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestAreaClaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode);
+	public void requestAreaClaim(@Nonnull Identifier dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.
@@ -534,7 +534,7 @@ public interface IClientClaimsManagerAPI
 	 * @param bottom  the highest Z coordinate of the area
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestAreaUnclaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode);
+	public void requestAreaUnclaim(@Nonnull Identifier dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests chunk (un)forceloads over a specified area by the local client player using a specified claiming mode.
@@ -551,7 +551,7 @@ public interface IClientClaimsManagerAPI
 	 * @param enable  true to forceload the chunks, false to unforceload
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestAreaForceload(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingMode);
+	public void requestAreaForceload(@Nonnull Identifier dimension, int left, int top, int right, int bottom, boolean enable, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Gets a claim state of the same type (see {@link IPlayerChunkClaimAPI#isSameClaimType(IPlayerChunkClaimAPI)}) as

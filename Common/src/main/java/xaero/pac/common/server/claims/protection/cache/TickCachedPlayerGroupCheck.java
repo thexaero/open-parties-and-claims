@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.protection.cache;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.server.claims.ServerClaimsManager;
@@ -36,22 +36,22 @@ import java.util.UUID;
 public class TickCachedPlayerGroupCheck {
 
 	private final IPlayerConfigOptionSpecAPI<String> option;
-	private final Map<UUID, Map<ResourceLocation, Map<String, Map<ServerPlayer, Boolean>>>> claimPlayerCache;
-	private final Map<UUID, Map<ResourceLocation, Map<String, Map<UUID, Boolean>>>> claimIdCache;
-	private final Map<ResourceLocation, Map<String, Map<ServerPlayer, Boolean>>> wildernessPlayerCache;
-	private final Map<ResourceLocation, Map<String, Map<UUID, Boolean>>> wildernessIdCache;
+	private final Map<UUID, Map<Identifier, Map<String, Map<ServerPlayer, Boolean>>>> claimPlayerCache;
+	private final Map<UUID, Map<Identifier, Map<String, Map<UUID, Boolean>>>> claimIdCache;
+	private final Map<Identifier, Map<String, Map<ServerPlayer, Boolean>>> wildernessPlayerCache;
+	private final Map<Identifier, Map<String, Map<UUID, Boolean>>> wildernessIdCache;
 	private ServerPlayer lastPlayer;
 	private UUID lastPlayerId;
 	private IPlayerChunkClaim lastClaimState;
-	private ResourceLocation lastDimension;
+	private Identifier lastDimension;
 	private boolean lastResult;
 
 	private TickCachedPlayerGroupCheck(
 			IPlayerConfigOptionSpecAPI<String> option,
-			Map<UUID, Map<ResourceLocation, Map<String, Map<ServerPlayer, Boolean>>>> claimPlayerCache,
-			Map<UUID, Map<ResourceLocation, Map<String, Map<UUID, Boolean>>>> claimIdCache,
-			Map<ResourceLocation, Map<String, Map<ServerPlayer, Boolean>>> wildernessPlayerCache,
-			Map<ResourceLocation, Map<String, Map<UUID, Boolean>>> wildernessIdCache
+			Map<UUID, Map<Identifier, Map<String, Map<ServerPlayer, Boolean>>>> claimPlayerCache,
+			Map<UUID, Map<Identifier, Map<String, Map<UUID, Boolean>>>> claimIdCache,
+			Map<Identifier, Map<String, Map<ServerPlayer, Boolean>>> wildernessPlayerCache,
+			Map<Identifier, Map<String, Map<UUID, Boolean>>> wildernessIdCache
 	) {
 		this.option = option;
 		this.claimPlayerCache = claimPlayerCache;
@@ -60,8 +60,8 @@ public class TickCachedPlayerGroupCheck {
 		this.wildernessIdCache = wildernessIdCache;
 	}
 
-	private Map<ServerPlayer, Boolean> getCachePlayerMap(UUID claimOwnerId, ResourceLocation dimension, String subClaim){
-		Map<ResourceLocation, Map<String, Map<ServerPlayer, Boolean>>> playerCache = claimOwnerId == null ?
+	private Map<ServerPlayer, Boolean> getCachePlayerMap(UUID claimOwnerId, Identifier dimension, String subClaim){
+		Map<Identifier, Map<String, Map<ServerPlayer, Boolean>>> playerCache = claimOwnerId == null ?
 				wildernessPlayerCache : claimPlayerCache.get(claimOwnerId);
 		if(playerCache == null)
 			claimPlayerCache.put(claimOwnerId, playerCache = new HashMap<>());
@@ -74,8 +74,8 @@ public class TickCachedPlayerGroupCheck {
 		return playerMap;
 	}
 
-	private Map<UUID, Boolean> getCachePlayerIdMap(UUID claimOwnerId, ResourceLocation dimension, String subClaim){
-		Map<ResourceLocation, Map<String, Map<UUID, Boolean>>> idCache = claimOwnerId == null ?
+	private Map<UUID, Boolean> getCachePlayerIdMap(UUID claimOwnerId, Identifier dimension, String subClaim){
+		Map<Identifier, Map<String, Map<UUID, Boolean>>> idCache = claimOwnerId == null ?
 				wildernessIdCache : claimIdCache.get(claimOwnerId);
 		if(idCache == null)
 			claimIdCache.put(claimOwnerId, idCache = new HashMap<>());
@@ -88,33 +88,33 @@ public class TickCachedPlayerGroupCheck {
 		return playerIdMap;
 	}
 
-	private Boolean getCache(UUID claimOwnerId, ResourceLocation dimension, String subClaim, ServerPlayer player){
+	private Boolean getCache(UUID claimOwnerId, Identifier dimension, String subClaim, ServerPlayer player){
 		Map<ServerPlayer, Boolean> playerMap = getCachePlayerMap(claimOwnerId, dimension, subClaim);
 		return playerMap.get(player);
 	}
 
-	private Boolean getCache(UUID claimOwnerId, ResourceLocation dimension, String subClaim, UUID playerId){
+	private Boolean getCache(UUID claimOwnerId, Identifier dimension, String subClaim, UUID playerId){
 		Map<UUID, Boolean> playerIdMap = getCachePlayerIdMap(claimOwnerId, dimension, subClaim);
 		return playerIdMap.get(playerId);
 	}
 
-	private Boolean getCache(UUID claimOwnerId, ResourceLocation dimension, String subClaim, ServerPlayer player, UUID playerId){
+	private Boolean getCache(UUID claimOwnerId, Identifier dimension, String subClaim, ServerPlayer player, UUID playerId){
 		if(player != null)
 			return getCache(claimOwnerId, dimension, subClaim, player);
 		return getCache(claimOwnerId, dimension, subClaim, playerId);
 	}
 
-	private void setCache(UUID claimOwnerId, ResourceLocation dimension, String subClaim, ServerPlayer player, Boolean value){
+	private void setCache(UUID claimOwnerId, Identifier dimension, String subClaim, ServerPlayer player, Boolean value){
 		Map<ServerPlayer, Boolean> playerMap = getCachePlayerMap(claimOwnerId, dimension, subClaim);
 		playerMap.put(player, value);
 	}
 
-	private void setCache(UUID claimOwnerId, ResourceLocation dimension, String subClaim, UUID playerId, Boolean value){
+	private void setCache(UUID claimOwnerId, Identifier dimension, String subClaim, UUID playerId, Boolean value){
 		Map<UUID, Boolean> playerIdMap = getCachePlayerIdMap(claimOwnerId, dimension, subClaim);
 		playerIdMap.put(playerId, value);
 	}
 
-	private void setCache(UUID claimOwnerId, ResourceLocation dimension, String subClaim, ServerPlayer player, UUID playerId, Boolean value){
+	private void setCache(UUID claimOwnerId, Identifier dimension, String subClaim, ServerPlayer player, UUID playerId, Boolean value){
 		if(player != null) {
 			setCache(claimOwnerId, dimension, subClaim, player, value);
 			return;
@@ -128,7 +128,7 @@ public class TickCachedPlayerGroupCheck {
 			ServerPlayer player,
 			UUID playerId,
 			IPlayerChunkClaim claimState,
-			ResourceLocation dimension
+			Identifier dimension
 	){
 		if(lastPlayer == player &&
 				Objects.equals(lastPlayerId, playerId) &&

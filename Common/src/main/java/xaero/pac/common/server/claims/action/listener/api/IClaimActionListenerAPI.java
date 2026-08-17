@@ -18,11 +18,11 @@
 
 package xaero.pac.common.server.claims.action.listener.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.common.claims.action.api.ClaimingAction;
-import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.action.listener.override.api.ClaimActionPermissionOverride;
+import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -68,7 +68,7 @@ public interface IClaimActionListenerAPI {
 			@Nonnull
 			UUID playerId,
 			@Nonnull
-			ResourceLocation dim,
+			Identifier dim,
 			int x,
 			int z,
 			@Nonnull
@@ -101,7 +101,7 @@ public interface IClaimActionListenerAPI {
 			@Nonnull
 			UUID playerId,
 			@Nonnull
-			ResourceLocation dim,
+			Identifier dim,
 			int x,
 			int z,
 			@Nonnull

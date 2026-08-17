@@ -360,8 +360,8 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 			return null;
 		int randomClaimIndex = (int) (Math.random() * totalCount);
 		int offset = 0;
-		List<Entry<ResourceLocation, PlayerDimensionClaims>> dimensions = getTypedStream().toList();
-		for (Entry<ResourceLocation, PlayerDimensionClaims> entry : dimensions) {
+		List<Entry<Identifier, PlayerDimensionClaims>> dimensions = getTypedStream().toList();
+		for (Entry<Identifier, PlayerDimensionClaims> entry : dimensions) {
 			PlayerDimensionClaims dimension = entry.getValue();
 			if(randomClaimIndex >= offset + dimension.getCount()){
 				offset += dimension.getCount();

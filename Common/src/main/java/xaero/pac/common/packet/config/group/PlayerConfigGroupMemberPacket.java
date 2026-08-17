@@ -20,7 +20,6 @@ package xaero.pac.common.packet.config.group;
 
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;

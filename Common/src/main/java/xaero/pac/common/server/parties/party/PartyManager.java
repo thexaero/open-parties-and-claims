@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.parties.party;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
@@ -32,7 +31,6 @@ import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
-import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.sync.PartySynchronizer;

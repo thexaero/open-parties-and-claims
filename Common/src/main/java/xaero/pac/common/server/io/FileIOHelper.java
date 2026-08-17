@@ -18,8 +18,8 @@
 
 package xaero.pac.common.server.io;
 
-import net.minecraft.ResourceLocationException;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.IdentifierException;
+import net.minecraft.resources.Identifier;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,14 +73,14 @@ public class FileIOHelper {
 		return path.toString();
 	}
 
-	public String convertDimensionToFileName(ResourceLocation dim, boolean replaceTrailingDots) {
+	public String convertDimensionToFileName(Identifier dim, boolean replaceTrailingDots) {
 		String path = dim.getPath().replace('/', '%');
 		if(replaceTrailingDots)
 			path = replaceTrailingDots(path, ',');//removes trailing dots because it's not supported on windows/other
 		return dim.getNamespace() + "$" + path;
 	}
 
-	public ResourceLocation convertFileNameToDimension(String fileName, boolean restoreTrailingDots) {
+	public Identifier convertFileNameToDimension(String fileName, boolean restoreTrailingDots) {
 		String[] idArgs = fileName.split("\\$");
 		if(idArgs.length < 2)
 			return null;
@@ -88,8 +88,8 @@ public class FileIOHelper {
 		if(restoreTrailingDots)
 			path = path.replace(',', '.');
 		try {
-			return ResourceLocation.fromNamespaceAndPath(idArgs[0], path);
-		} catch(ResourceLocationException rle){
+			return Identifier.fromNamespaceAndPath(idArgs[0], path);
+		} catch(IdentifierException rle){
 			return null;
 		}
 	}

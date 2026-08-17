@@ -18,8 +18,8 @@
 
 package xaero.pac.common.server.player.permission.api;
 
-import net.minecraft.network.chat.Component;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.network.chat.Component;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.player.permission.PermissionNode;
 import xaero.pac.common.server.player.permission.value.type.PermissionValueTypes;

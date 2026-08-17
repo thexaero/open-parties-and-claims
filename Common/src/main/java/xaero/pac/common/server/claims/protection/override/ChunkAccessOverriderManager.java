@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.protection.override;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import xaero.pac.OpenPartiesAndClaims;
@@ -50,7 +50,7 @@ public class ChunkAccessOverriderManager implements IChunkAccessOverriderManager
 	}
 
 	public ChunkAccessOverride overrideChunkAccess(
-			ResourceLocation dim,
+			Identifier dim,
 			int x,
 			int z,
 			IPlayerConfigAPI claimConfig,

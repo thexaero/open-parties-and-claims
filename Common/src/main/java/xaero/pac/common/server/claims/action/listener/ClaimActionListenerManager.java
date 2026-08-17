@@ -18,15 +18,15 @@
 
 package xaero.pac.common.server.claims.action.listener;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.action.api.ClaimingAction;
-import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 import xaero.pac.common.server.claims.action.listener.api.IClaimActionListenerAPI;
 import xaero.pac.common.server.claims.action.listener.api.IClaimActionListenerManagerAPI;
 import xaero.pac.common.server.claims.action.listener.override.api.ClaimActionPermissionOverride;
 import xaero.pac.common.server.claims.action.listener.override.api.ClaimActionPermissionOverrideType;
+import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class ClaimActionListenerManager implements IClaimActionListenerManagerAP
 
 	public ClaimActionPermissionOverride overrideClaimingActionPermission(
 			UUID playerId,
-			ResourceLocation dim,
+			Identifier dim,
 			int x,
 			int z,
 			ClaimingAction action,
@@ -77,7 +77,7 @@ public class ClaimActionListenerManager implements IClaimActionListenerManagerAP
 
 	public void handleSuccessfulClaimingAction(
 			UUID playerId,
-			ResourceLocation dim,
+			Identifier dim,
 			int x,
 			int z,
 			ClaimingAction action,

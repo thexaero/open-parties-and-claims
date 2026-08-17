@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -52,7 +51,6 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
-import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 

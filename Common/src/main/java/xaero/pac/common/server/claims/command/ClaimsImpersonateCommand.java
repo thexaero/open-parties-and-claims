@@ -63,7 +63,7 @@ public class ClaimsImpersonateCommand {
 				.requires(context -> ServerConfig.CONFIG.claimsEnabled.get())
 				.then(Commands.literal("impersonate")
 				.requires(CommandRequirementHelper.onServerThread(context -> {
-						if(context.hasPermission(2) )
+						if(Commands.LEVEL_GAMEMASTERS.check(context.permissions()))
 							return true;
 						try {
 							ServerPlayer player = context.getPlayerOrException();

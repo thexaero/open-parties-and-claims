@@ -19,13 +19,13 @@
 package xaero.pac.common.server.claims.player.task;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.action.api.ClaimingAction;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -50,7 +50,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 	private final boolean force;
 	private final UUID playerId;
 	private final int subConfigIndex;
-	private final ResourceLocation fromDimension;
+	private final Identifier fromDimension;
 	private final int fromX;
 	private final int fromZ;
 	private final Set<ClaimResult.Type> resultTypes = new HashSet<>();
@@ -72,7 +72,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 			boolean force,
 			UUID playerId,
 			int subConfigIndex,
-			ResourceLocation fromDimension,
+			Identifier fromDimension,
 			int fromX,
 			int fromZ,
 			int chunksToAffect,
@@ -125,7 +125,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 	) {
 		IServerClaimsManager<?, ?, ?> claimManager = serverData.getServerClaimsManager();
 		ClaimingAction action = actionRequest.getAction();
-		ResourceLocation dimension = actionRequest.getDimension();
+		Identifier dimension = actionRequest.getDimension();
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(currentIndex == 0) {
 			effectiveLeft = actionRequest.getLeft();
