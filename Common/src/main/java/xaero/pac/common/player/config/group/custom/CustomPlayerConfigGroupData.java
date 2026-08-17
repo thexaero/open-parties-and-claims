@@ -30,6 +30,7 @@ public class CustomPlayerConfigGroupData implements Comparable<CustomPlayerConfi
 
 	public static final UUID UNKNOWN_ID = new UUID(0, 0);
 	public static final String VALID_ID_CHARS_DISPLAY = "a-z, A-Z, 0-9 and -_";
+	public static final String VALID_ID_CHARS_REGEX_PARAMS = "a-zA-Z0-9-_";
 	private final String id;
 	private final Map<String, CustomPlayerGroupIncludedGroup> directGroups;
 	private final LinkedChain<CustomPlayerGroupIncludedGroup> directGroupsChain;
@@ -61,7 +62,16 @@ public class CustomPlayerConfigGroupData implements Comparable<CustomPlayerConfi
 	}
 
 	public static boolean isValidId(String id){
-		return id.matches("[a-zA-Z0-9-_]+") && id.length() <= PlayerConfigConstants.MAX_CUSTOM_PLAYER_GROUP_ID_LENGTH;
+		return id.matches("[" + VALID_ID_CHARS_REGEX_PARAMS + "]+") && id.length() <= PlayerConfigConstants.MAX_CUSTOM_PLAYER_GROUP_ID_LENGTH;
+	}
+
+	public static String makeIdValid(String id){
+		String result = id.replaceAll("[^" + VALID_ID_CHARS_REGEX_PARAMS + "]+", "");
+		if(result.isEmpty())
+			return "group";
+		if(result.length() > PlayerConfigConstants.MAX_CUSTOM_PLAYER_GROUP_ID_LENGTH)
+			return result.substring(result.length() - PlayerConfigConstants.MAX_CUSTOM_PLAYER_GROUP_ID_LENGTH);
+		return result;
 	}
 
 	public static boolean isValidPlayerName(String name){

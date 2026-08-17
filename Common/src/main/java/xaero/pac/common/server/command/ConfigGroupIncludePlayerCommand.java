@@ -62,8 +62,7 @@ public class ConfigGroupIncludePlayerCommand extends ConfigGroupCommand {
 			String inputGroupId,
 			String playerName
 	) throws CommandSyntaxException {
-		ServerPlayer caller = context.getSource().getPlayerOrException();
-		boolean isOp = Commands.LEVEL_GAMEMASTERS.check(caller.permissions());
+		boolean isOp = Commands.LEVEL_GAMEMASTERS.check(context.getSource().permissions());
 		if(!isOp && !ServerPlayerUtils.playerNameIsKnown(context.getSource().getServer(), playerName)){
 			//only ops are allowed to add previously unknown players
 			return Either.right(PlayerConfigGroupActionError.UNKNOWN_PLAYER);
@@ -72,7 +71,7 @@ public class ConfigGroupIncludePlayerCommand extends ConfigGroupCommand {
 		if(customPlayerConfigGroup == null)
 			return Either.right(PlayerConfigGroupActionError.GROUP_TO_EDIT_NOT_FOUND);
 		Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> result =
-				customPlayerConfigGroup.includeMemberLimitedInternal(null, playerName);
+				customPlayerConfigGroup.includeMemberLimitedInternal(null, playerName, true);
 		return result.mapBoth(
 				m -> Component.translatable("gui.xaero_pac_config_include_player", playerName, inputGroupId),
 				e -> e

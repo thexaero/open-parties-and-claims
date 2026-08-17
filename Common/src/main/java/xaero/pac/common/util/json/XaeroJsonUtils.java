@@ -27,7 +27,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.StrictJsonParser;
 import xaero.pac.OpenPartiesAndClaims;
 
-public class XaeroJsonUtil {
+public class XaeroJsonUtils {
 
     public static Component fromJson(String jsonString){
         JsonElement jsonElement = StrictJsonParser.parse(jsonString);

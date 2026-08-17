@@ -18,7 +18,6 @@
 
 package xaero.pac.common.event;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
@@ -59,8 +58,8 @@ import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.tracker.api.IClaimsManagerTrackerRegisterAPI;
-import xaero.pac.common.event.api.v2.OPACServerAddonRegister;
+import xaero.pac.common.event.api.OPACServerAddonRegisterEventContext;
+import xaero.pac.common.event.api.v3.OPACServerAddonRegister;
 import xaero.pac.common.mods.ModSupportFabric;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
@@ -72,8 +71,6 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.core.ServerCoreFabric;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.parties.system.api.v2.IPlayerPartySystemRegisterAPI;
-import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemRegisterAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.List;
@@ -263,17 +260,20 @@ public class CommonEventsFabric extends CommonEvents {
 	}
 
 	@Override
-	public void onAddonRegister(MinecraftServer server, IPlayerPermissionSystemRegisterAPI permissionSystemManagerAPI, IPlayerPartySystemRegisterAPI partySystemManagerAPI, IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI) {
-		super.onAddonRegister(server, permissionSystemManagerAPI, partySystemManagerAPI, claimsManagerTrackerAPI);
+	public void onAddonRegister(OPACServerAddonRegisterEventContext context) {
+		super.onAddonRegister(context);
 		ModSupportFabric modSupportFabric = (ModSupportFabric)modMain.getModSupport();
 		if(modSupportFabric.FABRIC_PERMISSIONS)
-			permissionSystemManagerAPI.register("permission_api", modSupportFabric.getFabricPermissionsSupport().getPermissionSystem());
+			context.getPermissionSystemManagerAPI().register("permission_api", modSupportFabric.getFabricPermissionsSupport().getPermissionSystem());
 
 	}
 
 	@Override
-	public void fireAddonRegisterEvent(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker());
+	public void fireAddonRegisterEvent(OPACServerAddonRegisterEventContext context, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+		OPACServerAddonRegister.EVENT.invoker().registerAddons(context);
+
+		//TODO remove this when the deprecated event is removed
+		xaero.pac.common.event.api.v2.OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker());
 		//TODO remove this when the deprecated event is removed
 		xaero.pac.common.event.api.OPACServerAddonRegister.EVENT.invoker().registerAddons(serverData.getServer(), serverData.getPlayerPermissionSystemManager(), serverData.getPlayerPartySystemManager(), serverData.getServerClaimsManager().getTracker());
 	}

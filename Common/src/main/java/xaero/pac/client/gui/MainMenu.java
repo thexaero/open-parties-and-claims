@@ -116,14 +116,14 @@ public class MainMenu extends XPACScreen {
 	private static final CachedComponentSupplier claimCountSupplier = new CachedComponentSupplier(args -> {
 		int currentClaimCount = (Integer) args[0];
 		int currentClaimLimit = (Integer) args[1];
-		String claimLimitString = currentClaimLimit == -1 ? "∞" : "" + currentClaimLimit;
+		String claimLimitString = currentClaimLimit == Integer.MAX_VALUE ? "∞" : "" + currentClaimLimit;
 		Component numbers = Component.literal(currentClaimCount + " / " + claimLimitString).withStyle(s -> s.withColor(0xFFAAAAAA));
 		return Component.translatable("gui.xaero_pac_ui_claim_count", numbers);
 	});
 	private static final CachedComponentSupplier forceloadCountSupplier = new CachedComponentSupplier(args -> {
 		int currentForceloadCount = (Integer) args[0];
 		int currentForceloadLimit = (Integer) args[1];
-		String forceloadLimitString = currentForceloadLimit == -1 ? "∞" : "" + currentForceloadLimit;
+		String forceloadLimitString = currentForceloadLimit == Integer.MAX_VALUE ? "∞" : "" + currentForceloadLimit;
 		return Component.translatable("gui.xaero_pac_ui_forceload_count", Component.literal(currentForceloadCount + " / " + forceloadLimitString).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
 	private static final CachedComponentSupplier claimsColorSupplier = new CachedComponentSupplier(args -> {
@@ -235,15 +235,13 @@ public class MainMenu extends XPACScreen {
 		serverHasPartiesEnabled = mainCap.getClientWorldData().serverHasPartiesEnabled();
 		aboutPartyButton.active = serverHasMod && OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null;
 		
-		claimButton.active = forceloadButton.active = false;
+		forceloadButton.active = false;
 		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		if(serverHasMod && !claimsManager.isLoading()) {
 			IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().identifier(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
 			boolean adminMode = claimsManager.isAdminMode();
-			IClaimingModeAPI effectiveClaimingMode = selectedEffectiveClaimingMode;
-			ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(effectiveClaimingMode);
-			UUID claimTargetUUID = claimingModeHandler.getClaimReflectionOwnerGetter().apply(claimsManager);
-			claimButton.active = adminMode || currentClaim == null || currentClaim.getPlayerId().equals(claimTargetUUID);
+			IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
+			UUID claimTargetUUID = potentialClaimReflection == null ? null : potentialClaimReflection.getPlayerId();
 			boolean wouldClaim = wouldClaim(currentClaim);
 			claimButton.setMessage(wouldClaim ? CLAIM : UNCLAIM);
 			claimButton.setTooltip(Tooltip.create(wouldClaim ? CLAIM_COMMAND : UNCLAIM_COMMAND));
@@ -267,7 +265,7 @@ public class MainMenu extends XPACScreen {
 	private void updateClaimingModeDropdown(IClientClaimsManager<?, ?, ?> claimsManager){
 		if(System.currentTimeMillis() - lastClaimingModeChangeTime < 1000)
 			return;
-		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode)
+		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode && claimsManager.getRawClaimingMode() == selectedClaimingMode)
 			return;
 		replaceRenderableWidget(claimingModeMenu, claimingModeMenu = setupClaimModeDropdown());
 	}

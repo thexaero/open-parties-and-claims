@@ -54,4 +54,7 @@ public interface IPlayerConfigSynchronizer {
 	void sendPermissions(ServerPlayer player, PlayerConfigType type);
 
 	void syncAdmin(ServerPlayer player, boolean admin);
+
+	void addConfigToSync(ServerPlayer player, IPlayerConfig toConfig);
+
 }

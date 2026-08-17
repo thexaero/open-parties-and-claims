@@ -56,10 +56,10 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 	}
 
 	@Override
-	public void onQueued(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
-		IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
+	public void onQueued(IServerData<?, ?> serverData) {
+		IServerClaimsManager<?, ?, ?>
 				claimManager = serverData.getServerClaimsManager();
-		IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = claimManager.getPlayerInfo(claimOwnerId);
+		IServerPlayerClaimInfo<?> playerInfo = claimManager.getPlayerInfo(claimOwnerId);
 		playerInfo.setReplacementInProgress(true);
 	}
 

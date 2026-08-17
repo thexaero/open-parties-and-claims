@@ -19,7 +19,10 @@
 package xaero.pac.common.server.player.data;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
+import net.minecraft.world.level.Level;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -36,6 +39,7 @@ import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
+import xaero.pac.common.server.claims.player.impersonation.ServerPlayerClaimImpersonationInfo;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
 import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
@@ -62,10 +66,12 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private final IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 			serverData;
 	private ServerPlayer player;//this can change!
+	private boolean claimsModeratorMode;
 	private boolean claimsAdminMode;
 	private boolean claimsNonallyMode;
 	private ClaimingMode claimingMode = null;
 	private IPlayerChunkClaim lastClaimCheck;
+	private ResourceKey<Level> lastClaimCheckDim;
 	private Map<IClaimingModeAPI, ClaimingModeLimits> lastLimitsSync;
 	private long lastClaimLimitsCheckTime;
 	private boolean shouldResyncPlayerConfigs;
@@ -95,6 +101,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private long allowedClaimAccessOverLimitTick;
 	private long lastClaimsOverLimitMessageTime;
 	private boolean partiesAdminMode;
+	private NameAndId partiesImpersonatedPlayerProfile;
+	private final ServerPlayerClaimImpersonationInfo claimsImpersonationInfo;
+	private NameAndId claimTransferRequestSourcePlayerProfile;
+	private UUID claimTransferRequestTargetPlayerId;
+	private long claimTransferRequestTime;
 
 	public ServerPlayerData(
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -104,6 +115,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		super();
 		this.serverData = serverData;
 		this.player = player;
+		this.claimsImpersonationInfo = new ServerPlayerClaimImpersonationInfo(null, serverData);
 	}
 
 	public void setPlayer(ServerPlayer player) {
@@ -134,6 +146,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	}
 
 	@Override
+	public boolean isClaimsModeratorMode() {
+		return claimsModeratorMode || isClaimsAdminMode();
+	}
+
+	@Override
 	public boolean isClaimsAdminMode() {
 		return claimsAdminMode;
 	}
@@ -147,7 +164,8 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	@Override
 	public ClaimingMode getClaimingMode() {
 		if(claimingMode == null) {
-			if(serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(player))
+			if(claimsImpersonationInfo.getPlayerId() == null &&
+					serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(player))
 				return (ClaimingMode) ClaimingModes.PARTY;
 			return (ClaimingMode) ClaimingModes.PLAYER;
 		}
@@ -169,7 +187,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public void setOftenSyncedPartyMemberInfo(PartyMemberDynamicInfoSyncable oftenSyncedPartyMemberInfo) {
 		this.oftenSyncedPartyMemberInfo = oftenSyncedPartyMemberInfo;
 	}
-	
+
+	public void setClaimsModeratorMode(boolean claimsModeratorMode) {
+		this.claimsModeratorMode = claimsModeratorMode;
+	}
+
 	public void setClaimsAdminMode(boolean claimsAdminMode) {
 		this.claimsAdminMode = claimsAdminMode;
 	}
@@ -402,6 +424,55 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public void setPartiesAdminMode(boolean partiesAdminMode) {
 		this.partiesAdminMode = partiesAdminMode;
+	}
+
+	@Nonnull
+	public ServerPlayerClaimImpersonationInfo getClaimsImpersonationInfo() {
+		return claimsImpersonationInfo;
+	}
+
+	public NameAndId getClaimTransferRequestSourcePlayerProfile() {
+		return claimTransferRequestSourcePlayerProfile;
+	}
+
+	public void setClaimTransferRequestSourcePlayerProfile(NameAndId claimTransferRequestSourcePlayerProfile) {
+		this.claimTransferRequestSourcePlayerProfile = claimTransferRequestSourcePlayerProfile;
+	}
+
+	public UUID getClaimTransferRequestTargetPlayerId() {
+		return claimTransferRequestTargetPlayerId;
+	}
+
+	public void setClaimTransferRequestTargetPlayerId(UUID claimTransferRequestTargetPlayerId) {
+		this.claimTransferRequestTargetPlayerId = claimTransferRequestTargetPlayerId;
+	}
+
+	public long getClaimTransferRequestTime() {
+		return claimTransferRequestTime;
+	}
+
+	public void setClaimTransferRequestTime(long claimTransferRequestTime) {
+		this.claimTransferRequestTime = claimTransferRequestTime;
+	}
+
+	public void setPartiesImpersonatedPlayerProfile(NameAndId partiesImpersonatedPlayerProfile) {
+		this.partiesImpersonatedPlayerProfile = partiesImpersonatedPlayerProfile;
+	}
+
+	public NameAndId getPartiesImpersonatedPlayerProfile() {
+		return partiesImpersonatedPlayerProfile;
+	}
+
+	public UUID getPartiesImpersonatedPlayerId() {
+		return partiesImpersonatedPlayerProfile == null ? null : partiesImpersonatedPlayerProfile.id();
+	}
+
+	public void setLastClaimCheckDim(ResourceKey<Level> lastClaimCheckDim) {
+		this.lastClaimCheckDim = lastClaimCheckDim;
+	}
+
+	public ResourceKey<Level> getLastClaimCheckDim() {
+		return lastClaimCheckDim;
 	}
 
 }

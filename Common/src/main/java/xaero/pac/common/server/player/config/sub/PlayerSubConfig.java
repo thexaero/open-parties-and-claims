@@ -27,8 +27,9 @@ import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfigManager;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
-import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
+import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
 import xaero.pac.common.util.linked.ILinkedChainNode;
 import xaero.pac.common.util.linked.LinkedChain;
 
@@ -49,8 +50,26 @@ public class PlayerSubConfig
 	private PlayerSubConfig<P> previousInChain;
 	private boolean destroyed;
 
-	private PlayerSubConfig(PlayerConfig<P> mainConfig, String subId, PlayerConfigType type, UUID playerId, PlayerConfigManager<P, ?> manager, Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues, LinkedChain<PlayerSubConfig<P>> linkedSubConfigs, Map<String, PlayerSubConfig<P>> subByID, Int2ObjectMap<String> subIndexToID, SortedValueList<String> subConfigIds, List<String> subConfigIdsUnmodifiable, int subIndex) {
-		super(type, playerId, manager, automaticDefaultValues, linkedSubConfigs, subByID, subIndexToID, subConfigIds, subConfigIdsUnmodifiable);
+	private PlayerSubConfig(
+			PlayerConfig<P> mainConfig,
+			String subId,
+			PlayerConfigType type,
+			UUID playerId,
+			PlayerConfigManager<P, ?> manager,
+			Map<PlayerConfigOptionSpec<?>, Object> automaticDefaultValues,
+			LinkedChain<PlayerSubConfig<P>> linkedSubConfigs,
+			Map<String, PlayerSubConfig<P>> subByID,
+			Int2ObjectMap<String> subIndexToID,
+			SortedValueList<String> subConfigIds,
+			List<String> subConfigIdsUnmodifiable,
+			Map<IPermissionNodeAPI<?>, Object> lastPermissionValues,
+			int subIndex
+	) {
+		super(
+				type, playerId, manager, automaticDefaultValues,
+				linkedSubConfigs, subByID, subIndexToID, subConfigIds,
+				subConfigIdsUnmodifiable, lastPermissionValues
+		);
 		this.mainConfig = mainConfig;
 		this.subId = subId;
 		this.subIndex = subIndex;
@@ -170,7 +189,7 @@ public class PlayerSubConfig
 	}
 
 	@Override
-	public PlayerSubConfig<P> createSubConfig(String id, int index) {
+	public PlayerSubConfig<P> createSubConfig(String id, int index, boolean initStorage) {
 		throw new RuntimeException(new IllegalAccessException());
 	}
 
@@ -269,7 +288,11 @@ public class PlayerSubConfig
 
 		@Override
 		protected PlayerSubConfig<P> buildInternally() {
-			return new PlayerSubConfig<>(mainConfig, subId, type, playerId, manager, automaticDefaultValues, null, null, null, null, null, subIndex);
+			return new PlayerSubConfig<>(
+					mainConfig, subId, type, playerId, manager,
+					automaticDefaultValues, null, null, null,
+					null, null, null, subIndex
+			);
 		}
 
 		public static <P extends IServerParty<?, ?, ?>> Builder<P> begin(){
