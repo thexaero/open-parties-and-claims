@@ -26,6 +26,7 @@ import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
+import xaero.pac.client.event.api.OPACClientAddonRegisterEventContext;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.client.parties.party.IClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientPartyMemberDynamicInfoSyncableStorage;
@@ -78,7 +79,7 @@ public abstract class ClientEvents {
 		clientData.getClientWorldLoadHandler().handle((ClientLevel) player.level(), player);
 	}
 
-	public abstract void fireAddonRegisterEvent();
+	public abstract void fireAddonRegisterEvent(OPACClientAddonRegisterEventContext context);
 
 	public static abstract class Builder<B extends Builder> {
 

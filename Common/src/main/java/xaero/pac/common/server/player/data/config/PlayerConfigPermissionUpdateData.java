@@ -77,7 +77,7 @@ public class PlayerConfigPermissionUpdateData extends PlayerConfigPermissions {
 				includeGroupsInGroups = partySystems.canIncludeGroupsInPartyConfigGroups(player.getUUID());
 				createGroups = partySystems.canCreatePartyConfigGroups(player.getUUID());
 			}
-			claimAs = partySystems.canPartyClaim(player.getUUID());
+			claimAs = serverData.getServerClaimsManager().getPermissionHandler().playerHasPartyClaimPermission(player, player.getUUID());
 		}
 		setEdit(edit);
 		setView(view);

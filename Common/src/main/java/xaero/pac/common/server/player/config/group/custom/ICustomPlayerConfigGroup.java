@@ -39,8 +39,8 @@ public interface ICustomPlayerConfigGroup extends IPlayerConfigParentGroup, ICus
 	@Override
 	ICustomPlayerConfigGroup lookupDefaultGroup(String id);
 
-	Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberInternal(@Nullable UUID id, @Nullable String name);
-	Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberLimitedInternal(@Nullable UUID id, @Nullable String name);
+	Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberInternal(@Nullable UUID id, @Nullable String name, boolean sync);
+	Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberLimitedInternal(@Nullable UUID id, @Nullable String name, boolean sync);
 	Optional<PlayerConfigGroupActionError> excludeMemberInternal(ICustomPlayerGroupMember member);
 
 	@Nonnull
@@ -53,14 +53,14 @@ public interface ICustomPlayerConfigGroup extends IPlayerConfigParentGroup, ICus
 	@Override
 	@SuppressWarnings("unchecked")
 	default Either<ICustomPlayerGroupMemberAPI, PlayerConfigGroupActionError> includeMember(@Nullable UUID id, @Nullable String name){
-		return (Either<ICustomPlayerGroupMemberAPI, PlayerConfigGroupActionError>)(Object)includeMemberInternal(id, name);
+		return (Either<ICustomPlayerGroupMemberAPI, PlayerConfigGroupActionError>)(Object)includeMemberInternal(id, name, true);
 	}
 
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
 	default Either<ICustomPlayerGroupMemberAPI, PlayerConfigGroupActionError> includeMemberLimited(@Nullable UUID id, @Nullable String name){
-		return (Either<ICustomPlayerGroupMemberAPI, PlayerConfigGroupActionError>)(Object)includeMemberLimitedInternal(id, name);
+		return (Either<ICustomPlayerGroupMemberAPI, PlayerConfigGroupActionError>)(Object)includeMemberLimitedInternal(id, name, true);
 	}
 
 	@Nonnull
@@ -76,6 +76,8 @@ public interface ICustomPlayerConfigGroup extends IPlayerConfigParentGroup, ICus
 	@Nonnull
 	@Override
 	Optional<PlayerConfigGroupActionError> includeGroup(@Nonnull String groupId);
+	@Nonnull
+	Optional<PlayerConfigGroupActionError> includeGroupInternal(@Nonnull String groupId, boolean sync);
 	@Nonnull
 	@Override
 	Optional<PlayerConfigGroupActionError> includeGroupLimited(@Nonnull String groupId);

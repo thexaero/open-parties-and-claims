@@ -53,6 +53,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.IPlayerPartySystemManager;
 import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManager;
 import xaero.pac.common.server.player.config.group.ServerPlayerConfigGroupManager;
@@ -87,43 +88,30 @@ public abstract class ConfigGroupCommand {
 	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
+		for (PlayerConfigType configType : PlayerConfigType.values()) {
+			Predicate<CommandSourceStack> prefixRequirement = configType.getWriteCommandRequirement();
+			Predicate<CommandSourceStack> mainRequirement = s -> true;
+			if(configType.readAndWriteReqsDiffer()) {
+				prefixRequirement = configType.getReadCommandRequirement();
+				mainRequirement = configType.getWriteCommandRequirement();
+			}
+
+			LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
+					.then(Commands.literal(configType.getCommandPrefix())
+					.requires(prefixRequirement).then(Commands.literal("player-groups")
+					.requires(mainRequirement)
+					.then(getMainCommandPart(configType))));
+			dispatcher.register(command);
+		}
+
 		Command<CommandSourceStack> regularExecutor = getExecutor(PlayerConfigType.PLAYER);
 
 		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX)
-				.then(Commands.literal("player-config").then(Commands.literal("player-groups")
-						.then(getMainCommandPart(regularExecutor, PlayerConfigType.PLAYER))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config")
+				.then(Commands.literal(PlayerConfigType.PLAYER.getCommandPrefix())
 				.then(Commands.literal("for")
-						.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
-						.then(Commands.argument("player", GameProfileArgument.gameProfile()).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(regularExecutor, PlayerConfigType.PLAYER))))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("player-config").then(Commands.literal("default")
-				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.DEFAULT_PLAYER)))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("server-claims-config")
-				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.SERVER))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("expired-claims-config")
-				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.EXPIRED))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("wilderness-config")
-				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions())).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.WILDERNESS))));
-		dispatcher.register(command);
-
-		command = Commands.literal(CommonCommandRegister.COMMAND_PREFIX).then(Commands.literal("party-claims-config")
-				.requires(getPartyClaimsRequirement(false)).then(Commands.literal("player-groups")
-						.then(getMainCommandPart(PlayerConfigType.PARTY_CLAIMS).requires(getPartyClaimsRequirement(true)))));
+				.requires(sourceStack -> Commands.LEVEL_GAMEMASTERS.check(sourceStack.permissions()))
+				.then(Commands.argument("player", GameProfileArgument.gameProfile()).then(Commands.literal("player-groups")
+				.then(getMainCommandPart(regularExecutor, PlayerConfigType.PLAYER))))));
 		dispatcher.register(command);
 	}
 
@@ -135,7 +123,11 @@ public abstract class ConfigGroupCommand {
 		RequiredArgumentBuilder<CommandSourceStack, ?> groupIdArgument = Commands.argument("group-id", StringArgumentType.word());
 		if(suggestExistingGroups) {
 			groupIdArgument = groupIdArgument.suggests((context, builder) -> {
-				ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+				ServerPlayer sourcePlayer = null;
+				try {
+					sourcePlayer = context.getSource().getPlayerOrException();
+				} catch (CommandSyntaxException e) {
+				}
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<
 						IServerClaimsManager<
@@ -145,6 +137,7 @@ public abstract class ConfigGroupCommand {
 								>,
 						IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
 						> serverData = ServerData.from(server);
+				UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 				UUID configPlayerUUID = null;
 				if (type == PlayerConfigType.PLAYER) {
 					configPlayerUUID = getConfigPlayerUUID(context, sourcePlayer, null);
@@ -152,7 +145,7 @@ public abstract class ConfigGroupCommand {
 						return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 				}
 				IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-						configPlayerUUID, sourcePlayer.getUUID(),
+						configPlayerUUID, callerId,
 						type, serverData.getPlayerConfigManager()
 				);
 				if(playerConfig == null)
@@ -185,7 +178,11 @@ public abstract class ConfigGroupCommand {
 
 	private Command<CommandSourceStack> getExecutor(PlayerConfigType type){
 		return context -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch (CommandSyntaxException e) {
+			}
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<
 					IServerClaimsManager<
@@ -200,6 +197,7 @@ public abstract class ConfigGroupCommand {
 			String inputGroupId = StringArgumentType.getString(context, "group-id");
 			String inputSecondaryArgument = secondaryArgumentName == null ?
 					null : StringArgumentType.getString(context, secondaryArgumentName);
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			UUID configPlayerUUID = null;
 			if(type == PlayerConfigType.PLAYER) {
 				configPlayerUUID = getConfigPlayerUUID(context, sourcePlayer, adaptiveLocalizer);
@@ -207,7 +205,7 @@ public abstract class ConfigGroupCommand {
 					return 0;
 			}
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(),
+					configPlayerUUID, callerId,
 					type, serverData.getPlayerConfigManager()
 			);
 			Either<Component, PlayerConfigGroupActionError> result = executeCommand(context, playerConfig, inputGroupId, inputSecondaryArgument);
@@ -215,14 +213,18 @@ public abstract class ConfigGroupCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, result.right().get().getCommandMessage()));
 				return 0;
 			}
-			sourcePlayer.sendSystemMessage(adaptiveLocalizer.getFor(sourcePlayer, result.left().get()));
+			context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(sourcePlayer, result.left().get()), true);
 			return 1;
 		};
 	}
 
 	protected SuggestionProvider<CommandSourceStack> getSecondaryArgumentSuggestor(PlayerConfigType type) {
 		return (context, builder) -> {
-			ServerPlayer sourcePlayer = context.getSource().getPlayerOrException();
+			ServerPlayer sourcePlayer = null;
+			try {
+				sourcePlayer = context.getSource().getPlayerOrException();
+			} catch (CommandSyntaxException e) {
+			}
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<
 					IServerClaimsManager<
@@ -232,6 +234,7 @@ public abstract class ConfigGroupCommand {
 							>,
 					IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>
 					> serverData = ServerData.from(server);
+			UUID callerId = sourcePlayer == null ? PlayerConfig.SERVER_CLAIM_UUID : sourcePlayer.getUUID();
 			UUID configPlayerUUID = null;
 			if (type == PlayerConfigType.PLAYER) {
 				configPlayerUUID = getConfigPlayerUUID(context, sourcePlayer, null);
@@ -239,7 +242,7 @@ public abstract class ConfigGroupCommand {
 					return SharedSuggestionProvider.suggest(Stream.empty(), builder);
 			}
 			IPlayerConfig playerConfig = ServerPlayerConfigUtils.getTargetConfig(
-					configPlayerUUID, sourcePlayer.getUUID(),
+					configPlayerUUID, callerId,
 					type, serverData.getPlayerConfigManager()
 			);
 			if(playerConfig == null)

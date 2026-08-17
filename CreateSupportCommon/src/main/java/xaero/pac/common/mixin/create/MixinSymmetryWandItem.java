@@ -43,7 +43,7 @@ public class MixinSymmetryWandItem {
 
 	@Inject(method = "apply", remap = false, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/equipment/symmetryWand/mirror/SymmetryMirror;process(Ljava/util/Map;)V"))
 	private static void onApply(Level world, ItemStack wand, Player player, BlockPos pos, BlockState block, CallbackInfo ci){
-		ServerCore.onCreateModSymmetryProcessed(world, player);
+		ServerCore.onCreateModSymmetryProcessed(world, player, true);
 	}
 
 	@ModifyArg(method = "remove", remap = false, at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/equipment/symmetryWand/mirror/SymmetryMirror;process(Ljava/util/Map;)V"))

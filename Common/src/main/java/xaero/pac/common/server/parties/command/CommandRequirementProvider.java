@@ -36,7 +36,9 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.command.CommandRequirementHelper;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.data.ServerPlayerData;
 
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
@@ -48,10 +50,14 @@ public class CommandRequirementProvider {
 				ServerPlayer player = c.getPlayerOrException();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(c.getServer());
 				IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-				IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(player.getUUID());
+				ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+				UUID contextPlayerId = serverPlayerData.getPartiesImpersonatedPlayerId();
+				if(contextPlayerId == null)
+					contextPlayerId = player.getUUID();
+				IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(contextPlayerId);
 				if(playerParty == null)
 					return false;
-				IPartyMember memberInfo = playerParty.getMemberInfo(player.getUUID());
+				IPartyMember memberInfo = playerParty.getMemberInfo(contextPlayerId);
 				return memberInfo == playerParty.getOwner() || casterMemberInfoRequirement.apply(playerParty, memberInfo);
 			} catch(CommandSyntaxException e) {
 				return false;
@@ -59,13 +65,17 @@ public class CommandRequirementProvider {
 		});
 	}
 	
-	public Predicate<CommandSourceStack> getNonMemberRequirement(Predicate<ServerPlayer> playerRequirement){
+	public Predicate<CommandSourceStack> getNonMemberRequirement(Predicate<ServerPlayer> playerRequirement, boolean ignoreImpersonation){
 		return CommandRequirementHelper.onServerThread(c -> {
 			try {
 				ServerPlayer player = c.getPlayerOrException();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(c.getServer());
 				IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-				IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(player.getUUID());
+				ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
+				UUID playerId = ignoreImpersonation ? null : serverPlayerData.getPartiesImpersonatedPlayerId();
+				if(playerId == null)
+					playerId = player.getUUID();
+				IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
 				return playerParty == null && playerRequirement.test(player);
 			} catch(CommandSyntaxException e) {
 				return false;

@@ -79,7 +79,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IClientClaimsManagerAPI</span><span class="extends-implements">
 extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></span></div>
-<div class="block">API for the claims manager on the client side</div>
+<div class="block">API for the claims manager on the client side.
+ <p>
+ Special claim owners can be found at <a href="../../../common/claims/api/SpecialClaimOwners.html" title="class in xaero.pac.common.claims.api"><code>SpecialClaimOwners</code></a>, such as for server claims.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -217,46 +219,56 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the maximum distance for claiming/forceloading a chunk allowed by the server.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/player/impersonation/api/IPlayerClaimImpersonationInfoAPI.html" title="interface in xaero.pac.common.claims.player.impersonation.api">IPlayerClaimImpersonationInfoAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerImpersonationInfo()" class="member-name-link">getPlayerImpersonationInfo</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the API for the player claim impersonation info for the local player.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets or creates the claim info instance for a player UUID.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="../player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfoStream()" class="member-name-link">getPlayerInfoStream</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="../player/api/IClientPlayerClaimInfoAPI.html" title="interface in xaero.pac.client.claims.player.api">IClientPlayerClaimInfoAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfoStream()" class="member-name-link">getPlayerInfoStream</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a stream of all player claim info.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPotentialClaimStateReflection()" class="member-name-link">getPotentialClaimStateReflection</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPotentialClaimStateReflection()" class="member-name-link">getPotentialClaimStateReflection</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a claim state of the same type (see <a href="../../../common/claims/player/api/IPlayerChunkClaimAPI.html#isSameClaimType(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)"><code>IPlayerChunkClaimAPI.isSameClaimType(IPlayerChunkClaimAPI)</code></a>) as
  would be placed in the world when the player requests a new claim.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRawClaimingMode()" class="member-name-link">getRawClaimingMode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRawClaimingMode()" class="member-name-link">getRawClaimingMode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the currently enabled claiming mode without automatically determining the effective one if none is set.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../common/claims/tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim change tracker that lets you register claim change listeners.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a player has claim info.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isAdminMode()" class="member-name-link">isAdminMode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isAdminMode()" class="member-name-link">isAdminMode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether the local client player is in admin mode.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isLoading()" class="member-name-link">isLoading</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isLoading()" class="member-name-link">isLoading</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether the initial server chunk claim sync is in progress.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isModeratorMode()" class="member-name-link">isModeratorMode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether the local client player is in moderator or admin mode.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3 method-summary-table-tab6"><code><a href="#isServerMode()" class="member-name-link">isServerMode</a>()</code></div>
@@ -273,32 +285,59 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  boolean&nbsp;byServer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaClaim(int, int, int, int, IClaimingModeAPI)</code></a></div>
+<div class="deprecation-comment">switch to <a href="#requestAreaClaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaClaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaClaim</a><wbr>(int&nbsp;left,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaClaim</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestAreaClaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaClaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a> instead
+ Requests new chunks claims over a specified area by the local client player using a specified claiming mode.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaClaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests new chunks claims over a specified area by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaForceload(int,int,int,int,boolean,boolean)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaForceload(int,int,int,int,boolean,boolean)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;enable,
  boolean&nbsp;byServer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="#requestAreaForceload(net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaForceload(ResourceLocation, int, int, int, int, boolean, IClaimingModeAPI)</code></a></div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;enable,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaForceload(int, int, int, int, boolean, IClaimingModeAPI)</code></a></div>
+<div class="deprecation-comment">Use <a href="#requestAreaForceload(net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaForceload(ResourceLocation, int, int, int, int, boolean, IClaimingModeAPI)</code></a> instead
+ Requests chunk (un)forceloads over a specified area by the local client player using a specified claiming mode.</div>
 </div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaForceload</a><wbr>(int&nbsp;left,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaForceload(net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
@@ -315,29 +354,53 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  boolean&nbsp;byServer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaUnclaim(int, int, int, int, IClaimingModeAPI)</code></a></div>
+<div class="deprecation-comment">switch to <a href="#requestAreaUnclaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaUnclaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaUnclaim</a><wbr>(int&nbsp;left,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaUnclaim</a><wbr>(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestAreaUnclaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaUnclaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a> instead
+ Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestAreaUnclaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestAreaUnclaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestClaim(int,int,boolean)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestClaim(int,int,boolean)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;byServer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="#requestClaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestClaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a></div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
+ int&nbsp;z,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestClaim(int, int, IClaimingModeAPI)</code></a></div>
+<div class="deprecation-comment">Use <a href="#requestClaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestClaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a> instead
+ Requests a new chunk claim by the local client player using a specified claiming mode.</div>
 </div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestClaim</a><wbr>(int&nbsp;x,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestClaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
  int&nbsp;z,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -350,28 +413,51 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  boolean&nbsp;byServer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestForceload(int, int, boolean, IClaimingModeAPI)</code></a></div>
+<div class="deprecation-comment">switch to <a href="#requestForceload(net.minecraft.resources.ResourceLocation,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestForceload(ResourceLocation, int, int, boolean, IClaimingModeAPI)</code></a></div>
 </div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestForceload</a><wbr>(int&nbsp;x,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestForceload</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;enable,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestForceload(net.minecraft.resources.ResourceLocation,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestForceload(ResourceLocation, int, int, boolean, IClaimingModeAPI)</code></a> instead
+ Requests a chunk (un)forceload by the local client player using a specified claiming mode.</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestForceload(net.minecraft.resources.ResourceLocation,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;enable,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests a chunk (un)forceload by the local client player using a specified claiming mode.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestUnclaim(int,int,boolean)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestUnclaim(int,int,boolean)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;byServer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">switch to <a href="#requestUnclaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestUnclaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a></div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
+ int&nbsp;z,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestUnclaim(int, int, IClaimingModeAPI)</code></a></div>
+<div class="deprecation-comment">Use <a href="#requestUnclaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestUnclaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a> instead
+ Requests a chunk unclaim by the local client player using a specified claiming mode.</div>
 </div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestUnclaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestUnclaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
  int&nbsp;z,
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -382,7 +468,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-xaero.pac.common.claims.api.IClaimsManagerAPI">Methods inherited from interface&nbsp;xaero.pac.common.claims.api.<a href="../../../common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></h3>
-<code><a href="../../../common/claims/api/IClaimsManagerAPI.html#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getDefaultName</a>, <a href="../../../common/claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getFullName</a></code></div>
+<code><a href="../../../common/claims/api/IClaimsManagerAPI.html#getDefaultName(java.util.UUID,boolean)">getDefaultName</a>, <a href="../../../common/claims/api/IClaimsManagerAPI.html#getDefaultName(java.util.UUID,boolean,boolean)">getDefaultName</a>, <a href="../../../common/claims/api/IClaimsManagerAPI.html#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getDefaultName</a>, <a href="../../../common/claims/api/IClaimsManagerAPI.html#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)">getDefaultName</a>, <a href="../../../common/claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)">getFullName</a>, <a href="../../../common/claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)">getFullName</a>, <a href="../../../common/claims/api/IClaimsManagerAPI.html#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation,boolean)">getFullName</a></code></div>
 </section>
 </li>
 </ul>
@@ -685,6 +771,17 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 </section>
 </li>
 <li>
+<section class="detail" id="isModeratorMode()">
+<h3>isModeratorMode</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isModeratorMode</span>()</div>
+<div class="block">Checks whether the local client player is in moderator or admin mode.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if the player is effectively in moderator mode, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="isAdminMode()">
 <h3>isAdminMode</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isAdminMode</span>()</div>
@@ -758,7 +855,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  int&nbsp;z,
  boolean&nbsp;byServer)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestClaim(int, int, IClaimingModeAPI)</code></a>
+<div class="deprecation-comment">switch to <a href="#requestClaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestClaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a>
  <p>
  Requests a new chunk claim by the local client player, party or by the server.
  <p>
@@ -782,7 +879,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  int&nbsp;z,
  boolean&nbsp;byServer)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestUnclaim(int, int, IClaimingModeAPI)</code></a>
+<div class="deprecation-comment">switch to <a href="#requestUnclaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestUnclaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a>
  <p>
  Requests a chunk unclaim by the local client player or by the server.
  <p>
@@ -807,7 +904,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  boolean&nbsp;enable,
  boolean&nbsp;byServer)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestForceload(int, int, boolean, IClaimingModeAPI)</code></a>
+<div class="deprecation-comment">switch to <a href="#requestForceload(net.minecraft.resources.ResourceLocation,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestForceload(ResourceLocation, int, int, boolean, IClaimingModeAPI)</code></a>
  <p>
  Requests a chunk (un)forceload by the local client player or by the server.
  <p>
@@ -834,7 +931,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  int&nbsp;bottom,
  boolean&nbsp;byServer)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaClaim(int, int, int, int, IClaimingModeAPI)</code></a>
+<div class="deprecation-comment">switch to <a href="#requestAreaClaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaClaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a>
  <p>
  Requests new chunks claims over a specified area by the local client player or by the server.
  <p>
@@ -862,7 +959,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  int&nbsp;bottom,
  boolean&nbsp;byServer)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaUnclaim(int, int, int, int, IClaimingModeAPI)</code></a>
+<div class="deprecation-comment">switch to <a href="#requestAreaUnclaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaUnclaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a>
  <p>
  Requests chunk unclaims over a specified area by the local client player or by the server.
  <p>
@@ -891,7 +988,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  boolean&nbsp;enable,
  boolean&nbsp;byServer)</span></div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">switch to <a href="#requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaForceload(int, int, int, int, boolean, IClaimingModeAPI)</code></a>
+<div class="deprecation-comment">switch to <a href="#requestAreaForceload(net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaForceload(ResourceLocation, int, int, int, int, boolean, IClaimingModeAPI)</code></a>
  <p>
  Requests chunk (un)forceloads over a specified area by the local client player or by the server.
  <p>
@@ -913,15 +1010,19 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <li>
 <section class="detail" id="requestClaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
 <h3>requestClaim</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestClaim</span><wbr><span class="parameters">(int&nbsp;x,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestClaim</span><wbr><span class="parameters">(int&nbsp;x,
  int&nbsp;z,
  @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
-<div class="block">Requests a new chunk claim by the local client player using a specified claiming mode.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestClaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestClaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a> instead
+ Requests a new chunk claim by the local client player using a specified claiming mode.
  <p>
  Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
  <p>
  You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>x</code> - the X coordinate of the chunk</dd>
@@ -933,15 +1034,19 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <li>
 <section class="detail" id="requestUnclaim(int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
 <h3>requestUnclaim</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestUnclaim</span><wbr><span class="parameters">(int&nbsp;x,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestUnclaim</span><wbr><span class="parameters">(int&nbsp;x,
  int&nbsp;z,
  @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
-<div class="block">Requests a chunk unclaim by the local client player using a specified claiming mode.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestUnclaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestUnclaim(ResourceLocation, int, int, IClaimingModeAPI)</code></a> instead
+ Requests a chunk unclaim by the local client player using a specified claiming mode.
  <p>
  Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
  <p>
  You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>x</code> - the X coordinate of the chunk</dd>
@@ -953,16 +1058,20 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <li>
 <section class="detail" id="requestForceload(int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
 <h3>requestForceload</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestForceload</span><wbr><span class="parameters">(int&nbsp;x,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestForceload</span><wbr><span class="parameters">(int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;enable,
  @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
-<div class="block">Requests a chunk (un)forceload by the local client player using a specified claiming mode.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestForceload(net.minecraft.resources.ResourceLocation,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestForceload(ResourceLocation, int, int, boolean, IClaimingModeAPI)</code></a> instead
+ Requests a chunk (un)forceload by the local client player using a specified claiming mode.
  <p>
  Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
  <p>
  You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>x</code> - the X coordinate of the chunk</dd>
@@ -975,17 +1084,21 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <li>
 <section class="detail" id="requestAreaClaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
 <h3>requestAreaClaim</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaClaim</span><wbr><span class="parameters">(int&nbsp;left,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaClaim</span><wbr><span class="parameters">(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
-<div class="block">Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestAreaClaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaClaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a> instead
+ Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
  <p>
  Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
  <p>
  You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>left</code> - the lowest X coordinate of the area</dd>
@@ -999,17 +1112,21 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <li>
 <section class="detail" id="requestAreaUnclaim(int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
 <h3>requestAreaUnclaim</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaUnclaim</span><wbr><span class="parameters">(int&nbsp;left,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaUnclaim</span><wbr><span class="parameters">(int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
  @Nullable
  <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
-<div class="block">Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestAreaUnclaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaUnclaim(ResourceLocation, int, int, int, int, IClaimingModeAPI)</code></a> instead
+ Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.
  <p>
  Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
  <p>
  You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>left</code> - the lowest X coordinate of the area</dd>
@@ -1023,7 +1140,164 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <li>
 <section class="detail" id="requestAreaForceload(int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
 <h3>requestAreaForceload</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaForceload</span><wbr><span class="parameters">(int&nbsp;left,
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaForceload</span><wbr><span class="parameters">(int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ boolean&nbsp;enable,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="#requestAreaForceload(net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)"><code>requestAreaForceload(ResourceLocation, int, int, int, int, boolean, IClaimingModeAPI)</code></a> instead
+ Requests chunk (un)forceloads over a specified area by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>left</code> - the lowest X coordinate of the area</dd>
+<dd><code>top</code> - the lowest Z coordinate of the area</dd>
+<dd><code>right</code> - the highest X coordinate of the area</dd>
+<dd><code>bottom</code> - the highest Z coordinate of the area</dd>
+<dd><code>enable</code> - true to forceload the chunks, false to unforceload</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestClaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestClaim</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestClaim</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Requests a new chunk claim by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>x</code> - the X coordinate of the chunk</dd>
+<dd><code>z</code> - the Z coordinate of the chunk</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestUnclaim(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestUnclaim</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestUnclaim</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Requests a chunk unclaim by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>x</code> - the X coordinate of the chunk</dd>
+<dd><code>z</code> - the Z coordinate of the chunk</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestForceload(net.minecraft.resources.ResourceLocation,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestForceload</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestForceload</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;enable,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Requests a chunk (un)forceload by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>x</code> - the X coordinate of the chunk</dd>
+<dd><code>z</code> - the Z coordinate of the chunk</dd>
+<dd><code>enable</code> - true to forceload the chunk, false to unforceload</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestAreaClaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestAreaClaim</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaClaim</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the area, not null</dd>
+<dd><code>left</code> - the lowest X coordinate of the area</dd>
+<dd><code>top</code> - the lowest Z coordinate of the area</dd>
+<dd><code>right</code> - the highest X coordinate of the area</dd>
+<dd><code>bottom</code> - the highest Z coordinate of the area</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestAreaUnclaim(net.minecraft.resources.ResourceLocation,int,int,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestAreaUnclaim</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaUnclaim</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;left,
+ int&nbsp;top,
+ int&nbsp;right,
+ int&nbsp;bottom,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Requests chunk unclaims over a specified area by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the area, not null</dd>
+<dd><code>left</code> - the lowest X coordinate of the area</dd>
+<dd><code>top</code> - the lowest Z coordinate of the area</dd>
+<dd><code>right</code> - the highest X coordinate of the area</dd>
+<dd><code>bottom</code> - the highest Z coordinate of the area</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestAreaForceload(net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestAreaForceload</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestAreaForceload</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;left,
  int&nbsp;top,
  int&nbsp;right,
  int&nbsp;bottom,
@@ -1037,6 +1311,7 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
  You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the area, not null</dd>
 <dd><code>left</code> - the lowest X coordinate of the area</dd>
 <dd><code>top</code> - the lowest Z coordinate of the area</dd>
 <dd><code>right</code> - the highest X coordinate of the area</dd>
@@ -1158,6 +1433,18 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the UUID of the local player's party owner, null before synced or when not in party</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerImpersonationInfo()">
+<h3>getPlayerImpersonationInfo</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../../../common/claims/player/impersonation/api/IPlayerClaimImpersonationInfoAPI.html" title="interface in xaero.pac.common.claims.player.impersonation.api">IPlayerClaimImpersonationInfoAPI</a></span>&nbsp;<span class="element-name">getPlayerImpersonationInfo</span>()</div>
+<div class="block">Gets the API for the player claim impersonation info for the local player.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>API for getting info about player claim impersonation by the local player, not null</dd>
 </dl>
 </section>
 </li>

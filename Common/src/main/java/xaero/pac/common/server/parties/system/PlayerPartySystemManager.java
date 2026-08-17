@@ -238,6 +238,11 @@ public final class PlayerPartySystemManager implements IPlayerPartySystemManager
 		return primarySystem.getColor(party);
 	}
 
+	@Override
+	public String getPrimarySystemName(){
+		return systemNames.get(primarySystem);
+	}
+
 	public static final class Builder {
 
 		private final MapFactory mapFactory;

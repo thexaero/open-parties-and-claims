@@ -102,14 +102,14 @@ public class CustomPlayerConfigGroup extends CachedPlayerConfigParentGroup imple
 	}
 
 	@Override
-	public Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberInternal(UUID id, String name) {
+	public Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberInternal(UUID id, String name, boolean sync) {
 		if(data.playerIdIsIncluded(id) || data.playerNameIsIncluded(name))
 			return Either.right(PlayerConfigGroupActionError.MEMBER_ALREADY_INCLUDED);
 		if(name != null && !CustomPlayerConfigGroupData.isValidPlayerName(name))
 			return Either.right(PlayerConfigGroupActionError.INVALID_PLAYER_NAME);
 		CustomPlayerGroupMember member = new CustomPlayerGroupMember(id, name);
 		data.includeMember(member);
-		if(storageConfig.getPlayerGroups().isLoaded())
+		if(sync && storageConfig.getPlayerGroups().isLoaded())
 			storageConfig.getManager().getSynchronizer().syncGroupMemberUpdate(
 					null, storageConfig, data.getId(),
 					PlayerConfigGroupMemberPacket.Action.INCLUDE, id, name
@@ -122,10 +122,10 @@ public class CustomPlayerConfigGroup extends CachedPlayerConfigParentGroup imple
 	}
 
 	@Override
-	public Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberLimitedInternal(@Nullable UUID id, @Nullable String name) {
+	public Either<ICustomPlayerGroupMember, PlayerConfigGroupActionError> includeMemberLimitedInternal(@Nullable UUID id, @Nullable String name, boolean sync) {
 		if(storageConfig.getPlayerGroups().getUsedSpace() >= storageConfig.getPlayerGroups().getGroupSpace())
 			return Either.right(PlayerConfigGroupActionError.OUT_OF_SPACE);
-		return includeMemberInternal(id, name);
+		return includeMemberInternal(id, name, sync);
 	}
 
 	@Override
@@ -170,12 +170,18 @@ public class CustomPlayerConfigGroup extends CachedPlayerConfigParentGroup imple
 	@Nonnull
 	@Override
 	public Optional<PlayerConfigGroupActionError> includeGroup(@Nonnull String groupId) {
+		return includeGroupInternal(groupId, true);
+	}
+
+	@Nonnull
+	@Override
+	public Optional<PlayerConfigGroupActionError> includeGroupInternal(@Nonnull String groupId, boolean sync) {
 		if(!CustomPlayerConfigGroupData.isValidId(groupId))
 			return Optional.of(PlayerConfigGroupActionError.INVALID_GROUP_ID);
 		if(data.groupIdIsIncluded(groupId))
 			return Optional.of(PlayerConfigGroupActionError.GROUP_ALREADY_INCLUDED);
 		data.includeGroup(groupId);
-		if(storageConfig.getPlayerGroups().isLoaded())
+		if(sync && storageConfig.getPlayerGroups().isLoaded())
 			storageConfig.getManager().getSynchronizer().syncGroupGroupUpdate(
 					null, storageConfig, data.getId(), PlayerConfigGroupGroupPacket.Action.INCLUDE, groupId
 			);

@@ -73,4 +73,8 @@ public interface IClientPlayerConfigGroupManager extends IClientPlayerConfigGrou
 	@Override
 	int getGroupSpace();
 
+	int getUsedSpace();
+
+	int getCustomGroupCount();
+
 }

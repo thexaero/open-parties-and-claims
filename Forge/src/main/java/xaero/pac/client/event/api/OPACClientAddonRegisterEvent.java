@@ -27,20 +27,32 @@ public class OPACClientAddonRegisterEvent extends MutableEvent {
 
 	public static final EventBus<OPACClientAddonRegisterEvent> BUS = EventBus.create(OPACClientAddonRegisterEvent.class);
 
-	private final IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI;
-	private final IClaimsManagerClaimResultTrackerRegisterAPI claimsManagerClaimResultTrackerAPI;
+	private final OPACClientAddonRegisterEventContext context;
 
-	public OPACClientAddonRegisterEvent(IClaimsManagerTrackerRegisterAPI claimsManagerTrackerAPI, IClaimsManagerClaimResultTrackerRegisterAPI claimsManagerClaimResultTrackerAPI) {
-		this.claimsManagerTrackerAPI = claimsManagerTrackerAPI;
-		this.claimsManagerClaimResultTrackerAPI = claimsManagerClaimResultTrackerAPI;
+	public OPACClientAddonRegisterEvent(OPACClientAddonRegisterEventContext context) {
+		this.context = context;
 	}
 
+	/**
+	 * @deprecated Use {@link #getContext()} instead
+	 * @return the claims manager tracker API
+	 */
+	@Deprecated
 	public IClaimsManagerTrackerRegisterAPI getClaimsManagerTrackerAPI() {
-		return claimsManagerTrackerAPI;
+		return context.getClaimsManagerTrackerAPI();
 	}
 
+	/**
+	 * @deprecated Use {@link #getContext()} instead
+	 * @return the claim result tracker API
+	 */
+	@Deprecated
 	public IClaimsManagerClaimResultTrackerRegisterAPI getClaimsManagerClaimResultTrackerAPI() {
-		return claimsManagerClaimResultTrackerAPI;
+		return context.getClaimsManagerClaimResultTrackerAPI();
+	}
+
+	public OPACClientAddonRegisterEventContext getContext() {
+		return context;
 	}
 
 }

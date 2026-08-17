@@ -18,11 +18,10 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.Command;
 import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.server.command.AbstractChunkCommand;
 import xaero.pac.common.server.config.ServerConfig;
 
@@ -35,23 +34,31 @@ public class ClaimsForceloadCommand extends AbstractChunkCommand {
 	public ClaimsForceloadCommand(boolean add, ClaimingMode mode) {
 		super(
 				ClaimsCommandRegister.COMMAND_PREFIX, add,
-				mode == null ? null : mode.getId(), "forceload", "unforceload"
+				mode == null || mode.canBeImpersonated(),
+				mode == null ? null : mode.getId(), "forceload", "unforceload",
+				null, null,
+				true
 		);
 		this.mode = mode;
 	}
 
 	@Override
-	protected ArgumentBuilder<CommandSourceStack, ?> createChunkCommand(
-			ArgumentBuilder<CommandSourceStack, ?> builder,
+	protected Command<CommandSourceStack> createChunkCommand(
 			boolean shouldApply,
+			boolean another,
 			boolean opForce
 	) {
-		return ClaimsForceloadCommands.createForceloadCommand(builder, shouldApply, mode, opForce);
+		return ClaimsForceloadCommands.createForceloadCommand(shouldApply, mode, another, opForce);
 	}
 
 	@Override
 	protected ModConfigSpec.BooleanValue getFeatureConfigOption() {
 		return ServerConfig.CONFIG.claimsEnabled;
+	}
+
+	@Override
+	protected Predicate<CommandSourceStack> getImpersonationRequirement() {
+		return ClaimsClaimCommands.getImpersonationRequirement();
 	}
 
 	@Override

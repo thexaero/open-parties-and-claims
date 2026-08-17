@@ -50,7 +50,7 @@ public abstract class ServerSpreadoutTaskHandler<T extends IServerSpreadoutTask<
 
 	protected abstract Iterator<H> getTaskHolderIterator(IServerData<?,?> serverData);
 
-	protected void handleTasksToAdd(List<T> tasksToAdd){
+	protected void handleTasksToAdd(List<T> tasksToAdd, IServerData<?,?> serverData){
 	}
 
 	public void onTick(IServerData<?,?> serverDataA){
@@ -81,7 +81,7 @@ public abstract class ServerSpreadoutTaskHandler<T extends IServerSpreadoutTask<
 			if(canDropTasks() && task.shouldDrop(serverData, taskHolder))
 				taskHolderIterator.remove();
 		}
-		handleTasksToAdd(tasksToAdd);
+		handleTasksToAdd(tasksToAdd, serverData);
 	}
 
 	protected boolean canDropTasks(){

@@ -112,6 +112,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">A constructor for internal usage</div>
 </div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(C,xaero.pac.common.claims.result.api.ClaimResult.Type,net.minecraft.network.chat.Component)" class="member-name-link">ClaimResult</a><wbr>(<a href="ClaimResult.html" title="type parameter in ClaimResult">C</a>&nbsp;claimResult,
+ <a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a>&nbsp;resultType,
+ net.minecraft.network.chat.Component&nbsp;customReason)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">A constructor for internal usage</div>
+</div>
 </div>
 </section>
 </li>
@@ -130,6 +136,16 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getClaimResult()" class="member-name-link">getClaimResult</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the claim state associated with this result where relevant.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCustomReason()" class="member-name-link">getCustomReason</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the text Component with the custom reason given by an addon for this result.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessage()" class="member-name-link">getMessage</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the display message for this result, applying the custom reason given by an addon when it exists.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getResultType()" class="member-name-link">getResultType</a>()</code></div>
@@ -168,6 +184,24 @@ loadScripts(document, 'script');</script>
 </dl>
 </section>
 </li>
+<li>
+<section class="detail" id="&lt;init&gt;(C,xaero.pac.common.claims.result.api.ClaimResult.Type,net.minecraft.network.chat.Component)">
+<h3 id="&lt;init&gt;(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,xaero.pac.common.claims.result.api.ClaimResult.Type,net.minecraft.network.chat.Component)">ClaimResult</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ClaimResult</span><wbr><span class="parameters">(@Nullable
+ <a href="ClaimResult.html" title="type parameter in ClaimResult">C</a>&nbsp;claimResult,
+ @Nonnull
+ <a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a>&nbsp;resultType,
+ @Nullable
+ net.minecraft.network.chat.Component&nbsp;customReason)</span></div>
+<div class="block">A constructor for internal usage</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimResult</code> - the claim state where relevant</dd>
+<dd><code>resultType</code> - the result type</dd>
+<dd><code>customReason</code> - the custom reason given by an addon for this result, can be null</dd>
+</dl>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -197,6 +231,30 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the type of this result, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCustomReason()">
+<h3>getCustomReason</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getCustomReason</span>()</div>
+<div class="block">Gets the text Component with the custom reason given by an addon for this result.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the custom reason Component, null if there isn't one</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getMessage()">
+<h3>getMessage</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getMessage</span>()</div>
+<div class="block">Gets the display message for this result, applying the custom reason given by an addon when it exists.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the display message for this result</dd>
 </dl>
 </section>
 </li>
