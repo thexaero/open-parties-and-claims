@@ -85,7 +85,7 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		PlayerConfigStringableOptionClientStorage<T> result = (PlayerConfigStringableOptionClientStorage<T>) options.get(option);
 		if(result == null){
 			PlayerConfigStringableOptionClientStorage.Builder<T> builder = PlayerConfigStringableOptionClientStorage.Builder.begin();
-			builder.setOption(option).setValue(getDefaultValue(option));
+			builder.setOption(option).setConfig(this).setValue(getDefaultValue(option));
 			options.put(option, result = builder.build());
 		}
 		return result;

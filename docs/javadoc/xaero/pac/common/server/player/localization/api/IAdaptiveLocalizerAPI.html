@@ -120,16 +120,18 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getFor(net.minecraft.server.level.ServerPlayer,java.lang.String,java.lang.Object...)">
 <h3>getFor</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type">net.minecraft.network.chat.MutableComponent</span>&nbsp;<span class="element-name">getFor</span><wbr><span class="parameters">(@Nonnull
+</span><span class="return-type">net.minecraft.network.chat.MutableComponent</span>&nbsp;<span class="element-name">getFor</span><wbr><span class="parameters">(@Nullable
  net.minecraft.server.level.ServerPlayer&nbsp;player,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  @Nonnull
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
-<div class="block">Gets a text component for translatable text adapted to a specified player.</div>
+<div class="block">Gets a text component for translatable text adapted to a specified player.
+ <p>
+ If the player is null it returns a server-localized component readable even by players without the client mod.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>player</code> - the player to read the text component, not null</dd>
+<dd><code>player</code> - the player to read the text component, can be null</dd>
 <dd><code>key</code> - the key of the translated line, not null</dd>
 <dd><code>args</code> - the arguments to format the translated line with, optional</dd>
 <dt>Returns:</dt>
@@ -141,7 +143,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getFor(net.minecraft.server.level.ServerPlayer,net.minecraft.network.chat.Component)">
 <h3>getFor</h3>
 <div class="member-signature"><span class="annotations">@Nonnull
-</span><span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getFor</span><wbr><span class="parameters">(@Nonnull
+</span><span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">getFor</span><wbr><span class="parameters">(@Nullable
  net.minecraft.server.level.ServerPlayer&nbsp;player,
  @Nonnull
  net.minecraft.network.chat.Component&nbsp;component)</span></div>
@@ -149,10 +151,12 @@ loadScripts(document, 'script');</script>
  <p>
  Only ever converts translatable text components and always returns anything else unchanged.
  The arguments of a translatable text component are also converted if necessary.
- Does not convert the siblings of the text component.</div>
+ Does not convert the siblings of the text component.
+ <p>
+ If the player is null it returns a server-localized component readable even by players without the client mod.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>player</code> - the player to read the text component, not null</dd>
+<dd><code>player</code> - the player to read the text component, can be null</dd>
 <dd><code>component</code> - the text component to adapt to the player, not null</dd>
 <dt>Returns:</dt>
 <dd>the converted text component or the unchanged input component if no conversion was necessary, not null</dd>

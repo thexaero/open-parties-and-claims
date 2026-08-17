@@ -179,6 +179,10 @@ public abstract class CustomPlayerConfigGroupDataManager<G extends ICustomPlayer
 		return usedSpace;
 	}
 
+	public int getCustomGroupCount(){
+		return customGroups.size();
+	}
+
 	@Override
 	public abstract int getMaxGroups();
 

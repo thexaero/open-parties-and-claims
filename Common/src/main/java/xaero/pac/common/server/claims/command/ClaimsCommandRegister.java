@@ -27,7 +27,7 @@ import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 
 public class ClaimsCommandRegister {
 	
-	public static final String COMMAND_PREFIX = "openpac-claims";
+	public static final String COMMAND_PREFIX = "oclaims";
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
 		new ClaimsNonAllyModeCommand().register(dispatcher, environment);
@@ -39,7 +39,13 @@ public class ClaimsCommandRegister {
 			ClaimingMode claimingMode = (ClaimingMode) claimingModeAPI;
 			registerForClaimingMode(claimingMode, dispatcher, environment);
 		}
+		new ClaimsModeratorModeCommand().register(dispatcher, environment);
 		new ClaimsAdminModeCommand().register(dispatcher, environment);
+		new ClaimsImpersonateCommand().register(dispatcher, environment);
+		new ClaimsTeleportCommand().register(dispatcher, environment);
+		new ClaimsClearCommand().register(dispatcher, environment);
+		new ClaimsTransferCommand().register(dispatcher, environment);
+		new ClaimsAreaClaimActionInterruptCommand().register(dispatcher, environment);
 	}
 
 	private void registerForClaimingMode(

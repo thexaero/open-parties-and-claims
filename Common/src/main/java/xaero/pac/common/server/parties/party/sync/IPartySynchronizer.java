@@ -29,6 +29,7 @@ public interface IPartySynchronizer
 	//internal api
 	
 	void syncToClient(ServerPlayer player, P party);
+	void syncToClientIncludingPrimarySwitch(ServerPlayer player, P party);
 	void syncToPartyAndAlliersUpdateName(P party, String value);
 	public IPartyMemberDynamicInfoSynchronizer<P> getOftenSyncedInfoSync();
 	public void onServerTick();

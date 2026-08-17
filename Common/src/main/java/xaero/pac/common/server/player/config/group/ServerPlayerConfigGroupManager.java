@@ -39,9 +39,9 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.group.custom.CustomPlayerConfigGroup;
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 import xaero.pac.common.server.player.config.group.custom.io.PlayerConfigGroupManagerIO;
@@ -77,61 +77,61 @@ public class ServerPlayerConfigGroupManager extends CustomPlayerConfigGroupDataM
 	}
 
 	private void setIo(PlayerConfigGroupManagerIO io) {
-		if(this.io != null)
+		if (this.io != null)
 			throw new IllegalStateException();
 		this.io = io;
 	}
 
 	@SuppressWarnings("unchecked")
 	public Iterable<ICustomPlayerConfigGroup> getAllCustom() {
-		return (Iterable<ICustomPlayerConfigGroup>)(Object)customGroupsChain;
+		return (Iterable<ICustomPlayerConfigGroup>) (Object) customGroupsChain;
 	}
 
-	public ICustomPlayerConfigGroup getCustom(@Nonnull String id){
+	public ICustomPlayerConfigGroup getCustom(@Nonnull String id) {
 		String idLowerCase = id.toLowerCase();
 		String idCaseCache = customGroupIdCaseCache.get(idLowerCase);
-		if(idCaseCache == null)
+		if (idCaseCache == null)
 			return null;
 		return customGroups.get(idCaseCache);
 	}
 
-	public IPlayerConfigGroup getBuiltIn(String id){
+	public IPlayerConfigGroup getBuiltIn(String id) {
 		return BuiltInPlayerConfigGroups.get(id);
 	}
 
-	public IPlayerConfigGroup get(@Nonnull String id){
+	public IPlayerConfigGroup get(@Nonnull String id) {
 		return get(id, true);
 	}
 
-	public IPlayerConfigGroup getUnwrapped(@Nonnull String id){
+	public IPlayerConfigGroup getUnwrapped(@Nonnull String id) {
 		return get(id, false);
 	}
 
-	public IPlayerConfigGroup get(String id, boolean useDefaultGroupWrappers){
+	public IPlayerConfigGroup get(String id, boolean useDefaultGroupWrappers) {
 		IPlayerConfigGroup builtIn = getBuiltIn(id);
-		if(builtIn != null)
+		if (builtIn != null)
 			return builtIn;
 		CustomPlayerConfigGroup localCustomGroup = getData(id);
-		if(localCustomGroup != null)
+		if (localCustomGroup != null)
 			return localCustomGroup;
 		IPlayerConfig defaultConfig = config.getManager().getDefaultConfig();
-		if(defaultConfig == config)
+		if (defaultConfig == config)
 			return null;
 		ICustomPlayerConfigGroup defaultConfigGroup = defaultConfig.getPlayerGroups().getCustom(id);
-		if(!useDefaultGroupWrappers)
+		if (!useDefaultGroupWrappers)
 			return defaultConfigGroup;
-		if(defaultConfigGroup == null)
+		if (defaultConfigGroup == null)
 			return null;
 		DefaultPlayerConfigGroupWrapper wrapper = defaultConfigGroupWrappers.get(id);
-		if(wrapper != null)
+		if (wrapper != null)
 			return wrapper;
 		defaultConfigGroupWrappers.put(id, wrapper = new DefaultPlayerConfigGroupWrapper(config, defaultConfigGroup));
 		return wrapper;
 	}
 
-	public Either<ICustomPlayerConfigGroup, PlayerConfigGroupActionError> addOrGetCustom(String id){
+	public Either<ICustomPlayerConfigGroup, PlayerConfigGroupActionError> addOrGetCustom(String id) {
 		ICustomPlayerConfigGroup result = getData(id);
-		if(result != null)
+		if (result != null)
 			return Either.left(result);
 		return addData(id).mapBoth(g -> g, e -> e);
 	}
@@ -142,21 +142,30 @@ public class ServerPlayerConfigGroupManager extends CustomPlayerConfigGroupDataM
 
 	@Override
 	public Either<ICustomPlayerConfigGroup, PlayerConfigGroupActionError> addCustomLimitedInternal(String id) {
-		if(customGroups.size() >= getMaxGroups())
+		if (customGroups.size() >= getMaxGroups())
 			return Either.right(PlayerConfigGroupActionError.GROUP_COUNT_LIMIT);
 		return addCustomInternal(id);
 	}
 
 	@Override
 	public Either<CustomPlayerConfigGroup, PlayerConfigGroupActionError> addData(String id) {
+		return addDataInternal(id, true);
+	}
+
+	private Either<CustomPlayerConfigGroup, PlayerConfigGroupActionError> addDataInternal(String id, boolean sync) {
 		Either<CustomPlayerConfigGroup, PlayerConfigGroupActionError> result = super.addData(id);
-		if(result.left().isPresent()){
+		if (result.left().isPresent()) {
 			customGroupsChain.add(result.left().get());
-			if(loaded)
+			if (sync && loaded)
 				config.getManager().getSynchronizer().syncGroupExistence(null, config, true, id);
 			setSaveNeeded();
 		}
 		return result;
+	}
+
+	@Override
+	public Either<ICustomPlayerConfigGroup, PlayerConfigGroupActionError> addCustom(String id, boolean sync) {
+		return addDataInternal(id, sync).mapBoth(g -> g, e -> e);
 	}
 
 	@Nonnull
@@ -282,12 +291,14 @@ public class ServerPlayerConfigGroupManager extends CustomPlayerConfigGroupDataM
 	}
 
 	private int getBaseLimit(ModConfigSpec.IntValue serverConfigOption, PermissionNode<Integer> permission){
+		if(config.getPlayerId() == null)//never happens as of writing
+			return serverConfigOption.get();
 		MinecraftServer server = config.getManager().getServer();
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
 		return PermissionUtils.getOverriddenServerConfigInt(
-				config.getPlayerId(), server, null, serverConfigOption,
-				permission, serverData.getPlayerPermissionSystemManager().getUsedSystem()
+				config.getPlayerId(), server, null, config,
+				serverConfigOption, permission, serverData.getPlayerPermissionSystemManager().getUsedSystem()
 		);
 	}
 

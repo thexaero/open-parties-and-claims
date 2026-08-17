@@ -20,6 +20,7 @@ package xaero.pac.common.server.claims.protection;
 
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.util.IdentifierUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class WildcardResolver {
 	private static final Function<String, String> WILDCARD_TO_REGEX = s -> WILDCARD_TO_REGEX_REPLACE_PATTERN.matcher(s).replaceAll("\\\\$1").replace("*", ".*");
 
 	public <T> List<T> resolveResourceLocations(Function<ResourceLocation, T> getter, Iterable<T> iterable, Function<T, ResourceLocation> keyGetter, String string){
-		boolean validResourceLocation = isValidResourceLocation(string) && !containsWildcardCharacters(string);//additional char check because of mods (e.g. AAA Particles)
+		boolean validResourceLocation = IdentifierUtils.isValidIdentifier(string) && !containsWildcardCharacters(string);//additional char check because of mods (e.g. AAA Particles)
 		if(validResourceLocation) {
 			T object = getter.apply(ResourceLocation.parse(string));
 			return object == null ? List.of() : List.of(object);
@@ -56,16 +57,6 @@ public class WildcardResolver {
 			return null;
 		}
 		return result;
-	}
-
-	private boolean isValidResourceLocation(String string){
-		int separatorIndex = string.indexOf(':');
-		String path = string.substring(separatorIndex + 1);
-		if(!ResourceLocation.isValidPath(path))
-			return false;
-		if(separatorIndex == -1)
-			return true;
-		return ResourceLocation.isValidNamespace(string.substring(0, separatorIndex));
 	}
 
 	private boolean containsWildcardCharacters(String string){
