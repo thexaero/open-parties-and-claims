@@ -163,7 +163,7 @@ public class PlayerConfig
 		return playerGroups;
 	}
 
-	public <T> void forceSet(PlayerConfigOptionSpec<T> option, T value) {
+	public <T> void forceSet(IPlayerConfigOptionSpecAPI<T> option, T value) {
 		if(value == null)
 			getStorage().remove(option.getPath());
 		else
