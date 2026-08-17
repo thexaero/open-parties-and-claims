@@ -19,7 +19,6 @@
 package xaero.pac.common.server.claims.command;
 
 import com.electronwill.nightconfig.core.Config;
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -33,9 +32,12 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -67,6 +69,7 @@ import xaero.pac.common.server.player.config.group.IServerPlayerConfigGroupManag
 import xaero.pac.common.server.player.config.group.custom.ICustomPlayerConfigGroup;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -79,7 +82,7 @@ public class ClaimsTransferCommand {
 				return true;
 			try {
 				ServerPlayer player = context.getPlayerOrException();
-				MinecraftServer server = player.getServer();
+				MinecraftServer server = ServerLevelHelper.getServer(player);
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 						serverData = ServerData.from(server);
 				return serverData.getServerClaimsManager().getPermissionHandler().playerHasAdminModePermission(player);
@@ -90,7 +93,7 @@ public class ClaimsTransferCommand {
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {
 			PlayerList playerlist = context.getSource().getServer().getPlayerList();
 			return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream()
-					.map(targetPlayer -> targetPlayer.getGameProfile().getName()), builder);
+					.map(targetPlayer -> targetPlayer.nameAndId().name()), builder);
 		};
 
 		LiteralArgumentBuilder<CommandSourceStack> onlineNoConfirmCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
@@ -135,20 +138,20 @@ public class ClaimsTransferCommand {
 		return context -> {
 			ServerPlayer callerPlayer = context.getSource().getPlayerOrException();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(callerPlayer.getServer());
+					serverData = ServerData.from(ServerLevelHelper.getServer(callerPlayer));
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			GameProfile transferTo = null;
+			NameAndId transferTo = null;
 			try {
 				if(accept){
-					transferTo = callerPlayer.getGameProfile();
+					transferTo = callerPlayer.nameAndId();
 				} else if(profile) {
-					Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
+					Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 					if (profiles.size() == 1)
 						transferTo = profiles.iterator().next();
 				} else {
 					ServerPlayer inputPlayer = EntityArgument.getPlayer(context, "player");
 					if(inputPlayer != null)
-						transferTo = inputPlayer.getGameProfile();
+						transferTo = inputPlayer.nameAndId();
 					else {
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_online_player_not_found"));
 						return 0;
@@ -165,18 +168,18 @@ public class ClaimsTransferCommand {
 			if(!confirmed)//don't want to switch off impersonation when using the confirm command
 				permissionHandler.ensureImpersonationPermission(callerPlayer, playerData);
 			UUID originalRequesterId;
-			GameProfile transferFrom;
+			NameAndId transferFrom;
 			UUID impersonatedId = null;
 			if(!accept) {
 				originalRequesterId = callerPlayer.getUUID();
 				impersonatedId = playerData.getClaimsImpersonationInfo().getPlayerId();
-				transferFrom = callerPlayer.getGameProfile();
+				transferFrom = callerPlayer.nameAndId();
 				if (impersonatedId != null) {
 					if (confirmed && !permissionHandler.playerHasImpersonationPermission(callerPlayer)) {
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_no_impersonation_permission"));
 						return 0;
 					}
-					transferFrom = callerPlayer.getServer().getProfileCache().get(impersonatedId).orElse(null);
+					transferFrom = ServerLevelHelper.getServer(callerPlayer).services().nameToIdCache().get(impersonatedId).orElse(null);
 					if (transferFrom == null) {
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_invalid_impersonated_player"));
 						return 0;
@@ -209,13 +212,13 @@ public class ClaimsTransferCommand {
 					return 0;
 				}
 			}
-			if(transferTo.getId().equals(transferFrom.getId())) {
+			if(transferTo.id().equals(transferFrom.id())) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_to_the_same"));
 				return 0;
 			}
 			if(!confirmed){
 				Component message;
-				message = Component.translatable("gui.xaero_claims_transfer_needs_confirmation", transferFrom.getName(), transferTo.getName());
+				message = Component.translatable("gui.xaero_claims_transfer_needs_confirmation", transferFrom.name(), transferTo.name());
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, message));
 				return 0;
 			}
@@ -226,9 +229,9 @@ public class ClaimsTransferCommand {
 			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 					claimsManager = serverData.getServerClaimsManager();
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> fromPlayerInfo =
-					claimsManager.getPlayerInfo(transferFrom.getId());
+					claimsManager.getPlayerInfo(transferFrom.id());
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> toPlayerInfo =
-					claimsManager.getPlayerInfo(transferTo.getId());
+					claimsManager.getPlayerInfo(transferTo.id());
 			if(fromPlayerInfo.getClaimCount() == 0){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_no_claims"));
 				return 0;
@@ -239,7 +242,7 @@ public class ClaimsTransferCommand {
 				startTransfer(transferFrom, transferTo, fromConfig, toConfig, originalRequesterId, serverData);
 				return 1;
 			}
-			ServerPlayer targetPlayer = serverData.getServer().getPlayerList().getPlayer(transferTo.getId());
+			ServerPlayer targetPlayer = serverData.getServer().getPlayerList().getPlayer(transferTo.id());
 			if(targetPlayer == null){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_online_player_not_found"));
 				return 0;
@@ -263,7 +266,7 @@ public class ClaimsTransferCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_target_sub_limit" + errorSuffix, availableSubCount, fromConfig.getSubCount()));
 				return 0;
 			}
-			int availableTargetClaims = claimsManager.getPlayerFullClaimLimit(transferTo.getId()) - toPlayerInfo.getClaimCount();
+			int availableTargetClaims = claimsManager.getPlayerFullClaimLimit(transferTo.id()) - toPlayerInfo.getClaimCount();
 			if(fromPlayerInfo.getClaimCount() > availableTargetClaims){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_target_claim_limit" + errorSuffix, availableTargetClaims, fromPlayerInfo.getClaimCount()));
 				return 0;
@@ -272,12 +275,12 @@ public class ClaimsTransferCommand {
 				startTransfer(transferFrom, transferTo, fromConfig, toConfig, originalRequesterId, serverData);
 				return 1;
 			}
-			Component callerName = Component.literal(callerPlayer.getGameProfile().getName()).withStyle(ChatFormatting.GREEN);
-			Component transferFromName = Component.literal(transferFrom.getName()).withStyle(ChatFormatting.GREEN);
-			Component transferToName = Component.literal(transferTo.getName()).withStyle(ChatFormatting.GREEN);
+			Component callerName = Component.literal(callerPlayer.nameAndId().name()).withStyle(ChatFormatting.GREEN);
+			Component transferFromName = Component.literal(transferFrom.name()).withStyle(ChatFormatting.GREEN);
+			Component transferToName = Component.literal(transferTo.name()).withStyle(ChatFormatting.GREEN);
 			callerPlayer.sendSystemMessage(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_request_sent", transferFromName, transferToName));
 			playerData.setClaimTransferRequestSourcePlayerProfile(transferFrom);
-			playerData.setClaimTransferRequestTargetPlayerId(transferTo.getId());
+			playerData.setClaimTransferRequestTargetPlayerId(transferTo.id());
 			playerData.setClaimTransferRequestTime(System.currentTimeMillis());
 			Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message", callerName, transferFromName, transferToName);
 			acceptComponent.getSiblings().add(Component.literal(" "));
@@ -291,8 +294,8 @@ public class ClaimsTransferCommand {
 	}
 
 	private static void startTransfer(
-			GameProfile transferFrom,
-			GameProfile transferTo,
+			NameAndId transferFrom,
+			NameAndId transferTo,
 			IPlayerConfig fromConfig,
 			IPlayerConfig toConfig,
 			UUID originalRequesterId,
@@ -301,9 +304,9 @@ public class ClaimsTransferCommand {
 		IServerClaimsManager<?, ?, ?>
 				claimsManager = serverData.getServerClaimsManager();
 		IServerPlayerClaimInfo<?> fromPlayerInfo =
-				claimsManager.getPlayerInfo(transferFrom.getId());
+				claimsManager.getPlayerInfo(transferFrom.id());
 		IServerPlayerClaimInfo<?> toPlayerInfo =
-				claimsManager.getPlayerInfo(transferTo.getId());
+				claimsManager.getPlayerInfo(transferTo.id());
 		fromPlayerInfo.setTransferInProgress(true);
 		toPlayerInfo.setTransferInProgress(true);
 		MinecraftServer server = serverData.getServer();

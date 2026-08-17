@@ -18,11 +18,11 @@
 
 package xaero.pac.common.server.claims.player.task;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -49,7 +49,7 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 	public static final class Builder {
 
 		private MinecraftServer server;
-		private GameProfile targetPlayerProfile;
+		private NameAndId targetPlayerProfile;
 		private UUID callerUUID;
 
 		private Builder(){}
@@ -66,7 +66,7 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 			return this;
 		}
 
-		public Builder setTargetPlayerProfile(GameProfile targetPlayerProfile) {
+		public Builder setTargetPlayerProfile(NameAndId targetPlayerProfile) {
 			this.targetPlayerProfile = targetPlayerProfile;
 			return this;
 		}
@@ -80,7 +80,7 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 			if(server == null || targetPlayerProfile == null)
 				throw new IllegalStateException();
 			Callback callback = new Callback(server, callerUUID, targetPlayerProfile);
-			UUID claimOwnerId = targetPlayerProfile.getId();
+			UUID claimOwnerId = targetPlayerProfile.id();
 			Predicate<IPlayerChunkClaim> matcher = c -> true;
 			return new PlayerClaimClearSpreadoutTask(callback, claimOwnerId, matcher, null);
 		}
@@ -95,9 +95,9 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 
 		private final MinecraftServer server;
 		private final UUID callerUUID;
-		private final GameProfile targetPlayerProfile;
+		private final NameAndId targetPlayerProfile;
 
-		public Callback(MinecraftServer server, UUID callerUUID, GameProfile targetPlayerProfile) {
+		public Callback(MinecraftServer server, UUID callerUUID, NameAndId targetPlayerProfile) {
 			this.server = server;
 			this.callerUUID = callerUUID;
 			this.targetPlayerProfile = targetPlayerProfile;
@@ -113,7 +113,7 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if (resultType.isSuccess()) {
 				if (onlinePlayer != null) {
-					Component targetName = Component.literal(targetPlayerProfile.getName()).withStyle(ChatFormatting.GREEN);
+					Component targetName = Component.literal(targetPlayerProfile.name()).withStyle(ChatFormatting.GREEN);
 					onlinePlayer.sendSystemMessage(adaptiveLocalizer.getFor(onlinePlayer, "gui.xaero_claims_clear_complete", targetName));
 				}
 				return;

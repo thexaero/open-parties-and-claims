@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -32,6 +31,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -53,6 +53,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public class ClaimsClearCommand {
 				return true;
 			try {
 				ServerPlayer player = context.getPlayerOrException();
-				MinecraftServer server = player.getServer();
+				MinecraftServer server = ServerLevelHelper.getServer(player);
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 						serverData = ServerData.from(server);
 				return serverData.getServerClaimsManager().getPermissionHandler().playerHasAdminModePermission(player);
@@ -77,7 +78,7 @@ public class ClaimsClearCommand {
 		SuggestionProvider<CommandSourceStack> targetSuggestions = (context, builder) -> {
 			PlayerList playerlist = context.getSource().getServer().getPlayerList();
 			return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream()
-					.map(targetPlayer -> targetPlayer.getGameProfile().getName()), builder);
+					.map(targetPlayer -> targetPlayer.nameAndId().name()), builder);
 		};
 
 		LiteralArgumentBuilder<CommandSourceStack> selfNoConfirmCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
@@ -120,8 +121,8 @@ public class ClaimsClearCommand {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 					serverData = ServerData.from(context.getSource().getServer());
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-			GameProfile targetProfile = null;
-			GameProfile casterPlayerProfile = casterPlayer == null ? PlayerConfig.SERVER_CLAIM_PROFILE : casterPlayer.getGameProfile();
+			NameAndId targetProfile = null;
+			NameAndId casterPlayerProfile = casterPlayer == null ? PlayerConfig.SERVER_CLAIM_PROFILE : casterPlayer.nameAndId();
 			if(self) {
 				ServerClaimsPermissionHandler permissionHandler = serverData.getServerClaimsManager().getPermissionHandler();
 				if(!confirmed && casterPlayer != null)//don't want to switch off impersonation when using the confirm command
@@ -132,7 +133,7 @@ public class ClaimsClearCommand {
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_no_impersonation_permission"));
 						return 0;
 					}
-					targetProfile = casterPlayer.getServer().getProfileCache().get(impersonatedId).orElse(null);
+					targetProfile = ServerLevelHelper.getServer(casterPlayer).services().nameToIdCache().get(impersonatedId).orElse(null);
 					if(targetProfile == null){
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_clear_invalid_impersonated_player"));
 						return 0;
@@ -140,7 +141,7 @@ public class ClaimsClearCommand {
 				} else
 					targetProfile = casterPlayerProfile;
 			} else try {
-				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
+				Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 				if(profiles.size() == 1)
 					targetProfile = profiles.iterator().next();
 			} catch(IllegalArgumentException iae) {
@@ -151,13 +152,13 @@ public class ClaimsClearCommand {
 			}
 			boolean effectivelySelf = targetProfile.equals(casterPlayerProfile);
 			if(!effectivelySelf && casterPlayer != null && !playerData.isClaimsAdminMode()) {
-				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_clear_not_admin_mode", targetProfile.getName()));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_clear_not_admin_mode", targetProfile.name()));
 				return 0;
 			}
 			if(!confirmed){
 				String primaryPartySystem = serverData.getPlayerPartySystemManager().getPrimarySystemName();
 				Component primaryPartyName = !ServerConfig.CONFIG.partyOwnedClaims.get() ? null :
-						serverData.getPlayerPartySystemManager().getPrimaryPartyNameByOwner(targetProfile.getId());
+						serverData.getPlayerPartySystemManager().getPrimaryPartyNameByOwner(targetProfile.id());
 				if(primaryPartyName == null)
 					primaryPartyName = Component.translatable(effectivelySelf ?
 							"gui.xaero_claims_clear_needs_confirmation_self_no_party_owned" :
@@ -166,7 +167,7 @@ public class ClaimsClearCommand {
 				Component message = Component.translatable(
 						effectivelySelf ? "gui.xaero_claims_clear_needs_confirmation_self" :
 								"gui.xaero_claims_clear_needs_confirmation_other",
-						targetProfile.getName(), primaryPartySystem, primaryPartyName
+						targetProfile.name(), primaryPartySystem, primaryPartyName
 				);
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, message));
 				return 0;
@@ -174,7 +175,7 @@ public class ClaimsClearCommand {
 			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 					claimsManager = serverData.getServerClaimsManager();
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo =
-					claimsManager.getPlayerInfo(targetProfile.getId());
+					claimsManager.getPlayerInfo(targetProfile.id());
 			if(playerInfo.getClaimCount() == 0){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(
 						casterPlayer, effectivelySelf ?
@@ -183,11 +184,11 @@ public class ClaimsClearCommand {
 				));
 				return 0;
 			}
-			Component targetName = Component.literal(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
+			Component targetName = Component.literal(targetProfile.name()).withStyle(ChatFormatting.GREEN);
 			context.getSource().sendSuccess(() -> Component.translatable("gui.xaero_claims_clear_start", targetName), true);
 			playerInfo.addReplacementTask(
 					PlayerClaimClearSpreadoutTask.Builder.begin()
-							.setCallerUUID(casterPlayerProfile.getId())
+							.setCallerUUID(casterPlayerProfile.id())
 							.setServer(serverData.getServer())
 							.setTargetPlayerProfile(targetProfile)
 							.build(),

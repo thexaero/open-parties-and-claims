@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.parties.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -32,6 +31,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -53,6 +53,7 @@ import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
 import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -61,12 +62,12 @@ public class ImpersonatePartyCommand {
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandRequirementProvider commandRequirementProvider) {
 		Command<CommandSourceStack> action = context -> {
-			GameProfile targetProfile = null;
+			NameAndId targetProfile = null;
 			ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(context.getSource().getServer());
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			try {
-				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
+				Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 				if(profiles.size() == 1)
 					targetProfile = profiles.iterator().next();
 				else if(profiles.isEmpty()) {
@@ -79,7 +80,7 @@ public class ImpersonatePartyCommand {
 			} catch(IllegalArgumentException iae) {
 			}
 			ServerPlayerData casterPlayerData = (ServerPlayerData) ServerPlayerData.from(casterPlayer);
-			boolean disabling = targetProfile == null || targetProfile.getId().equals(casterPlayerData.getPartiesImpersonatedPlayerId());
+			boolean disabling = targetProfile == null || targetProfile.id().equals(casterPlayerData.getPartiesImpersonatedPlayerId());
 			if(!disabling && !casterPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS)){
 				//this check is important for players who are already impersonating someone but have lost the permission
 				IPlayerPermissionSystemAPI usedPermissionSystem = serverData.getPlayerPermissionSystemManager().getUsedSystem();
@@ -90,7 +91,7 @@ public class ImpersonatePartyCommand {
 			if(disabling)
 				context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_parties_impersonate_disabled"), true);
 			else {
-				Component targetName = Component.literal(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
+				Component targetName = Component.literal(targetProfile.name()).withStyle(ChatFormatting.GREEN);
 				context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(casterPlayer, "gui.xaero_parties_impersonate_enabled", targetName), true);
 			}
 			serverData.getServer().getCommands().sendCommands(casterPlayer);
@@ -99,14 +100,14 @@ public class ImpersonatePartyCommand {
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {
 			PlayerList playerlist = context.getSource().getServer().getPlayerList();
 			return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream()
-					.map(targetPlayer -> targetPlayer.getGameProfile().getName()), builder);
+					.map(targetPlayer -> targetPlayer.getGameProfile().name()), builder);
 		};
 		Predicate<CommandSourceStack> requirement = CommandRequirementHelper.onServerThread(context -> {
 			if(context.hasPermission(Commands.LEVEL_GAMEMASTERS) )
 				return true;
 			try {
 				ServerPlayer player = context.getPlayerOrException();
-				MinecraftServer server = player.getServer();
+				MinecraftServer server = ServerLevelHelper.getServer(player);
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 						serverData = ServerData.from(server);
 				if(((ServerPlayerData)ServerPlayerDataAPI.from(player)).getPartiesImpersonatedPlayerProfile() != null)//lets you turn it off

@@ -109,7 +109,7 @@ public class UnallyPartyCommand {
 							
 							new PartyOnCommandUpdater().update(player, serverData, targetPlayerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_unally_target_party_message", Component.literal(playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), targetName));
 
-							Component callerName = Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.DARK_GREEN);
+							Component callerName = Component.literal(player.nameAndId().name()).withStyle(ChatFormatting.DARK_GREEN);
 
 							new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_unally_caster_party_message", callerName, targetName));
 							return 1;

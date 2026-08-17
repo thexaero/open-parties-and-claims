@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.parties.party.api;
 
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
@@ -84,7 +84,7 @@ public interface IPartyManagerAPI {
 	 *         or the party wasn't created for another reason
 	 */
 	@Nullable
-	public IServerPartyAPI createPartyForOwner(@Nonnull GameProfile ownerProfile);
+	public IServerPartyAPI createPartyForOwner(@Nonnull NameAndId ownerProfile);
 
 	/**
 	 * Removes the party owned by the player with a specified UUID.

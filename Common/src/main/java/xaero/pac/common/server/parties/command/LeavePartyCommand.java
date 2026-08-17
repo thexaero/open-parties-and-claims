@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.parties.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
@@ -27,6 +26,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -57,10 +57,10 @@ public class LeavePartyCommand {
 				.executes(context -> {
 					ServerPlayer player = context.getSource().getPlayerOrException();
 					ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
-					GameProfile contextProfile = serverPlayerData.getPartiesImpersonatedPlayerProfile();
+					NameAndId contextProfile = serverPlayerData.getPartiesImpersonatedPlayerProfile();
 					if(contextProfile == null)
-						contextProfile = player.getGameProfile();
-					UUID contextPlayerId = contextProfile.getId();
+						contextProfile = player.nameAndId();
+					UUID contextPlayerId = contextProfile.id();
 					MinecraftServer server = context.getSource().getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
@@ -78,7 +78,7 @@ public class LeavePartyCommand {
 						if(serverPlayerData.getPartiesImpersonatedPlayerId() == null)
 							message = Component.translatable("gui.xaero_parties_leave_party_message", Component.literal(memberToRemove.getUsername()).withStyle(s -> s.withColor(ChatFormatting.YELLOW)));
 						else
-							message = KickPartyCommand.getKickMessage(player, contextProfile.getName());
+							message = KickPartyCommand.getKickMessage(player, contextProfile.name());
 						new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, message);
 						
 						serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);

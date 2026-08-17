@@ -18,10 +18,10 @@
 
 package xaero.pac.common.server.claims.player;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
@@ -116,7 +116,7 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	@Override
 	protected void onAdd(ServerPlayerClaimInfo playerInfo) {
 		super.onAdd(playerInfo);
-		server.getProfileCache().get(playerInfo.getPlayerId()).map(GameProfile::getName)
+		server.services().nameToIdCache().get(playerInfo.getPlayerId()).map(NameAndId::name)
 				.ifPresent(playerInfo::setPlayerUsername);//helps with claim usernames when the claim owner has never been on the server
 		if(!loaded)
 			return;

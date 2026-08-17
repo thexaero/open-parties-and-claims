@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -32,6 +31,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import xaero.pac.common.claims.ClaimLocation;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -51,6 +51,7 @@ import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 import xaero.pac.common.server.player.util.ServerPlayerUtils;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -63,7 +64,7 @@ public class ClaimsTeleportCommand {
 				return true;
 			try {
 				ServerPlayer player = context.getPlayerOrException();
-				MinecraftServer server = player.getServer();
+				MinecraftServer server = ServerLevelHelper.getServer(player);
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 						serverData = ServerData.from(server);
 				return serverData.getServerClaimsManager().getPermissionHandler().playerHasTeleportPermission(player);
@@ -72,16 +73,16 @@ public class ClaimsTeleportCommand {
 			}
 		});
 		Command<CommandSourceStack> action = context -> {
-			GameProfile targetProfile = null;
+			NameAndId targetProfile = null;
 			ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
 			try {
-				Collection<GameProfile> profiles = GameProfileArgument.getGameProfiles(context, "profile");
+				Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "profile");
 				if(profiles.size() == 1)
 					targetProfile = profiles.iterator().next();
 			} catch(IllegalArgumentException iae) {
 			}
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
-					serverData = ServerData.from(casterPlayer.getServer());
+					serverData = ServerData.from(ServerLevelHelper.getServer(casterPlayer));
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if(!casterPlayer.isCreative() && !casterPlayer.isInvulnerable()) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_teleport_vulnerable"));
@@ -91,25 +92,25 @@ public class ClaimsTeleportCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_teleport_invalid_player"));
 				return 0;
 			}
-			final GameProfile profile = targetProfile;
+			final NameAndId profile = targetProfile;
 			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 				claimsManager = serverData.getServerClaimsManager();
 			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo =
-					claimsManager.getPlayerInfo(profile.getId());
+					claimsManager.getPlayerInfo(profile.id());
 			ClaimLocation randomClaimPos = playerInfo.getRandomClaimPos(true);
 			if(randomClaimPos == null){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(casterPlayer, "gui.xaero_claims_teleport_no_claims"));
 				return 0;
 			}
 			ServerPlayerUtils.teleport(casterPlayer, randomClaimPos.getDimId(), (randomClaimPos.getChunkX() << 4) + 8, casterPlayer.getY(), (randomClaimPos.getChunkZ() << 4) + 8, casterPlayer.getYRot(), casterPlayer.getXRot());
-			Component targetName = Component.literal(profile.getName()).withStyle(ChatFormatting.GREEN);
+			Component targetName = Component.literal(profile.name()).withStyle(ChatFormatting.GREEN);
 			casterPlayer.sendSystemMessage(Component.translatable("gui.xaero_claims_teleport_success", targetName));
 			return 1;
 		};
 		SuggestionProvider<CommandSourceStack> suggestions = (context, builder) -> {
 			PlayerList playerlist = context.getSource().getServer().getPlayerList();
 			return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream()
-					.map(targetPlayer -> targetPlayer.getGameProfile().getName()), builder);
+					.map(targetPlayer -> targetPlayer.nameAndId().name()), builder);
 		};
 		LiteralArgumentBuilder<CommandSourceStack> opTargetCommand = Commands.literal(ClaimsCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.claimsEnabled.get())
 				.then(Commands.literal("teleport")

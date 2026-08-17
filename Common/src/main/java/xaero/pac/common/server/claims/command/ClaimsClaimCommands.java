@@ -19,7 +19,6 @@
 package xaero.pac.common.server.claims.command;
 
 import com.google.common.collect.Sets;
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -39,6 +38,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -398,10 +398,10 @@ public class ClaimsClaimCommands {
 			IClaimingModeAPI claimingModeAPI
 	) throws CommandSyntaxException {
 		if(another){
-			GameProfile inputPlayer = ConfigCommandUtil.getConfigInputPlayer(context, sourcePlayer, tooManyTargetMessage, invalidTargetMessage, serverData.getAdaptiveLocalizer());
+			NameAndId inputPlayer = ConfigCommandUtil.getConfigInputPlayer(context, sourcePlayer, tooManyTargetMessage, invalidTargetMessage, serverData.getAdaptiveLocalizer());
 			if(inputPlayer == null)
 				return null;
-			return inputPlayer.getId();
+			return inputPlayer.id();
 		}
 		if(sourcePlayer == null)
 			return PlayerConfig.SERVER_CLAIM_UUID;

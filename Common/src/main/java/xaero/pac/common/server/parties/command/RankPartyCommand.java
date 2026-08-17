@@ -106,7 +106,7 @@ public class RankPartyCommand {
 							if(rankedPlayer != null)
 								serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(rankedPlayer, serverData, false);
 
-							Component callerName = Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.DARK_GREEN);
+							Component callerName = Component.literal(player.nameAndId().name()).withStyle(ChatFormatting.DARK_GREEN);
 							Component targetName = Component.literal(targetPlayerInfo.getUsername()).withStyle(ChatFormatting.YELLOW);
 
 							new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_rank_party_message", callerName, targetName, Component.literal(targetRank.toString()).withStyle(s -> s.withColor(targetRank.getColor()))));

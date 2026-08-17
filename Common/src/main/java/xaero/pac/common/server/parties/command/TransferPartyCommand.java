@@ -94,7 +94,7 @@ public class TransferPartyCommand {
 									serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(newOwnerPlayer, serverData, false);
 								serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
 
-								Component callerName = Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.DARK_GREEN);
+								Component callerName = Component.literal(player.nameAndId().name()).withStyle(ChatFormatting.DARK_GREEN);
 								Component targetName = Component.literal(targetMember.getUsername()).withStyle(ChatFormatting.YELLOW);
 
 								new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_transfer_success", callerName, targetName));

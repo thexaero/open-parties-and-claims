@@ -118,7 +118,7 @@ public class KickPartyCommand {
 	public static Component getKickMessage(ServerPlayer callerPlayer, String targetName){
 		return Component.translatable(
 				"gui.xaero_parties_kick_party_message",
-				Component.literal(callerPlayer.getGameProfile().getName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)),
+				Component.literal(callerPlayer.nameAndId().name()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)),
 				Component.literal(targetName).withStyle(s -> s.withColor(ChatFormatting.RED))
 		);
 	}

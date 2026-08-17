@@ -18,7 +18,6 @@
 
 package xaero.pac.common.server.claims.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -30,6 +29,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -50,6 +50,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.world.ServerLevelHelper;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -66,7 +67,7 @@ public class ClaimsImpersonateCommand {
 							return true;
 						try {
 							ServerPlayer player = context.getPlayerOrException();
-							MinecraftServer server = player.getServer();
+							MinecraftServer server = ServerLevelHelper.getServer(player);
 							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 									serverData = ServerData.from(server);
 							if(serverData.getServerClaimsManager().getPermissionHandler().playerHasImpersonationPermission(player))
@@ -84,14 +85,14 @@ public class ClaimsImpersonateCommand {
 
 	private static int execute(CommandContext<CommandSourceStack> context, boolean disable) throws CommandSyntaxException {
 		ServerPlayer player = context.getSource().getPlayerOrException();
-		MinecraftServer server = player.getServer();
+		MinecraftServer server = ServerLevelHelper.getServer(player);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-		GameProfile toImpersonate = null;
+		NameAndId toImpersonate = null;
 		ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(player);
 		if(!disable) {
-			Collection<GameProfile> profileCollection = GameProfileArgument.getGameProfiles(context, "player");
+			Collection<NameAndId> profileCollection = GameProfileArgument.getGameProfiles(context, "player");
 			if (profileCollection.isEmpty()) {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_claims_impersonate_unknown_player"));
 				return 0;
@@ -101,18 +102,18 @@ public class ClaimsImpersonateCommand {
 				return 0;
 			}
 			toImpersonate = profileCollection.iterator().next();
-			if(player.getUUID().equals(toImpersonate.getId()) || Objects.equals(toImpersonate.getId(), playerData.getClaimsImpersonationInfo().getPlayerId())) {
+			if(player.getUUID().equals(toImpersonate.id()) || Objects.equals(toImpersonate.id(), playerData.getClaimsImpersonationInfo().getPlayerId())) {
 				toImpersonate = null;
 				disable = true;
 			}
 		}
-		UUID idToImpersonate = toImpersonate == null ? null : toImpersonate.getId();
+		UUID idToImpersonate = toImpersonate == null ? null : toImpersonate.id();
 		if(idToImpersonate == null)
 			disable = true;
 		playerData.getClaimsImpersonationInfo().reset();
 		playerData.setClaimingMode(null);
 		playerData.getClaimsImpersonationInfo().setPlayerId(idToImpersonate);
-		Component impersonatedName = disable ? null : Component.literal(toImpersonate.getName()).withStyle(ChatFormatting.GREEN);
+		Component impersonatedName = disable ? null : Component.literal(toImpersonate.name()).withStyle(ChatFormatting.GREEN);
 		player.sendSystemMessage(
 				adaptiveLocalizer.getFor(player,
 						disable ? Component.translatable("gui.xaero_claims_impersonate_disabled") :

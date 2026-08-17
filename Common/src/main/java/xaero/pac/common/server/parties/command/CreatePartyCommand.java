@@ -18,13 +18,13 @@
 
 package xaero.pac.common.server.parties.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -59,9 +59,9 @@ public class CreatePartyCommand {
 						return 0;
 					ServerPlayer player = (ServerPlayer) entity;
 					ServerPlayerData serverPlayerData = (ServerPlayerData) ServerPlayerData.from(player);
-					GameProfile ownerProfile = serverPlayerData.getPartiesImpersonatedPlayerProfile();
+					NameAndId ownerProfile = serverPlayerData.getPartiesImpersonatedPlayerProfile();
 					if(ownerProfile == null)
-						ownerProfile = player.getGameProfile();
+						ownerProfile = player.nameAndId();
 					MinecraftServer server = context.getSource().getServer();
 					IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 					AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();

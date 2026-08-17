@@ -95,7 +95,7 @@ public class AllyPartyCommand {
 							
 							new PartyOnCommandUpdater().update(player, serverData, targetPlayerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_ally_player_target_party_info", Component.literal(playerParty.getDefaultName()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN)), targetPlayerParty.getDefaultName()));
 
-							Component callerName = Component.literal(player.getGameProfile().getName()).withStyle(ChatFormatting.DARK_GREEN);
+							Component callerName = Component.literal(player.nameAndId().name()).withStyle(ChatFormatting.DARK_GREEN);
 							Component targetPartyName = Component.literal(targetPlayerParty.getDefaultName()).withStyle(ChatFormatting.YELLOW);
 							new PartyOnCommandUpdater().update(player, serverData, playerParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_ally_caster_party_info", callerName, targetPartyName));
 							return 1;

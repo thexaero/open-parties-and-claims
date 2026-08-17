@@ -18,10 +18,10 @@
 
 package xaero.pac.common.server.player.data;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.level.Level;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -101,9 +101,9 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private long allowedClaimAccessOverLimitTick;
 	private long lastClaimsOverLimitMessageTime;
 	private boolean partiesAdminMode;
-	private GameProfile partiesImpersonatedPlayerProfile;
+	private NameAndId partiesImpersonatedPlayerProfile;
 	private final ServerPlayerClaimImpersonationInfo claimsImpersonationInfo;
-	private GameProfile claimTransferRequestSourcePlayerProfile;
+	private NameAndId claimTransferRequestSourcePlayerProfile;
 	private UUID claimTransferRequestTargetPlayerId;
 	private long claimTransferRequestTime;
 
@@ -431,11 +431,11 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		return claimsImpersonationInfo;
 	}
 
-	public GameProfile getClaimTransferRequestSourcePlayerProfile() {
+	public NameAndId getClaimTransferRequestSourcePlayerProfile() {
 		return claimTransferRequestSourcePlayerProfile;
 	}
 
-	public void setClaimTransferRequestSourcePlayerProfile(GameProfile claimTransferRequestSourcePlayerProfile) {
+	public void setClaimTransferRequestSourcePlayerProfile(NameAndId claimTransferRequestSourcePlayerProfile) {
 		this.claimTransferRequestSourcePlayerProfile = claimTransferRequestSourcePlayerProfile;
 	}
 
@@ -455,16 +455,16 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		this.claimTransferRequestTime = claimTransferRequestTime;
 	}
 
-	public void setPartiesImpersonatedPlayerProfile(GameProfile partiesImpersonatedPlayerProfile) {
+	public void setPartiesImpersonatedPlayerProfile(NameAndId partiesImpersonatedPlayerProfile) {
 		this.partiesImpersonatedPlayerProfile = partiesImpersonatedPlayerProfile;
 	}
 
-	public GameProfile getPartiesImpersonatedPlayerProfile() {
+	public NameAndId getPartiesImpersonatedPlayerProfile() {
 		return partiesImpersonatedPlayerProfile;
 	}
 
 	public UUID getPartiesImpersonatedPlayerId() {
-		return partiesImpersonatedPlayerProfile == null ? null : partiesImpersonatedPlayerProfile.getId();
+		return partiesImpersonatedPlayerProfile == null ? null : partiesImpersonatedPlayerProfile.id();
 	}
 
 	public void setLastClaimCheckDim(ResourceKey<Level> lastClaimCheckDim) {
