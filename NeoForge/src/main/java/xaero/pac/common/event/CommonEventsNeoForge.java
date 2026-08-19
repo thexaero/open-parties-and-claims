@@ -38,7 +38,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import org.apache.commons.lang3.tuple.Triple;
 import xaero.pac.OpenPartiesAndClaims;
@@ -127,8 +127,8 @@ public class CommonEventsNeoForge extends CommonEvents {
 	}
 	
 	@SubscribeEvent
-	public void onServerStopped(ServerStoppedEvent event) {
-		super.onServerStopped(event.getServer());
+	public void onServerStopping(ServerStoppingEvent event) {
+		super.onServerStopping(event.getServer());
 	}
 	
 	@SubscribeEvent
