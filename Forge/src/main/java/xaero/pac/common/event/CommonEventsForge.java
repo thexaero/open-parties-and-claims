@@ -38,7 +38,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -133,8 +133,8 @@ public class CommonEventsForge extends CommonEvents {
 	}
 	
 	@SubscribeEvent
-	public void onServerStopped(ServerStoppedEvent event) {
-		super.onServerStopped(event.getServer());
+	public void onServerStopping(ServerStoppingEvent event) {
+		super.onServerStopping(event.getServer());
 	}
 	
 	@SubscribeEvent
