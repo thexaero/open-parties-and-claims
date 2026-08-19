@@ -31,7 +31,9 @@ import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpira
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
+import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
+import xaero.pac.common.server.io.ObjectManagerIOToSaveTracker;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.permission.api.IPermissionNodeAPI;
@@ -47,28 +49,29 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	private final MinecraftServer server;
 	private final IPlayerConfigManager configManager;
 	private final ForceLoadTicketManager ticketManager;
-	private final Set<ServerPlayerClaimInfo> toSave;
 	private final Set<ResourceLocation> claimableDimensionsSet;
+	private ObjectManagerIOToSaveTracker<ServerPlayerClaimInfo> toSave;
 	private boolean loaded;
 	private PlayerClaimInfoManagerIO<?> io;
 	private ServerPlayerClaimsExpirationHandler expirationHandler;
 
 	public ServerPlayerClaimInfoManager(MinecraftServer server, IPlayerConfigManager configManager, ForceLoadTicketManager ticketManager,
-										Map<UUID, ServerPlayerClaimInfo> storage, LinkedChain<ServerPlayerClaimInfo> linkedPlayerInfo, Set<ServerPlayerClaimInfo> toSave) {
+	                                    Map<UUID, ServerPlayerClaimInfo> storage, LinkedChain<ServerPlayerClaimInfo> linkedPlayerInfo) {
 		super(storage, linkedPlayerInfo);
 		this.server = server;
 		this.configManager = configManager;
 		this.ticketManager = ticketManager;
-		this.toSave = toSave;
 		claimableDimensionsSet = new HashSet<>();
 		for(String s : ServerConfig.CONFIG.claimableDimensionsList.get())
 			claimableDimensionsSet.add(ResourceLocation.parse(s));
 	}
-	
-	public void setIo(PlayerClaimInfoManagerIO<?> io) {
+
+	@Override
+	public void setIo(ObjectManagerIO<?, ?, ServerPlayerClaimInfo, ServerPlayerClaimInfoManager> io) {
 		if(this.io != null)
 			throw new IllegalStateException();
-		this.io = io;
+		this.io = (PlayerClaimInfoManagerIO<?>) io;
+		this.toSave = ObjectManagerIOToSaveTracker.Builder.<ServerPlayerClaimInfo>begin().setIo(io).build();
 	}
 	
 	public void setExpirationHandler(ServerPlayerClaimsExpirationHandler expirationHandler) {
@@ -83,15 +86,10 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	}
 
 	@Override
-	public void addToSave(ServerPlayerClaimInfo object) {
-		toSave.add(object);
-	}
-
-	@Override
-	public Iterable<ServerPlayerClaimInfo> getToSave() {
+	public ObjectManagerIOToSaveTracker<ServerPlayerClaimInfo> getToSave() {
 		return toSave;
 	}
-	
+
 	public ForceLoadTicketManager getTicketManager() {
 		return ticketManager;
 	}
