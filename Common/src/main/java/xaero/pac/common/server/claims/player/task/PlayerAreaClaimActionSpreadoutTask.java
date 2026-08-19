@@ -21,11 +21,11 @@ package xaero.pac.common.server.claims.player.task;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.action.api.ClaimingAction;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
-import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -204,11 +204,12 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		IServerClaimsManager<?, ?, ?> claimManager = serverData.getServerClaimsManager();
 		IServerPlayerClaimInfo<?> playerInfo = claimManager.getPlayerInfo(playerId);
 		playerInfo.setAreaClaimTaskInProgress(null);
+		ResourceLocation dimension = actionRequest.getDimension();
 		int left = actionRequest.getLeft();
 		int top = actionRequest.getTop();
 		int right = actionRequest.getRight();
 		int bottom = actionRequest.getBottom();
-		AreaClaimResult result = new AreaClaimResult(resultTypes, customReasons, left, top, right, bottom);
+		AreaClaimResult result = new AreaClaimResult(resultTypes, customReasons, dimension, left, top, right, bottom);
 		resultListener.accept(result);
 		//queueing the next task
 		if(tasksToAdd != null && playerInfo.hasAreaClaimActionTasks())

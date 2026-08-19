@@ -66,6 +66,8 @@ public class ClientboundPlayerConfigAdminPacket {
 
 		@Override
 		public void accept(ClientboundPlayerConfigAdminPacket t) {
+			if(t == null)
+				return;
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().setAdmin(t.admin);
 		}
 

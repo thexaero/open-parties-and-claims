@@ -312,9 +312,7 @@ public final class PlayerConfigIO
 
 		@Override
 		protected PlayerConfigIO<P, CM> buildInternally() {
-			PlayerConfigIO<P, CM> result = new PlayerConfigIO<>(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
-			manager.setIO(result);
-			return result;
+			return new PlayerConfigIO<>(serializationHandler, serializedDataFileIO, ioThreadWorker, server, fileExtension, manager, fileIOHelper);
 		}
 
 		public static <

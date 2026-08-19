@@ -71,6 +71,8 @@ public abstract class LazyPacket<P extends LazyPacket<P>> {
 
 		@Override
 		public void accept(P t) {
+			if(t == null)
+				return;
 			LazyPacket<P> lazyPacket = t;
 			if(lazyPacket.prepared) {
 				//was directly passed in singleplayer without encoding

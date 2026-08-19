@@ -104,7 +104,7 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 		if(dirty && !manager.isLoaded())
 			return;
 		if(!this.dirty && dirty)
-			manager.addToSave(this);
+			manager.getToSave().add(this);
 		this.dirty = dirty;
 		
 	}
