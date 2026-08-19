@@ -96,6 +96,8 @@ public class ServerboundClaimActionRequestPacket {
 		
 		@Override
 		public void accept(ServerboundClaimActionRequestPacket t, ServerPlayer serverPlayer) {
+			if(t == null)
+				return;
 			ServerPlayerData playerData = (ServerPlayerData) ServerPlayerDataAPI.from(serverPlayer);
 			playerData.getClaimActionRequestHandler().onReceive(serverPlayer, t.request);
 		}

@@ -18,11 +18,10 @@
 
 package xaero.pac.common.server.io.single;
 
-import com.google.common.collect.Lists;
+import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
 import xaero.pac.common.server.io.ObjectManagerIOObject;
-
-import java.util.ArrayList;
+import xaero.pac.common.server.io.ObjectManagerIOToSaveTracker;
 
 public abstract class ObjectHolderIOHolder
 <
@@ -30,19 +29,26 @@ public abstract class ObjectHolderIOHolder
 	M extends ObjectHolderIOHolder<T, M>
 > implements ObjectManagerIOManager<T, M> {
 
+	protected ObjectManagerIO<?, ?, T, ?> io;
+
+	@Override
+	public void setIo(ObjectManagerIO<?, ?, T, M> io) {
+		if(this.io != null)
+			throw new IllegalStateException();
+		this.io = io;
+	}
+
 	public abstract T getObject();
 
 	public abstract void setObject(T object);
 
 	@Override
-	public void addToSave(T object) {
+	public ObjectManagerIOToSaveTracker<T> getToSave() {
+		T object = getObject();
+		ObjectManagerIOToSaveTracker<T> result = ObjectManagerIOToSaveTracker.Builder.<T>begin().setIo(io).build();
+		if(object != null && object.isDirty())
+			result.add(object);
+		return result;
 	}
 
-	@Override
-	public Iterable<T> getToSave() {
-		T object = getObject();
-		if(object != null && object.isDirty())
-			return Lists.newArrayList(object);
-		return new ArrayList<>();
-	}
 }

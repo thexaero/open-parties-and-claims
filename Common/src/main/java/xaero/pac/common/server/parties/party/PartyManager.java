@@ -31,8 +31,9 @@ import xaero.pac.common.parties.party.member.PartyMemberRank;
 import xaero.pac.common.server.ServerData;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
+import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
-import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
+import xaero.pac.common.server.io.ObjectManagerIOToSaveTracker;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
 import xaero.pac.common.server.parties.party.io.PartyManagerIO;
 import xaero.pac.common.server.parties.party.sync.PartySynchronizer;
@@ -58,7 +59,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	private final Map<UUID, ServerParty> partiesByMember;
 	private final Map<UUID, Set<UUID>> partiesByAlly;
 	private final LinkedChain<ServerParty> partyChain;
-	private final Set<ServerParty> toSave;
+	private ObjectManagerIOToSaveTracker<ServerParty> toSave;
 	private PartyManagerIO<?> io;
 	private IPlayerConfigManager playerConfigs;
 	private boolean loaded;
@@ -75,7 +76,6 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 			Map<UUID, ServerParty> partiesByMember,
 			Map<UUID, Set<UUID>> partiesByAlly,
 			LinkedChain<ServerParty> partyChain,
-			Set<ServerParty> toSave,
 			ServerSpreadoutQueuedTaskHandler<PartyRemovalSpreadoutTask> partyRemovalTaskHandler
 	) {
 		super();
@@ -87,7 +87,6 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		this.partiesByMember = partiesByMember;
 		this.partiesByAlly = partiesByAlly;
 		this.partyChain = partyChain;
-		this.toSave = toSave;
 		this.partyRemovalTaskHandler = partyRemovalTaskHandler;
 	}
 	
@@ -115,9 +114,12 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	public IPlayerConfigManager getPlayerConfigs() {
 		return playerConfigs;
 	}
-	
-	public void setIo(PartyManagerIO<?> io) {
-		this.io = io;
+
+
+	@Override
+	public void setIo(ObjectManagerIO<?, ?, ServerParty, PartyManager> io) {
+		this.io = (PartyManagerIO<?>) io;
+		this.toSave = ObjectManagerIOToSaveTracker.Builder.<ServerParty>begin().setIo(io).build();
 	}
 
 	public void setPartySystem(DefaultPlayerPartySystem partySystem) {
@@ -283,7 +285,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 	}
 
 	@Override
-	public Iterable<ServerParty> getToSave(){
+	public ObjectManagerIOToSaveTracker<ServerParty> getToSave() {
 		return toSave;
 	}
 
@@ -316,11 +318,6 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 		System.out.println("partiesByMember");
 		partiesByMember.forEach((k, v) -> System.out.println(k + " -> " + v));
 		System.out.println("");
-	}
-
-	@Override
-	public void addToSave(ServerParty object) {
-		toSave.add(object);
 	}
 
 	@Override
@@ -370,7 +367,7 @@ public final class PartyManager implements IPartyManager<ServerParty>, ObjectMan
 			PartyManager result = new PartyManager(
 					server, partySynchronizer, playerPartyOnlineCounterUpdater,
 					new HashMap<>(), new HashMap<>(), new HashMap<>(),
-					new HashMap<>(), new LinkedChain<>(), new HashSet<>(),
+					new HashMap<>(), new LinkedChain<>(),
 					partyRemovalTaskHandler
 			);
 			@SuppressWarnings("unchecked")

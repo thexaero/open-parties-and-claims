@@ -129,6 +129,8 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 
 		@Override
 		public void accept(ServerboundSubConfigExistencePacket t, ServerPlayer serverPlayer) {
+			if(t == null)
+				return;
 			if(!t.type.supportsSubConfigs()) {
 				OpenPartiesAndClaims.LOGGER.info("Someone is trying to create/delete a sub-config for an invalid config type! Name: " + serverPlayer.getGameProfile().name());
 				return;

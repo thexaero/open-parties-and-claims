@@ -45,7 +45,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
-	
+
+	public static final String OWNER_NAME_REGEX = "^[a-zA-Z0-9_]*$";
 	private final String ownerName;
 
 	public ServerboundOtherPlayerConfigPacket(String ownerName) {
@@ -64,7 +65,7 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 				if(nbt == null)
 					return null;
 				String ownerName = nbt.getStringOr("ownerName", null);
-				if(ownerName == null || !ownerName.matches("^[a-zA-Z0-9_]+$"))
+				if(ownerName == null || !ownerName.matches(OWNER_NAME_REGEX))
 					return null;
 				return new ServerboundOtherPlayerConfigPacket(ownerName);
 			} catch(Throwable t) {
@@ -85,6 +86,8 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 		
 		@Override
 		public void accept(ServerboundOtherPlayerConfigPacket t, ServerPlayer serverPlayer) {
+			if(t == null)
+				return;
 			if(!serverPlayer.hasPermissions(2)) {
 				OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to requesting another player's config! Name: " + serverPlayer.getGameProfile().name());
 				return;

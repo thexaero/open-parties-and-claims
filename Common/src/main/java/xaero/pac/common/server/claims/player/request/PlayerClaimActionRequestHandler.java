@@ -83,7 +83,7 @@ public class PlayerClaimActionRequestHandler {
 				if(claimType == playerData.getRawClaimingMode())
 					manager.getPermissionHandler().resetClaimingMode(player);
 				manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
-						new AreaClaimResult(Set.of(failureType), new HashSet<>(), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
+						new AreaClaimResult(Set.of(failureType), new HashSet<>(), request.getDimension(), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
 						player);
 				return;
 			}
