@@ -177,7 +177,6 @@ public class ServerDataInitializer {
 					.setManager(partyManager)
 					.setFileIOHelper(fileIOHelper)
 					.build();
-			partyManager.setIo(partyManagerIO);
 			
 			PlayerLogInPartyAssigner playerPartyAssigner = new PlayerLogInPartyAssigner();
 			PlayerConfigPermissionUpdater playerConfigPermissionUpdater = new PlayerConfigPermissionUpdater();
@@ -274,7 +273,6 @@ public class ServerDataInitializer {
 					.setFileIOHelper(fileIOHelper)
 					.setServer(server)
 					.build();
-			serverClaimsManager.setIo(playerClaimInfoManagerIO);
 
 			ServerPlayerClaimsExpirationHandler claimsExpirationHandler = serverClaimsManager
 					.beginExpirationHandlerBuilder()

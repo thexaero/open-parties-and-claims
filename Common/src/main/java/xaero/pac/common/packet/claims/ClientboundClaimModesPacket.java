@@ -127,6 +127,8 @@ public class ClientboundClaimModesPacket {
 		
 		@Override
 		public void accept(ClientboundClaimModesPacket t) {
+			if(t == null)
+				return;
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimModes(t.moderatorMode, t.adminMode, t.claimingMode, t.claimsImpersonationInfo);
 		}
 		
