@@ -80,7 +80,7 @@ public class ClientboundClaimResultPacket {
 					customReasons.add(customReason);
 				}
 				String dimString = tag.getString("d");
-				ResourceLocation dimension = new ResourceLocation(dimString);
+				ResourceLocation dimension = ResourceLocation.parse(dimString);
 				int left = tag.getInt("l");
 				int top = tag.getInt("t");
 				int right = tag.getInt("r");
