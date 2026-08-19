@@ -198,7 +198,7 @@ public abstract class CommonEvents {
 		}
 	}
 
-	public void onServerStopped(MinecraftServer server) {
+	public void onServerStopping(MinecraftServer server) {
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
 		if(serverData != null)

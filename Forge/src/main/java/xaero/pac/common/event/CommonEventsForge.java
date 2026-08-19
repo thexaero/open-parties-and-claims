@@ -40,7 +40,7 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -133,8 +133,8 @@ public class CommonEventsForge extends CommonEvents {
 	}
 	
 	@SubscribeEvent
-	public void onServerStopped(ServerStoppedEvent event) {
-		super.onServerStopped(event.getServer());
+	public void onServerStopping(ServerStoppingEvent event) {
+		super.onServerStopping(event.getServer());
 	}
 	
 	@SubscribeEvent
