@@ -69,6 +69,8 @@ public class ClaimRegionsStartPacket extends LazyPacket<ClaimRegionsStartPacket>
 		
 		@Override
 		public void accept(ClaimRegionsStartPacket t, ServerPlayer serverPlayer) {
+			if(t == null)
+				return;
 			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(serverPlayer);
 			mainCap.getClaimsManagerPlayerClaimOwnerPropertiesSync().start(serverPlayer);
 			mainCap.getClaimsManagerPlayerSubClaimPropertiesSync().start(serverPlayer);

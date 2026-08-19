@@ -28,7 +28,9 @@ import xaero.pac.common.player.config.dynamic.PlayerConfigDynamicOptions;
 import xaero.pac.common.server.claims.IServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.protection.group.ChunkProtectionExceptionGroup;
+import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.ObjectManagerIOManager;
+import xaero.pac.common.server.io.ObjectManagerIOToSaveTracker;
 import xaero.pac.common.server.parties.party.IPartyManager;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.system.PlayerPartySystemManager;
@@ -41,7 +43,10 @@ import xaero.pac.common.server.player.config.sync.PlayerConfigSynchronizer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -62,7 +67,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	private PlayerConfig<P> expiredClaimConfig;
 	private final ForceLoadTicketManager forceLoadTicketManager;
 	private final Map<UUID, PlayerConfig<P>> configs;
-	private final Set<PlayerConfig<P>> configsToSave;
+	private ObjectManagerIOToSaveTracker<PlayerConfig<P>> configsToSave;
 	private final PlayerConfigSynchronizer synchronizer;
 	private CM claimsManager;
 	private final IPartyManager<P> partyManager;
@@ -75,7 +80,6 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			MinecraftServer server,
 			ForceLoadTicketManager forceLoadTicketManager,
 			Map<UUID, PlayerConfig<P>> configs,
-			Set<PlayerConfig<P>> configsToSave,
 			PlayerConfigSynchronizer synchronizer,
 			IPartyManager<P> partyManager,
 			PlayerConfigDynamicOptions dynamicOptions,
@@ -86,7 +90,6 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		this.server = server;
 		this.forceLoadTicketManager = forceLoadTicketManager;
 		this.configs = configs;
-		this.configsToSave = configsToSave;
 		this.synchronizer = synchronizer;
 		this.partyManager = partyManager;
 		this.dynamicOptions = dynamicOptions;
@@ -137,7 +140,7 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	}
 
 	@Override
-	public Iterable<PlayerConfig<P>> getToSave() {
+	public ObjectManagerIOToSaveTracker<PlayerConfig<P>> getToSave() {
 		return configsToSave;
 	}
 	
@@ -182,11 +185,6 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 	}
 
 	@Override
-	public void addToSave(PlayerConfig<P> object) {
-		configsToSave.add(object);
-	}
-
-	@Override
 	public ForceLoadTicketManager getForceLoadTicketManager() {
 		return forceLoadTicketManager;
 	}
@@ -217,10 +215,13 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 		}
 	}
 
-	public void setIO(PlayerConfigIO<P, CM> io) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setIo(ObjectManagerIO<?, ?, PlayerConfig<P>, PlayerConfigManager<P, CM>> io) {
 		if(this.io != null)
 			throw new RuntimeException(new IllegalAccessException());
-		this.io = io;
+		this.io = (PlayerConfigIO<P, CM>) io;
+		this.configsToSave = ObjectManagerIOToSaveTracker.Builder.<PlayerConfig<P>>begin().setIo(io).build();
 	}
 
 	public boolean isLoaded() {
@@ -374,9 +375,9 @@ implements IPlayerConfigManager, ObjectManagerIOManager<PlayerConfig<P>, PlayerC
 			dynamicOptions.getOptions().values().forEach(optionConsumer);
 
 			PlayerConfigManager<P, CM> result = new PlayerConfigManager<>(
-					server, forceLoadTicketManager, new HashMap<>(), new HashSet<>(),
-					playerConfigSynchronizer, partyManager, dynamicOptions, configSpecBuilder.build(),
-					partySystemManager
+					server, forceLoadTicketManager, new HashMap<>(),
+					playerConfigSynchronizer, partyManager, dynamicOptions,
+					configSpecBuilder.build(), partySystemManager
 			);
 			playerConfigSynchronizer.setConfigManager(result);
 			forceLoadTicketManager.setConfigManager(result);

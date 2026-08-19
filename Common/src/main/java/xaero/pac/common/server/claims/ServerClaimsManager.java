@@ -51,7 +51,6 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
-import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
@@ -119,10 +118,6 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		this.actionListenerManager = actionListenerManager;
 		this.chunkAccessOverriderManager = chunkAccessOverriderManager;
 		this.tickCachedReclaimabilityCheck = tickCachedReclaimabilityCheck;
-	}
-	
-	public void setIo(PlayerClaimInfoManagerIO<?> io) {
-		this.playerClaimInfoManager.setIo(io);
 	}
 	
 	public void setExpirationHandler(ServerPlayerClaimsExpirationHandler expirationHandler) {
@@ -382,17 +377,17 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	@Deprecated
 	public AreaClaimResult backwardsCompatibleClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force){
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
-			return new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), new HashSet<>(), left, top, right, bottom);
+			return new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), new HashSet<>(), dimension, left, top, right, bottom);
 		Set<ClaimResult.Type> resultTypes = new HashSet<>();
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && (action == ClaimingAction.CLAIM || action == ClaimingAction.FORCELOAD) && !isClaimable(dimension)) {
 			resultTypes.add(ClaimResult.Type.UNCLAIMABLE_DIMENSION);
-			return new AreaClaimResult(resultTypes, new HashSet<>(), left, top, right, bottom);
+			return new AreaClaimResult(resultTypes, new HashSet<>(), dimension, left, top, right, bottom);
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(playerClaimInfo.isAreaClaimTaskInProgress()) {
 			resultTypes.add(ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
-			return new AreaClaimResult(resultTypes, new HashSet<>(), left, top, right, bottom);
+			return new AreaClaimResult(resultTypes, new HashSet<>(), dimension, left, top, right, bottom);
 		}
 		int effectiveLeft = left;
 		int effectiveTop = top;
@@ -424,25 +419,25 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	public void tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force, int maxChunksToAffect, Consumer<AreaClaimResult> listener) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get()) {
-			listener.accept(new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), new HashSet<>(), left, top, right, bottom));
+			listener.accept(new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), new HashSet<>(), dimension, left, top, right, bottom));
 			return;
 		}
 		Set<ClaimResult.Type> resultTypes = new HashSet<>();
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && (action == ClaimingAction.CLAIM || action == ClaimingAction.FORCELOAD) && !isClaimable(dimension)) {
 			resultTypes.add(ClaimResult.Type.UNCLAIMABLE_DIMENSION);
-			listener.accept(new AreaClaimResult(resultTypes, new HashSet<>(), left, top, right, bottom));
+			listener.accept(new AreaClaimResult(resultTypes, new HashSet<>(), dimension, left, top, right, bottom));
 			return;
 		}
 		if(!force && !fromDimension.equals(dimension)) {
 			resultTypes.add(ClaimResult.Type.ANOTHER_DIMENSION);
-			listener.accept(new AreaClaimResult(resultTypes, new HashSet<>(), left, top, right, bottom));
+			listener.accept(new AreaClaimResult(resultTypes, new HashSet<>(), dimension, left, top, right, bottom));
 			return;
 		}
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(playerClaimInfo.isAreaClaimTaskInProgress()) {
 			resultTypes.add(ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
-			listener.accept(new AreaClaimResult(resultTypes, new HashSet<>(), left, top, right, bottom));
+			listener.accept(new AreaClaimResult(resultTypes, new HashSet<>(), dimension, left, top, right, bottom));
 			return;
 		}
 		IServerData<?, ?> serverData = ServerData.from(server);
@@ -720,7 +715,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 							partySystemManager == null || areaClaimActionTaskHandler == null
 			)
 				throw new IllegalStateException();
-			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>(), new HashSet<>());
+			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>());
 			setPlayerClaimInfoManager(playerInfoManager);
 			ServerClaimsManager result = (ServerClaimsManager) super.build();
 			playerInfoManager.setClaimsManager(result);
