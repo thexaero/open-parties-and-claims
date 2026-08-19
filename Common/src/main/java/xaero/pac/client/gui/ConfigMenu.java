@@ -41,6 +41,7 @@ import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.packet.config.ServerboundOtherPlayerConfigPacket;
 
 public class ConfigMenu extends XPACScreen {
 	
@@ -121,7 +122,7 @@ public class ConfigMenu extends XPACScreen {
 	}
 	
 	private boolean isPlayerNameAllowed() {
-		return !otherPlayerNameString.isEmpty() && !otherPlayerNameString.equalsIgnoreCase(minecraft.player.getGameProfile().name());
+		return !otherPlayerNameString.isEmpty() && !otherPlayerNameString.equalsIgnoreCase(minecraft.player.getGameProfile().name()) && otherPlayerNameString.matches(ServerboundOtherPlayerConfigPacket.OWNER_NAME_REGEX);
 	}
 	
 	private void onOtherPlayerConfigButton(Button b) {

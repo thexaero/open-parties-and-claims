@@ -94,6 +94,8 @@ public class ClientboundPlayerConfigConfigurableOptionsPacket {
 
 		@Override
 		public void accept(ClientboundPlayerConfigConfigurableOptionsPacket t) {
+			if(t == null)
+				return;
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager().setConfigurableOptions(t.playerConfigurableOptions, t.opConfigurableOptions);
 		}
 
