@@ -42,6 +42,7 @@ import xaero.pac.common.server.expiration.task.ObjectExpirationCheckSpreadoutTas
 import xaero.pac.common.server.info.ServerInfo;
 import xaero.pac.common.server.info.io.ServerInfoHolderIO;
 import xaero.pac.common.server.io.IOThreadWorker;
+import xaero.pac.common.server.io.ObjectManagerIO;
 import xaero.pac.common.server.io.ObjectManagerLiveSaver;
 import xaero.pac.common.server.parties.party.*;
 import xaero.pac.common.server.parties.party.expiration.PartyExpirationHandler;
@@ -172,13 +173,20 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 		@SuppressWarnings("unchecked")
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverDataInterface = (IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>)(Object) this;
-		while(!partyManagerIO.save());
-		while(!playerConfigsIO.save());
-		while(!playerClaimInfoManagerIO.save());
+		saveAll(partyManagerIO);
+		saveAll(playerConfigsIO);
+		saveAll(playerClaimInfoManagerIO);
 		serverInfoIO.save();
 		OpenPartiesAndClaims.LOGGER.info("Stopping IO worker...");
 		ioThreadWorker.stop();
 		OpenPartiesAndClaims.LOGGER.info("Stopped IO worker!");
+	}
+
+	private void saveAll(ObjectManagerIO<?, ?, ?, ?> io){
+		io.setLiveSaving(false);//ends current live saving if it's in progress
+		io.setLiveSaving(true);
+		while(!io.save());
+		io.setLiveSaving(false);
 	}
 	
 	@Override
