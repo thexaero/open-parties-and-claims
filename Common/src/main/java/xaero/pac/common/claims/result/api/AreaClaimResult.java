@@ -19,7 +19,7 @@
 package xaero.pac.common.claims.result.api;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class AreaClaimResult {
 	
 	private final List<ClaimResult.Type> resultTypes;
 	private final Set<Component> customReasons;
-	private final ResourceLocation dimension;
+	private final Identifier dimension;
 	private final int left;
 	private final int top;
 	private final int right;
@@ -52,7 +52,7 @@ public class AreaClaimResult {
 	 * @param right  highest X coordinate value in this area
 	 * @param bottom  highest Z coordinate value in this area
 	 */
-	public AreaClaimResult(Set<ClaimResult.Type> resultTypes, Set<Component> customReasons, ResourceLocation dimension, int left, int top, int right, int bottom) {
+	public AreaClaimResult(Set<ClaimResult.Type> resultTypes, Set<Component> customReasons, Identifier dimension, int left, int top, int right, int bottom) {
 		super();
 		List<ClaimResult.Type> resultTypeList = Arrays.asList(resultTypes.toArray(new ClaimResult.Type[resultTypes.size()]));
 		Collections.sort(resultTypeList);
@@ -100,7 +100,7 @@ public class AreaClaimResult {
 	 * @return the dimension ID, not null
 	 */
 	@Nonnull
-	public ResourceLocation getDimension() {
+	public Identifier getDimension() {
 		return dimension;
 	}
 

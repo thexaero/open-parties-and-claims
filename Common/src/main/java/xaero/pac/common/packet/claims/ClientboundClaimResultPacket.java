@@ -21,7 +21,7 @@ package xaero.pac.common.packet.claims;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
@@ -76,7 +76,7 @@ public class ClientboundClaimResultPacket {
 					customReasons.add(customReason);
 				}
 				String dimString = tag.getStringOr("d", "");
-				ResourceLocation dimension = ResourceLocation.parse(dimString);
+				Identifier dimension = Identifier.parse(dimString);
 				int left = tag.getIntOr("l", 0);
 				int top = tag.getIntOr("t", 0);
 				int right = tag.getIntOr("r", 0);

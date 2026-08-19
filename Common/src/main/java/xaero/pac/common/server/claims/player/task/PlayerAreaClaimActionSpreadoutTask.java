@@ -204,7 +204,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		IServerClaimsManager<?, ?, ?> claimManager = serverData.getServerClaimsManager();
 		IServerPlayerClaimInfo<?> playerInfo = claimManager.getPlayerInfo(playerId);
 		playerInfo.setAreaClaimTaskInProgress(null);
-		ResourceLocation dimension = actionRequest.getDimension();
+		Identifier dimension = actionRequest.getDimension();
 		int left = actionRequest.getLeft();
 		int top = actionRequest.getTop();
 		int right = actionRequest.getRight();
