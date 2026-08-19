@@ -51,7 +51,6 @@ import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
-import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.claims.protection.ChunkProtection;
@@ -119,10 +118,6 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		this.actionListenerManager = actionListenerManager;
 		this.chunkAccessOverriderManager = chunkAccessOverriderManager;
 		this.tickCachedReclaimabilityCheck = tickCachedReclaimabilityCheck;
-	}
-	
-	public void setIo(PlayerClaimInfoManagerIO<?> io) {
-		this.playerClaimInfoManager.setIo(io);
 	}
 	
 	public void setExpirationHandler(ServerPlayerClaimsExpirationHandler expirationHandler) {
@@ -720,7 +715,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 							partySystemManager == null || areaClaimActionTaskHandler == null
 			)
 				throw new IllegalStateException();
-			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>(), new HashSet<>());
+			ServerPlayerClaimInfoManager playerInfoManager = new ServerPlayerClaimInfoManager(server, configManager, ticketManager, new HashMap<>(), new LinkedChain<>());
 			setPlayerClaimInfoManager(playerInfoManager);
 			ServerClaimsManager result = (ServerClaimsManager) super.build();
 			playerInfoManager.setClaimsManager(result);
