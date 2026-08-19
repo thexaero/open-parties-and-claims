@@ -23,8 +23,9 @@ public interface ObjectManagerIOManager
 	T extends ObjectManagerIOObject, 
 	M extends ObjectManagerIOManager<T, M>
 > {
-	
-	public void addToSave(T object);
-	public Iterable<T> getToSave();
+
+	public ObjectManagerIOToSaveTracker<T> getToSave();
+
+	void setIo(ObjectManagerIO<?, ?, T, M> io);
 
 }

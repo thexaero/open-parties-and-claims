@@ -125,6 +125,8 @@ public abstract class ClientboundPlayerConfigAbstractStatePacket extends PlayerC
 
 		@Override
 		public void accept(P t) {
+			if(t == null)
+				return;
 			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
 					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 			IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage = ClientPlayerConfigUtils.getTargetConfig(t.isOtherPlayer(), t.getType(), playerConfigStorageManager);

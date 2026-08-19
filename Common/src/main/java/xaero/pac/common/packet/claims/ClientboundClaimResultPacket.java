@@ -21,6 +21,7 @@ package xaero.pac.common.packet.claims;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
@@ -74,11 +75,13 @@ public class ClientboundClaimResultPacket {
 						continue;
 					customReasons.add(customReason);
 				}
+				String dimString = tag.getStringOr("d", "");
+				Identifier dimension = Identifier.parse(dimString);
 				int left = tag.getIntOr("l", 0);
 				int top = tag.getIntOr("t", 0);
 				int right = tag.getIntOr("r", 0);
 				int bottom = tag.getIntOr("b", 0);
-				return new ClientboundClaimResultPacket(new AreaClaimResult(resultTypes, customReasons, left, top, right, bottom));
+				return new ClientboundClaimResultPacket(new AreaClaimResult(resultTypes, customReasons, dimension, left, top, right, bottom));
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
 				return null;
@@ -104,6 +107,7 @@ public class ClientboundClaimResultPacket {
 			}
 			tag.putByteArray("ta", resultTypes);
 			tag.put("crl", customReasonListTag);
+			tag.putString("d", t.result.getDimension().toString());
 			tag.putInt("l", t.result.getLeft());
 			tag.putInt("t", t.result.getTop());
 			tag.putInt("r", t.result.getRight());
@@ -117,6 +121,8 @@ public class ClientboundClaimResultPacket {
 		
 		@Override
 		public void accept(ClientboundClaimResultPacket t) {
+			if(t == null)
+				return;
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimResult(t.result);
 		}
 		

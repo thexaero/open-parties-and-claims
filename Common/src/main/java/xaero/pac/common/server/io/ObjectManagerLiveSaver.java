@@ -33,12 +33,14 @@ public class ObjectManagerLiveSaver {
 	
 	public boolean onServerTick() {
 		if(System.currentTimeMillis() > lastSave + saveInterval) {
+			io.setLiveSaving(true);
 			if(io.save()) {
 				lastSave = System.currentTimeMillis();
+				io.setLiveSaving(false);
 			}
 			return true;
 		}
 		return false;
 	}
-	
+
 }

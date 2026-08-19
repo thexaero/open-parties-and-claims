@@ -76,6 +76,8 @@ public class ClientboundPlayerConfigHelpPacket {
 
 		@Override
 		public void accept(ClientboundPlayerConfigHelpPacket t) {
+			if(t == null)
+				return;
 			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
 					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 			IPlayerConfigOptionSpecAPI<?> option = playerConfigStorageManager.getOptionForId(t.optionId);
