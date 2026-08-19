@@ -79,7 +79,6 @@ public class ConfigMenu extends XPACScreen {
 				configStorage = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 		ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(minecraft.level, ClientWorldCapabilityTypes.MAIN_CAP);
 		otherPlayerNameBox.setValue(otherPlayerNameString);
-		otherPlayerNameBox.setFilter(s -> s.matches(ServerboundOtherPlayerConfigPacket.OWNER_NAME_REGEX));
 		otherPlayerNameBox.setResponder(s -> {otherPlayerNameString = s; updateOtherPlayerButton();});
 		otherPlayerNameBox.setEditable(mainCap.getClientWorldData().serverHasMod() && configStorage.isAdmin());
 		addRenderableWidget(Button.builder(Component.translatable("gui.xaero_pac_back"), this::onBackButton).bounds(width / 2 - 100, this.height / 6 + 168, 200, 20).build());
@@ -123,7 +122,7 @@ public class ConfigMenu extends XPACScreen {
 	}
 	
 	private boolean isPlayerNameAllowed() {
-		return !otherPlayerNameString.isEmpty() && !otherPlayerNameString.equalsIgnoreCase(minecraft.player.getGameProfile().name());
+		return !otherPlayerNameString.isEmpty() && !otherPlayerNameString.equalsIgnoreCase(minecraft.player.getGameProfile().name()) && otherPlayerNameString.matches(ServerboundOtherPlayerConfigPacket.OWNER_NAME_REGEX);
 	}
 	
 	private void onOtherPlayerConfigButton(Button b) {
