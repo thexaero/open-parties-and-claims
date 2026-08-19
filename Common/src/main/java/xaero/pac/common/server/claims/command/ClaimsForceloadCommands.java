@@ -202,7 +202,7 @@ public class ClaimsForceloadCommands {
 						 if(result.getCustomReason() != null)
 							 customReasons.add(result.getCustomReason());
 						 ((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
-								 new AreaClaimResult(Sets.newHashSet(result.getResultType()), customReasons, areaLeft, areaTop, areaRight, areaBottom),
+								 new AreaClaimResult(Sets.newHashSet(result.getResultType()), customReasons, world.dimension().location(), areaLeft, areaTop, areaRight, areaBottom),
 								 player);
 					 }
 			 	}

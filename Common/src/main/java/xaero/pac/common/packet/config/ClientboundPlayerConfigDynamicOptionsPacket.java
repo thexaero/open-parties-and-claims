@@ -156,6 +156,8 @@ public final class ClientboundPlayerConfigDynamicOptionsPacket extends PlayerCon
 
 		@Override
 		public void accept(ClientboundPlayerConfigDynamicOptionsPacket packet) {
+			if(packet == null)
+				return;
 			PlayerConfigDynamicOptions.Builder dynamicOptionsBuilder = PlayerConfigDynamicOptions.Builder.begin();
 			packet.entries.forEach(dynamicOptionsBuilder::addOption);
 			PlayerConfigDynamicOptions dynamicOptions = dynamicOptionsBuilder.build();

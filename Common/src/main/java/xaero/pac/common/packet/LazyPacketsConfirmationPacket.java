@@ -58,6 +58,8 @@ public class LazyPacketsConfirmationPacket {
 		
 		@Override
 		public void accept(LazyPacketsConfirmationPacket t, ServerPlayer player) {
+			if(t == null)
+				return;
 			ServerData.from(ServerLevelHelper.getServer(player)).getServerTickHandler().getLazyPacketSender().onConfirmation(player);
 		}
 		
@@ -67,6 +69,8 @@ public class LazyPacketsConfirmationPacket {
 
 		@Override
 		public void accept(LazyPacketsConfirmationPacket t) {
+			if(t == null)
+				return;
 			OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(t);
 		}
 
