@@ -297,7 +297,7 @@ public class PlayerConfig
 	@Override
 	public void setDirty(boolean dirty) {
 		if(!this.dirty && dirty)
-			manager.addToSave(this);
+			manager.getToSave().add(this);
 		this.dirty = dirty;
 	}
 

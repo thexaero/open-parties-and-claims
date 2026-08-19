@@ -94,7 +94,7 @@ public class CommonEventsFabric extends CommonEvents {
 		ServerPlayerEvents.AFTER_RESPAWN.register(this::onPlayerRespawn);
 		ServerPlayerEvents.COPY_FROM.register(this::onPlayerClone);
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarting);
-		ServerLifecycleEvents.SERVER_STOPPED.register(this::onServerStopped);
+		ServerLifecycleEvents.SERVER_STOPPING.register(this::onServerStopping);
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(this::onPlayerChangedDimension);
 		ServerTickEvents.START_SERVER_TICK.register(server -> onServerTick(server, true));
 		ServerTickEvents.END_SERVER_TICK.register(server -> onServerTick(server, false));
@@ -155,8 +155,8 @@ public class CommonEventsFabric extends CommonEvents {
 		}
 	}
 
-	public void onServerStopped(MinecraftServer server) {
-		super.onServerStopped(server);
+	public void onServerStopping(MinecraftServer server) {
+		super.onServerStopping(server);
 		ServerCoreFabric.reset();
 	}
 
