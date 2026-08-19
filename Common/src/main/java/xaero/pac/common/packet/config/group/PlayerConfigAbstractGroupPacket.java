@@ -167,6 +167,8 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 
 		@Override
 		public void accept(P packet) {
+			if(packet == null)
+				return;
 			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
 					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 			IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>> storage =
@@ -200,6 +202,8 @@ public class PlayerConfigAbstractGroupPacket extends PlayerConfigPacket {
 
 		@Override
 		public void accept(P packet, ServerPlayer serverPlayer) {
+			if(packet == null)
+				return;
 			boolean isOp = serverPlayer.hasPermissions(Commands.LEVEL_GAMEMASTERS);
 			if(!isOp){
 				if(packet.type != PlayerConfigType.PLAYER && packet.type != PlayerConfigType.PARTY_CLAIMS){

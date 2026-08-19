@@ -47,6 +47,7 @@ public abstract class ObjectManagerIO
 	private final IOThreadWorker ioThreadWorker;
 	protected final MinecraftServer server;
 	protected final FileIOHelper fileIOHelper;
+	protected boolean liveSaving;
 
 	@SuppressWarnings("unchecked")
 	protected ObjectManagerIO(SerializationHandler<S, I, T, M> serializationHandler, SerializedDataFileIO<S,I> serializedDataFileIO, IOThreadWorker ioThreadWorker, MinecraftServer server, String fileExtension, M manager, FileIOHelper fileIOHelper) {
@@ -260,7 +261,17 @@ public abstract class ObjectManagerIO
 			}
 		}
 	}
-	
+
+	public void setLiveSaving(boolean liveSaving) {
+		if(!this.liveSaving && liveSaving)
+			manager.getToSave().beforeLiveSave();
+		this.liveSaving = liveSaving;
+	}
+
+	public boolean isLiveSaving() {
+		return liveSaving;
+	}
+
 	public static abstract class Builder <
 		S, 
 		I,
@@ -333,7 +344,9 @@ public abstract class ObjectManagerIO
 					serializedDataFileIO == null || ioThreadWorker == null ||
 					server == null || fileIOHelper == null || manager == null)
 				throw new IllegalStateException();
-			return buildInternally();
+			ObjectManagerIO<S,I,T,M> result = buildInternally();
+			manager.setIo(result);
+			return result;
 		}
 		
 		protected abstract ObjectManagerIO<S,I,T,M> buildInternally();

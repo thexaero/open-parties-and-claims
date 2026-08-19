@@ -54,6 +54,8 @@ public class ClientboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 
 		@Override
 		public void accept(ClientboundPlayerConfigOptionValuePacket t) {
+			if(t == null)
+				return;
 			IPlayerConfigClientStorageManager<IPlayerConfigClientStorage<IPlayerConfigStringableOptionClientStorage<?>>>
 					playerConfigStorageManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 

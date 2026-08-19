@@ -69,6 +69,8 @@ public class ServerLoginHandshakePacket {
 		
 		@Override
 		public void accept(ServerLoginHandshakePacket t) {
+			if(t == null)
+				return;
 			if(t.networkVersion != PacketConstants.NETWORK_VERSION) {
 				Minecraft.getInstance().getConnection().getConnection().disconnect(PacketConstants.NETWORK_VERSION_MISMATCH);
 				return;
@@ -83,6 +85,8 @@ public class ServerLoginHandshakePacket {
 
 		@Override
 		public void accept(ServerLoginHandshakePacket t, ServerPlayer player) {
+			if(t == null)
+				return;
 			if(t.networkVersion != PacketConstants.NETWORK_VERSION) {
 				player.connection.disconnect(PacketConstants.NETWORK_VERSION_MISMATCH);
 				return;

@@ -212,7 +212,7 @@ public final class ServerParty extends Party implements IServerParty<PartyMember
 	@Override
 	public void setDirty(boolean dirty) {
 		if(!this.dirty && dirty && managedBy != null)
-			managedBy.addToSave(this);
+			managedBy.getToSave().add(this);
 		this.dirty = dirty;
 	}
 
