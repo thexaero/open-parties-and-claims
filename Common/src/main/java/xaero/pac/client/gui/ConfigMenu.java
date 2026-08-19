@@ -39,6 +39,7 @@ import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.packet.config.ServerboundOtherPlayerConfigPacket;
 
 public class ConfigMenu extends XPACScreen {
 	
@@ -76,6 +77,7 @@ public class ConfigMenu extends XPACScreen {
 				configStorage = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 		ClientWorldMainCapability mainCap = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(minecraft.level, ClientWorldCapabilityTypes.MAIN_CAP);
 		otherPlayerNameBox.setValue(otherPlayerNameString);
+		otherPlayerNameBox.setFilter(s -> s.matches(ServerboundOtherPlayerConfigPacket.OWNER_NAME_REGEX));
 		otherPlayerNameBox.setResponder(s -> {otherPlayerNameString = s; updateOtherPlayerButton();});
 		otherPlayerNameBox.setEditable(mainCap.getClientWorldData().serverHasMod() && configStorage.isAdmin());
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
