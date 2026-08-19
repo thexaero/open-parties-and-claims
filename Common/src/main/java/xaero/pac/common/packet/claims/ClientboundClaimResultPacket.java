@@ -119,6 +119,8 @@ public class ClientboundClaimResultPacket {
 		
 		@Override
 		public void accept(ClientboundClaimResultPacket t) {
+			if(t == null)
+				return;
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimResult(t.result);
 		}
 		

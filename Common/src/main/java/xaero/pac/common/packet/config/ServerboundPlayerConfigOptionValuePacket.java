@@ -97,6 +97,8 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 
 		@Override
 		public void accept(ServerboundPlayerConfigOptionValuePacket t, ServerPlayer serverPlayer) {
+			if(t == null)
+				return;
 			if(t.entries.size() > 1) {
 				OpenPartiesAndClaims.LOGGER.info("A player is attempting to modify multiple options in a single packet! Name: " + serverPlayer.getGameProfile().getName());
 				return;

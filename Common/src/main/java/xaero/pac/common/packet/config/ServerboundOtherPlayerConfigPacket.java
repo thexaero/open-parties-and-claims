@@ -83,6 +83,8 @@ public class ServerboundOtherPlayerConfigPacket extends PlayerConfigPacket {
 		
 		@Override
 		public void accept(ServerboundOtherPlayerConfigPacket t, ServerPlayer serverPlayer) {
+			if(t == null)
+				return;
 			if(!serverPlayer.hasPermissions(2)) {
 				OpenPartiesAndClaims.LOGGER.info("Non-op player is attempting to requesting another player's config! Name: " + serverPlayer.getGameProfile().getName());
 				return;
