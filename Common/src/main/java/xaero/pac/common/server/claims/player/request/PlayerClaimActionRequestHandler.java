@@ -20,11 +20,11 @@ package xaero.pac.common.server.claims.player.request;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
-import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -80,7 +80,7 @@ public class PlayerClaimActionRequestHandler {
 				if(claimType == playerData.getRawClaimingMode())
 					manager.getPermissionHandler().resetClaimingMode(player);
 				manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
-						new AreaClaimResult(Set.of(failureType), new HashSet<>(), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
+						new AreaClaimResult(Set.of(failureType), new HashSet<>(), request.getDimension(), request.getLeft(), request.getTop(), request.getRight(), request.getBottom()),
 						player);
 				return;
 			}
