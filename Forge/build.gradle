@@ -21,7 +21,9 @@ base {
 
 jar {
     manifest {
-        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json,${mod_id}.create.mixins.json,${mod_id}.create.forge.mixins.json"
+        //TODO restore when create is ported
+//        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json,${mod_id}.create.mixins.json,${mod_id}.create.forge.mixins.json"
+        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
     }
 }
 
