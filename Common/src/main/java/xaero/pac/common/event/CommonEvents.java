@@ -350,6 +350,8 @@ public abstract class CommonEvents {
 				serverData = ServerData.from(ServerLevelHelper.getServer(target));
 		if(serverData == null)
 			return false;
+		if(source.isSpectator())
+			return false;
 		return serverData.getChunkProtection().onEntityInteraction(serverData, source, source, target, null, hand, false, true, true);
 	}
 

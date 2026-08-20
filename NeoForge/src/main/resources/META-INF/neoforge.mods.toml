@@ -9,7 +9,7 @@ version="${version}" #mandatory
 displayName="${mod_display_name}" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 displayURL="${homepage}" #optional
-logoFile="${mod_id}.png" #optional
+iconFile="${mod_id}.png" #optional
 # credits="Thanks for this example mod goes to Java" #optional
 authors="${mod_author} and other contributors" #optional
 # mandatory
