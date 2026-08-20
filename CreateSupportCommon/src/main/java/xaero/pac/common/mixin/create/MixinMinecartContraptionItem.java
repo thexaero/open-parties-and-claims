@@ -29,12 +29,12 @@ import xaero.pac.common.server.core.ServerCore;
 @Mixin(MinecartContraptionItem.class)
 public class MixinMinecartContraptionItem {
 
-	@Inject(method = "useOn", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/contraptions/mounted/MinecartContraptionItem;addContraptionToMinecart(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/vehicle/AbstractMinecart;Lnet/minecraft/core/Direction;)V"))
+	@Inject(method = "useOn", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/contraptions/mounted/MinecartContraptionItem;addContraptionToMinecart(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/vehicle/minecart/AbstractMinecart;Lnet/minecraft/core/Direction;)V"))
 	public void onUseOnPre(UseOnContext context, CallbackInfoReturnable<Boolean> cir){
 		ServerCore.preMinecartContraptionPlaced(context);
 	}
 
-	@Inject(method = "useOn", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/contraptions/mounted/MinecartContraptionItem;addContraptionToMinecart(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/vehicle/AbstractMinecart;Lnet/minecraft/core/Direction;)V"))
+	@Inject(method = "useOn", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lcom/simibubi/create/content/contraptions/mounted/MinecartContraptionItem;addContraptionToMinecart(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/vehicle/minecart/AbstractMinecart;Lnet/minecraft/core/Direction;)V"))
 	public void onUseOnPost(UseOnContext context, CallbackInfoReturnable<Boolean> cir){
 		ServerCore.postMinecartContraptionPlaced();
 	}

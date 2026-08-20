@@ -232,12 +232,6 @@ public class CommonEventsNeoForge extends CommonEvents {
 			event.setCanceled(true);
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onInteractEntitySpecific(PlayerInteractEvent.EntityInteractSpecific event) {
-		if(super.onInteractEntitySpecific(event.getEntity(), event.getTarget(), event.getHand()))
-			event.setCanceled(true);
-	}
-	
 	@SubscribeEvent
 	public void onExplosionDetonate(ExplosionEvent.Detonate event) {
 		super.onExplosionDetonate(event.getLevel(), event.getExplosion(), event.getAffectedEntities(), event.getAffectedBlocks());
