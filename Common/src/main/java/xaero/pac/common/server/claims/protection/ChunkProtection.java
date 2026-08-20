@@ -2305,7 +2305,7 @@ public class ChunkProtection
 				return true;
 		}
 		//death loot is further protected by the entity barrier vvv along with some other stuff
-		return shouldPreventEntityChunkEntry(serverData, playerConfigs, firstClaim, secondClaim, firstConfig, secondConfig, second, null, null);
+		return shouldPreventEntityChunkEntry(serverData, playerConfigs, firstClaim, secondClaim, firstConfig, secondConfig, second, firstChunkPos, secondChunkPos);
 	}
 
 	public boolean onItemStackMerge(IServerData<CM, ?> serverData, ItemEntity first, ItemEntity second) {
