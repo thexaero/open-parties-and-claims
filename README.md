@@ -54,9 +54,21 @@ repositories {
 }
 ```
 
+For Fabric or for Forge 1.20.4+, you'll also need to add the Forge Config API Port repository:
+```
+repositories {
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
+}
+```
+
 If you're on Forge, make sure the MixinGradle plugin is applied in your project (org.spongepowered.mixin), unless you're on Minecraft 26.1 or newer.
 
-Finally, add one or more of the following dependency declarations, replacing `<minecraft version>` and `<mod version>` with actual values you can see at [chocolateminecraft.com/maven/xaero/pac](https://chocolateminecraft.com/maven/xaero/pac).
+Finally, add one or more of the following dependency declarations, replacing `<minecraft version>` and `<mod version>`
+with actual values you can see at [chocolateminecraft.com/maven/xaero/pac](https://chocolateminecraft.com/maven/xaero/pac).
+`<fcapi version>` is the Forge Config API Port mod version. Look that up on their CurseForge or Modrinth.
 
 Forge with official Mojang mappings before 1.21.1:
 
@@ -73,6 +85,7 @@ implementation "xaero.pac:open-parties-and-claims-forge-<minecraft version>:<mod
 Forge with other mappings:
 
 ```
+implementation fg.deobf("fuzs.forgeconfigapiport:forgeconfigapiport-forge:<fcapi version>")
 implementation fg.deobf("xaero.pac:open-parties-and-claims-forge-<minecraft version>:<mod version>")
 ```
 
