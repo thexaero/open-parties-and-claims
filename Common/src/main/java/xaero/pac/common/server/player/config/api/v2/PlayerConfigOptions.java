@@ -424,8 +424,8 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.color")
 				.setDefaultValue(0x000000)
 				.setDefaultReplacer((config, value) -> {
-					if(config.getPlayerId() == null || Objects.equals(config.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) || Objects.equals(config.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID))
-						return 0xAA0000;
+					if(config.getType().isGlobal())
+						return ClaimsConstants.GLOBAL_CLAIM_DEFAULT_COLOR;
 					if(ServerConfig.CONFIG.partyOwnedClaims.get()) {
 						//the cached automatic default value gets reset when the primary party color changes, so this code gets recalled
 						int primaryPartyColor = config.getManager().getPartySystemManager().getPrimaryPartyColorByOwner(config.getPlayerId());
