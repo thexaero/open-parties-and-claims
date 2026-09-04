@@ -281,7 +281,7 @@ public abstract class ClaimsManager
 		int subConfigIndex = claimState.getSubConfigIndex();
 		PCI playerClaimInfo = getPlayerInfo(claimState.getPlayerId());
 		String customName = playerClaimInfo.getClaimsName(subConfigIndex);
-		if(subConfigIndex != -1 && customName == null)
+		if(subConfigIndex != -1 && (customName == null || customName.isEmpty()))
 			return playerClaimInfo.getClaimsName();
 		return customName;
 	}
