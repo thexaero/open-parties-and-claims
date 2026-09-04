@@ -199,5 +199,20 @@ public interface IClaimsManagerAPI {
 	 */
 	@Nonnull
 	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension, boolean allowPartyNames);
-	
+
+	/**
+	 * Gets the color that would be used for a provided claim state and dimension.
+	 * <p>
+	 * The dimension argument only matters when claimState is null (wilderness) or an expired claim.
+	 * <p>
+	 * The returned value on the client side is the default color (0 for actual players) before the color is synced
+	 * from the server. The returned color may also not correspond to the dimension before the dimension-specific
+	 * color is synced.
+	 *
+	 * @param claimState  the claim state, can be null for wilderness
+	 * @param dimension  the dimension the claim is in, null when doesn't matter
+	 * @return the color of the claim state
+	 */
+	public int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension);
+
 }
