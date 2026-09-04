@@ -22,6 +22,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,6 +41,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public abstract class ClaimsManager
@@ -50,7 +52,7 @@ public abstract class ClaimsManager
 	WCM extends DimensionClaimsManager<M, WRC>,
 	CSH extends ClaimStateHolder
 > implements IClaimsManager<PCI, WCM> {
-	
+
 	protected final M playerClaimInfoManager;
 	protected final IPlayerConfigManager configManager;
 	private Map<ResourceLocation, WCM> dimensions;
@@ -58,6 +60,7 @@ public abstract class ClaimsManager
 	protected Map<PlayerChunkClaim, CSH> claimStateHolders;
 	private int nextClaimStateSyncIndex;
 	protected final ClaimsManagerTracker claimsManagerTracker;
+	protected final Function<ResourceLocation, String> id2String = Util.memoize(ResourceLocation::toString);
 	
 	protected ClaimsManager(M playerClaimInfoManager, IPlayerConfigManager configManager,
 							Map<ResourceLocation, WCM> dimensions, Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, CSH> claimStates, ClaimsManagerTracker claimsManagerTracker) {
@@ -272,10 +275,25 @@ public abstract class ClaimsManager
 		return Component.translatable("gui.xaero_pac_full_title_format", customName, defaultName);
 	}
 
+	@Override
+	public int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension) {
+		if(claimUsesDimensionSubConfigs(claimState))
+			return getDimensionColor(claimState, dimension);
+		if(claimState == null)//shouldn't really happen because wilderness uses dimension sub-configs
+			return 0;
+		PCI playerClaimInfo = getPlayerInfo(claimState.getPlayerId());
+		Integer subColor = playerClaimInfo.getClaimsColor(claimState.getSubConfigIndex());
+		if(subColor != null)
+			return subColor;
+		return playerClaimInfo.getClaimsColor();
+	}
+
 	public abstract boolean claimUsesDimensionSubConfigs(IPlayerChunkClaimAPI claimState);
 
 	@Nullable
 	public abstract String getDimensionName(IPlayerChunkClaimAPI claimState, ResourceLocation dimension);
+
+	public abstract int getDimensionColor(IPlayerChunkClaimAPI claimState, ResourceLocation dimension);
 
 	protected MutableComponent constructPlayerClaimName(PCI playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames){
 		//overridden to apply party name instead if necessary

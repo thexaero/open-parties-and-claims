@@ -228,7 +228,10 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 		IPlayerConfig subConfig = playerConfig.getEffectiveSubConfig(subConfigIndex);
 		if(subConfig.getSubIndex() != subConfigIndex)
 			return null;
-		return subConfig.getRaw(PlayerConfigOptions.CLAIMS_COLOR);
+		return playerConfig.applyDefaultReplacer(
+				PlayerConfigOptions.CLAIMS_COLOR,
+				subConfig.getRaw(PlayerConfigOptions.CLAIMS_COLOR)
+		);
 	}
 
 	@Nullable
@@ -245,7 +248,10 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 		IPlayerConfig subConfig = playerConfig.getSubConfig(subId);
 		if(subConfig == null)
 			return null;
-		return subConfig.getRaw(PlayerConfigOptions.CLAIMS_COLOR);
+		return playerConfig.applyDefaultReplacer(
+				PlayerConfigOptions.CLAIMS_COLOR,
+				subConfig.getRaw(PlayerConfigOptions.CLAIMS_COLOR)
+		);
 	}
 
 	@Override
