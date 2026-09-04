@@ -19,6 +19,7 @@
 package xaero.pac.common.server.claims.api;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -89,6 +90,37 @@ public interface IServerClaimsManagerAPI
 	@Nonnull
 	@Override
 	public IClaimsManagerTrackerAPI getTracker();
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable IPlayerChunkClaimAPI claimState);
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable IPlayerChunkClaimAPI claimState, boolean allowPartyNames);
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable UUID claimId, boolean forceloadable);
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable UUID claimId, boolean forceloadable, boolean allowPartyNames);
+
+	@Nonnull
+	@Override
+	Component getFullName(@Nullable IPlayerChunkClaimAPI claimState);
+
+	@Nonnull
+	@Override
+	Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, boolean allowPartyNames);
+
+	@Nonnull
+	@Override
+	Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension, boolean allowPartyNames);
+
+	@Override
+	int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension);
 
 	/**
 	 * Checks whether a dimension is claimable.
