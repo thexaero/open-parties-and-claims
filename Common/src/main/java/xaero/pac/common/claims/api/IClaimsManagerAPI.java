@@ -201,6 +201,22 @@ public interface IClaimsManagerAPI {
 	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension, boolean allowPartyNames);
 
 	/**
+	 * Gets the custom display name that would be used for a provided claim state and dimension.
+	 * <p>
+	 * The dimension argument only matters when claimState is null (wilderness) or an expired claim.
+	 * <p>
+	 * The returned value on the client side is null before the custom name is synced from the server.
+	 * The returned name may also not correspond to the dimension before the dimension-specific
+	 * name is synced.
+	 *
+	 * @param claimState  the claim state, can be null for wilderness
+	 * @param dimension  the dimension the claim is in, null when doesn't matter
+	 * @return the custom name of the claims, null if there is none
+	 */
+	@Nullable
+	public String getCustomName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension);
+
+	/**
 	 * Gets the color that would be used for a provided claim state and dimension.
 	 * <p>
 	 * The dimension argument only matters when claimState is null (wilderness) or an expired claim.

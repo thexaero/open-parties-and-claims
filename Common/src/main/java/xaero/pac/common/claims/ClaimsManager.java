@@ -263,9 +263,7 @@ public abstract class ClaimsManager
 	@Nonnull
 	@Override
 	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension, boolean allowPartyNames) {
-		String customName = claimUsesDimensionSubConfigs(claimState) ?
-				getDimensionName(claimState, dimension) :
-				getPlayerInfo(claimState.getPlayerId()).getClaimsName(claimState.getSubConfigIndex());
+		String customName = getCustomName(claimState, dimension);
 		boolean hasCustom = customName != null && !customName.isEmpty();
 		if(claimState == null && hasCustom)
 			return Component.literal(customName);
@@ -273,6 +271,21 @@ public abstract class ClaimsManager
 		if(!hasCustom)
 			return defaultName;
 		return Component.translatable("gui.xaero_pac_full_title_format", customName, defaultName);
+	}
+
+	@Nullable
+	@Override
+	public String getCustomName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension){
+		if(claimUsesDimensionSubConfigs(claimState))
+			return getDimensionName(claimState, dimension);
+		if(claimState == null)//shouldn't really happen because wilderness uses dimension sub-configs
+			return null;
+		int subConfigIndex = claimState.getSubConfigIndex();
+		PCI playerClaimInfo = getPlayerInfo(claimState.getPlayerId());
+		String customName = playerClaimInfo.getClaimsName(subConfigIndex);
+		if(subConfigIndex != -1 && customName == null)
+			return playerClaimInfo.getClaimsName();
+		return customName;
 	}
 
 	@Override
