@@ -28,7 +28,10 @@ import xaero.pac.common.server.player.config.*;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.PlayerConfigCommonChangeHandlers;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An access point for all static player config option specifications/representations.
@@ -424,8 +427,8 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.color")
 				.setDefaultValue(0x000000)
 				.setDefaultReplacer((config, value) -> {
-					if(config.getPlayerId() == null || Objects.equals(config.getPlayerId(), PlayerConfig.SERVER_CLAIM_UUID) || Objects.equals(config.getPlayerId(), PlayerConfig.EXPIRED_CLAIM_UUID))
-						return 0xAA0000;
+					if(config.getType().isGlobal())
+						return ClaimsConstants.GLOBAL_CLAIM_DEFAULT_COLOR;
 					if(ServerConfig.CONFIG.partyOwnedClaims.get()) {
 						//the cached automatic default value gets reset when the primary party color changes, so this code gets recalled
 						int primaryPartyColor = config.getManager().getPartySystemManager().getPrimaryPartyColorByOwner(config.getPlayerId());
@@ -450,6 +453,7 @@ public class PlayerConfigOptions {
 				.setComment("Used as the color for your claims. Set to 0 to use the default automatic color.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleClaimsProperty)
+				.setAffectsClaimsVisually(true)
 				.build(allOptions);
 		PARTY_NAME = PlayerConfigStringOptionSpec.Builder.begin()
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)

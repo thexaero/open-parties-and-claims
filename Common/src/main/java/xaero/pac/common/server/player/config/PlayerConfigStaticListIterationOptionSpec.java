@@ -62,7 +62,8 @@ public final class PlayerConfigStaticListIterationOptionSpec<T> extends PlayerCo
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<T> serverChangeHandler,
 			boolean syncable,
-			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter,
+			boolean affectsClaimsVisually
 	) {
 		super(
 				type, id, shortenedId, path, defaultValue, defaultReplacer,
@@ -70,7 +71,7 @@ public final class PlayerConfigStaticListIterationOptionSpec<T> extends PlayerCo
 				commentTranslationArgs, category, serverSideValidator,
 				clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter,
 				clientSideListGetter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable,
-				directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter
+				directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter, affectsClaimsVisually
 		);
 		this.list = list;
 	}
@@ -117,7 +118,7 @@ public final class PlayerConfigStaticListIterationOptionSpec<T> extends PlayerCo
 					clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter,
 					clientSideListGetter, list, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STATIC_LIST,
 					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
-					syncable, commandSuggestionGetter
+					syncable, commandSuggestionGetter, affectsClaimsVisually
 			);
 		}
 

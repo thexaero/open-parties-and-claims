@@ -60,7 +60,8 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<String> serverChangeHandler,
 			boolean syncable,
-			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter,
+			boolean affectsClaimsVisually
 	) {
 		super(
 				type, id, shortenedId, path, defaultValue, defaultReplacer,
@@ -68,7 +69,7 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 				commentTranslationArgs, category,
 				serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter,
 				syncOptionType, dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
-				serverChangeHandler, syncable, commandSuggestionGetter
+				serverChangeHandler, syncable, commandSuggestionGetter, affectsClaimsVisually
 		);
 		this.maxLength = maxLength;
 	}
@@ -125,7 +126,7 @@ public final class PlayerConfigStringOptionSpec extends PlayerConfigOptionSpec<S
 					category, serverSideValidator, clientSideValidator, maxLength,
 					tooltipPrefix, configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.STRING,
 					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
-					syncable, commandSuggestionGetter
+					syncable, commandSuggestionGetter, affectsClaimsVisually
 			);
 		}
 
