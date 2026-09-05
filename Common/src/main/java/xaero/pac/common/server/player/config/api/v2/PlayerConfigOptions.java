@@ -28,7 +28,10 @@ import xaero.pac.common.server.player.config.*;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.PlayerConfigCommonChangeHandlers;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An access point for all static player config option specifications/representations.
@@ -450,6 +453,7 @@ public class PlayerConfigOptions {
 				.setComment("Used as the color for your claims. Set to 0 to use the default automatic color.")
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleClaimsProperty)
+				.setAffectsClaimsVisually(true)
 				.build(allOptions);
 		PARTY_NAME = PlayerConfigStringOptionSpec.Builder.begin()
 				.setConfigTypeFilter(t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER)
