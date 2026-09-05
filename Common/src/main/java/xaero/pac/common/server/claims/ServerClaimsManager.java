@@ -600,7 +600,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Override
-	public int getDimensionColor(IPlayerChunkClaimAPI claimState, ResourceLocation dimension) {
+	public int getDimensionColor(IPlayerChunkClaimAPI claimState, Identifier dimension) {
 		IPlayerConfig effectiveConfig = configManager.getLoadedConfig(claimState == null ? null : claimState.getPlayerId());
 		if(dimension != null)
 			effectiveConfig = effectiveConfig.getEffectiveSubConfig(id2String.apply(dimension));

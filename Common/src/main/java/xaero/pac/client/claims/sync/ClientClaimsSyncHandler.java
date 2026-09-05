@@ -195,7 +195,7 @@ public class ClientClaimsSyncHandler {
 		boolean notManyClaims = playerClaimInfo.getClaimCount() < 1024;
 		ClaimsManagerTracker tracker = claimsManager.getTracker();
 		playerClaimInfo.getTypedStream().map(Map.Entry::getValue).forEach(dim -> {
-			ResourceLocation dimensionId = dim.getDimension();
+			Identifier dimensionId = dim.getDimension();
 			String dimensionIdString = dimensionId.toString();
 			PlayerConfigClientStorage dimSubConfig = dimensionIdString.equals(updatedSubConfig.getSubId()) ? updatedSubConfig ://for when it's already been deleted
 					rootConfig.getEffectiveSubConfig(dimensionIdString);
