@@ -38,8 +38,6 @@ import xaero.pac.common.server.claims.IServerDimensionClaimsManager;
 import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
-import xaero.pac.common.server.player.config.IPlayerConfig;
-import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
@@ -71,8 +69,7 @@ public class ServerPlayerClaimWelcomer {
 						player, null, playerDim, player.chunkPosition().x, player.chunkPosition().z
 				);
 
-		IPlayerConfig claimConfig = serverData.getChunkProtection().getClaimConfig(serverData.getPlayerConfigManager(), currentClaim, playerDim);
-		int claimColor = claimConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
+		int claimColor = claimsManager.getColor(currentClaim, playerDim);
 		claimsManager.getPermissionHandler().ensureModeratorModeStatusPermission(player, playerData);
 		boolean moderatorMode = playerData.isClaimsModeratorMode();
 		MutableComponent subTitleText = adaptiveLocalizer.getFor(player, claimsManager.getFullName(currentClaim, playerDim, !moderatorMode)).copy();

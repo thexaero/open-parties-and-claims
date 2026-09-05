@@ -24,7 +24,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.BitStorage;
+import net.minecraft.world.level.ChunkPos;
 import xaero.pac.client.claims.ClientClaimsManager;
+import xaero.pac.client.claims.player.ClientPlayerClaimInfo;
+import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.impersonation.SimplePlayerClaimImpersonationInfo;
@@ -33,10 +36,14 @@ import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
 import xaero.pac.common.claims.player.mode.ClaimingModeSubInfo;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
+import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
+import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class ClientClaimsSyncHandler {
 	
@@ -175,6 +182,36 @@ public class ClientClaimsSyncHandler {
 
 	public void onClaimsReset(boolean notifyTracker) {
 		claimsManager.reset(notifyTracker);
+	}
+
+	public void onDimensionSubConfigVisualChange(
+			PlayerConfigClientStorage updatedSubConfig,
+			PlayerConfigOptionSpec<?> option
+	) {
+		if(updatedSubConfig.getOwner() == null)//wilderness is not "visible" anyway
+			return;
+		PlayerConfigClientStorage rootConfig = updatedSubConfig.getMain();
+		ClientPlayerClaimInfo playerClaimInfo = claimsManager.getPlayerInfo(updatedSubConfig.getOwner());
+		boolean notManyClaims = playerClaimInfo.getClaimCount() < 1024;
+		ClaimsManagerTracker tracker = claimsManager.getTracker();
+		playerClaimInfo.getTypedStream().map(Map.Entry::getValue).forEach(dim -> {
+			ResourceLocation dimensionId = dim.getDimension();
+			String dimensionIdString = dimensionId.toString();
+			PlayerConfigClientStorage dimSubConfig = dimensionIdString.equals(updatedSubConfig.getSubId()) ? updatedSubConfig ://for when it's already been deleted
+					rootConfig.getEffectiveSubConfig(dimensionIdString);
+			if(dimSubConfig != updatedSubConfig &&
+					(updatedSubConfig != rootConfig || option != null && dimSubConfig.getOption(option).getValue() != null))
+				return;
+			if(notManyClaims) {
+				BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (state, pos) ->
+						tracker.onChunkChange(dimensionId, pos.x, pos.z, state);
+				dim.getTypedStream().forEach(posList -> {
+					PlayerChunkClaim state = posList.getClaimState();
+					posList.getStream().forEach(pos -> claimConsumer.accept(state, pos));
+				});
+			} else
+				tracker.onDimensionChange(dimensionId);
+		});
 	}
 
 }

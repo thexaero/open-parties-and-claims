@@ -57,6 +57,7 @@ import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
+import xaero.pac.common.claims.util.ClaimsConstants;
 import xaero.pac.common.packet.claims.ServerboundClaimActionRequestPacket;
 import xaero.pac.common.parties.party.IPartyMemberDynamicInfoSyncable;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
@@ -140,6 +141,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		if(this.clientData != null)
 			throw new IllegalStateException();
 		this.clientData = clientData;
+		this.playerClaimInfoManager.setClientData(clientData);
 	}
 
 	public void setLoading(boolean loading) {
@@ -487,11 +489,34 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 
 	@Override
 	public String getDimensionName(IPlayerChunkClaimAPI claimState, Identifier dimension) {
-		IPlayerConfigClientStorage<?> effectiveConfig = clientData.getPlayerConfigStorageManager()
+		IPlayerConfigClientStorage<?> rootConfig = clientData.getPlayerConfigStorageManager()
 				.getGlobalConfigForClaimOwner(claimState == null ? null : claimState.getPlayerId());
+		IPlayerConfigClientStorage<?> effectiveConfig = rootConfig;
 		if(dimension != null)
-			effectiveConfig = effectiveConfig.getEffectiveSubConfig(dimension.toString());
-		return effectiveConfig.getOption(PlayerConfigOptions.CLAIMS_NAME).getValue();
+			effectiveConfig = effectiveConfig.getEffectiveSubConfig(id2String.apply(dimension));
+		String name = effectiveConfig.getOption(PlayerConfigOptions.CLAIMS_NAME).getValue();
+		if(dimension != null && name == null)
+			name = rootConfig.getOption(PlayerConfigOptions.CLAIMS_NAME).getValue();
+		return name;
+	}
+
+	@Override
+	public int getDimensionColor(IPlayerChunkClaimAPI claimState, Identifier dimension) {
+		IPlayerConfigClientStorage<?> rootConfig = clientData.getPlayerConfigStorageManager()
+				.getGlobalConfigForClaimOwner(claimState == null ? null : claimState.getPlayerId());
+		Integer color = null;
+		if(dimension != null) {
+			IPlayerConfigClientStorage<?> effectiveConfig = rootConfig.getEffectiveSubConfig(id2String.apply(dimension));
+			color = effectiveConfig.getOption(PlayerConfigOptions.CLAIMS_COLOR).getValue();
+		}
+		if(color == null)
+			color = rootConfig.getOption(PlayerConfigOptions.CLAIMS_COLOR).getValue();
+		int defaultColorValue = PlayerConfigOptions.CLAIMS_COLOR.getDefaultValue();
+		if(color == null)
+			color = defaultColorValue;
+		if(color == defaultColorValue && rootConfig.getType().isGlobal())
+			return ClaimsConstants.GLOBAL_CLAIM_DEFAULT_COLOR;
+		return color;
 	}
 
 	@Override
