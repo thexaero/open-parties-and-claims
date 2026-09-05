@@ -29,6 +29,8 @@ public class ClientCore {
 
 	public static void onInitializeWorldBorder(ClientboundInitializeBorderPacket packet){
 		Minecraft.getInstance().schedule(() -> {
+			if(Minecraft.getInstance().level == null)//happens on some weird servers, can't do anything in such case
+				return;
 			//have to schedule because a vanilla and a modded packet are not necessarily handled in the order they are sent on Forge on 1.21.10+
 			//this ensures that the OPAC dimension handshake, if received, is handled before running this code
 			ClientWorldMainCapability capability = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(Minecraft.getInstance().level, ClientWorldCapabilityTypes.MAIN_CAP);

@@ -26,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
@@ -38,6 +39,7 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public abstract class ClaimsManager
@@ -48,7 +50,7 @@ public abstract class ClaimsManager
 	WCM extends DimensionClaimsManager<M, WRC>,
 	CSH extends ClaimStateHolder
 > implements IClaimsManager<PCI, WCM> {
-	
+
 	protected final M playerClaimInfoManager;
 	protected final IPlayerConfigManager configManager;
 	private Map<Identifier, WCM> dimensions;
@@ -56,6 +58,7 @@ public abstract class ClaimsManager
 	protected Map<PlayerChunkClaim, CSH> claimStateHolders;
 	private int nextClaimStateSyncIndex;
 	protected final ClaimsManagerTracker claimsManagerTracker;
+	protected final Function<Identifier, String> id2String = Util.memoize(Identifier::toString);
 	
 	protected ClaimsManager(M playerClaimInfoManager, IPlayerConfigManager configManager,
 							Map<Identifier, WCM> dimensions, Int2ObjectMap<PlayerChunkClaim> indexToClaimState, Map<PlayerChunkClaim, CSH> claimStates, ClaimsManagerTracker claimsManagerTracker) {
@@ -258,9 +261,7 @@ public abstract class ClaimsManager
 	@Nonnull
 	@Override
 	public Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension, boolean allowPartyNames) {
-		String customName = claimUsesDimensionSubConfigs(claimState) ?
-				getDimensionName(claimState, dimension) :
-				getPlayerInfo(claimState.getPlayerId()).getClaimsName(claimState.getSubConfigIndex());
+		String customName = getCustomName(claimState, dimension);
 		boolean hasCustom = customName != null && !customName.isEmpty();
 		if(claimState == null && hasCustom)
 			return Component.literal(customName);
@@ -270,10 +271,40 @@ public abstract class ClaimsManager
 		return Component.translatable("gui.xaero_pac_full_title_format", customName, defaultName);
 	}
 
+	@Nullable
+	@Override
+	public String getCustomName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension){
+		if(claimUsesDimensionSubConfigs(claimState))
+			return getDimensionName(claimState, dimension);
+		if(claimState == null)//shouldn't really happen because wilderness uses dimension sub-configs
+			return null;
+		int subConfigIndex = claimState.getSubConfigIndex();
+		PCI playerClaimInfo = getPlayerInfo(claimState.getPlayerId());
+		String customName = playerClaimInfo.getClaimsName(subConfigIndex);
+		if(subConfigIndex != -1 && (customName == null || customName.isEmpty()))
+			return playerClaimInfo.getClaimsName();
+		return customName;
+	}
+
+	@Override
+	public int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension) {
+		if(claimUsesDimensionSubConfigs(claimState))
+			return getDimensionColor(claimState, dimension);
+		if(claimState == null)//shouldn't really happen because wilderness uses dimension sub-configs
+			return 0;
+		PCI playerClaimInfo = getPlayerInfo(claimState.getPlayerId());
+		Integer subColor = playerClaimInfo.getClaimsColor(claimState.getSubConfigIndex());
+		if(subColor != null)
+			return subColor;
+		return playerClaimInfo.getClaimsColor();
+	}
+
 	public abstract boolean claimUsesDimensionSubConfigs(IPlayerChunkClaimAPI claimState);
 
 	@Nullable
 	public abstract String getDimensionName(IPlayerChunkClaimAPI claimState, Identifier dimension);
+
+	public abstract int getDimensionColor(IPlayerChunkClaimAPI claimState, Identifier dimension);
 
 	protected MutableComponent constructPlayerClaimName(PCI playerClaimInfo, Component forceloadedComponent, boolean allowPartyNames){
 		//overridden to apply party name instead if necessary
