@@ -198,7 +198,7 @@ public class ClientClaimsSyncHandler {
 			ResourceLocation dimensionId = dim.getDimension();
 			PlayerConfigClientStorage dimSubConfig = rootConfig.getEffectiveSubConfig(dimensionId.toString());
 			if(dimSubConfig != updatedSubConfig &&
-					(updatedSubConfig != rootConfig || dimSubConfig.getOption(option).getValue() != null))
+					(updatedSubConfig != rootConfig || option != null && dimSubConfig.getOption(option).getValue() != null))
 				return;
 			if(notManyClaims) {
 				BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (state, pos) ->
