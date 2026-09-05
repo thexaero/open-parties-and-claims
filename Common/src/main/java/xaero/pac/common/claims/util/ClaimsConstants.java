@@ -21,5 +21,6 @@ package xaero.pac.common.claims.util;
 public class ClaimsConstants {
 
 	public static final int COLOR_IS_PARTY_FLAG = 0x01000000;
+	public static final int GLOBAL_CLAIM_DEFAULT_COLOR = 0xAA0000;
 
 }
