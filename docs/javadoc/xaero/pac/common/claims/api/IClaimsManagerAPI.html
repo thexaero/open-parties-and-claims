@@ -114,6 +114,18 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim state for a specified chunk.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getColor(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation)" class="member-name-link">getColor</a><wbr>(<a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the color that would be used for a provided claim state and dimension.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCustomName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation)" class="member-name-link">getCustomName</a><wbr>(<a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the custom display name that would be used for a provided claim state and dimension.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(java.util.UUID,boolean)" class="member-name-link">getDefaultName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;claimId,
  boolean&nbsp;forceloadable)</code></div>
@@ -446,6 +458,53 @@ loadScripts(document, 'script');</script>
 <dd><code>allowPartyNames</code> - whether to apply party names to party-owned claims</dd>
 <dt>Returns:</dt>
 <dd>the full display name, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCustomName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation)">
+<h3>getCustomName</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getCustomName</span><wbr><span class="parameters">(@Nullable
+ <a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ @Nullable
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</span></div>
+<div class="block">Gets the custom display name that would be used for a provided claim state and dimension.
+ <p>
+ The dimension argument only matters when claimState is null (wilderness) or an expired claim.
+ <p>
+ The returned value on the client side is null before the custom name is synced from the server.
+ The returned name may also not correspond to the dimension before the dimension-specific
+ name is synced.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimState</code> - the claim state, can be null for wilderness</dd>
+<dd><code>dimension</code> - the dimension the claim is in, null when doesn't matter</dd>
+<dt>Returns:</dt>
+<dd>the custom name of the claims, null if there is none</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getColor(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation)">
+<h3>getColor</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getColor</span><wbr><span class="parameters">(@Nullable
+ <a href="../player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ @Nullable
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</span></div>
+<div class="block">Gets the color that would be used for a provided claim state and dimension.
+ <p>
+ The dimension argument only matters when claimState is null (wilderness) or an expired claim.
+ <p>
+ The returned value on the client side is the default color (0 for actual players) before the color is synced
+ from the server. The returned color may also not correspond to the dimension before the dimension-specific
+ color is synced.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>claimState</code> - the claim state, can be null for wilderness</dd>
+<dd><code>dimension</code> - the dimension the claim is in, null when doesn't matter</dd>
+<dt>Returns:</dt>
+<dd>the color of the claim state</dd>
 </dl>
 </section>
 </li>
