@@ -28,6 +28,8 @@ import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 public class ClientCore {
 
 	public static void onInitializeWorldBorder(ClientboundInitializeBorderPacket packet){
+		if(Minecraft.getInstance().level == null)//happens on some weird servers, can't do anything in such case
+			return;
 		ClientWorldMainCapability capability = (ClientWorldMainCapability) OpenPartiesAndClaims.INSTANCE.getCapabilityHelper().getCapability(Minecraft.getInstance().level, ClientWorldCapabilityTypes.MAIN_CAP);
 		IClientWorldData worldData = capability.getClientWorldDataInternal();
 		boolean serverHasMod = worldData.serverHasMod();
