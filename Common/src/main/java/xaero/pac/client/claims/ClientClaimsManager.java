@@ -141,6 +141,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		if(this.clientData != null)
 			throw new IllegalStateException();
 		this.clientData = clientData;
+		this.playerClaimInfoManager.setClientData(clientData);
 	}
 
 	public void setLoading(boolean loading) {
