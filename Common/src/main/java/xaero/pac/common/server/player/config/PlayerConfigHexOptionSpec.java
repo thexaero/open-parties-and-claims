@@ -57,7 +57,8 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<Integer> serverChangeHandler,
 			boolean syncable,
-			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter,
+			boolean affectsClaimsVisually
 	) {
 		super(
 				type, id, shortenedId, path, defaultValue, defaultReplacer,
@@ -66,7 +67,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 				serverSideValidator, clientSideValidator, tooltipPrefix,
 				configTypeFilter, syncOptionType, dynamic, overridable,
 				forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
-				syncable, commandSuggestionGetter
+				syncable, commandSuggestionGetter, affectsClaimsVisually
 		);
 	}
 
@@ -102,7 +103,8 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.HEX,
 					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
-					serverChangeHandler, syncable, commandSuggestionGetter
+					serverChangeHandler, syncable, commandSuggestionGetter,
+					affectsClaimsVisually
 			);
 		}
 		

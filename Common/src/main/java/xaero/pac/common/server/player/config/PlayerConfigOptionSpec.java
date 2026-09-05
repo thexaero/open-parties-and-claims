@@ -24,9 +24,9 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.common.packet.config.ClientboundPlayerConfigDynamicOptionsPacket;
+import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigAPI;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
-import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.change.IPlayerConfigChangeHandler;
 
 import javax.annotation.Nonnull;
@@ -71,6 +71,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 	private final IPlayerConfigChangeHandler<T> serverChangeHandler;
 	private final boolean syncable;
 	private final Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter;
+	private final boolean affectsClaimsVisually;
 
 	protected PlayerConfigOptionSpec(
 			PlayerConfigOptionValueType<T> valueType,
@@ -96,7 +97,8 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<T> serverChangeHandler,
 			boolean syncable,
-			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter
+			Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter,
+			boolean affectsClaimsVisually
 	) {
 		super();
 		this.valueType = valueType;
@@ -125,6 +127,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		this.serverChangeHandler = serverChangeHandler;
 		this.syncable = syncable;
 		this.commandSuggestionGetter = commandSuggestionGetter;
+		this.affectsClaimsVisually = affectsClaimsVisually;
 	}
 
 	protected ForgeConfigSpec.Builder buildForgeSpec(ForgeConfigSpec.Builder builder) {
@@ -317,6 +320,10 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		return commandSuggestionGetter.apply(config);
 	}
 
+	public boolean affectsClaimsVisually() {
+		return affectsClaimsVisually;
+	}
+
 	public abstract static class Builder<T, B extends Builder<T, B>> {
 		
 		protected final B self;
@@ -342,6 +349,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		protected IPlayerConfigChangeHandler<T> serverChangeHandler;
 		protected boolean syncable;
 		protected Function<PlayerConfig<?>, Stream<String>> commandSuggestionGetter;
+		protected boolean affectsClaimsVisually;
 		
 		@SuppressWarnings("unchecked")
 		protected Builder(PlayerConfigOptionValueType<T> valueType){
@@ -369,6 +377,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			setServerChangeHandler(null);
 			setSyncable(true);
 			setCommandSuggestionGetter(null);
+			setAffectsClaimsVisually(false);
 			return self;
 		}
 		
@@ -469,6 +478,11 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			return self;
 		}
 
+		public B setAffectsClaimsVisually(boolean affectsClaimsVisually) {
+			this.affectsClaimsVisually = affectsClaimsVisually;
+			return self;
+		}
+
 		protected Predicate<T> buildValueValidator() {
 			if(valueValidator == null) {
 				if(valueType.getJType() == String.class)
@@ -535,7 +549,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.DEFAULT,
 					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
-					syncable, commandSuggestionGetter
+					syncable, commandSuggestionGetter, affectsClaimsVisually
 			);
 		}
 		
