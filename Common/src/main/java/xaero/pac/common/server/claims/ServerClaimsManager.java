@@ -595,8 +595,16 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	public String getDimensionName(IPlayerChunkClaimAPI claimState, Identifier dimension) {
 		IPlayerConfig effectiveConfig = configManager.getLoadedConfig(claimState == null ? null : claimState.getPlayerId());
 		if(dimension != null)
-			effectiveConfig = effectiveConfig.getEffectiveSubConfig(dimension.toString());
+			effectiveConfig = effectiveConfig.getEffectiveSubConfig(id2String.apply(dimension));
 		return effectiveConfig.getEffective(PlayerConfigOptions.CLAIMS_NAME);
+	}
+
+	@Override
+	public int getDimensionColor(IPlayerChunkClaimAPI claimState, Identifier dimension) {
+		IPlayerConfig effectiveConfig = configManager.getLoadedConfig(claimState == null ? null : claimState.getPlayerId());
+		if(dimension != null)
+			effectiveConfig = effectiveConfig.getEffectiveSubConfig(id2String.apply(dimension));
+		return effectiveConfig.getEffective(PlayerConfigOptions.CLAIMS_COLOR);
 	}
 
 	@Override

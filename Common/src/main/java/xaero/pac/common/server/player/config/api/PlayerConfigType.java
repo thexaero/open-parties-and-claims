@@ -125,6 +125,8 @@ public enum PlayerConfigType {
 			Predicate<CommandSourceStack> writeCommandRequirement,
 			boolean readAndWriteReqsDiffer
 	){
+		if(!global && subConfigType == PlayerSubConfigType.DIMENSION)
+			throw new IllegalArgumentException("Only global configs can/should have dimension-based sub-configs!");
 		this.name = name;
 		this.subClaimOption = subClaimOption;
 		this.global = global;

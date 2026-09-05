@@ -20,6 +20,7 @@ package xaero.pac.client.claims.api;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -87,6 +88,37 @@ public interface IClientClaimsManagerAPI
 	@Nonnull
 	@Override
 	public IClaimsManagerTrackerAPI getTracker();
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable IPlayerChunkClaimAPI claimState);
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable IPlayerChunkClaimAPI claimState, boolean allowPartyNames);
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable UUID claimId, boolean forceloadable);
+
+	@Nonnull
+	@Override
+	Component getDefaultName(@Nullable UUID claimId, boolean forceloadable, boolean allowPartyNames);
+
+	@Nonnull
+	@Override
+	Component getFullName(@Nullable IPlayerChunkClaimAPI claimState);
+
+	@Nonnull
+	@Override
+	Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, boolean allowPartyNames);
+
+	@Nonnull
+	@Override
+	Component getFullName(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension, boolean allowPartyNames);
+
+	@Override
+	int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension);
 
 	/**
 	 * Checks whether the initial server chunk claim sync is in progress.
