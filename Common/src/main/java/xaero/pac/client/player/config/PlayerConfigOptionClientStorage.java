@@ -26,6 +26,7 @@ import xaero.pac.common.server.player.config.api.PlayerConfigType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 
 public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionClientStorage<T> {
@@ -118,7 +119,11 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 
 	@Override
 	public void setValue(T value) {
+		T oldValue = this.value;
 		this.value = value;
+		if(option.affectsClaimsVisually() && config.getType().hasDimensionSubConfigs() && !Objects.equals(oldValue, value))
+			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler()
+					.onDimensionSubConfigVisualChange(config, option);
 	}
 
 	@Override
