@@ -19,6 +19,7 @@
 package xaero.pac.client.player.config;
 
 import com.google.common.collect.Lists;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.api.IPlayerConfigClientStorageAPI;
 import xaero.pac.client.player.config.group.ClientPlayerConfigGroupManager;
 import xaero.pac.client.player.config.sub.PlayerSubConfigClientStorage;
@@ -138,6 +139,9 @@ public class PlayerConfigClientStorage implements IPlayerConfigClientStorage<Pla
 		if(removed != null) {
 			removed.setBeingDeleted(false);
 			subConfigIds.remove(subId);
+			if(getType().hasDimensionSubConfigs())
+				OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler()
+						.onDimensionSubConfigVisualChange(removed, null);
 		}
 	}
 
