@@ -204,7 +204,7 @@ public class ClientClaimsSyncHandler {
 				return;
 			if(notManyClaims) {
 				BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (state, pos) ->
-						tracker.onChunkChange(dimensionId, pos.x, pos.z, state);
+						tracker.onChunkChange(dimensionId, pos.x(), pos.z(), state);
 				dim.getTypedStream().forEach(posList -> {
 					PlayerChunkClaim state = posList.getClaimState();
 					posList.getStream().forEach(pos -> claimConsumer.accept(state, pos));
