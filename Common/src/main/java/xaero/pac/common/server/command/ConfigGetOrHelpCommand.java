@@ -110,7 +110,7 @@ public class ConfigGetOrHelpCommand {
 					.requires(requirement)
 					.then(Commands.literal("sub")
 					.then(Commands.literal(literalPrefix)
-					.then(Commands.argument("sub-id", StringArgumentType.word())
+					.then(Commands.argument("sub-id", configType.hasDimensionSubConfigs() ? StringArgumentType.string() : StringArgumentType.word())
 					.suggests(subConfigSuggestionProvider)
 					.then(Commands.argument("key", StringArgumentType.word())
 					.suggests(optionSuggestor)
