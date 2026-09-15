@@ -38,6 +38,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Prediction;
 import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1002,8 +1003,8 @@ public class ChunkProtection
 				!(item instanceof TridentItem) &&
 				!(item instanceof ShieldItem) &&
 				!itemStack.has(DataComponents.WEAPON) &&
-				!(item instanceof AxeItem) &&
-				!(item instanceof HoeItem) &&
+				!itemStack.is(ItemTags.AXES) &&
+				!itemStack.is(ItemTags.HOES) &&
 				!(item instanceof BoatItem) &&
 				!itemStack.is(ItemTags.BOATS) &&
 				!(itemStack.has(DataComponents.CONSUMABLE)) &&
@@ -2032,7 +2033,7 @@ public class ChunkProtection
 			if(result instanceof Player player && !player.isCreative()) {//causes weird dupe in creative + isn't really necessary to restore items
 				ItemStack itemStack = itemEntity.getItem();
 				if (!player.addItem(itemStack) && thrower != player && !thrower.chunkPosition().equals(player.chunkPosition()))
-					player.drop(itemStack, true);//try dropping the rest from the accessor
+					player.drop(itemStack, true, Prediction.SERVER_ONLY);//try dropping the rest from the accessor
 			}
 			return true;
 		}

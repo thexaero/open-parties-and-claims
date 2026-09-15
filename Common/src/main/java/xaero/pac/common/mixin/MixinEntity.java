@@ -49,7 +49,7 @@ public class MixinEntity implements IEntity {
 		cir.setReturnValue(ServerCore.replaceEntityIsInvulnerable(cir.getReturnValue(), damageSource, (Entity)(Object)this));
 	}
 
-	@Inject(method = "handlePortal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;teleport(Lnet/minecraft/world/level/portal/TeleportTransition;)Lnet/minecraft/world/entity/Entity;"), cancellable = true)
+	@Inject(method = "handlePortal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;teleportToPortalDestination(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/portal/TeleportTransition;)V"), cancellable = true)
 	public void onHandlePortal(CallbackInfo ci){
 		if(ServerCore.onHandleNetherPortal((Entity)(Object)this))
 			ci.cancel();

@@ -18,6 +18,7 @@
 
 package xaero.pac.common.mixin;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -32,7 +33,7 @@ import xaero.pac.common.server.core.ServerCoreFabric;
 public class MixinFabricTurtleEggBlock {
 
 	@Inject(method = "canDestroyEgg", at = @At("HEAD"))
-	public void onMobGriefGameRuleMethod(ServerLevel level, Entity entity, CallbackInfoReturnable<Boolean> callbackInfo){
+	public void onMobGriefGameRuleMethod(ServerLevel level, BlockPos pos, Entity entity, CallbackInfoReturnable<Boolean> callbackInfo){
 		ServerCoreFabric.tryToSetMobGriefingEntity(entity);
 	}
 

@@ -35,13 +35,13 @@ import java.util.List;
 public class XPACScreen extends Screen implements IDropDownContainer {
 
 	public static boolean hasShiftDown(){
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT) ||
-				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RSHIFT);
+		return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT) ||
+				InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
 	}
 
 	public static boolean hasControlDown() {
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LCONTROL) ||
-				InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_RCONTROL);
+		return InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) ||
+				InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
 	}
 
 	private static final Component XPAC_TITLE = Component.translatable("gui.xaero_pac_ui_parties_and_claims");

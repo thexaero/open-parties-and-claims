@@ -18,11 +18,11 @@
 
 package xaero.pac.client.gui.widget;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 import xaero.pac.client.gui.TextWidgetListElement;
 
 public class TextWidgetEditBox extends EditBox {
@@ -37,7 +37,7 @@ public class TextWidgetEditBox extends EditBox {
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		if((event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER) && element.onEnterPressed())
+		if((event.key() == InputConstants.KEY_RETURN || event.key() == InputConstants.KEY_NUMPADENTER) && element.onEnterPressed())
 			return true;
 		return super.keyPressed(event);
 	}

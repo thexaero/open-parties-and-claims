@@ -18,6 +18,7 @@
 
 package xaero.pac.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -27,7 +28,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
@@ -143,7 +143,7 @@ public class ConfigMenu extends XPACScreen {
 	
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		if(otherPlayerNameBox.isFocused() && (event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER) && isPlayerNameAllowed()) {
+		if(otherPlayerNameBox.isFocused() && (event.key() == InputConstants.KEY_RETURN || event.key() == InputConstants.KEY_NUMPADENTER) && isPlayerNameAllowed()) {
 			setFocused(null);
 			otherPlayerConfigButton.onPress(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)));
 			return true;

@@ -18,13 +18,13 @@
 
 package xaero.pac.client.gui.group;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.XPACScreen;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
@@ -171,7 +171,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		if(event.key() == GLFW.GLFW_KEY_ENTER && confirmButtonIsActive()) {
+		if(event.key() == InputConstants.KEY_RETURN && confirmButtonIsActive()) {
 			confirmButton.onPress(event);
 			return true;
 		}

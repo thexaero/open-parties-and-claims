@@ -34,9 +34,9 @@ import xaero.pac.OpenPartiesAndClaimsFabric;
 @Mixin(TeleportRandomlyConsumeEffect.class)
 public class MixinFabricTeleportRandomlyConsumeEffect {
 
-	@Inject(method = "apply", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z"), cancellable = true)
-	public void onFinishUsingItem(Level level, ItemStack stack, LivingEntity livingEntity, CallbackInfoReturnable<Boolean> callbackInfoReturnable, boolean bl, int i, double d, double e, double f, Vec3 vec3){
-		Vec3 target = new Vec3(d, e, f);
+	@Inject(method = "apply", locals = LocalCapture.CAPTURE_FAILSOFT, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZLnet/minecraft/tags/TagKey;)Z"), cancellable = true)
+	public void onFinishUsingItem(Level level, ItemStack stack, LivingEntity livingEntity, CallbackInfoReturnable<Boolean> callbackInfoReturnable, int attempt, double xx, double yy, double zz, Vec3 oldPos){
+		Vec3 target = new Vec3(xx, yy, zz);
 		if(((OpenPartiesAndClaimsFabric) OpenPartiesAndClaims.INSTANCE).getCommonEvents().onChorusFruit(livingEntity, target))
 			callbackInfoReturnable.setReturnValue(false);
 	}

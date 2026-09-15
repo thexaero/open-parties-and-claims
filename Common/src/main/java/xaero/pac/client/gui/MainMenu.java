@@ -401,7 +401,7 @@ public class MainMenu extends XPACScreen {
 	@Override
 	public boolean keyPressed(KeyEvent event) {
 		IKeyBindingHelper keyBindingHelper = Services.PLATFORM.getKeyBindingHelper();
-		if(getFocused() == null && keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.KEYSYM
+		if(getFocused() == null && keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.KEYBOARD
 				&&
 				event.key() == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
 				) {

@@ -19,9 +19,9 @@
 package xaero.pac.client.controls;
 
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.controls.api.OPACKeyBindingsAPI;
 
@@ -39,7 +39,7 @@ public class XPACKeyBindings implements OPACKeyBindingsAPI {
 
 	public XPACKeyBindings() {
 		keyBindings = new ArrayList<>();
-		keyBindings.add(openModMenu = new KeyMapping("gui.xaero_pac_key_open_menu", GLFW.GLFW_KEY_APOSTROPHE, category));
+		keyBindings.add(openModMenu = new KeyMapping("gui.xaero_pac_key_open_menu", InputConstants.KEY_APOSTROPHE, category));
 	}
 	
 	public void register(Consumer<KeyMapping> registry, Consumer<KeyMapping.Category> categoryRegistry) {

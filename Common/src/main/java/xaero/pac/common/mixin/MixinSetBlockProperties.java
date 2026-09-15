@@ -40,7 +40,7 @@ public class MixinSetBlockProperties {
 			ci.cancel();
 	}
 
-	@ModifyArg(method = "apply", index = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+	@ModifyArg(method = "apply", index = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
 	public BlockPos replaceSetBlockPos(BlockPos actual){
 		return ServerCore.replaceEnchantmentEffectBlockPos(actual);
 	}

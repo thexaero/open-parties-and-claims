@@ -18,6 +18,7 @@
 
 package xaero.pac.client.gui.group;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -32,7 +33,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import org.lwjgl.glfw.GLFW;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.gui.OtherPlayerConfigWaitScreen;
 import xaero.pac.client.gui.PlayerConfigScreen;
@@ -537,7 +537,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		if(event.key() == GLFW.GLFW_KEY_DELETE){
+		if(event.key() == InputConstants.KEY_DELETE){
 			if(groupList.isFocused())
 				onDeleteGroupButton(null);
 			else if(contentsList.isFocused()){
@@ -630,7 +630,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-				if(event.x() < scrollBarX() && event.button() == 0) {
+				if(event.x() < scrollBarX() && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
 					select();
 					return true;
 				}
@@ -806,7 +806,7 @@ public class PlayerGroupsScreen extends XPACScreen {
 
 			@Override
 			public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-				if(event.x() < scrollBarX() && event.button() == 0) {
+				if(event.x() < scrollBarX() && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
 					select();
 					return true;
 				}

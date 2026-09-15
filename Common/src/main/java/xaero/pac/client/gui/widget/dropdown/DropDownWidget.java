@@ -18,6 +18,7 @@
 
 package xaero.pac.client.gui.widget.dropdown;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -32,7 +33,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
-import org.lwjgl.glfw.GLFW;
 import xaero.pac.client.gui.XPACScreen;
 
 import javax.annotation.Nonnull;
@@ -321,7 +321,7 @@ public final class DropDownWidget extends AbstractWidget
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		if(event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_SPACE) {
+		if(event.key() == InputConstants.KEY_RETURN || event.key() == InputConstants.KEY_SPACE) {
 			int nextSelection;
 			if(XPACScreen.hasShiftDown()) {
 				nextSelection = getSelected() - 1;

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.mixin;
 
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,11 +26,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xaero.pac.common.server.core.ServerCoreFabric;
 
-@Mixin(targets = "net/minecraft/world/entity/monster/EnderMan$EndermanTakeBlockGoal")
+@Mixin(targets = "net/minecraft/world/entity/monster/Enderman$EndermanTakeBlockGoal")
 public class MixinFabricEndermanTakeBlockGoal {
 
 	@Shadow
-	protected EnderMan enderman;
+	protected Enderman enderman;
 
 	@Inject(method = "canUse", at = @At("HEAD"))
 	public void onMobGriefGameRuleMethod(CallbackInfoReturnable<Boolean> callbackInfo){
