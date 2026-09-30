@@ -570,6 +570,34 @@ public interface IClientClaimsManagerAPI
 	public void requestForceload(@Nonnull ResourceLocation dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
+	 * Requests a new chunk claiming anchor by the local client player using a specified claiming mode.
+	 * <p>
+	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
+	 * <p>
+	 * You can get all claiming modes from {@link ClaimingModes}.
+	 *
+	 * @param dimension  the dimension ID of the chunk, not null
+	 * @param x  the X coordinate of the chunk
+	 * @param z  the Z coordinate of the chunk
+	 * @param claimingMode  the claiming mode to use, null for current
+	 */
+	public void requestToAddAnchor(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
+
+	/**
+	 * Requests a chunk claiming anchor removal by the local client player using a specified claiming mode.
+	 * <p>
+	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
+	 * <p>
+	 * You can get all claiming modes from {@link ClaimingModes}.
+	 *
+	 * @param dimension  the dimension ID of the chunk, not null
+	 * @param x  the X coordinate of the chunk
+	 * @param z  the Z coordinate of the chunk
+	 * @param claimingMode  the claiming mode to use, null for current
+	 */
+	public void requestToRemoveAnchor(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
+
+	/**
 	 * Requests new chunks claims over a specified area by the local client player using a specified claiming mode.
 	 * <p>
 	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.

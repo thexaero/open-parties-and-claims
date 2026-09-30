@@ -430,6 +430,16 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
+	public void requestToAddAnchor(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode) {
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.ANCHOR, dimension, x, z, x, z, (ClaimingMode) claimingMode)));
+	}
+
+	@Override
+	public void requestToRemoveAnchor(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode) {
+		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.UNANCHOR, dimension, x, z, x, z, (ClaimingMode) claimingMode)));
+	}
+
+	@Override
 	public void requestAreaClaim(@Nonnull ResourceLocation dimension, int left, int top, int right, int bottom, @Nullable IClaimingModeAPI claimingModeAPI){
 		OpenPartiesAndClaims.INSTANCE.getPacketHandler().sendToServer(new ServerboundClaimActionRequestPacket(new ClaimActionRequest(ClaimingAction.CLAIM, dimension, left, top, right, bottom, (ClaimingMode) claimingModeAPI)));
 	}

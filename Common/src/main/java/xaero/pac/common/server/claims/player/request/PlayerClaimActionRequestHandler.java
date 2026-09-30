@@ -20,6 +20,7 @@ package xaero.pac.common.server.claims.player.request;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -98,11 +99,20 @@ public class PlayerClaimActionRequestHandler {
 		ResourceLocation fromDimension = player.level.dimension().location();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
+		lastRequestTickCounter = serverTickHandler.getTickCounter();
+		if(request.getAction() == ClaimingAction.ANCHOR || request.getAction() == ClaimingAction.UNANCHOR){
+			boolean add = request.getAction() == ClaimingAction.ANCHOR;
+			manager.tryAnchor(
+					request.getDimension(), claimPlayerId, fromDimension, fromX, fromZ,
+					request.getLeft(), request.getTop(), add, playerData.isClaimsAdminMode(),
+					result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player)
+			);
+			return;
+		}
 		manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
 				fromDimension, fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
 				request.getAction(), playerData.isClaimsAdminMode(),
 				null, result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
-		lastRequestTickCounter = serverTickHandler.getTickCounter();
 	}
 
 	public long getLastRequestTickCounter() {
