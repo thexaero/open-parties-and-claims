@@ -499,6 +499,22 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Requests a chunk (un)forceload by the local client player using a specified claiming mode.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestToAddAnchor(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestToAddAnchor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Requests a new chunk claiming anchor by the local client player using a specified claiming mode.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#requestToRemoveAnchor(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">requestToRemoveAnchor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Requests a chunk claiming anchor removal by the local client player using a specified claiming mode.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#requestUnclaim(int,int,boolean)" class="member-name-link">requestUnclaim</a><wbr>(int&nbsp;x,
  int&nbsp;z,
@@ -1559,6 +1575,52 @@ extends <a href="../../../common/claims/api/IClaimsManagerAPI.html" title="inter
 <dd><code>x</code> - the X coordinate of the chunk</dd>
 <dd><code>z</code> - the Z coordinate of the chunk</dd>
 <dd><code>enable</code> - true to forceload the chunk, false to unforceload</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestToAddAnchor(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestToAddAnchor</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestToAddAnchor</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Requests a new chunk claiming anchor by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>x</code> - the X coordinate of the chunk</dd>
+<dd><code>z</code> - the Z coordinate of the chunk</dd>
+<dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestToRemoveAnchor(net.minecraft.resources.ResourceLocation,int,int,xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)">
+<h3>requestToRemoveAnchor</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">requestToRemoveAnchor</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ int&nbsp;x,
+ int&nbsp;z,
+ @Nullable
+ <a href="../../../common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a>&nbsp;claimingMode)</span></div>
+<div class="block">Requests a chunk claiming anchor removal by the local client player using a specified claiming mode.
+ <p>
+ Register a claim result listener with <a href="../tracker/result/api/IClaimsManagerClaimResultTrackerAPI.html" title="interface in xaero.pac.client.claims.tracker.result.api"><code>IClaimsManagerClaimResultTrackerAPI</code></a> to receive the result of this request.
+ <p>
+ You can get all claiming modes from <a href="../../../common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api"><code>ClaimingModes</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>x</code> - the X coordinate of the chunk</dd>
+<dd><code>z</code> - the Z coordinate of the chunk</dd>
 <dd><code>claimingMode</code> - the claiming mode to use, null for current</dd>
 </dl>
 </section>
