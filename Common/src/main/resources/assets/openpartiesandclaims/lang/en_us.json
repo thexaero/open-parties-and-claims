@@ -670,7 +670,7 @@
 	"gui.xaero_claims_anchored_at" : "Successfully added a claiming anchor at chunk position (%1$s, %2$s) in %3$s!",
 	"gui.xaero_claims_began_unanchoring_at" : "Began removing the claiming anchor at chunk position (%1$s, %2$s) in %3$s and all claims that are in its range and not in any other anchor's range!",
 	"gui.xaero_claims_anchor_already_exists" : "You already have a claiming anchor at this chunk position!",
-	"gui.xaero_claims_anchor_doesnt_exists" : "You don't have a claiming anchor at this chunk position!",
+	"gui.xaero_claims_anchor_doesnt_exist" : "You don't have a claiming anchor at this chunk position!",
 	"gui.xaero_claims_anchor_limit_reached" : "You have reached your claiming anchor limit in this dimension!",
 	"gui.xaero_claims_claim_not_within_anchor_range" : "The target chunk(s) is/are not within a claiming anchor's range! Use /oclaims anchor to place a claiming anchor.",
 	"gui.xaero_claims_cant_unclaim_anchor" : "You can't unclaim a chunk that has a claiming anchor. Use /oclaims unanchor to remove the anchor along with claims that aren't also in another's range.",
