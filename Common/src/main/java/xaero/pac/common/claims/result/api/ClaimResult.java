@@ -199,13 +199,13 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		CANT_TOUCH_OTHER(new TranslatableComponent("gui.xaero_claims_claim_cant_touch_other_claims").withStyle(ChatFormatting.RED), false, true, false, false),
 
 		/** Claiming anchor already exists */
-		ANCHOR_ALREADY_EXISTS(new TranslatableComponent("gui.xaero_claims_anchor_already_exists"), false, true, false, false),
+		ANCHOR_ALREADY_EXISTS(new TranslatableComponent("gui.xaero_claims_anchor_already_exists").withStyle(ChatFormatting.RED), false, true, false, false),
 
 		/** Claiming anchor doesn't exist */
-		ANCHOR_DOESNT_EXIST(new TranslatableComponent("gui.xaero_claims_anchor_doesnt_exists"), false, true, false, false),
+		ANCHOR_DOESNT_EXIST(new TranslatableComponent("gui.xaero_claims_anchor_doesnt_exists").withStyle(ChatFormatting.RED), false, true, false, false),
 
 		/** Claiming anchor limit is reached */
-		ANCHOR_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_anchor_limit_reached"), false, true, false, false),
+		ANCHOR_LIMIT_REACHED(new TranslatableComponent("gui.xaero_claims_anchor_limit_reached").withStyle(ChatFormatting.RED), false, true, false, false),
 
 		/** The chunk was beyond any anchor range */
 		ANCHOR_TOO_FAR(new TranslatableComponent("gui.xaero_claims_claim_not_within_anchor_range").withStyle(ChatFormatting.RED), false, true, false, false),
