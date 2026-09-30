@@ -57,6 +57,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds a new ally party to this party.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#addAnchor(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos,java.util.UUID)" class="member-name-link">addAnchor(ResourceLocation, ChunkPos, UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Adds a claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+ if it doesn't already exist there.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#addCustom(java.lang.String)" class="member-name-link">addCustom(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
 <dd>
 <div class="block">Attempts to add a new custom group to this group manager with a specified ID.</div>
@@ -105,6 +110,30 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A chunk was already not forceloadable</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html#ANCHOR" class="member-name-link">ANCHOR</a> - Enum constant in enum class xaero.pac.common.claims.action.api.<a href="xaero/pac/common/claims/action/api/ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></dt>
+<dd>
+<div class="block">Adding a claiming anchor</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ANCHOR_ALREADY_EXISTS" class="member-name-link">ANCHOR_ALREADY_EXISTS</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Claiming anchor already exists</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ANCHOR_DOESNT_EXIST" class="member-name-link">ANCHOR_DOESNT_EXIST</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Claiming anchor doesn't exist</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ANCHOR_LIMIT_REACHED" class="member-name-link">ANCHOR_LIMIT_REACHED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Claiming anchor limit is reached</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ANCHOR_TOO_FAR" class="member-name-link">ANCHOR_TOO_FAR</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The chunk was beyond any anchor range</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ANCHORS_NOT_USED" class="member-name-link">ANCHORS_NOT_USED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Tried to add or remove an anchor when anchor-based claiming is disasbled</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#ANOTHER_DIMENSION" class="member-name-link">ANOTHER_DIMENSION</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The chunk was beyond the maximum distance</div>
@@ -124,6 +153,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:B">B</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#BEGAN_UNANCHOR" class="member-name-link">BEGAN_UNANCHOR</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Successfully began unanchoring a chunk</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html#BONUS_CHUNK_CLAIMS" class="member-name-link">BONUS_CHUNK_CLAIMS</a> - Static variable in class xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api">PlayerConfigOptions</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -144,6 +177,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The bonus chunk forceloads on top of the normal limit.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html#BONUS_CLAIMING_ANCHOR_RANGE" class="member-name-link">BONUS_CLAIMING_ANCHOR_RANGE</a> - Static variable in class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api.v2">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">The bonus claiming anchor range on top of the normal range.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html#BONUS_CLAIMING_ANCHORS" class="member-name-link">BONUS_CLAIMING_ANCHORS</a> - Static variable in class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api.v2">PlayerConfigOptions</a></dt>
+<dd>
+<div class="block">The bonus claiming anchors on top of the normal limit.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html#BONUS_PLAYER_GROUP_SPACE" class="member-name-link">BONUS_PLAYER_GROUP_SPACE</a> - Static variable in class xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/PlayerConfigOptions.html" title="class in xaero.pac.common.server.player.config.api.v2">PlayerConfigOptions</a></dt>
 <dd>
 <div class="block">The bonus player group total that this player can create.</div>
@@ -155,6 +196,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html#canAffectArea()" class="member-name-link">canAffectArea()</a> - Method in enum class xaero.pac.common.claims.action.api.<a href="xaero/pac/common/claims/action/api/ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></dt>
+<dd>
+<div class="block">Gets whether this action can be used to affect an area larger than 1 chunk.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/player/mode/api/IClaimingModeAPI.html#canBeImpersonated()" class="member-name-link">canBeImpersonated()</a> - Method in interface xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/IClaimingModeAPI.html" title="interface in xaero.pac.common.claims.player.mode.api">IClaimingModeAPI</a></dt>
 <dd>
 <div class="block">Checks whether this claiming mode can be used when impersonating another player.</div>
@@ -216,6 +261,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#CANT_TOUCH_OTHER" class="member-name-link">CANT_TOUCH_OTHER</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The claiming action was interruptingly forbidden by an addon</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#CANT_UNCLAIM_ANCHOR" class="member-name-link">CANT_UNCLAIM_ANCHOR</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The chunk can't be unclaimed because it has a claiming anchor</div>
 </dd>
 <dt><a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html#canView()" class="member-name-link">canView()</a> - Method in interface xaero.pac.common.player.config.api.<a href="xaero/pac/common/player/config/api/IPlayerConfigPermissionAPI.html" title="interface in xaero.pac.common.player.config.api">IPlayerConfigPermissionAPI</a></dt>
 <dd>
@@ -528,6 +577,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Whether the claimed chunk protection makes an exception for items dropped on player death.</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#CLAIM_STILL_ANCHORED" class="member-name-link">CLAIM_STILL_ANCHORED</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Chunk claim is still anchored</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/action/listener/override/api/ClaimActionPermissionOverride.html" class="type-name-link" title="class in xaero.pac.common.server.claims.action.listener.override.api">ClaimActionPermissionOverride</a> - Class in <a href="xaero/pac/common/server/claims/action/listener/override/api/package-summary.html">xaero.pac.common.server.claims.action.listener.override.api</a></dt>
 <dd>
 <div class="block">A claim action permission override</div>
@@ -540,6 +593,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">All types of overrides that a claim action listener can make</div>
 </dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#CLAIMING_ANCHOR_RANGE" class="member-name-link">CLAIMING_ANCHOR_RANGE</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The claiming anchor range int "permission".</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html" class="type-name-link" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a> - Enum Class in <a href="xaero/pac/common/claims/action/api/package-summary.html">xaero.pac.common.claims.action.api</a></dt>
 <dd>
 <div class="block">All possible types of claiming actions</div>
@@ -550,6 +607,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html#%3Cinit%3E()" class="member-name-link">ClaimingModes()</a> - Constructor for class xaero.pac.common.claims.player.mode.api.<a href="xaero/pac/common/claims/player/mode/api/ClaimingModes.html" title="class in xaero.pac.common.claims.player.mode.api">ClaimingModes</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html" class="type-name-link" title="class in xaero.pac.common.claims.api">ClaimLocation</a> - Class in <a href="xaero/pac/common/claims/api/package-summary.html">xaero.pac.common.claims.api</a></dt>
+<dd>
+<div class="block">A location which includes the dimension ID and the chunk position coordinates that may be used for a claim</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html#%3Cinit%3E(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">ClaimLocation(ResourceLocation, int, int)</a> - Constructor for class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/ClaimLocation.html" title="class in xaero.pac.common.claims.api">ClaimLocation</a></dt>
+<dd>
+<div class="block">Constructs a new claim location for a specified dimension ID and chunk position.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.html" class="type-name-link" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="xaero/pac/common/claims/result/api/ClaimResult.html" title="type parameter in ClaimResult">C</a> extends <a href="xaero/pac/common/claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt; - Class in <a href="xaero/pac/common/claims/result/api/package-summary.html">xaero.pac.common.claims.result.api</a></dt>
 <dd>
 <div class="block">A claim result for a single chunk</div>
@@ -686,6 +751,12 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/claims/player/api/IPlayerClaimInfoAPI.html#ensureDimension(net.minecraft.resources.ResourceLocation)" class="member-name-link">ensureDimension(ResourceLocation)</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerClaimInfoAPI</a></dt>
+<dd>
+<div class="block">Gets claim info for a dimension with a specified ID, creating it if needed.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/ClaimLocation.html" title="class in xaero.pac.common.claims.api">ClaimLocation</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html#excludeGroup(java.lang.String)" class="member-name-link">excludeGroup(String)</a> - Method in interface xaero.pac.common.server.player.config.group.custom.api.<a href="xaero/pac/common/server/player/config/group/custom/api/ICustomPlayerConfigGroupAPI.html" title="interface in xaero.pac.common.server.player.config.group.custom.api">ICustomPlayerConfigGroupAPI</a></dt>
 <dd>
 <div class="block">Attempts to exclude the group with a specified ID from this group.</div>
@@ -879,6 +950,26 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html#getAllyPartiesStream()" class="member-name-link">getAllyPartiesStream()</a> - Method in interface xaero.pac.common.server.parties.party.api.<a href="xaero/pac/common/server/parties/party/api/IServerPartyAPI.html" title="interface in xaero.pac.common.server.parties.party.api">IServerPartyAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html#getAlwaysChecksAnchors()" class="member-name-link">getAlwaysChecksAnchors()</a> - Method in enum class xaero.pac.common.claims.action.api.<a href="xaero/pac/common/claims/action/api/ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></dt>
+<dd>
+<div class="block">Gets whether this action always checks anchor ranges, even when used forcefully.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getAnchorCount(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getAnchorCount(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the claiming anchor count in the current dimension for a specified claiming mode.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getAnchorLimit(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getAnchorLimit(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the claiming anchor limit in the current dimension for a specified claiming mode.</div>
+</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#getAnchorRange(xaero.pac.common.claims.player.mode.api.IClaimingModeAPI)" class="member-name-link">getAnchorRange(IClaimingModeAPI)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the claiming anchor range in the current dimension for a specified claiming mode.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/player/api/IPlayerDimensionClaimsAPI.html#getAnchors()" class="member-name-link">getAnchors()</a> - Method in interface xaero.pac.common.claims.player.api.<a href="xaero/pac/common/claims/player/api/IPlayerDimensionClaimsAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerDimensionClaimsAPI</a></dt>
+<dd>
+<div class="block">Gets a set of all claiming anchors for this player.</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/AreaClaimResult.html#getBottom()" class="member-name-link">getBottom()</a> - Method in class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></dt>
 <dd>
 <div class="block">Get the highest Z coordinate value in this area.</div>
@@ -900,9 +991,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the chunk access overrider manager API.</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html#getChunkPos()" class="member-name-link">getChunkPos()</a> - Method in class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/ClaimLocation.html" title="class in xaero.pac.common.claims.api">ClaimLocation</a></dt>
+<dd>
+<div class="block">Gets the chunk position.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/api/OpenPACServerAPI.html#getChunkProtection()" class="member-name-link">getChunkProtection()</a> - Method in class xaero.pac.common.server.api.<a href="xaero/pac/common/server/api/OpenPACServerAPI.html" title="class in xaero.pac.common.server.api">OpenPACServerAPI</a></dt>
 <dd>
 <div class="block">Gets the API for the chunk protection with some basic methods you can use.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html#getChunkX()" class="member-name-link">getChunkX()</a> - Method in class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/ClaimLocation.html" title="class in xaero.pac.common.claims.api">ClaimLocation</a></dt>
+<dd>
+<div class="block">Gets the X chunk coordinate.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html#getChunkZ()" class="member-name-link">getChunkZ()</a> - Method in class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/ClaimLocation.html" title="class in xaero.pac.common.claims.api">ClaimLocation</a></dt>
+<dd>
+<div class="block">Gets the Z chunk coordinate.</div>
 </dd>
 <dt><a href="xaero/pac/common/event/api/OPACServerAddonRegisterEventContext.html#getClaimActionListenerManagerAPI()" class="member-name-link">getClaimActionListenerManagerAPI()</a> - Method in class xaero.pac.common.event.api.<a href="xaero/pac/common/event/api/OPACServerAddonRegisterEventContext.html" title="class in xaero.pac.common.event.api">OPACServerAddonRegisterEventContext</a></dt>
 <dd>
@@ -1411,6 +1514,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getDimensionStream()" class="member-name-link">getDimensionStream()</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets a stream of all read-only dimension claims managers.</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html#getDimId()" class="member-name-link">getDimId()</a> - Method in class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/ClaimLocation.html" title="class in xaero.pac.common.claims.api">ClaimLocation</a></dt>
+<dd>
+<div class="block">Gets the dimension ID.</div>
 </dd>
 <dt><a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html#getDirectGroupIds()" class="member-name-link">getDirectGroupIds()</a> - Method in interface xaero.pac.common.player.config.group.custom.api.<a href="xaero/pac/common/player/config/group/custom/api/ICustomPlayerConfigGroupDataAPI.html" title="interface in xaero.pac.common.player.config.group.custom.api">ICustomPlayerConfigGroupDataAPI</a></dt>
 <dd>
@@ -1945,6 +2052,22 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the value of a permission with a specific value type.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerBaseAnchorLimit(java.util.UUID)" class="member-name-link">getPlayerBaseAnchorLimit(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the base maximum claiming anchor number (without the bonus) for a player UUID.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerBaseAnchorLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseAnchorLimit(ServerPlayer)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the base maximum claiming anchor number (without the bonus) for a logged in player.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerBaseAnchorRange(java.util.UUID)" class="member-name-link">getPlayerBaseAnchorRange(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the base claiming anchor range (without the bonus) for a player UUID.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerBaseAnchorRange(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseAnchorRange(ServerPlayer)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the base claiming anchor range (without the bonus) for a logged in player.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerBaseClaimLimit(java.util.UUID)" class="member-name-link">getPlayerBaseClaimLimit(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Gets the base maximum claim number (without the bonus) for a player UUID.</div>
@@ -1975,6 +2098,22 @@ loadScripts(document, 'script');</script>
 <div class="deprecation-comment">use <a href="xaero/pac/common/server/api/OpenPACServerAPI.html#getPlayerConfigManager()"><code>OpenPACServerAPI.getPlayerConfigManager()</code></a> instead!<p>
  Gets the API for the server-side player config manager.</div>
 </div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullAnchorLimit(java.util.UUID,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorLimit(UUID, ResourceLocation)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full maximum claiming anchor number (with the bonus) for a player UUID and dimension.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullAnchorLimit(net.minecraft.server.level.ServerPlayer,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorLimit(ServerPlayer, ResourceLocation)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full maximum claiming anchor number (with the bonus) for a logged in player and dimension.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullAnchorRange(java.util.UUID,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorRange(UUID, ResourceLocation)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full claiming anchor range (with the bonus) for a player UUID and dimension.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullAnchorRange(net.minecraft.server.level.ServerPlayer,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorRange(ServerPlayer, ResourceLocation)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Gets the full claiming anchor range (with the bonus) for a logged in player and dimension.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#getPlayerFullClaimLimit(java.util.UUID)" class="member-name-link">getPlayerFullClaimLimit(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
@@ -2703,6 +2842,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets whether configs of this type have dimension-based sub-configs, e.g.</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/api/ClaimLocation.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/ClaimLocation.html" title="class in xaero.pac.common.claims.api">ClaimLocation</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo(UUID)</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo(UUID)</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></dt>
@@ -2711,6 +2852,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo(UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#hidden" class="member-name-link">hidden</a> - Variable in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Whether this result should be hidden from the user.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
@@ -3252,6 +3397,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html#isMutable()" class="member-name-link">isMutable()</a> - Method in interface xaero.pac.client.player.config.api.v2.<a href="xaero/pac/client/player/config/api/v2/IPlayerConfigStringableOptionClientStorageAPI.html" title="interface in xaero.pac.client.player.config.api.v2">IPlayerConfigStringableOptionClientStorageAPI</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigOptionSpecAPI.html#isOnlyDimensionOverridable()" class="member-name-link">isOnlyDimensionOverridable()</a> - Method in interface xaero.pac.common.server.player.config.api.v2.<a href="xaero/pac/common/server/player/config/api/v2/IPlayerConfigOptionSpecAPI.html" title="interface in xaero.pac.common.server.player.config.api.v2">IPlayerConfigOptionSpecAPI</a></dt>
+<dd>
+<div class="block">Gets whether this option can only be overridden by a dimension sub-config.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#isOptionAllowed(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI)" class="member-name-link">isOptionAllowed(IPlayerConfigOptionSpecAPI&lt;?&gt;)</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -3309,6 +3458,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks whether server-client synchronization of player groups is currently in progress.</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html#isUninterruptible()" class="member-name-link">isUninterruptible()</a> - Method in enum class xaero.pac.common.claims.action.api.<a href="xaero/pac/common/claims/action/api/ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></dt>
+<dd>
+<div class="block">Gets whether this claiming action is uninterruptible with the interrupt command.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:L">L</h2>
 <dl class="index">
@@ -3322,6 +3475,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/client/world/capability/api/ClientWorldCapabilityTypes.html#MAIN_CAP" class="member-name-link">MAIN_CAP</a> - Static variable in class xaero.pac.client.world.capability.api.<a href="xaero/pac/client/world/capability/api/ClientWorldCapabilityTypes.html" title="class in xaero.pac.client.world.capability.api">ClientWorldCapabilityTypes</a></dt>
 <dd>
 <div class="block">The main capability type for client worlds</div>
+</dd>
+<dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#MAX_PLAYER_CLAIMING_ANCHORS" class="member-name-link">MAX_PLAYER_CLAIMING_ANCHORS</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>
+<div class="block">The maximum claiming anchor number int "permission".</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#MAX_PLAYER_CLAIMS" class="member-name-link">MAX_PLAYER_CLAIMS</a> - Static variable in class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
 <dd>
@@ -3358,6 +3515,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The user doesn't have permission to make party claims</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NO_SERVER_ANCHORS" class="member-name-link">NO_SERVER_ANCHORS</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Tried to add or remove an anchor for server claims</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The user doesn't have permission to make server claims</div>
@@ -3385,6 +3546,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NOT_IN_PARTY" class="member-name-link">NOT_IN_PARTY</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">The user doesn't have permission to make party claims</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#NOT_SINGLE_CHUNK" class="member-name-link">NOT_SINGLE_CHUNK</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">The action can't be used over an area larger than 1 chunk</div>
 </dd>
 </dl>
 <h2 class="title" id="I:O">O</h2>
@@ -4087,6 +4252,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Removes an ally party from this party.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#removeAnchor(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos,java.util.UUID)" class="member-name-link">removeAnchor(ResourceLocation, ChunkPos, UUID)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Removes the claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+ if it exists.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html#removeCustom(java.lang.String)" class="member-name-link">removeCustom(String)</a> - Method in interface xaero.pac.common.server.player.config.group.api.<a href="xaero/pac/common/server/player/config/group/api/IServerPlayerConfigGroupManagerAPI.html" title="interface in xaero.pac.common.server.player.config.group.api">IServerPlayerConfigGroupManagerAPI</a></dt>
 <dd>
 <div class="block">Attempts to remove a custom group from this group manager with a specified ID.</div>
@@ -4422,6 +4592,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The value was successully set</div>
 </dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#SUCCESSFUL_ANCHOR" class="member-name-link">SUCCESSFUL_ANCHOR</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Successfully anchored a chunk</div>
+</dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#SUCCESSFUL_CLAIM" class="member-name-link">SUCCESSFUL_CLAIM</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">Successfully claimed a chunk</div>
@@ -4429,6 +4603,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#SUCCESSFUL_FORCELOAD" class="member-name-link">SUCCESSFUL_FORCELOAD</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">Successfully forceloaded a chunk</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#SUCCESSFUL_UNANCHOR" class="member-name-link">SUCCESSFUL_UNANCHOR</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
+<dd>
+<div class="block">Successfully unanchored a chunk</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#SUCCESSFUL_UNCLAIM" class="member-name-link">SUCCESSFUL_UNCLAIM</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
@@ -4460,6 +4638,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#TRANSFER_IN_PROGRESS" class="member-name-link">TRANSFER_IN_PROGRESS</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
 <div class="block">There is a claim transfer currently in progress in the background</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#tryToAddAnchor(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)" class="member-name-link">tryToAddAnchor(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Tries to add a claiming anchor for a chunk by a specified player.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)" class="member-name-link">tryToClaim(ResourceLocation, UUID, int, int, int, int, int, boolean)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
@@ -4535,6 +4717,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Tries to (un)mark chunks for forceloading over a specified area by a specified player.</div>
 </dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#tryToRemoveAnchor(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,java.util.function.Consumer)" class="member-name-link">tryToRemoveAnchor(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean, Consumer&lt;AreaClaimResult&gt;)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Tries to remove a claiming anchor for a chunk by a specified player.</div>
+</dd>
 <dt><a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html#tryToReset(xaero.pac.common.server.player.config.api.IPlayerConfigOptionSpecAPI)" class="member-name-link">tryToReset(IPlayerConfigOptionSpecAPI&lt;T&gt;)</a> - Method in interface xaero.pac.common.server.player.config.api.<a href="xaero/pac/common/server/player/config/api/IPlayerConfigAPI.html" title="interface in xaero.pac.common.server.player.config.api">IPlayerConfigAPI</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
@@ -4609,6 +4795,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:U">U</h2>
 <dl class="index">
+<dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html#UNANCHOR" class="member-name-link">UNANCHOR</a> - Enum constant in enum class xaero.pac.common.claims.action.api.<a href="xaero/pac/common/claims/action/api/ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></dt>
+<dd>
+<div class="block">Removing a claiming anchor</div>
+</dd>
 <dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#unclaim(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">unclaim(ResourceLocation, int, int)</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>
 <div class="block">Directly removes the current claim state of a chunk.</div>
@@ -4616,6 +4806,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html#UNCLAIM" class="member-name-link">UNCLAIM</a> - Enum constant in enum class xaero.pac.common.claims.action.api.<a href="xaero/pac/common/claims/action/api/ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></dt>
 <dd>
 <div class="block">Unclaiming a chunk</div>
+</dd>
+<dt><a href="xaero/pac/common/claims/action/api/ClaimingAction.html#UNCLAIM_UNANCHORED" class="member-name-link">UNCLAIM_UNANCHORED</a> - Enum constant in enum class xaero.pac.common.claims.action.api.<a href="xaero/pac/common/claims/action/api/ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></dt>
+<dd>
+<div class="block">Unclaiming a chunk if it's not anchored</div>
 </dd>
 <dt><a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html#UNCLAIMABLE_DIMENSION" class="member-name-link">UNCLAIMABLE_DIMENSION</a> - Enum constant in enum class xaero.pac.common.claims.result.api.<a href="xaero/pac/common/claims/result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></dt>
 <dd>
@@ -4662,6 +4856,14 @@ loadScripts(document, 'script');</script>
 <div class="block">Access point to all player permission nodes used by the mod.</div>
 </dd>
 <dt><a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html#%3Cinit%3E()" class="member-name-link">UsedPermissionNodes()</a> - Constructor for class xaero.pac.common.server.player.permission.api.<a href="xaero/pac/common/server/player/permission/api/UsedPermissionNodes.html" title="class in xaero.pac.common.server.player.permission.api">UsedPermissionNodes</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html#usingAnchorBasedClaiming()" class="member-name-link">usingAnchorBasedClaiming()</a> - Method in interface xaero.pac.client.claims.api.<a href="xaero/pac/client/claims/api/IClientClaimsManagerAPI.html" title="interface in xaero.pac.client.claims.api">IClientClaimsManagerAPI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html#usingAnchorBasedClaiming()" class="member-name-link">usingAnchorBasedClaiming()</a> - Method in interface xaero.pac.common.claims.api.<a href="xaero/pac/common/claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></dt>
+<dd>
+<div class="block">Checks whether anchor-based claiming is used.</div>
+</dd>
+<dt><a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html#usingAnchorBasedClaiming()" class="member-name-link">usingAnchorBasedClaiming()</a> - Method in interface xaero.pac.common.server.claims.api.<a href="xaero/pac/common/server/claims/api/IServerClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerClaimsManagerAPI</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:V">V</h2>
