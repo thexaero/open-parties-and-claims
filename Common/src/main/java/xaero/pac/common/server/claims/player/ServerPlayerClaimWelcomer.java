@@ -21,6 +21,7 @@ package xaero.pac.common.server.claims.player;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +30,7 @@ import net.minecraft.world.level.Level;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.util.ClaimsConstants;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -49,19 +51,26 @@ public class ServerPlayerClaimWelcomer {
 	public void onPlayerTick(ServerPlayerData playerData, ServerPlayer player, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData){
 		IPlayerChunkClaim lastClaimCheck = playerData.getLastClaimCheck();
 		ResourceKey<Level> lastClaimCheckDim = playerData.getLastClaimCheckDim();
+		boolean lastClaimCheckAnchor = playerData.getLastClaimCheckAnchor();
 		IServerClaimsManager<?, ?, ?> claimsManager = serverData.getServerClaimsManager();
 		ResourceKey<Level> playerDimKey = player.getLevel().dimension();
 		ResourceLocation playerDim = playerDimKey.location();
 		IPlayerChunkClaim currentClaim = claimsManager.get(playerDim, player.chunkPosition());
-		if (Objects.equals(lastClaimCheck, currentClaim) && lastClaimCheckDim == playerDimKey)
+		UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();
+		boolean isAnchor = false;
+		if(currentClaimId != null) {
+			isAnchor = ServerConfig.CONFIG.anchorBasedClaiming.get() && claimsManager.getPlayerInfo(currentClaimId)
+					.ensureDimension(playerDim).getAnchors().contains(player.chunkPosition());
+		}
+		if (Objects.equals(lastClaimCheck, currentClaim) && lastClaimCheckDim == playerDimKey && lastClaimCheckAnchor == isAnchor)
 			return;
 		if(!ServerConfig.CONFIG.claimWelcomeMessages.get()){
 			playerData.setLastClaimCheck(currentClaim);
 			playerData.setLastClaimCheckDim(playerDimKey);
+			playerData.setLastClaimCheckAnchor(isAnchor);
 			return;
 		}
 		AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-		UUID currentClaimId = currentClaim == null ? null : currentClaim.getPlayerId();
 		boolean isOwner = !playerData.isClaimsNonallyMode() && currentClaim != null && Objects.equals(currentClaimId, player.getUUID());
 		boolean hasAccess = isOwner ||
 				serverData.getChunkProtection().hasChunkAccess(
@@ -74,15 +83,19 @@ public class ServerPlayerClaimWelcomer {
 		boolean moderatorMode = playerData.isClaimsModeratorMode();
 		MutableComponent subTitleText = adaptiveLocalizer.getFor(player, claimsManager.getFullName(currentClaim, playerDim, !moderatorMode)).copy();
 		subTitleText = subTitleText.withStyle(s -> s.withColor(isOwner ? ChatFormatting.DARK_GREEN : hasAccess ? ChatFormatting.GOLD : ChatFormatting.DARK_RED));
+		MutableComponent iconComponent = null;
+		if(isAnchor)
+			iconComponent = ClaimsConstants.ANCHOR_SYMBOL_COMPONENT;
+		else
+			iconComponent = new TextComponent("□");
 
-		MutableComponent subTitle = new TextComponent("□ ").withStyle(s -> s.withColor(claimColor));
-		subTitle.getSiblings().add(subTitleText);
-		subTitle.getSiblings().add(new TextComponent(" □").withStyle(s -> s.withColor(claimColor)));
+		MutableComponent subTitle = new TranslatableComponent("gui.xaero.claims_welcome_message_format", subTitleText, iconComponent.withStyle(s -> s.withColor(claimColor)));
 		ClientboundSetActionBarTextPacket packet = new ClientboundSetActionBarTextPacket(subTitle);
 		player.connection.send(packet);
 
 		playerData.setLastClaimCheck(currentClaim);
 		playerData.setLastClaimCheckDim(playerDimKey);
+		playerData.setLastClaimCheckAnchor(isAnchor);
 	}
 
 }

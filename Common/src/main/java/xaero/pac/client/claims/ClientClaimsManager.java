@@ -45,10 +45,7 @@ import xaero.pac.common.claims.ClaimStateHolder;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.action.request.ClaimActionRequest;
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.*;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.player.impersonation.SimplePlayerClaimImpersonationInfo;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
@@ -100,6 +97,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	private boolean adminMode;
 	private IClaimingModeAPI claimingMode;
 	private boolean partyOwnedClaims;
+	private boolean anchorBasedClaiming;
 	private UUID currentPartyOwner;
 	private SimplePlayerClaimImpersonationInfo playerImpersonationInfo;
 
@@ -208,6 +206,25 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	}
 
 	@Override
+	public int getAnchorCount(@Nonnull IClaimingModeAPI modeAPI) {
+		ClaimingMode mode = (ClaimingMode) modeAPI;
+		if(!loading && !alwaysUseLoadingValues) {
+			UUID countsSourceId = mode == ClaimingModes.PLAYER ? Minecraft.getInstance().player.getUUID() :
+					mode.getClientCountsSourceId();
+			if(countsSourceId != null) {
+				int anchorCountInData = 0;
+				PlayerDimensionClaims playerDimensionClaims = getPlayerInfo(countsSourceId)
+						.getDimension(Minecraft.getInstance().level.dimension().location());
+				if(playerDimensionClaims != null)
+					anchorCountInData = playerDimensionClaims.getAnchors().size();
+				return anchorCountInData;
+			}
+		}
+		ClaimingModeLimits limits = claimingModeInfoMap.get(mode).getLimits();
+		return limits == null ? 0 : limits.anchorCount;
+	}
+
+	@Override
 	public int getClaimLimit(@Nonnull IClaimingModeAPI mode) {
 		ClaimingModeLimits limits = claimingModeInfoMap.get(mode).getLimits();
 		return limits == null ? 0 : limits.claimLimit;
@@ -217,6 +234,18 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 	public int getForceloadLimit(@Nonnull IClaimingModeAPI mode) {
 		ClaimingModeLimits limits = claimingModeInfoMap.get(mode).getLimits();
 		return limits == null ? 0 : limits.forceloadLimit;
+	}
+
+	@Override
+	public int getAnchorLimit(@Nonnull IClaimingModeAPI mode) {
+		ClaimingModeLimits limits = claimingModeInfoMap.get(mode).getLimits();
+		return limits == null ? 0 : limits.anchorLimit;
+	}
+
+	@Override
+	public int getAnchorRange(@Nonnull IClaimingModeAPI mode) {
+		ClaimingModeLimits limits = claimingModeInfoMap.get(mode).getLimits();
+		return limits == null ? 0 : limits.anchorRange;
 	}
 
 	public void setAlwaysUseLoadingValues(boolean alwaysUseLoadingValues) {
@@ -305,9 +334,18 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		this.partyOwnedClaims = partyOwnedClaims;
 	}
 
+	public void setAnchorBasedClaiming(boolean anchorBasedClaiming) {
+		this.anchorBasedClaiming = anchorBasedClaiming;
+	}
+
 	@Override
 	public boolean usingPartyOwnedClaims() {
 		return partyOwnedClaims;
+	}
+
+	@Override
+	public boolean usingAnchorBasedClaiming() {
+		return anchorBasedClaiming;
 	}
 
 	@Override
@@ -371,6 +409,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		maxClaimDistance = 0;
 		alwaysUseLoadingValues = false;
 		setPartyOwnedClaims(false);
+		setAnchorBasedClaiming(false);
 		setCurrentPartyOwner(null);
 		playerImpersonationInfo.reset();
 	}

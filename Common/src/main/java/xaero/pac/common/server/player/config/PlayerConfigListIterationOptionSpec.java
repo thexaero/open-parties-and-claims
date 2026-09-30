@@ -58,6 +58,7 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 			ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType,
 			boolean dynamic,
 			boolean overridable,
+			boolean onlyDimensionOverridable,
 			boolean forcedPlayerConfigurable,
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<T> serverChangeHandler,
@@ -69,9 +70,10 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 				type, id, shortenedId, path, defaultValue, defaultReplacer, comment,
 				translation, translationArgs, commentTranslation, commentTranslationArgs,
 				category, serverSideValidator, clientSideValidator, tooltipPrefix,
-				configTypeFilter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable,
-				directlyConfigurable, serverChangeHandler,
-				syncable, commandSuggestionGetter, affectsClaimsVisually
+				configTypeFilter, syncOptionType, dynamic, overridable, onlyDimensionOverridable,
+				forcedPlayerConfigurable, directlyConfigurable,
+				serverChangeHandler, syncable, commandSuggestionGetter,
+				affectsClaimsVisually
 		);
 		this.serverSideListGetter = serverSideListGetter;
 		this.clientSideListGetter = clientSideListGetter;
@@ -163,8 +165,9 @@ public class PlayerConfigListIterationOptionSpec<T> extends PlayerConfigOptionSp
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, serverSideListGetter, clientSideListGetter,
 					ClientboundPlayerConfigDynamicOptionsPacket.OptionType.UNSYNCABLE,
-					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
-					serverChangeHandler, syncable, commandSuggestionGetter, affectsClaimsVisually
+					dynamic, overridable, onlyDimensionOverridable, forcedPlayerConfigurable,
+					directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter,
+					affectsClaimsVisually
 			);
 		}
 

@@ -101,7 +101,7 @@ public class PlayerClaimActionRequestHandler {
 		manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
 				fromDimension, fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
 				request.getAction(), playerData.isClaimsAdminMode(),
-				result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
+				null, result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
 		lastRequestTickCounter = serverTickHandler.getTickCounter();
 	}
 

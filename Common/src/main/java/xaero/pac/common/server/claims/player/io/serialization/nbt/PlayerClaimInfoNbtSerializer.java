@@ -21,6 +21,7 @@ package xaero.pac.common.server.claims.player.io.serialization.nbt;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
+import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
 import xaero.pac.common.server.io.serialization.SimpleSerializer;
@@ -34,7 +35,9 @@ public final class PlayerClaimInfoNbtSerializer implements SimpleSerializer<Comp
 	
 	private final PlayerDimensionClaimsNbtSerializer playerDimensionClaimsNbtSerializer;
 	
-	private PlayerClaimInfoNbtSerializer(PlayerDimensionClaimsNbtSerializer playerDimensionClaimsNbtSerializer) {
+	private PlayerClaimInfoNbtSerializer(
+			PlayerDimensionClaimsNbtSerializer playerDimensionClaimsNbtSerializer
+	) {
 		super();
 		this.playerDimensionClaimsNbtSerializer = playerDimensionClaimsNbtSerializer;
 	}
@@ -63,15 +66,27 @@ public final class PlayerClaimInfoNbtSerializer implements SimpleSerializer<Comp
 	
 	public static final class Builder {
 
+		private ServerClaimsManager claimsManager;
+
 		private Builder() {
 		}
 
 		private Builder setDefault() {
+			setClaimsManager(null);
+			return this;
+		}
+
+		public Builder setClaimsManager(ServerClaimsManager claimsManager) {
+			this.claimsManager = claimsManager;
 			return this;
 		}
 
 		public PlayerClaimInfoNbtSerializer build() {
-			return new PlayerClaimInfoNbtSerializer(new PlayerDimensionClaimsNbtSerializer(new PlayerChunkClaimNbtSerializer()));
+			if(claimsManager == null)
+				throw new IllegalStateException();
+			return new PlayerClaimInfoNbtSerializer(
+					new PlayerDimensionClaimsNbtSerializer(new PlayerChunkClaimNbtSerializer(), claimsManager)
+			);
 		}
 
 		public static Builder begin() {
