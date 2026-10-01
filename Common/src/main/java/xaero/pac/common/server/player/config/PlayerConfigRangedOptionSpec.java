@@ -59,6 +59,7 @@ public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpe
 			ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType,
 			boolean dynamic,
 			boolean overridable,
+			boolean onlyDimensionOverridable,
 			boolean forcedPlayerConfigurable,
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<T> serverChangeHandler,
@@ -71,8 +72,9 @@ public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpe
 				comment, translation, translationArgs, commentTranslation,
 				commentTranslationArgs, category,
 				serverSideValidator, clientSideValidator, tooltipPrefix, configTypeFilter,
-				syncOptionType, dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
-				serverChangeHandler, syncable, commandSuggestionGetter, affectsClaimsVisually
+				syncOptionType, dynamic, overridable, onlyDimensionOverridable, forcedPlayerConfigurable,
+				directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter,
+				affectsClaimsVisually
 		);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -194,7 +196,7 @@ public final class PlayerConfigRangedOptionSpec<T> extends PlayerConfigOptionSpe
 					translationArgs, commentTranslation, commentTranslationArgs, category,
 					serverSideValidator, clientSideValidator, minValue, maxValue, tooltipPrefix, configTypeFilter,
 					ClientboundPlayerConfigDynamicOptionsPacket.OptionType.RANGED, dynamic, overridable,
-					forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
+					onlyDimensionOverridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
 					syncable, commandSuggestionGetter, affectsClaimsVisually
 			);
 		}

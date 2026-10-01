@@ -170,6 +170,8 @@ public final class ServerData implements IServerData<ServerClaimsManager, Server
 	}
 
 	public void onStop() {
+		if(!serverClaimsManager.getPlayerClaimInfoManager().getSavePostponedFor().isEmpty())
+			serverClaimsManager.getPlayerClaimInfoManager().preparePostponedSaves(this);
 		@SuppressWarnings("unchecked")
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverDataInterface = (IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>)(Object) this;

@@ -40,16 +40,19 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 	private final Collection<ClaimingModeLimits> limits;
 	private final int maxClaimDistance;
 	private final boolean alwaysUseLoadingValues;
+	private final boolean anchorBasedClaiming;
 
 	public ClientboundClaimLimitsPacket(
 			Collection<ClaimingModeLimits> limits,
 			int maxClaimDistance,
-			boolean alwaysUseLoadingValues
+			boolean alwaysUseLoadingValues,
+			boolean anchorBasedClaiming
 	) {
 		super();
 		this.limits = limits;
 		this.maxClaimDistance = maxClaimDistance;
 		this.alwaysUseLoadingValues = alwaysUseLoadingValues;
+		this.anchorBasedClaiming = anchorBasedClaiming;
 	}
 
 	@Override
@@ -60,15 +63,21 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 			CompoundTag modeLimitsTag = new CompoundTag();
 			modeLimitsTag.putInt("cc", modeLimits.claimCount);
 			modeLimitsTag.putInt("fc", modeLimits.forceloadCount);
-			if(modeLimits.claimLimit != -1)
+			modeLimitsTag.putInt("ac", modeLimits.anchorCount);
+			if(modeLimits.claimLimit != -Integer.MAX_VALUE)
 				modeLimitsTag.putInt("cl", modeLimits.claimLimit);
-			if(modeLimits.forceloadLimit != -1)
+			if(modeLimits.forceloadLimit != Integer.MAX_VALUE)
 				modeLimitsTag.putInt("fl", modeLimits.forceloadLimit);
+			if(modeLimits.anchorLimit != Integer.MAX_VALUE)
+				modeLimitsTag.putInt("al", modeLimits.anchorLimit);
+			if(modeLimits.anchorRange != Integer.MAX_VALUE)
+				modeLimitsTag.putInt("ar", modeLimits.anchorRange);
 			limitsTag.put(modeLimits.mode.getId(), modeLimitsTag);
 		}
 		tag.put("l", limitsTag);
 		tag.putInt("d", maxClaimDistance);
 		tag.putBoolean("a", alwaysUseLoadingValues);
+		tag.putBoolean("ac", anchorBasedClaiming);
 		u.writeNbt(tag);
 	}
 
@@ -104,21 +113,33 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 						continue;
 					int claimCount = modeLimitsTag.getInt("cc");
 					int forceloadCount = modeLimitsTag.getInt("fc");
-					int claimLimit = -1;
-					int forceloadLimit = -1;
+					int anchorCount = modeLimitsTag.getInt("ac");
+					int claimLimit = Integer.MAX_VALUE;
+					int forceloadLimit = Integer.MAX_VALUE;
+					int anchorLimit = Integer.MAX_VALUE;
+					int anchorRange = Integer.MAX_VALUE;
 					if(modeLimitsTag.contains("cl", Tag.TAG_INT))
 						claimLimit = modeLimitsTag.getInt("cl");
 					if(modeLimitsTag.contains("fl", Tag.TAG_INT))
 						forceloadLimit = modeLimitsTag.getInt("fl");
-					ClaimingModeLimits modeLimits = new ClaimingModeLimits(mode, claimCount, forceloadCount, claimLimit, forceloadLimit);
+					if(modeLimitsTag.contains("al", Tag.TAG_INT))
+						anchorLimit = modeLimitsTag.getInt("al");
+					if(modeLimitsTag.contains("ar", Tag.TAG_INT))
+						anchorRange = modeLimitsTag.getInt("ar");
+					ClaimingModeLimits modeLimits = new ClaimingModeLimits(
+							mode, claimCount, forceloadCount, anchorCount,
+							claimLimit, forceloadLimit, anchorLimit, anchorRange
+					);
 					limits.add(modeLimits);
 				}
 				int maxClaimDistance = tag.getInt("d");
 				boolean alwaysUseLoadingValues = tag.getBoolean("a");
+				boolean anchorBasedClaiming = tag.getBoolean("ac");
 				return new ClientboundClaimLimitsPacket(
 						limits,
 						maxClaimDistance,
-						alwaysUseLoadingValues
+						alwaysUseLoadingValues,
+						anchorBasedClaiming
 				);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet ", t);
@@ -133,7 +154,7 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 		@Override
 		public void handle(ClientboundClaimLimitsPacket t) {
 			OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientClaimsSyncHandler().onClaimLimits(
-					t.limits, t.maxClaimDistance, t.alwaysUseLoadingValues
+					t.limits, t.maxClaimDistance, t.alwaysUseLoadingValues, t.anchorBasedClaiming
 			);
 		}
 		

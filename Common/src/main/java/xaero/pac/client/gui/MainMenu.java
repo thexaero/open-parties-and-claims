@@ -23,8 +23,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
@@ -84,6 +87,13 @@ public class MainMenu extends XPACScreen {
 	private static final Component FORCELOAD_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " forceload");
 	private static final Component UNFORCELOAD_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unforceload");
 
+	public static final Component ANCHOR = Component.translatable("gui.xaero_pac_ui_anchor");
+	public static final Component UNANCHOR = Component.translatable("gui.xaero_pac_ui_unanchor");
+	private static final Component ANCHOR_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " anchor");
+	private static final Component UNANCHOR_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unanchor");
+	private static final Component UNANCHOR_CONFIRM_1 = Component.translatable("gui.xaero_pac_ui_unanchor_confirm_line1");
+	private static final Component UNANCHOR_CONFIRM_2 = Component.translatable("gui.xaero_pac_ui_unanchor_confirm_line2");
+
 	private static final CachedComponentSupplier partyNameSupplier = new CachedComponentSupplier(args -> {
 		String currentPartyName = (String) args[0];
 		return Component.translatable("gui.xaero_pac_ui_party_name", Component.literal(currentPartyName).withStyle(s -> s.withColor(0xFFAAAAAA)));
@@ -102,11 +112,11 @@ public class MainMenu extends XPACScreen {
 		int currentAllyLimit = (Integer) args[1];
 		return Component.translatable("gui.xaero_pac_ui_party_ally_count", Component.literal(currentAllyCount + " / " + currentAllyLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
-	private static final CachedComponentSupplier inviteCountSupplier = new CachedComponentSupplier(args -> {
-		int currentInviteCount = (Integer) args[0];
-		int currentInviteLimit = (Integer) args[1];
-		return Component.translatable("gui.xaero_pac_ui_party_invite_count", Component.literal(currentInviteCount + " / " + currentInviteLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
-	});
+//	private static final CachedComponentSupplier inviteCountSupplier = new CachedComponentSupplier(args -> {
+//		int currentInviteCount = (Integer) args[0];
+//		int currentInviteLimit = (Integer) args[1];
+//		return Component.translatable("gui.xaero_pac_ui_party_invite_count", Component.literal(currentInviteCount + " / " + currentInviteLimit).withStyle(s -> s.withColor(0xFFAAAAAA)));
+//	});
 
 	private static final CachedComponentSupplier claimsNameSupplier = new CachedComponentSupplier(args -> {
 		String currentClaimsName = (String) args[0];
@@ -131,6 +141,14 @@ public class MainMenu extends XPACScreen {
 		Component colorComponent = Component.literal(Integer.toUnsignedString(currentClaimColor, 16).toUpperCase()).withStyle(s -> s.withColor(currentClaimColor));
 		return Component.translatable("gui.xaero_pac_ui_claims_color", colorComponent);
 	});
+	private static final CachedComponentSupplier claimingAnchorCountSupplier = new CachedComponentSupplier(args -> {
+		ResourceLocation dimension = (ResourceLocation) args[0];
+		int currentAnchorCount = (Integer) args[1];
+		int currentAnchorLimit = (Integer) args[2];
+		String anchorLimitString = currentAnchorLimit == Integer.MAX_VALUE ? "∞" : "" + currentAnchorLimit;
+		Component numbers = Component.literal(currentAnchorCount + " / " + anchorLimitString).withStyle(s -> s.withColor(0xFFAAAAAA));
+		return Component.translatable("gui.xaero_pac_ui_claiming_anchor_count", dimension.toString(), numbers);
+	});
 
 	private boolean serverHasMod;
 	private boolean serverHasClaimsEnabled;
@@ -139,6 +157,7 @@ public class MainMenu extends XPACScreen {
 	private Button aboutPartyButton;
 	private Button claimButton;
 	private Button forceloadButton;
+	private Button anchorButton;
 	private List<ClaimingMode> claimModeOptions;
 	private IClaimingModeAPI selectedClaimingMode;
 	private IClaimingModeAPI selectedEffectiveClaimingMode;
@@ -167,7 +186,7 @@ public class MainMenu extends XPACScreen {
 
 		addRenderableWidget(claimingModeMenu = setupClaimModeDropdown());
 		
-		claimButton = new Button(width / 2 - 100, height / 8 + 124, 70, 20, CLAIM, this::onClaimButton, new Button.OnTooltip() {
+		claimButton = new Button(width / 2 - 100, height / 8 + 112, 70, 20, CLAIM, this::onClaimButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				if(openDropdown != null)
 					return;
@@ -179,7 +198,7 @@ public class MainMenu extends XPACScreen {
 			}
 		});
 		
-		forceloadButton = new Button(width / 2 - 100, height / 8 + 148, 70, 20, FORCELOAD, this::onForceloadButton, new Button.OnTooltip() {
+		forceloadButton = new Button(width / 2 - 100, height / 8 + 134, 70, 20, FORCELOAD, this::onForceloadButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				if(openDropdown != null)
 					return;
@@ -190,6 +209,21 @@ public class MainMenu extends XPACScreen {
 				p_170017_.accept(claimButton.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND);
 			}
 		});
+
+		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
+
+		if(claimsManager.usingAnchorBasedClaiming())
+			anchorButton = new Button(width / 2 - 100, height / 8 + 156, 70, 20, ANCHOR, this::onAnchorButton, new Button.OnTooltip() {
+				public void onTooltip(Button button, PoseStack p_170020_, int p_170021_, int p_170022_) {
+					if(openDropdown != null)
+						return;
+					MainMenu.this.renderTooltip(p_170020_, button.getMessage() == ANCHOR ? ANCHOR_COMMAND : UNANCHOR_COMMAND, p_170021_, p_170022_);
+				}
+
+				public void narrateTooltip(Consumer<Component> p_170017_) {
+					p_170017_.accept(anchorButton.getMessage() == ANCHOR ? ANCHOR_COMMAND : UNANCHOR_COMMAND);
+				}
+			});
 		
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, Component.translatable("gui.xaero_pac_back"), this::onBackButton));
 
@@ -203,6 +237,8 @@ public class MainMenu extends XPACScreen {
 		if(serverHasClaimsEnabled){
 			addRenderableWidget(claimButton);
 			addRenderableWidget(forceloadButton);
+			if(anchorButton != null)
+				addRenderableWidget(anchorButton);
 		}
 
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
@@ -228,7 +264,7 @@ public class MainMenu extends XPACScreen {
 				.setCallback(this::onClaimMode)
 				.setContainer(this)
 				.setX(width / 2 - 100)
-				.setY(height / 8 + 108)
+				.setY(height / 8 + 96)
 				.setW(200)
 				.setOptions(
 						claimModeOptions.stream()
@@ -268,7 +304,8 @@ public class MainMenu extends XPACScreen {
 		forceloadButton.active = false;
 		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		if(serverHasMod && !claimsManager.isLoading()) {
-			IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
+			ChunkPos chunkPos = minecraft.player.chunkPosition();
+			IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), chunkPos.x, chunkPos.z);
 			boolean adminMode = claimsManager.isAdminMode();
 			IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
 			UUID claimTargetUUID = potentialClaimReflection == null ? null : potentialClaimReflection.getPlayerId();
@@ -276,6 +313,11 @@ public class MainMenu extends XPACScreen {
 			
 			forceloadButton.active = currentClaim != null && (adminMode || currentClaim.getPlayerId().equals(claimTargetUUID));
 			forceloadButton.setMessage(currentClaim == null || !currentClaim.isForceloadable() ? FORCELOAD : UNFORCELOAD);
+
+			if(anchorButton != null) {
+				anchorButton.active = !claimsManager.getClaimingMode().isGlobal();
+				anchorButton.setMessage(wouldAnchor(chunkPos, currentClaim) ? ANCHOR : UNANCHOR);
+			}
 
 			updateClaimingModeDropdown(claimsManager);
 		}
@@ -304,6 +346,22 @@ public class MainMenu extends XPACScreen {
 		IPlayerChunkClaim potentialClaimReflection = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().getPotentialClaimStateReflection();
 		return !currentClaim.isSameClaimType(potentialClaimReflection);
 	}
+
+	private boolean wouldAnchor(ChunkPos pos, IPlayerChunkClaim currentClaim){
+		if(currentClaim == null)
+			return true;
+		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
+		IPlayerChunkClaim potentialClaimReflection = claimsManager.getPotentialClaimStateReflection();
+		if(potentialClaimReflection == null)
+			return true;
+		if(!currentClaim.getPlayerId().equals(potentialClaimReflection.getPlayerId()))
+			return true;
+		IPlayerDimensionClaims<?> playerDimensionClaims = claimsManager.getPlayerInfo(currentClaim.getPlayerId())
+				.getDimension(minecraft.player.level.dimension().location());
+		if(playerDimensionClaims == null)
+			return true;
+		return !playerDimensionClaims.getAnchors().contains(pos);
+	}
 	
 	private void onClaimButton(Button b) {
 		IPlayerChunkClaim currentClaim = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().get(minecraft.level.dimension().location(), minecraft.player.chunkPosition().x, minecraft.player.chunkPosition().z);
@@ -312,6 +370,22 @@ public class MainMenu extends XPACScreen {
 		else
 			CommandUtil.sendCommand(minecraft, UNCLAIM_COMMAND.getString().substring(1));
 		onClose();
+	}
+
+	private void onAnchorButton(Button b) {
+		IClientClaimsManager<?,?,?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
+		ChunkPos chunkPos = minecraft.player.chunkPosition();
+		IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), chunkPos.x, chunkPos.z);
+		if(wouldAnchor(chunkPos, currentClaim)) {
+			CommandUtil.sendCommand(minecraft, ANCHOR_COMMAND.getString());
+			onClose();
+			return;
+		}
+		minecraft.setScreen(new ConfirmScreen(result -> {
+			if(result)
+				CommandUtil.sendCommand(minecraft, UNANCHOR_COMMAND.getString() + " confirm");
+			onClose();
+		}, UNANCHOR_CONFIRM_1, UNANCHOR_CONFIRM_2));
 	}
 	
 	private void onForceloadButton(Button b) {
@@ -341,7 +415,7 @@ public class MainMenu extends XPACScreen {
 			drawString(poseStack, font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 8 + 54, -1);
 			drawString(poseStack, font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 8 + 66, -1);
 			drawString(poseStack, font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 8 + 78, -1);
-			drawString(poseStack, font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 8 + 90, -1);
+//			drawString(poseStack, font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 8 + 90, -1);
 		}
 	}
 
@@ -363,8 +437,14 @@ public class MainMenu extends XPACScreen {
 		String currentSubConfigId = claimsManager.getCurrentSubConfigId(claimingModeAPI);
 		int currentSubConfigIndex = claimsManager.getCurrentSubConfigIndex(claimingModeAPI);
 
-		drawString(poseStack, font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 8 + 126, -1);
-		drawString(poseStack, font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 8 + 138, -1);
+		drawString(poseStack, font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 8 + 114, -1);
+		drawString(poseStack, font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 8 + 126, -1);
+		if(!claimingModeAPI.isGlobal() && claimsManager.usingAnchorBasedClaiming() && minecraft.level != null) {
+			ResourceLocation dimension = minecraft.level.dimension().location();
+			int anchorCount = claimsManager.getAnchorCount(claimingModeAPI);
+			int anchorLimit = claimsManager.getAnchorLimit(claimingModeAPI);
+			drawString(poseStack, font, claimingAnchorCountSupplier.get(dimension, anchorCount, anchorLimit), width / 2 - 24, height / 8 + 162, -1);
+		}
 		if(playerInfo == null)
 			return;
 		String claimsName = playerInfo.getClaimsName(currentSubConfigIndex);
@@ -378,8 +458,8 @@ public class MainMenu extends XPACScreen {
 			claimsColor = playerInfo.getClaimsColor();
 		if(claimsColor == null)
 			claimsColor = -1;
-		drawString(poseStack, font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 8 + 150, -1);
-		drawString(poseStack, font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 8 + 162, -1);
+		drawString(poseStack, font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 8 + 138, -1);
+		drawString(poseStack, font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 8 + 150, -1);
 
 	}
 	

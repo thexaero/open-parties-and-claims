@@ -41,10 +41,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.impersonation.ServerPlayerClaimImpersonationInfo;
 import xaero.pac.common.server.claims.player.request.PlayerClaimActionRequestHandler;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPropertiesSync;
+import xaero.pac.common.server.claims.sync.player.*;
 import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.parties.party.sync.player.PlayerFullPartySync;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
@@ -72,6 +69,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private ClaimingMode claimingMode = null;
 	private IPlayerChunkClaim lastClaimCheck;
 	private ResourceKey<Level> lastClaimCheckDim;
+	private boolean lastClaimCheckAnchor;
 	private Map<IClaimingModeAPI, ClaimingModeLimits> lastLimitsSync;
 	private long lastClaimLimitsCheckTime;
 	private boolean shouldResyncPlayerConfigs;
@@ -79,6 +77,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	private PlayerFullPartySync playerFullPartySync;
 	private ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync;
 	private ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync;
+	private ClaimsManagerPlayerAnchorsSync claimsManagerPlayerAnchorsSync;
 	private ClaimsManagerPlayerStateSync claimsManagerPlayerStateSync;
 	private ClaimsManagerPlayerRegionSync claimsManagerPlayerRegionSync;
 	private PlayerClaimActionRequestHandler claimActionRequestHandler;
@@ -136,6 +135,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 	public void setClaimSyncTasks(
 			ClaimsManagerPlayerClaimOwnerPropertiesSync claimsManagerPlayerClaimOwnerPropertiesSync,
 			ClaimsManagerPlayerSubClaimPropertiesSync claimsManagerPlayerSubClaimPropertiesSync,
+			ClaimsManagerPlayerAnchorsSync claimsManagerPlayerAnchorsSync,
 			ClaimsManagerPlayerStateSync claimsManagerPlayerStateSyncHandler,
 			ClaimsManagerPlayerRegionSync claimsManagerPlayerSyncHandler
 	) {
@@ -143,6 +143,7 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 		this.claimsManagerPlayerStateSync = claimsManagerPlayerStateSyncHandler;
 		this.claimsManagerPlayerClaimOwnerPropertiesSync = claimsManagerPlayerClaimOwnerPropertiesSync;
 		this.claimsManagerPlayerSubClaimPropertiesSync = claimsManagerPlayerSubClaimPropertiesSync;
+		this.claimsManagerPlayerAnchorsSync = claimsManagerPlayerAnchorsSync;
 	}
 
 	@Override
@@ -238,6 +239,10 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public ClaimsManagerPlayerSubClaimPropertiesSync getClaimsManagerPlayerSubClaimPropertiesSync() {
 		return claimsManagerPlayerSubClaimPropertiesSync;
+	}
+
+	public ClaimsManagerPlayerAnchorsSync getClaimsManagerPlayerAnchorsSync() {
+		return claimsManagerPlayerAnchorsSync;
 	}
 
 	public PlayerClaimActionRequestHandler getClaimActionRequestHandler() {
@@ -473,6 +478,14 @@ public class ServerPlayerData extends ServerPlayerDataAPI {
 
 	public ResourceKey<Level> getLastClaimCheckDim() {
 		return lastClaimCheckDim;
+	}
+
+	public void setLastClaimCheckAnchor(boolean lastClaimCheckAnchor) {
+		this.lastClaimCheckAnchor = lastClaimCheckAnchor;
+	}
+
+	public boolean getLastClaimCheckAnchor() {
+		return lastClaimCheckAnchor;
 	}
 
 }
