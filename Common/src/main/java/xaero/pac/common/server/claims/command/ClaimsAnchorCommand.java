@@ -25,7 +25,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
@@ -115,8 +114,8 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 			int chunkZ;
 			try {
 				ColumnPos columnPos = ColumnPosArgument.getColumnPos(context, "block-pos");
-				chunkX = columnPos.x >> 4;
-				chunkZ = columnPos.z >> 4;
+				chunkX = columnPos.x() >> 4;
+				chunkZ = columnPos.z() >> 4;
 			} catch(IllegalArgumentException iae) {
 				if(player == null){
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_anchor_command_unknown_pos")));
