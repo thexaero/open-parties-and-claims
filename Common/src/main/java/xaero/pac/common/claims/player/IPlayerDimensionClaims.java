@@ -18,10 +18,13 @@
 
 package xaero.pac.common.claims.player;
 
+import net.minecraft.world.level.ChunkPos;
+import xaero.pac.common.claims.ClaimingAnchor;
 import xaero.pac.common.claims.player.api.IPlayerClaimPosListAPI;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
 
 import javax.annotation.Nonnull;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 public interface IPlayerDimensionClaims<L extends IPlayerClaimPosList> extends IPlayerDimensionClaimsAPI {
@@ -37,5 +40,23 @@ public interface IPlayerDimensionClaims<L extends IPlayerClaimPosList> extends I
 	default Stream<IPlayerClaimPosListAPI> getStream(){
 		return (Stream<IPlayerClaimPosListAPI>)(Object)getTypedStream();
 	}
+
+	/**
+	 * Adds a claiming anchor at a specified chunk position if it doesn't already exist there.
+	 *
+	 * @param pos  the position for the anchor, not null
+	 * @return true if the anchor was added, false if the specified position already had an anchor
+	 */
+	boolean addAnchor(@Nonnull ChunkPos pos);
+
+	/**
+	 * Removes the claiming anchor at a specified chunk position if it exists.
+	 *
+	 * @param pos  the position of the anchor, not null
+	 * @return true if the anchor was removed, false if the specified position didn't have one
+	 */
+	boolean removeAnchor(@Nonnull ChunkPos pos);
+
+	Iterator<ClaimingAnchor> getAnchorIterator();
 
 }

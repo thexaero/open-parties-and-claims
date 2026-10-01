@@ -25,27 +25,34 @@ public final class ClaimingModeLimits {
 	public final ClaimingMode mode;
 	public final int claimCount;
 	public final int forceloadCount;
+	public final int anchorCount;
 	public final int claimLimit;
 	public final int forceloadLimit;
+	public final int anchorLimit;
+	public final int anchorRange;
 
-	public ClaimingModeLimits(IClaimingModeAPI mode, int claimCount, int forceloadCount, int claimLimit, int forceloadLimit) {
-		this((ClaimingMode) mode, claimCount, forceloadCount, claimLimit, forceloadLimit);
+	public ClaimingModeLimits(IClaimingModeAPI mode, int claimCount, int forceloadCount, int anchorCount, int claimLimit, int forceloadLimit, int anchorLimit, int anchorRange) {
+		this((ClaimingMode) mode, claimCount, forceloadCount, anchorCount, claimLimit, forceloadLimit, anchorLimit, anchorRange);
 	}
 
-	public ClaimingModeLimits(ClaimingMode mode, int claimCount, int forceloadCount, int claimLimit, int forceloadLimit) {
+	public ClaimingModeLimits(ClaimingMode mode, int claimCount, int forceloadCount, int anchorCount, int claimLimit, int forceloadLimit, int anchorLimit, int anchorRange) {
 		this.mode = mode;
 		this.claimCount = claimCount;
 		this.forceloadCount = forceloadCount;
+		this.anchorCount = anchorCount;
 		this.claimLimit = claimLimit;
 		this.forceloadLimit = forceloadLimit;
+		this.anchorLimit = anchorLimit;
+		this.anchorRange = anchorRange;
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;
 		ClaimingModeLimits that = (ClaimingModeLimits) o;
-		return claimCount == that.claimCount && forceloadCount == that.forceloadCount &&
-				claimLimit == that.claimLimit && forceloadLimit == that.forceloadLimit && mode == that.mode;
+		return claimCount == that.claimCount && forceloadCount == that.forceloadCount && anchorCount == that.anchorCount &&
+				claimLimit == that.claimLimit && forceloadLimit == that.forceloadLimit && anchorLimit == that.anchorLimit &&
+				anchorRange == that.anchorRange && mode == that.mode;
 	}
 
 }

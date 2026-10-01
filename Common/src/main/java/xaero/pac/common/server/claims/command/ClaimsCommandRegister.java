@@ -58,6 +58,10 @@ public class ClaimsCommandRegister {
 		new ClaimsForceloadCommand(true, claimingMode).register(dispatcher, environment);
 		new ClaimsForceloadCommand(false, claimingMode).register(dispatcher, environment);
 		new ClaimingModeCommand(claimingMode).register(dispatcher, environment);
+		if(claimingMode != null && claimingMode.isGlobal())
+			return;
+		new ClaimsAnchorCommand(true, claimingMode).register(dispatcher, environment);
+		new ClaimsAnchorCommand(false, claimingMode).register(dispatcher, environment);
 	}
 
 }

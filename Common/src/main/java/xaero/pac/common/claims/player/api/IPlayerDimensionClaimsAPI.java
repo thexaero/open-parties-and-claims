@@ -18,7 +18,10 @@
 
 package xaero.pac.common.claims.player.api;
 
+import net.minecraft.world.level.ChunkPos;
+
 import javax.annotation.Nonnull;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -33,5 +36,13 @@ public interface IPlayerDimensionClaimsAPI {
 	 */
 	@Nonnull
 	public Stream<IPlayerClaimPosListAPI> getStream();
+
+	/**
+	 * Gets a set of all claiming anchors for this player.
+	 *
+	 * @return a Set of chunk positions of all claiming anchors for this player and dimension, not null
+	 */
+	@Nonnull
+	Set<ChunkPos> getAnchors();
 
 }

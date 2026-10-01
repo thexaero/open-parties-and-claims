@@ -37,7 +37,7 @@ public class ClaimsForceloadCommand extends AbstractChunkCommand {
 				mode == null || mode.canBeImpersonated(),
 				mode == null ? null : mode.getId(), "forceload", "unforceload",
 				null, null,
-				true
+				true, false
 		);
 		this.mode = mode;
 	}
@@ -46,7 +46,8 @@ public class ClaimsForceloadCommand extends AbstractChunkCommand {
 	protected Command<CommandSourceStack> createChunkCommand(
 			boolean shouldApply,
 			boolean another,
-			boolean opForce
+			boolean opForce,
+			boolean confirmed
 	) {
 		return ClaimsForceloadCommands.createForceloadCommand(shouldApply, mode, another, opForce);
 	}

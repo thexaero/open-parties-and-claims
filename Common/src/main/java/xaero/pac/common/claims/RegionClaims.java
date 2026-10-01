@@ -114,7 +114,7 @@ public abstract class RegionClaims
 			PlayerClaimInfo<?,?> newPlayerInfo = newClaim == null ? null : playerClaimsManager.getInfo(newClaim.getPlayerId());
 
 			if (currentPlayerInfo != null)
-				currentPlayerInfo.onUnclaim(configManager, dimension, currentClaim, x, z);
+				currentPlayerInfo.onUnclaim(configManager, dimension, currentClaim, x, z, currentPlayerInfo == newPlayerInfo);
 			if (newPlayerInfo != null)
 				newPlayerInfo.onClaim(configManager, dimension, newClaim, x, z);
 			return true;
