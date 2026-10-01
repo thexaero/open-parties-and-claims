@@ -85,7 +85,7 @@ public class ClientboundClaimAnchorsPacket extends LazyPacket<ClientboundClaimAn
 				if(nbt == null)
 					return null;
 				UUID claimOwner = nbt.getUUID("o");
-				ResourceLocation dimensionId = new ResourceLocation(nbt.getString("d"));
+				ResourceLocation dimensionId = ResourceLocation.parse(nbt.getString("d"));
 				ListTag anchorListTag = nbt.getList("l", 10);
 				if(anchorListTag.size() > MAX_ANCHORS) {
 					OpenPartiesAndClaims.LOGGER.info("Received claim anchor list is too large!");
