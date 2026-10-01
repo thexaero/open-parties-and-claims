@@ -152,7 +152,11 @@ public class PlayerConfigOptionClientStorage<T> implements IPlayerConfigOptionCl
 	public boolean isPlayerMutable() {
 		if(config.getType() != PlayerConfigType.PLAYER && config.getType() != PlayerConfigType.PARTY_CLAIMS)
 			return false;
-		if(!option.isOverridable() && config instanceof PlayerSubConfigClientStorage)
+		if(
+				!option.isOverridable() &&
+				(!config.getType().hasDimensionSubConfigs() || !option.isOnlyDimensionOverridable()) &&
+				config instanceof PlayerSubConfigClientStorage
+		)
 			return false;
 		if(isAdminMutable())
 			return false;

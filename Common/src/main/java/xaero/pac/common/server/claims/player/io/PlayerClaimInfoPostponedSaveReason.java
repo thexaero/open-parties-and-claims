@@ -16,15 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.claims.util;
+package xaero.pac.common.server.claims.player.io;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import xaero.pac.common.server.IServerData;
 
-public class ClaimsConstants {
+import java.util.function.Consumer;
 
-	public static final int COLOR_IS_PARTY_FLAG = 0x01000000;
-	public static final int GLOBAL_CLAIM_DEFAULT_COLOR = 0xAA0000;
-	public static final MutableComponent ANCHOR_SYMBOL_COMPONENT = Component.literal("⚓");
+public enum PlayerClaimInfoPostponedSaveReason {
+	TRANSFER(serverData -> {
+		serverData.getServerClaimsManager().getClaimReplaceTaskHandler().onTick(serverData);
+	});
 
+	private final Consumer<IServerData<?,?>> preparer;
+
+	PlayerClaimInfoPostponedSaveReason(Consumer<IServerData<?, ?>> preparer) {
+		this.preparer = preparer;
+	}
+
+	public Consumer<IServerData<?, ?>> getPreparer() {
+		return preparer;
+	}
 }

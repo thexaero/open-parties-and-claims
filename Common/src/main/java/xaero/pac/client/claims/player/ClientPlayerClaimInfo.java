@@ -26,6 +26,7 @@ import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -37,10 +38,20 @@ public final class ClientPlayerClaimInfo extends PlayerClaimInfo<ClientPlayerCla
 	private boolean partyOwned;
 	private final Int2ObjectMap<ClientPlayerSubClaimInfo> subClaimInfo;
 	
-	public ClientPlayerClaimInfo(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
-								 ClientPlayerClaimInfoManager manager, Int2ObjectMap<ClientPlayerSubClaimInfo> subClaimInfo) {
+	public ClientPlayerClaimInfo(
+			String username,
+			UUID playerId,
+			Map<ResourceLocation, PlayerDimensionClaims> claims,
+			ClientPlayerClaimInfoManager manager,
+			Int2ObjectMap<ClientPlayerSubClaimInfo> subClaimInfo
+	) {
 		super(username, playerId, claims, manager);
 		this.subClaimInfo = subClaimInfo;
+	}
+
+	@Override
+	protected PlayerDimensionClaims createDimension(ResourceLocation dimension) {
+		return new PlayerDimensionClaims(playerId, dimension, new HashMap<>(), new HashMap<>(), manager.getClaimsManager());
 	}
 
 	@Override

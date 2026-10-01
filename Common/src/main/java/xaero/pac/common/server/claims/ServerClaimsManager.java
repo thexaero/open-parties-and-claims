@@ -26,17 +26,16 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.ClaimsManager;
 import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.action.request.ClaimActionRequest;
-import xaero.pac.common.claims.player.IPlayerChunkClaim;
-import xaero.pac.common.claims.player.IPlayerClaimPosList;
-import xaero.pac.common.claims.player.IPlayerDimensionClaims;
-import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.*;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
+import xaero.pac.common.claims.util.ClaimsUtils;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -49,6 +48,7 @@ import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfoManager;
+import xaero.pac.common.server.claims.player.ServerPlayerDimensionClaims;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
@@ -72,6 +72,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimInfo, ServerPlayerClaimInfoManager, ServerRegionClaims, ServerDimensionClaimsManager, ServerClaimStateHolder> implements IServerClaimsManager<PlayerChunkClaim, ServerPlayerClaimInfo, ServerDimensionClaimsManager> {
 
@@ -158,6 +160,15 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return Math.abs(x - fromX) <= maxClaimDistance && Math.abs(z - fromZ) <= maxClaimDistance;
 	}
 
+	private boolean withinAnchorDistance(UUID playerId, ResourceLocation dimension, int x, int z){
+		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
+		PlayerDimensionClaims playerDimensionClaims = playerClaimInfo.getDimension(dimension);
+		if(playerDimensionClaims == null)
+			return false;
+		int anchorRange = getPlayerFullAnchorRange(playerId, dimension);
+		return ClaimsUtils.withinAnchorDistance(playerDimensionClaims.getAnchors(), anchorRange, x, z);
+	}
+
 	@Override
 	public boolean isClaimable(@Nonnull ResourceLocation dimension) {
 		return playerClaimInfoManager.isClaimable(dimension);
@@ -194,6 +205,27 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		super.unclaim(dimension, x, z);
 		if(loaded)
 			claimsManagerTracker.onChunkChange(dimension, x, z, null);
+	}
+
+	@Override
+	public boolean addAnchor(@Nonnull ResourceLocation dimension, @Nonnull ChunkPos pos, @Nonnull UUID playerId) {
+		PlayerChunkClaim currentClaim = get(dimension, pos.x, pos.z);
+		if(currentClaim == null || !currentClaim.getPlayerId().equals(playerId))
+			currentClaim = claim(dimension, playerId, -1, pos.x, pos.z, false);
+		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
+		return playerClaimInfo.ensureDimension(dimension).addAnchor(pos);
+	}
+
+	@Override
+	public boolean removeAnchor(@Nonnull ResourceLocation dimension, @Nonnull ChunkPos pos, @Nonnull UUID playerId) {
+		PlayerChunkClaim currentClaim = get(dimension, pos.x, pos.z);
+		if(currentClaim == null || !currentClaim.getPlayerId().equals(playerId))
+			return false;
+		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
+		PlayerDimensionClaims playerDimensionClaims = playerClaimInfo.getDimension(dimension);
+		if(playerDimensionClaims == null)
+			return false;
+		return playerDimensionClaims.removeAnchor(pos);
 	}
 
 	private boolean canReclaim(PlayerChunkClaim currentClaim, UUID playerId, ResourceLocation dimension) {
@@ -259,7 +291,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force) {
+	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force, boolean ignoreAnchors) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
@@ -272,19 +304,26 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
+		if(!ignoreAnchors && !force && ServerConfig.CONFIG.anchorBasedClaiming.get() &&
+				!withinAnchorDistance(playerId, dimension, x, z))
+			return new ClaimResult<>(null, ClaimResult.Type.ANCHOR_TOO_FAR);
 		int claimLimit = getPlayerFullClaimLimit(playerId);
 		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, ClaimingAction.CLAIM);
 	}
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean force) {
+	public ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean force, boolean causedByUnanchor) {
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		if(currentClaim == null)
 			return new ClaimResult<>(null, ClaimResult.Type.NOT_CLAIMED);
+		ClaimingAction action = causedByUnanchor ? ClaimingAction.UNCLAIM_UNANCHORED : ClaimingAction.UNCLAIM;
 		if(!force) {
 			ClaimActionPermissionOverride permissionOverride =
-					actionListenerManager.overrideClaimingActionPermission(id, dimension, x, z, ClaimingAction.UNCLAIM, this, server);
+					actionListenerManager.overrideClaimingActionPermission(
+							id, dimension, x, z, action,
+							this, server
+					);
 			if (permissionOverride.getType() != ClaimActionPermissionOverrideType.PASS) {
 				if (permissionOverride.getType() == ClaimActionPermissionOverrideType.ALLOW)
 					force = true;
@@ -296,14 +335,17 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		}
 		if(!force && !Objects.equals(id, currentClaim.getPlayerId()))
 			return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER);
-		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
+		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(currentClaim.getPlayerId());//currentClaim.getPlayerId() is not necessarily equal to id
+		if(ServerConfig.CONFIG.anchorBasedClaiming.get() &&
+				playerClaimInfo.ensureDimension(dimension).getAnchors().contains(new ChunkPos(x, z)))
+			return new ClaimResult<>(null, ClaimResult.Type.CANT_UNCLAIM_ANCHOR);
 		if(!force && playerClaimInfo.isTransferInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.TRANSFER_IN_PROGRESS);
 		if(!force && playerClaimInfo.isReplacementInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
 	 	unclaim(dimension, x, z);
-		actionListenerManager.handleSuccessfulClaimingAction(id, dimension, x, z, ClaimingAction.UNCLAIM, this, server);
-	 	return new ClaimResult<>(null, ClaimResult.Type.SUCCESSFUL_UNCLAIM);
+		actionListenerManager.handleSuccessfulClaimingAction(id, dimension, x, z, action, this, server);
+	 	return new ClaimResult<>(null, action.getSuccessType());
 	}
 	
 	@Nonnull
@@ -319,7 +361,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(id);
 		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
-		return tryToUnclaimHelper(dimension, id, fromX, fromZ, x, z, force);
+		return tryToUnclaimHelper(dimension, id, fromX, fromZ, x, z, force, false);
 	}
 
 	@Nonnull
@@ -373,6 +415,122 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return tryToForceloadHelper(dimension, id, fromX, fromZ, x, z, enable, force, isServer, claimLimit, forceloadLimit);
 	}
 
+	@Nonnull
+	public ClaimResult<PlayerChunkClaim> tryAnchor(
+			@Nonnull ResourceLocation dimension,
+			@Nonnull UUID playerId,
+			@Nonnull ResourceLocation fromDimension,
+			int fromX,
+			int fromZ,
+			int x,
+			int z,
+			boolean add,
+			boolean force,
+			Consumer<AreaClaimResult> futureResultListener
+	) {
+		if(!ServerConfig.CONFIG.anchorBasedClaiming.get())
+			return new ClaimResult<>(null, ClaimResult.Type.ANCHORS_NOT_USED);
+		if(Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID) || Objects.equals(playerId, PlayerConfig.EXPIRED_CLAIM_UUID))
+			return new ClaimResult<>(null, ClaimResult.Type.NO_SERVER_ANCHORS);
+		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
+		if(playerClaimInfo.isAreaClaimTaskInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
+		if(!force && playerClaimInfo.isTransferInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.TRANSFER_IN_PROGRESS);
+		if(!force && playerClaimInfo.isReplacementInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.REPLACEMENT_IN_PROGRESS);
+		ClaimingAction action = add ? ClaimingAction.ANCHOR : ClaimingAction.UNANCHOR;
+		if(!force) {
+			ClaimActionPermissionOverride permissionOverride =
+					actionListenerManager.overrideClaimingActionPermission(
+							playerId, dimension, x, z, action,
+							this, server
+					);
+			if (permissionOverride.getType() != ClaimActionPermissionOverrideType.PASS) {
+				if (permissionOverride.getType() == ClaimActionPermissionOverrideType.ALLOW)
+					force = true;
+				else {
+					boolean interrupts = permissionOverride.getType() == ClaimActionPermissionOverrideType.INTERRUPT;
+					return new ClaimResult<>(null, interrupts ? ClaimResult.Type.ADDON_INTERRUPTS : ClaimResult.Type.ADDON_FORBIDS, permissionOverride.getReason());
+				}
+			}
+		}
+		if(!force && !fromDimension.equals(dimension))
+			return new ClaimResult<>(null, ClaimResult.Type.ANOTHER_DIMENSION);
+		if(!force && !withinDistance(fromX, fromZ, x, z))
+			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
+		PlayerChunkClaim currentClaim = get(dimension, x, z);
+		ServerPlayerDimensionClaims playerDimensionClaims = null;
+		if(!add)
+			playerDimensionClaims = playerClaimInfo.getDimension(dimension);
+		else if(!force) {
+			int anchorLimit = getPlayerFullAnchorLimit(playerId, dimension);
+			int anchorCount = 0;
+			if(anchorLimit > 0) {
+				playerDimensionClaims = playerClaimInfo.getDimension(dimension);
+				if(playerDimensionClaims != null)
+					anchorCount = playerDimensionClaims.getAnchors().size();
+			}
+			if(anchorCount >= anchorLimit)
+				return new ClaimResult<>(
+						null,
+						ClaimResult.Type.ANCHOR_LIMIT_REACHED
+				);
+		}
+		if(playerClaimInfo.isAreaClaimTaskInProgress())
+			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
+		if(add && (currentClaim == null || !currentClaim.getPlayerId().equals(playerId))) {
+			ClaimResult<PlayerChunkClaim> claimResult = tryToClaimTyped(dimension, playerId, -1, fromDimension, fromX, fromZ, x, z, force, true);
+			if(!claimResult.getResultType().success)
+				return claimResult;
+			currentClaim = claimResult.getClaimResult();
+		}
+		ChunkPos anchorPos = new ChunkPos(x, z);
+		if(add) {
+			boolean success = addAnchor(dimension, anchorPos, playerId);
+			if(success)
+				actionListenerManager.handleSuccessfulClaimingAction(playerId, dimension, x, z, action, this, server);
+			return new ClaimResult<>(
+					currentClaim,
+					success ? ClaimResult.Type.SUCCESSFUL_ANCHOR : ClaimResult.Type.ANCHOR_ALREADY_EXISTS
+			);
+		}
+		boolean exists = playerDimensionClaims != null && playerDimensionClaims.getAnchors().contains(anchorPos);
+		if(exists) {
+			int anchorRange = getPlayerFullAnchorRange(playerId, dimension);
+			tryClaimActionOverArea(
+					dimension, playerId, -1, dimension, fromX, fromZ,
+					x - anchorRange, z - anchorRange, x + anchorRange, z + anchorRange,
+					ClaimingAction.UNCLAIM_UNANCHORED, true, Integer.MAX_VALUE,
+					a -> !a.equals(anchorPos), result -> {
+						Set<ClaimResult.Type> fullResultTypes = result.getResultTypesStream().collect(Collectors.toSet());
+						boolean removalSuccess = removeAnchor(dimension, anchorPos, playerId);
+						if(removalSuccess) {
+							fullResultTypes.add(ClaimResult.Type.SUCCESSFUL_UNANCHOR);
+							actionListenerManager.handleSuccessfulClaimingAction(playerId, dimension, x, z, action, this, server);
+							boolean withinDistance = withinAnchorDistance(playerId, dimension, x, z);
+							if(!withinDistance) {
+								ClaimResult<PlayerChunkClaim> lastUnclaimResult =
+										tryToUnclaimHelper(dimension, playerId, x, z, x, z, false, true);
+								if (!lastUnclaimResult.getResultType().success)
+									fullResultTypes.add(lastUnclaimResult.getResultType());
+							}
+						}
+						AreaClaimResult fullResult = new AreaClaimResult(
+								fullResultTypes, result.getCustomReasons(), result.getDimension(),
+								result.getLeft(), result.getTop(), result.getRight(), result.getBottom()
+						);
+						if(futureResultListener != null)
+							futureResultListener.accept(fullResult);
+					}
+			);
+		}
+		return new ClaimResult<>(
+				currentClaim,
+				exists ? ClaimResult.Type.BEGAN_UNANCHOR : ClaimResult.Type.ANCHOR_DOESNT_EXIST
+		);
+	}
+
 	@Deprecated
 	public AreaClaimResult backwardsCompatibleClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force){
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
@@ -401,7 +559,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		PlayerAreaClaimActionSpreadoutTask task = new PlayerAreaClaimActionSpreadoutTask(
 				new ClaimActionRequest(action, dimension, effectiveLeft, effectiveTop, effectiveRight, effectiveBottom, null),
 				force, playerId, subConfigIndex,
-				dimension, fromX, fromZ, 100,
+				dimension, fromX, fromZ, 100, null,
 				resultFuture::complete
 		);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -411,17 +569,22 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return resultFuture.join();
 	}
 
-	public void tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force, Consumer<AreaClaimResult> listener) {
+	public void tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force, Predicate<ChunkPos> anchorFilter, Consumer<AreaClaimResult> listener) {
 		int maxChunksToAffect = force ? Integer.MAX_VALUE : ServerConfig.CONFIG.maxSingleClaimActionSize.get();
-		tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, action, force, maxChunksToAffect, listener);
+		tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, action, force, maxChunksToAffect, anchorFilter, listener);
 	}
 
-	public void tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force, int maxChunksToAffect, Consumer<AreaClaimResult> listener) {
+	public void tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force, int maxChunksToAffect, Predicate<ChunkPos> anchorFilter, Consumer<AreaClaimResult> listener) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get()) {
 			listener.accept(new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), new HashSet<>(), dimension, left, top, right, bottom));
 			return;
 		}
 		Set<ClaimResult.Type> resultTypes = new HashSet<>();
+		if(!action.canAffectArea() && (right != left || top != bottom)){
+			resultTypes.add(ClaimResult.Type.NOT_SINGLE_CHUNK);
+			listener.accept(new AreaClaimResult(resultTypes, new HashSet<>(), dimension, left, top, right, bottom));
+			return;
+		}
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
 		if(!isServer && (action == ClaimingAction.CLAIM || action == ClaimingAction.FORCELOAD) && !isClaimable(dimension)) {
 			resultTypes.add(ClaimResult.Type.UNCLAIMABLE_DIMENSION);
@@ -444,7 +607,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				new PlayerAreaClaimActionSpreadoutTask(
 						new ClaimActionRequest(action, dimension, left, top, right, bottom, null),
 						force, playerId, subConfigIndex,
-						fromDimension, fromX, fromZ, maxChunksToAffect,
+						fromDimension, fromX, fromZ, maxChunksToAffect, anchorFilter,
 						listener
 				),
 				serverData
@@ -453,17 +616,17 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	public void tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean force, @Nonnull Consumer<AreaClaimResult> listener) {
-		tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.CLAIM, force, listener);
+		tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.CLAIM, force, null, listener);
 	}
 
 	@Override
 	public void tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean force, @Nonnull Consumer<AreaClaimResult> listener) {
-		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.UNCLAIM, force, listener);
+		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.UNCLAIM, force, null, listener);
 	}
 
 	@Override
 	public void tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean force, @Nonnull Consumer<AreaClaimResult> listener) {
-		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, force, listener);
+		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, force, null, listener);
 	}
 
 	@Nullable
@@ -496,6 +659,24 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	}
 
 	@Override
+	public int getPlayerBaseAnchorLimit(@Nonnull UUID playerId) {
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				playerId, null,
+				ServerConfig.CONFIG.maxPlayerClaimingAnchors, ServerConfig.CONFIG.claimingAnchorBonusPerPartyMember,
+				ServerConfig.CONFIG.claimingAnchorBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_CLAIMING_ANCHORS
+		);
+	}
+
+	@Override
+	public int getPlayerBaseAnchorRange(@Nonnull UUID playerId) {
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				playerId, null,
+				ServerConfig.CONFIG.claimingAnchorRange, null,
+				null, UsedPermissionNodes.CLAIMING_ANCHOR_RANGE
+		);
+	}
+
+	@Override
 	public int getPlayerBaseClaimLimit(@Nonnull ServerPlayer player){
 		return playerClaimInfoManager.getPlayerBaseLimit(
 				null, player,
@@ -510,6 +691,24 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				null, player,
 				ServerConfig.CONFIG.maxPlayerClaimForceloads, ServerConfig.CONFIG.forceloadBonusPerPartyMember,
 				ServerConfig.CONFIG.forceloadBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_FORCELOADS
+		);
+	}
+
+	@Override
+	public int getPlayerBaseAnchorLimit(@Nonnull ServerPlayer player) {
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				null, player,
+				ServerConfig.CONFIG.maxPlayerClaimingAnchors, ServerConfig.CONFIG.claimingAnchorBonusPerPartyMember,
+				ServerConfig.CONFIG.claimingAnchorBonusForPartyOwner, UsedPermissionNodes.MAX_PLAYER_CLAIMING_ANCHORS
+		);
+	}
+
+	@Override
+	public int getPlayerBaseAnchorRange(@Nonnull ServerPlayer player) {
+		return playerClaimInfoManager.getPlayerBaseLimit(
+				null, player,
+				ServerConfig.CONFIG.claimingAnchorRange, null,
+				null, UsedPermissionNodes.CLAIMING_ANCHOR_RANGE
 		);
 	}
 
@@ -543,6 +742,50 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(config.getType().isGlobal())
 			return Integer.MAX_VALUE;
 		return getPlayerBaseForceloadLimit(player) + config.getEffective(PlayerConfigOptions.BONUS_CHUNK_FORCELOADS);
+	}
+
+	@Override
+	public int getPlayerFullAnchorLimit(@Nonnull UUID playerId, @Nonnull ResourceLocation dimension) {
+		IPlayerConfig config = configManager.getLoadedConfig(playerId);
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		IPlayerConfig wildernessConfig = configManager.getWildernessConfig().getEffectiveSubConfig(id2String.apply(dimension));
+		int playerBonus = config.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHORS);
+		int wildernessBonus = wildernessConfig.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHORS);
+		return getPlayerBaseAnchorLimit(playerId) + playerBonus + wildernessBonus;
+	}
+
+	@Override
+	public int getPlayerFullAnchorLimit(@Nonnull ServerPlayer player, @Nonnull ResourceLocation dimension) {
+		IPlayerConfig config = configManager.getLoadedConfig(player.getUUID());
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		IPlayerConfig wildernessConfig = configManager.getWildernessConfig().getEffectiveSubConfig(id2String.apply(dimension));
+		int playerBonus = config.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHORS);
+		int wildernessBonus = wildernessConfig.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHORS);
+		return getPlayerBaseAnchorLimit(player) + playerBonus + wildernessBonus;
+	}
+
+	@Override
+	public int getPlayerFullAnchorRange(@Nonnull UUID playerId, @Nonnull ResourceLocation dimension) {
+		IPlayerConfig config = configManager.getLoadedConfig(playerId);
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		IPlayerConfig wildernessConfig = configManager.getWildernessConfig().getEffectiveSubConfig(id2String.apply(dimension));
+		int playerBonus = config.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHOR_RANGE);
+		int wildernessBonus = wildernessConfig.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHOR_RANGE);
+		return getPlayerBaseAnchorRange(playerId) + playerBonus + wildernessBonus;
+	}
+
+	@Override
+	public int getPlayerFullAnchorRange(@Nonnull ServerPlayer player, @Nonnull ResourceLocation dimension) {
+		IPlayerConfig config = configManager.getLoadedConfig(player.getUUID());
+		if(config.getType().isGlobal())
+			return Integer.MAX_VALUE;
+		IPlayerConfig wildernessConfig = configManager.getWildernessConfig().getEffectiveSubConfig(id2String.apply(dimension));
+		int playerBonus = config.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHOR_RANGE);
+		int wildernessBonus = wildernessConfig.getEffective(PlayerConfigOptions.BONUS_CLAIMING_ANCHOR_RANGE);
+		return getPlayerBaseAnchorRange(player) + playerBonus + wildernessBonus;
 	}
 
 	public Iterator<ServerClaimStateHolder> getClaimStateHolderIterator(){
@@ -638,6 +881,11 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 	@Override
 	public ChunkAccessOverriderManager getChunkAccessOverriderManager() {
 		return chunkAccessOverriderManager;
+	}
+
+	@Override
+	public boolean usingAnchorBasedClaiming() {
+		return ServerConfig.CONFIG.anchorBasedClaiming.get();
 	}
 
 	@Override
