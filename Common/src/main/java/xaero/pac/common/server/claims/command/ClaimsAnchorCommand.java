@@ -30,7 +30,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -213,7 +213,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 	}
 
 	@Override
-	protected ForgeConfigSpec.BooleanValue getFeatureConfigOption() {
+	protected ModConfigSpec.BooleanValue getFeatureConfigOption() {
 		return ServerConfig.CONFIG.claimsEnabled;
 	}
 

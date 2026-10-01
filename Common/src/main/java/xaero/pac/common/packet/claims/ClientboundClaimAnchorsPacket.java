@@ -20,6 +20,7 @@ package xaero.pac.common.packet.claims;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
@@ -80,7 +81,7 @@ public class ClientboundClaimAnchorsPacket extends LazyPacket<ClientboundClaimAn
 			try {
 				if(input.readableBytes() > 65536)
 					return null;
-				CompoundTag nbt = input.readAnySizeNbt();
+				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
 				UUID claimOwner = nbt.getUUID("o");
