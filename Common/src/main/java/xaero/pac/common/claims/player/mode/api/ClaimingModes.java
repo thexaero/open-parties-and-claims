@@ -68,13 +68,13 @@ public class ClaimingModes {
 				int claimCount = playerClaims.getClaimCount();
 				int forceloadCount = playerClaims.getForceloadCount();
 				int anchorCount = 0;
-				IPlayerDimensionClaims<?> playerDimensionClaims = playerClaims.getDimension(player.level.dimension().location());
+				IPlayerDimensionClaims<?> playerDimensionClaims = playerClaims.getDimension(player.level().dimension().location());
 				if(playerDimensionClaims != null)
 					anchorCount = playerDimensionClaims.getAnchors().size();
 				int claimLimit = claimsManager.getPlayerFullClaimLimit(playerId);
 				int forceloadLimit = claimsManager.getPlayerFullForceloadLimit(playerId);
-				int anchorLimit = claimsManager.getPlayerFullAnchorLimit(playerId, player.level.dimension().location());
-				int anchorRange = claimsManager.getPlayerFullAnchorRange(playerId, player.level.dimension().location());
+				int anchorLimit = claimsManager.getPlayerFullAnchorLimit(playerId, player.level().dimension().location());
+				int anchorRange = claimsManager.getPlayerFullAnchorRange(playerId, player.level().dimension().location());
 				return new ClaimingModeLimits(
 						ClaimingModes.PLAYER, claimCount, forceloadCount, anchorCount,
 						claimLimit, forceloadLimit, anchorLimit, anchorRange
@@ -126,13 +126,13 @@ public class ClaimingModes {
 						IServerPlayerClaimInfo<?> partyOwnerClaims = claimsManager.getPlayerInfo(partyOwner);
 						partyClaimCount = partyOwnerClaims.getClaimCount();
 						partyForceloadCount = partyOwnerClaims.getForceloadCount();
-						IPlayerDimensionClaims<?> playerDimensionClaims = partyOwnerClaims.getDimension(player.level.dimension().location());
+						IPlayerDimensionClaims<?> playerDimensionClaims = partyOwnerClaims.getDimension(player.level().dimension().location());
 						if(playerDimensionClaims != null)
 							partyAnchorCount = playerDimensionClaims.getAnchors().size();
 						partyClaimLimit = claimsManager.getPlayerFullClaimLimit(partyOwner);
 						partyForceloadLimit = claimsManager.getPlayerFullForceloadLimit(partyOwner);
-						partyAnchorLimit = claimsManager.getPlayerFullAnchorLimit(partyOwner, player.level.dimension().location());
-						partyAnchorRange = claimsManager.getPlayerFullAnchorRange(partyOwner, player.level.dimension().location());
+						partyAnchorLimit = claimsManager.getPlayerFullAnchorLimit(partyOwner, player.level().dimension().location());
+						partyAnchorRange = claimsManager.getPlayerFullAnchorRange(partyOwner, player.level().dimension().location());
 					}
 				}
 				return new ClaimingModeLimits(

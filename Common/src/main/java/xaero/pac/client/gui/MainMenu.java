@@ -286,7 +286,8 @@ public class MainMenu extends XPACScreen {
 			if(openDropdown != null && openDropdown.isHovered()) {
 				claimButton.setTooltip(null);
 				forceloadButton.setTooltip(null);
-				anchorButton.setTooltip(null);
+				if(anchorButton != null)
+					anchorButton.setTooltip(null);
 			}
 
 			updateClaimingModeDropdown(claimsManager);

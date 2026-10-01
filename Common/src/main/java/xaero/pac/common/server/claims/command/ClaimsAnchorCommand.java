@@ -108,7 +108,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_anchor_command_unknown_dimension")));
 					return 0;
 				}
-				world = player.getLevel();
+				world = player.serverLevel();
 			}
 			int chunkX;
 			int chunkZ;
@@ -164,7 +164,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 			}
 			UUID sourceUUID = player == null ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 			boolean impersonating = !another && !contextPlayerId.equals(sourceUUID);
-			ResourceLocation fromDimension = player == null ? world.dimension().location() : player.level.dimension().location();
+			ResourceLocation fromDimension = player == null ? world.dimension().location() : player.level().dimension().location();
 			int fromX = player == null ? chunkX : player.chunkPosition().x;
 			int fromZ = player == null ? chunkZ : player.chunkPosition().z;
 
@@ -190,14 +190,14 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 					if(result.getResultType().fail)
 						context.getSource().sendFailure(message);
 					else
-						context.getSource().sendSuccess(message, true);
+						context.getSource().sendSuccess(() -> message, true);
 					return 0;
 				}
 
 				if(shouldApply)
-					context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_anchored_at", chunkX, chunkZ, world.dimension().location().toString()), true);
+					context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(player, "gui.xaero_claims_anchored_at", chunkX, chunkZ, world.dimension().location().toString()), true);
 				else
-					context.getSource().sendSuccess(adaptiveLocalizer.getFor(player, "gui.xaero_claims_began_unanchoring_at", chunkX, chunkZ, world.dimension().location().toString()), true);
+					context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(player, "gui.xaero_claims_began_unanchoring_at", chunkX, chunkZ, world.dimension().location().toString()), true);
 				return 1;
 			} finally {
 				if(result != null && player != null) {
