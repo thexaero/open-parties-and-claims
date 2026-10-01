@@ -377,13 +377,13 @@ public class MainMenu extends XPACScreen {
 		ChunkPos chunkPos = minecraft.player.chunkPosition();
 		IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), chunkPos.x, chunkPos.z);
 		if(wouldAnchor(chunkPos, currentClaim)) {
-			CommandUtil.sendCommand(minecraft, ANCHOR_COMMAND.getString());
+			CommandUtil.sendCommand(minecraft, ANCHOR_COMMAND.getString().substring(1));
 			onClose();
 			return;
 		}
 		minecraft.setScreen(new ConfirmScreen(result -> {
 			if(result)
-				CommandUtil.sendCommand(minecraft, UNANCHOR_COMMAND.getString() + " confirm");
+				CommandUtil.sendCommand(minecraft, UNANCHOR_COMMAND.getString().substring(1) + " confirm");
 			onClose();
 		}, UNANCHOR_CONFIRM_1, UNANCHOR_CONFIRM_2));
 	}
