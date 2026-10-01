@@ -63,8 +63,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_max_claiming_anchors",
 			PermissionValueTypes.INTEGER,
 			() -> ServerConfig.CONFIG.maxPlayerClaimingAnchorsPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_max_claiming_anchors"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_max_claiming_anchors"),
+			Component.translatable("gui.xaero_pac_permission_max_claiming_anchors"),
+			Component.translatable("gui.xaero_pac_permission_comment_max_claiming_anchors"),
 			ALL_BUILDER);
 
 	/**
@@ -74,8 +74,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_claiming_anchor_range",
 			PermissionValueTypes.INTEGER,
 			() -> ServerConfig.CONFIG.claimingAnchorRangePermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_claiming_anchor_range"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_claiming_anchor_range"),
+			Component.translatable("gui.xaero_pac_permission_claiming_anchor_range"),
+			Component.translatable("gui.xaero_pac_permission_comment_claiming_anchor_range"),
 			ALL_BUILDER);
 
 	/**
