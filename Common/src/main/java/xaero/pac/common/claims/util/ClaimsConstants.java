@@ -19,12 +19,12 @@
 package xaero.pac.common.claims.util;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
 
 public class ClaimsConstants {
 
 	public static final int COLOR_IS_PARTY_FLAG = 0x01000000;
 	public static final int GLOBAL_CLAIM_DEFAULT_COLOR = 0xAA0000;
-	public static final TextComponent ANCHOR_SYMBOL_COMPONENT = Component.literal("⚓");
+	public static final MutableComponent ANCHOR_SYMBOL_COMPONENT = Component.literal("⚓");
 
 }

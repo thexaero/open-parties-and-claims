@@ -88,8 +88,8 @@ public class MainMenu extends XPACScreen {
 	private static final Component FORCELOAD_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " forceload");
 	private static final Component UNFORCELOAD_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unforceload");
 
-	public static final TranslatableComponent ANCHOR = Component.translatable("gui.xaero_pac_ui_anchor");
-	public static final TranslatableComponent UNANCHOR = Component.translatable("gui.xaero_pac_ui_unanchor");
+	public static final Component ANCHOR = Component.translatable("gui.xaero_pac_ui_anchor");
+	public static final Component UNANCHOR = Component.translatable("gui.xaero_pac_ui_unanchor");
 	private static final Component ANCHOR_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " anchor");
 	private static final Component UNANCHOR_COMMAND = Component.literal("/" + ClaimsCommandRegister.COMMAND_PREFIX + " unanchor");
 	private static final Component UNANCHOR_CONFIRM_1 = Component.translatable("gui.xaero_pac_ui_unanchor_confirm_line1");

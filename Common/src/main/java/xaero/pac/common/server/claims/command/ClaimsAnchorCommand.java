@@ -98,7 +98,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if(!shouldApply && !confirmed){
-				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, new TranslatableComponent("gui.xaero.claims_unanchor_command_unconfirmed")));
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_unanchor_command_unconfirmed")));
 				return 0;
 			}
 			ServerLevel world;
@@ -106,7 +106,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 				world = DimensionArgument.getDimension(context, "dimension");
 			} catch(IllegalArgumentException iae) {
 				if(player == null){
-					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, new TranslatableComponent("gui.xaero.claims_anchor_command_unknown_dimension")));
+					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_anchor_command_unknown_dimension")));
 					return 0;
 				}
 				world = player.getLevel();
@@ -119,7 +119,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 				chunkZ = columnPos.z >> 4;
 			} catch(IllegalArgumentException iae) {
 				if(player == null){
-					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, new TranslatableComponent("gui.xaero.claims_anchor_command_unknown_pos")));
+					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_anchor_command_unknown_pos")));
 					return 0;
 				}
 				chunkX = player.chunkPosition().x;
@@ -173,7 +173,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 			try {
 				Consumer<AreaClaimResult> futureResultListener = null;
 				if(!shouldApply) {
-					Component unanchorEndMessage = new TranslatableComponent(
+					Component unanchorEndMessage = Component.translatable(
 							"gui.xaero_claims_unanchor_command_area_end", chunkX, chunkZ
 					);
 					futureResultListener = r -> ClaimsClaimCommands.sendResult(

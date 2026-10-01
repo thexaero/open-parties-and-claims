@@ -50,7 +50,7 @@ public class PlayerLuckPermsSystem implements IPlayerPermissionSystemAPI {
 			Short.class, Short::valueOf,
 			Byte.class, Byte::valueOf,
 			String.class, Function.identity(),
-			Component.class, TextComponent::new
+			Component.class, Component::literal
 	);
 
 	@Nonnull
