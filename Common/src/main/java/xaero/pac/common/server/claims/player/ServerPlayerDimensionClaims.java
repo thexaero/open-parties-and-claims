@@ -41,7 +41,7 @@ public class ServerPlayerDimensionClaims extends PlayerDimensionClaims {
 	public boolean addAnchor(@Nonnull ChunkPos pos) {
 		if(super.addAnchor(pos)) {
 			ServerClaimsManager serverClaimsManager = (ServerClaimsManager) claimsManager;
-			if(serverClaimsManager.isLoaded())
+			if(serverClaimsManager.isLoaded() && serverClaimsManager.usingAnchorBasedClaiming())
 				serverClaimsManager.getClaimsManagerSynchronizer().syncClaimAnchors(null, playerId, dimension, List.of(pos), true);
 			return true;
 		}
@@ -52,7 +52,7 @@ public class ServerPlayerDimensionClaims extends PlayerDimensionClaims {
 	public boolean removeAnchor(@Nonnull ChunkPos pos) {
 		if(super.removeAnchor(pos)) {
 			ServerClaimsManager serverClaimsManager = (ServerClaimsManager) claimsManager;
-			if(serverClaimsManager.isLoaded())
+			if(serverClaimsManager.isLoaded() && serverClaimsManager.usingAnchorBasedClaiming())
 				serverClaimsManager.getClaimsManagerSynchronizer().syncClaimAnchors(null, playerId, dimension, List.of(pos), false);
 			return true;
 		}
