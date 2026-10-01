@@ -45,6 +45,7 @@ public abstract class AbstractChunkCommand {
 	private final String subArgumentLiteral;
 	private final String subArgumentName;
 	private final boolean areaSelection;
+	private final boolean withConfirmation;
 
 	protected AbstractChunkCommand(
 			String featureLiteral,
@@ -55,7 +56,8 @@ public abstract class AbstractChunkCommand {
 			String unapplyLiteral,
 			String subArgumentLiteral,
 			String subArgumentName,
-			boolean areaSelection
+			boolean areaSelection,
+			boolean withConfirmation
 	) {
 		this.featureLiteral = featureLiteral;
 		this.apply = apply;
@@ -66,6 +68,7 @@ public abstract class AbstractChunkCommand {
 		this.subArgumentLiteral = subArgumentLiteral;
 		this.subArgumentName = subArgumentName;
 		this.areaSelection = areaSelection;
+		this.withConfirmation = withConfirmation;
 	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment) {
@@ -85,13 +88,30 @@ public abstract class AbstractChunkCommand {
 
 		Command<CommandSourceStack> defaultExecutor = createChunkCommand(
 				apply, another,
-				false);
+				false, false
+		);
 		registerCommand(dispatcher, actionLiteral, null, defaultExecutor, requirement, another, subArgument);
+		if(withConfirmation){
+			ArgumentBuilder<CommandSourceStack, ?> mainPart = Commands.literal("confirm")
+					.executes(createChunkCommand(
+							apply, another,
+							false, true
+					));
+			registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
+		}
 
 		ArgumentBuilder<CommandSourceStack, ?> mainPart = Commands.argument(areaSelection ? "to-block-pos" : "block-pos", ColumnPosArgument.columnPos())
 				.executes(createChunkCommand(
 						apply, another,
-						false));
+						false, false
+				));
+		if(withConfirmation){
+			mainPart.then(Commands.literal("confirm")
+					.executes(createChunkCommand(
+							apply, another,
+							false, true
+					)));
+		}
 		if(areaSelection)
 			mainPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(mainPart);
 		registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
@@ -99,14 +119,16 @@ public abstract class AbstractChunkCommand {
 		mainPart = Commands.literal("anyway").requires(source -> source.hasPermission(2))
 				.executes(createChunkCommand(
 						apply, another,
-						true));
+						true, true
+				));
 		registerCommand(dispatcher, actionLiteral, mainPart, null, requirement, another, subArgument);
 
 		mainPart = Commands.argument(areaSelection ? "to-block-pos" : "block-pos", ColumnPosArgument.columnPos())
 				.then(Commands.literal("anyway").requires(source -> source.hasPermission(2))
 				.executes(createChunkCommand(
 						apply, another,
-						true))
+						true, true
+				))
 		);
 		if(areaSelection)
 			mainPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(mainPart);
@@ -115,7 +137,15 @@ public abstract class AbstractChunkCommand {
 		ArgumentBuilder<CommandSourceStack, ?> blockPosPart = Commands.argument(areaSelection ? "to-block-pos" : "block-pos", ColumnPosArgument.columnPos())
 				.executes(createChunkCommand(
 						apply, another,
-						false));
+						false, false
+				));
+		if(withConfirmation){
+			blockPosPart.then(Commands.literal("confirm")
+					.executes(createChunkCommand(
+							apply, another,
+							false, true
+					)));
+		}
 		if(areaSelection)
 			blockPosPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(blockPosPart);
 		mainPart = Commands.literal("in")
@@ -128,7 +158,8 @@ public abstract class AbstractChunkCommand {
 				.then(Commands.literal("anyway").requires(source -> source.hasPermission(2))
 				.executes(createChunkCommand(
 						apply, another,
-						true)));
+						true, true
+				)));
 		if(areaSelection)
 			blockPosPart = Commands.argument("from-block-pos", ColumnPosArgument.columnPos()).then(blockPosPart);
 		mainPart = Commands.literal("in")
@@ -195,7 +226,8 @@ public abstract class AbstractChunkCommand {
 	protected abstract Command<CommandSourceStack> createChunkCommand(
 			boolean shouldApply,
 			boolean another,
-			boolean opForce
+			boolean opForce,
+			boolean confirmed
 	);
 
 }

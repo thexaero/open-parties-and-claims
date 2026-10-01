@@ -94,8 +94,11 @@ public final class ClientPlayerClaimInfoManager extends PlayerClaimInfoManager<C
 	}
 
 	@Override
-	protected ClientPlayerClaimInfo create(String username, UUID playerId,
-			Map<ResourceLocation, PlayerDimensionClaims> claims) {
+	protected ClientPlayerClaimInfo create(
+			String username,
+			UUID playerId,
+			Map<ResourceLocation, PlayerDimensionClaims> claims
+	) {
 		return new ClientPlayerClaimInfo(username, playerId, claims, this, new Int2ObjectOpenHashMap<>());
 	}
 
