@@ -64,7 +64,7 @@ public class ClientboundClaimLimitsPacket extends LazyPacket<ClientboundClaimLim
 			modeLimitsTag.putInt("cc", modeLimits.claimCount);
 			modeLimitsTag.putInt("fc", modeLimits.forceloadCount);
 			modeLimitsTag.putInt("ac", modeLimits.anchorCount);
-			if(modeLimits.claimLimit != -Integer.MAX_VALUE)
+			if(modeLimits.claimLimit != Integer.MAX_VALUE)
 				modeLimitsTag.putInt("cl", modeLimits.claimLimit);
 			if(modeLimits.forceloadLimit != Integer.MAX_VALUE)
 				modeLimitsTag.putInt("fl", modeLimits.forceloadLimit);
