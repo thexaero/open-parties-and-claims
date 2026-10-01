@@ -47,15 +47,15 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 
 	//no field for the player because this handler can be moved to another one (e.g. on respawn)
 	private final UUID playerId;
-	private final ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync;
+	private final ClaimsManagerPlayerAnchorsSync claimAnchorsSync;
 	private List<PlayerChunkClaim> packetBuilder;
 	private Iterator<ServerClaimStateHolder> iterator;
 	private final boolean ownedOnly;
 
-	private ClaimsManagerPlayerStateSync(UUID playerId, ClaimsManagerSynchronizer synchronizer, ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync, Iterator<ServerClaimStateHolder> iterator, boolean ownedOnly) {
+	private ClaimsManagerPlayerStateSync(UUID playerId, ClaimsManagerSynchronizer synchronizer, ClaimsManagerPlayerAnchorsSync claimAnchorsSync, Iterator<ServerClaimStateHolder> iterator, boolean ownedOnly) {
 		super(synchronizer);
 		this.playerId = playerId;
-		this.subClaimPropertiesSync = subClaimPropertiesSync;
+		this.claimAnchorsSync = claimAnchorsSync;
 		this.iterator = iterator;
 		this.ownedOnly = ownedOnly;
 	}
@@ -112,27 +112,27 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 	}
 
 	public boolean isFinished(){
-		return subClaimPropertiesSync.isFinished() && (iterator == null ||
+		return claimAnchorsSync.isFinished() && (iterator == null ||
 				!iterator.hasNext());
 	}
 
 	@Override
 	public boolean shouldWorkNotClogged(IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData, ServerPlayer player) {
-		return started && subClaimPropertiesSync.isFinished() && !isFinished();
+		return started && claimAnchorsSync.isFinished() && !isFinished();
 	}
 
 	public static final class Builder {
 
 		private ServerPlayer player;
 		private ClaimsManagerSynchronizer synchronizer;
-		private ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync;
+		private ClaimsManagerPlayerAnchorsSync claimAnchorsSync;
 
 		private Builder(){}
 
 		public Builder setDefault() {
 			setPlayer(null);
 			setSynchronizer(null);
-			setSubClaimPropertiesSync(null);
+			setClaimAnchorsSync(null);
 			return this;
 		}
 
@@ -146,17 +146,17 @@ public final class ClaimsManagerPlayerStateSync extends ClaimsManagerPlayerLazyP
 			return this;
 		}
 
-		public Builder setSubClaimPropertiesSync(ClaimsManagerPlayerSubClaimPropertiesSync subClaimPropertiesSync) {
-			this.subClaimPropertiesSync = subClaimPropertiesSync;
+		public Builder setClaimAnchorsSync(ClaimsManagerPlayerAnchorsSync claimAnchorsSync) {
+			this.claimAnchorsSync = claimAnchorsSync;
 			return this;
 		}
 
 		public ClaimsManagerPlayerStateSync build(){
-			if(player == null || synchronizer == null || subClaimPropertiesSync == null)
+			if(player == null || synchronizer == null || claimAnchorsSync == null)
 				throw new IllegalStateException();
 			boolean ownedOnly = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.OWNED_ONLY;
 			Iterator<ServerClaimStateHolder> iterator = synchronizer.getStateHolderIteratorForSync();
-			return new ClaimsManagerPlayerStateSync(player.getUUID(), synchronizer, subClaimPropertiesSync, iterator, ownedOnly);
+			return new ClaimsManagerPlayerStateSync(player.getUUID(), synchronizer, claimAnchorsSync, iterator, ownedOnly);
 		}
 
 		public static Builder begin(){

@@ -16,15 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.packet.util;
+package xaero.pac.common.server.claims.player.io;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import xaero.pac.common.server.IServerData;
 
-public class PacketConstants {
+import java.util.function.Consumer;
 
-	public static final int NETWORK_VERSION = 7;
-	public static final Component NETWORK_VERSION_MISMATCH =
-			Component.literal("Open Parties and Claims versions between server and client aren't compatible!");
+public enum PlayerClaimInfoPostponedSaveReason {
+	TRANSFER(serverData -> {
+		serverData.getServerClaimsManager().getClaimReplaceTaskHandler().onTick(serverData);
+	});
 
+	private final Consumer<IServerData<?,?>> preparer;
+
+	PlayerClaimInfoPostponedSaveReason(Consumer<IServerData<?, ?>> preparer) {
+		this.preparer = preparer;
+	}
+
+	public Consumer<IServerData<?, ?>> getPreparer() {
+		return preparer;
+	}
 }

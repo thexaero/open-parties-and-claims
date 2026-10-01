@@ -24,6 +24,7 @@ import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
+import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.server.claims.action.listener.ClaimActionListenerManager;
 import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
@@ -40,6 +41,7 @@ import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface IServerClaimsManager
@@ -75,10 +77,10 @@ public interface IServerClaimsManager
 	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean force, boolean isServer, int claimLimit, ClaimingAction action);
 
 	@Nonnull
-	public ClaimResult<C> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force);
+	public ClaimResult<C> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force, boolean ignoreAnchors);
 
 	@Nonnull
-	public ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean force);
+	public ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean force, boolean causedByUnanchor);
 
 	@Nonnull
 	public ClaimResult<C> tryToUnclaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force);
@@ -90,10 +92,24 @@ public interface IServerClaimsManager
 	public ClaimResult<C> tryToForceloadTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean force);
 
 	@Nonnull
+	public ClaimResult<C> tryAnchor(
+			@Nonnull ResourceLocation dimension,
+			@Nonnull UUID playerId,
+			@Nonnull ResourceLocation fromDimension,
+			int fromX,
+			int fromZ,
+			int x,
+			int z,
+			boolean add,
+			boolean force,
+			Consumer<AreaClaimResult> futureResultListener
+	);
+
+	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
 	default ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, x, z, force);
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, x, z, force, false);
 	}
 
 	@Nonnull
@@ -108,6 +124,20 @@ public interface IServerClaimsManager
 	@SuppressWarnings("unchecked")
 	default ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean force) {
 		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToForceloadTyped(dimension, playerId, fromDimension, fromX, fromZ, x, z, enable, force);
+	}
+
+	@Nonnull
+	@Override
+	@SuppressWarnings("unchecked")
+	default ClaimResult<IPlayerChunkClaimAPI> tryToAddAnchor(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryAnchor(dimension, playerId, fromDimension, fromX, fromZ, x, z, true, force, null);
+	}
+
+	@Nonnull
+	@Override
+	@SuppressWarnings("unchecked")
+	default ClaimResult<IPlayerChunkClaimAPI> tryToRemoveAnchor(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force, Consumer<AreaClaimResult> listener) {
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryAnchor(dimension, playerId, fromDimension, fromX, fromZ, x, z, false, force, listener);
 	}
 
 	@Nonnull

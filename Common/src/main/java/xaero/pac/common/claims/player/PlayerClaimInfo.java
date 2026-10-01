@@ -26,7 +26,6 @@ import xaero.pac.common.util.linked.ILinkedChainNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -52,17 +51,26 @@ public abstract class PlayerClaimInfo
 	private PCI previousInChain;
 	
 	@SuppressWarnings("unchecked")
-	public PlayerClaimInfo(String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims, M manager) {
+	public PlayerClaimInfo(
+			String username,
+			UUID playerId,
+			Map<ResourceLocation, PlayerDimensionClaims> claims,
+			M manager
+	) {
 		this.self = (PCI) this;
 		this.playerUsername = username;
 		this.playerId = playerId;
 		this.manager = manager;
 		this.claims = claims;
 	}
-	
-	private PlayerDimensionClaims ensureDimension(ResourceLocation dimension) {
-		return claims.computeIfAbsent(dimension, d -> new PlayerDimensionClaims(playerId, d, new HashMap<>()));
+
+	@Nonnull
+	@Override
+	public PlayerDimensionClaims ensureDimension(@Nonnull ResourceLocation dimension) {
+		return claims.computeIfAbsent(dimension, d -> createDimension(dimension));
 	}
+
+	protected abstract PlayerDimensionClaims createDimension(ResourceLocation dimension);
 
 	private void removeDimension(ResourceLocation dimension){
 		claims.remove(dimension);
@@ -79,11 +87,11 @@ public abstract class PlayerClaimInfo
 		dimensionClaims.addClaim(x, z, claim);
 	}
 	
-	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
+	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z, boolean replacedWithSameOwner) {
 		PlayerDimensionClaims dimensionClaims = ensureDimension(dimension);
 		if(!dimensionClaims.removeClaim(x, z, claim))
 			throw new IllegalStateException();
-		if(dimensionClaims.getCount() <= 0)
+		if(dimensionClaims.getCount() <= 0 && dimensionClaims.getAnchors().isEmpty())
 			removeDimension(dimension);
 	}
 	
@@ -175,5 +183,5 @@ public abstract class PlayerClaimInfo
 		}
 		return defaultPartyNameCache;
 	}
-	
+
 }
