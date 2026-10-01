@@ -177,6 +177,13 @@ public interface IPlayerConfigOptionSpecAPI<T> {
 	boolean isOverridable();
 
 	/**
+	 * Gets whether this option can only be overridden by a dimension sub-config.
+	 *
+	 * @return true if this option is only dimension-overridable, otherwise false
+	 */
+	boolean isOnlyDimensionOverridable();
+
+	/**
 	 * Gets whether this option can be directly configured, as opposed
 	 * to being configurable only by the mod's internal code, like the option
 	 * used for storing the custom player group data, which shouldn't be accessed

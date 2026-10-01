@@ -86,6 +86,7 @@ public class ServerConfig {
 	public final ModConfigSpec.ConfigValue<String> playerGroupSpacePermission;
 	public final ModConfigSpec.IntValue maxPlayerClaims;
 	public final ModConfigSpec.IntValue maxPlayerClaimForceloads;
+	public final ModConfigSpec.IntValue maxPlayerClaimingAnchors;
 	public final ModConfigSpec.IntValue maxPartyMembers;
 	public final ModConfigSpec.IntValue maxPartyAllies;
 	public final ModConfigSpec.IntValue maxPartyInvites;
@@ -96,6 +97,8 @@ public class ServerConfig {
 	public final ModConfigSpec.BooleanValue claimWelcomeMessages;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimsPermission;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
+	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimingAnchorsPermission;
+	public final ModConfigSpec.ConfigValue<String> claimingAnchorRangePermission;
 	public final ModConfigSpec.IntValue maxSingleClaimActionSize;
 	public final ModConfigSpec.ConfigValue<String> serverClaimPermission;
 	public final ModConfigSpec.ConfigValue<String> claimsModeratorModePermission;
@@ -107,10 +110,14 @@ public class ServerConfig {
 	public final ModConfigSpec.BooleanValue partyOwnedClaims;
 	public final ModConfigSpec.IntValue claimBonusPerPartyMember;
 	public final ModConfigSpec.IntValue forceloadBonusPerPartyMember;
+	public final ModConfigSpec.DoubleValue claimingAnchorBonusPerPartyMember;
 	public final ModConfigSpec.IntValue claimBonusForPartyOwner;
 	public final ModConfigSpec.IntValue forceloadBonusForPartyOwner;
+	public final ModConfigSpec.IntValue claimingAnchorBonusForPartyOwner;
 	public final ModConfigSpec.IntValue overLimitClaimAccessCooldown;
 	public final ModConfigSpec.BooleanValue allowTouchingClaims;
+	public final ModConfigSpec.BooleanValue anchorBasedClaiming;
+	public final ModConfigSpec.IntValue claimingAnchorRange;
 
 	private ServerConfig(ModConfigSpec.Builder builder) {
 		builder.push("serverConfig");
@@ -284,6 +291,13 @@ public class ServerConfig {
 			.worldRestart()
 			.defineInRange("forceloadBonusPerPartyMember", 2, 0, Integer.MAX_VALUE);
 
+		claimingAnchorBonusPerPartyMember = builder
+			.comment("How much the party's claiming anchor limit should be increased per party member when option \"partyOwnedClaims\" is enabled. " +
+					"This option supports fractions, so the default value 0.1 means that 1 anchor is added for every 10 players in the party.")
+			.translation("gui.xaero_pac_config_claims_anchor_bonus_per_party_player")
+			.worldRestart()
+			.defineInRange("claimingAnchorBonusPerPartyMember", 0.1, 0, Double.MAX_VALUE);
+
 		claimBonusForPartyOwner = builder
 			.comment("""
 					How much the party's claim limit should be increased when a player's party has at least another member and
@@ -302,6 +316,15 @@ public class ServerConfig {
 			.worldRestart()
 			.defineInRange("forceloadBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
 
+		claimingAnchorBonusForPartyOwner = builder
+			.comment("""
+					How much the party's claiming anchor limit should be increased when a player's party has at least another member and
+					"partyOwnedClaims" is enabled. This bonus is added on top of "claimingAnchorBonusPerPartyMember". The main use for this
+					is to prevent players from claiming until they have started a party with another player ("maxPlayerClaimingAnchors" should be 0).""")
+			.translation("gui.xaero_pac_config_claims_anchor_bonus_for_party_owner")
+			.worldRestart()
+			.defineInRange("claimingAnchorBonusForPartyOwner", 0, 0, Integer.MAX_VALUE);
+
 		allowTouchingClaims = builder
 			.comment(
 					"""
@@ -313,6 +336,19 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_allow_touching_claims")
 			.worldRestart()
 			.define("allowTouchingClaims", true);
+
+		anchorBasedClaiming = builder
+			.comment(
+					"""
+					Whether players should only be allowed to claim chunks around a limited number of claiming "anchors".
+					Players can choose where to add their claiming anchors.
+					You can edit the range of a claiming anchor with the option claimingAnchorRange and the default
+					maximum number of claiming anchors with the option maxPlayerClaimingAnchors.
+					This can help prevent players making a large number of tiny claims all over the world."""
+			)
+			.translation("gui.xaero_pac_config_anchors_based_claiming")
+			.worldRestart()
+			.define("anchorBasedClaiming", false);
 
 		overLimitClaimAccessCooldown = builder
 			.comment("""
@@ -356,6 +392,25 @@ public class ServerConfig {
 			.worldRestart()
 			.defineInRange("maxPlayerClaimForceloads", 10, 0, Integer.MAX_VALUE);
 
+		maxPlayerClaimingAnchors = builder
+			.comment("""
+					The maximum number of claiming anchors that a player can add in a dimension. Additional claiming anchors can be configured in the player config.
+					The bonus claiming anchors in the wilderness config apply to every player, which supports the dimension-based sub-configs.
+					This value can be overridden with a player permission.""")
+			.translation("gui.xaero_pac_config_max_player_claiming_anchors")
+			.worldRestart()
+			.defineInRange("maxPlayerClaimingAnchors", 3, 0, Integer.MAX_VALUE);
+
+		claimingAnchorRange = builder
+			.comment("""
+					The maximum distance from a claiming anchor on either axis at which a player chunk claim could be made when using
+					anchorBasedClaiming. The covered range forms a square. This value can be overridden with a player permission.
+					The bonus claiming anchor range option in a player config and the wilderness config can be used to further adjust
+					this value for specific players and/or dimensions.""")
+			.translation("gui.xaero_pac_config_claims_anchor_range")
+			.worldRestart()
+			.defineInRange("claimingAnchorRange", 16, 0, Integer.MAX_VALUE);
+
 		maxPlayerClaimsPermission = builder
 			.comment("""
 					The permission that should override the default "maxPlayerClaims" value. Set it to an empty string to never check permissions.
@@ -377,6 +432,28 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_max_forceloads_permission")
 			.worldRestart()
 			.define("maxPlayerClaimForceloadsPermission", UsedPermissionNodes.MAX_PLAYER_FORCELOADS.getDefaultNodeString());
+
+		maxPlayerClaimingAnchorsPermission = builder
+			.comment("""
+					The permission that should override the default "maxPlayerClaimingAnchors" value. Set it to an empty string to never check permissions.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
+					The used permission system can be configured with "permissionSystem".""")
+			.translation("gui.xaero_pac_config_max_player_claiming_anchors_permission")
+			.worldRestart()
+			.define("maxPlayerClaimingAnchorsPermission", UsedPermissionNodes.MAX_PLAYER_CLAIMING_ANCHORS.getDefaultNodeString());
+
+		claimingAnchorRangePermission = builder
+			.comment("""
+					The permission that should override the default "claimingAnchorRange" value. Set it to an empty string to never check permissions.
+					Checking permissions requires the player to be online. If you change a permission value for an offline player,
+					it will only take effect when the player logs in.
+					This might not work well with party-owned claims. The party owner would have to log in for any changes.
+					The used permission system can be configured with "permissionSystem".""")
+			.translation("gui.xaero_pac_config_claiming_anchor_range_permission")
+			.worldRestart()
+			.define("claimingAnchorRangePermission", UsedPermissionNodes.CLAIMING_ANCHOR_RANGE.getDefaultNodeString());
 
 		maxSingleClaimActionSize = builder
 			.comment("""
@@ -1038,7 +1115,14 @@ public class ServerConfig {
 					Check the default player config .toml file for the option names.""")
 			.translation("gui.xaero_pac_config_op_configurable_player_options")
 			//.worldRestart()
-			.defineListAllowEmpty(Lists.newArrayList("opConfigurablePlayerConfigOptions"), () -> Lists.newArrayList("claims.bonusChunkClaims", "claims.bonusChunkForceloads", "bonusPlayerGroups", "bonusPlayerGroupSpace"), s -> s instanceof String);
+			.defineListAllowEmpty(Lists.newArrayList("opConfigurablePlayerConfigOptions"), () -> Lists.newArrayList(
+					"claims.bonusChunkClaims",
+					"claims.bonusChunkForceloads",
+					"claims.bonusAnchors",
+					"claims.bonusAnchorRange",
+					"bonusPlayerGroups",
+					"bonusPlayerGroupSpace"
+			), s -> s instanceof String);
 
 		builder.pop();
 	}

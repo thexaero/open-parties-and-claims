@@ -86,12 +86,13 @@ public class PlayerSubConfig
 
 	@Override
 	public boolean isOptionAllowed(@Nonnull IPlayerConfigOptionSpecAPI<?> option) {
-		return super.isOptionAllowed(option) && option.isOverridable();
+		return super.isOptionAllowed(option) &&
+				(option.isOverridable() || option.isOnlyDimensionOverridable() && getType().hasDimensionSubConfigs());
 	}
 
 	private <T> T getInner(IPlayerConfigOptionSpecAPI<T> o, boolean inherit){
 		PlayerConfigOptionSpec<T> option = (PlayerConfigOptionSpec<T>) o;
-		if(!option.isOverridable())
+		if(!option.isOverridable() && (!option.isOnlyDimensionOverridable() || !getType().hasDimensionSubConfigs()))
 			return inherit ? mainConfig.getFromEffectiveConfig(option) : null;
 		if(isOptionDefaulted(option))
 			return inherit ? manager.getDefaultConfig().getFromEffectiveConfig(option) : null;

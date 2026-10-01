@@ -105,20 +105,32 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code><a href="#CLAIM" class="member-name-link">CLAIM</a></code></div>
+<div class="col-first even-row-color"><code><a href="#ANCHOR" class="member-name-link">ANCHOR</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Adding a claiming anchor</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#CLAIM" class="member-name-link">CLAIM</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Claiming a chunk</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#FORCELOAD" class="member-name-link">FORCELOAD</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#FORCELOAD" class="member-name-link">FORCELOAD</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Marking a claim for forceloading</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#UNANCHOR" class="member-name-link">UNANCHOR</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Removing a claiming anchor</div>
 </div>
 <div class="col-first even-row-color"><code><a href="#UNCLAIM" class="member-name-link">UNCLAIM</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Unclaiming a chunk</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#UNFORCELOAD" class="member-name-link">UNFORCELOAD</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#UNCLAIM_UNANCHORED" class="member-name-link">UNCLAIM_UNANCHORED</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Unclaiming a chunk if it's not anchored</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#UNFORCELOAD" class="member-name-link">UNFORCELOAD</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Unmarking a claim for forceloading</div>
 </div>
 </div>
@@ -135,19 +147,34 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canAffectArea()" class="member-name-link">canAffectArea</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets whether this action can be used to affect an area larger than 1 chunk.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAlwaysChecksAnchors()" class="member-name-link">getAlwaysChecksAnchors</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets whether this action always checks anchor ranges, even when used forcefully.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../result/api/ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSuccessType()" class="member-name-link">getSuccessType</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the result type that is used when this type of action succeeds.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isUninterruptible()" class="member-name-link">isUninterruptible</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets whether this claiming action is uninterruptible with the interrupt command.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </div>
@@ -199,6 +226,27 @@ the order they are declared.</div>
 <div class="block">Unmarking a claim for forceloading</div>
 </section>
 </li>
+<li>
+<section class="detail" id="UNCLAIM_UNANCHORED">
+<h3>UNCLAIM_UNANCHORED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></span>&nbsp;<span class="element-name">UNCLAIM_UNANCHORED</span></div>
+<div class="block">Unclaiming a chunk if it's not anchored</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ANCHOR">
+<h3>ANCHOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></span>&nbsp;<span class="element-name">ANCHOR</span></div>
+<div class="block">Adding a claiming anchor</div>
+</section>
+</li>
+<li>
+<section class="detail" id="UNANCHOR">
+<h3>UNANCHOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimingAction.html" title="enum class in xaero.pac.common.claims.action.api">ClaimingAction</a></span>&nbsp;<span class="element-name">UNANCHOR</span></div>
+<div class="block">Removing a claiming anchor</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -246,6 +294,39 @@ not permitted.)</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the success result type, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isUninterruptible()">
+<h3>isUninterruptible</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isUninterruptible</span>()</div>
+<div class="block">Gets whether this claiming action is uninterruptible with the interrupt command.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if it's uninterruptible, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getAlwaysChecksAnchors()">
+<h3>getAlwaysChecksAnchors</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">getAlwaysChecksAnchors</span>()</div>
+<div class="block">Gets whether this action always checks anchor ranges, even when used forcefully.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this action always checks anchor ranges, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="canAffectArea()">
+<h3>canAffectArea</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canAffectArea</span>()</div>
+<div class="block">Gets whether this action can be used to affect an area larger than 1 chunk.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if this action can be used to affect an area, otherwise false</dd>
 </dl>
 </section>
 </li>
