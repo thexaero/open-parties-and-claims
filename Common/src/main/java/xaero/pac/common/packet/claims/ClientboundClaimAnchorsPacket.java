@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
+import xaero.pac.common.util.nbt.XaeroNbtUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class ClientboundClaimAnchorsPacket extends LazyPacket<ClientboundClaimAn
 	@Override
 	protected void writeOnPrepare(FriendlyByteBuf dest) {
 		CompoundTag nbt = new CompoundTag();
-		nbt.putUUID("o", claimOwner);
+		XaeroNbtUtil.putUUID(nbt, "o", claimOwner);
 		nbt.putString("d", dimensionId.toString());
 		ListTag anchorListTag = new ListTag();
 		for (int i = 0; i < this.anchors.size(); i++) {
@@ -84,21 +85,21 @@ public class ClientboundClaimAnchorsPacket extends LazyPacket<ClientboundClaimAn
 				CompoundTag nbt = (CompoundTag) input.readNbt(NbtAccounter.unlimitedHeap());
 				if(nbt == null)
 					return null;
-				UUID claimOwner = nbt.getUUID("o");
-				ResourceLocation dimensionId = ResourceLocation.parse(nbt.getString("d"));
-				ListTag anchorListTag = nbt.getList("l", 10);
+				UUID claimOwner = XaeroNbtUtil.getUUID(nbt, "o").orElse(null);
+				ResourceLocation dimensionId = ResourceLocation.parse(nbt.getStringOr("d", ""));
+				ListTag anchorListTag = nbt.getListOrEmpty("l");
 				if(anchorListTag.size() > MAX_ANCHORS) {
 					OpenPartiesAndClaims.LOGGER.info("Received claim anchor list is too large!");
 					return null;
 				}
 				List<ChunkPos> anchors = new ArrayList<>(anchorListTag.size());
 				for (int i = 0; i < anchorListTag.size(); i++) {
-					CompoundTag anchorTag = anchorListTag.getCompound(i);
-					int x = anchorTag.getInt("x");
-					int z = anchorTag.getInt("z");
+					CompoundTag anchorTag = anchorListTag.getCompoundOrEmpty(i);
+					int x = anchorTag.getIntOr("x", 0);
+					int z = anchorTag.getIntOr("z", 0);
 					anchors.add(new ChunkPos(x, z));
 				}
-				boolean add = nbt.getBoolean("a");
+				boolean add = nbt.getBooleanOr("a", false);
 				return new ClientboundClaimAnchorsPacket(claimOwner, dimensionId, anchors, add);
 			} catch(Throwable t) {
 				OpenPartiesAndClaims.LOGGER.error("invalid packet", t);
