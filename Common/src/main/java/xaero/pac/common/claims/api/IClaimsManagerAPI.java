@@ -231,4 +231,13 @@ public interface IClaimsManagerAPI {
 	 */
 	public int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable ResourceLocation dimension);
 
+	/**
+	 * Checks whether anchor-based claiming is used.
+	 * <p>
+	 * The returned value is false on the client side before the real one is synced from the server.
+	 *
+	 * @return true if anchor-based claiming is enabled on the server, otherwise false
+	 */
+	public boolean usingAnchorBasedClaiming();
+
 }

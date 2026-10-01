@@ -93,7 +93,7 @@ public class PlayerConfigSynchronizer implements IPlayerConfigSynchronizer {
 		boolean playerMutable = false;
 		T value = null;
 		boolean isSub = syncedConfig instanceof PlayerSubConfig;
-		if(!isSub || option.isOverridable()) {
+		if(!isSub || option.isOverridable() || option.isOnlyDimensionOverridable() && syncedConfig.getType().hasDimensionSubConfigs()) {
 			if(!opMutable){
 				opMutable = PlayerConfig.isOptionOPConfigurable(option);
 				playerMutable = !opMutable && PlayerConfig.isPlayerConfigurable(option);

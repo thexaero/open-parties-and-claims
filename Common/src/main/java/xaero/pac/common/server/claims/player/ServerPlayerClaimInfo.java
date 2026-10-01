@@ -20,11 +20,13 @@ package xaero.pac.common.server.claims.player;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import xaero.pac.common.claims.ClaimLocation;
+import net.minecraft.world.level.ChunkPos;
+import xaero.pac.common.claims.api.ClaimLocation;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimInfo;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.server.IServerData;
+import xaero.pac.common.server.claims.player.io.PlayerClaimInfoPostponedSaveReason;
 import xaero.pac.common.server.claims.player.task.PlayerAreaClaimActionSpreadoutTask;
 import xaero.pac.common.server.claims.player.task.PlayerClaimReplaceSpreadoutTask;
 import xaero.pac.common.server.config.ServerConfig;
@@ -54,15 +56,21 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	private final Deque<PlayerClaimReplaceSpreadoutTask> replaceTaskQueue;
 	private boolean transferInProgress;
 	private PlayerAreaClaimActionSpreadoutTask areaClaimTaskInProgress;
+	private Set<PlayerClaimInfoPostponedSaveReason> postponedSaveReasons;
 
 	private Component lastPartyNameSynced;
 	private boolean lastPartyOwnedSynced;
 	private long partyNameSyncedTime;
 	private long lastAllowedClaimAccessOverLimitTime;
 
-	public ServerPlayerClaimInfo(IPlayerConfig playerConfig, String username, UUID playerId, Map<ResourceLocation, PlayerDimensionClaims> claims,
-	                             ServerPlayerClaimInfoManager manager, Deque<PlayerAreaClaimActionSpreadoutTask> areaClaimActionTaskQueue,
-								 Deque<PlayerClaimReplaceSpreadoutTask> replaceSpreadoutTasks
+	public ServerPlayerClaimInfo(
+			IPlayerConfig playerConfig,
+			String username,
+			UUID playerId,
+			Map<ResourceLocation, PlayerDimensionClaims> claims,
+			ServerPlayerClaimInfoManager manager,
+			Deque<PlayerAreaClaimActionSpreadoutTask> areaClaimActionTaskQueue,
+			Deque<PlayerClaimReplaceSpreadoutTask> replaceSpreadoutTasks
 	) {
 		super(username, playerId, claims, manager);
 		this.playerConfig = playerConfig;
@@ -70,8 +78,26 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 		this.replaceTaskQueue = replaceSpreadoutTasks;
 		if(manager.getExpirationHandler() != null)
 			this.registeredActivity = manager.getExpirationHandler().getServerInfo().getTotalUseTime();
+		postponedSaveReasons = new HashSet<>();
 	}
-	
+
+	@Override
+	protected ServerPlayerDimensionClaims createDimension(ResourceLocation dimension) {
+		return new ServerPlayerDimensionClaims(playerId, dimension, new HashMap<>(), new HashMap<>(), manager.getClaimsManager());
+	}
+
+	@Nullable
+	@Override
+	public ServerPlayerDimensionClaims getDimension(@Nonnull ResourceLocation dimension) {
+		return (ServerPlayerDimensionClaims) super.getDimension(dimension);
+	}
+
+	@Nonnull
+	@Override
+	public ServerPlayerDimensionClaims ensureDimension(@Nonnull ResourceLocation dimension) {
+		return (ServerPlayerDimensionClaims) super.ensureDimension(dimension);
+	}
+
 	@Override
 	public void onClaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
 		super.onClaim(configManager, dimension, claim, x, z);
@@ -84,8 +110,13 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 	
 	@Override
-	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z) {
-		super.onUnclaim(configManager, dimension, claim, x, z);
+	public void onUnclaim(IPlayerConfigManager configManager, ResourceLocation dimension, PlayerChunkClaim claim, int x, int z, boolean replacedWithSameOwner) {
+		if(!replacedWithSameOwner) {
+			ServerPlayerDimensionClaims dimensionClaims = getDimension(dimension);
+			if (dimensionClaims != null && !dimensionClaims.getAnchors().isEmpty())
+				dimensionClaims.removeAnchor(new ChunkPos(x, z));
+		}
+		super.onUnclaim(configManager, dimension, claim, x, z, replacedWithSameOwner);
 		if(claim.isForceloadable())
 			manager.getTicketManager().removeTicket(dimension, playerId, x, z);
 		setDirty(true);
@@ -301,11 +332,23 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	}
 
 	@Override
-	public void stopAllAreaClaimActionTasks(IServerData<?, ?> serverData) {
+	public boolean stopAllAreaClaimActionTasks(IServerData<?, ?> serverData) {
 		if(areaClaimTaskInProgress != null)
-			areaClaimTaskInProgress.interrupt(serverData);
-		areaClaimActionTaskQueue.forEach(task -> task.interrupt(serverData));
-		areaClaimActionTaskQueue.clear();
+			if(!areaClaimTaskInProgress.interrupt(serverData))
+				return false;
+		Iterator<PlayerAreaClaimActionSpreadoutTask> iterator = areaClaimActionTaskQueue.iterator();
+		boolean allInterrupted = true;
+		while(iterator.hasNext()){
+			PlayerAreaClaimActionSpreadoutTask task = iterator.next();
+			if(task.interrupt(serverData)) {
+				iterator.remove();
+				continue;
+			}
+			allInterrupted = false;
+		}
+		if(!allInterrupted && areaClaimTaskInProgress == null/*has to be but just in case*/)
+			addAreaClaimActionTask(removeNextAreaClaimActionTask(), serverData);
+		return allInterrupted;
 	}
 
 	@Override
@@ -347,6 +390,10 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 	@Override
 	public void setTransferInProgress(boolean transferInProgress) {
 		this.transferInProgress = transferInProgress;
+		if(transferInProgress)
+			manager.addSavePostponedFor(this, PlayerClaimInfoPostponedSaveReason.TRANSFER);//can't save mid-transfer because it can create unanchored claims
+		else
+			manager.removeSavePostponedFor(this, PlayerClaimInfoPostponedSaveReason.TRANSFER);
 	}
 
 	@Override
@@ -376,6 +423,10 @@ public final class ServerPlayerClaimInfo extends PlayerClaimInfo<ServerPlayerCla
 			return dimension.getRandomClaimPos(firstPosIfTooMany);
 		}
 		return null;
+	}
+
+	public Set<PlayerClaimInfoPostponedSaveReason> getPostponedSaveReasons() {
+		return postponedSaveReasons;
 	}
 
 }
