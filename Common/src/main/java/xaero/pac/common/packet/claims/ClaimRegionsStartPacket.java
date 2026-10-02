@@ -75,6 +75,7 @@ public class ClaimRegionsStartPacket extends LazyPacket<ClaimRegionsStartPacket>
 			ServerPlayerData mainCap = (ServerPlayerData) ServerPlayerDataAPI.from(serverPlayer);
 			mainCap.getClaimsManagerPlayerClaimOwnerPropertiesSync().start(serverPlayer);
 			mainCap.getClaimsManagerPlayerSubClaimPropertiesSync().start(serverPlayer);
+			mainCap.getClaimsManagerPlayerAnchorsSync().start(serverPlayer);
 			mainCap.getClaimsManagerPlayerStateSync().start(serverPlayer);
 			mainCap.getClaimsManagerPlayerRegionSync().start(serverPlayer);
 		}

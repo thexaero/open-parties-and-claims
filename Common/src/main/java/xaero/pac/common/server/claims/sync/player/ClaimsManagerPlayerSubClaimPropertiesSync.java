@@ -136,7 +136,7 @@ public final class ClaimsManagerPlayerSubClaimPropertiesSync extends ClaimsManag
 		public ClaimsManagerPlayerSubClaimPropertiesSync build(){
 			if(synchronizer == null || player == null || claimOwnerPropertiesSync == null)
 				throw new IllegalStateException();
-			Iterator<ServerPlayerClaimInfo> toSync = synchronizer.getClaimPropertiesToSync(player);
+			Iterator<ServerPlayerClaimInfo> toSync = synchronizer.getPlayerClaimInfoToSync(player);
 			return new ClaimsManagerPlayerSubClaimPropertiesSync(toSync, synchronizer, claimOwnerPropertiesSync);
 		}
 

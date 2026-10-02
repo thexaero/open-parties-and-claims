@@ -267,7 +267,13 @@ public class ServerDataInitializer {
 			PlayerClaimInfoManagerIO<CompoundTag> playerClaimInfoManagerIO = PlayerClaimInfoManagerIO.Builder.<CompoundTag>begin()
 					.setServerClaimsManager(serverClaimsManager)
 					.setFileExtension(".nbt")
-					.setSerializationHandler(new SimpleSerializationHandler<>(PlayerClaimInfoNbtSerializer.Builder.begin().build()))
+					.setSerializationHandler(
+							new SimpleSerializationHandler<>(
+									PlayerClaimInfoNbtSerializer.Builder.begin()
+											.setClaimsManager(serverClaimsManager)
+											.build()
+							)
+					)
 					.setSerializedDataFileIO(new SimpleNBTSerializedDataFileIO<>())
 					.setIoThreadWorker(ioThreadWorker)
 					.setFileIOHelper(fileIOHelper)

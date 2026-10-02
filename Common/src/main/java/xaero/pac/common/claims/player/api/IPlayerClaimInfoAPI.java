@@ -116,6 +116,14 @@ public interface IPlayerClaimInfoAPI {
 	public IPlayerDimensionClaimsAPI getDimension(@Nonnull Identifier id);
 
 	/**
+	 * Gets claim info for a dimension with a specified ID, creating it if needed.
+	 * @param id  the dimension ID, not null
+	 * @return  the claim info of the dimension, not null
+	 */
+	@Nonnull
+	public IPlayerDimensionClaimsAPI ensureDimension(@Nonnull Identifier id);
+
+	/**
 	 * Gets whether these claims are party-owned.
 	 *
 	 * @return true if these claims are owned by a party, otherwise false

@@ -57,6 +57,28 @@ public class UsedPermissionNodes {
 			ALL_BUILDER);
 
 	/**
+	 * The maximum claiming anchor number int "permission".
+	 */
+	public static final IPermissionNodeAPI<Integer> MAX_PLAYER_CLAIMING_ANCHORS = new PermissionNode<>(
+			"xaero.pac_max_claiming_anchors",
+			PermissionValueTypes.INTEGER,
+			() -> ServerConfig.CONFIG.maxPlayerClaimingAnchorsPermission.get(),
+			Component.translatable("gui.xaero_pac_permission_max_claiming_anchors"),
+			Component.translatable("gui.xaero_pac_permission_comment_max_claiming_anchors"),
+			ALL_BUILDER);
+
+	/**
+	 * The claiming anchor range int "permission".
+	 */
+	public static final IPermissionNodeAPI<Integer> CLAIMING_ANCHOR_RANGE = new PermissionNode<>(
+			"xaero.pac_claiming_anchor_range",
+			PermissionValueTypes.INTEGER,
+			() -> ServerConfig.CONFIG.claimingAnchorRangePermission.get(),
+			Component.translatable("gui.xaero_pac_permission_claiming_anchor_range"),
+			Component.translatable("gui.xaero_pac_permission_comment_claiming_anchor_range"),
+			ALL_BUILDER);
+
+	/**
 	 * The permission to make/remove server claims and use server claim mode.
 	 */
 	public static final IPermissionNodeAPI<Boolean> SERVER_CLAIMS = new PermissionNode<>(

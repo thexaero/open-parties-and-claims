@@ -21,9 +21,13 @@ package xaero.pac.common.server.claims.player.io.serialization.nbt;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.ChunkPos;
+import xaero.pac.common.claims.ClaimingAnchor;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.PlayerClaimPosList;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
+import xaero.pac.common.server.claims.ServerClaimsManager;
+import xaero.pac.common.server.claims.player.ServerPlayerDimensionClaims;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -31,13 +35,15 @@ import java.util.UUID;
 public class PlayerDimensionClaimsNbtSerializer {
 	
 	private final PlayerChunkClaimNbtSerializer playerChunkClaimDataNbtSerializer;
+	private final ServerClaimsManager claimsManager;
 
-	public PlayerDimensionClaimsNbtSerializer(PlayerChunkClaimNbtSerializer playerChunkClaimDataNbtSerializer) {
+	public PlayerDimensionClaimsNbtSerializer(PlayerChunkClaimNbtSerializer playerChunkClaimDataNbtSerializer, ServerClaimsManager claimsManager) {
 		super();
 		this.playerChunkClaimDataNbtSerializer = playerChunkClaimDataNbtSerializer;
+		this.claimsManager = claimsManager;
 	}
 
-	public PlayerDimensionClaims deserialize(UUID playerId, String dimension, CompoundTag nbt) {
+	public ServerPlayerDimensionClaims deserialize(UUID playerId, String dimension, CompoundTag nbt) {
 		ListTag claimsTag = nbt.getListOrEmpty("claims");
 		HashMap<PlayerChunkClaim, PlayerClaimPosList> claimLists = new HashMap<>(64);
 		claimsTag.forEach(t -> {
@@ -54,7 +60,14 @@ public class PlayerDimensionClaimsNbtSerializer {
 			});
 			claimLists.put(state, posList);
 		});
-		return new PlayerDimensionClaims(playerId, Identifier.parse(dimension), claimLists);
+		ListTag anchorListTag = nbt.getListOrEmpty("anchors");
+		HashMap<ChunkPos, ClaimingAnchor> anchors = new HashMap<>();
+		anchorListTag.forEach(tag -> {
+			CompoundTag anchorTag = (CompoundTag) tag;
+			ChunkPos anchorPos = new ChunkPos(anchorTag.getIntOr("x", 0), anchorTag.getIntOr("z", 0));
+			anchors.put(anchorPos, new ClaimingAnchor(anchorPos));
+		});
+		return new ServerPlayerDimensionClaims(playerId, Identifier.parse(dimension), claimLists, anchors, claimsManager);
 	}
 
 	public CompoundTag serialize(PlayerDimensionClaims data) {
@@ -76,6 +89,14 @@ public class PlayerDimensionClaimsNbtSerializer {
 			claims.add(posListTag);
 		});
 		nbt.put("claims", claims);
+		ListTag anchorListTag = new ListTag();
+		data.getAnchors().forEach(anchorPos -> {
+			CompoundTag anchorTag = new CompoundTag();
+			anchorTag.putInt("x", anchorPos.x);
+			anchorTag.putInt("z", anchorPos.z);
+			anchorListTag.add(anchorTag);
+		});
+		nbt.put("anchors", anchorListTag);
 		return nbt;
 	}
 

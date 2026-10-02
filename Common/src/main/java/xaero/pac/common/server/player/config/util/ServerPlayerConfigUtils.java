@@ -18,10 +18,13 @@
 
 package xaero.pac.common.server.player.config.util;
 
+import net.minecraft.resources.Identifier;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
+import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
-import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 
 import java.util.UUID;
 
@@ -57,6 +60,42 @@ public class ServerPlayerConfigUtils {
 		int claimCount = manager.getClaimsManager().getPlayerInfo(playerId).getClaimCount();
 		int claimLimit = manager.getClaimsManager().getPlayerFullClaimLimit(playerId);
 		return claimCount > claimLimit;
+	}
+
+	public static boolean isOverClaimingAnchorLimit(IPlayerConfig config, Identifier dimension){
+		if(config.getType().isGlobal())
+			return false;
+		IPlayerConfigManager manager = config.getManager();
+		UUID playerId = config.getPlayerId();
+		IPlayerDimensionClaims<?> playerDimensionClaims = manager.getClaimsManager().getPlayerInfo(playerId).getDimension(dimension);
+		return isOverClaimingAnchorLimit(config, dimension, playerDimensionClaims);
+	}
+
+	private static boolean isOverClaimingAnchorLimit(IPlayerConfig config, Identifier dimension, IPlayerDimensionClaimsAPI playerDimensionClaims){
+		IPlayerConfigManager manager = config.getManager();
+		UUID playerId = config.getPlayerId();
+		int anchorCount = playerDimensionClaims == null ? 0 : playerDimensionClaims.getAnchors().size();
+		int anchorLimit = manager.getClaimsManager().getPlayerFullAnchorLimit(playerId, dimension);
+		return anchorCount > anchorLimit;
+	}
+
+	public static boolean isOverEitherClaimingLimit(IPlayerConfig config, Identifier dimension){
+		if(config.getType().isGlobal())
+			return false;
+		if(isOverClaimLimit(config))
+			return true;
+		if(dimension != null)
+			return isOverClaimingAnchorLimit(config, dimension);
+		IPlayerConfigManager manager = config.getManager();
+		UUID playerId = config.getPlayerId();
+		IServerPlayerClaimInfo<?> playerClaims = manager.getClaimsManager().getPlayerInfo(playerId);
+		return playerClaims.getStream().anyMatch(entry ->
+			isOverClaimingAnchorLimit(config, entry.getKey(), entry.getValue())
+		);
+	}
+
+	public static boolean isOverEitherClaimingLimit(IPlayerConfig config){
+		return isOverEitherClaimingLimit(config, null);
 	}
 
 }
