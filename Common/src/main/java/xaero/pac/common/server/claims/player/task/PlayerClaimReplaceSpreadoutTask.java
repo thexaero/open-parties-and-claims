@@ -21,7 +21,7 @@ package xaero.pac.common.server.claims.player.task;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
-import xaero.pac.common.claims.ClaimLocation;
+import xaero.pac.common.claims.api.ClaimLocation;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -37,6 +37,7 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.task.IServerSpreadoutQueuedTask;
 
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTask<PlayerClaimReplaceSpreadoutTask> {
@@ -45,14 +46,31 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 	private final UUID claimOwnerId;
 	private final IPlayerChunkClaim with;
 	private final Predicate<IPlayerChunkClaim> matcher;
+	private final BiPredicate<IPlayerDimensionClaims<IPlayerClaimPosList>, ChunkPos> posFilter;
 	private boolean finished;
 	private int totalCount;
 
-	public PlayerClaimReplaceSpreadoutTask(IPlayerClaimReplaceSpreadoutTaskCallback callback, UUID claimOwnerId, Predicate<IPlayerChunkClaim> matcher, IPlayerChunkClaim with) {
+	public PlayerClaimReplaceSpreadoutTask(
+			IPlayerClaimReplaceSpreadoutTaskCallback callback,
+			UUID claimOwnerId,
+			Predicate<IPlayerChunkClaim> matcher,
+			BiPredicate<IPlayerDimensionClaims<IPlayerClaimPosList>, ChunkPos> posFilter,
+			IPlayerChunkClaim with
+	) {
 		this.callback = callback;
 		this.claimOwnerId = claimOwnerId;
 		this.matcher = matcher;
 		this.with = with;
+		this.posFilter = posFilter;
+	}
+
+	public PlayerClaimReplaceSpreadoutTask(
+			IPlayerClaimReplaceSpreadoutTaskCallback callback,
+			UUID claimOwnerId,
+			Predicate<IPlayerChunkClaim> matcher,
+			IPlayerChunkClaim with
+	) {
+		this(callback, claimOwnerId, matcher, null, with);
 	}
 
 	@Override
@@ -80,9 +98,11 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 
 		IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo = claimManager.getPlayerInfo(claimOwnerId);
 
+		boolean ownerChanges = with == null || !with.getPlayerId().equals(claimOwnerId);
+		boolean newOwnerGlobal = with == null || claimManager.getConfigManager().getLoadedConfig(with.getPlayerId()).getType().isGlobal();
 		int tickCount = 0;
 		ResultType resultType = null;
-		if(with != null && with.getPlayerId().equals(claimOwnerId) && matcher.test(with)){
+		if(with != null && !ownerChanges && matcher.test(with)){
 			//the new state should not match what is being replaced
 			resultType = ResultType.FAILURE_STATE_MATCHES;
 			finished = true;
@@ -103,6 +123,8 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 						claimPosIterator = claimPosList.getStream().iterator();
 						while (claimPosIterator.hasNext() && locations.size() < perTick) {
 							ChunkPos claimChunkPos = claimPosIterator.next();
+							if(posFilter != null && !posFilter.test(dim, claimChunkPos))//would go through these every single tick, so it shouldn't filter out too many
+								continue;
 							locations.add(new ClaimLocation(dimId, claimChunkPos.x(), claimChunkPos.z()));
 							totalCount++;
 							tickCount++;
@@ -123,8 +145,15 @@ public class PlayerClaimReplaceSpreadoutTask implements IServerSpreadoutQueuedTa
 			}
 			if (with == null)
 				locations.forEach(cl -> claimManager.unclaim(cl.getDimId(), cl.getChunkX(), cl.getChunkZ()));
-			else
-				locations.forEach(cl -> claimManager.claim(cl.getDimId(), with.getPlayerId(), with.getSubConfigIndex(), cl.getChunkX(), cl.getChunkZ(), with.isForceloadable()));
+			else {
+				locations.forEach(cl -> {
+					boolean shouldAddAnchor = ownerChanges && !newOwnerGlobal &&
+							playerInfo.ensureDimension(cl.getDimId()).getAnchors().contains(cl.getChunkPos());
+					claimManager.claim(cl.getDimId(), with.getPlayerId(), with.getSubConfigIndex(), cl.getChunkX(), cl.getChunkZ(), with.isForceloadable());
+					if(shouldAddAnchor)
+						claimManager.addAnchor(cl.getDimId(), cl.getChunkPos(), with.getPlayerId());
+				});
+			}
 		}
 		if(finished) {
 			callback.onFinish(resultType, tickCount, totalCount, serverData);

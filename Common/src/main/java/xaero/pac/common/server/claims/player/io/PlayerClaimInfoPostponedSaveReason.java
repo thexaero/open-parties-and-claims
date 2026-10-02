@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,32 +16,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.claims;
+package xaero.pac.common.server.claims.player.io;
 
-import net.minecraft.resources.Identifier;
+import xaero.pac.common.server.IServerData;
 
-public class ClaimLocation {
+import java.util.function.Consumer;
 
-	private final Identifier dimId;
-	private final int chunkX;
-	private final int chunkZ;
+public enum PlayerClaimInfoPostponedSaveReason {
+	TRANSFER(serverData -> {
+		serverData.getServerClaimsManager().getClaimReplaceTaskHandler().onTick(serverData);
+	});
 
-	public ClaimLocation(Identifier dimId, int chunkX, int chunkZ) {
-		this.dimId = dimId;
-		this.chunkX = chunkX;
-		this.chunkZ = chunkZ;
+	private final Consumer<IServerData<?,?>> preparer;
+
+	PlayerClaimInfoPostponedSaveReason(Consumer<IServerData<?, ?>> preparer) {
+		this.preparer = preparer;
 	}
 
-	public Identifier getDimId() {
-		return dimId;
+	public Consumer<IServerData<?, ?>> getPreparer() {
+		return preparer;
 	}
-
-	public int getChunkX() {
-		return chunkX;
-	}
-
-	public int getChunkZ() {
-		return chunkZ;
-	}
-
 }

@@ -1,6 +1,6 @@
 /*
  * Open Parties and Claims - adds chunk claims and player parties to Minecraft
- * Copyright (C) 2022-2026, Xaero <xaero1996@gmail.com> and contributors
+ * Copyright (C) 2026, Xaero <xaero1996@gmail.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -16,33 +16,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xaero.pac.common.claims.player.api;
+package xaero.pac.common.claims.util;
 
 import net.minecraft.world.level.ChunkPos;
 
-import javax.annotation.Nonnull;
-import java.util.Set;
-import java.util.stream.Stream;
+public class ClaimsUtils {
 
-/**
- * API for dimension claims of a player
- */
-public interface IPlayerDimensionClaimsAPI {
-
-	/**
-	 * Gets a stream of all claim position lists in this dimension for this player.
-	 *
-	 * @return the stream of all claim position lists, not null
-	 */
-	@Nonnull
-	public Stream<IPlayerClaimPosListAPI> getStream();
-
-	/**
-	 * Gets a set of all claiming anchors for this player.
-	 *
-	 * @return a Set of chunk positions of all claiming anchors for this player and dimension, not null
-	 */
-	@Nonnull
-	Set<ChunkPos> getAnchors();
+	public static boolean withinAnchorDistance(Iterable<ChunkPos> anchors, int anchorRange, int x, int z){
+		for (ChunkPos anchor : anchors) {
+			if(x > anchor.x() + anchorRange || x < anchor.x() - anchorRange)
+				continue;
+			if(z > anchor.z() + anchorRange || z < anchor.z() - anchorRange)
+				continue;
+			return true;
+		}
+		return false;
+	}
 
 }

@@ -120,7 +120,7 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 		private boolean checkBlockedBecauseOverClaimLimit(IPlayerConfig config, ServerPlayer player){
 			if(!ServerConfig.CONFIG.claimsEnabled.get())
 				return false;
-			if(!ServerPlayerConfigUtils.isOverClaimLimit(config))
+			if(!ServerPlayerConfigUtils.isOverEitherClaimingLimit(config))
 				return false;
 			Component message = Component.translatable("gui.xaero_pac_config_claim_count_over_limit")
 					.withStyle(ChatFormatting.RED);

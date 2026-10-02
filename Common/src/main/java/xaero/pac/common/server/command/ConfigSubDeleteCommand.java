@@ -152,7 +152,7 @@ public class ConfigSubDeleteCommand {
 			}
 			boolean isOP = Commands.LEVEL_GAMEMASTERS.check(context.getSource().permissions());
 			if(ServerConfig.CONFIG.claimsEnabled.get()) {
-				if(!isOP && ServerPlayerConfigUtils.isOverClaimLimit(playerConfig)) {
+				if(!isOP && ServerPlayerConfigUtils.isOverEitherClaimingLimit(playerConfig)) {
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_claim_count_over_limit"));
 					return 0;
 				}
