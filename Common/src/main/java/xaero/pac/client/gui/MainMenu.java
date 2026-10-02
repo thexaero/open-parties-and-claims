@@ -356,7 +356,7 @@ public class MainMenu extends XPACScreen {
 			onClose();
 			return;
 		}
-		minecraft.setScreen(new ConfirmScreen(result -> {
+		minecraft.gui.setScreen(new ConfirmScreen(result -> {
 			if(result)
 				CommandUtil.sendCommand(minecraft, UNANCHOR_COMMAND.getString().substring(1) + " confirm");
 			onClose();
