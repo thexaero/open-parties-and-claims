@@ -108,7 +108,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_anchor_command_unknown_dimension")));
 					return 0;
 				}
-				world = player.serverLevel();
+				world = player.level();
 			}
 			int chunkX;
 			int chunkZ;
