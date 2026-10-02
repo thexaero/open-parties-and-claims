@@ -194,6 +194,11 @@ public class PacketRegister {
 				configurableOptionsCodec, configurableOptionsCodec,
 				null, new ClientboundPlayerConfigConfigurableOptionsPacket.ClientHandler()
 		);
+
+		packetHandler.register(50, ClientboundClaimAnchorsPacket.class,
+				ClientboundClaimAnchorsPacket.ENCODER, ClientboundClaimAnchorsPacket.DECODER,
+				null, new ClientboundClaimAnchorsPacket.ClientHandler()
+		);
 	}
 
 }

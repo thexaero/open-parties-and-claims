@@ -122,6 +122,9 @@ public interface IServerClaimsManagerAPI
 	@Override
 	int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension);
 
+	@Override
+	boolean usingAnchorBasedClaiming();
+
 	/**
 	 * Checks whether a dimension is claimable.
 	 * <p>
@@ -168,6 +171,28 @@ public interface IServerClaimsManagerAPI
 	 * @param z  the Z coordinate of the chunk
 	 */
 	public void unclaim(@Nonnull Identifier dimension, int x, int z);
+
+	/**
+	 * Adds a claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+	 * if it doesn't already exist there.
+	 *
+	 * @param dimension  the dimension ID for the anchor, not null
+	 * @param pos  the position for the anchor, not null
+	 * @param playerId  the ID of the player to add the anchor for, not null
+	 * @return true if the anchor was added, false if the specified position already had an anchor
+	 */
+	boolean addAnchor(@Nonnull Identifier dimension, @Nonnull ChunkPos pos, @Nonnull UUID playerId);
+
+	/**
+	 * Removes the claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+	 * if it exists.
+	 *
+	 * @param dimension  the dimension ID of the anchor, not null
+	 * @param pos  the position of the anchor, not null
+	 * @param playerId  the ID of the player to remove the anchor for, not null
+	 * @return true if the anchor was removed, false if the specified position didn't have one
+	 */
+	boolean removeAnchor(@Nonnull Identifier dimension, @Nonnull ChunkPos pos, @Nonnull UUID playerId);
 
 	/**
 	 * @deprecated Use {@link #tryToClaim(Identifier, UUID, int, Identifier, int, int, int, int, boolean)} instead
@@ -419,6 +444,47 @@ public interface IServerClaimsManagerAPI
 	public ClaimResult<IPlayerChunkClaimAPI> tryToForceload(@Nonnull Identifier dimension, @Nonnull UUID playerId, @Nonnull Identifier fromDimension, int fromX, int fromZ, int x, int z, boolean enable, boolean force);
 
 	/**
+	 * Tries to add a claiming anchor for a chunk by a specified player.
+	 * <p>
+	 * Success is not guaranteed. Different limitations are checked, e.g. maximum anchor number, maximum claim distance, existing anchors.
+	 * <p>
+	 * You get a {@link ClaimResult} containing a message describing the result.
+	 *
+	 * @param dimension  the dimension ID of the chunk, not null
+	 * @param playerId  the anchoring player's UUID, not null
+	 * @param fromDimension  the ID of the dimension the anchoring player is currently in, not null
+	 * @param fromX  the X coordinate of the anchoring player's current chunk position
+	 * @param fromZ  the Z coordinate of the anchoring player's current chunk position
+	 * @param x  the X coordinate of the chunk to add the anchor for
+	 * @param z  the Z coordinate of the chunk to add the anchor for
+	 * @param force  whether to ignore most limitations
+	 * @return the result, not null
+	 */
+	@Nonnull
+	public ClaimResult<IPlayerChunkClaimAPI> tryToAddAnchor(@Nonnull Identifier dimension, @Nonnull UUID playerId, @Nonnull Identifier fromDimension, int fromX, int fromZ, int x, int z, boolean force);
+
+	/**
+	 * Tries to remove a claiming anchor for a chunk by a specified player.
+	 * <p>
+	 * Success is not guaranteed. Different limitations are checked, e.g. maximum anchor number, maximum claim distance, existing anchors.
+	 * <p>
+	 * You get a {@link ClaimResult} containing a message describing the initial result of trying to begin the removal process.
+	 *
+	 * @param dimension  the dimension ID of the chunk, not null
+	 * @param playerId  the unanchoring player's UUID, not null
+	 * @param fromDimension  the ID of the dimension the unanchoring player is currently in, not null
+	 * @param fromX  the X coordinate of the unanchoring player's current chunk position
+	 * @param fromZ  the Z coordinate of the unanchoring player's current chunk position
+	 * @param x  the X coordinate of the chunk to remove the anchor for
+	 * @param z  the Z coordinate of the chunk to remove the anchor for
+	 * @param force  whether to ignore most limitations
+	 * @param listener  listener for the final result, can be null
+	 * @return the initial result of trying to begin the removal process, not null
+	 */
+	@Nonnull
+	public ClaimResult<IPlayerChunkClaimAPI> tryToRemoveAnchor(@Nonnull Identifier dimension, @Nonnull UUID playerId, @Nonnull Identifier fromDimension, int fromX, int fromZ, int x, int z, boolean force, @Nullable Consumer<AreaClaimResult> listener);
+
+	/**
 	 * Tries to claim chunks over a specified area as a specified player.
 	 * <p>
 	 * The effect of calling this method is not immediate, and it may take many server ticks before the result is passed
@@ -508,31 +574,31 @@ public interface IServerClaimsManagerAPI
 	 * Gets the base maximum claim number (without the bonus) for a player UUID.
 	 * <p>
 	 * By default, the base claim limit is configured in this mod's server config file.
-	 * However, if the FTB Ranks mod is installed, a permission node is configured in the claim mod's server config
+	 * However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
 	 * and the player with UUID {@code playerId} is logged in, then the permission value is used as the base limit.
 	 *
 	 * @param playerId  the player UUID, not null
 	 * @return the base maximum claim number
 	 */
-	public int getPlayerBaseClaimLimit(@Nonnull  UUID playerId);
+	public int getPlayerBaseClaimLimit(@Nonnull UUID playerId);
 
 	/**
 	 * Gets the base maximum claim number (without the bonus) for a logged in player.
 	 * <p>
 	 * By default, the base claim limit is configured in this mod's server config file.
-	 * However, if the FTB Ranks mod is installed and a permission node is configured in the claim mod's server config,
+	 * However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
 	 * then the permission value is used as the base limit.
 	 *
 	 * @param player  the player, not null
 	 * @return the base maximum claim number
 	 */
-	public int getPlayerBaseClaimLimit(@Nonnull  ServerPlayer player);
+	public int getPlayerBaseClaimLimit(@Nonnull ServerPlayer player);
 
 	/**
 	 * Gets the base maximum forceload number (without the bonus) for a player UUID.
 	 * <p>
 	 * By default, the base forceload limit is configured in this mod's server config file.
-	 * However, if the FTB Ranks mod is installed, a permission node is configured in the claim mod's server config
+	 * However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
 	 * and the player with UUID {@code playerId} is logged in, then the permission value is used as the base limit.
 	 *
 	 * @param playerId  the player UUID, not null
@@ -544,13 +610,61 @@ public interface IServerClaimsManagerAPI
 	 * Gets the base maximum forceload number (without the bonus) for a logged in player.
 	 * <p>
 	 * By default, the base forceload limit is configured in this mod's server config file.
-	 * However, if the FTB Ranks mod is installed and a permission node is configured in the claim mod's server config,
+	 * However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
 	 * then the permission value is used as the base limit.
 	 *
 	 * @param player  the player, not null
 	 * @return the base maximum forceload number
 	 */
 	public int getPlayerBaseForceloadLimit(@Nonnull ServerPlayer player);
+
+	/**
+	 * Gets the base maximum claiming anchor number (without the bonus) for a player UUID.
+	 * <p>
+	 * By default, the base claiming anchor limit is configured in this mod's server config file.
+	 * However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
+	 * and the player with UUID {@code playerId} is logged in, then the permission value is used as the base limit.
+	 *
+	 * @param playerId  the player UUID, not null
+	 * @return the base maximum claiming anchor number
+	 */
+	public int getPlayerBaseAnchorLimit(@Nonnull UUID playerId);
+
+	/**
+	 * Gets the base maximum claiming anchor number (without the bonus) for a logged in player.
+	 * <p>
+	 * By default, the base claiming anchor limit is configured in this mod's server config file.
+	 * However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
+	 * then the permission value is used as the base limit.
+	 *
+	 * @param player  the player, not null
+	 * @return the base maximum claiming anchor number
+	 */
+	public int getPlayerBaseAnchorLimit(@Nonnull ServerPlayer player);
+
+	/**
+	 * Gets the base claiming anchor range (without the bonus) for a player UUID.
+	 * <p>
+	 * By default, the base claiming anchor range is configured in this mod's server config file.
+	 * However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
+	 * and the player with UUID {@code playerId} is logged in, then the permission value is used as the base limit.
+	 *
+	 * @param playerId  the player UUID, not null
+	 * @return the base claiming anchor range
+	 */
+	public int getPlayerBaseAnchorRange(@Nonnull UUID playerId);
+
+	/**
+	 * Gets the base claiming anchor range (without the bonus) for a logged in player.
+	 * <p>
+	 * By default, the base claiming anchor range is configured in this mod's server config file.
+	 * However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
+	 * then the permission value is used as the base limit.
+	 *
+	 * @param player  the player, not null
+	 * @return the base claiming anchor range
+	 */
+	public int getPlayerBaseAnchorRange(@Nonnull ServerPlayer player);
 
 	/**
 	 * Gets the full maximum claim number (with the bonus) for a player UUID.
@@ -561,7 +675,7 @@ public interface IServerClaimsManagerAPI
 	 * @param playerId  the player UUID, not null
 	 * @return the full maximum claim number
 	 */
-	public int getPlayerFullClaimLimit(@Nonnull  UUID playerId);
+	public int getPlayerFullClaimLimit(@Nonnull UUID playerId);
 
 	/**
 	 * Gets the full maximum claim number (with the bonus) for a logged in player.
@@ -572,7 +686,7 @@ public interface IServerClaimsManagerAPI
 	 * @param player  the player, not null
 	 * @return the full maximum claim number
 	 */
-	public int getPlayerFullClaimLimit(@Nonnull  ServerPlayer player);
+	public int getPlayerFullClaimLimit(@Nonnull ServerPlayer player);
 
 	/**
 	 * Gets the full maximum forceload number (with the bonus) for a player UUID.
@@ -595,6 +709,54 @@ public interface IServerClaimsManagerAPI
 	 * @return the full maximum forceload number
 	 */
 	public int getPlayerFullForceloadLimit(@Nonnull ServerPlayer player);
+
+	/**
+	 * Gets the full maximum claiming anchor number (with the bonus) for a player UUID and dimension.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseAnchorLimit(UUID)} with the bonus claiming anchors
+	 * added to it, which includes the player's own config bonus and the wilderness config bonus.
+	 *
+	 * @param playerId  the player UUID, not null
+	 * @param dimension  the dimension ID to get the limit for, not null
+	 * @return the full maximum claiming anchor number
+	 */
+	public int getPlayerFullAnchorLimit(@Nonnull UUID playerId, @Nonnull Identifier dimension);
+
+	/**
+	 * Gets the full maximum claiming anchor number (with the bonus) for a logged in player and dimension.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseAnchorLimit(ServerPlayer)} with the bonus claiming anchors
+	 * added to it, which includes the player's own config bonus and the wilderness config bonus.
+	 *
+	 * @param player  the player, not null
+	 * @param dimension  the dimension ID to get the limit for, not null
+	 * @return the full maximum claiming anchor number
+	 */
+	public int getPlayerFullAnchorLimit(@Nonnull ServerPlayer player, @Nonnull Identifier dimension);
+
+	/**
+	 * Gets the full claiming anchor range (with the bonus) for a player UUID and dimension.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseAnchorRange(UUID)} with the bonus anchor range
+	 * added to it, which includes the player's own config bonus and the wilderness config bonus.
+	 *
+	 * @param playerId  the player UUID, not null
+	 * @param dimension  the dimension ID to get the range for, not null
+	 * @return the full claiming anchor range
+	 */
+	public int getPlayerFullAnchorRange(@Nonnull UUID playerId, @Nonnull Identifier dimension);
+
+	/**
+	 * Gets the full claiming anchor range (with the bonus) for a logged in player and dimension.
+	 * <p>
+	 * The returned value is equal to the value returned by {@link #getPlayerBaseAnchorRange(ServerPlayer)} with the bonus anchor range
+	 * added to it, which includes the player's own config bonus and the wilderness config bonus.
+	 *
+	 * @param player  the player, not null
+	 * @param dimension  the dimension ID to get the range for, not null
+	 * @return the full claiming anchor range
+	 */
+	public int getPlayerFullAnchorRange(@Nonnull ServerPlayer player, @Nonnull Identifier dimension);
 
 	/**
 	 * Gets the API for the claim action listener manager for this claims manager where you can register claim action listeners.

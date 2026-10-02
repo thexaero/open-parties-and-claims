@@ -120,6 +120,9 @@ public interface IClientClaimsManagerAPI
 	@Override
 	int getColor(@Nullable IPlayerChunkClaimAPI claimState, @Nullable Identifier dimension);
 
+	@Override
+	boolean usingAnchorBasedClaiming();
+
 	/**
 	 * Checks whether the initial server chunk claim sync is in progress.
 	 * <p>
@@ -182,6 +185,16 @@ public interface IClientClaimsManagerAPI
 	public int getForceloadCount(@Nonnull IClaimingModeAPI mode);
 
 	/**
+	 * Gets the claiming anchor count in the current dimension for a specified claiming mode.
+	 * <p>
+	 * This is not necessarily up-to-date with the actual synced claim data at the time of calling.
+	 *
+	 * @param mode  the claiming mode, not null
+	 * @return the claiming anchor count for the mode
+	 */
+	public int getAnchorCount(@Nonnull IClaimingModeAPI mode);
+
+	/**
 	 * Gets the claim limit for a specified claiming mode.
 	 *
 	 * @param mode  the claiming mode, not null
@@ -196,6 +209,26 @@ public interface IClientClaimsManagerAPI
 	 * @return the forceload limit for the mode
 	 */
 	public int getForceloadLimit(@Nonnull IClaimingModeAPI mode);
+
+	/**
+	 * Gets the claiming anchor limit in the current dimension for a specified claiming mode.
+	 * <p>
+	 * This is not necessarily up-to-date.
+	 *
+	 * @param mode  the claiming mode, not null
+	 * @return the claiming anchor limit for the mode
+	 */
+	public int getAnchorLimit(@Nonnull IClaimingModeAPI mode);
+
+	/**
+	 * Gets the claiming anchor range in the current dimension for a specified claiming mode.
+	 * <p>
+	 * This is not necessarily up-to-date.
+	 *
+	 * @param mode  the claiming mode, not null
+	 * @return the claiming anchor range for the mode
+	 */
+	public int getAnchorRange(@Nonnull IClaimingModeAPI mode);
 
 	/**
 	 * Gets the maximum distance for claiming/forceloading a chunk allowed by the server.
@@ -535,6 +568,34 @@ public interface IClientClaimsManagerAPI
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
 	public void requestForceload(@Nonnull Identifier dimension, int x, int z, boolean enable, @Nullable IClaimingModeAPI claimingMode);
+
+	/**
+	 * Requests a new chunk claiming anchor by the local client player using a specified claiming mode.
+	 * <p>
+	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
+	 * <p>
+	 * You can get all claiming modes from {@link ClaimingModes}.
+	 *
+	 * @param dimension  the dimension ID of the chunk, not null
+	 * @param x  the X coordinate of the chunk
+	 * @param z  the Z coordinate of the chunk
+	 * @param claimingMode  the claiming mode to use, null for current
+	 */
+	public void requestToAddAnchor(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
+
+	/**
+	 * Requests a chunk claiming anchor removal by the local client player using a specified claiming mode.
+	 * <p>
+	 * Register a claim result listener with {@link IClaimsManagerClaimResultTrackerAPI} to receive the result of this request.
+	 * <p>
+	 * You can get all claiming modes from {@link ClaimingModes}.
+	 *
+	 * @param dimension  the dimension ID of the chunk, not null
+	 * @param x  the X coordinate of the chunk
+	 * @param z  the Z coordinate of the chunk
+	 * @param claimingMode  the claiming mode to use, null for current
+	 */
+	public void requestToRemoveAnchor(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests new chunks claims over a specified area by the local client player using a specified claiming mode.

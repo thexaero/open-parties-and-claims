@@ -20,6 +20,7 @@ package xaero.pac.common.server.claims.player.task;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -28,6 +29,7 @@ import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
+import xaero.pac.common.claims.util.ClaimsUtils;
 import xaero.pac.common.parties.party.IPartyPlayerInfo;
 import xaero.pac.common.parties.party.ally.IPartyAlly;
 import xaero.pac.common.parties.party.member.IPartyMember;
@@ -43,6 +45,7 @@ import xaero.pac.common.server.task.IServerSpreadoutQueuedTask;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueuedTask<PlayerAreaClaimActionSpreadoutTask> {
 
@@ -56,9 +59,12 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 	private final Set<ClaimResult.Type> resultTypes = new HashSet<>();
 	private final Set<Component> customReasons;
 	private final Consumer<AreaClaimResult> resultListener;
+	private final Predicate<ChunkPos> anchorFilter;
 	private int chunksToAffect;
 	private boolean finished;
 	private int currentIndex = 0;
+	private int anchorRange;
+	private List<ChunkPos> overlappingAnchors;
 	private int effectiveLeft;
 	private int effectiveTop;
 	private int effectiveRight;
@@ -76,6 +82,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 			int fromX,
 			int fromZ,
 			int chunksToAffect,
+			Predicate<ChunkPos> anchorFilter,
 			Consumer<AreaClaimResult> resultListener
 	) {
 		this.actionRequest = actionRequest;
@@ -85,9 +92,11 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		this.fromDimension = fromDimension;
 		this.fromX = fromX;
 		this.fromZ = fromZ;
+		this.anchorFilter = anchorFilter;
 		this.customReasons = new HashSet<>();
 		this.chunksToAffect = chunksToAffect;
 		this.resultListener = resultListener;
+		this.overlappingAnchors = new ArrayList<>();
 	}
 
 	@Override
@@ -127,6 +136,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 		ClaimingAction action = actionRequest.getAction();
 		Identifier dimension = actionRequest.getDimension();
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
+		boolean usingAnchors = !isServer && (!force || action.getAlwaysChecksAnchors()) && ServerConfig.CONFIG.anchorBasedClaiming.get();
 		if(currentIndex == 0) {
 			effectiveLeft = actionRequest.getLeft();
 			effectiveTop = actionRequest.getTop();
@@ -160,6 +170,30 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 				effectiveTotal = (1 + effectiveRight - effectiveLeft) * (1 + effectiveBottom - effectiveTop);
 			claimLimit = claimManager.getPlayerFullClaimLimit(playerId);
 			forceloadLimit = claimManager.getPlayerFullForceloadLimit(playerId);
+			if(usingAnchors && effectiveTotal > 0){
+				anchorRange = claimManager.getPlayerFullAnchorRange(playerId, dimension);
+				IServerPlayerClaimInfo<?> playerClaimInfo = claimManager.getPlayerInfo(playerId);
+				IPlayerDimensionClaims<?> dimensionClaims = playerClaimInfo.getDimension(dimension);
+				if(dimensionClaims != null){
+					for (ChunkPos anchor : dimensionClaims.getAnchors()) {
+						if(anchorFilter != null && !anchorFilter.test(anchor))
+							continue;
+						int anchorLeft = anchor.x() - anchorRange;
+						if(anchorLeft > effectiveRight)
+							continue;
+						int anchorRight = anchor.x() + anchorRange;
+						if(anchorRight < effectiveLeft)
+							continue;
+						int anchorTop = anchor.z() - anchorRange;
+						if(anchorTop > effectiveBottom)
+							continue;
+						int anchorBottom = anchor.z() + anchorRange;
+						if(anchorBottom < effectiveTop)
+							continue;
+						overlappingAnchors.add(anchor);
+					}
+				}
+			}
 		}
 		int workUntilIndex = Math.min(currentIndex + perTick, effectiveTotal);
 		int effectiveHeight = (1 + effectiveBottom - effectiveTop);
@@ -167,10 +201,21 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 			int x = effectiveLeft + currentIndex / effectiveHeight;
 			int z = effectiveTop + currentIndex % effectiveHeight;
 			ClaimResult<PlayerChunkClaim> result;
-			if(action == ClaimingAction.CLAIM)
-				result = claimManager.tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, action);
-			else if(action == ClaimingAction.UNCLAIM)
-				result = claimManager.tryToUnclaimHelper(dimension, playerId, fromX, fromZ, x, z, force);
+			if(action == ClaimingAction.CLAIM) {
+				if(usingAnchors && !ClaimsUtils.withinAnchorDistance(overlappingAnchors, anchorRange, x, z))
+					result = new ClaimResult<>(null, ClaimResult.Type.ANCHOR_TOO_FAR);
+				else
+					result = claimManager.tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, action);
+			} else if(action == ClaimingAction.UNCLAIM)
+				result = claimManager.tryToUnclaimHelper(dimension, playerId, fromX, fromZ, x, z, force, false);
+			else if(action == ClaimingAction.UNCLAIM_UNANCHORED) {
+				if(!ClaimsUtils.withinAnchorDistance(overlappingAnchors, anchorRange, x, z)) {
+					result = claimManager.tryToUnclaimHelper(dimension, playerId, x, z, x, z, false, true);
+					if(result.getResultType().fail)
+						result = new ClaimResult<>(null, ClaimResult.Type.CLAIM_STILL_ANCHORED);
+				} else
+					result = new ClaimResult<>(null, ClaimResult.Type.CLAIM_STILL_ANCHORED);
+			}
 			else if(action == ClaimingAction.FORCELOAD)
 				result = claimManager.tryToForceloadHelper(dimension, playerId, fromX, fromZ, x, z, true, force, isServer, claimLimit, forceloadLimit);
 			else if(action == ClaimingAction.UNFORCELOAD)
@@ -216,9 +261,12 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 			tasksToAdd.add(playerInfo.removeNextAreaClaimActionTask());
 	}
 
-	public void interrupt(IServerData<?, ?> serverData){
+	public boolean interrupt(IServerData<?, ?> serverData){
+		if(actionRequest.getAction().isUninterruptible())
+			return false;
 		resultTypes.add(ClaimResult.Type.INTERRUPTED);
 		finish(serverData, null);
+		return true;
 	}
 
 }

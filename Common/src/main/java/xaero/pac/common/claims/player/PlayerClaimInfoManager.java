@@ -20,7 +20,6 @@ package xaero.pac.common.claims.player;
 
 import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.ClaimsManager;
-import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.util.linked.LinkedChain;
 
 import java.util.HashMap;
@@ -55,9 +54,13 @@ public abstract class PlayerClaimInfoManager
 			throw new IllegalStateException();
 		this.claimsManager = claimsManager;
 	}
-	
-	protected abstract PCI create(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims);
-	
+
+	protected abstract PCI create(
+			String username,
+			UUID playerId,
+			Map<Identifier, PlayerDimensionClaims> claims
+	);
+
 	public boolean hasInfo(UUID playerId) {
 		return storage.containsKey(playerId);
 	}

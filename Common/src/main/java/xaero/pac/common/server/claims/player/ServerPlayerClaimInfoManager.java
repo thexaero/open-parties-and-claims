@@ -23,12 +23,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.PlayerClaimInfoManager;
 import xaero.pac.common.claims.player.PlayerDimensionClaims;
+import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.ServerClaimsManager;
 import xaero.pac.common.server.claims.forceload.ForceLoadTicketManager;
 import xaero.pac.common.server.claims.player.expiration.ServerPlayerClaimsExpirationHandler;
 import xaero.pac.common.server.claims.player.io.PlayerClaimInfoManagerIO;
+import xaero.pac.common.server.claims.player.io.PlayerClaimInfoPostponedSaveReason;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.expiration.ObjectManagerIOExpirableObjectManager;
 import xaero.pac.common.server.io.ObjectManagerIO;
@@ -50,6 +53,8 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	private final IPlayerConfigManager configManager;
 	private final ForceLoadTicketManager ticketManager;
 	private final Set<Identifier> claimableDimensionsSet;
+	private final Set<ServerPlayerClaimInfo> savePostponedFor;
+	private final Set<ServerPlayerClaimInfo> unmodifiableSavePostponedFor;
 	private ObjectManagerIOToSaveTracker<ServerPlayerClaimInfo> toSave;
 	private boolean loaded;
 	private PlayerClaimInfoManagerIO<?> io;
@@ -61,6 +66,8 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 		this.server = server;
 		this.configManager = configManager;
 		this.ticketManager = ticketManager;
+		this.savePostponedFor = new HashSet<>();
+		this.unmodifiableSavePostponedFor = Collections.unmodifiableSet(savePostponedFor);
 		claimableDimensionsSet = new HashSet<>();
 		for(String s : ServerConfig.CONFIG.claimableDimensionsList.get())
 			claimableDimensionsSet.add(Identifier.parse(s));
@@ -107,7 +114,11 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	}
 
 	@Override
-	protected ServerPlayerClaimInfo create(String username, UUID playerId, Map<Identifier, PlayerDimensionClaims> claims) {
+	protected ServerPlayerClaimInfo create(
+			String username,
+			UUID playerId,
+			Map<Identifier, PlayerDimensionClaims> claims
+	) {
 		return new ServerPlayerClaimInfo(getConfig(playerId), username, playerId, claims, this, new ArrayDeque<>(), new ArrayDeque<>());
 	}
 
@@ -132,8 +143,8 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 			UUID playerId,
 			ServerPlayer player,
 			ModConfigSpec.IntValue limitConfig,
-			ModConfigSpec.IntValue partyBonusConfig,
-			ModConfigSpec.IntValue partyOwnerBonusConfig,
+			ModConfigSpec.ConfigValue<?> partyBonusConfig,
+			ModConfigSpec.ConfigValue<?> partyOwnerBonusConfig,
 			IPermissionNodeAPI<Integer> permissionNode
 	){
 		if(playerId == null)
@@ -150,18 +161,29 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 
 	private int getPartyOwnershipBonus(
 			UUID playerId,
-			ModConfigSpec.IntValue partyBonusConfig,
-			ModConfigSpec.IntValue partyOwnerBonusConfig
+			ModConfigSpec.ConfigValue<?> partyBonusConfig,
+			ModConfigSpec.ConfigValue<?> partyOwnerBonusConfig
 	){
 		if(partyBonusConfig == null || !configManager.getPartySystemManager().isPrimaryPartyOwner(playerId))
 			return 0;
 		int memberCount = configManager.getPartySystemManager().getPrimaryMemberCount(playerId);
 		if(memberCount > 0)
 			memberCount--;//owner doesn't count
-		int result = memberCount * partyBonusConfig.get();
-		if(memberCount > 0)
-			result += partyOwnerBonusConfig.get();
-		return result;
+		double partyBonusConfigValue = 0;
+		if(partyBonusConfig instanceof ModConfigSpec.IntValue partyBonusConfigInt)
+			partyBonusConfigValue = partyBonusConfigInt.get();
+		else if(partyBonusConfig instanceof ModConfigSpec.DoubleValue partyBonusConfigDouble)
+			partyBonusConfigValue = partyBonusConfigDouble.get();
+		double result = memberCount * partyBonusConfigValue;
+		if(memberCount > 0) {
+			double partyOwnerBonusConfigValue = 0;
+			if(partyOwnerBonusConfig instanceof ModConfigSpec.IntValue partyOwnerBonusConfigInt)
+				partyOwnerBonusConfigValue = partyOwnerBonusConfigInt.get();
+			else if(partyOwnerBonusConfig instanceof ModConfigSpec.DoubleValue partyOwnerBonusConfigDouble)
+				partyOwnerBonusConfigValue = partyOwnerBonusConfigDouble.get();
+			result += partyOwnerBonusConfigValue;
+		}
+		return (int) result;
 	}
 	
 	public ServerPlayerClaimsExpirationHandler getExpirationHandler() {
@@ -180,6 +202,38 @@ public final class ServerPlayerClaimInfoManager extends PlayerClaimInfoManager<S
 	@Override
 	public boolean usingPartyOwnedClaims() {
 		return ServerConfig.CONFIG.partyOwnedClaims.get();
+	}
+
+	public void addSavePostponedFor(ServerPlayerClaimInfo playerClaimInfo, PlayerClaimInfoPostponedSaveReason reason){
+		savePostponedFor.add(playerClaimInfo);
+		playerClaimInfo.getPostponedSaveReasons().add(reason);
+	}
+
+	public void removeSavePostponedFor(ServerPlayerClaimInfo playerClaimInfo, PlayerClaimInfoPostponedSaveReason reason){
+		playerClaimInfo.getPostponedSaveReasons().remove(reason);
+		if(playerClaimInfo.getPostponedSaveReasons().isEmpty())
+			savePostponedFor.remove(playerClaimInfo);
+	}
+
+	public boolean isSavePostponed(ServerPlayerClaimInfo playerClaimInfo){
+		return savePostponedFor.contains(playerClaimInfo);
+	}
+
+	public Set<ServerPlayerClaimInfo> getSavePostponedFor() {
+		return unmodifiableSavePostponedFor;
+	}
+
+	public void preparePostponedSaves(IServerData<?,?> serverData){
+		OpenPartiesAndClaims.LOGGER.info("Finishing claim-related tasks that must be completed before saving...");
+		while(!savePostponedFor.isEmpty()){
+			ServerPlayerClaimInfo first = savePostponedFor.iterator().next();
+			while(!first.getPostponedSaveReasons().isEmpty()) {
+				PlayerClaimInfoPostponedSaveReason firstReason = first.getPostponedSaveReasons().iterator().next();
+				firstReason.getPreparer().accept(serverData);
+			}
+			//preparers should eventually clear savePostponedFor if they're declared correctly
+		}
+		OpenPartiesAndClaims.LOGGER.info("Done! All claims can now be saved.");
 	}
 
 }

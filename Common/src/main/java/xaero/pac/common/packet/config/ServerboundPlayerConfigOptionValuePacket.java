@@ -84,8 +84,8 @@ public class ServerboundPlayerConfigOptionValuePacket extends PlayerConfigOption
 		) {
 			if(ServerConfig.CONFIG.claimsEnabled.get()) {
 				if(!Commands.LEVEL_GAMEMASTERS.check(serverPlayer.permissions()) &&
-						option != PlayerConfigOptions.BONUS_CHUNK_CLAIMS &&
-						ServerPlayerConfigUtils.isOverClaimLimit(config)) {
+						option != PlayerConfigOptions.BONUS_CHUNK_CLAIMS && option != PlayerConfigOptions.BONUS_CLAIMING_ANCHORS &&
+						ServerPlayerConfigUtils.isOverEitherClaimingLimit(config)) {
 					Component message = Component.translatable("gui.xaero_pac_config_claim_count_over_limit")
 							.withStyle(ChatFormatting.RED);
 					serverPlayer.sendSystemMessage(message);

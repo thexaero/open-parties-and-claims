@@ -129,21 +129,53 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">A chunk was already not forceloadable</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#ANOTHER_DIMENSION" class="member-name-link">ANOTHER_DIMENSION</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#ANCHOR_ALREADY_EXISTS" class="member-name-link">ANCHOR_ALREADY_EXISTS</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Claiming anchor already exists</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#ANCHOR_DOESNT_EXIST" class="member-name-link">ANCHOR_DOESNT_EXIST</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Claiming anchor doesn't exist</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#ANCHOR_LIMIT_REACHED" class="member-name-link">ANCHOR_LIMIT_REACHED</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Claiming anchor limit is reached</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#ANCHOR_TOO_FAR" class="member-name-link">ANCHOR_TOO_FAR</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The chunk was beyond any anchor range</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#ANCHORS_NOT_USED" class="member-name-link">ANCHORS_NOT_USED</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Tried to add or remove an anchor when anchor-based claiming is disasbled</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#ANOTHER_DIMENSION" class="member-name-link">ANOTHER_DIMENSION</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The chunk was beyond the maximum distance</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#AREA_ACTION_IN_PROGRESS" class="member-name-link">AREA_ACTION_IN_PROGRESS</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#AREA_ACTION_IN_PROGRESS" class="member-name-link">AREA_ACTION_IN_PROGRESS</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">There is an area claim action task in progress in the background</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#BEGAN_UNANCHOR" class="member-name-link">BEGAN_UNANCHOR</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Successfully began unanchoring a chunk</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#CANT_TOUCH_OTHER" class="member-name-link">CANT_TOUCH_OTHER</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">The claiming action was interruptingly forbidden by an addon</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#CLAIM_LIMIT_REACHED" class="member-name-link">CLAIM_LIMIT_REACHED</a></code></div>
+<div class="col-first even-row-color"><code><a href="#CANT_UNCLAIM_ANCHOR" class="member-name-link">CANT_UNCLAIM_ANCHOR</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">The chunk can't be unclaimed because it has a claiming anchor</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#CLAIM_LIMIT_REACHED" class="member-name-link">CLAIM_LIMIT_REACHED</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The maximum number of claims was reached</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#CLAIM_STILL_ANCHORED" class="member-name-link">CLAIM_STILL_ANCHORED</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Chunk claim is still anchored</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#CLAIMS_ARE_DISABLED" class="member-name-link">CLAIMS_ARE_DISABLED</a></code></div>
 <div class="col-last odd-row-color">
@@ -165,25 +197,33 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">The user doesn't have permission to make party claims</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a></code></div>
+<div class="col-first even-row-color"><code><a href="#NO_SERVER_ANCHORS" class="member-name-link">NO_SERVER_ANCHORS</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Tried to add or remove an anchor for server claims</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#NO_SERVER_PERMISSION" class="member-name-link">NO_SERVER_PERMISSION</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The user doesn't have permission to make server claims</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED" class="member-name-link">NOT_CLAIMED</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#NOT_CLAIMED" class="member-name-link">NOT_CLAIMED</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The chunk is not claimed</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#NOT_CLAIMED_BY_USER" class="member-name-link">NOT_CLAIMED_BY_USER</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED_BY_USER" class="member-name-link">NOT_CLAIMED_BY_USER</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The chunk isn't claimed by who is trying to unclaim it</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#NOT_CLAIMED_BY_USER_FORCELOAD" class="member-name-link">NOT_CLAIMED_BY_USER_FORCELOAD</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#NOT_CLAIMED_BY_USER_FORCELOAD" class="member-name-link">NOT_CLAIMED_BY_USER_FORCELOAD</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The chunk isn't claimed by who is trying to (un)forceload it</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#NOT_IN_PARTY" class="member-name-link">NOT_IN_PARTY</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#NOT_IN_PARTY" class="member-name-link">NOT_IN_PARTY</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The user doesn't have permission to make party claims</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#NOT_SINGLE_CHUNK" class="member-name-link">NOT_SINGLE_CHUNK</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The action can't be used over an area larger than 1 chunk</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#OVER_CLAIM_LIMIT" class="member-name-link">OVER_CLAIM_LIMIT</a></code></div>
 <div class="col-last odd-row-color">
@@ -193,13 +233,21 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">There is a claim replacement currently in progress in the background</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_CLAIM" class="member-name-link">SUCCESSFUL_CLAIM</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_ANCHOR" class="member-name-link">SUCCESSFUL_ANCHOR</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Successfully anchored a chunk</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#SUCCESSFUL_CLAIM" class="member-name-link">SUCCESSFUL_CLAIM</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Successfully claimed a chunk</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#SUCCESSFUL_FORCELOAD" class="member-name-link">SUCCESSFUL_FORCELOAD</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_FORCELOAD" class="member-name-link">SUCCESSFUL_FORCELOAD</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Successfully forceloaded a chunk</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#SUCCESSFUL_UNANCHOR" class="member-name-link">SUCCESSFUL_UNANCHOR</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Successfully unanchored a chunk</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#SUCCESSFUL_UNCLAIM" class="member-name-link">SUCCESSFUL_UNCLAIM</a></code></div>
 <div class="col-last odd-row-color">
@@ -243,18 +291,23 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether the result can be considered a failure</div>
 </div>
 <div class="col-first odd-row-color"><code>final boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#interruptsAreaAction" class="member-name-link">interruptsAreaAction</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#hidden" class="member-name-link">hidden</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Whether this result should be hidden from the user.</div>
+</div>
+<div class="col-first even-row-color"><code>final boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#interruptsAreaAction" class="member-name-link">interruptsAreaAction</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Whether this result should stop an area claim action from continuing</div>
 </div>
-<div class="col-first even-row-color"><code>final net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color"><code><a href="#message" class="member-name-link">message</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>final net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color"><code><a href="#message" class="member-name-link">message</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">A message describing the result</div>
 </div>
-<div class="col-first odd-row-color"><code>final boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#success" class="member-name-link">success</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>final boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#success" class="member-name-link">success</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Whether the result can be considered a success</div>
 </div>
 </div>
@@ -487,6 +540,69 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="ANCHOR_ALREADY_EXISTS">
+<h3>ANCHOR_ALREADY_EXISTS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ANCHOR_ALREADY_EXISTS</span></div>
+<div class="block">Claiming anchor already exists</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ANCHOR_DOESNT_EXIST">
+<h3>ANCHOR_DOESNT_EXIST</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ANCHOR_DOESNT_EXIST</span></div>
+<div class="block">Claiming anchor doesn't exist</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ANCHOR_LIMIT_REACHED">
+<h3>ANCHOR_LIMIT_REACHED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ANCHOR_LIMIT_REACHED</span></div>
+<div class="block">Claiming anchor limit is reached</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ANCHOR_TOO_FAR">
+<h3>ANCHOR_TOO_FAR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ANCHOR_TOO_FAR</span></div>
+<div class="block">The chunk was beyond any anchor range</div>
+</section>
+</li>
+<li>
+<section class="detail" id="CLAIM_STILL_ANCHORED">
+<h3>CLAIM_STILL_ANCHORED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">CLAIM_STILL_ANCHORED</span></div>
+<div class="block">Chunk claim is still anchored</div>
+</section>
+</li>
+<li>
+<section class="detail" id="CANT_UNCLAIM_ANCHOR">
+<h3>CANT_UNCLAIM_ANCHOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">CANT_UNCLAIM_ANCHOR</span></div>
+<div class="block">The chunk can't be unclaimed because it has a claiming anchor</div>
+</section>
+</li>
+<li>
+<section class="detail" id="NOT_SINGLE_CHUNK">
+<h3>NOT_SINGLE_CHUNK</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NOT_SINGLE_CHUNK</span></div>
+<div class="block">The action can't be used over an area larger than 1 chunk</div>
+</section>
+</li>
+<li>
+<section class="detail" id="NO_SERVER_ANCHORS">
+<h3>NO_SERVER_ANCHORS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">NO_SERVER_ANCHORS</span></div>
+<div class="block">Tried to add or remove an anchor for server claims</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ANCHORS_NOT_USED">
+<h3>ANCHORS_NOT_USED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">ANCHORS_NOT_USED</span></div>
+<div class="block">Tried to add or remove an anchor when anchor-based claiming is disasbled</div>
+</section>
+</li>
+<li>
 <section class="detail" id="SUCCESSFUL_UNFORCELOAD">
 <h3>SUCCESSFUL_UNFORCELOAD</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">SUCCESSFUL_UNFORCELOAD</span></div>
@@ -512,6 +628,27 @@ the order they are declared.</div>
 <h3>SUCCESSFUL_CLAIM</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">SUCCESSFUL_CLAIM</span></div>
 <div class="block">Successfully claimed a chunk</div>
+</section>
+</li>
+<li>
+<section class="detail" id="SUCCESSFUL_ANCHOR">
+<h3>SUCCESSFUL_ANCHOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">SUCCESSFUL_ANCHOR</span></div>
+<div class="block">Successfully anchored a chunk</div>
+</section>
+</li>
+<li>
+<section class="detail" id="BEGAN_UNANCHOR">
+<h3>BEGAN_UNANCHOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">BEGAN_UNANCHOR</span></div>
+<div class="block">Successfully began unanchoring a chunk</div>
+</section>
+</li>
+<li>
+<section class="detail" id="SUCCESSFUL_UNANCHOR">
+<h3>SUCCESSFUL_UNANCHOR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClaimResult.Type.html" title="enum class in xaero.pac.common.claims.result.api">ClaimResult.Type</a></span>&nbsp;<span class="element-name">SUCCESSFUL_UNANCHOR</span></div>
+<div class="block">Successfully unanchored a chunk</div>
 </section>
 </li>
 </ul>
@@ -549,6 +686,13 @@ the order they are declared.</div>
 <h3>interruptsAreaAction</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">interruptsAreaAction</span></div>
 <div class="block">Whether this result should stop an area claim action from continuing</div>
+</section>
+</li>
+<li>
+<section class="detail" id="hidden">
+<h3>hidden</h3>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hidden</span></div>
+<div class="block">Whether this result should be hidden from the user.</div>
 </section>
 </li>
 </ul>

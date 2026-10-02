@@ -19,7 +19,7 @@
 package xaero.pac.common.server.claims.player;
 
 import net.minecraft.resources.Identifier;
-import xaero.pac.common.claims.ClaimLocation;
+import xaero.pac.common.claims.api.ClaimLocation;
 import xaero.pac.common.claims.player.IPlayerClaimInfo;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
@@ -105,6 +105,6 @@ public interface IServerPlayerClaimInfo<DC extends IPlayerDimensionClaims<?>> ex
 
 	public PlayerAreaClaimActionSpreadoutTask removeNextAreaClaimActionTask();
 
-	void stopAllAreaClaimActionTasks(IServerData<?, ?> serverData);
+	boolean stopAllAreaClaimActionTasks(IServerData<?, ?> serverData);
 
 }

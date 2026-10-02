@@ -66,6 +66,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 	private final ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType;
 	private final boolean dynamic;
 	private final boolean overridable;
+	private final boolean onlyDimensionOverridable;
 	private final boolean forcedPlayerConfigurable;
 	private final boolean directlyConfigurable;
 	private final IPlayerConfigChangeHandler<T> serverChangeHandler;
@@ -93,6 +94,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType,
 			boolean dynamic,
 			boolean overridable,
+			boolean onlyDimensionOverridable,
 			boolean forcedPlayerConfigurable,
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<T> serverChangeHandler,
@@ -122,6 +124,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		this.syncOptionType = syncOptionType;
 		this.dynamic = dynamic;
 		this.overridable = overridable;
+		this.onlyDimensionOverridable = onlyDimensionOverridable;
 		this.forcedPlayerConfigurable = forcedPlayerConfigurable;
 		this.directlyConfigurable = directlyConfigurable;
 		this.serverChangeHandler = serverChangeHandler;
@@ -293,8 +296,14 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		return dynamic;
 	}
 
+	@Override
 	public boolean isOverridable() {
 		return overridable;
+	}
+
+	@Override
+	public boolean isOnlyDimensionOverridable() {
+		return onlyDimensionOverridable;
 	}
 
 	public boolean isForcedPlayerConfigurable() {
@@ -344,6 +353,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 		protected Predicate<PlayerConfigType> configTypeFilter;
 		protected boolean dynamic;
 		protected boolean overridable;
+		protected boolean onlyDimensionOverridable;
 		protected boolean forcedPlayerConfigurable;
 		protected boolean directlyConfigurable;
 		protected IPlayerConfigChangeHandler<T> serverChangeHandler;
@@ -372,6 +382,7 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 			setConfigTypeFilter(t -> true);
 			setDynamic(false);
 			setOverridable(true);
+			setOnlyDimensionOverridable(false);
 			setForcedPlayerConfigurable(false);
 			setDirectlyConfigurable(true);
 			setServerChangeHandler(null);
@@ -450,6 +461,15 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 
 		public B setOverridable(boolean overridable) {
 			this.overridable = overridable;
+			if(overridable)
+				this.onlyDimensionOverridable = false;
+			return self;
+		}
+
+		public B setOnlyDimensionOverridable(boolean onlyDimensionOverridable) {
+			this.onlyDimensionOverridable = onlyDimensionOverridable;
+			if(onlyDimensionOverridable)
+				this.overridable = false;
 			return self;
 		}
 
@@ -548,8 +568,9 @@ public class PlayerConfigOptionSpec<T> implements IPlayerConfigOptionSpecAPI<T> 
 					commentTranslation, commentTranslationArgs, category,
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.DEFAULT,
-					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
-					syncable, commandSuggestionGetter, affectsClaimsVisually
+					dynamic, overridable, onlyDimensionOverridable, forcedPlayerConfigurable,
+					directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter,
+					affectsClaimsVisually
 			);
 		}
 		
