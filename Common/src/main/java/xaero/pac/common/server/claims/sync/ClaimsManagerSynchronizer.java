@@ -24,6 +24,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.level.ChunkPos;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
@@ -41,10 +42,7 @@ import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.*;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.player.ServerPlayerClaimInfo;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerClaimOwnerPropertiesSync;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerRegionSync;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerStateSync;
-import xaero.pac.common.server.claims.sync.player.ClaimsManagerPlayerSubClaimPropertiesSync;
+import xaero.pac.common.server.claims.sync.player.*;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.lazypacket.LazyPacket;
 import xaero.pac.common.server.lazypacket.task.schedule.LazyPacketScheduleTaskHandler;
@@ -65,9 +63,10 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 	public static final int STATES_PER_TICK_PER_PLAYER = 1024 * 3;//multiplied by 3 because 1 state sync is up to 3 steps
 	public static final int OWNER_PROPERTIES_PER_TICK = 24576;
 	public static final int OWNER_PROPERTIES_PER_TICK_PER_PLAYER = 1536;
-
 	public static final int SUBCLAIM_PROPERTIES_PER_TICK = 16384;
 	public static final int SUBCLAIM_PROPERTIES_PER_TICK_PER_PLAYER = 1024;
+	public static final int ANCHORS_PER_TICK = 65536;
+	public static final int ANCHORS_PER_TICK_PER_PLAYER = 4096;
 	private final static ClientboundClaimsClaimUpdateNextXPosPacket NEXT_X_PACKET = new ClientboundClaimsClaimUpdateNextXPosPacket();
 	private final static ClientboundClaimsClaimUpdateNextZPosPacket NEXT_Z_PACKET = new ClientboundClaimsClaimUpdateNextZPosPacket();
 
@@ -134,9 +133,10 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 	public void syncClaimLimits(ServerPlayer player, Collection<ClaimingModeLimits> limits) {
 		int maxClaimDistance = ServerConfig.CONFIG.maxClaimDistance.get();
 		boolean alwaysUseLoadingValues = ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.NOT_SYNCED;
+		boolean anchorBasedClaiming = ServerConfig.CONFIG.anchorBasedClaiming.get();
 		sendToClient(
 				player,
-				new ClientboundClaimLimitsPacket(limits, maxClaimDistance, alwaysUseLoadingValues),
+				new ClientboundClaimLimitsPacket(limits, maxClaimDistance, alwaysUseLoadingValues, anchorBasedClaiming),
 				false
 		);
 	}
@@ -179,7 +179,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		sendToClient(player, new ClientboundCurrentSubClaimPacket(subInfoCollection), false);
 	}
 
-	public Iterator<ServerPlayerClaimInfo> getClaimPropertiesToSync(ServerPlayer player){
+	public Iterator<ServerPlayerClaimInfo> getPlayerClaimInfoToSync(ServerPlayer player){
 		if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.NOT_SYNCED)
 			return List.of(claimsManager.getPlayerInfo(player.getUUID())).iterator();
 		if(ServerConfig.CONFIG.claimsSynchronization.get() == ServerConfig.ClaimsSyncType.ALL)
@@ -399,6 +399,34 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 		if(player != null)
 			sendToClient(player, packet, false);
 	}
+
+	@Override
+	public void syncClaimAnchors(ServerPlayer player, UUID claimOwner, ResourceLocation dimensionId, List<ChunkPos> positions, boolean add) {
+		ServerConfig.ClaimsSyncType syncType = ServerConfig.CONFIG.claimsSynchronization.get();
+		if(syncType == ServerConfig.ClaimsSyncType.NOT_SYNCED)
+			return;
+		PlayerList players = server.getPlayerList();
+		ClientboundClaimAnchorsPacket packet = new ClientboundClaimAnchorsPacket(claimOwner, dimensionId, positions, add);
+		if(claimInfoShouldReachEveryone(syncType, claimOwner)) {
+			for(ServerPlayer p : players.getPlayers())
+				sendToClient(p, packet, false);
+			return;
+		}
+		if(player == null) {
+			if (ServerConfig.CONFIG.partyOwnedClaims.get() &&
+					serverData.getPlayerPartySystemManager().isPrimaryPartyOwner(claimOwner)) {
+				for (ServerPlayer p : players.getPlayers())
+					if (claimOwner.equals(serverData.getPlayerPartySystemManager().getPrimaryPartyOwnerByMember(p.getUUID())))
+						sendToClient(p, packet, false);
+				return;
+			}
+			ServerPlayer selfPlayer = players.getPlayer(claimOwner);
+			if (selfPlayer != null)
+				sendToClient(selfPlayer, packet, false);
+			return;
+		}
+		sendToClient(player, packet, false);
+	}
 	
 	public void syncToPlayerClaimActionResult(AreaClaimResult result, ServerPlayer player) {
 		sendToClient(player, new ClientboundClaimResultPacket(result), true);
@@ -446,17 +474,22 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 				.setClaimOwnerPropertiesSync(playerClaimOwnerPropertiesSync)
 				.setSynchronizer(this)
 				.build();
+		ClaimsManagerPlayerAnchorsSync anchorsSync = ClaimsManagerPlayerAnchorsSync.Builder.begin()
+				.setPlayer(player)
+				.setSubClaimPropertiesSync(playerSubClaimPropertiesSync)
+				.setSynchronizer(this)
+				.build();
 		ClaimsManagerPlayerStateSync playerClaimStateSync = ClaimsManagerPlayerStateSync.Builder.begin()
 				.setPlayer(player)
 				.setSynchronizer(this)
-				.setSubClaimPropertiesSync(playerSubClaimPropertiesSync)
+				.setClaimAnchorsSync(anchorsSync)
 				.build();
 		ClaimsManagerPlayerRegionSync playerRegionSync = ClaimsManagerPlayerRegionSync.Builder.begin()
 				.setClaimsManager(serverData.getServerClaimsManager())
 				.setStateSyncHandler(playerClaimStateSync)
 				.setPlayerId(player.getUUID())
 				.build();
-		playerData.setClaimSyncTasks(playerClaimOwnerPropertiesSync, playerSubClaimPropertiesSync, playerClaimStateSync, playerRegionSync);
+		playerData.setClaimSyncTasks(playerClaimOwnerPropertiesSync, playerSubClaimPropertiesSync, anchorsSync, playerClaimStateSync, playerRegionSync);
 
 		sendToClient(player, new ClaimRegionsStartPacket(), false);
 	}
@@ -507,6 +540,11 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 					.setPerTickLimit(SUBCLAIM_PROPERTIES_PER_TICK)
 					.setPerTickPerTaskLimit(SUBCLAIM_PROPERTIES_PER_TICK_PER_PLAYER).build();
 
+			LazyPacketScheduleTaskHandler claimAnchorsScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
+					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerAnchorsSync)
+					.setPerTickLimit(ANCHORS_PER_TICK)
+					.setPerTickPerTaskLimit(ANCHORS_PER_TICK_PER_PLAYER).build();
+
 			LazyPacketScheduleTaskHandler claimStateScheduler = LazyPacketScheduleTaskHandler.Builder.begin()
 					.setPlayerTaskGetter(ServerPlayerData::getClaimsManagerPlayerStateSync)
 					.setPerTickLimit(STATES_PER_TICK)
@@ -520,7 +558,13 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 					.setPerTickLimit(regionsPerTick)
 					.setPerTickPerTaskLimit(regionsPerTickPerPlayer).build();
 
-			List<LazyPacketScheduleTaskHandler> schedulers = List.of(claimOwnerPropertiesScheduler, subClaimPropertiesScheduler, claimStateScheduler, regionScheduler);
+			List<LazyPacketScheduleTaskHandler> schedulers = List.of(
+					claimOwnerPropertiesScheduler,
+					subClaimPropertiesScheduler,
+					claimAnchorsScheduler,
+					claimStateScheduler,
+					regionScheduler
+			);
 			return new ClaimsManagerSynchronizer(server, schedulers);
 		}
 

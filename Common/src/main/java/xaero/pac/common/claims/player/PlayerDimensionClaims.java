@@ -20,27 +20,41 @@ package xaero.pac.common.claims.player;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
-import xaero.pac.common.claims.ClaimLocation;
+import xaero.pac.common.claims.ClaimingAnchor;
+import xaero.pac.common.claims.ClaimsManager;
+import xaero.pac.common.claims.api.ClaimLocation;
+import xaero.pac.common.util.linked.LinkedChain;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaimPosList> {
 
-	private final UUID playerId;
-	private final Identifier dimension;
-	private final Map<PlayerChunkClaim, PlayerClaimPosList> claimLists;
-	private int count;
-	private int forceloadableCount;
+	protected final UUID playerId;
+	protected final Identifier dimension;
+	protected final Map<PlayerChunkClaim, PlayerClaimPosList> claimLists;
+	protected final Map<ChunkPos, ClaimingAnchor> anchors;
+	protected final Map<ChunkPos, ClaimingAnchor> anchorsUnmodifiable;
+	protected final LinkedChain<ClaimingAnchor> anchorLinkedChain;
+	protected int count;
+	protected int forceloadableCount;
+	protected final ClaimsManager<?,?,?,?,?> claimsManager;
 	
-	public PlayerDimensionClaims(UUID playerId, Identifier dimension, Map<PlayerChunkClaim, PlayerClaimPosList> claimLists) {
+	public PlayerDimensionClaims(UUID playerId, Identifier dimension, Map<PlayerChunkClaim, PlayerClaimPosList> claimLists, Map<ChunkPos, ClaimingAnchor> anchors, ClaimsManager<?,?,?,?,?> claimsManager) {
 		this.playerId = playerId;
 		this.dimension = dimension;
 		this.claimLists = claimLists;
+		this.claimsManager = claimsManager;
 		this.count = calculateCount();
 		this.forceloadableCount = calculateForceloadableCount();
+		this.anchors = anchors;
+		this.anchorsUnmodifiable = Collections.unmodifiableMap(anchors);
+		this.anchorLinkedChain = new LinkedChain<>();
+		for (ClaimingAnchor anchor : anchors.values())
+			anchorLinkedChain.add(anchor);
 	}
 	
 	private PlayerClaimPosList getOrCreateList(PlayerChunkClaim claim) {
@@ -141,6 +155,36 @@ public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaim
 			return new ClaimLocation(dimension, pos.x, pos.z);
 		}
 		return null;
+	}
+
+	public boolean addAnchor(@Nonnull ChunkPos pos){
+		if(anchors.containsKey(pos))
+			return false;
+		ClaimingAnchor anchor = new ClaimingAnchor(pos);
+		anchors.put(pos, anchor);
+		anchorLinkedChain.add(anchor);
+		claimsManager.getTracker().onChunkChange(dimension, pos.x, pos.z, claimsManager.get(dimension, pos.x, pos.z));
+		return true;
+	}
+
+	public boolean removeAnchor(@Nonnull ChunkPos pos){
+		ClaimingAnchor anchor = anchors.remove(pos);
+		if(anchor != null){
+			anchorLinkedChain.remove(anchor);
+			claimsManager.getTracker().onChunkChange(dimension, pos.x, pos.z, claimsManager.get(dimension, pos.x, pos.z));
+			return true;
+		}
+		return false;
+	}
+
+	@Nonnull
+	public Set<ChunkPos> getAnchors() {
+		return anchorsUnmodifiable.keySet();
+	}
+
+	@Override
+	public Iterator<ClaimingAnchor> getAnchorIterator(){
+		return anchorLinkedChain.iterator();
 	}
 
 }

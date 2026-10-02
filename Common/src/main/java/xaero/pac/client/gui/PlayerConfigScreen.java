@@ -528,7 +528,9 @@ public final class PlayerConfigScreen extends WidgetListScreen {
 						|| optionStorage.getOption() == PlayerConfigOptions.USED_PARTY_SUBCLAIM
 				)
 					return;
-				if(optionValueSourceData instanceof PlayerSubConfigClientStorage && !optionStorage.getOption().isOverridable())
+				if(optionValueSourceData instanceof PlayerSubConfigClientStorage &&
+						(!optionValueSourceData.getType().hasDimensionSubConfigs() || !optionStorage.getOption().isOnlyDimensionOverridable())
+						&& !optionStorage.getOption().isOverridable())
 					return;
 				final boolean mutable = isMutable(optionValueSourceData, optionStorage);
 				Class<?> type = optionStorage.getType();

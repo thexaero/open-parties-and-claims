@@ -217,7 +217,7 @@ public class ClaimsClaimCommands {
 							);
 							return 1;
 						}
-						result = claimsManager.tryToClaimTyped(world.dimension().identifier(), claimPlayerId, subConfigIndex, fromDimension, fromX, fromZ, middleX, middleZ, shouldReplace);
+						result = claimsManager.tryToClaimTyped(world.dimension().identifier(), claimPlayerId, subConfigIndex, fromDimension, fromX, fromZ, middleX, middleZ, shouldReplace, false);
 
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IPlayerChunkClaimAPI currentClaim = claimsManager.get(world.dimension().identifier(), middleX, middleZ);
@@ -303,6 +303,8 @@ public class ClaimsClaimCommands {
 		sourceStack.sendSuccess(() -> endMessage, true);
 		int resultNumber = 0;
 		for (ClaimResult.Type type : result.getResultTypesIterable()) {
+			if(type.hidden)
+				continue;
 			resultNumber++;
 			Component resultMessage = Component.literal(resultNumber + ") ").withStyle(ChatFormatting.WHITE);
 			resultMessage.getSiblings().add(adaptiveLocalizer.getFor(player, type.message));

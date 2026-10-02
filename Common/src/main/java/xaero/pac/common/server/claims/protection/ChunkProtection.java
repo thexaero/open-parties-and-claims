@@ -2581,9 +2581,12 @@ public class ChunkProtection
 		if(claimsManager.getPermissionHandler().playerHasAdminModePermission(player))
 			return false;
 		IPlayerConfigManager configManager = serverData.getPlayerConfigManager();
-		boolean result = ServerPlayerConfigUtils.isOverClaimLimit(configManager.getLoadedConfig(claimOwnerId));
-		if(!result)
-			result = ServerPlayerConfigUtils.isOverClaimLimit(configManager.getLoadedConfig(accessor.getUUID()));
+		IPlayerConfig claimOwnerConfig = configManager.getLoadedConfig(claimOwnerId);
+		boolean result = ServerPlayerConfigUtils.isOverEitherClaimingLimit(claimOwnerConfig, player.level().dimension().location());
+		if(!result) {
+			IPlayerConfig accessorConfig = configManager.getLoadedConfig(accessor.getUUID());
+			result = ServerPlayerConfigUtils.isOverEitherClaimingLimit(accessorConfig, player.level().dimension().location());
+		}
 		if(!result)
 			return false;
 		long time = System.currentTimeMillis();

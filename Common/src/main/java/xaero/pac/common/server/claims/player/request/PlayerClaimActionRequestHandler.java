@@ -21,10 +21,12 @@ package xaero.pac.common.server.claims.player.request;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.action.request.ClaimActionRequest;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
+import xaero.pac.common.claims.player.PlayerChunkClaim;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.result.api.AreaClaimResult;
 import xaero.pac.common.claims.result.api.ClaimResult;
@@ -45,6 +47,7 @@ import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.world.ServerLevelHelper;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -101,11 +104,31 @@ public class PlayerClaimActionRequestHandler {
 		Identifier fromDimension = player.level().dimension().identifier();
 		int fromX = player.chunkPosition().x;
 		int fromZ = player.chunkPosition().z;
+		lastRequestTickCounter = serverTickHandler.getTickCounter();
+		if(request.getAction() == ClaimingAction.ANCHOR || request.getAction() == ClaimingAction.UNANCHOR){
+			boolean add = request.getAction() == ClaimingAction.ANCHOR;
+			ClaimResult<PlayerChunkClaim> anchorResult = manager.tryAnchor(
+					request.getDimension(), claimPlayerId, fromDimension, fromX, fromZ,
+					request.getLeft(), request.getTop(), add, playerData.isClaimsAdminMode(),
+					result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player)
+			);
+			manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
+					new AreaClaimResult(
+							Collections.singleton(anchorResult.getResultType()),
+							anchorResult.getCustomReason() == null ? Collections.emptySet() :
+									Collections.singleton(anchorResult.getCustomReason()),
+							request.getDimension(),
+							request.getLeft(), request.getTop(),
+							request.getLeft(), request.getTop()
+					),
+					player
+			);
+			return;
+		}
 		manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
 				fromDimension, fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
 				request.getAction(), playerData.isClaimsAdminMode(),
-				result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
-		lastRequestTickCounter = serverTickHandler.getTickCounter();
+				null, result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
 	}
 
 	public long getLastRequestTickCounter() {

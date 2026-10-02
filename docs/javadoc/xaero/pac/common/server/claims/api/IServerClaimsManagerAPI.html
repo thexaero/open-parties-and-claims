@@ -96,171 +96,243 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#claim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,boolean)" class="member-name-link">claim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#addAnchor(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos,java.util.UUID)" class="member-name-link">addAnchor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ net.minecraft.world.level.ChunkPos&nbsp;pos,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Adds a claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+ if it doesn't already exist there.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#claim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,boolean)" class="member-name-link">claim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;id,
  int&nbsp;subConfigIndex,
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;forceload)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Directly replaces the current claim state of a chunk.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#get(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#get(net.minecraft.resources.ResourceLocation,int,int)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  int&nbsp;x,
  int&nbsp;z)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the claim state for a specified chunk.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#get(net.minecraft.resources.ResourceLocation,net.minecraft.core.BlockPos)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ net.minecraft.core.BlockPos&nbsp;blockPos)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim state for a specified chunk.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#get(net.minecraft.resources.ResourceLocation,net.minecraft.core.BlockPos)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
- net.minecraft.core.BlockPos&nbsp;blockPos)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the claim state for a specified chunk.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#get(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#get(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos)" class="member-name-link">get</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  net.minecraft.world.level.ChunkPos&nbsp;chunkPos)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim state for a specified chunk.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../action/listener/api/IClaimActionListenerManagerAPI.html" title="interface in xaero.pac.common.server.claims.action.listener.api">IClaimActionListenerManagerAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getActionListenerManager()" class="member-name-link">getActionListenerManager</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../action/listener/api/IClaimActionListenerManagerAPI.html" title="interface in xaero.pac.common.server.claims.action.listener.api">IClaimActionListenerManagerAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getActionListenerManager()" class="member-name-link">getActionListenerManager</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the API for the claim action listener manager for this claims manager where you can register claim action listeners.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../protection/override/api/IChunkAccessOverriderManagerAPI.html" title="interface in xaero.pac.common.server.claims.protection.override.api">IChunkAccessOverriderManagerAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getChunkAccessOverriderManager()" class="member-name-link">getChunkAccessOverriderManager</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../protection/override/api/IChunkAccessOverriderManagerAPI.html" title="interface in xaero.pac.common.server.claims.protection.override.api">IChunkAccessOverriderManagerAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getChunkAccessOverriderManager()" class="member-name-link">getChunkAccessOverriderManager</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the API for the chunk access overrider manager for this claims manager where you can register your chunk access
  overriders.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getColor(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation)" class="member-name-link">getColor</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getColor(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation)" class="member-name-link">getColor</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
  net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the color that would be used for a provided claim state and dimension.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(java.util.UUID,boolean)" class="member-name-link">getDefaultName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;claimId,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(java.util.UUID,boolean)" class="member-name-link">getDefaultName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;claimId,
  boolean&nbsp;forceloadable)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the default display name that would be used for a provided claim UUID.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(java.util.UUID,boolean,boolean)" class="member-name-link">getDefaultName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;claimId,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(java.util.UUID,boolean,boolean)" class="member-name-link">getDefaultName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;claimId,
  boolean&nbsp;forceloadable,
  boolean&nbsp;allowPartyNames)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the default display name that would be used for a provided claim UUID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getDefaultName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the default display name that would be used for a provided claim state.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)" class="member-name-link">getDefaultName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
- boolean&nbsp;allowPartyNames)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getDefaultName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the default display name that would be used for a provided claim state.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IServerDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerDimensionClaimsManagerAPI</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimension(net.minecraft.resources.ResourceLocation)" class="member-name-link">getDimension</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefaultName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)" class="member-name-link">getDefaultName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ boolean&nbsp;allowPartyNames)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the default display name that would be used for a provided claim state.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="IServerDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerDimensionClaimsManagerAPI</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimension(net.minecraft.resources.ResourceLocation)" class="member-name-link">getDimension</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the read-only claims manager for a specified dimension ID.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="IServerDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerDimensionClaimsManagerAPI</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimensionStream()" class="member-name-link">getDimensionStream</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="IServerDimensionClaimsManagerAPI.html" title="interface in xaero.pac.common.server.claims.api">IServerDimensionClaimsManagerAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDimensionStream()" class="member-name-link">getDimensionStream</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a stream of all read-only dimension claims managers.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getFullName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI)" class="member-name-link">getFullName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)" class="member-name-link">getFullName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+ boolean&nbsp;allowPartyNames)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,boolean)" class="member-name-link">getFullName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
- boolean&nbsp;allowPartyNames)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>net.minecraft.network.chat.Component</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">getFullName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFullName(xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI,net.minecraft.resources.ResourceLocation,boolean)" class="member-name-link">getFullName</a><wbr>(<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&nbsp;claimState,
  net.minecraft.resources.ResourceLocation&nbsp;dimension,
  boolean&nbsp;allowPartyNames)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the full display name, with sub-claim names applied, that would be used for a provided claim state and dimension.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseAnchorLimit(java.util.UUID)" class="member-name-link">getPlayerBaseAnchorLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the base maximum claiming anchor number (without the bonus) for a player UUID.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseClaimLimit(java.util.UUID)" class="member-name-link">getPlayerBaseClaimLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseAnchorLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseAnchorLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the base maximum claiming anchor number (without the bonus) for a logged in player.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseAnchorRange(java.util.UUID)" class="member-name-link">getPlayerBaseAnchorRange</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the base claiming anchor range (without the bonus) for a player UUID.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseAnchorRange(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseAnchorRange</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the base claiming anchor range (without the bonus) for a logged in player.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseClaimLimit(java.util.UUID)" class="member-name-link">getPlayerBaseClaimLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the base maximum claim number (without the bonus) for a player UUID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseClaimLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseClaimLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseClaimLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseClaimLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the base maximum claim number (without the bonus) for a logged in player.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseForceloadLimit(java.util.UUID)" class="member-name-link">getPlayerBaseForceloadLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseForceloadLimit(java.util.UUID)" class="member-name-link">getPlayerBaseForceloadLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the base maximum forceload number (without the bonus) for a player UUID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseForceloadLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseForceloadLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerBaseForceloadLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerBaseForceloadLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the base maximum forceload number (without the bonus) for a logged in player.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullAnchorLimit(java.util.UUID,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full maximum claiming anchor number (with the bonus) for a player UUID and dimension.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullClaimLimit(java.util.UUID)" class="member-name-link">getPlayerFullClaimLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullAnchorLimit(net.minecraft.server.level.ServerPlayer,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full maximum claiming anchor number (with the bonus) for a logged in player and dimension.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullAnchorRange(java.util.UUID,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorRange</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full claiming anchor range (with the bonus) for a player UUID and dimension.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullAnchorRange(net.minecraft.server.level.ServerPlayer,net.minecraft.resources.ResourceLocation)" class="member-name-link">getPlayerFullAnchorRange</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the full claiming anchor range (with the bonus) for a logged in player and dimension.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullClaimLimit(java.util.UUID)" class="member-name-link">getPlayerFullClaimLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the full maximum claim number (with the bonus) for a player UUID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullClaimLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullClaimLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullClaimLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullClaimLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the full maximum claim number (with the bonus) for a logged in player.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullForceloadLimit(java.util.UUID)" class="member-name-link">getPlayerFullForceloadLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullForceloadLimit(java.util.UUID)" class="member-name-link">getPlayerFullForceloadLimit</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the full maximum forceload number (with the bonus) for a player UUID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullForceloadLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullForceloadLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerFullForceloadLimit(net.minecraft.server.level.ServerPlayer)" class="member-name-link">getPlayerFullForceloadLimit</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the full maximum forceload number (with the bonus) for a logged in player.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfo(java.util.UUID)" class="member-name-link">getPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets or creates the claim info instance for a player UUID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="../player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfoStream()" class="member-name-link">getPlayerInfoStream</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link">Stream</a>&lt;<a href="../player/api/IServerPlayerClaimInfoAPI.html" title="interface in xaero.pac.common.server.claims.player.api">IServerPlayerClaimInfoAPI</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayerInfoStream()" class="member-name-link">getPlayerInfoStream</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a stream of all player claim info.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/tracker/api/IClaimsManagerTrackerAPI.html" title="interface in xaero.pac.common.claims.tracker.api">IClaimsManagerTrackerAPI</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracker()" class="member-name-link">getTracker</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets the claim change tracker that lets you register claim change listeners.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#hasPlayerInfo(java.util.UUID)" class="member-name-link">hasPlayerInfo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a player has claim info.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isClaimable(net.minecraft.resources.ResourceLocation)" class="member-name-link">isClaimable</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isClaimable(net.minecraft.resources.ResourceLocation)" class="member-name-link">isClaimable</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Checks whether a dimension is claimable.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#removeAnchor(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos,java.util.UUID)" class="member-name-link">removeAnchor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ net.minecraft.world.level.ChunkPos&nbsp;pos,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Removes the claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+ if it exists.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToAddAnchor(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)" class="member-name-link">tryToAddAnchor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Tries to add a claiming anchor for a chunk by a specified player.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;subConfigIndex,
  int&nbsp;fromX,
@@ -268,14 +340,14 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;replace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">Use <a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)"><code>tryToClaim(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, boolean)</code></a> instead
  Tries to claim a chunk by a specified player.</div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)" class="member-name-link">tryToClaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;subConfigIndex,
  net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
@@ -284,11 +356,11 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;x,
  int&nbsp;z,
  boolean&nbsp;force)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to claim a chunk by a specified player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,int,boolean)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,int,boolean)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;subConfigIndex,
  int&nbsp;fromX,
@@ -298,14 +370,14 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;right,
  int&nbsp;bottom,
  boolean&nbsp;replace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">Use <a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)"><code>tryToClaimArea(ResourceLocation, UUID, int, ResourceLocation, int, int, int, int, int, int, boolean, Consumer)</code></a> instead
  Tries to claim chunks over a specified area by a specified player.</div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)" class="member-name-link">tryToClaimArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;subConfigIndex,
  net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
@@ -317,11 +389,11 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;bottom,
  boolean&nbsp;force,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to claim chunks over a specified area as a specified player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;fromX,
  int&nbsp;fromZ,
@@ -329,14 +401,14 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;z,
  boolean&nbsp;enable,
  boolean&nbsp;replace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">Use <a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)"><code>tryToForceload(ResourceLocation, UUID, ResourceLocation, int, int, int, int, boolean, boolean)</code></a> instead
  Tries to (un)mark a chunk for forceloading by a specified player.</div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceload(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceload</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
  int&nbsp;fromX,
@@ -345,11 +417,11 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;z,
  boolean&nbsp;enable,
  boolean&nbsp;force)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to (un)mark a chunk for forceloading by a specified player.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceloadArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,int,int,boolean,boolean)" class="member-name-link">tryToForceloadArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  int&nbsp;fromX,
  int&nbsp;fromZ,
@@ -359,14 +431,14 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;bottom,
  boolean&nbsp;enable,
  boolean&nbsp;replace)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">Use <a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,boolean,java.util.function.Consumer)"><code>tryToForceloadArea(ResourceLocation, UUID, ResourceLocation, int, int, int, int, int, int, boolean, boolean, Consumer)</code></a> instead
  Tries to (un)mark chunks for forceloading over a specified area by a specified player.</div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,boolean,java.util.function.Consumer)" class="member-name-link">tryToForceloadArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToForceloadArea(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,boolean,java.util.function.Consumer)" class="member-name-link">tryToForceloadArea</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
  int&nbsp;fromX,
@@ -378,8 +450,21 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  boolean&nbsp;enable,
  boolean&nbsp;force,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Tries to (un)mark chunks for forceloading over a specified area by a specified player.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#tryToRemoveAnchor(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,java.util.function.Consumer)" class="member-name-link">tryToRemoveAnchor</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Tries to remove a claiming anchor for a chunk by a specified player.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#tryToUnclaim(net.minecraft.resources.ResourceLocation,java.util.UUID,int,int,int,int,boolean)" class="member-name-link">tryToUnclaim</a><wbr>(net.minecraft.resources.ResourceLocation&nbsp;dimension,
@@ -444,6 +529,11 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
  int&nbsp;z)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Directly removes the current claim state of a chunk.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#usingAnchorBasedClaiming()" class="member-name-link">usingAnchorBasedClaiming</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether anchor-based claiming is used.</div>
 </div>
 </div>
 </div>
@@ -814,6 +904,22 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 </section>
 </li>
 <li>
+<section class="detail" id="usingAnchorBasedClaiming()">
+<h3>usingAnchorBasedClaiming</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">usingAnchorBasedClaiming</span>()</div>
+<div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="../../../claims/api/IClaimsManagerAPI.html#usingAnchorBasedClaiming()">IClaimsManagerAPI</a></code></span></div>
+<div class="block">Checks whether anchor-based claiming is used.
+ <p>
+ The returned value is false on the client side before the real one is synced from the server.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="../../../claims/api/IClaimsManagerAPI.html#usingAnchorBasedClaiming()">usingAnchorBasedClaiming</a></code>&nbsp;in interface&nbsp;<code><a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in xaero.pac.common.claims.api">IClaimsManagerAPI</a></code></dd>
+<dt>Returns:</dt>
+<dd>true if anchor-based claiming is enabled on the server, otherwise false</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="isClaimable(net.minecraft.resources.ResourceLocation)">
 <h3>isClaimable</h3>
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isClaimable</span><wbr><span class="parameters">(@Nonnull
@@ -882,6 +988,48 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
 <dd><code>x</code> - the X coordinate of the chunk</dd>
 <dd><code>z</code> - the Z coordinate of the chunk</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addAnchor(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos,java.util.UUID)">
+<h3>addAnchor</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">addAnchor</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ net.minecraft.world.level.ChunkPos&nbsp;pos,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Adds a claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+ if it doesn't already exist there.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID for the anchor, not null</dd>
+<dd><code>pos</code> - the position for the anchor, not null</dd>
+<dd><code>playerId</code> - the ID of the player to add the anchor for, not null</dd>
+<dt>Returns:</dt>
+<dd>true if the anchor was added, false if the specified position already had an anchor</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removeAnchor(net.minecraft.resources.ResourceLocation,net.minecraft.world.level.ChunkPos,java.util.UUID)">
+<h3>removeAnchor</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">removeAnchor</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ net.minecraft.world.level.ChunkPos&nbsp;pos,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Removes the claiming anchor in a specified dimension, at a specified chunk position, for a specified player,
+ if it exists.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the anchor, not null</dd>
+<dd><code>pos</code> - the position of the anchor, not null</dd>
+<dd><code>playerId</code> - the ID of the player to remove the anchor for, not null</dd>
+<dt>Returns:</dt>
+<dd>true if the anchor was removed, false if the specified position didn't have one</dd>
 </dl>
 </section>
 </li>
@@ -1270,6 +1418,79 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 </section>
 </li>
 <li>
+<section class="detail" id="tryToAddAnchor(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean)">
+<h3>tryToAddAnchor</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToAddAnchor</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force)</span></div>
+<div class="block">Tries to add a claiming anchor for a chunk by a specified player.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum anchor number, maximum claim distance, existing anchors.
+ <p>
+ You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a message describing the result.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>playerId</code> - the anchoring player's UUID, not null</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the anchoring player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the anchoring player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the anchoring player's current chunk position</dd>
+<dd><code>x</code> - the X coordinate of the chunk to add the anchor for</dd>
+<dd><code>z</code> - the Z coordinate of the chunk to add the anchor for</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dt>Returns:</dt>
+<dd>the result, not null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="tryToRemoveAnchor(net.minecraft.resources.ResourceLocation,java.util.UUID,net.minecraft.resources.ResourceLocation,int,int,int,int,boolean,java.util.function.Consumer)">
+<h3>tryToRemoveAnchor</h3>
+<div class="member-signature"><span class="annotations">@Nonnull
+</span><span class="return-type"><a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api">ClaimResult</a>&lt;<a href="../../../claims/player/api/IPlayerChunkClaimAPI.html" title="interface in xaero.pac.common.claims.player.api">IPlayerChunkClaimAPI</a>&gt;</span>&nbsp;<span class="element-name">tryToRemoveAnchor</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;fromDimension,
+ int&nbsp;fromX,
+ int&nbsp;fromZ,
+ int&nbsp;x,
+ int&nbsp;z,
+ boolean&nbsp;force,
+ @Nullable
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="../../../claims/result/api/AreaClaimResult.html" title="class in xaero.pac.common.claims.result.api">AreaClaimResult</a>&gt;&nbsp;listener)</span></div>
+<div class="block">Tries to remove a claiming anchor for a chunk by a specified player.
+ <p>
+ Success is not guaranteed. Different limitations are checked, e.g. maximum anchor number, maximum claim distance, existing anchors.
+ <p>
+ You get a <a href="../../../claims/result/api/ClaimResult.html" title="class in xaero.pac.common.claims.result.api"><code>ClaimResult</code></a> containing a message describing the initial result of trying to begin the removal process.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>dimension</code> - the dimension ID of the chunk, not null</dd>
+<dd><code>playerId</code> - the unanchoring player's UUID, not null</dd>
+<dd><code>fromDimension</code> - the ID of the dimension the unanchoring player is currently in, not null</dd>
+<dd><code>fromX</code> - the X coordinate of the unanchoring player's current chunk position</dd>
+<dd><code>fromZ</code> - the Z coordinate of the unanchoring player's current chunk position</dd>
+<dd><code>x</code> - the X coordinate of the chunk to remove the anchor for</dd>
+<dd><code>z</code> - the Z coordinate of the chunk to remove the anchor for</dd>
+<dd><code>force</code> - whether to ignore most limitations</dd>
+<dd><code>listener</code> - listener for the final result, can be null</dd>
+<dt>Returns:</dt>
+<dd>the initial result of trying to begin the removal process, not null</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="tryToClaimArea(net.minecraft.resources.ResourceLocation,java.util.UUID,int,net.minecraft.resources.ResourceLocation,int,int,int,int,int,int,boolean,java.util.function.Consumer)">
 <h3>tryToClaimArea</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">tryToClaimArea</span><wbr><span class="parameters">(@Nonnull
@@ -1419,7 +1640,7 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Gets the base maximum claim number (without the bonus) for a player UUID.
  <p>
  By default, the base claim limit is configured in this mod's server config file.
- However, if the FTB Ranks mod is installed, a permission node is configured in the claim mod's server config
+ However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
  and the player with UUID <code>playerId</code> is logged in, then the permission value is used as the base limit.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1437,7 +1658,7 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Gets the base maximum claim number (without the bonus) for a logged in player.
  <p>
  By default, the base claim limit is configured in this mod's server config file.
- However, if the FTB Ranks mod is installed and a permission node is configured in the claim mod's server config,
+ However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
  then the permission value is used as the base limit.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1455,7 +1676,7 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Gets the base maximum forceload number (without the bonus) for a player UUID.
  <p>
  By default, the base forceload limit is configured in this mod's server config file.
- However, if the FTB Ranks mod is installed, a permission node is configured in the claim mod's server config
+ However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
  and the player with UUID <code>playerId</code> is logged in, then the permission value is used as the base limit.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -1473,13 +1694,85 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <div class="block">Gets the base maximum forceload number (without the bonus) for a logged in player.
  <p>
  By default, the base forceload limit is configured in this mod's server config file.
- However, if the FTB Ranks mod is installed and a permission node is configured in the claim mod's server config,
+ However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
  then the permission value is used as the base limit.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>player</code> - the player, not null</dd>
 <dt>Returns:</dt>
 <dd>the base maximum forceload number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerBaseAnchorLimit(java.util.UUID)">
+<h3>getPlayerBaseAnchorLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerBaseAnchorLimit</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Gets the base maximum claiming anchor number (without the bonus) for a player UUID.
+ <p>
+ By default, the base claiming anchor limit is configured in this mod's server config file.
+ However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
+ and the player with UUID <code>playerId</code> is logged in, then the permission value is used as the base limit.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the player UUID, not null</dd>
+<dt>Returns:</dt>
+<dd>the base maximum claiming anchor number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerBaseAnchorLimit(net.minecraft.server.level.ServerPlayer)">
+<h3>getPlayerBaseAnchorLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerBaseAnchorLimit</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Gets the base maximum claiming anchor number (without the bonus) for a logged in player.
+ <p>
+ By default, the base claiming anchor limit is configured in this mod's server config file.
+ However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
+ then the permission value is used as the base limit.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - the player, not null</dd>
+<dt>Returns:</dt>
+<dd>the base maximum claiming anchor number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerBaseAnchorRange(java.util.UUID)">
+<h3>getPlayerBaseAnchorRange</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerBaseAnchorRange</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
+<div class="block">Gets the base claiming anchor range (without the bonus) for a player UUID.
+ <p>
+ By default, the base claiming anchor range is configured in this mod's server config file.
+ However, if a supported permission mod is installed, a permission node is configured in the claim mod's server config
+ and the player with UUID <code>playerId</code> is logged in, then the permission value is used as the base limit.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the player UUID, not null</dd>
+<dt>Returns:</dt>
+<dd>the base claiming anchor range</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerBaseAnchorRange(net.minecraft.server.level.ServerPlayer)">
+<h3>getPlayerBaseAnchorRange</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerBaseAnchorRange</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
+<div class="block">Gets the base claiming anchor range (without the bonus) for a logged in player.
+ <p>
+ By default, the base claiming anchor range is configured in this mod's server config file.
+ However, if a supported permission mod is installed and a permission node is configured in the claim mod's server config,
+ then the permission value is used as the base limit.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - the player, not null</dd>
+<dt>Returns:</dt>
+<dd>the base claiming anchor range</dd>
 </dl>
 </section>
 </li>
@@ -1548,6 +1841,86 @@ extends <a href="../../../claims/api/IClaimsManagerAPI.html" title="interface in
 <dd><code>player</code> - the player, not null</dd>
 <dt>Returns:</dt>
 <dd>the full maximum forceload number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullAnchorLimit(java.util.UUID,net.minecraft.resources.ResourceLocation)">
+<h3>getPlayerFullAnchorLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullAnchorLimit</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</span></div>
+<div class="block">Gets the full maximum claiming anchor number (with the bonus) for a player UUID and dimension.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseAnchorLimit(java.util.UUID)"><code>getPlayerBaseAnchorLimit(UUID)</code></a> with the bonus claiming anchors
+ added to it, which includes the player's own config bonus and the wilderness config bonus.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the player UUID, not null</dd>
+<dd><code>dimension</code> - the dimension ID to get the limit for, not null</dd>
+<dt>Returns:</dt>
+<dd>the full maximum claiming anchor number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullAnchorLimit(net.minecraft.server.level.ServerPlayer,net.minecraft.resources.ResourceLocation)">
+<h3>getPlayerFullAnchorLimit</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullAnchorLimit</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</span></div>
+<div class="block">Gets the full maximum claiming anchor number (with the bonus) for a logged in player and dimension.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseAnchorLimit(net.minecraft.server.level.ServerPlayer)"><code>getPlayerBaseAnchorLimit(ServerPlayer)</code></a> with the bonus claiming anchors
+ added to it, which includes the player's own config bonus and the wilderness config bonus.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - the player, not null</dd>
+<dd><code>dimension</code> - the dimension ID to get the limit for, not null</dd>
+<dt>Returns:</dt>
+<dd>the full maximum claiming anchor number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullAnchorRange(java.util.UUID,net.minecraft.resources.ResourceLocation)">
+<h3>getPlayerFullAnchorRange</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullAnchorRange</span><wbr><span class="parameters">(@Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</span></div>
+<div class="block">Gets the full claiming anchor range (with the bonus) for a player UUID and dimension.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseAnchorRange(java.util.UUID)"><code>getPlayerBaseAnchorRange(UUID)</code></a> with the bonus anchor range
+ added to it, which includes the player's own config bonus and the wilderness config bonus.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerId</code> - the player UUID, not null</dd>
+<dd><code>dimension</code> - the dimension ID to get the range for, not null</dd>
+<dt>Returns:</dt>
+<dd>the full claiming anchor range</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPlayerFullAnchorRange(net.minecraft.server.level.ServerPlayer,net.minecraft.resources.ResourceLocation)">
+<h3>getPlayerFullAnchorRange</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getPlayerFullAnchorRange</span><wbr><span class="parameters">(@Nonnull
+ net.minecraft.server.level.ServerPlayer&nbsp;player,
+ @Nonnull
+ net.minecraft.resources.ResourceLocation&nbsp;dimension)</span></div>
+<div class="block">Gets the full claiming anchor range (with the bonus) for a logged in player and dimension.
+ <p>
+ The returned value is equal to the value returned by <a href="#getPlayerBaseAnchorRange(net.minecraft.server.level.ServerPlayer)"><code>getPlayerBaseAnchorRange(ServerPlayer)</code></a> with the bonus anchor range
+ added to it, which includes the player's own config bonus and the wilderness config bonus.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - the player, not null</dd>
+<dd><code>dimension</code> - the dimension ID to get the range for, not null</dd>
+<dt>Returns:</dt>
+<dd>the full claiming anchor range</dd>
 </dl>
 </section>
 </li>

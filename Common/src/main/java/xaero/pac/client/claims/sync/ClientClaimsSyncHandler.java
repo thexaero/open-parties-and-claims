@@ -30,6 +30,7 @@ import xaero.pac.client.claims.player.ClientPlayerClaimInfo;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.claims.PlayerChunkClaimHolder;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
+import xaero.pac.common.claims.player.PlayerDimensionClaims;
 import xaero.pac.common.claims.player.impersonation.SimplePlayerClaimImpersonationInfo;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.ClaimingModeLimits;
@@ -39,10 +40,7 @@ import xaero.pac.common.claims.storage.RegionClaimsPaletteStorage;
 import xaero.pac.common.claims.tracker.ClaimsManagerTracker;
 import xaero.pac.common.server.player.config.PlayerConfigOptionSpec;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class ClientClaimsSyncHandler {
@@ -79,12 +77,14 @@ public class ClientClaimsSyncHandler {
 	public void onClaimLimits(
 			Collection<ClaimingModeLimits> limits,
 			int maxClaimDistance,
-			boolean alwaysUseLoadingValues
+			boolean alwaysUseLoadingValues,
+			boolean anchorBasedClaiming
 	) {
 		for (ClaimingModeLimits modeLimit : limits)
 			claimsManager.updateLimits(modeLimit);
 		claimsManager.setMaxClaimDistance(maxClaimDistance);
 		claimsManager.setAlwaysUseLoadingValues(alwaysUseLoadingValues);
+		claimsManager.setAnchorBasedClaiming(anchorBasedClaiming);
 	}
 
 	public void onSubConfigIndices(Collection<ClaimingModeSubInfo> subInfoCollection){
@@ -212,6 +212,18 @@ public class ClientClaimsSyncHandler {
 			} else
 				tracker.onDimensionChange(dimensionId);
 		});
+	}
+
+	public void onClaimAnchors(UUID claimOwner, ResourceLocation dimensionId, List<ChunkPos> anchors, boolean add) {
+		ClientPlayerClaimInfo playerClaimInfo = claimsManager.getPlayerInfo(claimOwner);
+		PlayerDimensionClaims playerDimensionClaims = playerClaimInfo.ensureDimension(dimensionId);
+		if(add){
+			for (ChunkPos anchor : anchors)
+				playerDimensionClaims.addAnchor(anchor);
+			return;
+		}
+		for (ChunkPos anchor : anchors)
+			playerDimensionClaims.removeAnchor(anchor);
 	}
 
 }
