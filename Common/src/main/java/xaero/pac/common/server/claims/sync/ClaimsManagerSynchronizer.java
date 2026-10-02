@@ -401,7 +401,7 @@ public final class ClaimsManagerSynchronizer implements IClaimsManagerSynchroniz
 	}
 
 	@Override
-	public void syncClaimAnchors(ServerPlayer player, UUID claimOwner, ResourceLocation dimensionId, List<ChunkPos> positions, boolean add) {
+	public void syncClaimAnchors(ServerPlayer player, UUID claimOwner, Identifier dimensionId, List<ChunkPos> positions, boolean add) {
 		ServerConfig.ClaimsSyncType syncType = ServerConfig.CONFIG.claimsSynchronization.get();
 		if(syncType == ServerConfig.ClaimsSyncType.NOT_SYNCED)
 			return;

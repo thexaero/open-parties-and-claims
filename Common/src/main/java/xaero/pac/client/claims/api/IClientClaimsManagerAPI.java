@@ -581,7 +581,7 @@ public interface IClientClaimsManagerAPI
 	 * @param z  the Z coordinate of the chunk
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestToAddAnchor(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
+	public void requestToAddAnchor(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests a chunk claiming anchor removal by the local client player using a specified claiming mode.
@@ -595,7 +595,7 @@ public interface IClientClaimsManagerAPI
 	 * @param z  the Z coordinate of the chunk
 	 * @param claimingMode  the claiming mode to use, null for current
 	 */
-	public void requestToRemoveAnchor(@Nonnull ResourceLocation dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
+	public void requestToRemoveAnchor(@Nonnull Identifier dimension, int x, int z, @Nullable IClaimingModeAPI claimingMode);
 
 	/**
 	 * Requests new chunks claims over a specified area by the local client player using a specified claiming mode.

@@ -36,7 +36,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
@@ -329,9 +329,9 @@ public class ClaimsTransferCommand {
 				return 0;
 			}
 			final UUID transferFromId = transferFrom.id();
-			Optional<Map.Entry<ResourceLocation, IPlayerDimensionClaims<IPlayerClaimPosList>>> dimEntryOverAnchorLimit =
+			Optional<Map.Entry<Identifier, IPlayerDimensionClaims<IPlayerClaimPosList>>> dimEntryOverAnchorLimit =
 					fromPlayerInfo.getFullStream().filter(dimEntry -> {
-						ResourceLocation dimensionId = dimEntry.getKey();
+						Identifier dimensionId = dimEntry.getKey();
 						int sourcePlayerAnchorCount = dimEntry.getValue().getAnchors().size();
 						if (sourcePlayerAnchorCount == 0)
 							return false;

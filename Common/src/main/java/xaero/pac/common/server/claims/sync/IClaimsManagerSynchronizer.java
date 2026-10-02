@@ -19,7 +19,7 @@
 package xaero.pac.common.server.claims.sync;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
@@ -37,7 +37,7 @@ public interface IClaimsManagerSynchronizer {
 	public void syncToPlayersClaimOwnerPropertiesUpdate(IServerPlayerClaimInfo<?> playerInfo, Component partyName, boolean partyOwned);
 	public void syncToPlayersSubClaimPropertiesUpdate(IPlayerConfig subConfig);
 	public void syncToPlayersSubClaimPropertiesRemove(IPlayerConfig subConfig);
-	public void syncClaimAnchors(ServerPlayer player, UUID claimOwner, ResourceLocation dimensionId, List<ChunkPos> positions, boolean add);
+	public void syncClaimAnchors(ServerPlayer player, UUID claimOwner, Identifier dimensionId, List<ChunkPos> positions, boolean add);
 	public void syncOnLogin(ServerPlayer player);
 	public void fullClaimsSync(ServerPlayer player, boolean resetFirst);
 	public void onServerTick();

@@ -214,7 +214,7 @@ public class ClientClaimsSyncHandler {
 		});
 	}
 
-	public void onClaimAnchors(UUID claimOwner, ResourceLocation dimensionId, List<ChunkPos> anchors, boolean add) {
+	public void onClaimAnchors(UUID claimOwner, Identifier dimensionId, List<ChunkPos> anchors, boolean add) {
 		ClientPlayerClaimInfo playerClaimInfo = claimsManager.getPlayerInfo(claimOwner);
 		PlayerDimensionClaims playerDimensionClaims = playerClaimInfo.ensureDimension(dimensionId);
 		if(add){

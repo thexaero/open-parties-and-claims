@@ -18,7 +18,7 @@
 
 package xaero.pac.common.claims.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 
 import javax.annotation.Nonnull;
@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 public class ClaimLocation {
 
-	private final ResourceLocation dimId;
+	private final Identifier dimId;
 	private final ChunkPos pos;
 
 	/**
@@ -39,7 +39,7 @@ public class ClaimLocation {
 	 * @param chunkX  the X chunk coordinate
 	 * @param chunkZ  the Z chunk coordinate
 	 */
-	public ClaimLocation(@Nonnull ResourceLocation dimId, int chunkX, int chunkZ) {
+	public ClaimLocation(@Nonnull Identifier dimId, int chunkX, int chunkZ) {
 		this.dimId = dimId;
 		this.pos = new ChunkPos(chunkX, chunkZ);
 	}
@@ -50,7 +50,7 @@ public class ClaimLocation {
 	 * @return the dimension ID of the claim, not null
 	 */
 	@Nonnull
-	public ResourceLocation getDimId() {
+	public Identifier getDimId() {
 		return dimId;
 	}
 

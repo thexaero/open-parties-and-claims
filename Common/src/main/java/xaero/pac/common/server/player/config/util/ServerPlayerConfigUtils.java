@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.player.config.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.api.IPlayerDimensionClaimsAPI;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
@@ -62,7 +62,7 @@ public class ServerPlayerConfigUtils {
 		return claimCount > claimLimit;
 	}
 
-	public static boolean isOverClaimingAnchorLimit(IPlayerConfig config, ResourceLocation dimension){
+	public static boolean isOverClaimingAnchorLimit(IPlayerConfig config, Identifier dimension){
 		if(config.getType().isGlobal())
 			return false;
 		IPlayerConfigManager manager = config.getManager();
@@ -71,7 +71,7 @@ public class ServerPlayerConfigUtils {
 		return isOverClaimingAnchorLimit(config, dimension, playerDimensionClaims);
 	}
 
-	private static boolean isOverClaimingAnchorLimit(IPlayerConfig config, ResourceLocation dimension, IPlayerDimensionClaimsAPI playerDimensionClaims){
+	private static boolean isOverClaimingAnchorLimit(IPlayerConfig config, Identifier dimension, IPlayerDimensionClaimsAPI playerDimensionClaims){
 		IPlayerConfigManager manager = config.getManager();
 		UUID playerId = config.getPlayerId();
 		int anchorCount = playerDimensionClaims == null ? 0 : playerDimensionClaims.getAnchors().size();
@@ -79,7 +79,7 @@ public class ServerPlayerConfigUtils {
 		return anchorCount > anchorLimit;
 	}
 
-	public static boolean isOverEitherClaimingLimit(IPlayerConfig config, ResourceLocation dimension){
+	public static boolean isOverEitherClaimingLimit(IPlayerConfig config, Identifier dimension){
 		if(config.getType().isGlobal())
 			return false;
 		if(isOverClaimLimit(config))

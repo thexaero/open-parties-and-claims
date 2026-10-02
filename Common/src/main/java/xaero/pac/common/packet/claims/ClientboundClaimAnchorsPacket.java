@@ -22,7 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.common.server.lazypacket.LazyPacket;
@@ -40,11 +40,11 @@ public class ClientboundClaimAnchorsPacket extends LazyPacket<ClientboundClaimAn
 	public static final Decoder DECODER = new Decoder();
 
 	private final UUID claimOwner;
-	private final ResourceLocation dimensionId;
+	private final Identifier dimensionId;
 	private final List<ChunkPos> anchors;
 	private final boolean add;
 
-	public ClientboundClaimAnchorsPacket(UUID claimOwner, ResourceLocation dimensionId, List<ChunkPos> anchors, boolean add) {
+	public ClientboundClaimAnchorsPacket(UUID claimOwner, Identifier dimensionId, List<ChunkPos> anchors, boolean add) {
 		super();
 		this.claimOwner = claimOwner;
 		this.dimensionId = dimensionId;
@@ -86,7 +86,7 @@ public class ClientboundClaimAnchorsPacket extends LazyPacket<ClientboundClaimAn
 				if(nbt == null)
 					return null;
 				UUID claimOwner = XaeroNbtUtil.getUUID(nbt, "o").orElse(null);
-				ResourceLocation dimensionId = ResourceLocation.parse(nbt.getStringOr("d", ""));
+				Identifier dimensionId = Identifier.parse(nbt.getStringOr("d", ""));
 				ListTag anchorListTag = nbt.getListOrEmpty("l");
 				if(anchorListTag.size() > MAX_ANCHORS) {
 					OpenPartiesAndClaims.LOGGER.info("Received claim anchor list is too large!");

@@ -18,7 +18,7 @@
 
 package xaero.pac.common.server.claims.player;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.ClaimingAnchor;
 import xaero.pac.common.claims.player.PlayerChunkClaim;
@@ -33,7 +33,7 @@ import java.util.UUID;
 
 public class ServerPlayerDimensionClaims extends PlayerDimensionClaims {
 
-	public ServerPlayerDimensionClaims(UUID playerId, ResourceLocation dimension, Map<PlayerChunkClaim, PlayerClaimPosList> claimLists, Map<ChunkPos, ClaimingAnchor> anchors, ServerClaimsManager claimsManager) {
+	public ServerPlayerDimensionClaims(UUID playerId, Identifier dimension, Map<PlayerChunkClaim, PlayerClaimPosList> claimLists, Map<ChunkPos, ClaimingAnchor> anchors, ServerClaimsManager claimsManager) {
 		super(playerId, dimension, claimLists, anchors, claimsManager);
 	}
 

@@ -121,7 +121,7 @@ public interface IPlayerClaimInfoAPI {
 	 * @return  the claim info of the dimension, not null
 	 */
 	@Nonnull
-	public IPlayerDimensionClaimsAPI ensureDimension(@Nonnull ResourceLocation id);
+	public IPlayerDimensionClaimsAPI ensureDimension(@Nonnull Identifier id);
 
 	/**
 	 * Gets whether these claims are party-owned.

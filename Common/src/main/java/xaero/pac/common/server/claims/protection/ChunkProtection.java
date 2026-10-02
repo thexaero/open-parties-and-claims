@@ -2582,10 +2582,10 @@ public class ChunkProtection
 			return false;
 		IPlayerConfigManager configManager = serverData.getPlayerConfigManager();
 		IPlayerConfig claimOwnerConfig = configManager.getLoadedConfig(claimOwnerId);
-		boolean result = ServerPlayerConfigUtils.isOverEitherClaimingLimit(claimOwnerConfig, player.level().dimension().location());
+		boolean result = ServerPlayerConfigUtils.isOverEitherClaimingLimit(claimOwnerConfig, player.level().dimension().identifier());
 		if(!result) {
 			IPlayerConfig accessorConfig = configManager.getLoadedConfig(accessor.getUUID());
-			result = ServerPlayerConfigUtils.isOverEitherClaimingLimit(accessorConfig, player.level().dimension().location());
+			result = ServerPlayerConfigUtils.isOverEitherClaimingLimit(accessorConfig, player.level().dimension().identifier());
 		}
 		if(!result)
 			return false;

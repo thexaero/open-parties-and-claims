@@ -60,7 +60,7 @@ public abstract class PlayerClaimInfoManager
 			UUID playerId,
 			Map<Identifier, PlayerDimensionClaims> claims
 	);
-	
+
 	public boolean hasInfo(UUID playerId) {
 		return storage.containsKey(playerId);
 	}

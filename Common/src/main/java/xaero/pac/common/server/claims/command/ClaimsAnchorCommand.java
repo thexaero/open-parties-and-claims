@@ -25,7 +25,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
@@ -164,7 +164,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 			}
 			UUID sourceUUID = player == null ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 			boolean impersonating = !another && !contextPlayerId.equals(sourceUUID);
-			ResourceLocation fromDimension = player == null ? world.dimension().location() : player.level().dimension().location();
+			Identifier fromDimension = player == null ? world.dimension().identifier() : player.level().dimension().identifier();
 			int fromX = player == null ? chunkX : player.chunkPosition().x;
 			int fromZ = player == null ? chunkZ : player.chunkPosition().z;
 
@@ -181,7 +181,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 					);
 				}
 				result = claimsManager.tryAnchor(
-						world.dimension().location(), claimPlayerId, fromDimension, fromX, fromZ,
+						world.dimension().identifier(), claimPlayerId, fromDimension, fromX, fromZ,
 						chunkX, chunkZ, shouldApply, shouldForce, futureResultListener
 				);
 
@@ -195,9 +195,9 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 				}
 
 				if(shouldApply)
-					context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(player, "gui.xaero_claims_anchored_at", chunkX, chunkZ, world.dimension().location().toString()), true);
+					context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(player, "gui.xaero_claims_anchored_at", chunkX, chunkZ, world.dimension().identifier().toString()), true);
 				else
-					context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(player, "gui.xaero_claims_began_unanchoring_at", chunkX, chunkZ, world.dimension().location().toString()), true);
+					context.getSource().sendSuccess(adaptiveLocalizer.supplierFor(player, "gui.xaero_claims_began_unanchoring_at", chunkX, chunkZ, world.dimension().identifier().toString()), true);
 				return 1;
 			} finally {
 				if(result != null && player != null) {
@@ -205,7 +205,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 					if(result.getCustomReason() != null)
 						customReasons.add(result.getCustomReason());
 					((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
-							new AreaClaimResult(Sets.newHashSet(result.getResultType()), customReasons, world.dimension().location(), chunkX, chunkZ, chunkX, chunkZ),
+							new AreaClaimResult(Sets.newHashSet(result.getResultType()), customReasons, world.dimension().identifier(), chunkX, chunkZ, chunkX, chunkZ),
 							player);
 				}
 			}
