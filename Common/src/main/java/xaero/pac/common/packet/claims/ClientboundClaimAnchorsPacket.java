@@ -66,8 +66,8 @@ public class ClientboundClaimAnchorsPacket extends LazyPacket<ClientboundClaimAn
 		for (int i = 0; i < this.anchors.size(); i++) {
 			ChunkPos anchorEntry = this.anchors.get(i);
 			CompoundTag anchorTag = new CompoundTag();
-			anchorTag.putInt("x", anchorEntry.x);
-			anchorTag.putInt("z", anchorEntry.z);
+			anchorTag.putInt("x", anchorEntry.x());
+			anchorTag.putInt("z", anchorEntry.z());
 			anchorListTag.add(anchorTag);
 		}
 		nbt.put("l", anchorListTag);

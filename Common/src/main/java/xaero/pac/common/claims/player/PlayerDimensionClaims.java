@@ -163,7 +163,7 @@ public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaim
 		ClaimingAnchor anchor = new ClaimingAnchor(pos);
 		anchors.put(pos, anchor);
 		anchorLinkedChain.add(anchor);
-		claimsManager.getTracker().onChunkChange(dimension, pos.x, pos.z, claimsManager.get(dimension, pos.x, pos.z));
+		claimsManager.getTracker().onChunkChange(dimension, pos.x(), pos.z(), claimsManager.get(dimension, pos.x(), pos.z()));
 		return true;
 	}
 
@@ -171,7 +171,7 @@ public class PlayerDimensionClaims implements IPlayerDimensionClaims<PlayerClaim
 		ClaimingAnchor anchor = anchors.remove(pos);
 		if(anchor != null){
 			anchorLinkedChain.remove(anchor);
-			claimsManager.getTracker().onChunkChange(dimension, pos.x, pos.z, claimsManager.get(dimension, pos.x, pos.z));
+			claimsManager.getTracker().onChunkChange(dimension, pos.x(), pos.z(), claimsManager.get(dimension, pos.x(), pos.z()));
 			return true;
 		}
 		return false;

@@ -92,8 +92,8 @@ public class PlayerDimensionClaimsNbtSerializer {
 		ListTag anchorListTag = new ListTag();
 		data.getAnchors().forEach(anchorPos -> {
 			CompoundTag anchorTag = new CompoundTag();
-			anchorTag.putInt("x", anchorPos.x);
-			anchorTag.putInt("z", anchorPos.z);
+			anchorTag.putInt("x", anchorPos.x());
+			anchorTag.putInt("z", anchorPos.z());
 			anchorListTag.add(anchorTag);
 		});
 		nbt.put("anchors", anchorListTag);

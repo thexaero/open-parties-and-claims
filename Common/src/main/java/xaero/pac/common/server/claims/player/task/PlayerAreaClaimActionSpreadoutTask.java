@@ -178,16 +178,16 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 					for (ChunkPos anchor : dimensionClaims.getAnchors()) {
 						if(anchorFilter != null && !anchorFilter.test(anchor))
 							continue;
-						int anchorLeft = anchor.x - anchorRange;
+						int anchorLeft = anchor.x() - anchorRange;
 						if(anchorLeft > effectiveRight)
 							continue;
-						int anchorRight = anchor.x + anchorRange;
+						int anchorRight = anchor.x() + anchorRange;
 						if(anchorRight < effectiveLeft)
 							continue;
-						int anchorTop = anchor.z - anchorRange;
+						int anchorTop = anchor.z() - anchorRange;
 						if(anchorTop > effectiveBottom)
 							continue;
-						int anchorBottom = anchor.z + anchorRange;
+						int anchorBottom = anchor.z() + anchorRange;
 						if(anchorBottom < effectiveTop)
 							continue;
 						overlappingAnchors.add(anchor);

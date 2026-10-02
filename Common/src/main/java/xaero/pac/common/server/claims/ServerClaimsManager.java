@@ -209,16 +209,16 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	public boolean addAnchor(@Nonnull Identifier dimension, @Nonnull ChunkPos pos, @Nonnull UUID playerId) {
-		PlayerChunkClaim currentClaim = get(dimension, pos.x, pos.z);
+		PlayerChunkClaim currentClaim = get(dimension, pos.x(), pos.z());
 		if(currentClaim == null || !currentClaim.getPlayerId().equals(playerId))
-			currentClaim = claim(dimension, playerId, -1, pos.x, pos.z, false);
+			currentClaim = claim(dimension, playerId, -1, pos.x(), pos.z(), false);
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		return playerClaimInfo.ensureDimension(dimension).addAnchor(pos);
 	}
 
 	@Override
 	public boolean removeAnchor(@Nonnull Identifier dimension, @Nonnull ChunkPos pos, @Nonnull UUID playerId) {
-		PlayerChunkClaim currentClaim = get(dimension, pos.x, pos.z);
+		PlayerChunkClaim currentClaim = get(dimension, pos.x(), pos.z());
 		if(currentClaim == null || !currentClaim.getPlayerId().equals(playerId))
 			return false;
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);

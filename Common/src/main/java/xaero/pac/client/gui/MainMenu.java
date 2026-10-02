@@ -350,7 +350,7 @@ public class MainMenu extends XPACScreen {
 	private void onAnchorButton(Button b) {
 		IClientClaimsManager<?,?,?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		ChunkPos chunkPos = minecraft.player.chunkPosition();
-		IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().identifier(), chunkPos.x, chunkPos.z);
+		IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().identifier(), chunkPos.x(), chunkPos.z());
 		if(wouldAnchor(chunkPos, currentClaim)) {
 			CommandUtil.sendCommand(minecraft, ANCHOR_COMMAND.getString().substring(1));
 			onClose();

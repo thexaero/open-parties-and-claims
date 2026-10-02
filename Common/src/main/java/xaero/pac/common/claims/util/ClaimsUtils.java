@@ -24,9 +24,9 @@ public class ClaimsUtils {
 
 	public static boolean withinAnchorDistance(Iterable<ChunkPos> anchors, int anchorRange, int x, int z){
 		for (ChunkPos anchor : anchors) {
-			if(x > anchor.x + anchorRange || x < anchor.x - anchorRange)
+			if(x > anchor.x() + anchorRange || x < anchor.x() - anchorRange)
 				continue;
-			if(z > anchor.z + anchorRange || z < anchor.z - anchorRange)
+			if(z > anchor.z() + anchorRange || z < anchor.z() - anchorRange)
 				continue;
 			return true;
 		}

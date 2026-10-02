@@ -60,7 +60,7 @@ public class ClaimLocation {
 	 * @return the X chunk coordinate of the claim
 	 */
 	public int getChunkX() {
-		return pos.x;
+		return pos.x();
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class ClaimLocation {
 	 * @return the Z chunk coordinate of the claim
 	 */
 	public int getChunkZ() {
-		return pos.z;
+		return pos.z();
 	}
 
 	/**

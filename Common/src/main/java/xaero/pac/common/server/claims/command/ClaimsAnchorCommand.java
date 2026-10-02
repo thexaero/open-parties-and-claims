@@ -121,8 +121,8 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_anchor_command_unknown_pos")));
 					return 0;
 				}
-				chunkX = player.chunkPosition().x;
-				chunkZ = player.chunkPosition().z;
+				chunkX = player.chunkPosition().x();
+				chunkZ = player.chunkPosition().z();
 			}
 			ServerPlayerData playerData = player == null ? null : (ServerPlayerData) ServerPlayerDataAPI.from(player);
 			ClaimingMode finalMode = mode == null ?
@@ -165,8 +165,8 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 			UUID sourceUUID = player == null ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 			boolean impersonating = !another && !contextPlayerId.equals(sourceUUID);
 			Identifier fromDimension = player == null ? world.dimension().identifier() : player.level().dimension().identifier();
-			int fromX = player == null ? chunkX : player.chunkPosition().x;
-			int fromZ = player == null ? chunkZ : player.chunkPosition().z;
+			int fromX = player == null ? chunkX : player.chunkPosition().x();
+			int fromZ = player == null ? chunkZ : player.chunkPosition().z();
 
 			ClaimResult<?> result = null;
 			try {
