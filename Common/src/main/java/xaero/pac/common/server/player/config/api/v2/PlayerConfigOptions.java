@@ -70,6 +70,14 @@ public class PlayerConfigOptions {
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Integer> BONUS_CHUNK_FORCELOADS;
 	/**
+	 * The bonus claiming anchors on top of the normal limit.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> BONUS_CLAIMING_ANCHORS;
+	/**
+	 * The bonus claiming anchor range on top of the normal range.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Integer> BONUS_CLAIMING_ANCHOR_RANGE;
+	/**
 	 * The display name of the player's claimed chunks.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> CLAIMS_NAME;
@@ -554,6 +562,32 @@ public class PlayerConfigOptions {
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setOverridable(false)
 				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleBonusForceloads)
+				.build(allOptions);
+		BONUS_CLAIMING_ANCHORS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
+				.setConfigTypeFilter(
+						t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER ||
+								t == PlayerConfigType.PARTY_CLAIMS || t == PlayerConfigType.WILDERNESS
+				)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusAnchors")
+				.setDefaultValue(0)
+				.setComment("The number of additional claiming anchors that you can make on top of the normal limit. " +
+						"The wilderness (sub-)config bonus gets added to (or subtracted from) every player.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOnlyDimensionOverridable(true)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleAbstractBonusClaims)
+				.build(allOptions);
+		BONUS_CLAIMING_ANCHOR_RANGE = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.INTEGER)
+				.setConfigTypeFilter(
+						t -> t == PlayerConfigType.PLAYER || t == PlayerConfigType.DEFAULT_PLAYER ||
+								t == PlayerConfigType.PARTY_CLAIMS || t == PlayerConfigType.WILDERNESS
+				)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.bonusAnchorRange")
+				.setDefaultValue(0)
+				.setComment("The additional range to add to (or subtract from) the base claiming anchor range at which player chunk claims " +
+						"could be made. The wilderness (sub-)config bonus gets added to (or subtracted from) every player.")
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOnlyDimensionOverridable(true)
+				.setServerChangeHandler(PlayerConfigCommonChangeHandlers::handleAbstractBonusClaims)
 				.build(allOptions);
 		LAST_PERMISSION_VALUES = PlayerConfigOptionSpec.FinalBuilder
 				.begin(PlayerConfigOptionValueTypes.getListType(PlayerConfigOptionValueTypes.STRING))

@@ -287,7 +287,8 @@ public class ConfigSetCommand {
 				return 0;
 			}
 			if(ServerConfig.CONFIG.claimsEnabled.get()) {
-				if(!isOP && option != PlayerConfigOptions.BONUS_CHUNK_CLAIMS && ServerPlayerConfigUtils.isOverClaimLimit(effectivePlayerConfig)) {
+				if(!isOP && option != PlayerConfigOptions.BONUS_CHUNK_CLAIMS && option != PlayerConfigOptions.BONUS_CLAIMING_ANCHORS &&
+						ServerPlayerConfigUtils.isOverEitherClaimingLimit(effectivePlayerConfig)) {
 					context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_claim_count_over_limit"));
 					return 0;
 				}

@@ -218,6 +218,8 @@ public class PlayerConfig
 	}
 	
 	public ServerPlayer getOnlinePlayer() {
+		if(playerId == null)
+			return null;
 		PlayerList serverPlayers = manager.getServer().getPlayerList();
 		return serverPlayers.getPlayer(playerId);
 	}

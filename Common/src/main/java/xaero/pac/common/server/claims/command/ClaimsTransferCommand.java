@@ -35,6 +35,8 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
@@ -242,6 +244,60 @@ public class ClaimsTransferCommand {
 				startTransfer(transferFrom, transferTo, fromConfig, toConfig, originalRequesterId, serverData);
 				return 1;
 			}
+			if(fromPlayerInfo.isAreaClaimTaskInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						callerPlayer,
+						accept ?
+								"gui.xaero_claims_area_action_task_in_progress_other" :
+								"gui.xaero_claims_area_action_task_in_progress"
+				));
+				return 0;
+			}
+			if(toPlayerInfo.isAreaClaimTaskInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						callerPlayer,
+						accept ?
+								"gui.xaero_claims_area_action_task_in_progress" :
+								"gui.xaero_claims_area_action_task_in_progress_other"
+				));
+				return 0;
+			}
+			if(fromPlayerInfo.isReplacementInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						callerPlayer, accept ?
+								"gui.xaero_claims_replacement_in_progress_other" :
+								"gui.xaero_claims_replacement_in_progress"
+						)
+				);
+				return 0;
+			}
+			if(toPlayerInfo.isReplacementInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						callerPlayer, accept ?
+								"gui.xaero_claims_replacement_in_progress" :
+								"gui.xaero_claims_replacement_in_progress_other"
+						)
+				);
+				return 0;
+			}
+			if(fromPlayerInfo.isTransferInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+								callerPlayer, accept ?
+										"gui.xaero_claims_transfer_in_progress_other" :
+										"gui.xaero_claims_transfer_in_progress"
+						)
+				);
+				return 0;
+			}
+			if(toPlayerInfo.isTransferInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+								callerPlayer, accept ?
+										"gui.xaero_claims_transfer_in_progress" :
+										"gui.xaero_claims_transfer_in_progress_other"
+						)
+				);
+				return 0;
+			}
 			ServerPlayer targetPlayer = serverData.getServer().getPlayerList().getPlayer(transferTo.id());
 			if(targetPlayer == null){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_online_player_not_found"));
@@ -266,11 +322,36 @@ public class ClaimsTransferCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_target_sub_limit" + errorSuffix, availableSubCount, fromConfig.getSubCount()));
 				return 0;
 			}
-			int availableTargetClaims = claimsManager.getPlayerFullClaimLimit(transferTo.id()) - toPlayerInfo.getClaimCount();
+			final UUID transferToId = transferTo.id();
+			int availableTargetClaims = claimsManager.getPlayerFullClaimLimit(transferToId) - toPlayerInfo.getClaimCount();
 			if(fromPlayerInfo.getClaimCount() > availableTargetClaims){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_target_claim_limit" + errorSuffix, availableTargetClaims, fromPlayerInfo.getClaimCount()));
 				return 0;
 			}
+			final UUID transferFromId = transferFrom.id();
+			Optional<Map.Entry<ResourceLocation, IPlayerDimensionClaims<IPlayerClaimPosList>>> dimEntryOverAnchorLimit =
+					fromPlayerInfo.getFullStream().filter(dimEntry -> {
+						ResourceLocation dimensionId = dimEntry.getKey();
+						int sourcePlayerAnchorCount = dimEntry.getValue().getAnchors().size();
+						if (sourcePlayerAnchorCount == 0)
+							return false;
+						IPlayerDimensionClaims<?> targetPlayerDimensionClaims = toPlayerInfo.getDimension(dimensionId);
+						int targetPlayerAnchorCount = targetPlayerDimensionClaims == null ? 0 : targetPlayerDimensionClaims.getAnchors().size();
+						int availableTargetAnchors = claimsManager.getPlayerFullAnchorLimit(transferToId, dimensionId) - targetPlayerAnchorCount;
+						if(sourcePlayerAnchorCount > availableTargetAnchors) {
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_target_anchor_limit" + errorSuffix, availableTargetAnchors, dimensionId.toString(), sourcePlayerAnchorCount));
+							return true;
+						}
+						int sourcePlayerAnchorRange = claimsManager.getPlayerFullAnchorRange(transferFromId, dimensionId);
+						int targetPlayerAnchorRange = claimsManager.getPlayerFullAnchorRange(transferToId, dimensionId);
+						if(sourcePlayerAnchorRange > targetPlayerAnchorRange){
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_target_anchor_range_limit" + errorSuffix, targetPlayerAnchorRange, dimensionId.toString(), sourcePlayerAnchorRange));
+							return true;
+						}
+						return false;
+					}).findFirst();
+			if(dimEntryOverAnchorLimit.isPresent())
+				return 0;
 			if(accept){
 				startTransfer(transferFrom, transferTo, fromConfig, toConfig, originalRequesterId, serverData);
 				return 1;
@@ -280,7 +361,7 @@ public class ClaimsTransferCommand {
 			Component transferToName = Component.literal(transferTo.name()).withStyle(ChatFormatting.GREEN);
 			callerPlayer.sendSystemMessage(adaptiveLocalizer.getFor(callerPlayer, "gui.xaero_claims_transfer_request_sent", transferFromName, transferToName));
 			playerData.setClaimTransferRequestSourcePlayerProfile(transferFrom);
-			playerData.setClaimTransferRequestTargetPlayerId(transferTo.id());
+			playerData.setClaimTransferRequestTargetPlayerId(transferToId);
 			playerData.setClaimTransferRequestTime(System.currentTimeMillis());
 			Component acceptComponent = adaptiveLocalizer.getFor(targetPlayer, "gui.xaero_claims_transfer_target_message", callerName, transferFromName, transferToName);
 			acceptComponent.getSiblings().add(Component.literal(" "));

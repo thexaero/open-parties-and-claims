@@ -53,6 +53,7 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 			ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType,
 			boolean dynamic,
 			boolean overridable,
+			boolean isOnlyDimensionOverridable,
 			boolean forcedPlayerConfigurable,
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<Integer> serverChangeHandler,
@@ -65,9 +66,10 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 				comment, translation, translationArgs, commentTranslation,
 				commentTranslationArgs, category,
 				serverSideValidator, clientSideValidator, tooltipPrefix,
-				configTypeFilter, syncOptionType, dynamic, overridable,
-				forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler,
-				syncable, commandSuggestionGetter, affectsClaimsVisually
+				configTypeFilter, syncOptionType, dynamic, overridable, isOnlyDimensionOverridable,
+				forcedPlayerConfigurable, directlyConfigurable,
+				serverChangeHandler, syncable, commandSuggestionGetter,
+				affectsClaimsVisually
 		);
 	}
 
@@ -102,8 +104,8 @@ public final class PlayerConfigHexOptionSpec extends PlayerConfigOptionSpec<Inte
 					commentTranslation, commentTranslationArgs, category,
 					serverSideValidator, clientSideValidator, tooltipPrefix,
 					configTypeFilter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.HEX,
-					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
-					serverChangeHandler, syncable, commandSuggestionGetter,
+					dynamic, overridable, onlyDimensionOverridable, forcedPlayerConfigurable,
+					directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter,
 					affectsClaimsVisually
 			);
 		}

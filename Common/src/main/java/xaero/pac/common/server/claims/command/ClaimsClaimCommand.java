@@ -39,13 +39,13 @@ public class ClaimsClaimCommand extends AbstractChunkCommand {
 				mode == null ? null : mode.getId(),
 				"claim", "unclaim",
 				add ? "with" : null, "sub-id",
-				true
+				true, false
 		);
 		this.mode = mode;
 	}
 
 	@Override
-	protected Command<CommandSourceStack> createChunkCommand(boolean shouldApply, boolean another, boolean opForce) {
+	protected Command<CommandSourceStack> createChunkCommand(boolean shouldApply, boolean another, boolean opForce, boolean confirmed) {
 		return ClaimsClaimCommands.createClaimCommand(shouldApply, mode, another, opForce);
 	}
 

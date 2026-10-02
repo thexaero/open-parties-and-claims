@@ -57,6 +57,7 @@ public final class PlayerConfigPlayerGroupOptionSpec extends PlayerConfigListIte
 			ClientboundPlayerConfigDynamicOptionsPacket.OptionType syncOptionType,
 			boolean dynamic,
 			boolean overridable,
+			boolean onlyDimensionOverridable,
 			boolean forcedPlayerConfigurable,
 			boolean directlyConfigurable,
 			IPlayerConfigChangeHandler<String> serverChangeHandler,
@@ -69,9 +70,9 @@ public final class PlayerConfigPlayerGroupOptionSpec extends PlayerConfigListIte
 				comment, translation, translationArgs, commentTranslation,
 				commentTranslationArgs, category, serverSideValidator,
 				clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter,
-				clientSideListGetter, syncOptionType, dynamic, overridable, forcedPlayerConfigurable,
-				directlyConfigurable, serverChangeHandler, syncable, commandSuggestionGetter,
-				affectsClaimsVisually
+				clientSideListGetter, syncOptionType, dynamic, overridable, onlyDimensionOverridable,
+				forcedPlayerConfigurable, directlyConfigurable, serverChangeHandler, syncable,
+				commandSuggestionGetter, affectsClaimsVisually
 		);
 	}
 
@@ -104,7 +105,7 @@ public final class PlayerConfigPlayerGroupOptionSpec extends PlayerConfigListIte
 					commentTranslationArgs, category, serverSideValidator,
 					clientSideValidator, tooltipPrefix, configTypeFilter, serverSideListGetter,
 					clientSideListGetter, ClientboundPlayerConfigDynamicOptionsPacket.OptionType.GROUP_ITERATION,
-					dynamic, overridable, forcedPlayerConfigurable, directlyConfigurable,
+					dynamic, overridable, onlyDimensionOverridable, forcedPlayerConfigurable, directlyConfigurable,
 					serverChangeHandler, syncable, commandSuggestionGetter, affectsClaimsVisually
 			);
 		}

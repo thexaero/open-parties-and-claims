@@ -86,6 +86,16 @@ public final class PlayerClaimInfoManagerIO<S>
 	}
 
 	@Override
+	protected void saveFile(ServerPlayerClaimInfo object, Path filePath) {
+		if(manager.isSavePostponed(object)) {
+			//already removed from the main set, readding here should put it in the toSaveLater set
+			manager.getToSave().add(object);
+			return;
+		}
+		super.saveFile(object, filePath);
+	}
+
+	@Override
 	protected Path getFilePath(ServerPlayerClaimInfo object, String fileName) {
 		return claimsFolderPath.resolve(fileName + this.fileExtension);
 	}
@@ -118,18 +128,26 @@ public final class PlayerClaimInfoManagerIO<S>
 		loadedObject.getFullStream().forEach(
 				e -> {
 					ResourceLocation dim = e.getKey();
-					PlayerDimensionClaims dimensionClaims = e.getValue();
+					PlayerDimensionClaims loadedDimensionClaims = e.getValue();
 					BiConsumer<PlayerChunkClaim, ChunkPos> claimConsumer = (claim, pos) -> {
 						serverClaimsManager.claim(dim, loadedObject.getPlayerId(), claim.getSubConfigIndex(), pos.x,
-								pos.z, claim.isForceloadable());
+								pos.z, claim.isForceloadable());//if there's another claim there already it will override it and remove the anchor if it exists
 					};
-					dimensionClaims.getTypedStream().forEach(posList -> {
+					loadedDimensionClaims.getTypedStream().forEach(posList -> {
 						PlayerChunkClaim claim = posList.getClaimState();
 						if(claim.getSubConfigIndex() != -1 && !playerConfig.subConfigExists(claim.getSubConfigIndex()))
 							claim = new PlayerChunkClaim(claim.getPlayerId(), -1, claim.isForceloadable(), 0);//converting sub-claim to main claim
 						final PlayerChunkClaim finalClaim = claim;
 						posList.getStream().forEach(pos -> claimConsumer.accept(finalClaim, pos));
 					});
+					for (ChunkPos anchor : loadedDimensionClaims.getAnchors()) {
+						PlayerChunkClaim claimAtAnchorPos = serverClaimsManager.get(dim, anchor);
+						if(claimAtAnchorPos == null)//can't have an anchor in an unclaimed chunk
+							continue;
+						if(!loadedObject.getPlayerId().equals(claimAtAnchorPos.getPlayerId()))//can't have an anchor in another player's claim
+							continue;
+						playerInfo.ensureDimension(dim).addAnchor(anchor);
+					}
 				}
 			);
 	}
