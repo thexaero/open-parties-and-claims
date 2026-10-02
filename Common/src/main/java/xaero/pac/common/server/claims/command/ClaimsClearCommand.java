@@ -173,9 +173,27 @@ public class ClaimsClearCommand {
 			}
 			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>
 					claimsManager = serverData.getServerClaimsManager();
-			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> playerInfo =
+			IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> targetPlayerInfo =
 					claimsManager.getPlayerInfo(targetProfile.getId());
-			if(playerInfo.getClaimCount() == 0){
+			if(targetPlayerInfo.isAreaClaimTaskInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						casterPlayer, "gui.xaero_claims_area_action_task_in_progress")
+				);
+				return 0;
+			}
+			if(targetPlayerInfo.isReplacementInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						casterPlayer, "gui.xaero_claims_replacement_in_progress")
+				);
+				return 0;
+			}
+			if(targetPlayerInfo.isTransferInProgress()){
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(
+						casterPlayer, "gui.xaero_claims_transfer_in_progress")
+				);
+				return 0;
+			}
+			if(targetPlayerInfo.getClaimCount() == 0){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(
 						casterPlayer, effectivelySelf ?
 								"gui.xaero_claims_clear_no_claims_self" :
@@ -185,11 +203,23 @@ public class ClaimsClearCommand {
 			}
 			Component targetName = Component.literal(targetProfile.getName()).withStyle(ChatFormatting.GREEN);
 			context.getSource().sendSuccess(() -> Component.translatable("gui.xaero_claims_clear_start", targetName), true);
-			playerInfo.addReplacementTask(
+			targetPlayerInfo.addReplacementTask(
 					PlayerClaimClearSpreadoutTask.Builder.begin()
 							.setCallerUUID(casterPlayerProfile.getId())
 							.setServer(serverData.getServer())
 							.setTargetPlayerProfile(targetProfile)
+							.setTargetPlayerInfo(targetPlayerInfo)
+							.setIncludeAnchors(false)//non-anchors first so that the server shutting down mid-way doesn't leave unanchored claims
+							.build(),
+					serverData
+			);
+			targetPlayerInfo.addReplacementTask(
+					PlayerClaimClearSpreadoutTask.Builder.begin()
+							.setCallerUUID(casterPlayerProfile.getId())
+							.setServer(serverData.getServer())
+							.setTargetPlayerProfile(targetProfile)
+							.setTargetPlayerInfo(targetPlayerInfo)
+							.setIncludeAnchors(true)
 							.build(),
 					serverData
 			);

@@ -23,6 +23,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -38,19 +39,28 @@ import xaero.pac.common.server.parties.party.IServerParty;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
 
 import java.util.UUID;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSpreadoutTask {
 
-	private PlayerClaimClearSpreadoutTask(IPlayerClaimReplaceSpreadoutTaskCallback callback, UUID claimOwnerId, Predicate<IPlayerChunkClaim> matcher, IPlayerChunkClaim with) {
-		super(callback, claimOwnerId, matcher, with);
+	private PlayerClaimClearSpreadoutTask(
+			IPlayerClaimReplaceSpreadoutTaskCallback callback,
+			UUID claimOwnerId,
+			Predicate<IPlayerChunkClaim> matcher,
+			BiPredicate<IPlayerDimensionClaims<IPlayerClaimPosList>, ChunkPos> posFilter,
+			IPlayerChunkClaim with
+	) {
+		super(callback, claimOwnerId, matcher, posFilter, with);
 	}
 
 	public static final class Builder {
 
 		private MinecraftServer server;
+		private IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> targetPlayerInfo;
 		private GameProfile targetPlayerProfile;
 		private UUID callerUUID;
+		private boolean includeAnchors;
 
 		private Builder(){}
 
@@ -58,11 +68,18 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 			setServer(null);
 			setTargetPlayerProfile(null);
 			setCallerUUID(null);
+			setTargetPlayerInfo(null);
+			setIncludeAnchors(false);
 			return this;
 		}
 
 		public Builder setServer(MinecraftServer server) {
 			this.server = server;
+			return this;
+		}
+
+		public Builder setTargetPlayerInfo(IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>> targetPlayerInfo) {
+			this.targetPlayerInfo = targetPlayerInfo;
 			return this;
 		}
 
@@ -76,13 +93,22 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 			return this;
 		}
 
+		public Builder setIncludeAnchors(boolean includeAnchors) {
+			this.includeAnchors = includeAnchors;
+			return this;
+		}
+
 		public PlayerClaimClearSpreadoutTask build(){
-			if(server == null || targetPlayerProfile == null)
+			if(server == null || targetPlayerProfile == null || targetPlayerInfo == null)
 				throw new IllegalStateException();
-			Callback callback = new Callback(server, callerUUID, targetPlayerProfile);
+			Callback callback = new Callback(server, callerUUID, targetPlayerProfile, includeAnchors);
 			UUID claimOwnerId = targetPlayerProfile.getId();
 			Predicate<IPlayerChunkClaim> matcher = c -> true;
-			return new PlayerClaimClearSpreadoutTask(callback, claimOwnerId, matcher, null);
+			return new PlayerClaimClearSpreadoutTask(
+					callback, claimOwnerId, matcher,
+					(dim, pos) -> includeAnchors || !dim.getAnchors().contains(pos),
+					null
+			);
 		}
 
 		public static Builder begin(){
@@ -96,11 +122,13 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 		private final MinecraftServer server;
 		private final UUID callerUUID;
 		private final GameProfile targetPlayerProfile;
+		private final boolean includeAnchors;
 
-		public Callback(MinecraftServer server, UUID callerUUID, GameProfile targetPlayerProfile) {
+		public Callback(MinecraftServer server, UUID callerUUID, GameProfile targetPlayerProfile, boolean includeAnchors) {
 			this.server = server;
 			this.callerUUID = callerUUID;
 			this.targetPlayerProfile = targetPlayerProfile;
+			this.includeAnchors = includeAnchors;
 		}
 
 		@Override
@@ -109,6 +137,8 @@ public final class PlayerClaimClearSpreadoutTask extends PlayerClaimReplaceSprea
 
 		@Override
 		public void onFinish(ResultType resultType, int tickCount, int totalCount, IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData) {
+			if(!includeAnchors)//anchors are cleared last
+				return;
 			ServerPlayer onlinePlayer = callerUUID == null ? null : server.getPlayerList().getPlayer(callerUUID);
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if (resultType.isSuccess()) {
