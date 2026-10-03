@@ -433,7 +433,13 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return new ClaimResult<>(null, ClaimResult.Type.ANCHORS_NOT_USED);
 		if(Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID) || Objects.equals(playerId, PlayerConfig.EXPIRED_CLAIM_UUID))
 			return new ClaimResult<>(null, ClaimResult.Type.NO_SERVER_ANCHORS);
-		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
+		final UUID anchorOwnerId;
+		PlayerChunkClaim currentClaim = get(dimension, x, z);
+		if(!add && force && currentClaim != null)
+			anchorOwnerId = currentClaim.getPlayerId();
+		else
+			anchorOwnerId = playerId;
+		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(anchorOwnerId);
 		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
 		if(!force && playerClaimInfo.isTransferInProgress())
@@ -460,7 +466,6 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			return new ClaimResult<>(null, ClaimResult.Type.ANOTHER_DIMENSION);
 		if(!force && !withinDistance(fromX, fromZ, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.TOO_FAR);
-		PlayerChunkClaim currentClaim = get(dimension, x, z);
 		ServerPlayerDimensionClaims playerDimensionClaims = null;
 		if(!add)
 			playerDimensionClaims = playerClaimInfo.getDimension(dimension);
@@ -498,21 +503,22 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		}
 		boolean exists = playerDimensionClaims != null && playerDimensionClaims.getAnchors().contains(anchorPos);
 		if(exists) {
-			int anchorRange = getPlayerFullAnchorRange(playerId, dimension);
+			int anchorRange = getPlayerFullAnchorRange(anchorOwnerId, dimension);
+			final boolean finalForce = force;
 			tryClaimActionOverArea(
-					dimension, playerId, -1, dimension, fromX, fromZ,
+					dimension, anchorOwnerId, -1, dimension, fromX, fromZ,
 					x - anchorRange, z - anchorRange, x + anchorRange, z + anchorRange,
 					ClaimingAction.UNCLAIM_UNANCHORED, true, Integer.MAX_VALUE,
 					a -> !a.equals(anchorPos), result -> {
 						Set<ClaimResult.Type> fullResultTypes = result.getResultTypesStream().collect(Collectors.toSet());
-						boolean removalSuccess = removeAnchor(dimension, anchorPos, playerId);
+						boolean removalSuccess = removeAnchor(dimension, anchorPos, anchorOwnerId);
 						if(removalSuccess) {
 							fullResultTypes.add(ClaimResult.Type.SUCCESSFUL_UNANCHOR);
 							actionListenerManager.handleSuccessfulClaimingAction(playerId, dimension, x, z, action, this, server);
-							boolean withinDistance = withinAnchorDistance(playerId, dimension, x, z);
+							boolean withinDistance = withinAnchorDistance(anchorOwnerId, dimension, x, z);
 							if(!withinDistance) {
 								ClaimResult<PlayerChunkClaim> lastUnclaimResult =
-										tryToUnclaimHelper(dimension, playerId, x, z, x, z, false, true);
+										tryToUnclaimHelper(dimension, playerId, x, z, x, z, finalForce, true);
 								if (!lastUnclaimResult.getResultType().success)
 									fullResultTypes.add(lastUnclaimResult.getResultType());
 							}
