@@ -21,6 +21,7 @@ package xaero.pac.common.config;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import xaero.pac.OpenPartiesAndClaims;
 
 public class ForgeConfigHelperNeoForge implements IForgeConfigHelper {
 
@@ -32,7 +33,7 @@ public class ForgeConfigHelperNeoForge implements IForgeConfigHelper {
 
 	@Override
 	public void registerServerConfig(ModConfigSpec spec) {
-		modContainer.registerConfig(ModConfig.Type.SERVER, spec);
+		modContainer.registerConfig(ModConfig.Type.SYNCED, spec, OpenPartiesAndClaims.MOD_ID + "-server.toml");
 	}
 
 	@Override
@@ -42,7 +43,7 @@ public class ForgeConfigHelperNeoForge implements IForgeConfigHelper {
 
 	@Override
 	public void registerCommonConfig(ModConfigSpec spec) {
-		modContainer.registerConfig(ModConfig.Type.COMMON, spec);
+		modContainer.registerConfig(ModConfig.Type.LOCAL, spec);
 	}
 
 }
