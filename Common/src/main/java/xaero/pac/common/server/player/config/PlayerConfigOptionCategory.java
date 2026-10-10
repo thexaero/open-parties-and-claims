@@ -19,21 +19,20 @@
 package xaero.pac.common.server.player.config;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.server.config.ServerConfig;
 
 public enum PlayerConfigOptionCategory {
-	GENERAL(false, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_general")),
-	GENERAL_PARTY(false, true, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_general_parties")),
-	GENERAL_CLAIMS(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_general_claims")),
-	BLOCK_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_block_protection")),
-	TRIGGER_BLOCKS(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_trigger_blocks")),
-	ENTITY_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_entity_protection")),
-	PICKUP_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_item_pickup")),
-	PROTECTION_FROM_ITEMS(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_item_use")),
-	MOVEMENT(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_movement")),
-	SPAWN_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_spawn_protection")),
-	MIXED_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_mixed_protection"));
+	GENERAL(false, false, Component.translatable("gui.xaero_pac_ui_player_config_category_general")),
+	GENERAL_PARTY(false, true, Component.translatable("gui.xaero_pac_ui_player_config_category_general_parties")),
+	GENERAL_CLAIMS(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_general_claims")),
+	BLOCK_PROTECTION(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_block_protection")),
+	TRIGGER_BLOCKS(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_trigger_blocks")),
+	ENTITY_PROTECTION(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_entity_protection")),
+	PICKUP_PROTECTION(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_item_pickup")),
+	PROTECTION_FROM_ITEMS(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_item_use")),
+	MOVEMENT(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_movement")),
+	SPAWN_PROTECTION(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_spawn_protection")),
+	MIXED_PROTECTION(true, false, Component.translatable("gui.xaero_pac_ui_player_config_category_mixed_protection"));
 
 	public final boolean requiresClaims;
 	public final boolean requiresParties;
