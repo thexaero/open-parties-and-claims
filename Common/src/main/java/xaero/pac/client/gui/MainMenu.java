@@ -173,9 +173,9 @@ public class MainMenu extends XPACScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(configsButton = new Button(width / 2 - 100, height / 8 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_config_menu"), this::onConfigsButton));
+		addRenderableWidget(configsButton = new Button(width / 2 - 100, height / 7, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_config_menu"), this::onConfigsButton));
 		
-		aboutPartyButton = new Button(width / 2 - 100, height / 8 + 40, 70, 20, new TranslatableComponent("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton, new Button.OnTooltip() {
+		aboutPartyButton = new Button(width / 2 - 100, height / 7 + 28, 70, 20, new TranslatableComponent("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				 MainMenu.this.renderTooltip(p_170020_, ABOUT_PARTY_COMMAND, p_170021_, p_170022_);
 			}
@@ -184,10 +184,8 @@ public class MainMenu extends XPACScreen {
 				p_170017_.accept(ABOUT_PARTY_COMMAND);
 			}
 		});
-
-		addRenderableWidget(claimingModeMenu = setupClaimModeDropdown());
 		
-		claimButton = new Button(width / 2 - 100, height / 8 + 112, 70, 20, CLAIM, this::onClaimButton, new Button.OnTooltip() {
+		claimButton = new Button(width / 2 - 100, height / 7 + 100, 70, 20, CLAIM, this::onClaimButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				if(openDropdown != null)
 					return;
@@ -199,7 +197,7 @@ public class MainMenu extends XPACScreen {
 			}
 		});
 		
-		forceloadButton = new Button(width / 2 - 100, height / 8 + 134, 70, 20, FORCELOAD, this::onForceloadButton, new Button.OnTooltip() {
+		forceloadButton = new Button(width / 2 - 100, height / 7 + 122, 70, 20, FORCELOAD, this::onForceloadButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				if(openDropdown != null)
 					return;
@@ -214,7 +212,7 @@ public class MainMenu extends XPACScreen {
 		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 
 		if(claimsManager.usingAnchorBasedClaiming())
-			anchorButton = new Button(width / 2 - 100, height / 8 + 156, 70, 20, ANCHOR, this::onAnchorButton, new Button.OnTooltip() {
+			anchorButton = new Button(width / 2 - 100, height / 7 + 144, 70, 20, ANCHOR, this::onAnchorButton, new Button.OnTooltip() {
 				public void onTooltip(Button button, PoseStack p_170020_, int p_170021_, int p_170022_) {
 					if(openDropdown != null)
 						return;
@@ -226,7 +224,7 @@ public class MainMenu extends XPACScreen {
 				}
 			});
 		
-		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
+		addRenderableWidget(new Button(width / 2 - 100, this.height / 7 + 171, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
 
 		//addRenderableWidget(new Button(0, 0, 40, 20, new TextComponent("test toggle"), this::onTestToggle));
 
@@ -236,6 +234,7 @@ public class MainMenu extends XPACScreen {
 			addRenderableWidget(aboutPartyButton);
 		}
 		if(serverHasClaimsEnabled){
+			addRenderableWidget(claimingModeMenu = setupClaimModeDropdown());
 			addRenderableWidget(claimButton);
 			addRenderableWidget(forceloadButton);
 			if(anchorButton != null)
@@ -265,7 +264,7 @@ public class MainMenu extends XPACScreen {
 				.setCallback(this::onClaimMode)
 				.setContainer(this)
 				.setX(width / 2 - 100)
-				.setY(height / 8 + 96)
+				.setY(height / 7 + 84)
 				.setW(200)
 				.setOptions(
 						claimModeOptions.stream()
@@ -300,11 +299,12 @@ public class MainMenu extends XPACScreen {
 		serverHasMod = configsButton.active = mainCap.getClientWorldData().serverHasMod();
 		serverHasClaimsEnabled = mainCap.getClientWorldData().serverHasClaimsEnabled();
 		serverHasPartiesEnabled = mainCap.getClientWorldData().serverHasPartiesEnabled();
-		aboutPartyButton.active = serverHasMod && OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null;
-		
+		if(serverHasPartiesEnabled) {
+			aboutPartyButton.active = serverHasMod && OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null;
+		}
 		forceloadButton.active = false;
 		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
-		if(serverHasMod && !claimsManager.isLoading()) {
+		if(serverHasMod && serverHasClaimsEnabled && !claimsManager.isLoading()) {
 			ChunkPos chunkPos = minecraft.player.chunkPosition();
 			IPlayerChunkClaim currentClaim = claimsManager.get(minecraft.level.dimension().location(), chunkPos.x, chunkPos.z);
 			boolean adminMode = claimsManager.isAdminMode();
@@ -410,13 +410,13 @@ public class MainMenu extends XPACScreen {
 		String actualPartyName = partyStorage.getPartyName();
 		if(actualPartyName == null || actualPartyName.isEmpty())
 			actualPartyName = "N/A";
-		drawString(poseStack, font, partyNameSupplier.get(actualPartyName), width / 2 - 24, height / 8 + 42, -1);
+		drawString(poseStack, font, partyNameSupplier.get(actualPartyName), width / 2 - 24, height / 7 + 30, -1);
 		if(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null) {
 			String actualOwnerName = partyStorage.getParty().getOwner().getUsername();
-			drawString(poseStack, font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 8 + 54, -1);
-			drawString(poseStack, font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 8 + 66, -1);
-			drawString(poseStack, font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 8 + 78, -1);
-//			drawString(poseStack, font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 8 + 90, -1);
+			drawString(poseStack, font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 7 + 42, -1);
+			drawString(poseStack, font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 7 + 54, -1);
+			drawString(poseStack, font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 7 + 66, -1);
+//			drawString(poseStack, font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 7 + 90, -1);
 		}
 	}
 
@@ -438,13 +438,13 @@ public class MainMenu extends XPACScreen {
 		String currentSubConfigId = claimsManager.getCurrentSubConfigId(claimingModeAPI);
 		int currentSubConfigIndex = claimsManager.getCurrentSubConfigIndex(claimingModeAPI);
 
-		drawString(poseStack, font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 8 + 114, -1);
-		drawString(poseStack, font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 8 + 126, -1);
+		drawString(poseStack, font, claimCountSupplier.get(claimCount, claimLimit), width / 2 - 24, height / 7 + 102, -1);
+		drawString(poseStack, font, forceloadCountSupplier.get(forceloadCount, forceloadLimit), width / 2 - 24, height / 7 + 114, -1);
 		if(!claimingModeAPI.isGlobal() && claimsManager.usingAnchorBasedClaiming() && minecraft.level != null) {
 			ResourceLocation dimension = minecraft.level.dimension().location();
 			int anchorCount = claimsManager.getAnchorCount(claimingModeAPI);
 			int anchorLimit = claimsManager.getAnchorLimit(claimingModeAPI);
-			drawString(poseStack, font, claimingAnchorCountSupplier.get(dimension, anchorCount, anchorLimit), width / 2 - 24, height / 8 + 162, -1);
+			drawString(poseStack, font, claimingAnchorCountSupplier.get(dimension, anchorCount, anchorLimit), width / 2 - 24, height / 7 + 150, -1);
 		}
 		if(playerInfo == null)
 			return;
@@ -459,8 +459,8 @@ public class MainMenu extends XPACScreen {
 			claimsColor = playerInfo.getClaimsColor();
 		if(claimsColor == null)
 			claimsColor = -1;
-		drawString(poseStack, font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 8 + 138, -1);
-		drawString(poseStack, font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 8 + 150, -1);
+		drawString(poseStack, font, claimsNameSupplier.get(claimsName), width / 2 - 24, height / 7 + 126, -1);
+		drawString(poseStack, font, claimsColorSupplier.get(claimsColor), width / 2 - 24, height / 7 + 138, -1);
 
 	}
 	
@@ -468,7 +468,7 @@ public class MainMenu extends XPACScreen {
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		updateWidgets();
 		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
+		drawCenteredString(poseStack, font, title, width / 2, height / 7 - 17, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
 	}
 
@@ -476,21 +476,21 @@ public class MainMenu extends XPACScreen {
 	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		super.renderPreDropdown(poseStack, mouseX, mouseY, partial);
 		if(!serverHasMod)
-			drawCenteredString(poseStack, font, NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
+			drawCenteredString(poseStack, font, NO_HANDSHAKE, width / 2, height / 7 - 6, 0xFFFF5555);
 		else {
 			if(serverHasPartiesEnabled) {
 				if (OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().isLoading())
-					drawString(poseStack, font, PARTY_SYNCING, width / 2 - 104 - font.width(PARTY_SYNCING), height / 8 + 42, -1);
+					drawString(poseStack, font, PARTY_SYNCING, width / 2 - 104 - font.width(PARTY_SYNCING), height / 7 + 30, -1);
 				drawPartyInfo(poseStack, mouseX, mouseY, partial);
 			} else
-				drawCenteredString(poseStack, font, NO_PARTIES, width / 2, height / 8 + 42, 0xFFAAAAAA);
+				drawCenteredString(poseStack, font, NO_PARTIES, width / 2, height / 7 + 30, 0xFFAAAAAA);
 
 			if(serverHasClaimsEnabled) {
 				if (OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager().isLoading())
-					drawString(poseStack, font, CLAIMS_SYNCING, width / 2 - 104 - font.width(CLAIMS_SYNCING), height / 8 + 114, -1);
+					drawString(poseStack, font, CLAIMS_SYNCING, width / 2 - 104 - font.width(CLAIMS_SYNCING), height / 7 + 102, -1);
 				drawClaimsInfo(poseStack, mouseX, mouseY, partial);
 			} else
-				drawCenteredString(poseStack, font, NO_CLAIMS, width / 2, height / 8 + 114, 0xFFAAAAAA);
+				drawCenteredString(poseStack, font, NO_CLAIMS, width / 2, height / 7 + 102, 0xFFAAAAAA);
 		}
 	}
 

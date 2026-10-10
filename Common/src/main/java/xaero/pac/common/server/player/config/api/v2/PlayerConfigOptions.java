@@ -703,7 +703,7 @@ public class PlayerConfigOptions {
 							"pressed by projectiles owned by the players in the group.\n" +
 						PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_TARGETS_BY_PROJECTILES = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.targetsByProjectiles")
@@ -714,7 +714,7 @@ public class PlayerConfigOptions {
 								"the group.\n" +
 						PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLATES_BY_PLAYERS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.platesByPlayers")
@@ -724,7 +724,7 @@ public class PlayerConfigOptions {
 								"being pressed by players in the group.\n"
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLATES_BY_MOBS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.platesByMobs")
@@ -734,7 +734,7 @@ public class PlayerConfigOptions {
 								"being pressed by mobs owned by players in the group.\n"
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLATES_BY_OTHER = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.platesByOther")
@@ -744,7 +744,7 @@ public class PlayerConfigOptions {
 								"being pressed by non-living entities owned by players in the group.\n"
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_TRIPWIRE_BY_PLAYERS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.tripwireByPlayers")
@@ -754,7 +754,7 @@ public class PlayerConfigOptions {
 								"triggered by players in the group.\n"
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_TRIPWIRE_BY_MOBS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.tripwireByMobs")
@@ -764,7 +764,7 @@ public class PlayerConfigOptions {
 								"triggered by mobs owned by players in the group.\n"
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_TRIPWIRE_BY_OTHER = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.tripwireByOther")
@@ -774,7 +774,7 @@ public class PlayerConfigOptions {
 								"triggered by non-living entities owned by players in the group.\n"
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_OWNED
 				)
-				.setCategory(PlayerConfigOptionCategory.BLOCK_TRIGGERS)
+				.setCategory(PlayerConfigOptionCategory.TRIGGER_BLOCKS)
 				.build(allOptions);
 		CLAIM_EXCEPTION_ENTITIES_BY_PLAYERS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.entitiesByPlayers")
@@ -849,25 +849,25 @@ public class PlayerConfigOptions {
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection makes an exception for players interacting with players, including combat. " +
 						"Non-combat interaction can be allowed through an entity exception group (option Interact (Players) by default).")
-				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLAYERS_BY_MOBS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.playersByMobs")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection makes an exception for players being attacked by mobs.")
-				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLAYERS_BY_OTHER = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.playersByOther")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection makes an exception for players being attacked by non-living entities.")
-				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLAYERS_REDIRECT = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.playersRedirect")
 				.setDefaultValue(true)
 				.setComment("When enabled, instead of always simply using the direct \"Allow Players By Mobs/Other\" option for entity attacks/iteractions coming from non-player entities, if the attacking entity (e.g. an arrow) has an owner (e.g. a player), then the entity protection option corresponding to the owner is used (e.g. \"Allow Players By Players\").")
-				.setCategory(PlayerConfigOptionCategory.PLAYER_PROTECTION)
+				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLAYER_LIGHTNING = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.playerLightning")

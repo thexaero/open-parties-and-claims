@@ -62,14 +62,14 @@ public class ConfigMenu extends XPACScreen {
 	@Override
 	protected void init() {
 		super.init();
-		addRenderableWidget(myPlayerConfigButton = new Button(width / 2 - 205, height / 7 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_my_player_config"), this::onPlayerConfigButton));
-		addRenderableWidget(partyClaimsConfigButton = new Button(width / 2 - 205, height / 7 + 32, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_party_claims_config"), this::onPartyClaimsConfigButton));
-		addRenderableWidget(defaultConfigButton = new Button(width / 2 - 205, height / 7 + 56, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_default_player_config"), this::onDefaultConfigButton));
-		addRenderableWidget(serverClaimsConfigButton = new Button(width / 2 + 5, height / 7 + 8, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_server_claims_config"), this::onServerClaimsConfigButton));
-		addRenderableWidget(expiredClaimsConfigButton = new Button(width / 2 + 5, height / 7 + 32, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_expired_claims_config"), this::onExpiredClaimsConfigButton));
-		addRenderableWidget(wildernessConfigButton = new Button(width / 2 + 5, height / 7 + 56, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_wilderness_config"), this::onWildernessConfigButton));
-		addRenderableWidget(otherPlayerNameBox = new FixedEditBox(font, width / 2 - 99, height / 7 + 100, 98, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_name_field")));
-		addRenderableWidget(otherPlayerConfigButton = new Button(width / 2, height / 7 + 100, 100, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_button"), this::onOtherPlayerConfigButton));
+		addRenderableWidget(myPlayerConfigButton = new Button(width / 2 - 205, height / 7, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_my_player_config"), this::onPlayerConfigButton));
+		addRenderableWidget(partyClaimsConfigButton = new Button(width / 2 - 205, height / 7 + 24, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_party_claims_config"), this::onPartyClaimsConfigButton));
+		addRenderableWidget(defaultConfigButton = new Button(width / 2 - 205, height / 7 + 48, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_default_player_config"), this::onDefaultConfigButton));
+		addRenderableWidget(serverClaimsConfigButton = new Button(width / 2 + 5, height / 7, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_server_claims_config"), this::onServerClaimsConfigButton));
+		addRenderableWidget(expiredClaimsConfigButton = new Button(width / 2 + 5, height / 7 + 24, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_expired_claims_config"), this::onExpiredClaimsConfigButton));
+		addRenderableWidget(wildernessConfigButton = new Button(width / 2 + 5, height / 7 + 48, 200, 20, new TranslatableComponent("gui.xaero_pac_ui_wilderness_config"), this::onWildernessConfigButton));
+		addRenderableWidget(otherPlayerNameBox = new FixedEditBox(font, width / 2 - 99, height / 7 + 92, 98, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_name_field")));
+		addRenderableWidget(otherPlayerConfigButton = new Button(width / 2, height / 7 + 92, 100, 20, new TranslatableComponent("gui.xaero_pac_ui_other_player_config_button"), this::onOtherPlayerConfigButton));
 		IClientClaimsManager<IPlayerChunkClaim, IClientPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IClientDimensionClaimsManager<IClientRegionClaims>>
 				claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 		updateOtherPlayerButton();
@@ -80,7 +80,7 @@ public class ConfigMenu extends XPACScreen {
 		otherPlayerNameBox.setFilter(s -> s.matches(ServerboundOtherPlayerConfigPacket.OWNER_NAME_REGEX));
 		otherPlayerNameBox.setResponder(s -> {otherPlayerNameString = s; updateOtherPlayerButton();});
 		otherPlayerNameBox.setEditable(mainCap.getClientWorldData().serverHasMod() && configStorage.isAdmin());
-		addRenderableWidget(new Button(width / 2 - 100, this.height / 6 + 168, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
+		addRenderableWidget(new Button(width / 2 - 100, this.height / 7 + 171, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
 
 		serverHasMod = mainCap.getClientWorldData().serverHasMod();
 		myPlayerConfigButton.active = serverHasMod && configStorage.getMyPlayerConfig().getPermissions().canView();
@@ -154,11 +154,11 @@ public class ConfigMenu extends XPACScreen {
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		renderBackground(poseStack);
-		drawCenteredString(poseStack, font, title, width / 2, 16, -1);
-		drawCenteredString(poseStack, font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 85, -1);
+		drawCenteredString(poseStack, font, title, width / 2, height / 7 - 17, -1);
+		drawCenteredString(poseStack, font, ANOTHER_PLAYER_TITLE, width / 2, height / 7 + 77, -1);
 		super.render(poseStack, mouseX, mouseY, partial);
 		if(!serverHasMod)
-			drawCenteredString(poseStack, font, MainMenu.NO_HANDSHAKE, width / 2, 27, 0xFFFF5555);
+			drawCenteredString(poseStack, font, MainMenu.NO_HANDSHAKE, width / 2, height / 7 - 6, 0xFFFF5555);
 	}
 	
 	@Override

@@ -434,6 +434,11 @@ public class PlayerGroupsScreen extends XPACScreen {
 	}
 
 	@Override
+	protected int getOPACTitleY() {
+		return 5;
+	}
+
+	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		hoveredContentsEntry = null;
 		groupList.render(poseStack, mouseX, mouseY, partial);
