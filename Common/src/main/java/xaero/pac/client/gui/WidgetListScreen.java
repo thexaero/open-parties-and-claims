@@ -169,7 +169,7 @@ public abstract class WidgetListScreen<C> extends XPACScreen {
 			matchesToSort.sort(Comparator.comparing(Pair::getRight));
 			matchesToSort.stream().map(Pair::getLeft).forEach(filteredElements::add);
 		}
-		if(!searching && chosenCategory == null && categories != null) {
+		if(!searching && !elements.isEmpty() && chosenCategory == null && categories != null) {
 			for (C category : categories) {
 				Component categoryName = getCategoryName(category);
 				WidgetListElement<C, ?> categoryWidget = SimpleWidgetListElement.Builder.<C>begin()
@@ -237,7 +237,7 @@ public abstract class WidgetListScreen<C> extends XPACScreen {
 	@Override
 	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		super.renderPreDropdown(poseStack, mouseX, mouseY, partial);
-		if(filteredElements.isEmpty())
+		if((chosenCategory != null || !searchValue.isEmpty()) && filteredElements.isEmpty())
 			drawCenteredString(poseStack, font, noOptionsComponent, width / 2, height / 7 + ROW_HEIGHT + 10, 0xFFAAAAAA);
 		int startIndex = getStartIndex();
 		int endIndex = getEndIndex();
