@@ -842,7 +842,7 @@ public class PlayerConfigOptions {
 								"The protection stops raiders from spawning inside the protected chunks, from entering them " +
 								"and from hurting protectable entities, even if entity protection is turned off."
 				)
-				.setCategory(PlayerConfigOptionCategory.ENTITY_PROTECTION)
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_PLAYERS_BY_PLAYERS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.playersByPlayers")
@@ -948,7 +948,7 @@ public class PlayerConfigOptions {
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.dispenserBarrier")
 				.setDefaultValue(true)
 				.setComment("When enabled, claimed chunk protection includes protection against dispensers that are \"touching\" and facing the protected chunks from outside. This does not protect wilderness.")
-				.setCategory(PlayerConfigOptionCategory.PROTECTION_FROM_ITEMS)
+				.setCategory(PlayerConfigOptionCategory.MIXED_PROTECTION)
 				.build(allOptions);
 		CLAIM_EXCEPTION_ITEM_TOSS_PLAYERS = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.itemTossPlayers")
@@ -1124,7 +1124,7 @@ public class PlayerConfigOptions {
 						"""
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
 				)
-				.setCategory(PlayerConfigOptionCategory.SPAWN_PROTECTION)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 
 		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
