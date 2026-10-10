@@ -20,7 +20,6 @@ package xaero.pac.client.gui;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.player.config.PlayerConfigClientStorage;
 import xaero.pac.common.server.player.config.PlayerConfig;
