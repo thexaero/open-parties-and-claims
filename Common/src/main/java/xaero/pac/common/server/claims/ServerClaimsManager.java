@@ -305,7 +305,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
-		if(!ignoreAnchors && !force && ServerConfig.CONFIG.anchorBasedClaiming.get() &&
+		if(!isServer && !ignoreAnchors && !force && ServerConfig.CONFIG.anchorBasedClaiming.get() &&
 				!withinAnchorDistance(playerId, dimension, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.ANCHOR_TOO_FAR);
 		int claimLimit = getPlayerFullClaimLimit(playerId);

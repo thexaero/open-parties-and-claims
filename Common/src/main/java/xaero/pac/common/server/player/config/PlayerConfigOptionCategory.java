@@ -18,33 +18,40 @@
 
 package xaero.pac.common.server.player.config;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import xaero.pac.common.server.config.ServerConfig;
 
 public enum PlayerConfigOptionCategory {
-	GENERAL(false, false),
-	GENERAL_CLAIMS(true, false),
-	BLOCK_PROTECTION(true, false),
-	BLOCK_TRIGGERS(true, false),
-	ENTITY_PROTECTION(true, false),
-	PLAYER_PROTECTION(true, false),
-	MOVEMENT(true, false),
-	PROTECTION_FROM_ITEMS(true, false),
-	PICKUP_PROTECTION(true, false),
-	SPAWN_PROTECTION(true, false),
-	MIXED_PROTECTION(true, false),
-	GENERAL_PARTY(false, true);
+	GENERAL(false, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_general")),
+	GENERAL_PARTY(false, true, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_general_parties")),
+	GENERAL_CLAIMS(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_general_claims")),
+	BLOCK_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_block_protection")),
+	TRIGGER_BLOCKS(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_trigger_blocks")),
+	ENTITY_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_entity_protection")),
+	PICKUP_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_item_pickup")),
+	PROTECTION_FROM_ITEMS(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_item_use")),
+	MOVEMENT(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_movement")),
+	SPAWN_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_spawn_protection")),
+	MIXED_PROTECTION(true, false, new TranslatableComponent("gui.xaero_pac_ui_player_config_category_mixed_protection"));
 
 	public final boolean requiresClaims;
 	public final boolean requiresParties;
+	private final Component displayName;
 
-	PlayerConfigOptionCategory(boolean requiresClaims, boolean requiresParties) {
+	PlayerConfigOptionCategory(boolean requiresClaims, boolean requiresParties, Component displayName) {
 		this.requiresClaims = requiresClaims;
 		this.requiresParties = requiresParties;
+		this.displayName = displayName;
 	}
 
 	public boolean requiredFeaturesAreEnabled(){
 		return (!requiresClaims || ServerConfig.CONFIG.claimsEnabled.get()) &&
 				(!requiresParties || ServerConfig.CONFIG.partiesEnabled.get());
+	}
+
+	public Component getDisplayName() {
+		return displayName;
 	}
 
 }

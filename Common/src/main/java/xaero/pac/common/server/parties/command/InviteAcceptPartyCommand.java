@@ -18,6 +18,7 @@
 
 package xaero.pac.common.server.parties.command;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -56,57 +57,65 @@ public class InviteAcceptPartyCommand {
 	
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandRequirementProvider commandRequirementProvider) {
 		Predicate<CommandSourceStack> requirement = commandRequirementProvider.getNonMemberRequirement(p -> true, true);
-		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get()).then(Commands.literal("join")
+		Command<CommandSourceStack> executor = context -> {
+			ServerPlayer player = context.getSource().getPlayerOrException();
+			UUID playerId = player.getUUID();
+			MinecraftServer server = context.getSource().getServer();
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
+			IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
+			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
+			if(playerParty != null) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_already_in_one"));
+				return 0;
+			}
+			UUID targetPartyId;
+			try {
+				String targetPartyStringId = context.getArgument("id", String.class);
+				targetPartyId = UUID.fromString(targetPartyStringId);
+			} catch(IllegalArgumentException iae) {
+				CompoundTag data = Services.PLATFORM.getEntityAccess().getPersistentData(player);
+				targetPartyId = data.hasUUID("xaero_OPAC_LastInviteId") ?
+						data.getUUID("xaero_OPAC_LastInviteId") : null;
+				if(targetPartyId == null) {
+					context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_invalid_id"));
+					return 0;
+				}
+			}
+			IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetParty = partyManager.getPartyById(targetPartyId);
+			if(targetParty == null) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_not_exist"));
+				return 0;
+			}
+			if(!targetParty.isInvited(playerId)) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_not_invited"));
+				return 0;
+			}
+			if(targetParty.getMemberCount() >= ServerConfig.CONFIG.maxPartyMembers.get()) {
+				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_member_limit"));
+				return 0;
+			}
+			IPartyMember addedPartyMember = targetParty.addMember(playerId, null, player.getGameProfile().getName());
+			if(addedPartyMember == null)
+				return 0;
+			player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_success", targetParty.getDefaultName()), player.getUUID());
+
+			new PartyOnCommandUpdater().update(player, serverData, targetParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_join_success_info", Component.literal(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
+			serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
+			return 1;
+		};
+		LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(PartyCommandRegister.COMMAND_PREFIX).requires(c -> ServerConfig.CONFIG.partiesEnabled.get())
+				.then(Commands.literal("join")
 				.requires(requirement)
+				.executes(executor)
 				.then(Commands.argument("id", StringArgumentType.word())
-						.suggests((context, builder) -> {
-							ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
-							CompoundTag data = Services.PLATFORM.getEntityAccess().getPersistentData(casterPlayer);
-							Stream<String> lastInviteId = data.hasUUID("xaero_OPAC_LastInviteId") ? Stream.of(data.getUUID("xaero_OPAC_LastInviteId").toString()) : Stream.empty();
-							return SharedSuggestionProvider.suggest(lastInviteId, builder);
-						})
-						.executes(context -> {
-							ServerPlayer player = context.getSource().getPlayerOrException();
-							UUID playerId = player.getUUID();
-							MinecraftServer server = context.getSource().getServer();
-							IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
-							AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
-							IPartyManager<IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> partyManager = serverData.getPartyManager();
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> playerParty = partyManager.getPartyByMember(playerId);
-							if(playerParty != null) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_already_in_one"));
-								return 0;
-							}
-							String targetPartyStringId = context.getArgument("id", String.class);
-							UUID targetPartyId;
-							try {
-								targetPartyId = UUID.fromString(targetPartyStringId);
-							} catch(IllegalArgumentException iae) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_invalid_id"));
-								return 0;
-							}
-							IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly> targetParty = partyManager.getPartyById(targetPartyId);
-							if(targetParty == null) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_not_exist"));
-								return 0;
-							}
-							if(!targetParty.isInvited(playerId)) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_party_not_invited"));
-								return 0;
-							}
-							if(targetParty.getMemberCount() >= ServerConfig.CONFIG.maxPartyMembers.get()) {
-								context.getSource().sendFailure(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_member_limit"));
-								return 0;
-							}
-							IPartyMember addedPartyMember = targetParty.addMember(playerId, null, player.getGameProfile().getName());
-							if(addedPartyMember == null)
-								return 0;
-							player.sendMessage(adaptiveLocalizer.getFor(player, "gui.xaero_parties_join_success", targetParty.getDefaultName()), player.getUUID());
-							
-							new PartyOnCommandUpdater().update(player, serverData, targetParty, serverData.getPlayerConfigManager(), mi -> false, Component.translatable("gui.xaero_parties_join_success_info", Component.literal(addedPartyMember.getUsername()).withStyle(s -> s.withColor(ChatFormatting.DARK_GREEN))));
-							serverData.getPlayerPermissionChangeHandler().sendCommandsAndUpdatePermissions(player, serverData, false);
-							return 1;
-						})));
+				.suggests((context, builder) -> {
+					ServerPlayer casterPlayer = context.getSource().getPlayerOrException();
+					CompoundTag data = Services.PLATFORM.getEntityAccess().getPersistentData(casterPlayer);
+					Stream<String> lastInviteId = data.hasUUID("xaero_OPAC_LastInviteId") ? Stream.of(data.getUUID("xaero_OPAC_LastInviteId").toString()) : Stream.empty();
+					return SharedSuggestionProvider.suggest(lastInviteId, builder);
+				})
+				.executes(executor)));
 		dispatcher.register(command);
 	}
 

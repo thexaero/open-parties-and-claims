@@ -24,14 +24,28 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElement<T, E>> extends WidgetListElement<E> {
+public class SimpleValueWidgetListElement<C, T, E extends SimpleValueWidgetListElement<C, T, E>> extends WidgetListElement<C, E> {
 	
 	protected T draftValue;
+	protected final Function<T, String> valueNamer;
 	
-	protected SimpleValueWidgetListElement(T startValue, int w, int h, boolean mutable, BiFunction<E, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip) {
-		super(w, h, mutable, widgetSupplier, tooltip);
+	protected SimpleValueWidgetListElement(
+			T startValue,
+			int w,
+			int h,
+			boolean mutable,
+			BiFunction<E, Vec3i, AbstractWidget> widgetSupplier,
+			Supplier<String> searchName,
+			Supplier<C> category,
+			Function<T, String> valueNamer,
+			List<FormattedCharSequence> tooltip
+	) {
+		super(w, h, mutable, widgetSupplier, searchName, category, tooltip);
 		this.draftValue = startValue;
+		this.valueNamer = valueNamer;
 	}
 	
 	public T getDraftValue() {
@@ -41,10 +55,16 @@ public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElem
 	public void setDraftValue(T draftValue) {
 		this.draftValue = draftValue;
 	}
-	
-	public static abstract class Builder<T, E extends SimpleValueWidgetListElement<T, E>, B extends Builder<T, E, B>> extends WidgetListElement.Builder<E, B> {
+
+	@Override
+	public String getSearchText() {
+		return super.getSearchText() + ": " + valueNamer.apply(draftValue);
+	}
+
+	public static abstract class Builder<C, T, E extends SimpleValueWidgetListElement<C, T, E>, B extends Builder<C, T, E, B>> extends WidgetListElement.Builder<C, E, B> {
 		
 		protected T startValue;
+		protected Function<T, String> valueNamer;
 
 		@Override
 		public B setDefault() {
@@ -57,32 +77,48 @@ public class SimpleValueWidgetListElement<T, E extends SimpleValueWidgetListElem
 			this.startValue = startValue;
 			return self;
 		}
-		
+
+		public B setValueNamer(Function<T, String> valueNamer) {
+			this.valueNamer = valueNamer;
+			return self;
+		}
+
 		@Override
 		public E build() {
+			if(valueNamer == null)
+				throw new IllegalStateException();
 			return super.build();
 		}
 		
 	}
 	
-	public static final class Final<T> extends SimpleValueWidgetListElement<T, Final<T>>{
+	public static final class Final<C, T> extends SimpleValueWidgetListElement<C, T, Final<C, T>>{
 
-		private Final(T startValue, int w, int h, boolean mutable,
-				BiFunction<Final<T>, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip) {
-			super(startValue, w, h, mutable, widgetSupplier, tooltip);
+		private Final(
+				T startValue,
+				int w,
+				int h,
+				boolean mutable,
+				BiFunction<Final<C, T>, Vec3i, AbstractWidget> widgetSupplier,
+				Supplier<String> searchName,
+				Supplier<C> category,
+				Function<T, String> valueNamer,
+				List<FormattedCharSequence> tooltip
+		) {
+			super(startValue, w, h, mutable, widgetSupplier, searchName, category, valueNamer, tooltip);
 		}
 		
 	}
 	
-	public static final class FinalBuilder<T> extends Builder<T, Final<T>, FinalBuilder<T>> {
+	public static final class FinalBuilder<C, T> extends Builder<C, T, Final<C, T>, FinalBuilder<C, T>> {
 		
 		@Override
-		protected Final<T> buildInternal() {
-			return new Final<>(startValue, w, h, mutable, widgetSupplier, tooltip);
+		protected Final<C, T> buildInternal() {
+			return new Final<>(startValue, w, h, mutable, widgetSupplier, searchName, category, valueNamer, tooltip);
 		}
 		
-		public static <T> FinalBuilder<T> begin() {
-			return new FinalBuilder<T>().setDefault();
+		public static <C, T> FinalBuilder<C, T> begin() {
+			return new FinalBuilder<C, T>().setDefault();
 		}
 		
 	}

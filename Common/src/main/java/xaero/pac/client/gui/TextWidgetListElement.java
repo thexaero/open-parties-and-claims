@@ -18,6 +18,7 @@
 
 package xaero.pac.client.gui;
 
+import com.google.common.base.Functions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -31,22 +32,32 @@ import xaero.pac.client.gui.widget.TextWidgetEditBox;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
+import java.util.function.*;
 
-public final class TextWidgetListElement extends SimpleValueWidgetListElement<String, TextWidgetListElement> {
+public final class TextWidgetListElement<C> extends SimpleValueWidgetListElement<C, String, TextWidgetListElement<C>> {
 
 	private final Component title;
 	private EditBox editBox;
 	private Button confirmButton;
 	private Button cancelButton;
 	private String confirmedText;
-	private final BiConsumer<TextWidgetListElement, String> valueConfirmResponder;
+	private final BiConsumer<TextWidgetListElement<C>, String> valueConfirmResponder;
 	private final Predicate<String> validator;
 	
-	private TextWidgetListElement(int w, int h, boolean mutable, Component title, BiFunction<TextWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip, BiConsumer<TextWidgetListElement, String> valueConfirmResponder, Predicate<String> validator, String startValue) {
-		super(startValue, w, h, mutable, widgetSupplier, tooltip);
+	private TextWidgetListElement(
+			int w,
+			int h,
+			boolean mutable,
+			Component title,
+			BiFunction<TextWidgetListElement<C>, Vec3i, AbstractWidget> widgetSupplier,
+			Supplier<String> searchName,
+			Supplier<C> category,
+			Function<String, String> valueNamer,
+			List<FormattedCharSequence> tooltip,
+			BiConsumer<TextWidgetListElement<C>, String> valueConfirmResponder,
+			Predicate<String> validator, String startValue
+	) {
+		super(startValue, w, h, mutable, widgetSupplier, searchName, category, valueNamer, tooltip);
 		this.confirmedText = startValue;
 		this.title = title;
 		this.valueConfirmResponder = valueConfirmResponder;
@@ -111,17 +122,17 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 		Minecraft.getInstance().font.drawShadow(poseStack, title, x + 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
 	}
 	
-	public static final class Builder extends SimpleValueWidgetListElement.Builder<String, TextWidgetListElement, Builder> {
+	public static final class Builder<C> extends SimpleValueWidgetListElement.Builder<C, String, TextWidgetListElement<C>, Builder<C>> {
 		
 		private Component title;
-		private BiConsumer<TextWidgetListElement, String> responder;
+		private BiConsumer<TextWidgetListElement<C>, String> responder;
 		private Predicate<String> filter;
 		private Predicate<String> validator;
 		private int boxWidth;
 		private int maxLength;
 		
 		@Override
-		public Builder setDefault() {
+		public Builder<C> setDefault() {
 			super.setDefault();
 			setBoxWidth(50);
 			setTitle(null);
@@ -129,48 +140,53 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 			setFilter(Objects::nonNull);
 			setValidator(Objects::nonNull);
 			setMaxLength(32);
+			setValueNamer(Functions.identity());
 			return this;
 		}
 		
-		public Builder setMaxLength(int maxLength) {
+		public Builder<C> setMaxLength(int maxLength) {
 			this.maxLength = maxLength;
 			return this;
 		}
 		
-		public Builder setBoxWidth(int boxWidth) {
+		public Builder<C> setBoxWidth(int boxWidth) {
 			this.boxWidth = boxWidth;
 			return this;
 		}
 		
-		public Builder setTitle(Component title) {
+		public Builder<C> setTitle(Component title) {
 			this.title = title;
 			return this;
 		}
 		
-		public Builder setResponder(BiConsumer<TextWidgetListElement, String> responder) {
+		public Builder<C> setResponder(BiConsumer<TextWidgetListElement<C>, String> responder) {
 			this.responder = responder;
 			return this;
 		}
 		
-		public Builder setFilter(Predicate<String> filter) {
+		public Builder<C> setFilter(Predicate<String> filter) {
 			this.filter = filter;
 			return this;
 		}
 		
-		public Builder setValidator(Predicate<String> validator) {
+		public Builder<C> setValidator(Predicate<String> validator) {
 			this.validator = validator;
 			return this;
 		}
-		
-		public TextWidgetListElement build() {
+
+		@Override
+		public Builder<C> setWidgetSupplier(BiFunction<TextWidgetListElement<C>, Vec3i, AbstractWidget> widgetSupplier) {
+			if(widgetSupplier != null)
+				throw new UnsupportedOperationException();
+			return super.setWidgetSupplier(widgetSupplier);
+		}
+
+		public TextWidgetListElement<C> build() {
 			if(title == null || filter == null)
 				throw new IllegalStateException();
-			return (TextWidgetListElement) super.build();
-		}
-		
-		@Override
-		protected TextWidgetListElement buildInternal() {
-			BiFunction<TextWidgetListElement, Vec3i, AbstractWidget> widgetSupplier = (el, xy) -> {
+			if(searchName == null)
+				setSearchName(title::getString);
+			BiFunction<TextWidgetListElement<C>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) -> {
 				TextWidgetEditBox box = new TextWidgetEditBox(el, Minecraft.getInstance().font, xy.getX() + w - boxWidth - 42, xy.getY(), boxWidth, h, title);
 				box.setMaxLength(maxLength);
 				box.setValue(el.getDraftValue());
@@ -178,11 +194,20 @@ public final class TextWidgetListElement extends SimpleValueWidgetListElement<St
 				box.setFilter(filter);
 				return box;
 			};
-			return new TextWidgetListElement(w, h, mutable, title, widgetSupplier, tooltip, responder, validator, startValue);
+			super.setWidgetSupplier(widgetSupplier);
+			return super.build();
 		}
 		
-		public static Builder begin() {
-			return new Builder().setDefault();
+		@Override
+		protected TextWidgetListElement<C> buildInternal() {
+			return new TextWidgetListElement<>(
+					w, h, mutable, title, widgetSupplier, searchName, category, valueNamer,
+					tooltip, responder, validator, startValue
+			);
+		}
+		
+		public static <C> Builder<C> begin() {
+			return new Builder<C>().setDefault();
 		}
 		
 	}

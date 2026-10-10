@@ -89,10 +89,14 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
 
+	protected int getOPACTitleY(){
+		return height / 7 - 27;
+	}
+
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
 		super.render(poseStack, mouseX, mouseY, partial);
-		drawCenteredString(poseStack, font, XPAC_TITLE, width / 2, 5, -1);
+		drawCenteredString(poseStack, font, XPAC_TITLE, width / 2, getOPACTitleY(), -1);
 		renderPreDropdown(poseStack, mouseX, mouseY, partial);
 		if(openDropdown != null) {
 			poseStack.pushPose();
@@ -103,6 +107,19 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial){
+		if(openDropdown != null && openDropdown.onDropDown(mouseX, mouseY, height))
+			return;
+		for (GuiEventListener child : children()) {
+			if(!(child instanceof DropDownWidget dropDownWidget))
+				continue;
+			if(!dropDownWidget.isClosed())
+				continue;
+			if(dropDownWidget.getTooltip() == null)
+				continue;
+			if(!dropDownWidget.isMouseOver(mouseX, mouseY))
+				continue;
+			renderTooltip(poseStack, dropDownWidget.getTooltip(), mouseX, mouseY + 34);
+		}
 	}
 
 	@Override
