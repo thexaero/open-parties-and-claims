@@ -235,7 +235,7 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 		if(beingDeletedStateOnOpen != subData.isBeingDeleted())
 			refresh();
 		else if(subData.isBeingDeleted())
-			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 7 + 124, -1);
+			drawCenteredString(poseStack, font, BEING_DELETED, width / 2, height / 7 + 84, -1);
 	}
 
 	public static MutableComponent getUICommentForOption(IPlayerConfigOptionSpecAPI<?> option){
@@ -483,7 +483,8 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 			data.setSelectedSubConfig(subConfigs.get(indexOfSelectedSub));
 			PlayerConfigClientStorage subData = data.isSubConfigSelected() ?
 					data.getOrCreateSubConfig(data.getSelectedSubConfig()) : data;
-
+			if(subData.isBeingDeleted())
+				return;
 			if(data.getType().hasDimensionSubConfigs())
 				return;
 			boolean isCurrentlyUsed = Objects.equals(usedSubConfigOptionStorage.getValue(), data.getSelectedSubConfig());
