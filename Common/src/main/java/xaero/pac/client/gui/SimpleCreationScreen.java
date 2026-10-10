@@ -74,14 +74,14 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 				confirmButton = new Button(
 						width / 2 - 105, height / 7 + 128,
 						100, 20,
-						new TranslatableComponent("gui.xaero_pac_confirm"), this::onConfirm
+						Component.translatable("gui.xaero_pac_confirm"), this::onConfirm
 				)
 		);
 		addRenderableWidget(
 				new Button(
 						width / 2 + 5, this.height / 7 + 128,
 						100, 20,
-						new TranslatableComponent("gui.xaero_pac_cancel"), b -> goBack()
+						Component.translatable("gui.xaero_pac_cancel"), b -> goBack()
 				)
 		);
 		setFocused(idTextBox);

@@ -30,19 +30,19 @@ import java.util.function.Supplier;
 public final class CreateSubConfigScreen extends SimpleCreationScreen<CreateSubConfigScreen.InputValidity> {
 
 	private static final Component TITLE =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_create_sub_config");
+			Component.translatable("gui.xaero_pac_ui_player_config_create_sub_config");
 	private static final Component CHOOSE_ID =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_choose_sub_config_id");
+			Component.translatable("gui.xaero_pac_ui_player_config_choose_sub_config_id");
 	private static final Component NORMAL_RULES_1 =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_sub_config_rules1", PlayerConfig.MAX_SUB_ID_LENGTH);
+			Component.translatable("gui.xaero_pac_ui_player_config_sub_config_rules1", PlayerConfig.MAX_SUB_ID_LENGTH);
 	private static final Component NORMAL_RULES_2 =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_sub_config_rules2");
+			Component.translatable("gui.xaero_pac_ui_player_config_sub_config_rules2");
 	private static final Component DIMENSION_RULES_1 =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_sub_config_dimension_rules1");
+			Component.translatable("gui.xaero_pac_ui_player_config_sub_config_dimension_rules1");
 	private static final Component DIMENSION_RULES_2 =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_sub_config_dimension_rules2");
+			Component.translatable("gui.xaero_pac_ui_player_config_sub_config_dimension_rules2");
 	private static final Component EDIT_BOX_NAME =
-			new TranslatableComponent("gui.xaero_pac_ui_player_config_sub_id_edit_box");
+			Component.translatable("gui.xaero_pac_ui_player_config_sub_id_edit_box");
 
 	private final PlayerConfigClientStorage configData;
 	private final Supplier<Screen> targetScreenSupplier;
@@ -102,8 +102,8 @@ public final class CreateSubConfigScreen extends SimpleCreationScreen<CreateSubC
 	public enum InputValidity {
 		VALID(null),
 		EMPTY(null),
-		INVALID(new TranslatableComponent("gui.xaero_pac_ui_player_config_sub_id_not_valid")),
-		DUPLICATE(new TranslatableComponent("gui.xaero_pac_ui_player_config_sub_id_duplicate"));
+		INVALID(Component.translatable("gui.xaero_pac_ui_player_config_sub_id_not_valid")),
+		DUPLICATE(Component.translatable("gui.xaero_pac_ui_player_config_sub_id_duplicate"));
 
 		private final Component message;
 
