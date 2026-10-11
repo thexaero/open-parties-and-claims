@@ -268,6 +268,11 @@ public class PlayerConfigTransformers {
 		transformers.add(//16
 				new PlayerConfigOpConfigurableAdder(ImmutableList.of("claims.bonusAnchors", "claims.bonusAnchorRange"))
 		);
+
+		transformers.add(//17
+				new PlayerConfigOpConfigurableAdder(ImmutableList.of("claims.allowedToClaim", "claims.allowedToAddForceloads"))
+		);
+
 	}
 
 }

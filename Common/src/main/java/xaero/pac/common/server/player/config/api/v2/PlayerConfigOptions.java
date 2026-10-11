@@ -350,6 +350,16 @@ public class PlayerConfigOptions {
 	public static final IPlayerConfigOptionSpecAPI<Boolean> WHOLE_PARTY_CAN_CLAIM;
 
 	/**
+	 * Whether this player is allowed to make claims.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> ALLOWED_TO_CLAIM;
+
+	/**
+	 * Whether this player is allowed to add forceloaded claims.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> ALLOWED_TO_ADD_FORCELOADS;
+
+	/**
 	 * Whether the player shares their in-game location with their party.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> SHARE_LOCATION_WITH_PARTY;
@@ -1151,6 +1161,30 @@ public class PlayerConfigOptions {
 						"""
 						When enabled, if you own a primary party and party-owned claims are enabled, every single player in your party will be able to claim/unclaim as the party (as you), without checking party ranks like normally.
 						This option is almost exclusively meant for servers that don't care about claim protection."""
+				)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.build(allOptions);
+
+		ALLOWED_TO_CLAIM = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.allowedToClaim")
+				.setConfigTypeFilter(type -> type == PlayerConfigType.PLAYER || type == PlayerConfigType.DEFAULT_PLAYER)
+				.setDefaultValue(true)
+				.setComment(
+						"""
+						When enabled, this player is allowed to make claims."""
+				)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.build(allOptions);
+
+		ALLOWED_TO_ADD_FORCELOADS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.allowedToAddForceloads")
+				.setConfigTypeFilter(type -> type == PlayerConfigType.PLAYER || type == PlayerConfigType.DEFAULT_PLAYER)
+				.setDefaultValue(true)
+				.setComment(
+						"""
+						When enabled, this player is allowed to mark new claimed chunks for forceloading."""
 				)
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setOverridable(false)

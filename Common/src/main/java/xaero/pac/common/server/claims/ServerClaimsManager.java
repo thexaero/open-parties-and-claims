@@ -235,7 +235,21 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean force, boolean isServer, int claimLimit, ClaimingAction action) {
+	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(
+			@Nonnull ResourceLocation dimension,
+			@Nonnull UUID playerId,
+			int subConfigIndex,
+			int fromX,
+			int fromZ,
+			int x,
+			int z,
+			boolean forceLoaded,
+			boolean force,
+			boolean isServer,
+			int claimLimit,
+			ClaimResult.Type claimingPermissionResult,
+			ClaimingAction action
+	) {
 		if(!force && action == ClaimingAction.CLAIM) {
 			ClaimActionPermissionOverride permissionOverride =
 					actionListenerManager.overrideClaimingActionPermission(playerId, dimension, x, z, ClaimingAction.CLAIM, this, server);
@@ -249,6 +263,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			}
 		}
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
+		if(!force && currentClaim == null && claimingPermissionResult != null)
+			return new ClaimResult<>(null, claimingPermissionResult);
 		boolean claimCountUnaffected = false;
 		if(currentClaim != null)
 			claimCountUnaffected = Objects.equals(currentClaim.getPlayerId(), playerId);
@@ -292,7 +308,19 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Nonnull
 	@Override
-	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int x, int z, boolean force, boolean ignoreAnchors) {
+	public ClaimResult<PlayerChunkClaim> tryToClaimTyped(
+			@Nonnull ResourceLocation dimension,
+			@Nonnull UUID playerId,
+			int subConfigIndex,
+			@Nonnull ResourceLocation fromDimension,
+			int fromX,
+			int fromZ,
+			int x,
+			int z,
+			boolean force,
+			boolean ignoreAnchors,
+			ClaimResult.Type claimingPermissionResult
+	) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get())
 			return new ClaimResult<>(null, ClaimResult.Type.CLAIMS_ARE_DISABLED);
 		boolean isServer = Objects.equals(playerId, PlayerConfig.SERVER_CLAIM_UUID);
@@ -309,7 +337,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				!withinAnchorDistance(playerId, dimension, x, z))
 			return new ClaimResult<>(null, ClaimResult.Type.ANCHOR_TOO_FAR);
 		int claimLimit = getPlayerFullClaimLimit(playerId);
-		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, ClaimingAction.CLAIM);
+		return tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, claimingPermissionResult, ClaimingAction.CLAIM);
 	}
 
 	@Nonnull
@@ -391,7 +419,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 				return new ClaimResult<>(currentClaim, ClaimResult.Type.FORCELOAD_LIMIT_REACHED);
 
 			ClaimingAction action = enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD;
-			return tryToClaimHelper(dimension, currentClaim.getPlayerId(), currentClaim.getSubConfigIndex(), fromX, fromZ, x, z, enable, force, isServer, claimLimit, action);
+			return tryToClaimHelper(dimension, currentClaim.getPlayerId(), currentClaim.getSubConfigIndex(), fromX, fromZ, x, z, enable, force, isServer, claimLimit, null, action);
 		} else
 		 	return new ClaimResult<>(currentClaim, ClaimResult.Type.NOT_CLAIMED_BY_USER_FORCELOAD);
 	}
@@ -486,7 +514,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		if(playerClaimInfo.isAreaClaimTaskInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.AREA_ACTION_IN_PROGRESS);
 		if(add && (currentClaim == null || !currentClaim.getPlayerId().equals(playerId))) {
-			ClaimResult<PlayerChunkClaim> claimResult = tryToClaimTyped(dimension, playerId, -1, fromDimension, fromX, fromZ, x, z, force, true);
+			ClaimResult<PlayerChunkClaim> claimResult = tryToClaimTyped(dimension, playerId, -1, fromDimension, fromX, fromZ, x, z, force, true, null);
 			if(!claimResult.getResultType().success)
 				return claimResult;
 			currentClaim = claimResult.getClaimResult();
@@ -509,7 +537,7 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 					dimension, anchorOwnerId, -1, dimension, fromX, fromZ,
 					x - anchorRange, z - anchorRange, x + anchorRange, z + anchorRange,
 					ClaimingAction.UNCLAIM_UNANCHORED, true, Integer.MAX_VALUE,
-					a -> !a.equals(anchorPos), result -> {
+					a -> !a.equals(anchorPos), null, result -> {
 						Set<ClaimResult.Type> fullResultTypes = result.getResultTypesStream().collect(Collectors.toSet());
 						boolean removalSuccess = removeAnchor(dimension, anchorPos, anchorOwnerId);
 						if(removalSuccess) {
@@ -565,8 +593,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		CompletableFuture<AreaClaimResult> resultFuture = new CompletableFuture<>();
 		PlayerAreaClaimActionSpreadoutTask task = new PlayerAreaClaimActionSpreadoutTask(
 				new ClaimActionRequest(action, dimension, effectiveLeft, effectiveTop, effectiveRight, effectiveBottom, null),
-				force, playerId, subConfigIndex,
-				dimension, fromX, fromZ, 100, null,
+				force, playerId, subConfigIndex, dimension, fromX, fromZ,
+				100, null, null,
 				resultFuture::complete
 		);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
@@ -576,12 +604,49 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		return resultFuture.join();
 	}
 
-	public void tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force, Predicate<ChunkPos> anchorFilter, Consumer<AreaClaimResult> listener) {
+	@Override
+	public void tryClaimActionOverArea(
+			@Nonnull ResourceLocation dimension,
+			@Nonnull UUID playerId,
+			int subConfigIndex,
+			@Nonnull ResourceLocation fromDimension,
+			int fromX,
+			int fromZ,
+			int left,
+			int top,
+			int right,
+			int bottom,
+			@Nonnull ClaimingAction action,
+			boolean force,
+			@Nullable Predicate<ChunkPos> anchorFilter,
+			@Nullable ClaimResult.Type claimingPermissionResult,
+			@Nonnull Consumer<AreaClaimResult> listener
+	) {
 		int maxChunksToAffect = force ? Integer.MAX_VALUE : ServerConfig.CONFIG.maxSingleClaimActionSize.get();
-		tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, action, force, maxChunksToAffect, anchorFilter, listener);
+		tryClaimActionOverArea(
+				dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom,
+				action, force, maxChunksToAffect, anchorFilter, claimingPermissionResult, listener
+		);
 	}
 
-	public void tryClaimActionOverArea(ResourceLocation dimension, UUID playerId, int subConfigIndex, ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, ClaimingAction action, boolean force, int maxChunksToAffect, Predicate<ChunkPos> anchorFilter, Consumer<AreaClaimResult> listener) {
+	public void tryClaimActionOverArea(
+			ResourceLocation dimension,
+			UUID playerId,
+			int subConfigIndex,
+			ResourceLocation fromDimension,
+			int fromX,
+			int fromZ,
+			int left,
+			int top,
+			int right,
+			int bottom,
+			ClaimingAction action,
+			boolean force,
+			int maxChunksToAffect,
+			Predicate<ChunkPos> anchorFilter,
+			ClaimResult.Type claimingPermissionResult,
+			Consumer<AreaClaimResult> listener
+	) {
 		if(!ServerConfig.CONFIG.claimsEnabled.get()) {
 			listener.accept(new AreaClaimResult(Sets.newHashSet(ClaimResult.Type.CLAIMS_ARE_DISABLED), new HashSet<>(), dimension, left, top, right, bottom));
 			return;
@@ -613,9 +678,8 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 		playerClaimInfo.addAreaClaimActionTask(
 				new PlayerAreaClaimActionSpreadoutTask(
 						new ClaimActionRequest(action, dimension, left, top, right, bottom, null),
-						force, playerId, subConfigIndex,
-						fromDimension, fromX, fromZ, maxChunksToAffect, anchorFilter,
-						listener
+						force, playerId, subConfigIndex, fromDimension, fromX, fromZ, maxChunksToAffect,
+						anchorFilter, claimingPermissionResult, listener
 				),
 				serverData
 		);
@@ -623,17 +687,17 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 
 	@Override
 	public void tryToClaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean force, @Nonnull Consumer<AreaClaimResult> listener) {
-		tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.CLAIM, force, null, listener);
+		tryClaimActionOverArea(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.CLAIM, force, null, null, listener);
 	}
 
 	@Override
 	public void tryToUnclaimArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean force, @Nonnull Consumer<AreaClaimResult> listener) {
-		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.UNCLAIM, force, null, listener);
+		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, ClaimingAction.UNCLAIM, force, null, null, listener);
 	}
 
 	@Override
 	public void tryToForceloadArea(@Nonnull ResourceLocation dimension, @Nonnull UUID id, @Nonnull ResourceLocation fromDimension, int fromX, int fromZ, int left, int top, int right, int bottom, boolean enable, boolean force, @Nonnull Consumer<AreaClaimResult> listener) {
-		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, force, null, listener);
+		tryClaimActionOverArea(dimension, id, -1, fromDimension, fromX, fromZ, left, top, right, bottom, enable ? ClaimingAction.FORCELOAD : ClaimingAction.UNFORCELOAD, force, null, null, listener);
 	}
 
 	@Nullable
