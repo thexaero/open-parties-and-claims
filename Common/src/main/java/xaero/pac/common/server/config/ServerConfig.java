@@ -332,7 +332,8 @@ public class ServerConfig {
 					"""
 					Whether players should be able to claim chunks that are directly next to claimed chunks owned by another player/party.
 					Disallowing it can prevent players from doing so without realizing that chunks next to claims can also be partially protected,
-					e.g. from item use and mob griefing, making them not ideal for some purposes.
+					e.g. from item use and mob griefing, making them not ideal for some purposes. Players can make exceptions using the "Can Claim Next To"
+					option in their player config.
 					Only affects claiming wilderness, so reclaimable claims can still work."""
 			)
 			.translation("gui.xaero_pac_config_allow_touching_claims")
@@ -1083,6 +1084,7 @@ public class ServerConfig {
 							"claims.protection.exceptions.projectileHitHostileSpawn",
 							"claims.protection.exceptions.projectileHitFriendlySpawn",
 							"claims.protection.exceptions.reclaimable",
+							"claims.protection.exceptions.canClaimNextTo",
 							"parties.name",
 							"parties.shareLocationWithParty",
 							"parties.shareLocationWithMutualAllyParties",

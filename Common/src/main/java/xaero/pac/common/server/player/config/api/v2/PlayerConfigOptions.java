@@ -333,6 +333,10 @@ public class PlayerConfigOptions {
 	 * Whether the claimed chunk(s) can be reclaimed by another player.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_RECLAIMABLE;
+	/**
+	 * Players whose claims you want to be able to claim next to.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_CLAIM_NEXT_TO;
 
 	/**
 	 * Whether the player's forceloadable claims are forceloaded, at least while the player is online.
@@ -1131,6 +1135,21 @@ public class PlayerConfigOptions {
 						When a player group is chosen, every player in the group can reclaim the chunk(s)
 						that use this (sub-)config as their own. This is mainly meant for land plots you want other
 						players to be able to take from you.
+						"""
+						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.build(allOptions);
+
+		CLAIM_EXCEPTION_CLAIM_NEXT_TO = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.canClaimNextTo")
+				.setDefaultValue(PlayerConfigConstants.NO_EXCEPTION_ID)
+				.setComment(
+						"""
+						If touching claims aren't allowed by default on the server, you can claim next to claims owned
+						by the players in the chosen group if they can also claim next to yours.
+						Chunks next to claims can be partially protected against item use, mob griefing and more, so you can
+						accidentally prevent yourself from doing certain things in your own claim.
 						"""
 						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
 				)

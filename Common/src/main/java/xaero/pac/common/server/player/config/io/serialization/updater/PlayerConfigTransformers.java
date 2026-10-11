@@ -273,6 +273,10 @@ public class PlayerConfigTransformers {
 				new PlayerConfigOpConfigurableAdder(ImmutableList.of("claims.allowedToClaim", "claims.allowedToAddForceloads"))
 		);
 
+		transformers.add(//18
+				new PlayerConfigConfigurableAdder(ImmutableList.of("claims.protection.exceptions.canClaimNextTo"))
+		);
+
 	}
 
 }
