@@ -319,10 +319,10 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 						PlayerChunkClaim neighborClaim = get(dimension, x + i, z + j);
 						if(neighborClaim == null)
 							continue;
-						if(claimsCanTouch(claim, neighborClaim, dimension))
+						if(neighborClaim.getPlayerId().equals(playerId))
 							continue;
-						if(!neighborClaim.getPlayerId().equals(playerId))
-							return new ClaimResult<>(currentClaim, ClaimResult.Type.CANT_TOUCH_OTHER);
+						if(!claimsCanTouch(claim, neighborClaim, dimension))
+							return new ClaimResult<>(null, ClaimResult.Type.CANT_TOUCH_OTHER);
 					}
 				}
 			PlayerChunkClaim actualClaim = claim(dimension, claim.getPlayerId(), subConfigIndex, x, z, claim.isForceloadable());
