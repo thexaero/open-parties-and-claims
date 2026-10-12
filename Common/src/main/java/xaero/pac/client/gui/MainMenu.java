@@ -20,15 +20,20 @@ package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.level.ChunkPos;
 import xaero.pac.OpenPartiesAndClaims;
 import xaero.pac.client.claims.IClientClaimsManager;
@@ -40,11 +45,12 @@ import xaero.pac.client.claims.player.mode.ClientClaimingModeHandler;
 import xaero.pac.client.controls.keybinding.IKeyBindingHelper;
 import xaero.pac.client.gui.component.CachedComponentSupplier;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
+import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
 import xaero.pac.client.parties.party.IClientParty;
 import xaero.pac.client.parties.party.IClientPartyAllyInfo;
 import xaero.pac.client.parties.party.IClientPartyMemberDynamicInfoSyncableStorage;
 import xaero.pac.client.parties.party.IClientPartyStorage;
-import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
+import xaero.pac.client.player.config.*;
 import xaero.pac.client.world.capability.ClientWorldMainCapability;
 import xaero.pac.client.world.capability.api.ClientWorldCapabilityTypes;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -61,6 +67,8 @@ import xaero.pac.common.platform.Services;
 import xaero.pac.common.server.claims.command.ClaimingModeCommand;
 import xaero.pac.common.server.claims.command.ClaimsCommandRegister;
 import xaero.pac.common.server.parties.command.PartyCommandRegister;
+import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -99,10 +107,10 @@ public class MainMenu extends XPACScreen {
 		String currentPartyName = (String) args[0];
 		return new TranslatableComponent("gui.xaero_pac_ui_party_name", new TextComponent(currentPartyName).withStyle(s -> s.withColor(0xFFAAAAAA)));
 	});
-	private static final CachedComponentSupplier ownerNameSupplier = new CachedComponentSupplier(args -> {
-		String currentOwnerName = (String) args[0];
-		return new TranslatableComponent("gui.xaero_pac_ui_party_owner", new TextComponent(currentOwnerName).withStyle(s -> s.withColor(0xFFAAAAAA)));
-	});
+//	private static final CachedComponentSupplier ownerNameSupplier = new CachedComponentSupplier(args -> {
+//		String currentOwnerName = (String) args[0];
+//		return new TranslatableComponent("gui.xaero_pac_ui_party_owner", new TextComponent(currentOwnerName).withStyle(s -> s.withColor(0xFFAAAAAA)));
+//	});
 	private static final CachedComponentSupplier memberCountSupplier = new CachedComponentSupplier(args -> {
 		int currentMemberCount = (Integer) args[0];
 		int currentMemberLimit = (Integer) args[1];
@@ -159,10 +167,13 @@ public class MainMenu extends XPACScreen {
 	private Button claimButton;
 	private Button forceloadButton;
 	private Button anchorButton;
+	private Button claimConfigButton;
 	private List<ClaimingMode> claimModeOptions;
 	private IClaimingModeAPI selectedClaimingMode;
 	private IClaimingModeAPI selectedEffectiveClaimingMode;
 	private DropDownWidget claimingModeMenu;
+	private DropDownWidget subClaimMenu;
+	private List<String> subClaimOptions;
 	private long lastClaimingModeChangeTime;
 	public static boolean TEST_TOGGLE;
 
@@ -223,6 +234,23 @@ public class MainMenu extends XPACScreen {
 					p_170017_.accept(anchorButton.getMessage() == ANCHOR ? ANCHOR_COMMAND : UNANCHOR_COMMAND);
 				}
 			});
+
+		Component claimConfigButtonName = new TextComponent("C");
+		Component claimConfigButtonTooltipText = new TranslatableComponent("gui.xaero_pac_ui_subclaim_config_button");
+		List<FormattedCharSequence> claimConfigButtonTooltip = minecraft.font.split(claimConfigButtonTooltipText, 200);
+		claimConfigButton = new Button(width / 2 + 102, height / 7 + 74, 20, 20, claimConfigButtonName,
+				b -> {
+					if(!isClaimConfigButtonEnabled())
+						return;
+					IPlayerConfigClientStorageManager<?> configs = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
+					ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(selectedEffectiveClaimingMode);
+					IPlayerConfigClientStorage<?> config = claimingModeHandler.getConfigStorage(configs);
+					config.setSelectedSubConfig(subClaimOptions == null ? null : subClaimOptions.get(subClaimMenu.getSelected()));
+					claimingModeHandler.openConfigScreen(this, escape);
+				},
+				(b, matrixStack, mouseX, mouseY) ->
+						renderTooltip(matrixStack, claimConfigButtonTooltip, mouseX, mouseY + 34)
+		);
 		
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 7 + 171, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
 
@@ -235,6 +263,9 @@ public class MainMenu extends XPACScreen {
 		}
 		if(serverHasClaimsEnabled){
 			addRenderableWidget(claimingModeMenu = setupClaimModeDropdown());
+			addRenderableWidget(subClaimMenu = setupSubClaimDropdown());
+			claimConfigButton.active = isClaimConfigButtonEnabled();
+			addRenderableWidget(claimConfigButton);
 			addRenderableWidget(claimButton);
 			addRenderableWidget(forceloadButton);
 			if(anchorButton != null)
@@ -259,12 +290,13 @@ public class MainMenu extends XPACScreen {
 		selectedClaimingMode = claimsManager.getRawClaimingMode();
 		selectedEffectiveClaimingMode = claimsManager.getEffectiveClaimingMode(selectedClaimingMode);
 		ClaimingMode effectiveDefaultMode = (ClaimingMode) claimsManager.getEffectiveClaimingMode(null);
-		int selectedClaimMode = selectedClaimingMode == null ? 0 : claimModeOptions.indexOf(selectedClaimingMode);
+		int selectedClaimMode = selectedClaimingMode == null ? 0 : claimModeOptions.indexOf((ClaimingMode) selectedClaimingMode);
+		List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(new TranslatableComponent("gui.xaero_pac_ui_claiming_mode_dropdown_tooltip"), 200);
 		return DropDownWidget.Builder.begin()
 				.setCallback(this::onClaimMode)
 				.setContainer(this)
 				.setX(width / 2 - 100)
-				.setY(height / 7 + 84)
+				.setY(height / 7 + 71)
 				.setW(200)
 				.setOptions(
 						claimModeOptions.stream()
@@ -279,6 +311,55 @@ public class MainMenu extends XPACScreen {
 				)
 				.setSelected(selectedClaimMode)
 				.setNarrationTitle(new TranslatableComponent("gui.xaero_pac_claiming_as_narration"))
+				.setTooltip(tooltip)
+				.build();
+	}
+
+	private DropDownWidget setupSubClaimDropdown(){
+		IPlayerConfigClientStorageManager<?> configs = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
+		IPlayerConfigClientStorage<?> config = ClaimingModeClientHandlers.get(selectedEffectiveClaimingMode).getConfigStorage(configs);
+		IPlayerConfigClientStorage<?> myPlayerConfig = configs.getMyPlayerConfig();
+		IPlayerConfigOptionSpecAPI<String> subClaimOption = config.getType().getSubClaimOption();
+		IPlayerConfigStringableOptionClientStorage<String> usedSubConfigOptionStorage;
+		subClaimOptions = null;
+		String[] subClaimOptionsArray;
+		int indexOfSelectedSub;
+		if(subClaimOption != null) {
+			usedSubConfigOptionStorage = myPlayerConfig.getOption(subClaimOption);
+			subClaimOptions = new ArrayList<>(config.getSubConfigIds());
+			subClaimOptionsArray = subClaimOptions.toArray(new String[0]);
+			indexOfSelectedSub = subClaimOptions.indexOf(usedSubConfigOptionStorage.getValue());
+			if (indexOfSelectedSub < 0)
+				indexOfSelectedSub = subClaimOptions.indexOf(PlayerConfig.MAIN_SUB_ID);
+			if (indexOfSelectedSub < 0)
+				indexOfSelectedSub = 0;
+		} else {
+			usedSubConfigOptionStorage = null;
+			subClaimOptionsArray = new String[]{"§8" + I18n.get("gui.xaero_pac_ui_subclaim_dropdown_not_supported")};
+			indexOfSelectedSub = 0;
+		}
+		Component tooltipText = new TranslatableComponent("gui.xaero_pac_ui_subclaim_dropdown_tooltip");
+		List<FormattedCharSequence> tooltip = Minecraft.getInstance().font.split(tooltipText, 200);
+		return DropDownWidget.Builder.begin()
+				.setX(width / 2 - 100)
+				.setY(height / 7 + 85)
+				.setW(200)
+				.setOptions(subClaimOptionsArray)
+				.setNarrationTitle(tooltipText)
+				.setCallback((dd, index) -> {
+					if(subClaimOption == null)
+						return false;
+					String selectedSubClaim = subClaimOptions.get(index);
+					usedSubConfigOptionStorage.setValue(selectedSubClaim);
+					OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().syncToServer(
+							(PlayerConfigClientStorage) myPlayerConfig,
+							(PlayerConfigStringableOptionClientStorage<?>) usedSubConfigOptionStorage
+					);
+					return true;
+				})
+				.setContainer((IDropDownContainer) Minecraft.getInstance().screen)
+				.setSelected(indexOfSelectedSub)
+				.setTooltip(tooltip)
 				.build();
 	}
 
@@ -290,6 +371,7 @@ public class MainMenu extends XPACScreen {
 		String modePrefix = selectedClaimingMode == null ? ClaimingModeCommand.DEFAULT_MODE_PREFIX : selectedClaimingMode.getId();
 		sendMessage("/" + ClaimsCommandRegister.COMMAND_PREFIX + " " + modePrefix + "-claim-mode");
 		lastClaimingModeChangeTime = System.currentTimeMillis();
+		replaceRenderableWidget(subClaimMenu, subClaimMenu = setupSubClaimDropdown());
 		updateWidgets();
 		return true;
 	}
@@ -320,16 +402,25 @@ public class MainMenu extends XPACScreen {
 				anchorButton.setMessage(wouldAnchor(chunkPos, currentClaim) ? ANCHOR : UNANCHOR);
 			}
 
-			updateClaimingModeDropdown(claimsManager);
+			detectClaimingModeChanges(claimsManager);
+
+			claimConfigButton.active = isClaimConfigButtonEnabled();
 		}
 	}
 
-	private void updateClaimingModeDropdown(IClientClaimsManager<?, ?, ?> claimsManager){
+	private boolean isClaimConfigButtonEnabled(){
+		IPlayerConfigClientStorageManager<?> configs = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
+		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(selectedEffectiveClaimingMode);
+		return claimingModeHandler.isConfigScreenViewable(configs);
+	}
+
+	private void detectClaimingModeChanges(IClientClaimsManager<?, ?, ?> claimsManager){
 		if(System.currentTimeMillis() - lastClaimingModeChangeTime < 1000)
 			return;
 		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode && claimsManager.getRawClaimingMode() == selectedClaimingMode)
 			return;
 		replaceRenderableWidget(claimingModeMenu, claimingModeMenu = setupClaimModeDropdown());
+		replaceRenderableWidget(subClaimMenu, subClaimMenu = setupSubClaimDropdown());
 	}
 	
 	private void onConfigsButton(Button b) {
@@ -412,10 +503,10 @@ public class MainMenu extends XPACScreen {
 			actualPartyName = "N/A";
 		drawString(poseStack, font, partyNameSupplier.get(actualPartyName), width / 2 - 24, height / 7 + 30, -1);
 		if(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClientPartyStorage().getParty() != null) {
-			String actualOwnerName = partyStorage.getParty().getOwner().getUsername();
-			drawString(poseStack, font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 7 + 42, -1);
-			drawString(poseStack, font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 7 + 54, -1);
-			drawString(poseStack, font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 7 + 66, -1);
+//			String actualOwnerName = partyStorage.getParty().getOwner().getUsername();
+//			drawString(poseStack, font, ownerNameSupplier.get(actualOwnerName), width / 2 - 24, height / 7 + 42, -1);
+			drawString(poseStack, font, memberCountSupplier.get(partyStorage.getUIMemberCount(), partyStorage.getMemberLimit()), width / 2 - 24, height / 7 + 42, -1);
+			drawString(poseStack, font, allyCountSupplier.get(partyStorage.getUIAllyCount(), partyStorage.getAllyLimit()), width / 2 - 24, height / 7 + 54, -1);
 //			drawString(poseStack, font, inviteCountSupplier.get(partyStorage.getUIInviteCount(), partyStorage.getInviteLimit()), width / 2 - 24, height / 7 + 90, -1);
 		}
 	}
@@ -497,10 +588,9 @@ public class MainMenu extends XPACScreen {
 	@Override
 	public boolean keyPressed(int p_96552_, int p_96553_, int p_96554_) {
 		IKeyBindingHelper keyBindingHelper = Services.PLATFORM.getKeyBindingHelper();
-		if(getFocused() == null && keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getType() == InputConstants.Type.KEYSYM
-				&&
-				p_96552_ == keyBindingHelper.getBoundKey(OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu).getValue()
-				) {
+		KeyMapping openKeyMapping = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getKeyBindings().openModMenu;
+		if(keyBindingHelper.getBoundKey(openKeyMapping).getType() == InputConstants.Type.KEYSYM &&
+				p_96552_ == keyBindingHelper.getBoundKey(openKeyMapping).getValue()) {
 			onClose();
 			return true;
 		}

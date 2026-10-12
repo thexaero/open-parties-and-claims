@@ -718,5 +718,9 @@
 	"gui.xaero_claims_paused_permission" : "You can't make claims because you have been given the \"claiming paused\" permission.",
 	"gui.xaero_claims_not_allowed_in_config" : "You can't make claims because your player config doesn't allow you to.",
 	"gui.xaero_claims_new_fl_paused_permission" : "You can't mark claims for forceloading because you have been given the \"new forceloads paused\" permission.",
-	"gui.xaero_claims_new_fl_not_allowed_in_config" : "You can't mark claims for forceloading because your player config doesn't allow you to."
+	"gui.xaero_claims_new_fl_not_allowed_in_config" : "You can't mark claims for forceloading because your player config doesn't allow you to.",
+	"gui.xaero_pac_ui_claiming_mode_dropdown_tooltip" : "Claiming Mode",
+	"gui.xaero_pac_ui_subclaim_dropdown_tooltip" : "Used Sub-claim",
+	"gui.xaero_pac_ui_subclaim_dropdown_not_supported" : "Not Supported",
+	"gui.xaero_pac_ui_subclaim_config_button" : "Claim Config"
 }

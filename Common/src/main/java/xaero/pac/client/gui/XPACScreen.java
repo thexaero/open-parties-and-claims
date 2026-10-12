@@ -138,6 +138,8 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 
 	private <T extends GuiEventListener & NarratableEntry, T2 extends GuiEventListener & Widget & NarratableEntry>
 	void replaceWidget(T current, T replacement, T2 replaceRenderable) {
+		if(current == null)
+			return;
 		int childIndex = children().indexOf(current);
 		if(childIndex == -1)
 			return;

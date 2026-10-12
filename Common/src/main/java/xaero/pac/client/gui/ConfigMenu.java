@@ -30,6 +30,8 @@ import xaero.pac.client.claims.IClientClaimsManager;
 import xaero.pac.client.claims.IClientDimensionClaimsManager;
 import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
+import xaero.pac.client.claims.player.mode.ClaimingModeClientHandlers;
+import xaero.pac.client.claims.player.mode.ClientClaimingModeHandler;
 import xaero.pac.client.gui.widget.FixedEditBox;
 import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
@@ -83,13 +85,12 @@ public class ConfigMenu extends XPACScreen {
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 7 + 171, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));
 
 		serverHasMod = mainCap.getClientWorldData().serverHasMod();
-		myPlayerConfigButton.active = serverHasMod && configStorage.getMyPlayerConfig().getPermissions().canView();
-		serverClaimsConfigButton.active = serverHasMod && configStorage.getServerClaimsConfig().getPermissions().canView();
+		myPlayerConfigButton.active = serverHasMod && ClaimingModeClientHandlers.PLAYER.isConfigScreenViewable(configStorage);
+		serverClaimsConfigButton.active = serverHasMod && ClaimingModeClientHandlers.SERVER.isConfigScreenViewable(configStorage);
 		expiredClaimsConfigButton.active = serverHasMod && configStorage.getExpiredClaimsConfig().getPermissions().canView();
 		wildernessConfigButton.active = serverHasMod && configStorage.getWildernessConfig().getPermissions().canView();
 		defaultConfigButton.active = serverHasMod && configStorage.getDefaultPlayerConfig().getPermissions().canView();
-		partyClaimsConfigButton.active = serverHasMod && claimsManager.usingPartyOwnedClaims() && claimsManager.isInParty()
-				&& configStorage.getPartyClaimsConfig().getPermissions().canView();
+		partyClaimsConfigButton.active = serverHasMod && ClaimingModeClientHandlers.PARTY.isConfigScreenViewable(configStorage);
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	}
 
