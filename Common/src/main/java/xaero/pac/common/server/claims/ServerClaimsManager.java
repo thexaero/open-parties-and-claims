@@ -286,11 +286,11 @@ public final class ServerClaimsManager extends ClaimsManager<ServerPlayerClaimIn
 			}
 		}
 		PlayerChunkClaim currentClaim = get(dimension, x, z);
-		if(!force && currentClaim == null && claimingPermissionResult != null)
-			return new ClaimResult<>(null, claimingPermissionResult);
 		boolean claimCountUnaffected = false;
 		if(currentClaim != null)
 			claimCountUnaffected = Objects.equals(currentClaim.getPlayerId(), playerId);
+		if(!force && !claimCountUnaffected && claimingPermissionResult != null)
+			return new ClaimResult<>(currentClaim, claimingPermissionResult);
 		ServerPlayerClaimInfo playerClaimInfo = getPlayerInfo(playerId);
 		if(!force && playerClaimInfo.isTransferInProgress())
 			return new ClaimResult<>(null, ClaimResult.Type.TRANSFER_IN_PROGRESS);
