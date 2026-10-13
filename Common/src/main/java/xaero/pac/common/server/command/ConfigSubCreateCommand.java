@@ -169,7 +169,9 @@ public class ConfigSubCreateCommand {
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, subIdRulesComponent));
 				return 0;
 			}
-			if(sourcePlayer != null && type.getSubClaimOption() != null) {
+			if(sourcePlayer != null &&
+					(type != PlayerConfigType.PLAYER || callerId.equals(configPlayerUUID)) &&
+					type.getSubClaimOption() != null) {
 				IPlayerConfig callerConfig = serverData.getPlayerConfigManager().getLoadedConfig(callerId);
 				callerConfig.tryToSet(type.getSubClaimOption(), inputSubId);
 			}

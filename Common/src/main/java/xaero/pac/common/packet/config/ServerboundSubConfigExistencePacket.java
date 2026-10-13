@@ -180,7 +180,9 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 						serverPlayer.sendMessage(limitReachedMessage, serverPlayer.getUUID());
 					}
 				}
-				if(createdSub != null && t.type.getSubClaimOption() != null){
+				if(createdSub != null &&
+						(t.type != PlayerConfigType.PLAYER || serverPlayer.getUUID().equals(ownerId)) &&
+						t.type.getSubClaimOption() != null){
 					IPlayerConfig callerConfig = serverData.getPlayerConfigManager().getLoadedConfig(serverPlayer.getUUID());
 					callerConfig.tryToSet(t.type.getSubClaimOption(), t.subId);//I know this can potentially land after the screen is refreshed but it's not a critical problem and works most of the time
 				}
