@@ -185,7 +185,8 @@ public class MainMenu extends XPACScreen {
 		
 		aboutPartyButton = new Button(width / 2 - 100, height / 7 + 28, 70, 20, new TranslatableComponent("gui.xaero_pac_ui_about_party"), this::onAboutPartyButton, new Button.OnTooltip() {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
-				 MainMenu.this.renderTooltip(p_170020_, ABOUT_PARTY_COMMAND, p_170021_, p_170022_);
+				if (p_170019_.isMouseOver(p_170021_, p_170022_))
+					nextTooltip = List.of(ABOUT_PARTY_COMMAND.getVisualOrderText());
 			}
 
 			public void narrateTooltip(Consumer<Component> p_170017_) {
@@ -197,7 +198,8 @@ public class MainMenu extends XPACScreen {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				if(openDropdown != null)
 					return;
-				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND, p_170021_, p_170022_);
+				if (p_170019_.isMouseOver(p_170021_, p_170022_))
+					nextTooltip = List.of((p_170019_.getMessage() == CLAIM ? CLAIM_COMMAND : UNCLAIM_COMMAND).getVisualOrderText());
 			}
 
 			public void narrateTooltip(Consumer<Component> p_170017_) {
@@ -209,7 +211,8 @@ public class MainMenu extends XPACScreen {
 			public void onTooltip(Button p_170019_, PoseStack p_170020_, int p_170021_, int p_170022_) {
 				if(openDropdown != null)
 					return;
-				MainMenu.this.renderTooltip(p_170020_, p_170019_.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND, p_170021_, p_170022_);
+				if (p_170019_.isMouseOver(p_170021_, p_170022_))
+					nextTooltip = List.of((p_170019_.getMessage() == FORCELOAD ? FORCELOAD_COMMAND : UNFORCELOAD_COMMAND).getVisualOrderText());
 			}
 
 			public void narrateTooltip(Consumer<Component> p_170017_) {
@@ -224,7 +227,8 @@ public class MainMenu extends XPACScreen {
 				public void onTooltip(Button button, PoseStack p_170020_, int p_170021_, int p_170022_) {
 					if(openDropdown != null)
 						return;
-					MainMenu.this.renderTooltip(p_170020_, button.getMessage() == ANCHOR ? ANCHOR_COMMAND : UNANCHOR_COMMAND, p_170021_, p_170022_);
+					if (button.isMouseOver(p_170021_, p_170022_))
+						nextTooltip = List.of((button.getMessage() == ANCHOR ? ANCHOR_COMMAND : UNANCHOR_COMMAND).getVisualOrderText());
 				}
 
 				public void narrateTooltip(Consumer<Component> p_170017_) {
@@ -245,8 +249,7 @@ public class MainMenu extends XPACScreen {
 					config.setSelectedSubConfig(subClaimOptions == null ? null : subClaimOptions.get(subClaimMenu.getSelected()));
 					claimingModeHandler.openConfigScreen(this, escape);
 				},
-				(b, matrixStack, mouseX, mouseY) ->
-						renderTooltip(matrixStack, claimConfigButtonTooltip, mouseX, mouseY + 34)
+				(b, matrixStack, mouseX, mouseY) -> nextTooltip = claimConfigButtonTooltip
 		);
 		
 		addRenderableWidget(new Button(width / 2 - 100, this.height / 7 + 171, 200, 20, new TranslatableComponent("gui.xaero_pac_back"), this::onBackButton));

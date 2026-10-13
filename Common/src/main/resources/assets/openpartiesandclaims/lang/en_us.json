@@ -680,7 +680,7 @@
 	"gui.xaero_claims_claim_action_forbidden_by_addon_reason" : "The requested claiming action was prevented for (a) chunk(s) by an addon. Reason: %1$s",
 	"gui.xaero_claims_claim_action_interruptingly_forbidden_by_addon_reason" : "The requested claiming action was interrupted by an addon. Reason: %1$s",
 	"gui.xaero_claims_claim_action_forbidden_by_addon_reasons" : "Reasons provided by the addon(s):",
-	"gui.xaero_claims_claim_cant_touch_other_claims" : "Your claims are not allowed to touch as configured by the server config! Try the \"Can Claim Next To\" option in your player config for exceptions.",
+	"gui.xaero_claims_claim_cant_touch_other_claims" : "Your claim(s) would touch other claims they're not allowed to! Try the \"Can Claim Next To\" option in your player config for exceptions.",
 	"gui.xaero_claims_anchored" : "Successfully added a claiming anchor!",
 	"gui.xaero_claims_unanchored" : "Successfully removed the claiming anchor!",
 	"gui.xaero_claims_unanchor_command_area_end" : "Finished removing the claiming anchor at (%1$s, %2$s). Here are the results:",
@@ -722,5 +722,11 @@
 	"gui.xaero_pac_ui_claiming_mode_dropdown_tooltip" : "Claiming Mode",
 	"gui.xaero_pac_ui_subclaim_dropdown_tooltip" : "Used Sub-claim",
 	"gui.xaero_pac_ui_subclaim_dropdown_not_supported" : "Not Supported",
-	"gui.xaero_pac_ui_subclaim_config_button" : "Claim Config"
+	"gui.xaero_pac_ui_subclaim_config_button" : "Claim Config",
+	"gui.xaero_pac_ui_my_player_config_tooltip" : "Your own personal config used for Open Parties and Claims: both the built-in party system and the claiming system.",
+	"gui.xaero_pac_ui_party_claims_config_tooltip" : "The config used for the claims owned by the party that you are in when party-owned claims are enabled on the server. When you are the owner of the party, it's the same as your player config but just the claim-related options.",
+	"gui.xaero_pac_ui_default_player_config_tooltip" : "The default player config. When a new player joins the server their player config is copied from this one. It's also the config that the locked \"unconfigurable\" options in the individual player configs redirect to. The server owner can configure what those options are.",
+	"gui.xaero_pac_ui_server_claims_config_tooltip" : "The config used for claims made AS THE SERVER, not as an actual player. This is NOT the main server config for Open Parties and Claims. The main config file for the mod is openpartiesandclaims-server.toml. Please refer to the FAQ on the mod page for more info.",
+	"gui.xaero_pac_ui_expired_claims_config_tooltip" : "The config used for claims that have expired if the mod is not configured to automatically remove them.",
+	"gui.xaero_pac_ui_wilderness_config_tooltip" : "The config used for chunks that have not been claimed by anyone."
 }
