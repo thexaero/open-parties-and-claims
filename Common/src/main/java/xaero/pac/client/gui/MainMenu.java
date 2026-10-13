@@ -20,7 +20,6 @@ package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -70,10 +69,7 @@ import xaero.pac.common.server.parties.command.PartyCommandRegister;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.v2.IPlayerConfigOptionSpecAPI;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class MainMenu extends XPACScreen {
@@ -171,10 +167,11 @@ public class MainMenu extends XPACScreen {
 	private List<ClaimingMode> claimModeOptions;
 	private IClaimingModeAPI selectedClaimingMode;
 	private IClaimingModeAPI selectedEffectiveClaimingMode;
+	private String selectedSub;
 	private DropDownWidget claimingModeMenu;
 	private DropDownWidget subClaimMenu;
 	private List<String> subClaimOptions;
-	private long lastClaimingModeChangeTime;
+	private long lastClaimingChangeTime;
 	public static boolean TEST_TOGGLE;
 
 	public MainMenu(Screen escape, Screen parent) {
@@ -322,13 +319,19 @@ public class MainMenu extends XPACScreen {
 		IPlayerConfigOptionSpecAPI<String> subClaimOption = config.getType().getSubClaimOption();
 		IPlayerConfigStringableOptionClientStorage<String> usedSubConfigOptionStorage;
 		subClaimOptions = null;
+		selectedSub = null;
+		boolean canCreateSubs = config.getPermissions().canEdit();
 		String[] subClaimOptionsArray;
 		int indexOfSelectedSub;
 		if(subClaimOption != null) {
 			usedSubConfigOptionStorage = myPlayerConfig.getOption(subClaimOption);
 			subClaimOptions = new ArrayList<>(config.getSubConfigIds());
-			subClaimOptionsArray = subClaimOptions.toArray(new String[0]);
-			indexOfSelectedSub = subClaimOptions.indexOf(usedSubConfigOptionStorage.getValue());
+			selectedSub = usedSubConfigOptionStorage.getValue();
+			subClaimOptionsArray = new String[subClaimOptions.size() + (canCreateSubs ? 1 : 0)];
+			subClaimOptionsArray = subClaimOptions.toArray(subClaimOptionsArray);
+			if(canCreateSubs)
+				subClaimOptionsArray[subClaimOptionsArray.length - 1] = "§8" + I18n.get("gui.xaero_pac_ui_sub_config_dropdown_create");
+			indexOfSelectedSub = subClaimOptions.indexOf(selectedSub);
 			if (indexOfSelectedSub < 0)
 				indexOfSelectedSub = subClaimOptions.indexOf(PlayerConfig.MAIN_SUB_ID);
 			if (indexOfSelectedSub < 0)
@@ -349,8 +352,19 @@ public class MainMenu extends XPACScreen {
 				.setCallback((dd, index) -> {
 					if(subClaimOption == null)
 						return false;
-					String selectedSubClaim = subClaimOptions.get(index);
-					usedSubConfigOptionStorage.setValue(selectedSubClaim);
+					if(index >= subClaimOptions.size()) {
+						minecraft.setScreen(
+								CreateSubConfigScreen.Builder.begin()
+										.setConfigData((PlayerConfigClientStorage) config)
+										.setTargetScreenSupplier(() -> this)
+										.setParent(this)
+										.build()
+						);
+						return false;
+					}
+					selectedSub = subClaimOptions.get(index);
+					usedSubConfigOptionStorage.setValue(selectedSub);
+					lastClaimingChangeTime = System.currentTimeMillis();
 					OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer().syncToServer(
 							(PlayerConfigClientStorage) myPlayerConfig,
 							(PlayerConfigStringableOptionClientStorage<?>) usedSubConfigOptionStorage
@@ -370,7 +384,7 @@ public class MainMenu extends XPACScreen {
 
 		String modePrefix = selectedClaimingMode == null ? ClaimingModeCommand.DEFAULT_MODE_PREFIX : selectedClaimingMode.getId();
 		sendMessage("/" + ClaimsCommandRegister.COMMAND_PREFIX + " " + modePrefix + "-claim-mode");
-		lastClaimingModeChangeTime = System.currentTimeMillis();
+		lastClaimingChangeTime = System.currentTimeMillis();
 		replaceRenderableWidget(subClaimMenu, subClaimMenu = setupSubClaimDropdown());
 		updateWidgets();
 		return true;
@@ -402,22 +416,32 @@ public class MainMenu extends XPACScreen {
 				anchorButton.setMessage(wouldAnchor(chunkPos, currentClaim) ? ANCHOR : UNANCHOR);
 			}
 
-			detectClaimingModeChanges(claimsManager);
+			detectClaimingChanges(claimsManager);
 
 			claimConfigButton.active = isClaimConfigButtonEnabled();
 		}
 	}
 
 	private boolean isClaimConfigButtonEnabled(){
+		if(selectedEffectiveClaimingMode == null)
+			return false;
 		IPlayerConfigClientStorageManager<?> configs = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
 		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(selectedEffectiveClaimingMode);
 		return claimingModeHandler.isConfigScreenViewable(configs);
 	}
 
-	private void detectClaimingModeChanges(IClientClaimsManager<?, ?, ?> claimsManager){
-		if(System.currentTimeMillis() - lastClaimingModeChangeTime < 1000)
+	private void detectClaimingChanges(IClientClaimsManager<?, ?, ?> claimsManager){
+		if(System.currentTimeMillis() - lastClaimingChangeTime < 1000)
 			return;
-		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode && claimsManager.getRawClaimingMode() == selectedClaimingMode)
+		if(selectedEffectiveClaimingMode == null)
+			return;
+		IPlayerConfigClientStorageManager<?> configs = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager();
+		ClientClaimingModeHandler claimingModeHandler = ClaimingModeClientHandlers.get(selectedEffectiveClaimingMode);
+		IPlayerConfigClientStorage<?> claimingConfig = claimingModeHandler.getConfigStorage(configs);
+		IPlayerConfigOptionSpecAPI<String> claimingSubOption = claimingConfig.getType().getSubClaimOption();
+		String usedSub = claimingSubOption == null ? null : configs.getMyPlayerConfig().getOption(claimingSubOption).getValue();
+		if(claimsManager.getClaimingMode() == selectedEffectiveClaimingMode &&
+				claimsManager.getRawClaimingMode() == selectedClaimingMode && Objects.equals(usedSub, selectedSub))
 			return;
 		replaceRenderableWidget(claimingModeMenu, claimingModeMenu = setupClaimModeDropdown());
 		replaceRenderableWidget(subClaimMenu, subClaimMenu = setupSubClaimDropdown());

@@ -636,7 +636,8 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 					title, data, optionValueSourceData, mainPlayerConfigData, subConfigs,
 					selectedSubConfig, syncInProgress, optionValueSourceData.isBeingDeleted(),
 					otherPlayerName, this,
-					canCreateSubs);
+					canCreateSubs
+			);
 		}
 
 		public static Builder begin(ListFactory listFactory) {
