@@ -231,7 +231,7 @@
 	"gui.xaero_claims_protection_off_hand" : "Off Hand",
 	"gui.xaero_claims_protection_create_cant_use_glue" : "You are not allowed to glue some (or all) of the selected.",
 	"gui.xaero_claims_protection_create_cant_remove_glue" : "You are not allowed to remove glue from some (or all) of the claims that contain this glue selection.",
-	"gui.xaero_claims_protection_create_train_controls_protected" : "You are not allowed to control this train! Press ESCAPE to free yourself.",
+	"gui.xaero_claims_protection_create_train_controls_protected" : "You are not allowed to control this train (block ID is create:controls)! Press ESCAPE to free yourself.",
 
 	"gui.xaero_pac_full_title_format" : "%1$s - %2$s",
 	"gui.xaero_pac_title_wilderness" : "Wilderness",
