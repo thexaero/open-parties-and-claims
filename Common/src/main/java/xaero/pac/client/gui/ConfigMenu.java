@@ -45,13 +45,13 @@ import xaero.pac.common.packet.config.ServerboundOtherPlayerConfigPacket;
 
 public class ConfigMenu extends XPACScreen {
 	
-	private static final TranslatableComponent ANOTHER_PLAYER_TITLE = Component.translatable("gui.xaero_pac_ui_other_player_config_name_title");
-	private static final TranslatableComponent MY_PLAYER_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_my_player_config_tooltip");
-	private static final TranslatableComponent PARTY_CLAIMS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_party_claims_config_tooltip");
-	private static final TranslatableComponent DEFAULT_PLAYER_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_default_player_config_tooltip");
-	private static final TranslatableComponent SERVER_CLAIMS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_server_claims_config_tooltip");
-	private static final TranslatableComponent EXPIRED_CLAIMS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_expired_claims_config_tooltip");
-	private static final TranslatableComponent WILDERNESS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_wilderness_config_tooltip");
+	private static final MutableComponent ANOTHER_PLAYER_TITLE = Component.translatable("gui.xaero_pac_ui_other_player_config_name_title");
+	private static final MutableComponent MY_PLAYER_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_my_player_config_tooltip");
+	private static final MutableComponent PARTY_CLAIMS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_party_claims_config_tooltip");
+	private static final MutableComponent DEFAULT_PLAYER_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_default_player_config_tooltip");
+	private static final MutableComponent SERVER_CLAIMS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_server_claims_config_tooltip");
+	private static final MutableComponent EXPIRED_CLAIMS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_expired_claims_config_tooltip");
+	private static final MutableComponent WILDERNESS_CONFIG_TOOLTIP = Component.translatable("gui.xaero_pac_ui_wilderness_config_tooltip");
 	private boolean serverHasMod;
 	private Button partyClaimsConfigButton;
 	private Button myPlayerConfigButton;
