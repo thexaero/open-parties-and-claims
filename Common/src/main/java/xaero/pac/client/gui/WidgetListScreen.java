@@ -251,7 +251,7 @@ public abstract class WidgetListScreen<C> extends XPACScreen {
 		if (openDropdown == null && tooltipElement != null) {
 			List<FormattedCharSequence> tooltip = tooltipElement.getTooltip();
 			if (tooltip != null)
-				renderTooltip(poseStack, tooltip, mouseX, mouseY + ROW_HEIGHT + 10);
+				nextTooltip = tooltip;
 		}
 	}
 

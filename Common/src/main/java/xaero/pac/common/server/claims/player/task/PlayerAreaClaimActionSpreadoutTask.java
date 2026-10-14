@@ -50,6 +50,7 @@ import java.util.function.Predicate;
 public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueuedTask<PlayerAreaClaimActionSpreadoutTask> {
 
 	private final ClaimActionRequest actionRequest;
+	private final ClaimResult.Type claimingPermissionResult;
 	private final boolean force;
 	private final UUID playerId;
 	private final int subConfigIndex;
@@ -83,9 +84,11 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 			int fromZ,
 			int chunksToAffect,
 			Predicate<ChunkPos> anchorFilter,
+			ClaimResult.Type claimingPermissionResult,
 			Consumer<AreaClaimResult> resultListener
 	) {
 		this.actionRequest = actionRequest;
+		this.claimingPermissionResult = claimingPermissionResult;
 		this.force = force;
 		this.playerId = playerId;
 		this.subConfigIndex = subConfigIndex;
@@ -205,7 +208,7 @@ public class PlayerAreaClaimActionSpreadoutTask implements IServerSpreadoutQueue
 				if(usingAnchors && !ClaimsUtils.withinAnchorDistance(overlappingAnchors, anchorRange, x, z))
 					result = new ClaimResult<>(null, ClaimResult.Type.ANCHOR_TOO_FAR);
 				else
-					result = claimManager.tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, action);
+					result = claimManager.tryToClaimHelper(dimension, playerId, subConfigIndex, fromX, fromZ, x, z, false, force, isServer, claimLimit, claimingPermissionResult, action);
 			} else if(action == ClaimingAction.UNCLAIM)
 				result = claimManager.tryToUnclaimHelper(dimension, playerId, fromX, fromZ, x, z, force, false);
 			else if(action == ClaimingAction.UNCLAIM_UNANCHORED) {

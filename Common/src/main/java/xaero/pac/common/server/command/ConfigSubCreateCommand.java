@@ -44,6 +44,7 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.config.api.PlayerConfigType;
 import xaero.pac.common.server.player.config.sub.PlayerSubConfig;
@@ -166,6 +167,12 @@ public class ConfigSubCreateCommand {
 						Component.translatable("gui.xaero_pac_config_create_sub_id_rules", PlayerConfig.MAX_SUB_ID_LENGTH);
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(sourcePlayer, subIdRulesComponent));
 				return 0;
+			}
+			if(sourcePlayer != null &&
+					(type != PlayerConfigType.PLAYER || callerId.equals(configPlayerUUID)) &&
+					type.getSubClaimOption() != null) {
+				IPlayerConfig callerConfig = serverData.getPlayerConfigManager().getLoadedConfig(callerId);
+				callerConfig.tryToSet(type.getSubClaimOption(), inputSubId);
 			}
 			context.getSource().sendSuccess(adaptiveLocalizer.getFor(sourcePlayer, "gui.xaero_pac_config_create_sub"), true);
 			return 1;

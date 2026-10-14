@@ -19,7 +19,16 @@
 package xaero.pac.client.claims.player.mode;
 
 import net.minecraft.client.Minecraft;
+import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.client.claims.IClientClaimsManager;
+import xaero.pac.client.claims.IClientDimensionClaimsManager;
+import xaero.pac.client.claims.IClientRegionClaims;
 import xaero.pac.client.claims.api.IClientClaimsManagerAPI;
+import xaero.pac.client.claims.player.IClientPlayerClaimInfo;
+import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
+import xaero.pac.common.claims.player.IPlayerChunkClaim;
+import xaero.pac.common.claims.player.IPlayerClaimPosList;
+import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.mode.api.ClaimingModes;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
 import xaero.pac.common.server.player.config.PlayerConfig;
@@ -36,6 +45,9 @@ public class ClaimingModeClientHandlers {
 			.setClaimReflectionOwnerGetter(claimsManager ->
 					Minecraft.getInstance().player == null ? null : Minecraft.getInstance().player.getUUID()
 			)
+			.setConfigStorageGetter(IPlayerConfigClientStorageManager::getMyPlayerConfig)
+			.setConfigScreenOpener((p, e) -> OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager()
+					.openMyPlayerConfigScreen(e, p))
 			.build(ALL);
 
 	public static final ClientClaimingModeHandler PARTY = ClientClaimingModeHandler.Builder.begin()
@@ -43,6 +55,13 @@ public class ClaimingModeClientHandlers {
 			.setClaimReflectionOwnerGetter(IClientClaimsManagerAPI::getCurrentPartyOwner)
 			.setVisibilityGetter((claimsManager, configs) ->
 					claimsManager.usingPartyOwnedClaims())
+			.setConfigStorageGetter(IPlayerConfigClientStorageManager::getPartyClaimsConfig)
+			.setConfigScreenOpener((p, e) -> OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager()
+					.openPartyClaimsConfigScreen(e, p))
+			.setConfigScreenViewabityGetter(() -> {
+				IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
+				return claimsManager.usingPartyOwnedClaims() && claimsManager.isInParty();
+			})
 			.build(ALL);
 
 	public static final ClientClaimingModeHandler SERVER = ClientClaimingModeHandler.Builder.begin()
@@ -50,6 +69,9 @@ public class ClaimingModeClientHandlers {
 			.setClaimReflectionOwnerGetter(claimsManager -> PlayerConfig.SERVER_CLAIM_UUID)
 			.setVisibilityGetter((claimsManager, configs) ->
 					configs.getServerClaimsConfig().getPermissions().canClaimAs())
+			.setConfigStorageGetter(IPlayerConfigClientStorageManager::getServerClaimsConfig)
+			.setConfigScreenOpener((p, e) -> OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigStorageManager()
+					.openServerClaimsConfigScreen(e, p))
 			.build(ALL);
 
 	public static ClientClaimingModeHandler get(IClaimingModeAPI mode){
