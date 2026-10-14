@@ -54,10 +54,8 @@ public class PlayerFTBPermissionSystem implements IPlayerPermissionSystemAPI {
 		//going through value types manually (string must be last because a lot of types can have asString implemented)
 		Optional<?> optional = permissionValue.asNumber();
 		if(optional.isEmpty()) {
-			Optional<Boolean> optionalBoolean = permissionValue.asBoolean();
-			if(optionalBoolean.isPresent())
-				optional = Optional.of(optionalBoolean.get());
-			else {
+			optional = permissionValue.asBoolean();
+			if(optional.isEmpty()) {
 				optional = permissionValue.asString();
 				if (optional.isEmpty())
 					return Optional.empty();
