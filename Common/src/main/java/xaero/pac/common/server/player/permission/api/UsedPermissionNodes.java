@@ -86,8 +86,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_claiming_paused",
 			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.claimingPausedPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_claiming_paused"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_claiming_paused"),
+			Component.translatable("gui.xaero_pac_permission_claiming_paused"),
+			Component.translatable("gui.xaero_pac_permission_comment_claiming_paused"),
 			ALL_BUILDER);
 
 	/**
@@ -97,8 +97,8 @@ public class UsedPermissionNodes {
 			"xaero.pac_new_forceloads_paused",
 			PermissionValueTypes.BOOLEAN,
 			() -> ServerConfig.CONFIG.newForceloadsPausedPermission.get(),
-			new TranslatableComponent("gui.xaero_pac_permission_new_forceloads_paused"),
-			new TranslatableComponent("gui.xaero_pac_permission_comment_new_forceloads_paused"),
+			Component.translatable("gui.xaero_pac_permission_new_forceloads_paused"),
+			Component.translatable("gui.xaero_pac_permission_comment_new_forceloads_paused"),
 			ALL_BUILDER);
 
 	/**
