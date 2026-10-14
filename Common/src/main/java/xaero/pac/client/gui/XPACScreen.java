@@ -25,6 +25,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
 
@@ -36,6 +37,7 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	protected final Screen escape;
 	protected final Screen parent;
 	protected DropDownWidget openDropdown;
+	protected List<FormattedCharSequence> nextTooltip;
 
 	protected XPACScreen(Screen escape, Screen parent, Component p_96550_) {
 		super(p_96550_);
@@ -107,6 +109,8 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	protected void renderPreDropdown(PoseStack poseStack, int mouseX, int mouseY, float partial){
+		List<FormattedCharSequence> nextTooltip = this.nextTooltip;
+		this.nextTooltip = null;
 		if(openDropdown != null && openDropdown.onDropDown(mouseX, mouseY, height))
 			return;
 		for (GuiEventListener child : children()) {
@@ -119,7 +123,10 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 			if(!dropDownWidget.isMouseOver(mouseX, mouseY))
 				continue;
 			renderTooltip(poseStack, dropDownWidget.getTooltip(), mouseX, mouseY + 34);
+			return;
 		}
+		if(nextTooltip != null)
+			renderTooltip(poseStack, nextTooltip, mouseX, mouseY + 34);
 	}
 
 	@Override
@@ -138,6 +145,8 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 
 	private <T extends GuiEventListener & NarratableEntry, T2 extends GuiEventListener & Widget & NarratableEntry>
 	void replaceWidget(T current, T replacement, T2 replaceRenderable) {
+		if(current == null)
+			return;
 		int childIndex = children().indexOf(current);
 		if(childIndex == -1)
 			return;

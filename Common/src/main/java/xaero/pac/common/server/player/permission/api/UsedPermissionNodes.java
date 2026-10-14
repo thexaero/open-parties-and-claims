@@ -80,6 +80,28 @@ public class UsedPermissionNodes {
 			ALL_BUILDER);
 
 	/**
+	 * The permission which pauses claiming by the player.
+	 */
+	public static final IPermissionNodeAPI<Boolean> CLAIMING_PAUSED = new PermissionNode<>(
+			"xaero.pac_claiming_paused",
+			PermissionValueTypes.BOOLEAN,
+			() -> ServerConfig.CONFIG.claimingPausedPermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_claiming_paused"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_claiming_paused"),
+			ALL_BUILDER);
+
+	/**
+	 * The permission which pauses new forceloads by the player.
+	 */
+	public static final IPermissionNodeAPI<Boolean> NEW_FORCELOADS_PAUSED = new PermissionNode<>(
+			"xaero.pac_new_forceloads_paused",
+			PermissionValueTypes.BOOLEAN,
+			() -> ServerConfig.CONFIG.newForceloadsPausedPermission.get(),
+			new TranslatableComponent("gui.xaero_pac_permission_new_forceloads_paused"),
+			new TranslatableComponent("gui.xaero_pac_permission_comment_new_forceloads_paused"),
+			ALL_BUILDER);
+
+	/**
 	 * The permission to make/remove server claims and use server claim mode.
 	 */
 	public static final IPermissionNodeAPI<Boolean> SERVER_CLAIMS = new PermissionNode<>(

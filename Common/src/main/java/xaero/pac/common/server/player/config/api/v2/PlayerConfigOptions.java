@@ -333,6 +333,10 @@ public class PlayerConfigOptions {
 	 * Whether the claimed chunk(s) can be reclaimed by another player.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_RECLAIMABLE;
+	/**
+	 * Players whose claims you want to be able to claim next to.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<String> CLAIM_EXCEPTION_CLAIM_NEXT_TO;
 
 	/**
 	 * Whether the player's forceloadable claims are forceloaded, at least while the player is online.
@@ -348,6 +352,16 @@ public class PlayerConfigOptions {
 	 * without any rank or permission requirement.
 	 */
 	public static final IPlayerConfigOptionSpecAPI<Boolean> WHOLE_PARTY_CAN_CLAIM;
+
+	/**
+	 * Whether this player is allowed to make claims.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> ALLOWED_TO_CLAIM;
+
+	/**
+	 * Whether this player is allowed to add forceloaded claims.
+	 */
+	public static final IPlayerConfigOptionSpecAPI<Boolean> ALLOWED_TO_ADD_FORCELOADS;
 
 	/**
 	 * Whether the player shares their in-game location with their party.
@@ -1127,6 +1141,21 @@ public class PlayerConfigOptions {
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.build(allOptions);
 
+		CLAIM_EXCEPTION_CLAIM_NEXT_TO = PlayerConfigPlayerGroupOptionSpec.Builder.begin()
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.protection.exceptions.canClaimNextTo")
+				.setDefaultValue(PlayerConfigConstants.NO_EXCEPTION_ID)
+				.setComment(
+						"""
+						If touching claims aren't allowed by default on the server, you can claim next to claims owned
+						by the players in the chosen group if they can also claim next to yours.
+						Chunks next to claims can be partially protected against item use, mob griefing and more, so you can
+						accidentally prevent yourself from doing certain things in your own claim.
+						"""
+						+ PlayerConfig.BUILTIN_EXCEPTION_LEVELS_TOOLTIP_PLAYERS
+				)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.build(allOptions);
+
 		FORCELOAD = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
 				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.forceload.enabled")
 				.setDefaultValue(true)
@@ -1151,6 +1180,30 @@ public class PlayerConfigOptions {
 						"""
 						When enabled, if you own a primary party and party-owned claims are enabled, every single player in your party will be able to claim/unclaim as the party (as you), without checking party ranks like normally.
 						This option is almost exclusively meant for servers that don't care about claim protection."""
+				)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.build(allOptions);
+
+		ALLOWED_TO_CLAIM = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.allowedToClaim")
+				.setConfigTypeFilter(type -> type == PlayerConfigType.PLAYER || type == PlayerConfigType.DEFAULT_PLAYER)
+				.setDefaultValue(true)
+				.setComment(
+						"""
+						When enabled, this player is allowed to make claims."""
+				)
+				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
+				.setOverridable(false)
+				.build(allOptions);
+
+		ALLOWED_TO_ADD_FORCELOADS = PlayerConfigOptionSpec.FinalBuilder.begin(PlayerConfigOptionValueTypes.BOOLEAN)
+				.setId(PlayerConfig.PLAYER_CONFIG_ROOT_DOT + "claims.allowedToAddForceloads")
+				.setConfigTypeFilter(type -> type == PlayerConfigType.PLAYER || type == PlayerConfigType.DEFAULT_PLAYER)
+				.setDefaultValue(true)
+				.setComment(
+						"""
+						When enabled, this player is allowed to mark new claimed chunks for forceloading."""
 				)
 				.setCategory(PlayerConfigOptionCategory.GENERAL_CLAIMS)
 				.setOverridable(false)

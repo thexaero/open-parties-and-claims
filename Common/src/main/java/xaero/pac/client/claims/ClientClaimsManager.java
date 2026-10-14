@@ -318,6 +318,7 @@ public final class ClientClaimsManager extends ClaimsManager<ClientPlayerClaimIn
 		return claimingMode;
 	}
 
+	@Nonnull
 	@Override
 	public IClaimingModeAPI getEffectiveClaimingMode(IClaimingModeAPI selected) {
 		if(selected == null){

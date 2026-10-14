@@ -18,30 +18,41 @@
 
 package xaero.pac.client.claims.player.mode;
 
+import net.minecraft.client.gui.screens.Screen;
 import xaero.pac.client.claims.IClientClaimsManager;
+import xaero.pac.client.player.config.IPlayerConfigClientStorage;
 import xaero.pac.client.player.config.IPlayerConfigClientStorageManager;
 import xaero.pac.common.claims.player.mode.ClaimingMode;
 import xaero.pac.common.claims.player.mode.api.IClaimingModeAPI;
+import xaero.pac.common.server.IServerData;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
+import java.util.function.*;
 
 public final class ClientClaimingModeHandler {
 
 	private final ClaimingMode mode;
 	private final Function<IClientClaimsManager<?, ?, ?>, UUID> claimReflectionOwnerGetter;
 	private final BiPredicate<IClientClaimsManager<?, ?, ?>, IPlayerConfigClientStorageManager<?>> visibilityGetter;
+	private final Function<IPlayerConfigClientStorageManager<?>, IPlayerConfigClientStorage<?>> configStorageGetter;
+	private final BiConsumer<Screen, Screen> configScreenOpener;
+	private final BooleanSupplier configScreenViewabityGetter;
 
 	private ClientClaimingModeHandler(
 			ClaimingMode mode,
 			Function<IClientClaimsManager<?, ?, ?>, UUID> claimReflectionOwnerGetter,
-			BiPredicate<IClientClaimsManager<?, ?, ?>, IPlayerConfigClientStorageManager<?>> visibilityGetter
+			BiPredicate<IClientClaimsManager<?, ?, ?>, IPlayerConfigClientStorageManager<?>> visibilityGetter,
+			Function<IPlayerConfigClientStorageManager<?>, IPlayerConfigClientStorage<?>> configStorageGetter,
+			BiConsumer<Screen, Screen> configScreenOpener,
+			BooleanSupplier configScreenViewabityGetter
 	) {
 		this.mode = mode;
 		this.claimReflectionOwnerGetter = claimReflectionOwnerGetter;
 		this.visibilityGetter = visibilityGetter;
+		this.configStorageGetter = configStorageGetter;
+		this.configScreenOpener = configScreenOpener;
+		this.configScreenViewabityGetter = configScreenViewabityGetter;
 	}
 
 	public ClaimingMode getMode() {
@@ -56,17 +67,36 @@ public final class ClientClaimingModeHandler {
 		return visibilityGetter;
 	}
 
+	public IPlayerConfigClientStorage<?> getConfigStorage(IPlayerConfigClientStorageManager<?> manager) {
+		return configStorageGetter.apply(manager);
+	}
+
+	public void openConfigScreen(Screen parent, Screen escape){
+		configScreenOpener.accept(parent, escape);
+	}
+
+	public boolean isConfigScreenViewable(IPlayerConfigClientStorageManager<?> manager){
+		return getConfigStorage(manager).getPermissions().canView() &&
+				(configScreenViewabityGetter == null || configScreenViewabityGetter.getAsBoolean());
+	}
+
 	public static final class Builder {
 
 		private ClaimingMode mode;
 		private Function<IClientClaimsManager<?, ?, ?>, UUID> claimReflectionOwnerGetter;
 		private BiPredicate<IClientClaimsManager<?, ?, ?>, IPlayerConfigClientStorageManager<?>> visibilityGetter;
+		private Function<IPlayerConfigClientStorageManager<?>, IPlayerConfigClientStorage<?>> configStorageGetter;
+		private BiConsumer<Screen, Screen> configScreenOpener;
+		private BooleanSupplier configScreenViewabityGetter;
 
 		private Builder(){}
 
 		public Builder setDefault(){
 			setMode(null);
 			setClaimReflectionOwnerGetter(null);
+			setConfigStorageGetter(null);
+			setConfigScreenOpener(null);
+			setConfigScreenViewabityGetter(null);
 			return this;
 		}
 
@@ -90,10 +120,28 @@ public final class ClientClaimingModeHandler {
 			return this;
 		}
 
+		public Builder setConfigStorageGetter(Function<IPlayerConfigClientStorageManager<?>, IPlayerConfigClientStorage<?>> configStorageGetter) {
+			this.configStorageGetter = configStorageGetter;
+			return this;
+		}
+
+		public Builder setConfigScreenOpener(BiConsumer<Screen, Screen> configScreenOpener) {
+			this.configScreenOpener = configScreenOpener;
+			return this;
+		}
+
+		public Builder setConfigScreenViewabityGetter(BooleanSupplier configScreenViewabityGetter) {
+			this.configScreenViewabityGetter = configScreenViewabityGetter;
+			return this;
+		}
+
 		public ClientClaimingModeHandler build(Map<IClaimingModeAPI, ClientClaimingModeHandler> dest){
-			if(mode == null || claimReflectionOwnerGetter == null)
+			if(mode == null || claimReflectionOwnerGetter == null || configStorageGetter == null)
 				throw new IllegalStateException();
-			ClientClaimingModeHandler result = new ClientClaimingModeHandler(mode, claimReflectionOwnerGetter, visibilityGetter);
+			ClientClaimingModeHandler result = new ClientClaimingModeHandler(
+					mode, claimReflectionOwnerGetter, visibilityGetter,
+					configStorageGetter, configScreenOpener, configScreenViewabityGetter
+			);
 			if(dest != null)
 				dest.put(mode, result);
 			return result;

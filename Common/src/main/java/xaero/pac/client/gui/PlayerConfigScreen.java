@@ -130,7 +130,8 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 		);
 		if(data.isSyncInProgress())
 			return;
-		List<FormattedCharSequence> subConfigTooltip = Minecraft.getInstance().font.split(Component.translatable("gui.xaero_pac_ui_sub_config_dropdown_tooltip"), 200);
+		Component subConfigTooltipText = Component.translatable("gui.xaero_pac_ui_sub_config_dropdown_tooltip");
+		List<FormattedCharSequence> subConfigTooltip = Minecraft.getInstance().font.split(subConfigTooltipText, 200);
 		int subConfigTitleWidth = font.width(SUB_CONFIG_TITLE);
 		int subConfigMargin = 6;
 		String[] subConfigOptionArray;
@@ -147,7 +148,7 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 				.setY(yAnchor + 4)
 				.setW(200 - subConfigTitleWidth - subConfigMargin - 1 - 20)
 				.setOptions(subConfigOptionArray)
-				.setNarrationTitle(title)
+				.setNarrationTitle(subConfigTooltipText)
 				.setCallback((dd, index) -> {
 					if(subConfigOptions == null)
 						return false;
@@ -192,7 +193,7 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 							Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm2")));
 				},
 				(b, matrixStack, mouseX, mouseY) ->
-					renderTooltip(matrixStack, deleteButtonTooltip, mouseX, mouseY + 34)
+					nextTooltip = deleteButtonTooltip
 		);
 		deleteSubButton.active = subData != data && canCreateSubs && selectedSubConfig != null && !subData.isBeingDeleted();
 		addRenderableWidget(deleteSubButton);
@@ -459,12 +460,9 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 				throw new IllegalStateException();
 			PlayerConfigClientStorage usedSubConfigSyncDest;
 			PlayerConfigStringableOptionClientStorage<String> usedSubConfigOptionStorage;
-			if(data.getType() == PlayerConfigType.SERVER){
+			if(data.getType() != PlayerConfigType.PLAYER && data.getType().getSubClaimOption() != null){
 				usedSubConfigSyncDest = mainPlayerConfigData;
-				usedSubConfigOptionStorage = mainPlayerConfigData.getOption(PlayerConfigOptions.USED_SERVER_SUBCLAIM);
-			} else if(data.getType() == PlayerConfigType.PARTY_CLAIMS){
-				usedSubConfigSyncDest = mainPlayerConfigData;
-				usedSubConfigOptionStorage = mainPlayerConfigData.getOption(PlayerConfigOptions.USED_PARTY_SUBCLAIM);
+				usedSubConfigOptionStorage = mainPlayerConfigData.getOption(data.getType().getSubClaimOption());
 			} else {
 				usedSubConfigSyncDest = data;
 				usedSubConfigOptionStorage = data.getOption(PlayerConfigOptions.USED_SUBCLAIM);
@@ -639,7 +637,8 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 					title, data, optionValueSourceData, mainPlayerConfigData, subConfigs,
 					selectedSubConfig, syncInProgress, optionValueSourceData.isBeingDeleted(),
 					otherPlayerName, this,
-					canCreateSubs);
+					canCreateSubs
+			);
 		}
 
 		public static Builder begin(ListFactory listFactory) {
