@@ -57,8 +57,8 @@ public class SimpleValueWidgetListElement<C, T, E extends SimpleValueWidgetListE
 	}
 
 	@Override
-	public String getSearchText() {
-		return super.getSearchText() + ": " + valueNamer.apply(draftValue);
+	public String getSearchTextNoTooltip() {
+		return super.getSearchTextNoTooltip() + ": " + valueNamer.apply(draftValue);
 	}
 
 	public static abstract class Builder<C, T, E extends SimpleValueWidgetListElement<C, T, E>, B extends Builder<C, T, E, B>> extends WidgetListElement.Builder<C, E, B> {

@@ -35,6 +35,7 @@ public abstract class WidgetListElement<C, E extends WidgetListElement<C, E>> {
 	private final Supplier<String> searchName;
 	private final Supplier<C> category;
 	private final List<FormattedCharSequence> tooltip;
+	private String tooltipTextCache;
 	protected int x;
 	protected int y;
 	protected final int w;
@@ -86,8 +87,28 @@ public abstract class WidgetListElement<C, E extends WidgetListElement<C, E>> {
 	public void render(PoseStack poseStack) {
 	}
 
-	public String getSearchText(){
+	protected String getSearchTextNoTooltip(){
 		return searchName.get();
+	}
+
+	public String getSearchText(){
+		StringBuilder searchTextBuilder = new StringBuilder(getSearchTextNoTooltip());
+		if(tooltip != null) {
+			if(tooltipTextCache == null) {
+				StringBuilder tooltipTextBuilder = new StringBuilder();
+				for (FormattedCharSequence formattedCharSequence : tooltip) {
+					formattedCharSequence.accept((a, s, c) -> {
+						tooltipTextBuilder.append((char) c);
+						return true;
+					});
+					tooltipTextBuilder.append(" ");
+				}
+				tooltipTextCache = tooltipTextBuilder.toString();
+			}
+			searchTextBuilder.append("\n");
+			searchTextBuilder.append(tooltipTextCache);
+		}
+		return searchTextBuilder.toString();
 	}
 
 	public C getCategory() {
