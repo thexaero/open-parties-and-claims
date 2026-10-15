@@ -24,6 +24,7 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
@@ -89,10 +90,14 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
 
+	protected int getOPACTitleY(){
+		return height / 7 - 27;
+	}
+
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		super.render(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, XPAC_TITLE, width / 2, 5, -1);
+		guiGraphics.drawCenteredString(font, XPAC_TITLE, width / 2, getOPACTitleY(), -1);
 		renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		if(openDropdown != null) {
 			PoseStack poseStack = guiGraphics.pose();
@@ -104,6 +109,20 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+		if(openDropdown != null && openDropdown.onDropDown(mouseX, mouseY, height))
+			return;
+		for (GuiEventListener child : children()) {
+			if(!(child instanceof DropDownWidget dropDownWidget))
+				continue;
+			if(!dropDownWidget.isClosed())
+				continue;
+			if(dropDownWidget.getTooltip() == null)
+				continue;
+			if(!dropDownWidget.isMouseOver(mouseX, mouseY))
+				continue;
+			setTooltipForNextRenderPass(dropDownWidget.getTooltip(), OPACTooltipPositioner.INSTANCE, true);
+			return;
+		}
 	}
 
 	@Override
@@ -122,6 +141,8 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 
 	private <T extends GuiEventListener & NarratableEntry, T2 extends GuiEventListener & Renderable & NarratableEntry>
 	void replaceWidget(T current, T replacement, T2 replaceRenderable) {
+		if(current == null)
+			return;
 		int childIndex = children().indexOf(current);
 		if(childIndex == -1)
 			return;

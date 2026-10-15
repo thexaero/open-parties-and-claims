@@ -399,7 +399,15 @@ public class ServerCore {
 		if(serverData == null)
 			return true;
 		Entity contraption = player.serverLevel().getEntity(contraptionId);
-		boolean shouldProtect = serverData.getChunkProtection().onEntityInteraction(serverData, null, player, contraption, null, null, false, false, true);
+		if(contraption == null)
+			return true;
+		Block controlsBlock = serverData.getServer().registryAccess()
+				.registryOrThrow(Registries.BLOCK)
+				.getOrThrow(CreateContraptionHelper.TRAIN_CONTROLS_BLOCK);
+		boolean shouldProtect = serverData.getChunkProtection().onBlockInteraction(
+				serverData, controlsBlock.defaultBlockState(), player, InteractionHand.MAIN_HAND, null,
+				player.serverLevel(), contraption.blockPosition(), Direction.UP, false, false
+		);
 		if(shouldProtect)
 			player.sendSystemMessage(serverData.getAdaptiveLocalizer().getFor(player, TRAIN_CONTROLS_MESSAGE));
 		return !shouldProtect;

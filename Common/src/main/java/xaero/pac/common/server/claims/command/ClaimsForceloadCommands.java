@@ -49,11 +49,16 @@ import xaero.pac.common.server.claims.IServerRegionClaims;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.claims.sync.ClaimsManagerSynchronizer;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
+import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -71,6 +76,7 @@ public class ClaimsForceloadCommands {
 
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
 				AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 				ServerLevel world;
 				try {
@@ -110,6 +116,25 @@ public class ClaimsForceloadCommands {
 					areaBottom = chunkZ;
 				}
 				ServerPlayerData playerData = player == null ? null : (ServerPlayerData) ServerPlayerDataAPI.from(player);
+				boolean shouldReplace = opReplaceCurrent;
+				if(player != null) {
+					if(serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
+						return 0;//going too fast
+					playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
+					claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
+					shouldReplace = shouldReplace || playerData.isClaimsAdminMode();
+					if(!shouldReplace && enable){
+						ClaimResult.Type permissionResult = serverData.getServerClaimsManager().getPermissionHandler()
+								.checkNewForceloadsPermission(player, serverData);
+						if(permissionResult != null){
+							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, permissionResult.message));
+							((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
+									new AreaClaimResult(Sets.newHashSet(permissionResult), Collections.emptySet(), world.dimension().location(), areaLeft, areaTop, areaRight, areaBottom),
+									player);
+							return 0;
+						}
+					}
+				}
 				ClaimingMode finalMode = mode == null ?
 						(another || player == null ? (ClaimingMode) ClaimingModes.PLAYER : playerData.getClaimingMode()) : mode;
 				UUID contextPlayerId = ClaimsClaimCommands.getClaimInputPlayerId(
@@ -136,16 +161,6 @@ public class ClaimsForceloadCommands {
 					//shouldn't actually happen, so no failure is sent,
 					// but won't hurt to catch this anyway
 					return 0;
-				}
-
-				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
-				boolean shouldReplace = opReplaceCurrent;
-				if(player != null) {
-					if(serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
-						return 0;//going too fast
-					playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
-					claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
-					shouldReplace = shouldReplace || playerData.isClaimsAdminMode();
 				}
 				UUID sourceUUID = player == null ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 				boolean impersonating = !another && !contextPlayerId.equals(sourceUUID);

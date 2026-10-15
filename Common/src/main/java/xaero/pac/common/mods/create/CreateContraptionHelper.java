@@ -32,6 +32,7 @@ import xaero.pac.common.server.core.accessor.ICreateContraptionEntity;
 public class CreateContraptionHelper {
 
 	public static ResourceKey<Block> CONTRAPTION_CONTROLS_BLOCK = ResourceKey.create(Registries.BLOCK, new ResourceLocation("create", "contraption_controls"));
+	public static ResourceKey<Block> TRAIN_CONTROLS_BLOCK = ResourceKey.create(Registries.BLOCK, new ResourceLocation("create", "controls"));
 	public static final String PLACEMENT_POS_TAG = "xaero_OPAC_placementPos";
 
 	public static void handleCreateContraptionAdded(Entity entity, ICreateContraptionEntity contraptionEntity){

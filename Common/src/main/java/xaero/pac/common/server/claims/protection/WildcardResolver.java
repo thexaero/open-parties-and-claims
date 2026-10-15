@@ -29,19 +29,16 @@ import java.util.regex.PatternSyntaxException;
 
 public class WildcardResolver {
 
-	private static final Pattern WILDCARD_FORMAT = Pattern.compile("[\\(\\)\\*\\|a-zA-Z0-9_\\-\\.\\/\\:]+");
-	private static final Pattern WILDCARD_TO_REGEX_REPLACE_PATTERN = Pattern.compile("([\\.\\-\\:\\/])");
-	private static final Function<String, String> WILDCARD_TO_REGEX = s -> WILDCARD_TO_REGEX_REPLACE_PATTERN.matcher(s).replaceAll("\\\\$1").replace("*", ".*");
+	private static final Pattern WILDCARD_TO_REGEX_REPLACE_PATTERN = Pattern.compile("([\\.\\-\\:\\/\\^\\$\\?\\+\\[\\]\\{\\}])");//matches most regex special chars
+	private static final Function<String, String> WILDCARD_TO_REGEX = s -> WILDCARD_TO_REGEX_REPLACE_PATTERN
+			.matcher(s).replaceAll("\\\\$1")
+			.replace("*", ".*");
 
 	public <T> List<T> resolveResourceLocations(Function<ResourceLocation, T> getter, Iterable<T> iterable, Function<T, ResourceLocation> keyGetter, String string){
 		boolean validResourceLocation = ResourceLocation.isValidResourceLocation(string) && !containsWildcardCharacters(string);//additional char check because of mods (e.g. AAA Particles)
 		if(validResourceLocation) {
 			T object = getter.apply(new ResourceLocation(string));
 			return object == null ? List.of() : List.of(object);
-		}
-		if(!WILDCARD_FORMAT.matcher(string).matches()){
-			OpenPartiesAndClaims.LOGGER.error("Invalid resource location or wildcard in the server config file: " + string + ". Additional characters allowed for wildcards are (, ), | and *.");
-			return null;
 		}
 		ArrayList<T> result = new ArrayList<>();
 		try {
