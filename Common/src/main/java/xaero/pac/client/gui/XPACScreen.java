@@ -19,6 +19,7 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -116,11 +117,13 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 				continue;
 			if(!dropDownWidget.isClosed())
 				continue;
-			if(dropDownWidget.getTooltip() == null)
+			if(dropDownWidget.getDDTooltip() == null)
 				continue;
-			if(!dropDownWidget.isMouseOver(mouseX, mouseY))
+			boolean needsTooltip = dropDownWidget.isHovered() ||
+					dropDownWidget.isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard();
+			if(!needsTooltip)
 				continue;
-			setTooltipForNextRenderPass(dropDownWidget.getTooltip(), OPACTooltipPositioner.INSTANCE, true);
+			setTooltipForNextRenderPass(dropDownWidget.getDDTooltip(), dropDownWidget.createTooltipPositioner(), true);
 			return;
 		}
 	}

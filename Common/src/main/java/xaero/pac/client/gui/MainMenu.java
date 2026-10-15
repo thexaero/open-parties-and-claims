@@ -186,8 +186,6 @@ public class MainMenu extends XPACScreen {
 		
 		forceloadButton = Button.builder(FORCELOAD, this::onForceloadButton).tooltip(Tooltip.create(FORCELOAD_COMMAND)).bounds(width / 2 - 100, height / 7 + 122, 70, 20).build();
 
-		addRenderableWidget(Button.builder(Component.translatable("gui.xaero_pac_back"), this::onBackButton).bounds(width / 2 - 100, this.height / 6 + 168, 200, 20).build());
-
 		IClientClaimsManager<?, ?, ?> claimsManager = OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getClaimsManager();
 
 		if(claimsManager.usingAnchorBasedClaiming())

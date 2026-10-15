@@ -26,6 +26,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -63,9 +64,9 @@ public final class DropDownWidget extends AbstractWidget
 	private final int selectedBackground;
 	private final int selectedHoveredBackground;
 	private boolean shortenFromTheRight;
-	private final Tooltip tooltip;
+	private final List<FormattedCharSequence> tooltip;
 
-	private DropDownWidget(String[] options, int x, int y, int w, Integer selected, boolean openingUp, IDropDownWidgetCallback callback, IDropDownContainer container, boolean hasEmptyOption, Component narrationTitle, Tooltip tooltip)
+	private DropDownWidget(String[] options, int x, int y, int w, Integer selected, boolean openingUp, IDropDownWidgetCallback callback, IDropDownContainer container, boolean hasEmptyOption, Component narrationTitle, List<FormattedCharSequence> tooltip)
 	{
 		super(x, y + (openingUp ? LINE_HEIGHT : 0), w, LINE_HEIGHT, narrationTitle);
 		this.realOptions = options;
@@ -366,8 +367,13 @@ public final class DropDownWidget extends AbstractWidget
 		return false;
 	}
 
-	public Tooltip getTooltip() {
+	public List<FormattedCharSequence> getDDTooltip() {
 		return tooltip;
+	}
+
+	@Override
+	public ClientTooltipPositioner createTooltipPositioner() {
+		return super.createTooltipPositioner();
 	}
 
 	public static final class Builder {

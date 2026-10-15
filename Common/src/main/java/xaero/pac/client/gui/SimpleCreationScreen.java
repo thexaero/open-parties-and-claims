@@ -19,6 +19,7 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -70,21 +71,17 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 		addRenderableWidget(idTextBox);
 		idTextBox.setResponder(this::onIdTextBox);
 		addRenderableWidget(
-				confirmButton = new Button(
-						width / 2 - 105, height / 7 + 128,
-						100, 20,
-						Component.translatable("gui.xaero_pac_confirm"), this::onConfirm
-				)
+				confirmButton = Button.builder(Component.translatable("gui.xaero_pac_confirm"), this::onConfirm)
+						.bounds(width / 2 - 105, height / 7 + 128, 100, 20).build()
 		);
 		addRenderableWidget(
-				new Button(
-						width / 2 + 5, this.height / 7 + 128,
-						100, 20,
+				Button.builder(
 						Component.translatable("gui.xaero_pac_cancel"), b -> goBack()
-				)
+				).bounds(width / 2 + 5, this.height / 7 + 128,
+						100, 20).build()
 		);
 		setFocused(idTextBox);
-		idTextBox.setFocus(true);
+		idTextBox.setFocused(true);
 		updateButtons();
 	}
 
@@ -123,17 +120,17 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 	}
 
 	@Override
-	public void render(PoseStack poseStack, int mouseX, int mouseY, float partial) {
-		renderBackground(poseStack);
-		super.render(poseStack, mouseX, mouseY, partial);
-		drawCenteredString(poseStack, font, title, width / 2, height / 7 - 17, -1);
-		drawCenteredString(poseStack, font, chooseId, width / 2, this.height / 7 + 25, -1);
-		drawCenteredString(poseStack, font, rules1, width / 2, this.height / 7 + 35, 0xFFAAAAAA);
-		drawCenteredString(poseStack, font, rules2, width / 2, this.height / 7 + 45, 0xFFAAAAAA);
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+		renderBackground(guiGraphics);
+		super.render(guiGraphics, mouseX, mouseY, partial);
+		guiGraphics.drawCenteredString(font, title, width / 2, height / 7 - 17, -1);
+		guiGraphics.drawCenteredString(font, chooseId, width / 2, this.height / 7 + 25, -1);
+		guiGraphics.drawCenteredString(font, rules1, width / 2, this.height / 7 + 35, 0xFFAAAAAA);
+		guiGraphics.drawCenteredString(font, rules2, width / 2, this.height / 7 + 45, 0xFFAAAAAA);
 		V inputValidity = getInputValidity(idTextBox.getValue());
 		Component validityMessage = getValidityMessage(inputValidity);
 		if(validityMessage != null)
-			drawCenteredString(poseStack, font, validityMessage, width / 2, height / 7 + 86, 0xFFFF5555);
+			guiGraphics.drawCenteredString(font, validityMessage, width / 2, height / 7 + 86, 0xFFFF5555);
 	}
 
 	protected abstract V getInputValidity(String input);
