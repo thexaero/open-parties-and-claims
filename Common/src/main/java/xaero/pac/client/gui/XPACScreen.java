@@ -21,11 +21,11 @@ package xaero.pac.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import xaero.pac.client.gui.widget.dropdown.DropDownWidget;
 import xaero.pac.client.gui.widget.dropdown.IDropDownContainer;
@@ -70,7 +70,12 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 				openDropdown.mouseClicked(mouseX, mouseY, button);
 			return true;
 		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		if(!super.mouseClicked(mouseX, mouseY, button)){
+			if(getFocused() instanceof EditBox)
+				getFocused().setFocused(false);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
