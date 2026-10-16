@@ -393,6 +393,7 @@ public class PlayerConfig
 		if(manager.isLoaded() && initStorage) {
 			subConfig.getStorage();//creates the storage here to avoid concur modif exception when saving
 			manager.getSynchronizer().syncSubExistence(null, subConfig, true);
+			subConfig.tryToSet(PlayerConfigOptions.CLAIMS_NAME, id);
 		}
 		return subConfig;
 	}

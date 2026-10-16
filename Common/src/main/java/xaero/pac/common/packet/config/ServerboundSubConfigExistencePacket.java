@@ -173,13 +173,20 @@ public class ServerboundSubConfigExistencePacket extends PlayerConfigPacket {
 			boolean blockedBecauseOverClaimLimit = !isOP && checkBlockedBecauseOverClaimLimit(config, serverPlayer);
 			if(t.create) {
 				boolean reachedLimit = config.getSubCount() >= config.getSubConfigLimit();
-				if (reachedLimit || blockedBecauseOverClaimLimit || config.createSubConfig(t.subId) == null || !isGlobal && !Objects.equals(ownerId, serverPlayer.getUUID())) {
+				IPlayerConfig createdSub = null;
+				if (reachedLimit || blockedBecauseOverClaimLimit || (createdSub = config.createSubConfig(t.subId)) == null || !isGlobal && !Objects.equals(ownerId, serverPlayer.getUUID())) {
 					playerConfigs.getSynchronizer().confirmSubConfigCreationSync(serverPlayer, config);//need to notify the client even when unsuccessful
 					if(reachedLimit) {
 						MutableComponent limitReachedMessage = Component.translatable("gui.xaero_pac_config_create_sub_id_limit_reached", config.getSubConfigLimit());
 						limitReachedMessage.withStyle(s -> s.withColor(ChatFormatting.RED));
 						serverPlayer.sendSystemMessage(limitReachedMessage);
 					}
+				}
+				if(createdSub != null &&
+						(t.type != PlayerConfigType.PLAYER || serverPlayer.getUUID().equals(ownerId)) &&
+						t.type.getSubClaimOption() != null){
+					IPlayerConfig callerConfig = serverData.getPlayerConfigManager().getLoadedConfig(serverPlayer.getUUID());
+					callerConfig.tryToSet(t.type.getSubClaimOption(), t.subId);//I know this can potentially land after the screen is refreshed but it's not a critical problem and works most of the time
 				}
 			} else {
 				IPlayerConfig subConfig = config.getSubConfig(t.subId);

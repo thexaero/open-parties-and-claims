@@ -75,8 +75,29 @@ public class PlayerClaimActionRequestHandler {
 		MinecraftServer server = ServerLevelHelper.getServer(player);
 		IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
 				serverData = ServerData.from(server);
+		ClaimResult.Type permissionResult = null;
+		manager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
+		if(!playerData.isClaimsAdminMode()) {
+			if (request.getAction() == ClaimingAction.CLAIM || request.getAction() == ClaimingAction.ANCHOR)
+				permissionResult = manager.getPermissionHandler().checkClaimingPermission(player, serverData);
+			else if (request.getAction() == ClaimingAction.FORCELOAD)
+				permissionResult = manager.getPermissionHandler().checkNewForceloadsPermission(player, serverData);
+			if (permissionResult != null && request.getAction() != ClaimingAction.CLAIM) {//lack of claiming permission only affects claiming wilderness
+				manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(
+						new AreaClaimResult(
+								Collections.singleton(permissionResult),
+								Collections.emptySet(),
+								request.getDimension(),
+								request.getLeft(), request.getTop(),
+								request.getRight(), request.getBottom()
+						),
+						player
+				);
+				return;
+			}
+		}
 		UUID contextPlayerId = player.getUUID();
-		serverData.getServerClaimsManager().getPermissionHandler().ensureImpersonationPermission(player, playerData);
+		manager.getPermissionHandler().ensureImpersonationPermission(player, playerData);
 		boolean impersonating = claimType.canBeImpersonated() && playerData.getClaimsImpersonationInfo().getPlayerId() != null;
 		if(impersonating)
 			contextPlayerId = playerData.getClaimsImpersonationInfo().getPlayerId();
@@ -92,7 +113,6 @@ public class PlayerClaimActionRequestHandler {
 			}
 		}
 		UUID claimPlayerId = contextPlayerId;
-		manager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
 		if(claimType.getForcedUUIDGetter() != null)
 			claimPlayerId = claimType.getForcedUUIDGetter().apply(claimPlayerId, manager);
 		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(contextPlayerId);
@@ -128,7 +148,9 @@ public class PlayerClaimActionRequestHandler {
 		manager.tryClaimActionOverArea(request.getDimension(), claimPlayerId, subConfigIndex,
 				fromDimension, fromX, fromZ, request.getLeft(), request.getTop(), request.getRight(), request.getBottom(),
 				request.getAction(), playerData.isClaimsAdminMode(),
-				null, result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player));
+				null, permissionResult,
+				result -> manager.getClaimsManagerSynchronizer().syncToPlayerClaimActionResult(result, player)
+		);
 	}
 
 	public long getLastRequestTickCounter() {

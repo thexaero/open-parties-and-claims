@@ -440,6 +440,11 @@ public class PlayerGroupsScreen extends XPACScreen {
 	}
 
 	@Override
+	protected int getOPACTitleY() {
+		return 5;
+	}
+
+	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		if(wasEffectivelySyncingOnInit()){
 			if(!isEffectivelySyncing())
