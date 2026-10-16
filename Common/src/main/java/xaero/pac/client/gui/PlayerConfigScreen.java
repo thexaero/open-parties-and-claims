@@ -192,8 +192,7 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 					}, Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm1", s),
 							Component.translatable("gui.xaero_pac_ui_sub_config_delete_button_confirm2")));
 				},
-				(b, matrixStack, mouseX, mouseY) ->
-					nextTooltip = deleteButtonTooltip
+				(b, matrixStack, mouseX, mouseY) -> buttonTooltip(deleteButtonTooltip, b, mouseX, mouseY)
 		);
 		deleteSubButton.active = subData != data && canCreateSubs && selectedSubConfig != null && !subData.isBeingDeleted();
 		addRenderableWidget(deleteSubButton);
