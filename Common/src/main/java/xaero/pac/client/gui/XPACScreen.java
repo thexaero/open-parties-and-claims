@@ -124,7 +124,7 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 					dropDownWidget.isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard();
 			if(!needsTooltip)
 				continue;
-			setTooltipForNextRenderPass(dropDownWidget.getDDTooltip(), dropDownWidget.createTooltipPositioner(), true);
+			guiGraphics.setTooltipForNextFrame(font, dropDownWidget.getDDTooltip(), dropDownWidget.createTooltipPositioner(), mouseX, mouseY, true);
 			return;
 		}
 	}

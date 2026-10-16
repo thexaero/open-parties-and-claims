@@ -251,7 +251,7 @@ public abstract class WidgetListScreen<C> extends XPACScreen {
 		if ((openDropdown == null || !openDropdown.isHovered()) && tooltipElement != null) {
 			List<FormattedCharSequence> tooltip = tooltipElement.getTooltip();
 			if (tooltip != null)
-				guiGraphics.setTooltipForNextFrame(tooltip, mouseX, mouseY);
+				guiGraphics.setTooltipForNextFrame(font, tooltip, OPACTooltipPositioner.INSTANCE, mouseX, mouseY, true);
 		}
 	}
 

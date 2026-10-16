@@ -118,7 +118,6 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics, mouseX, mouseY, partial);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, title, width / 2, height / 7 - 17, -1);
 		guiGraphics.drawCenteredString(font, chooseId, width / 2, this.height / 7 + 25, -1);
