@@ -84,7 +84,7 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		}
 		if(!super.mouseClicked(event, doubleClick)){
 			if(getFocused() instanceof EditBox)
-				getFocused().setFocused(false);
+				setFocused(null);
 			return false;
 		}
 		return true;
