@@ -24,8 +24,11 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.BelowOrAboveWidgetTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.MenuTooltipPositioner;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -366,9 +369,11 @@ public final class DropDownWidget extends AbstractWidget
 		return tooltip;
 	}
 
-	@Override
 	public ClientTooltipPositioner createTooltipPositioner() {
-		return super.createTooltipPositioner();
+		ScreenRectangle rectangle = getRectangle();
+		if(!isHovered() && isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard())
+			return new BelowOrAboveWidgetTooltipPositioner(rectangle);
+		return new MenuTooltipPositioner(rectangle);
 	}
 
 	public static final class Builder {

@@ -18,14 +18,12 @@
 
 package xaero.pac.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
-import xaero.pac.client.gui.widget.FixedEditBox;
 
 public abstract class SimpleCreationScreen<V> extends XPACScreen {
 
@@ -60,7 +58,7 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 	protected void init() {
 		super.init();
 		String existingInput = idTextBox == null ? null : idTextBox.getValue();
-		idTextBox = new FixedEditBox(
+		idTextBox = new EditBox(
 				font, width / 2 - 100, height / 7 + 60,
 				200, 20,
 				editBoxName
@@ -107,7 +105,6 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 	@Override
 	public void tick() {
 		super.tick();
-		idTextBox.tick();
 	}
 
 	@Override
@@ -121,7 +118,7 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
-		renderBackground(guiGraphics);
+		renderBackground(guiGraphics, mouseX, mouseY, partial);
 		super.render(guiGraphics, mouseX, mouseY, partial);
 		guiGraphics.drawCenteredString(font, title, width / 2, height / 7 - 17, -1);
 		guiGraphics.drawCenteredString(font, chooseId, width / 2, this.height / 7 + 25, -1);

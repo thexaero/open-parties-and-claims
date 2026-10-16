@@ -73,7 +73,7 @@ public class ServerConfig {
 	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemInteractions;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
-	public final ModConfigSpec.BooleanValue completelyDisableFrostWalking;
+	public final ModConfigSpec.BooleanValue alwaysProtectBlocksFromEnchantments;
 	public final ModConfigSpec.BooleanValue reducedBoatEntityCollisions;
 	public final ModConfigSpec.IntValue maxClaimDistance;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
