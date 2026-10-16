@@ -40,6 +40,7 @@ import net.minecraft.server.level.ColumnPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import xaero.pac.OpenPartiesAndClaims;
+import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
@@ -68,12 +69,8 @@ import xaero.pac.common.server.player.config.PlayerConfig;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
-import xaero.pac.common.server.world.ServerLevelHelper;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class ClaimsClaimCommands {
@@ -88,6 +85,7 @@ public class ClaimsClaimCommands {
 				final ServerPlayer finalPlayer = player;
 				MinecraftServer server = context.getSource().getServer();
 				IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
 				AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 				ServerLevel world;
 				try {
@@ -126,8 +124,19 @@ public class ClaimsClaimCommands {
 					areaRight = chunkX;
 					areaBottom = chunkZ;
 				}
-				
 				ServerPlayerData playerData = player == null ? null : (ServerPlayerData) ServerPlayerDataAPI.from(player);
+				boolean shouldReplace = opReplaceCurrent;
+				ClaimResult.Type claimingPermissionResult = null;
+				if(player != null) {
+					if (serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
+						return 0;//going too fast
+					playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
+					claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
+					shouldReplace = shouldReplace || playerData.isClaimsAdminMode();
+					if(!shouldReplace && shouldClaim)
+						claimingPermissionResult = serverData.getServerClaimsManager().getPermissionHandler()
+								.checkClaimingPermission(player, serverData);
+				}
 				ClaimingMode finalMode = mode == null ?
 						(another || player == null ? (ClaimingMode) ClaimingModes.PLAYER : playerData.getClaimingMode()) : mode;
 				UUID contextPlayerId = getClaimInputPlayerId(
@@ -154,16 +163,6 @@ public class ClaimsClaimCommands {
 					//shouldn't actually happen, so no failure is sent,
 					// but won't hurt to catch this anyway
 					return 0;
-				}
-
-				IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
-				boolean shouldReplace = opReplaceCurrent;
-				if(player != null) {
-					if (serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
-						return 0;//going too fast
-					playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
-					claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
-					shouldReplace = shouldReplace || playerData.isClaimsAdminMode();
 				}
 				UUID sourceUUID = player == null ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 				boolean impersonating = !another && !contextPlayerId.equals(sourceUUID);
@@ -210,14 +209,12 @@ public class ClaimsClaimCommands {
 									player, "gui.xaero_claims_claim_command_area_end",
 									areaLeft, areaTop, areaRight, areaBottom, defaultClaimName, subIdComponent
 							);
-							claimsManager.tryToClaimArea(
-									world.dimension().location(), claimPlayerId, subConfigIndex,
-									fromDimension, fromX, fromZ, areaLeft, areaTop, areaRight, areaBottom,
-									shouldReplace, r -> sendResult(context.getSource(), server, finalPlayer, r, endMessage, serverData)
-							);
+							claimsManager.tryClaimActionOverArea(world.dimension().location(), claimPlayerId, subConfigIndex,
+									fromDimension, fromX, fromZ, areaLeft, areaTop, areaRight, areaBottom, ClaimingAction.CLAIM,
+									shouldReplace, null, claimingPermissionResult, r -> sendResult(context.getSource(), server, finalPlayer, r, endMessage, serverData));
 							return 1;
 						}
-						result = claimsManager.tryToClaimTyped(world.dimension().location(), claimPlayerId, subConfigIndex, fromDimension, fromX, fromZ, middleX, middleZ, shouldReplace, false);
+						result = claimsManager.tryToClaimTyped(world.dimension().location(), claimPlayerId, subConfigIndex, fromDimension, fromX, fromZ, middleX, middleZ, shouldReplace, false, claimingPermissionResult);
 
 						if(result.getResultType() == ClaimResult.Type.ALREADY_CLAIMED) {
 							IPlayerChunkClaimAPI currentClaim = claimsManager.get(world.dimension().location(), middleX, middleZ);

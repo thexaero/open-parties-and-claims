@@ -21,17 +21,24 @@ package xaero.pac.client.gui.widget.dropdown;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.BelowOrAboveWidgetTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.MenuTooltipPositioner;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FormattedCharSequence;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public final class DropDownWidget extends AbstractWidget
 {
@@ -59,13 +66,15 @@ public final class DropDownWidget extends AbstractWidget
 	private final int selectedBackground;
 	private final int selectedHoveredBackground;
 	private boolean shortenFromTheRight;
+	private final List<FormattedCharSequence> tooltip;
 
-	private DropDownWidget(String[] options, int x, int y, int w, Integer selected, boolean openingUp, IDropDownWidgetCallback callback, IDropDownContainer container, boolean hasEmptyOption, Component narrationTitle)
+	private DropDownWidget(String[] options, int x, int y, int w, Integer selected, boolean openingUp, IDropDownWidgetCallback callback, IDropDownContainer container, boolean hasEmptyOption, Component narrationTitle, List<FormattedCharSequence> tooltip)
 	{
 		super(x, y + (openingUp ? LINE_HEIGHT : 0), w, LINE_HEIGHT, narrationTitle);
 		this.realOptions = options;
 		this.callback = callback;
 		this.container = container;
+		this.tooltip = tooltip;
 		int emptyOptionCount = hasEmptyOption ? 1 : 0;
 		this.options = new String[realOptions.length + emptyOptionCount];
 		System.arraycopy(realOptions, 0, this.options, emptyOptionCount, realOptions.length);
@@ -356,6 +365,17 @@ public final class DropDownWidget extends AbstractWidget
 		return false;
 	}
 
+	public List<FormattedCharSequence> getDDTooltip() {
+		return tooltip;
+	}
+
+	public ClientTooltipPositioner createTooltipPositioner() {
+		ScreenRectangle rectangle = getRectangle();
+		if(!isHovered() && isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard())
+			return new BelowOrAboveWidgetTooltipPositioner(rectangle);
+		return new MenuTooltipPositioner(rectangle);
+	}
+
 	public static final class Builder {
 
 		private String[] options;
@@ -368,6 +388,7 @@ public final class DropDownWidget extends AbstractWidget
 		private IDropDownContainer container;
 		private boolean hasEmptyOption;
 		private Component narrationTitle;
+		private List<FormattedCharSequence> tooltip;
 
 		private Builder (){}
 
@@ -381,6 +402,7 @@ public final class DropDownWidget extends AbstractWidget
 			setCallback(null);
 			setHasEmptyOption(true);
 			setNarrationTitle(null);
+			setTooltip(null);
 			return this;
 		}
 
@@ -434,10 +456,15 @@ public final class DropDownWidget extends AbstractWidget
 			return this;
 		}
 
+		public Builder setTooltip(List<FormattedCharSequence> tooltip) {
+			this.tooltip = tooltip;
+			return this;
+		}
+
 		public DropDownWidget build(){
 			if(options == null || w == 0 || selected == null || callback == null || narrationTitle == null || container == null)
 				throw new IllegalStateException();
-			return new DropDownWidget(options, x, y, w, selected, openingUp, callback, container, hasEmptyOption, narrationTitle);
+			return new DropDownWidget(options, x, y, w, selected, openingUp, callback, container, hasEmptyOption, narrationTitle, tooltip);
 		}
 
 		public static Builder begin(){
