@@ -125,7 +125,7 @@ public class ClaimsForceloadCommands {
 						if(permissionResult != null){
 							context.getSource().sendFailure(adaptiveLocalizer.getFor(player, permissionResult.message));
 							((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
-									new AreaClaimResult(Sets.newHashSet(permissionResult), Collections.emptySet(), world.dimension().location(), areaLeft, areaTop, areaRight, areaBottom),
+									new AreaClaimResult(Sets.newHashSet(permissionResult), Collections.emptySet(), world.dimension().identifier(), areaLeft, areaTop, areaRight, areaBottom),
 									player);
 							return 0;
 						}

@@ -142,7 +142,7 @@ public abstract class WidgetListScreen<C> extends XPACScreen {
 		searchValue = input;
 		shouldRefocusSearch = true;
 		updateFilteredElements();
-		init(minecraft, width, height);
+		init(width, height);
 	}
 
 	private void updateFilteredElements(){
@@ -179,7 +179,7 @@ public abstract class WidgetListScreen<C> extends XPACScreen {
 										b -> {
 											chosenCategory = category;
 											updateFilteredElements();
-											init(minecraft, width, height);
+											init(width, height);
 										}
 								).bounds(xy.getX(), xy.getY(), 200, 20).build()
 						).build();
@@ -276,7 +276,7 @@ public abstract class WidgetListScreen<C> extends XPACScreen {
 			searchValue = "";
 			searchBox.setValue(searchValue);
 			updateFilteredElements();
-			init(minecraft, width, height);
+			init(width, height);
 			return;
 		}
 		goBack();

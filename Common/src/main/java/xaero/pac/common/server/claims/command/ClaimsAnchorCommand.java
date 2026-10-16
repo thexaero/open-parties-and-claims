@@ -144,7 +144,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 					if(permissionResult != null){
 						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, permissionResult.message));
 						((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
-								new AreaClaimResult(Sets.newHashSet(permissionResult), Collections.emptySet(), world.dimension().location(), chunkX, chunkZ, chunkX, chunkZ),
+								new AreaClaimResult(Sets.newHashSet(permissionResult), Collections.emptySet(), world.dimension().identifier(), chunkX, chunkZ, chunkX, chunkZ),
 								player);
 						return 0;
 					}
