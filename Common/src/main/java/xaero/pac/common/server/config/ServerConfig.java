@@ -73,7 +73,7 @@ public class ServerConfig {
 	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledItemInteractions;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledBlockInteractions;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> completelyDisabledEntityInteractions;
-	public final ModConfigSpec.BooleanValue alwaysProtectBlocksFromEnchantments;
+	public final ModConfigSpec.BooleanValue completelyDisableFrostWalking;
 	public final ModConfigSpec.BooleanValue reducedBoatEntityCollisions;
 	public final ModConfigSpec.IntValue maxClaimDistance;
 	public final ModConfigSpec.ConfigValue<List<? extends String>> claimableDimensionsList;
@@ -99,6 +99,8 @@ public class ServerConfig {
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimForceloadsPermission;
 	public final ModConfigSpec.ConfigValue<String> maxPlayerClaimingAnchorsPermission;
 	public final ModConfigSpec.ConfigValue<String> claimingAnchorRangePermission;
+	public final ModConfigSpec.ConfigValue<String> claimingPausedPermission;
+	public final ModConfigSpec.ConfigValue<String> newForceloadsPausedPermission;
 	public final ModConfigSpec.IntValue maxSingleClaimActionSize;
 	public final ModConfigSpec.ConfigValue<String> serverClaimPermission;
 	public final ModConfigSpec.ConfigValue<String> claimsModeratorModePermission;
@@ -330,7 +332,8 @@ public class ServerConfig {
 					"""
 					Whether players should be able to claim chunks that are directly next to claimed chunks owned by another player/party.
 					Disallowing it can prevent players from doing so without realizing that chunks next to claims can also be partially protected,
-					e.g. from item use and mob griefing, making them not ideal for some purposes.
+					e.g. from item use and mob griefing, making them not ideal for some purposes. Players can make exceptions using the "Can Claim Next To"
+					option in their player config.
 					Only affects claiming wilderness, so reclaimable claims can still work."""
 			)
 			.translation("gui.xaero_pac_config_allow_touching_claims")
@@ -454,6 +457,22 @@ public class ServerConfig {
 			.translation("gui.xaero_pac_config_claiming_anchor_range_permission")
 			.worldRestart()
 			.define("claimingAnchorRangePermission", UsedPermissionNodes.CLAIMING_ANCHOR_RANGE.getDefaultNodeString());
+
+		claimingPausedPermission = builder
+			.comment("""
+					The permission that is used to check whether claiming is paused for a player. Set it to an empty string to never check permissions.
+					The used permission system can be configured with "permissionSystem".""")
+			.translation("gui.xaero_pac_config_claiming_paused_permission")
+			.worldRestart()
+			.define("claimingPausedPermission", UsedPermissionNodes.CLAIMING_PAUSED.getDefaultNodeString());
+
+		newForceloadsPausedPermission = builder
+			.comment("""
+					The permission that is used to check whether new forceloads are paused for a player. Set it to an empty string to never check permissions.
+					The used permission system can be configured with "permissionSystem".""")
+			.translation("gui.xaero_pac_config_new_forceloads_paused_permission")
+			.worldRestart()
+			.define("newForceloadsPausedPermission", UsedPermissionNodes.NEW_FORCELOADS_PAUSED.getDefaultNodeString());
 
 		maxSingleClaimActionSize = builder
 			.comment("""
@@ -1066,6 +1085,7 @@ public class ServerConfig {
 							"claims.protection.exceptions.projectileHitHostileSpawn",
 							"claims.protection.exceptions.projectileHitFriendlySpawn",
 							"claims.protection.exceptions.reclaimable",
+							"claims.protection.exceptions.canClaimNextTo",
 							"parties.name",
 							"parties.shareLocationWithParty",
 							"parties.shareLocationWithMutualAllyParties",
@@ -1122,7 +1142,9 @@ public class ServerConfig {
 					"claims.bonusAnchors",
 					"claims.bonusAnchorRange",
 					"bonusPlayerGroups",
-					"bonusPlayerGroupSpace"
+					"bonusPlayerGroupSpace",
+					"claims.allowedToClaim",
+					"claims.allowedToAddForceloads"
 			), s -> s instanceof String);
 
 		builder.pop();

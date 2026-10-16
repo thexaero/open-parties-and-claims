@@ -189,7 +189,7 @@ public abstract class IncludeElementScreen extends XPACScreen implements IDropDo
 	@Override
 	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawCenteredString(font, title, width / 2, 26, -1);
+		guiGraphics.drawCenteredString(font, title, width / 2, height / 7 - 17, -1);
 		if(selectionMenu == null)
 			guiGraphics.drawCenteredString(font, allIncludedErrorMessage, width / 2, selectionMenuY, -1);
 		else

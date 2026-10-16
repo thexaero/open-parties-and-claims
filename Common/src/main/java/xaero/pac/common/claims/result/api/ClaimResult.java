@@ -197,6 +197,18 @@ public class ClaimResult<C extends IPlayerChunkClaimAPI> {
 		/** The claiming action was interruptingly forbidden by an addon */
 		CANT_TOUCH_OTHER(Component.translatable("gui.xaero_claims_claim_cant_touch_other_claims").withStyle(ChatFormatting.RED), false, true, false, false),
 
+		/** Claiming is paused by permission */
+		CLAIMING_PAUSED_PERMISSION(Component.translatable("gui.xaero_claims_paused_permission").withStyle(ChatFormatting.RED), false, true, false, false),
+
+		/** Claiming is not allowed in player config */
+		CLAIMING_NOT_ALLOWED_IN_CONFIG(Component.translatable("gui.xaero_claims_not_allowed_in_config").withStyle(ChatFormatting.RED), false, true, false, false),
+
+		/** New forceloads are paused by permission */
+		NEW_FORCELOADS_PAUSED_PERMISSION(Component.translatable("gui.xaero_claims_new_fl_paused_permission").withStyle(ChatFormatting.RED), false, true, false, false),
+
+		/** New forceloads are not allowed in player config */
+		NEW_FORCELOADS_NOT_ALLOWED_IN_CONFIG(Component.translatable("gui.xaero_claims_new_fl_not_allowed_in_config").withStyle(ChatFormatting.RED), false, true, false, false),
+
 		/** Claiming anchor already exists */
 		ANCHOR_ALREADY_EXISTS(Component.translatable("gui.xaero_claims_anchor_already_exists").withStyle(ChatFormatting.RED), false, true, false, false),
 

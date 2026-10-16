@@ -26,12 +26,16 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
-public abstract class WidgetListElement<E extends WidgetListElement<E>> {
+public abstract class WidgetListElement<C, E extends WidgetListElement<C, E>> {
 
 	protected final E self;
 	private final BiFunction<E, Vec3i, AbstractWidget> widgetSupplier;
+	private final Supplier<String> searchName;
+	private final Supplier<C> category;
 	private final List<FormattedCharSequence> tooltip;
+	private String tooltipTextCache;
 	protected int x;
 	protected int y;
 	protected final int w;
@@ -39,8 +43,18 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 	protected final boolean mutable;
 	
 	@SuppressWarnings("unchecked")
-	protected WidgetListElement(int w, int h, boolean mutable, BiFunction<E, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip) {
+	protected WidgetListElement(
+			int w,
+			int h,
+			boolean mutable,
+			BiFunction<E, Vec3i, AbstractWidget> widgetSupplier,
+			Supplier<String> searchName,
+			Supplier<C> category,
+			List<FormattedCharSequence> tooltip
+	) {
 		super();
+		this.searchName = searchName;
+		this.category = category;
 		this.self = (E) this;
 		this.w = w;
 		this.h = h;
@@ -72,13 +86,43 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 	
 	public void render(GuiGraphics guiGraphics) {
 	}
-	
-	public static abstract class Builder<E extends WidgetListElement<E>, B extends Builder<E, B>> {
+
+	protected String getSearchTextNoTooltip(){
+		return searchName.get();
+	}
+
+	public String getSearchText(){
+		StringBuilder searchTextBuilder = new StringBuilder(getSearchTextNoTooltip());
+		if(tooltip != null) {
+			if(tooltipTextCache == null) {
+				StringBuilder tooltipTextBuilder = new StringBuilder();
+				for (FormattedCharSequence formattedCharSequence : tooltip) {
+					formattedCharSequence.accept((a, s, c) -> {
+						tooltipTextBuilder.append((char) c);
+						return true;
+					});
+					tooltipTextBuilder.append(" ");
+				}
+				tooltipTextCache = tooltipTextBuilder.toString();
+			}
+			searchTextBuilder.append("\n");
+			searchTextBuilder.append(tooltipTextCache);
+		}
+		return searchTextBuilder.toString();
+	}
+
+	public C getCategory() {
+		return category == null ? null : category.get();
+	}
+
+	public static abstract class Builder<C, E extends WidgetListElement<C, E>, B extends Builder<C, E, B>> {
 		
 		protected final B self;
 		protected BiFunction<E, Vec3i, AbstractWidget> widgetSupplier;
 		protected int w;
 		protected int h;
+		protected Supplier<String> searchName;
+		protected Supplier<C> category;
 		protected List<FormattedCharSequence> tooltip;
 		protected boolean mutable;
 		
@@ -91,6 +135,8 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 		public B setDefault() {
 			setW(0);
 			setH(0);
+			setSearchName(null);
+			setCategory(null);
 			setTooltip(null);
 			setMutable(true);
 			setWidgetSupplier(null);
@@ -111,7 +157,17 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 			this.h = h;
 			return self;
 		}
-		
+
+		public B setSearchName(Supplier<String> searchName) {
+			this.searchName = searchName;
+			return self;
+		}
+
+		public B setCategory(Supplier<C> category) {
+			this.category = category;
+			return self;
+		}
+
 		public B setTooltip(List<FormattedCharSequence> tooltip) {
 			this.tooltip = tooltip;
 			return self;
@@ -123,6 +179,8 @@ public abstract class WidgetListElement<E extends WidgetListElement<E>> {
 		}
 		
 		public E build() {
+			if(widgetSupplier == null || searchName == null)
+				throw new IllegalStateException();
 			return buildInternal();
 		}
 		

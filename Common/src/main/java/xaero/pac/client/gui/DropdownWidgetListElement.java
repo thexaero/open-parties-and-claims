@@ -32,16 +32,33 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListElement<T, DropdownWidgetListElement<T>> implements IDropDownWidgetCallback {
+public final class DropdownWidgetListElement<C, T> extends SimpleValueWidgetListElement<C, T, DropdownWidgetListElement<C, T>> implements IDropDownWidgetCallback {
 
 	private final Consumer<T> valueChangeConsumer;
 	private final List<T> options;
 	private int currentIndex;
 	private final Component title;
 
-	private DropdownWidgetListElement(int w, int h, boolean mutable, BiFunction<DropdownWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier, List<FormattedCharSequence> tooltip, T startValue, int startIndex, List<T> options, Consumer<T> valueChangeConsumer, Component title) {
-		super(startValue, w, h, mutable, widgetSupplier, tooltip);
+	private DropdownWidgetListElement(
+			int w,
+			int h,
+			boolean mutable,
+			BiFunction<DropdownWidgetListElement<C, T>, Vec3i,
+			AbstractWidget> widgetSupplier,
+			Supplier<String> searchName,
+			Supplier<C> category,
+			Function<T, String> valueNamer,
+			List<FormattedCharSequence> tooltip,
+			T startValue,
+			int startIndex,
+			List<T> options,
+			Consumer<T> valueChangeConsumer,
+			Component title
+	) {
+		super(startValue, w, h, mutable, widgetSupplier, searchName, category, valueNamer, tooltip);
 		this.options = options;
 		this.currentIndex = startIndex;
 		this.valueChangeConsumer = valueChangeConsumer;
@@ -51,7 +68,7 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 	@Override
 	public void render(GuiGraphics guiGraphics) {
 		super.render(guiGraphics);
-		guiGraphics.drawString(Minecraft.getInstance().font, title, x, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+		guiGraphics.drawString(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
 
 	}
 
@@ -63,7 +80,7 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 		return true;
 	}
 
-	public static final class Builder<T> extends SimpleValueWidgetListElement.Builder<T, DropdownWidgetListElement<T>, Builder<T>> {
+	public static final class Builder<C, T> extends SimpleValueWidgetListElement.Builder<C, T, DropdownWidgetListElement<C, T>, Builder<C, T>> {
 
 		private int startIndex;
 		private List<T> options;
@@ -71,7 +88,7 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 		private Component title;
 
 		@Override
-		public Builder<T> setDefault() {
+		public Builder<C, T> setDefault() {
 			super.setDefault();
 			setStartIndex(-1);
 			setOptions(null);
@@ -81,47 +98,49 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 		}
 
 		@Override
-		public Builder<T> setStartValue(T startValue) {
+		public Builder<C, T> setStartValue(T startValue) {
 			if(startValue != null)
 				throw new IllegalArgumentException();
 			return super.setStartValue(startValue);
 		}
 
-		public Builder<T> setStartIndex(int startIndex) {
+		public Builder<C, T> setStartIndex(int startIndex) {
 			this.startIndex = startIndex;
 			return self;
 		}
 
-		public Builder<T> setOptions(List<T> options) {
+		public Builder<C, T> setOptions(List<T> options) {
 			this.options = options;
 			return self;
 		}
 
-		public Builder<T> setValueChangeConsumer(Consumer<T> valueChangeConsumer) {
+		public Builder<C, T> setValueChangeConsumer(Consumer<T> valueChangeConsumer) {
 			this.valueChangeConsumer = valueChangeConsumer;
 			return self;
 		}
 
-		public Builder<T> setTitle(Component title) {
+		public Builder<C, T> setTitle(Component title) {
 			this.title = title;
 			return self;
 		}
 
-		public DropdownWidgetListElement<T> build() {
+		public DropdownWidgetListElement<C, T> build() {
 			if(startIndex == -1 || options == null || valueChangeConsumer == null || title == null)
 				throw new IllegalStateException();
 			startValue = options.get(startIndex);
+			if(searchName == null)
+				setSearchName(title::getString);
 			return super.build();
 		}
 
 		@Override
-		protected DropdownWidgetListElement<T> buildInternal() {
+		protected DropdownWidgetListElement<C, T> buildInternal() {
 			String[] stringOptions = new String[options.size()];
 			for(int i = 0; i < options.size(); i++)
 				stringOptions[i] = Objects.toString(options.get(i));
 			int titleWidth = Minecraft.getInstance().font.width(title);
-			int margin = 4;
-			BiFunction<DropdownWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) ->
+			int margin = 6;
+			BiFunction<DropdownWidgetListElement<C, T>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) ->
 					DropDownWidget.Builder.begin()
 							.setX(xy.getX() + titleWidth + margin)
 							.setY(xy.getY() + 4)
@@ -131,11 +150,14 @@ public final class DropdownWidgetListElement<T> extends SimpleValueWidgetListEle
 							.setCallback(el)
 							.setContainer((IDropDownContainer) Minecraft.getInstance().screen)
 							.setSelected(el.currentIndex).build();
-			return new DropdownWidgetListElement<>(w, h, mutable, widgetSupplier, tooltip, startValue, startIndex, List.copyOf(options), valueChangeConsumer, title);
+			return new DropdownWidgetListElement<>(
+					w, h, mutable, widgetSupplier, searchName, category, valueNamer, tooltip,
+					startValue, startIndex, List.copyOf(options), valueChangeConsumer, title
+			);
 		}
 		
-		public static <T> Builder<T> begin() {
-			return new Builder<T>().setDefault();
+		public static <C, T> Builder<C, T> begin() {
+			return new Builder<C, T>().setDefault();
 		}
 		
 	}
