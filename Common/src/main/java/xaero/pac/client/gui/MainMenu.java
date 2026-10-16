@@ -205,7 +205,7 @@ public class MainMenu extends XPACScreen {
 					claimingModeHandler.openConfigScreen(this, escape);
 				}
 		).bounds(width / 2 + 102, height / 7 + 74, 20, 20).tooltip(claimConfigButtonTooltip).build();
-		
+
 		addRenderableWidget(Button.builder(Component.translatable("gui.xaero_pac_back"), this::onBackButton).bounds(width / 2 - 100, this.height / 7 + 171, 200, 20).build());
 
 		//addRenderableWidget(Button.builder(Component.literal("test toggle"), this::onTestToggle).bounds(0, 0, 40, 20).build());
