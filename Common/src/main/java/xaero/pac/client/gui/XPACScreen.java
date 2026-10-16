@@ -19,6 +19,7 @@
 package xaero.pac.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -176,6 +177,15 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 
 	public Screen getParent() {
 		return parent;
+	}
+
+	protected void buttonTooltip(List<FormattedCharSequence> tooltip, Button button, int mouseX, int mouseY){
+		if(button.isMouseOver(mouseX, mouseY) && (openDropdown == null || !openDropdown.onDropDown(mouseX, mouseY, height)))
+			nextTooltip = tooltip;
+	}
+
+	protected void buttonTooltip(Component tooltip, Button button, int mouseX, int mouseY){
+		buttonTooltip(font.split(tooltip, 200), button, mouseX, mouseY);
 	}
 
 }
