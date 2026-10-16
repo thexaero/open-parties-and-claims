@@ -23,16 +23,18 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public final class PickerWidgetListElement<T> extends SimpleValueWidgetListElement<T, PickerWidgetListElement<T>> {
+public final class PickerWidgetListElement<C, T> extends SimpleValueWidgetListElement<C, T, PickerWidgetListElement<C, T>> {
 
 	private int currentIndex;
 	private final List<T> options;
@@ -42,8 +44,22 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 	private Button defaultButton;
 	private final BiConsumer<T, Button> valueChangeConsumer;
 
-	private PickerWidgetListElement(int w, int h, boolean mutable, BiFunction<PickerWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip, T startValue, int startIndex, List<T> options, T defaultValue, BiConsumer<T, Button>  valueChangeConsumer) {
-		super(startValue, w, h, mutable, widgetSupplier, tooltip);
+	private PickerWidgetListElement(
+			int w,
+			int h,
+			boolean mutable,
+			BiFunction<PickerWidgetListElement<C, T>, Vec3i, AbstractWidget> widgetSupplier,
+			Supplier<String> searchName,
+			Supplier<C> category,
+			Function<T, String> valueNamer,
+			List<FormattedCharSequence> tooltip,
+			T startValue,
+			int startIndex,
+			List<T> options,
+			T defaultValue,
+			BiConsumer<T, Button>  valueChangeConsumer
+	) {
+		super(startValue, w, h, mutable, widgetSupplier, searchName, category, valueNamer, tooltip);
 		this.options = options;
 		this.currentIndex = startIndex;
 		this.defaultValue = defaultValue;
@@ -96,7 +112,7 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		guiGraphics.drawString(Minecraft.getInstance().font, subName, x + 90 - subNameW / 2, y + 6, mutable ? -1 : 0xFFE0E0E0/*copied from editbox class*/);
 	}
 	
-	public static final class Builder<T> extends SimpleValueWidgetListElement.Builder<T, PickerWidgetListElement<T>, Builder<T>> {
+	public static final class Builder<C, T> extends SimpleValueWidgetListElement.Builder<C, T, PickerWidgetListElement<C, T>, Builder<C, T>> {
 
 		private int startIndex;
 		private List<T> options;
@@ -104,7 +120,7 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		private BiConsumer<T, Button> valueChangeConsumer;
 
 		@Override
-		public Builder<T> setDefault() {
+		public Builder<C, T> setDefault() {
 			super.setDefault();
 			setStartIndex(-1);
 			setOptions(null);
@@ -114,33 +130,33 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		}
 
 		@Override
-		public Builder<T> setStartValue(T startValue) {
+		public Builder<C, T> setStartValue(T startValue) {
 			if(startValue != null)
 				throw new IllegalArgumentException();
 			return super.setStartValue(startValue);
 		}
 
-		public Builder<T> setStartIndex(int startIndex) {
+		public Builder<C, T> setStartIndex(int startIndex) {
 			this.startIndex = startIndex;
 			return self;
 		}
 
-		public Builder<T> setOptions(List<T> options) {
+		public Builder<C, T> setOptions(List<T> options) {
 			this.options = options;
 			return self;
 		}
 
-		public Builder<T> setDefaultValue(T defaultValue) {
+		public Builder<C, T> setDefaultValue(T defaultValue) {
 			this.defaultValue = defaultValue;
 			return self;
 		}
 
-		public Builder<T> setValueChangeConsumer(BiConsumer<T, Button> valueChangeConsumer) {
+		public Builder<C, T> setValueChangeConsumer(BiConsumer<T, Button> valueChangeConsumer) {
 			this.valueChangeConsumer = valueChangeConsumer;
 			return self;
 		}
 
-		public PickerWidgetListElement<T> build() {
+		public PickerWidgetListElement<C, T> build() {
 			if(startIndex == -1 || options == null || valueChangeConsumer == null)
 				throw new IllegalStateException();
 			startValue = options.get(startIndex);
@@ -150,14 +166,17 @@ public final class PickerWidgetListElement<T> extends SimpleValueWidgetListEleme
 		}
 
 		@Override
-		protected PickerWidgetListElement<T> buildInternal(List<ClientTooltipComponent> clientTooltip) {
-			BiFunction<PickerWidgetListElement<T>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) ->
+		protected PickerWidgetListElement<C, T> buildInternal() {
+			BiFunction<PickerWidgetListElement<C, T>, Vec3i, AbstractWidget> widgetSupplier = (el, xy) ->
 					Button.builder(Component.literal("<"), el::onPrevButton).bounds(xy.getX(), xy.getY(), 20, 20).build();
-			return new PickerWidgetListElement<>(w, h, mutable, widgetSupplier, clientTooltip, startValue, startIndex, options, defaultValue, valueChangeConsumer);
+			return new PickerWidgetListElement<>(
+					w, h, mutable, widgetSupplier, searchName, category, valueNamer, tooltip,
+					startValue, startIndex, options, defaultValue, valueChangeConsumer
+			);
 		}
 		
-		public static <T> Builder<T> begin() {
-			return new Builder<T>().setDefault();
+		public static <C, T> Builder<C, T> begin() {
+			return new Builder<C, T>().setDefault();
 		}
 		
 	}

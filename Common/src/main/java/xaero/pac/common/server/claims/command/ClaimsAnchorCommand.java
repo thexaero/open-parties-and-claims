@@ -52,11 +52,16 @@ import xaero.pac.common.server.command.AbstractChunkCommand;
 import xaero.pac.common.server.command.CommandRequirementHelper;
 import xaero.pac.common.server.config.ServerConfig;
 import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.IPlayerConfig;
 import xaero.pac.common.server.player.config.PlayerConfig;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.localization.AdaptiveLocalizer;
+import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
+import xaero.pac.common.server.player.permission.api.UsedPermissionNodes;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -95,6 +100,7 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 
 			MinecraftServer server = context.getSource().getServer();
 			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>> serverData = ServerData.from(server);
+			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
 			AdaptiveLocalizer adaptiveLocalizer = serverData.getAdaptiveLocalizer();
 			if(!shouldApply && !confirmed){
 				context.getSource().sendFailure(adaptiveLocalizer.getFor(player, Component.translatable("gui.xaero.claims_unanchor_command_unconfirmed")));
@@ -125,6 +131,25 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 				chunkZ = player.chunkPosition().z;
 			}
 			ServerPlayerData playerData = player == null ? null : (ServerPlayerData) ServerPlayerDataAPI.from(player);
+			boolean shouldForce = opForce;
+			if(player != null) {
+				if(serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
+					return 0;//going too fast
+				playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
+				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
+				shouldForce = shouldForce || playerData.isClaimsAdminMode();
+				if(!shouldForce && shouldApply){
+					ClaimResult.Type permissionResult = serverData.getServerClaimsManager().getPermissionHandler()
+							.checkClaimingPermission(player, serverData);
+					if(permissionResult != null){
+						context.getSource().sendFailure(adaptiveLocalizer.getFor(player, permissionResult.message));
+						((ClaimsManagerSynchronizer) claimsManager.getClaimsManagerSynchronizer()).syncToPlayerClaimActionResult(
+								new AreaClaimResult(Sets.newHashSet(permissionResult), Collections.emptySet(), world.dimension().location(), chunkX, chunkZ, chunkX, chunkZ),
+								player);
+						return 0;
+					}
+				}
+			}
 			ClaimingMode finalMode = mode == null ?
 					(another || player == null ? (ClaimingMode) ClaimingModes.PLAYER : playerData.getClaimingMode()) : mode;
 			UUID contextPlayerId = ClaimsClaimCommands.getClaimInputPlayerId(
@@ -153,15 +178,6 @@ public class ClaimsAnchorCommand extends AbstractChunkCommand {
 				return 0;
 			}
 
-			IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>> claimsManager = serverData.getServerClaimsManager();
-			boolean shouldForce = opForce;
-			if(player != null) {
-				if(serverData.getServerTickHandler().getTickCounter() == playerData.getClaimActionRequestHandler().getLastRequestTickCounter())
-					return 0;//going too fast
-				playerData.getClaimActionRequestHandler().setLastRequestTickCounter(serverData.getServerTickHandler().getTickCounter());
-				claimsManager.getPermissionHandler().ensureAdminModeStatusPermission(player, playerData);
-				shouldForce = shouldForce || playerData.isClaimsAdminMode();
-			}
 			UUID sourceUUID = player == null ? PlayerConfig.SERVER_CLAIM_UUID : player.getUUID();
 			boolean impersonating = !another && !contextPlayerId.equals(sourceUUID);
 			Identifier fromDimension = player == null ? world.dimension().identifier() : player.level().dimension().identifier();
