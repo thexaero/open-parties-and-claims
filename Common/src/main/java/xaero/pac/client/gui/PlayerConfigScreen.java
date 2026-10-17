@@ -605,7 +605,7 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 						
 					} else if(type == Double.class || type == Float.class)
 						filter = s -> s != null && s.matches("^[-\\.0-9]*$");
-
+					final Predicate<String> finalFilter = filter;
 					TextWidgetListElement.Builder<PlayerConfigOptionCategory> elementBuilder = TextWidgetListElement.Builder.<PlayerConfigOptionCategory>begin()
 							.setW(elementWidth)
 							.setH(elementHeight)
