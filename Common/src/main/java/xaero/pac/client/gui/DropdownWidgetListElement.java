@@ -68,7 +68,7 @@ public final class DropdownWidgetListElement<C, T> extends SimpleValueWidgetList
 	@Override
 	public void render(GuiGraphics guiGraphics) {
 		super.render(guiGraphics);
-		guiGraphics.drawString(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 14737632/*copied from editbox class*/);
+		guiGraphics.drawString(Minecraft.getInstance().font, title, x + 2, y + 6, mutable ? -1 : 0xFFE0E0E0/*copied from editbox class*/);
 
 	}
 

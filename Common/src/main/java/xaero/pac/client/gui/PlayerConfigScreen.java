@@ -223,7 +223,7 @@ public final class PlayerConfigScreen extends WidgetListScreen<PlayerConfigOptio
 	@Override
 	protected void renderPreDropdown(GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		super.renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.drawString(font, SUB_CONFIG_TITLE, width / 2 - 205 + 2, height / 7 + 6, subConfigOptions != null ? -1 : 14737632/*copied from editbox class*/);
+		guiGraphics.drawString(font, SUB_CONFIG_TITLE, width / 2 - 205 + 2, height / 7 + 6, subConfigOptions != null ? -1 : 0xFFE0E0E0/*copied from editbox class*/);
 		if(shouldWaitForData){
 			if(!data.isSyncInProgress())
 				refresh();
