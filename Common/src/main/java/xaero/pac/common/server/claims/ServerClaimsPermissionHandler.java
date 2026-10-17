@@ -25,10 +25,17 @@ import xaero.pac.common.claims.player.IPlayerChunkClaim;
 import xaero.pac.common.claims.player.IPlayerClaimPosList;
 import xaero.pac.common.claims.player.IPlayerDimensionClaims;
 import xaero.pac.common.claims.player.impersonation.PlayerClaimImpersonationInfo;
+import xaero.pac.common.claims.result.api.ClaimResult;
 import xaero.pac.common.packet.claims.ClientboundClaimModesPacket;
+import xaero.pac.common.parties.party.IPartyPlayerInfo;
+import xaero.pac.common.parties.party.ally.IPartyAlly;
+import xaero.pac.common.parties.party.member.IPartyMember;
 import xaero.pac.common.server.IServerData;
 import xaero.pac.common.server.claims.player.IServerPlayerClaimInfo;
 import xaero.pac.common.server.config.ServerConfig;
+import xaero.pac.common.server.parties.party.IServerParty;
+import xaero.pac.common.server.player.config.IPlayerConfig;
+import xaero.pac.common.server.player.config.api.v2.PlayerConfigOptions;
 import xaero.pac.common.server.player.data.ServerPlayerData;
 import xaero.pac.common.server.player.data.api.ServerPlayerDataAPI;
 import xaero.pac.common.server.player.permission.api.IPlayerPermissionSystemAPI;
@@ -125,6 +132,34 @@ public class ServerClaimsPermissionHandler {
 		if(permissionSystem == null)
 			return false;
 		return permissionSystem.getPermission(player, UsedPermissionNodes.CLAIMS_TELEPORTATION);
+	}
+
+	public ClaimResult.Type checkClaimingPermission(
+			ServerPlayer player,
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData
+	){
+		IPlayerPermissionSystemAPI usedPermissionSystem = serverData.getPlayerPermissionSystemManager().getUsedSystem();
+		if(usedPermissionSystem != null && usedPermissionSystem.getPermission(player, UsedPermissionNodes.CLAIMING_PAUSED))
+			return ClaimResult.Type.CLAIMING_PAUSED_PERMISSION;
+		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
+		if(!playerConfig.getEffective(PlayerConfigOptions.ALLOWED_TO_CLAIM))
+			return ClaimResult.Type.CLAIMING_NOT_ALLOWED_IN_CONFIG;
+		return null;
+	}
+
+	public ClaimResult.Type checkNewForceloadsPermission(
+			ServerPlayer player,
+			IServerData<IServerClaimsManager<IPlayerChunkClaim, IServerPlayerClaimInfo<IPlayerDimensionClaims<IPlayerClaimPosList>>, IServerDimensionClaimsManager<IServerRegionClaims>>, IServerParty<IPartyMember, IPartyPlayerInfo, IPartyAlly>>
+					serverData
+	){
+		IPlayerPermissionSystemAPI usedPermissionSystem = serverData.getPlayerPermissionSystemManager().getUsedSystem();
+		if(usedPermissionSystem != null && usedPermissionSystem.getPermission(player, UsedPermissionNodes.NEW_FORCELOADS_PAUSED))
+			return ClaimResult.Type.NEW_FORCELOADS_PAUSED_PERMISSION;
+		IPlayerConfig playerConfig = serverData.getPlayerConfigManager().getLoadedConfig(player.getUUID());
+		if(!playerConfig.getEffective(PlayerConfigOptions.ALLOWED_TO_ADD_FORCELOADS))
+			return ClaimResult.Type.NEW_FORCELOADS_NOT_ALLOWED_IN_CONFIG;
+		return null;
 	}
 
 	public IPlayerPermissionSystemAPI getSystem() {

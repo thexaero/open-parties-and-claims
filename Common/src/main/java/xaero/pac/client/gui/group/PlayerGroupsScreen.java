@@ -440,6 +440,10 @@ public class PlayerGroupsScreen extends XPACScreen {
 		refreshButtonStates();
 	}
 
+	protected int getOPACTitleY() {
+		return 5;
+	}
+
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		if(wasEffectivelySyncingOnInit()){
