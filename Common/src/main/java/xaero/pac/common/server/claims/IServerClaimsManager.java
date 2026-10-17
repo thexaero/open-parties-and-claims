@@ -19,6 +19,7 @@
 package xaero.pac.common.server.claims;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.ChunkPos;
 import xaero.pac.common.claims.IClaimsManager;
 import xaero.pac.common.claims.action.api.ClaimingAction;
 import xaero.pac.common.claims.player.IPlayerChunkClaim;
@@ -40,8 +41,10 @@ import xaero.pac.common.server.player.config.IPlayerConfigManager;
 import xaero.pac.common.server.task.ServerSpreadoutQueuedTaskHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface IServerClaimsManager
@@ -74,10 +77,36 @@ public interface IServerClaimsManager
 	}
 
 	@Nonnull
-	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(@Nonnull Identifier dimension, @Nonnull UUID playerId, int subConfigIndex, int fromX, int fromZ, int x, int z, boolean forceLoaded, boolean force, boolean isServer, int claimLimit, ClaimingAction action);
+	public ClaimResult<PlayerChunkClaim> tryToClaimHelper(
+			@Nonnull Identifier dimension,
+			@Nonnull UUID playerId,
+			int subConfigIndex,
+			int fromX,
+			int fromZ,
+			int x,
+			int z,
+			boolean forceLoaded,
+			boolean force,
+			boolean isServer,
+			int claimLimit,
+			ClaimResult.Type claimingPermissionResult,
+			ClaimingAction action
+	);
 
 	@Nonnull
-	public ClaimResult<C> tryToClaimTyped(@Nonnull Identifier dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull Identifier fromDimension, int fromX, int fromZ, int x, int z, boolean force, boolean ignoreAnchors);
+	public ClaimResult<C> tryToClaimTyped(
+			@Nonnull Identifier dimension,
+			@Nonnull UUID playerId,
+			int subConfigIndex,
+			@Nonnull Identifier fromDimension,
+			int fromX,
+			int fromZ,
+			int x,
+			int z,
+			boolean force,
+			boolean ignoreAnchors,
+			ClaimResult.Type claimingPermissionResult
+	);
 
 	@Nonnull
 	public ClaimResult<PlayerChunkClaim> tryToUnclaimHelper(@Nonnull Identifier dimension, @Nonnull UUID id, int fromX, int fromZ, int x, int z, boolean force, boolean causedByUnanchor);
@@ -105,11 +134,29 @@ public interface IServerClaimsManager
 			Consumer<AreaClaimResult> futureResultListener
 	);
 
+	public void tryClaimActionOverArea(
+			@Nonnull Identifier dimension,
+			@Nonnull UUID playerId,
+			int subConfigIndex,
+			@Nonnull Identifier fromDimension,
+			int fromX,
+			int fromZ,
+			int left,
+			int top,
+			int right,
+			int bottom,
+			@Nonnull ClaimingAction action,
+			boolean force,
+			@Nullable Predicate<ChunkPos> anchorFilter,
+			@Nullable ClaimResult.Type claimingPermissionResult,
+			@Nonnull Consumer<AreaClaimResult> listener
+	);
+
 	@Nonnull
 	@Override
 	@SuppressWarnings("unchecked")
 	default ClaimResult<IPlayerChunkClaimAPI> tryToClaim(@Nonnull Identifier dimension, @Nonnull UUID playerId, int subConfigIndex, @Nonnull Identifier fromDimension, int fromX, int fromZ, int x, int z, boolean force) {
-		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, x, z, force, false);
+		return (ClaimResult<IPlayerChunkClaimAPI>)(Object)tryToClaimTyped(dimension, playerId, subConfigIndex, fromDimension, fromX, fromZ, x, z, force, false, null);
 	}
 
 	@Nonnull
