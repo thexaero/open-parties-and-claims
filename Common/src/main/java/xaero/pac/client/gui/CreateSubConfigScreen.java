@@ -95,7 +95,7 @@ public final class CreateSubConfigScreen extends SimpleCreationScreen<CreateSubC
 		configData.setSelectedSubConfig(input);
 		OpenPartiesAndClaims.INSTANCE.getClientDataInternal().getPlayerConfigClientSynchronizer()
 				.requestCreateSubConfig(configData, input);
-		minecraft.setScreen(targetScreenSupplier.get());
+		minecraft.gui.setScreen(targetScreenSupplier.get());
 	}
 
 	public enum InputValidity {

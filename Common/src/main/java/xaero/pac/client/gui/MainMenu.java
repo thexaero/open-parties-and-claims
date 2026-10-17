@@ -310,7 +310,7 @@ public class MainMenu extends XPACScreen {
 					if(subClaimOption == null)
 						return false;
 					if(index >= subClaimOptions.size()) {
-						minecraft.setScreen(
+						minecraft.gui.setScreen(
 								CreateSubConfigScreen.Builder.begin()
 										.setConfigData((PlayerConfigClientStorage) config)
 										.setTargetScreenSupplier(() -> this)
@@ -328,7 +328,7 @@ public class MainMenu extends XPACScreen {
 					);
 					return true;
 				})
-				.setContainer((IDropDownContainer) Minecraft.getInstance().screen)
+				.setContainer((IDropDownContainer) Minecraft.getInstance().gui.screen())
 				.setSelected(indexOfSelectedSub)
 				.setTooltip(tooltip)
 				.build();
