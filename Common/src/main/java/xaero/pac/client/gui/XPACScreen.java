@@ -21,6 +21,7 @@ package xaero.pac.client.gui;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -80,7 +81,12 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 				openDropdown.mouseClicked(event, doubleClick);
 			return true;
 		}
-		return super.mouseClicked(event, doubleClick);
+		if(!super.mouseClicked(event, doubleClick)){
+			if(getFocused() instanceof EditBox)
+				setFocused(null);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -101,9 +107,14 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 		return super.mouseReleased(event);
 	}
 
+	protected int getOPACTitleY(){
+		return height / 7 - 27;
+	}
+
+	@Override
 	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial) {
 		super.extractRenderState(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.centeredText(font, XPAC_TITLE, width / 2, 5, -1);
+		guiGraphics.centeredText(font, XPAC_TITLE, width / 2, getOPACTitleY(), -1);
 		renderPreDropdown(guiGraphics, mouseX, mouseY, partial);
 		if(openDropdown != null) {
 			openDropdown.render(guiGraphics, mouseX, mouseY, height, false);
@@ -111,6 +122,22 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 	}
 
 	protected void renderPreDropdown(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partial){
+		if(openDropdown != null && openDropdown.onDropDown(mouseX, mouseY, height))
+			return;
+		for (GuiEventListener child : children()) {
+			if(!(child instanceof DropDownWidget dropDownWidget))
+				continue;
+			if(!dropDownWidget.isClosed())
+				continue;
+			if(dropDownWidget.getDDTooltip() == null)
+				continue;
+			boolean needsTooltip = dropDownWidget.isHovered() ||
+					dropDownWidget.isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard();
+			if(!needsTooltip)
+				continue;
+			guiGraphics.setTooltipForNextFrame(font, dropDownWidget.getDDTooltip(), dropDownWidget.createTooltipPositioner(), mouseX, mouseY, true);
+			return;
+		}
 	}
 
 	@Override
@@ -129,6 +156,8 @@ public class XPACScreen extends Screen implements IDropDownContainer {
 
 	private <T extends GuiEventListener & NarratableEntry, T2 extends GuiEventListener & Renderable & NarratableEntry>
 	void replaceWidget(T current, T replacement, T2 replaceRenderable) {
+		if(current == null)
+			return;
 		int childIndex = children().indexOf(current);
 		if(childIndex == -1)
 			return;

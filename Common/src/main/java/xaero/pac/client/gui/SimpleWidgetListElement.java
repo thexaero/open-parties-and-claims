@@ -20,16 +20,25 @@ package xaero.pac.client.gui;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Vec3i;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
-public class SimpleWidgetListElement extends WidgetListElement<SimpleWidgetListElement> {
+public class SimpleWidgetListElement<C> extends WidgetListElement<C, SimpleWidgetListElement<C>> {
 	
-	protected SimpleWidgetListElement(int w, int h, boolean mutable, BiFunction<SimpleWidgetListElement, Vec3i, AbstractWidget> widgetSupplier, List<ClientTooltipComponent> tooltip) {
-		super(w, h, mutable, widgetSupplier, tooltip);
+	protected SimpleWidgetListElement(
+			int w,
+			int h,
+			boolean mutable,
+			BiFunction<SimpleWidgetListElement<C>, Vec3i, AbstractWidget> widgetSupplier,
+			Supplier<String> searchName,
+			Supplier<C> category,
+			List<FormattedCharSequence> tooltip
+	) {
+		super(w, h, mutable, widgetSupplier, searchName, category, tooltip);
 	}
 	
 	@Override
@@ -37,15 +46,15 @@ public class SimpleWidgetListElement extends WidgetListElement<SimpleWidgetListE
 		super.render(guiGraphics);
 	}
 	
-	public static final class Builder extends WidgetListElement.Builder<SimpleWidgetListElement, Builder> {
+	public static final class Builder<C> extends WidgetListElement.Builder<C, SimpleWidgetListElement<C>, Builder<C>> {
 		
 		@Override
-		protected SimpleWidgetListElement buildInternal(List<ClientTooltipComponent> clientTooltip) {
-			return new SimpleWidgetListElement(w, h, mutable, widgetSupplier, clientTooltip);
+		protected SimpleWidgetListElement<C> buildInternal() {
+			return new SimpleWidgetListElement<C>(w, h, mutable, widgetSupplier, searchName, category, tooltip);
 		}
 		
-		public static Builder begin() {
-			return new Builder().setDefault();
+		public static <C> Builder<C> begin() {
+			return new Builder<C>().setDefault();
 		}
 		
 	}
