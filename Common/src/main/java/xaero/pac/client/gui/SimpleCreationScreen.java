@@ -18,13 +18,13 @@
 
 package xaero.pac.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 public abstract class SimpleCreationScreen<V> extends XPACScreen {
 
@@ -110,7 +110,7 @@ public abstract class SimpleCreationScreen<V> extends XPACScreen {
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		if(event.key() == GLFW.GLFW_KEY_ENTER && confirmButtonIsActive()) {
+		if(event.key() == InputConstants.KEY_RETURN && confirmButtonIsActive()) {
 			confirmButton.onPress(event);
 			return true;
 		}
